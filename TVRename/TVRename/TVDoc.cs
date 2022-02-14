@@ -2227,7 +2227,7 @@ namespace TVRename
                         return (null, null);
                     }
 
-                    Logger.Error($"User did not select a movie for {file.FullName}");
+                    Logger.Warn($"User did not select a movie for {file.FullName}");
                     return (null, null);
                 }
                 else if (dr == DialogResult.Abort)

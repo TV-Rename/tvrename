@@ -11,9 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using NLog;
 using TVRename.Forms.ShowPreferences;
 
 namespace TVRename
@@ -37,6 +39,7 @@ namespace TVRename
         private readonly ProcessedEpisode? sampleEpisode;
         private readonly bool addingNewShow;
         private readonly TVDoc mDoc;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public AddEditShow([NotNull] ShowConfiguration si, TVDoc doc)
         {
@@ -562,9 +565,16 @@ namespace TVRename
                 folderBrowser.SelectedPath = txtBaseFolder.Text;
             }
 
-            if (folderBrowser.ShowDialog(this) == DialogResult.OK)
+            try
             {
-                txtBaseFolder.Text = folderBrowser.SelectedPath;
+                if (folderBrowser.ShowDialog(this) == DialogResult.OK)
+                {
+                    txtBaseFolder.Text = folderBrowser.SelectedPath;
+                }
+            }
+            catch (SEHException ex)
+            {
+                Logger.Error(ex,"Could not load Folder Selection Dialog:");
             }
         }
 
