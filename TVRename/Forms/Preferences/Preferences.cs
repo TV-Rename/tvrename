@@ -1817,7 +1817,7 @@ namespace TVRename
                 SelectedPath = "",
                 Title = "Add New Search Folder...",
                 ShowEditbox = true,
-                StartPosition = FormStartPosition.CenterScreen
+                StartPosition = FormStartPosition.CenterParent
             };
 
             //Populate the popup with the right path
@@ -1948,7 +1948,7 @@ namespace TVRename
                 SelectedPath = "",
                 Title = "Add New Library Folder...",
                 ShowEditbox = true,
-                StartPosition = FormStartPosition.CenterScreen
+                StartPosition = FormStartPosition.CenterParent
             };
 
             if (lstFMMonitorFolders.SelectedIndex != -1)
@@ -2224,7 +2224,7 @@ namespace TVRename
                 SelectedPath = "",
                 Title = "Add New Library Folder...",
                 ShowEditbox = true,
-                StartPosition = FormStartPosition.CenterScreen
+                StartPosition = FormStartPosition.CenterParent
             };
 
             if (lstMovieMonitorFolders.SelectedIndex != -1)

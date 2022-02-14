@@ -68,10 +68,10 @@ namespace TVRename
             this.bnEditEntry = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.lvFMNewShows = new TVRename.ListViewFlickerFree();
-            this.columnHeader42 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader43 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader44 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader45 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader42 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader43 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader44 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader45 = new System.Windows.Forms.ColumnHeader();
             this.imagesPassFail = new System.Windows.Forms.ImageList(this.components);
             this.bnClose = new System.Windows.Forms.Button();
             this.bwRescan = new System.ComponentModel.BackgroundWorker();
@@ -131,9 +131,7 @@ namespace TVRename
             // lstFMMonitorFolders
             // 
             this.lstFMMonitorFolders.AllowDrop = true;
-            this.lstFMMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstFMMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.lstFMMonitorFolders.FormattingEnabled = true;
             this.lstFMMonitorFolders.IntegralHeight = false;
             this.lstFMMonitorFolders.Location = new System.Drawing.Point(6, 55);
@@ -206,9 +204,7 @@ namespace TVRename
             // lstFMIgnoreFolders
             // 
             this.lstFMIgnoreFolders.AllowDrop = true;
-            this.lstFMIgnoreFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstFMIgnoreFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.lstFMIgnoreFolders.FormattingEnabled = true;
             this.lstFMIgnoreFolders.IntegralHeight = false;
             this.lstFMIgnoreFolders.Location = new System.Drawing.Point(6, 55);
@@ -307,9 +303,7 @@ namespace TVRename
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tbFolders);
             this.tabControl1.Controls.Add(this.tbIgnore);
             this.tabControl1.Controls.Add(this.tbResults);
@@ -378,8 +372,7 @@ namespace TVRename
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(487, 36);
             this.label3.TabIndex = 10;
-            this.label3.Text = "Add folders to this list, to have them ignored when Checking.  Drag and drop, or " +
-    "click \"Add...\" below.  Click \"Check >>\" when done.";
+            this.label3.Text = "Add folders to this list, to have them ignored when Checking.  Drag and drop, or " + "click \"Add...\" below.  Click \"Check >>\" when done.";
             // 
             // tbResults
             // 
@@ -423,14 +416,8 @@ namespace TVRename
             // lvFMNewShows
             // 
             this.lvFMNewShows.AllowDrop = true;
-            this.lvFMNewShows.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvFMNewShows.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader42,
-            this.columnHeader43,
-            this.columnHeader44,
-            this.columnHeader45});
+            this.lvFMNewShows.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvFMNewShows.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.columnHeader42, this.columnHeader43, this.columnHeader44, this.columnHeader45 });
             this.lvFMNewShows.FullRowSelect = true;
             this.lvFMNewShows.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvFMNewShows.HideSelection = false;
@@ -534,6 +521,7 @@ namespace TVRename
             this.Name = "BulkAddMovie";
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Bulk Add Movies";
             this.tabControl1.ResumeLayout(false);
             this.tbFolders.ResumeLayout(false);
@@ -543,7 +531,6 @@ namespace TVRename
             this.tbResults.ResumeLayout(false);
             this.tbResults.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
 

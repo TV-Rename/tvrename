@@ -49,18 +49,18 @@ namespace TVRename
             this.bnCopy = new System.Windows.Forms.Button();
             this.linkForum = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
-            // 
+            //
             // label7
-            // 
+            //
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(12, 13);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(45, 13);
             this.label7.TabIndex = 12;
             this.label7.Text = "Include:";
-            // 
+            //
             // cbSettings
-            // 
+            //
             this.cbSettings.AutoSize = true;
             this.cbSettings.Checked = true;
             this.cbSettings.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -70,9 +70,9 @@ namespace TVRename
             this.cbSettings.TabIndex = 13;
             this.cbSettings.Text = "Settings Files";
             this.cbSettings.UseVisualStyleBackColor = true;
-            // 
+            //
             // cbFOScan
-            // 
+            //
             this.cbFOScan.AutoSize = true;
             this.cbFOScan.Checked = true;
             this.cbFOScan.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -82,9 +82,9 @@ namespace TVRename
             this.cbFOScan.TabIndex = 14;
             this.cbFOScan.Text = "F&&O Scan";
             this.cbFOScan.UseVisualStyleBackColor = true;
-            // 
+            //
             // bnCreate
-            // 
+            //
             this.bnCreate.Location = new System.Drawing.Point(12, 35);
             this.bnCreate.Name = "bnCreate";
             this.bnCreate.Size = new System.Drawing.Size(75, 23);
@@ -92,31 +92,28 @@ namespace TVRename
             this.bnCreate.Text = "Create";
             this.bnCreate.UseVisualStyleBackColor = true;
             this.bnCreate.Click += new System.EventHandler(this.bnCreate_Click);
-            // 
+            //
             // txtEmailText
-            // 
-            this.txtEmailText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            //
+            this.txtEmailText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtEmailText.Location = new System.Drawing.Point(15, 64);
             this.txtEmailText.Multiline = true;
             this.txtEmailText.Name = "txtEmailText";
             this.txtEmailText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtEmailText.Size = new System.Drawing.Size(894, 442);
             this.txtEmailText.TabIndex = 18;
-            // 
+            //
             // label8
-            // 
-            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            //
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.Location = new System.Drawing.Point(12, 509);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(897, 47);
             this.label8.TabIndex = 17;
             this.label8.Text = resources.GetString("label8.Text");
-            // 
+            //
             // bnClose
-            // 
+            //
             this.bnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.bnClose.Location = new System.Drawing.Point(834, 585);
@@ -125,9 +122,9 @@ namespace TVRename
             this.bnClose.TabIndex = 20;
             this.bnClose.Text = "Close";
             this.bnClose.UseVisualStyleBackColor = true;
-            // 
+            //
             // cbFolderScan
-            // 
+            //
             this.cbFolderScan.AutoSize = true;
             this.cbFolderScan.Checked = true;
             this.cbFolderScan.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -137,9 +134,9 @@ namespace TVRename
             this.cbFolderScan.TabIndex = 15;
             this.cbFolderScan.Text = "Folder Scan";
             this.cbFolderScan.UseVisualStyleBackColor = true;
-            // 
+            //
             // bnCopy
-            // 
+            //
             this.bnCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnCopy.Location = new System.Drawing.Point(12, 585);
             this.bnCopy.Name = "bnCopy";
@@ -148,9 +145,9 @@ namespace TVRename
             this.bnCopy.Text = "Copy";
             this.bnCopy.UseVisualStyleBackColor = true;
             this.bnCopy.Click += new System.EventHandler(this.bnCopy_Click);
-            // 
+            //
             // linkForum
-            // 
+            //
             this.linkForum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkForum.AutoSize = true;
             this.linkForum.Location = new System.Drawing.Point(12, 558);
@@ -160,9 +157,9 @@ namespace TVRename
             this.linkForum.TabStop = true;
             this.linkForum.Text = "TV Rename Google Groups";
             this.linkForum.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkForum_LinkClicked);
-            // 
+            //
             // BugReport
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnClose;
@@ -182,10 +179,10 @@ namespace TVRename
             this.Name = "BugReport";
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Bug Report";
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

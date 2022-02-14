@@ -29,13 +29,13 @@ namespace TVRename.Forms.Tools
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.olvFileIssues = new ObjectListViewFlickerFree();
-            this.olvShow = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvFileName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvMessage = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvFileDirectory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvSeason = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvEpisodeNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvFileIssues = new TVRename.ObjectListViewFlickerFree();
+            this.olvShow = new BrightIdeasSoftware.OLVColumn();
+            this.olvFileName = new BrightIdeasSoftware.OLVColumn();
+            this.olvMessage = new BrightIdeasSoftware.OLVColumn();
+            this.olvFileDirectory = new BrightIdeasSoftware.OLVColumn();
+            this.olvSeason = new BrightIdeasSoftware.OLVColumn();
+            this.olvEpisodeNumber = new BrightIdeasSoftware.OLVColumn();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblStatus = new System.Windows.Forms.Label();
@@ -59,13 +59,7 @@ namespace TVRename.Forms.Tools
             this.olvFileIssues.AllColumns.Add(this.olvEpisodeNumber);
             this.olvFileIssues.AllowColumnReorder = true;
             this.olvFileIssues.CellEditUseWholeCell = false;
-            this.olvFileIssues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvShow,
-            this.olvFileName,
-            this.olvMessage,
-            this.olvFileDirectory,
-            this.olvSeason,
-            this.olvEpisodeNumber});
+            this.olvFileIssues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.olvShow, this.olvFileName, this.olvMessage, this.olvFileDirectory, this.olvSeason, this.olvEpisodeNumber });
             this.olvFileIssues.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvFileIssues.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvFileIssues.FullRowSelect = true;
@@ -206,13 +200,13 @@ namespace TVRename.Forms.Tools
             this.MinimizeBox = false;
             this.Name = "OrphanFiles";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Orphan Media Files";
             ((System.ComponentModel.ISupportInitialize)(this.olvFileIssues)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion

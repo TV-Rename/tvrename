@@ -33,17 +33,17 @@ namespace TVRename.Forms.ShowPreferences
             this.bnOK = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
+            //
             // comboBox1
-            // 
+            //
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(16, 38);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(245, 21);
             this.comboBox1.TabIndex = 0;
-            // 
+            //
             // bnCancel
-            // 
+            //
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.bnCancel.Location = new System.Drawing.Point(191, 75);
             this.bnCancel.Name = "bnCancel";
@@ -52,9 +52,9 @@ namespace TVRename.Forms.ShowPreferences
             this.bnCancel.Text = "Cancel";
             this.bnCancel.UseVisualStyleBackColor = true;
             this.bnCancel.Click += new System.EventHandler(this.BnCancel_Click);
-            // 
+            //
             // bnOK
-            // 
+            //
             this.bnOK.Location = new System.Drawing.Point(110, 75);
             this.bnOK.Name = "bnOK";
             this.bnOK.Size = new System.Drawing.Size(75, 23);
@@ -62,18 +62,18 @@ namespace TVRename.Forms.ShowPreferences
             this.bnOK.Text = "OK";
             this.bnOK.UseVisualStyleBackColor = true;
             this.bnOK.Click += new System.EventHandler(this.BnOK_Click);
-            // 
+            //
             // label1
-            // 
+            //
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(248, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "Select an episode that should be considered \'seen\':";
-            // 
+            //
             // NewSeenEpisode
-            // 
+            //
             this.AcceptButton = this.bnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -89,7 +89,7 @@ namespace TVRename.Forms.ShowPreferences
             this.Name = "NewSeenEpisode";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "New Seen Episode";
             this.ResumeLayout(false);
             this.PerformLayout();

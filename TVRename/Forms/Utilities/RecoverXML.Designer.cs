@@ -63,9 +63,9 @@ namespace TVRename
             this.tableLayoutPanel2.SuspendLayout();
             this.panel4.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // bnOK
-            // 
+            //
             this.bnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnOK.Location = new System.Drawing.Point(727, 472);
             this.bnOK.Name = "bnOK";
@@ -74,11 +74,11 @@ namespace TVRename
             this.bnOK.Text = "OK";
             this.bnOK.UseVisualStyleBackColor = true;
             this.bnOK.Click += new System.EventHandler(this.bnOK_Click);
-            // 
+            //
             // lbSettings
-            // 
-            this.lbSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.lbSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbSettings.FormattingEnabled = true;
             this.lbSettings.IntegralHeight = false;
@@ -86,11 +86,11 @@ namespace TVRename
             this.lbSettings.Name = "lbSettings";
             this.lbSettings.Size = new System.Drawing.Size(160, 400);
             this.lbSettings.TabIndex = 1;
-            // 
+            //
             // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 4;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.8216F));
@@ -107,9 +107,9 @@ namespace TVRename
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(873, 422);
             this.tableLayoutPanel1.TabIndex = 2;
-            // 
+            //
             // panel3
-            // 
+            //
             this.panel3.Controls.Add(this.label4);
             this.panel3.Controls.Add(this.lbTVDB);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -117,20 +117,20 @@ namespace TVRename
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(247, 416);
             this.panel3.TabIndex = 6;
-            // 
+            //
             // label4
-            // 
+            //
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(-3, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(113, 13);
             this.label4.TabIndex = 0;
             this.label4.Text = "&TheTVDB local cache";
-            // 
+            //
             // lbTVDB
-            // 
-            this.lbTVDB.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.lbTVDB.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbTVDB.FormattingEnabled = true;
             this.lbTVDB.IntegralHeight = false;
@@ -138,9 +138,9 @@ namespace TVRename
             this.lbTVDB.Name = "lbTVDB";
             this.lbTVDB.Size = new System.Drawing.Size(247, 400);
             this.lbTVDB.TabIndex = 1;
-            // 
+            //
             // panel2
-            // 
+            //
             this.panel2.Controls.Add(this.label2);
             this.panel2.Controls.Add(this.lbTvMaze);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -148,20 +148,20 @@ namespace TVRename
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(225, 416);
             this.panel2.TabIndex = 5;
-            // 
+            //
             // label2
-            // 
+            //
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(-3, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(124, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "&TheTVMaze local cache";
-            // 
+            //
             // lbTvMaze
-            // 
-            this.lbTvMaze.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.lbTvMaze.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbTvMaze.FormattingEnabled = true;
             this.lbTvMaze.IntegralHeight = false;
@@ -169,9 +169,9 @@ namespace TVRename
             this.lbTvMaze.Name = "lbTvMaze";
             this.lbTvMaze.Size = new System.Drawing.Size(225, 400);
             this.lbTvMaze.TabIndex = 1;
-            // 
+            //
             // panel1
-            // 
+            //
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.lbSettings);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -179,18 +179,18 @@ namespace TVRename
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(160, 416);
             this.panel1.TabIndex = 3;
-            // 
+            //
             // label1
-            // 
+            //
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(-3, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(100, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "&Application Settings";
-            // 
+            //
             // label3
-            // 
+            //
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Location = new System.Drawing.Point(3, 13);
@@ -199,9 +199,9 @@ namespace TVRename
             this.label3.TabIndex = 1;
             this.label3.Text = "Select the versions of the settings files to use, then click OK.  Changes to your" +
     " settings are not permanent, until you do a File->Save.";
-            // 
+            //
             // lbHint
-            // 
+            //
             this.lbHint.AutoSize = true;
             this.lbHint.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -210,11 +210,11 @@ namespace TVRename
             this.lbHint.Size = new System.Drawing.Size(873, 13);
             this.lbHint.TabIndex = 0;
             this.lbHint.Text = "<< Error Description >>";
-            // 
+            //
             // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel2.ColumnCount = 1;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -229,9 +229,9 @@ namespace TVRename
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.Size = new System.Drawing.Size(879, 454);
             this.tableLayoutPanel2.TabIndex = 4;
-            // 
+            //
             // bnCancel
-            // 
+            //
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.Location = new System.Drawing.Point(806, 472);
             this.bnCancel.Name = "bnCancel";
@@ -240,9 +240,9 @@ namespace TVRename
             this.bnCancel.Text = "Cancel";
             this.bnCancel.UseVisualStyleBackColor = true;
             this.bnCancel.Click += new System.EventHandler(this.bnCancel_Click);
-            // 
+            //
             // panel4
-            // 
+            //
             this.panel4.Controls.Add(this.label5);
             this.panel4.Controls.Add(this.lbTMDB);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -250,9 +250,9 @@ namespace TVRename
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(217, 416);
             this.panel4.TabIndex = 7;
-            // 
+            //
             // label5
-            // 
+            //
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(-3, 0);
             this.label5.Name = "label5";
@@ -260,11 +260,11 @@ namespace TVRename
             this.label5.TabIndex = 0;
             this.label5.Text = "TMDB local cache";
             this.label5.Click += new System.EventHandler(this.label5_Click);
-            // 
+            //
             // lbTMDB
-            // 
-            this.lbTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.lbTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbTMDB.FormattingEnabled = true;
             this.lbTMDB.IntegralHeight = false;
@@ -272,9 +272,9 @@ namespace TVRename
             this.lbTMDB.Name = "lbTMDB";
             this.lbTMDB.Size = new System.Drawing.Size(217, 400);
             this.lbTMDB.TabIndex = 1;
-            // 
+            //
             // RecoverXml
-            // 
+            //
             this.AcceptButton = this.bnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -285,7 +285,7 @@ namespace TVRename
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "RecoverXml";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "TV Rename Recover";
             this.Load += new System.EventHandler(this.RecoverXML_Load);
             this.tableLayoutPanel1.ResumeLayout(false);

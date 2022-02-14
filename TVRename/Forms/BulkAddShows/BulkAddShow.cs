@@ -160,7 +160,7 @@ namespace TVRename
                 SelectedPath = "",
                 Title = "Add New Ignore Folder...",
                 ShowEditbox = true,
-                StartPosition = FormStartPosition.CenterScreen
+                StartPosition = FormStartPosition.CenterParent
             };
 
             if (lstFMIgnoreFolders.SelectedIndex != -1)

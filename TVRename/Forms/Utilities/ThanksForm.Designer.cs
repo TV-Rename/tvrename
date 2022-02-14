@@ -46,9 +46,9 @@ namespace TVRename.Forms.Utilities
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.SuspendLayout();
-            // 
+            //
             // label1
-            // 
+            //
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(9, 31);
@@ -56,9 +56,9 @@ namespace TVRename.Forms.Utilities
             this.label1.Size = new System.Drawing.Size(66, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "The TVDB";
-            // 
+            //
             // label2
-            // 
+            //
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(9, 173);
@@ -66,9 +66,9 @@ namespace TVRename.Forms.Utilities
             this.label2.Size = new System.Drawing.Size(57, 13);
             this.label2.TabIndex = 3;
             this.label2.Text = "TV Maze";
-            // 
+            //
             // btnVisitTVDB
-            // 
+            //
             this.btnVisitTVDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnVisitTVDB.Location = new System.Drawing.Point(349, 31);
             this.btnVisitTVDB.Name = "btnVisitTVDB";
@@ -77,9 +77,9 @@ namespace TVRename.Forms.Utilities
             this.btnVisitTVDB.Text = "Visit TVDB";
             this.btnVisitTVDB.UseVisualStyleBackColor = true;
             this.btnVisitTVDB.Click += new System.EventHandler(this.btnLicence_Click);
-            // 
+            //
             // btnClose
-            // 
+            //
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Location = new System.Drawing.Point(412, 446);
@@ -88,9 +88,9 @@ namespace TVRename.Forms.Utilities
             this.btnClose.TabIndex = 12;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            // 
+            //
             // btnVisitTVMaze
-            // 
+            //
             this.btnVisitTVMaze.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnVisitTVMaze.Location = new System.Drawing.Point(349, 173);
             this.btnVisitTVMaze.Name = "btnVisitTVMaze";
@@ -99,11 +99,10 @@ namespace TVRename.Forms.Utilities
             this.btnVisitTVMaze.Text = "Visit TV Maze";
             this.btnVisitTVMaze.UseVisualStyleBackColor = true;
             this.btnVisitTVMaze.Click += new System.EventHandler(this.BtnVisitTVMaze_Click);
-            // 
+            //
             // richTextBox1
-            // 
-            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            //
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox1.BackColor = System.Drawing.SystemColors.Control;
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox1.Enabled = false;
@@ -111,13 +110,11 @@ namespace TVRename.Forms.Utilities
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(296, 95);
             this.richTextBox1.TabIndex = 15;
-            this.richTextBox1.Text = "TV information and images are provided by TheTVDB.com, but we are not endorsed or" +
-    " certified by TheTVDB.com or its affiliates.";
-            // 
+            this.richTextBox1.Text = "TV information and images are provided by TheTVDB.com, but we are not endorsed or" + " certified by TheTVDB.com or its affiliates.";
+            //
             // richTextBox2
-            // 
-            this.richTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            //
+            this.richTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox2.BackColor = System.Drawing.SystemColors.Control;
             this.richTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox2.Enabled = false;
@@ -126,9 +123,9 @@ namespace TVRename.Forms.Utilities
             this.richTextBox2.Size = new System.Drawing.Size(296, 74);
             this.richTextBox2.TabIndex = 17;
             this.richTextBox2.Text = resources.GetString("richTextBox2.Text");
-            // 
+            //
             // pictureBox2
-            // 
+            //
             this.pictureBox2.Image = global::TVRename.Properties.Resources.tvm_header_logo;
             this.pictureBox2.Location = new System.Drawing.Point(28, 190);
             this.pictureBox2.Name = "pictureBox2";
@@ -136,9 +133,9 @@ namespace TVRename.Forms.Utilities
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 16;
             this.pictureBox2.TabStop = false;
-            // 
+            //
             // pictureBox1
-            // 
+            //
             this.pictureBox1.Image = global::TVRename.Properties.Resources.tvdblogo2;
             this.pictureBox1.Location = new System.Drawing.Point(28, 48);
             this.pictureBox1.Name = "pictureBox1";
@@ -146,11 +143,10 @@ namespace TVRename.Forms.Utilities
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 14;
             this.pictureBox1.TabStop = false;
-            // 
+            //
             // richTextBox3
-            // 
-            this.richTextBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            //
+            this.richTextBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox3.BackColor = System.Drawing.SystemColors.Control;
             this.richTextBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox3.Enabled = false;
@@ -159,9 +155,9 @@ namespace TVRename.Forms.Utilities
             this.richTextBox3.Size = new System.Drawing.Size(296, 97);
             this.richTextBox3.TabIndex = 21;
             this.richTextBox3.Text = "This product uses the TMDb API but is not endorsed or certified by TMDb.";
-            // 
+            //
             // pictureBox3
-            // 
+            //
             this.pictureBox3.Image = global::TVRename.Properties.Resources.blue_square_2_d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b__1_;
             this.pictureBox3.Location = new System.Drawing.Point(28, 322);
             this.pictureBox3.Name = "pictureBox3";
@@ -169,9 +165,9 @@ namespace TVRename.Forms.Utilities
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox3.TabIndex = 20;
             this.pictureBox3.TabStop = false;
-            // 
+            //
             // button1
-            // 
+            //
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.Location = new System.Drawing.Point(349, 305);
             this.button1.Name = "button1";
@@ -180,9 +176,9 @@ namespace TVRename.Forms.Utilities
             this.button1.Text = "Visit the Movie DB";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
+            //
             // label3
-            // 
+            //
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(9, 305);
@@ -190,9 +186,9 @@ namespace TVRename.Forms.Utilities
             this.label3.Size = new System.Drawing.Size(88, 13);
             this.label3.TabIndex = 18;
             this.label3.Text = "The Movie DB";
-            // 
+            //
             // ThanksForm
-            // 
+            //
             this.AcceptButton = this.btnClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -218,13 +214,13 @@ namespace TVRename.Forms.Utilities
             this.Name = "ThanksForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "TV Rename Credits";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
