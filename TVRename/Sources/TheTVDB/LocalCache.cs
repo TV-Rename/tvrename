@@ -1402,6 +1402,8 @@ namespace TVRename.TheTVDB
 
                 25=>  MediaImage.ImageType.clearLogo,
                 24 => MediaImage.ImageType.clearArt,
+                22 => MediaImage.ImageType.clearArt,
+                23 => MediaImage.ImageType.clearLogo,
 
                 _ => MediaImage.ImageType.poster
             };
@@ -1417,6 +1419,8 @@ namespace TVRename.TheTVDB
                 3 => MediaImage.ImageSubject.show,
                 5 => MediaImage.ImageSubject.show,
                 20 => MediaImage.ImageSubject.show,
+                22 => MediaImage.ImageSubject.show,
+                23 => MediaImage.ImageSubject.show,
 
                 6 => MediaImage.ImageSubject.season,
                 7 => MediaImage.ImageSubject.season,

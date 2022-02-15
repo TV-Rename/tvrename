@@ -256,6 +256,8 @@ namespace TVRename
             string bannerHtml = GenerateImageCarousel("Banners", ser.Images(MediaImage.ImageType.wideBanner, MediaImage.ImageSubject.show).ToList(), "MyBannerCarousel", "w-100");
             string fanartHtml = GenerateImageCarousel("Backgrounds", ser.Images(MediaImage.ImageType.background).ToList(), "MyBackgroundCarousel", "w-100");
             string iconHtml = GenerateImageCarousel("Icons", ser.Images(MediaImage.ImageType.icon).ToList(), "MyIconCarousel", "w-100");
+            string clearArtHtml = GenerateImageCarousel("Clear Art", ser.Images(MediaImage.ImageType.clearArt).ToList(), "MyClearArtCarousel", "w-100");
+            string clearLogoHtml = GenerateImageCarousel("Clear Logo", ser.Images(MediaImage.ImageType.clearLogo).ToList(), "MyClearLogoCarousel", "w-100");
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                   <div class=""row"">
@@ -278,6 +280,18 @@ namespace TVRename
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                   <div class=""row"">
                     {iconHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {clearArtHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {clearLogoHtml}
                   </div>
 
                 </div>");
@@ -336,6 +350,8 @@ namespace TVRename
             string bannerHtml = GenerateImageCarousel("Banners", ser.Images(MediaImage.ImageType.wideBanner, MediaImage.ImageSubject.show).ToList(), "MyBannerCarousel", "w-100");
             string fanartHtml = GenerateImageCarousel("Backgrounds", ser.Images(MediaImage.ImageType.background).ToList(), "MyBackgroundCarousel", "w-100");
             string iconHtml = GenerateImageCarousel("Icons", ser.Images(MediaImage.ImageType.icon).ToList(), "MyIconCarousel", "w-100");
+            string clearArtHtml = GenerateImageCarousel("Clear Art", ser.Images(MediaImage.ImageType.clearArt).ToList(), "MyClearArtCarousel", "w-100");
+            string clearLogoHtml = GenerateImageCarousel("Clear Logo", ser.Images(MediaImage.ImageType.clearLogo).ToList(), "MyClearLogoCarousel", "w-100");
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                   <div class=""row"">
@@ -358,6 +374,18 @@ namespace TVRename
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                   <div class=""row"">
                     {iconHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {clearArtHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {clearLogoHtml}
                   </div>
 
                 </div>");
