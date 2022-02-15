@@ -318,9 +318,19 @@ namespace TVRename
             string[] regexPatterns =
             {
                 @"(?<ext>\.forced\.\w{2}-\w{2}\" + TOKEN + ")$",
-                @"(?<ext>\.\w{2,3}\.forced\" + TOKEN + ")$",
                 @"(?<ext>\.forced\.\w{2,3}\" + TOKEN + ")$",
+                @"(?<ext>\.\w{2,3}\.forced\" + TOKEN + ")$",
                 @"(?<ext>\.\w{2}-\w{2}\.forced\" + TOKEN + ")$",
+
+                @"(?<ext>\.cc\.\w{2}-\w{2}\" + TOKEN + ")$",
+                @"(?<ext>\.cc\.\w{2,3}\" + TOKEN + ")$",
+                @"(?<ext>\.\w{2,3}\.cc\" + TOKEN + ")$",
+                @"(?<ext>\.\w{2}-\w{2}\.cc\" + TOKEN + ")$",
+
+                @"(?<ext>\.sdh\.\w{2}-\w{2}\" + TOKEN + ")$",
+                @"(?<ext>\.sdh\.\w{2,3}\" + TOKEN + ")$",
+                @"(?<ext>\.\w{2,3}\.sdh\" + TOKEN + ")$",
+                @"(?<ext>\.\w{2}-\w{2}\.sdh\" + TOKEN + ")$",
 
                 @"(?<ext>\.\w{2,3}\" + TOKEN + ")$",
                 @"(?<ext>\.\w{2}-\w{2}\" + TOKEN + ")$",
