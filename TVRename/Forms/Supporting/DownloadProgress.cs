@@ -48,6 +48,7 @@ namespace TVRename
         {
             if (mDoc.DownloadDone)
             {
+                Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.NoProgress, ParentForm?.Handle ?? Handle);
                 Close();
             }
             else
@@ -62,6 +63,7 @@ namespace TVRename
             newTimer.Stop();
             DialogResult = DialogResult.Abort;
             token.Cancel();
+            Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.NoProgress, ParentForm?.Handle ?? Handle);
             Close();
         }
 
@@ -77,6 +79,7 @@ namespace TVRename
                 TVmaze.LocalCache.Instance.CurrentDLTask ??
                 TMDB.LocalCache.Instance.CurrentDLTask ?? string.Empty;
             pbProgressBar.Value = mDoc.DownloadPct;
+            Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressValue(mDoc.DownloadPct,100,ParentForm?.Handle??Handle);
         }
     }
 }

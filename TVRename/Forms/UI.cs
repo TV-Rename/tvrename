@@ -37,6 +37,7 @@ using TVRename.Utility.Helper;
 using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
 using Alphaleonis.Win32.Filesystem;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using MessageBox = System.Windows.Forms.MessageBox;
 using SystemColors = System.Drawing.SystemColors;
@@ -3588,6 +3589,8 @@ namespace TVRename
             TVDoc.ScanSettings scanSettings = new(shows ?? new List<ShowConfiguration>(),
                 movies ?? new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, scanProgDlg);
             mDoc.SetScanSettings(scanSettings);
+
+            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal,Handle);
             bwScan.RunWorkerAsync(scanSettings);
             ShowDialogAndWait(cts);
         }
@@ -3612,8 +3615,9 @@ namespace TVRename
         private void bwScan_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
             Thread.CurrentThread.Name ??= "Main Scan Thread"; // Can only set it once
-            mDoc.Scan((TVDoc.ScanSettings)e.Argument);
-            lastScanUnattended = ((TVDoc.ScanSettings) e.Argument).Unattended;
+            TVDoc.ScanSettings scanSettings = (TVDoc.ScanSettings)e.Argument;
+            mDoc.Scan(scanSettings);
+            lastScanUnattended = scanSettings.Unattended;
         }
 
         private void bwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -3622,12 +3626,14 @@ namespace TVRename
 
         private void bwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress,Handle);
             AskUserAboutShowProblems(lastScanUnattended);
             LessBusy(); //Note this is set in UiScan()
             scanProgDlg?.Close();
             FillMyShows(true); // scanning can download more info to be displayed in my shows
             FillMyMovies();
             FillActionList();
+            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, Handle);
             offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
         }
 
@@ -3635,7 +3641,7 @@ namespace TVRename
         {
             if (!mDoc.Args.Hide && Environment.UserInteractive)
             {
-                scanProgDlg = new ScanProgress(
+                scanProgDlg = new ScanProgress(this,
                     TVSettings.Instance.DoBulkAddInScan,
                     TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
                     TVSettings.Instance.RemoveDownloadDirectoriesFiles || TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies || TVSettings.Instance.ReplaceWithBetterQuality || TVSettings.Instance.ReplaceMoviesWithBetterQuality,
@@ -4960,6 +4966,7 @@ namespace TVRename
         {
             if (!IsDisposed)
             {
+                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
                 Invoke((MethodInvoker)delegate { new DownloadProgress(cu, cts).Show(this); });
             }
         }

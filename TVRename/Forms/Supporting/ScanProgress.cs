@@ -31,11 +31,14 @@ namespace TVRename
         private int pctuTorrent;
         private string? msg;
         private string? lastUpdate;
+        private UI ui;
 
-        public ScanProgress(bool autoBulkAdd, bool mediaLib, bool downloadFolder, bool searchLocal, bool downloading, bool rss)
+        public ScanProgress(UI ui, bool autoBulkAdd, bool mediaLib, bool downloadFolder, bool searchLocal,
+            bool downloading, bool rss)
         {
             Ready = false;
             finished = false;
+            this.ui = ui;
             InitializeComponent();
 
             lbBulkAutoAdd.Enabled = autoBulkAdd;
@@ -48,18 +51,25 @@ namespace TVRename
 
         private void UpdateProg()
         {
-            pbBulkAutoAdd.Value = pctAutoBulkAdd < 0 ? 0 : pctAutoBulkAdd > 100 ? 100 : pctAutoBulkAdd;
+            pbBulkAutoAdd.Value = pctAutoBulkAdd.Between(0,100);
             pbBulkAutoAdd.Update();
-            pbMediaLib.Value = pctMediaLib < 0 ? 0 : pctMediaLib > 100 ? 100 : pctMediaLib;
+            pbMediaLib.Value = pctMediaLib.Between(0, 100);
             pbMediaLib.Update();
-            pbDownloadFolder.Value = pctDownloadFolder < 0 ? 0 : pctDownloadFolder > 100 ? 100 : pctDownloadFolder;
+            pbDownloadFolder.Value = pctDownloadFolder.Between(0, 100);
             pbDownloadFolder.Update();
-            pbLocalSearch.Value = pctLocalSearch < 0 ? 0 : pctLocalSearch > 100 ? 100 : pctLocalSearch;
+            pbLocalSearch.Value = pctLocalSearch.Between(0, 100);
             pbLocalSearch.Update();
-            pbRSS.Value = pctDownloading < 0 ? 0 : pctDownloading > 100 ? 100 : pctDownloading;
+            pbRSS.Value = pctDownloading.Between(0, 100);
             pbRSS.Update();
-            pbDownloading.Value = pctuTorrent < 0 ? 0 : pctuTorrent > 100 ? 100 : pctuTorrent;
+            pbDownloading.Value = pctuTorrent.Between(0, 100);
             pbDownloading.Update();
+
+            if (!finished){
+                Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressValue(
+                pbBulkAutoAdd.Value + pbMediaLib.Value + pbDownloadFolder.Value + pbLocalSearch.Value + pbRSS.Value + pbDownloading.Value
+                , 600
+                , ui.Handle);
+            }
             lblMessage.Text = msg;
             lblDetail.Text = lastUpdate;
         }

@@ -109,10 +109,13 @@ namespace TVRename.Forms
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
             lblStatus.Text = e.UserState.ToString();
+
+            Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressValue(e.ProgressPercentage.Between(0, 100), 100, mainUi.Handle);
         }
 
         private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.NoProgress, mainUi.Handle);
             btnRefresh.Visible = true;
             pbProgress.Visible = false;
             lblStatus.Visible = false;
@@ -134,6 +137,7 @@ namespace TVRename.Forms
             btnRefresh.Visible = false;
             pbProgress.Visible = true;
             lblStatus.Visible = true;
+            Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.Normal,mainUi.Handle);
             bwScan.RunWorkerAsync();
         }
 
