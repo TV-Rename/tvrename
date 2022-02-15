@@ -114,7 +114,7 @@ namespace TVRename
             AutoAddFolderBase =
                   !TVSettings.Instance.DefShowAutoFolders ? string.Empty
                 : !TVSettings.Instance.DefShowUseDefLocation ? string.Empty
-                : TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator() + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(ShowName));
+                : TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator() + TVSettings.Instance.DefaultTVShowFolder(this);
 
             AutoAddType =
                 !TVSettings.Instance.DefShowAutoFolders ? AutomaticFolderType.none

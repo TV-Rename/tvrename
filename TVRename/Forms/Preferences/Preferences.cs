@@ -126,6 +126,7 @@ namespace TVRename
         {
             ValidateFilePath(txtSpecialsFolderName, tpLibraryFolders, true);
             ValidateFilePath(txtSeasonFormat, tpLibraryFolders, true);
+            ValidateFilePath(txtShowFolderFormat, tpLibraryFolders, true);
             ValidateFilePath(txtMovieFolderFormat, tpLibraryFolders, true);
             ValidateFilePath(txtMovieFilenameFormat, tpLibraryFolders, true);
             if (cbCheckuTorrent.Checked)
@@ -320,6 +321,7 @@ namespace TVRename
             s.AutoCreateFolders = cbAutoCreateFolders.Checked;
             s.SpecialsFolderName = txtSpecialsFolderName.Text;
             s.SeasonFolderFormat = txtSeasonFormat.Text;
+            s.DefaultTvShowFolderFormat = txtShowFolderFormat.Text;
             s.MovieFolderFormat = txtMovieFolderFormat.Text;
             s.MovieFilenameFormat = txtMovieFilenameFormat.Text;
             s.searchSeasonWordsString = tbSeasonSearchTerms.Text;
@@ -893,6 +895,7 @@ namespace TVRename
             cbAutoSelInMyShows.Checked = s.AutoSelectShowInMyShows;
             txtSpecialsFolderName.Text = s.SpecialsFolderName;
             txtSeasonFormat.Text = s.SeasonFolderFormat;
+            txtShowFolderFormat.Text = s.DefaultTvShowFolderFormat;
             txtMovieFolderFormat.Text = s.MovieFolderFormat;
             txtMovieFilenameFormat.Text = s.MovieFilenameFormat;
             cbForceLower.Checked = s.ForceLowercaseFilenames;
@@ -2294,6 +2297,15 @@ namespace TVRename
         private void chkBitTorrentUseHTTPS_CheckedChanged(object sender, EventArgs e)
         {
             UpdateQBitTorrentLink();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            ShowConfiguration t = null;
+            // ReSharper disable once ExpressionIsAlwaysNull
+            cntfw = new CustomNameTagsFloatingWindow(t);
+            cntfw.Show(this);
+            Focus();
         }
     }
 }

@@ -67,5 +67,21 @@ namespace TVRename
                 label1.Text += txt + "\r\n";
             }
         }
+
+        public CustomNameTagsFloatingWindow(ShowConfiguration? tvShow)
+        {
+            InitializeComponent();
+
+            foreach (string s in CustomTvShowName.TAGS)
+            {
+                string txt = s;
+                if (tvShow != null)
+                {
+                    txt += " - " + CustomTvShowName.NameFor(tvShow, s);
+                }
+
+                label1.Text += txt + "\r\n";
+            }
+        }
     }
 }

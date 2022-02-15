@@ -35,7 +35,7 @@ namespace TVRename.Forms.ShowPreferences
             }
             cbDirectory.ResumeLayout();
 
-            initialFolder = Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(hint));
+            initialFolder = Path.DirectorySeparatorChar + hint;
             txtShowFolder.Text = initialFolder;
         }
 

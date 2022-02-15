@@ -48,6 +48,7 @@ namespace TVRename
                                                             "{ShowName} - {Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
                                                             "{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
                                                             "{ShowName} S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
+                                                            "{ShowNameNoYear} ({Year}) S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
                                                             "{Season}{Episode}[-{Season}{Episode2}] - {EpisodeName}",
                                                             "{Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
                                                             "S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
@@ -62,6 +63,7 @@ namespace TVRename
             "{ShowName}",
             "{ShowNameInitial}",
             "{ShowNameLower}",
+            "{ShowNameNoYear}",
             "{Season}",
             "{Season:2}",
             "{SeasonNumber}",
@@ -123,6 +125,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ShowName}", show.ShowName);
             name = name.ReplaceInsensitive("{ShowNameLower}", show.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
             name = name.ReplaceInsensitive("{ShowNameInitial}", show.ShowName.Initial().ToLower());
+            name = name.ReplaceYear(show);
 
             int seasonNumber;
             int episodeNumber;
@@ -244,6 +247,7 @@ namespace TVRename
                 name = name.ReplaceInsensitive("{ShowName}", showName);
                 name = name.ReplaceInsensitive("{ShowNameLower}", pe.Show.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
                 name = name.ReplaceInsensitive("{ShowNameInitial}", showName.Initial().ToLower());
+                name = name.ReplaceYear(pe.Show);
                 name = name.ReplaceInsensitive("{Season}", pe.AppropriateSeasonNumber.ToString());
                 name = name.ReplaceInsensitive("{Season:2}", pe.AppropriateSeasonNumber.ToString("00"));
                 name = name.ReplaceInsensitive("{SeasonNumber}", pe.AppropriateSeasonIndex.ToString());

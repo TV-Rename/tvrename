@@ -1,11 +1,11 @@
-using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public static class CustomMovieName
+    public static class CustomTvShowName
     {
         public static string DefaultStyle() => Presets[0];
 
@@ -25,36 +25,25 @@ namespace TVRename
             "{Year}",
             "{ContentRating}",
             "{Imdb}",
-            "{CollectionName}",
-            "{MovieType}",
-            "{CollectionFolder}",
         };
 
         [NotNull]
-        public static List<string> ExamplePresets(MovieConfiguration s)
+        public static List<string> ExamplePresets(ShowConfiguration s)
         {
             return Presets.Select(example => NameFor(s, example)).ToList();
         }
 
         [NotNull]
-        public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false, true);
+        public static string NameFor(ShowConfiguration? m, string styleString) => NameFor(m, styleString, false, true);
 
         [NotNull]
-        public static string DirectoryNameFor(MovieConfiguration? m, [NotNull] string styleString)
+        public static string DirectoryNameFor(ShowConfiguration? m, [NotNull] string styleString)
         {
-            if (styleString.StartsWith("{collectionFolder}", StringComparison.OrdinalIgnoreCase))
-            {
-                if (m?.InCollection ?? false)
-                {
-                    return m.CachedMovie?.CollectionName + "\\" + NameFor(m, styleString.RemoveFirst("{collectionFolder}/".Length), false, false);
-                }
-                return NameFor(m, styleString.RemoveFirst("{collectionFolder}/".Length), false, false);
-            }
             return NameFor(m, styleString, false, false);
         }
 
         [NotNull]
-        public static string NameFor(MovieConfiguration m, string styleString, string? extension)
+        public static string NameFor(ShowConfiguration m, string styleString, string? extension)
         {
             string r = NameFor(m, styleString);
 
@@ -74,31 +63,39 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string NameFor(MovieConfiguration? m, string styleString, bool urlEncode, bool isfilename)
+        private static string NameFor([CanBeNull] CachedSeriesInfo showConfiguration, string styleString, bool urlEncode, bool isfilename)
+        {
+            return NameFor(showConfiguration?.Name, showConfiguration, styleString, urlEncode, isfilename);
+        }
+
+        public static string NameFor(ShowConfiguration? m, string styleString, bool urlEncode, bool isfilename)
+        {
+            return NameFor(m?.ShowName, m?.CachedShow, styleString, urlEncode, isfilename);
+        }
+
+        public static string NameFor(string? showName,CachedSeriesInfo si, string styleString, bool urlEncode, bool isfilename)
         {
             string name = styleString;
 
-            if (m?.ShowName is null)
+            if (showName is null)
             {
                 return string.Empty;
             }
 
-            string showname = m.ShowName;
+            string showname = showName;
             if (urlEncode)
             {
                 showname = Uri.EscapeDataString(showname);
             }
 
-            name = name.ReplaceInsensitive("{CollectionFolder}", m.InCollection ? "{collectionName}\\" : string.Empty);
             name = name.ReplaceInsensitive("{ShowName}", showname);
             name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
             name = name.ReplaceInsensitive("{ShowNameLower}", showname.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
-            name = name.ReplaceYear(m);
-            name = name.ReplaceInsensitive("{ContentRating}", m.CachedMovie?.ContentRating);
-            name = name.ReplaceInsensitive("{Year}", m.CachedMovie?.Year.ToString());
-            name = name.ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb);
-            name = name.ReplaceInsensitive("{CollectionName}", m.CachedMovie?.CollectionName);
-            name = name.ReplaceInsensitive("{MovieType}", m.CachedMovie?.MovieType);
+            name = name.ReplaceYear(showName);
+            name = name.ReplaceInsensitive("{ContentRating}", si?.ContentRating);
+            name = name.ReplaceInsensitive("{Year}", si?.Year);
+            name = name.ReplaceInsensitive("{Imdb}", si?.Imdb);
+
             if (urlEncode)
             {
                 return name.Trim();
@@ -122,11 +119,9 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string NameFor(MovieConfiguration m, [NotNull] string styleString, int year)
+        public static string DirectoryNameFor(CachedSeriesInfo showConfiguration, string styleString)
         {
-            string styleStringNewYear = styleString.ReplaceInsensitive("{Year}", year.ToString());
-
-            return NameFor(m, styleStringNewYear);
+            return NameFor(showConfiguration, styleString, false, false);
         }
     }
 }

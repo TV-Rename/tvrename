@@ -362,6 +362,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> SubsFolderNames => Convert(SubsFolderNamesString);
 
+        [NotNull]
         public string qBitTorrentProtocol => qBitTorrentUseHTTPS ? "https" : "http";
 
         public string SubsFolderNamesString = "subs;subtitle;vobsubs;sub;vobsub;subtitle";
@@ -452,7 +453,8 @@ namespace TVRename
 
         public string? DefMovieDefaultLocation;
         public TVDoc.ProviderType DefaultMovieProvider = TVDoc.ProviderType.TMDB;
-        internal bool UnArchiveFilesInDownloadDirectory = true; //TODO put in settings and preferences
+        internal bool UnArchiveFilesInDownloadDirectory = true;
+        internal string DefaultTvShowFolderFormat = "{ShowName}"; //TODO put in settings and preferences
 
         private TVSettings()
         {
@@ -580,6 +582,7 @@ namespace TVRename
             writer.WriteElement("HideMyShowsSpoilers", HideMyShowsSpoilers);
             writer.WriteElement("SpecialsFolderName", SpecialsFolderName);
             writer.WriteElement("SeasonFolderFormat", SeasonFolderFormat);
+            writer.WriteElement("DefaultTvShowFolderFormat", DefaultTvShowFolderFormat);
             writer.WriteElement("MovieFolderFormat", MovieFolderFormat);
             writer.WriteElement("MovieFilenameFormat", MovieFilenameFormat);
             writer.WriteElement("uTorrentPath", uTorrentPath);
@@ -1466,6 +1469,7 @@ namespace TVRename
             AutoSelectShowInMyShows = xmlSettings.ExtractBool("AutoSelectShowInMyShows", true);
             SpecialsFolderName = xmlSettings.ExtractString("SpecialsFolderName", "Specials");
             SeasonFolderFormat = xmlSettings.ExtractString("SeasonFolderFormat");
+            DefaultTvShowFolderFormat = xmlSettings.ExtractString("DefaultTvShowFolderFormat", "{ShowName}");
             MovieFolderFormat = xmlSettings.ExtractString("MovieFolderFormat", "{ShowName} ({Year})");
             MovieFilenameFormat = xmlSettings.ExtractString("MovieFilenameFormat", "{ShowName} ({Year})");
             SearchJSONURL = xmlSettings.ExtractString("SearchJSONURL", "https://eztv.ag/api/get-torrents?imdb_id=");
@@ -1934,6 +1938,24 @@ namespace TVRename
                     Replacements.Add(new Replacement(thisValue, thatValue, caseInsensitive));
                 }
             }
+        }
+
+        public string DefaultTVShowFolder([NotNull] ShowConfiguration showConfiguration)
+        {
+            string style = DefaultTvShowFolderFormat;
+            string folderName = CustomTvShowName.DirectoryNameFor(showConfiguration,style);
+            return DefaultTVShowFolder(folderName);
+        }
+        public string DefaultTVShowFolder(string baseHint)
+        {
+            return FilenameFriendly(FileHelper.MakeValidPath(baseHint));
+        }
+
+        public string DefaultTVShowFolder([CanBeNull] CachedSeriesInfo showConfiguration)
+        {
+            string style = DefaultTvShowFolderFormat;
+            string folderName = CustomTvShowName.DirectoryNameFor(showConfiguration,style);
+            return DefaultTVShowFolder(folderName);
         }
     }
 }

@@ -109,59 +109,59 @@ namespace TVRename.Forms
             UpdateUI();
         }
 
-        private void AddToLibrary(int id, string? name)
+        private void AddTvToLibrary(int id, CachedSeriesInfo? cache)
         {
-            QuickLocateForm f = new(name, media);
+            string name = TVSettings.Instance.DefaultTVShowFolder(cache);
+            QuickLocateForm f = new(name, MediaConfiguration.MediaType.tv);
 
             if (f.ShowDialog(this) != DialogResult.OK)
             {
                 return;
             }
 
-            switch (media)
+            ShowConfiguration newShow = new(id, TVDoc.ProviderType.TMDB);
+
+            if (newShow.ConfigurationProvider == TVSettings.Instance.DefaultProvider)
             {
-                case MediaConfiguration.MediaType.tv:
-                    ShowConfiguration newShow = new(id, TVDoc.ProviderType.TMDB);
-
-                    if (newShow.ConfigurationProvider == TVSettings.Instance.DefaultProvider)
-                    {
-                        newShow.ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
-                    }
-                    newShow.AutoAddFolderBase = f.DirectoryFullPath!;
-
-                    mDoc.Add(newShow.AsList(), true);
-                    addedShows.Add(newShow);
-                    break;
-
-                case MediaConfiguration.MediaType.movie:
-
-                    // need to add a new showitem
-                    MovieConfiguration found = new(id, TVDoc.ProviderType.TMDB);
-
-                    if (found.ConfigurationProvider == TVSettings.Instance.DefaultMovieProvider)
-                    {
-                        found.ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
-                    }
-
-                    if (f.FolderNameChanged)
-                    {
-                        found.UseAutomaticFolders = false;
-                        found.UseManualLocations = true;
-                        found.ManualLocations.Add(f.DirectoryFullPath);
-                    }
-                    else if (f.RootDirectory.HasValue())
-                    {
-                        found.AutomaticFolderRoot = f.RootDirectory!;
-                        found.UseAutomaticFolders = true;
-                    }
-
-                    mDoc.Add(found.AsList(), true);
-                    addedMovies.Add(found);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
+                newShow.ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
             }
+            newShow.AutoAddFolderBase = f.DirectoryFullPath!;
+
+            mDoc.Add(newShow.AsList(), true);
+            addedShows.Add(newShow);
+        }
+
+        private void AddMovieToLibrary(int id, string? name)
+        {
+            QuickLocateForm f = new(name, MediaConfiguration.MediaType.movie);
+
+            if (f.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            // need to add a new showitem
+            MovieConfiguration found = new(id, TVDoc.ProviderType.TMDB);
+
+            if (found.ConfigurationProvider == TVSettings.Instance.DefaultMovieProvider)
+            {
+                found.ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
+            }
+
+            if (f.FolderNameChanged)
+            {
+                found.UseAutomaticFolders = false;
+                found.UseManualLocations = true;
+                found.ManualLocations.Add(f.DirectoryFullPath);
+            }
+            else if (f.RootDirectory.HasValue())
+            {
+                found.AutomaticFolderRoot = f.RootDirectory!;
+                found.UseAutomaticFolders = true;
+            }
+
+            mDoc.Add(found.AsList(), true);
+            addedMovies.Add(found);
         }
 
         private void AddRcMenuItem([NotNull] string label, EventHandler command)
@@ -246,7 +246,15 @@ namespace TVRename.Forms
 
             possibleMergedEpisodeRightClickMenu.Items.Clear();
 
-            AddRcMenuItem("Add to Library", (_, _) => AddToLibrary(mlastSelected.Key,mlastSelected.Name));
+            switch (media)
+            {
+                case MediaConfiguration.MediaType.movie:
+                    AddRcMenuItem("Add Movie to Library", (_, _) => AddMovieToLibrary(mlastSelected.Key, mlastSelected.Name));
+                    break;
+                case MediaConfiguration.MediaType.tv:
+                    AddRcMenuItem("Add TV show to Library", (_, _) => AddTvToLibrary(mlastSelected.Key, mlastSelected.Series));
+                    break;
+            }
         }
 
         private void lvRecommendations_ItemSelectionChanged(object sender, [NotNull] ListViewItemSelectionChangedEventArgs e)

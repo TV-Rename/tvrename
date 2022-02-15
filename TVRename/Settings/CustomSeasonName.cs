@@ -26,6 +26,7 @@ namespace TVRename
                                                             "S{Season}",
                                                             "S{Season:2}",
                                                             "{ShowName} - Season {Season:2}",
+                                                            "{ShowNameNoYear} ({Year}) - Season {Season:2}",
                                                             "Season {SeasonNumber:2}",
                                                             "Season {SeasonNumber}",
                                                             "S{SeasonNumber}",
@@ -40,6 +41,7 @@ namespace TVRename
             "{ShowName}",
             "{ShowNameInitial}",
             "{ShowNameLower}",
+            "{ShowNameNoYear}",
             "{Season}",
             "{Season:2}",
             "{SeasonNumber}",
@@ -81,6 +83,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ShowName}", showname);
             name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
             name = name.ReplaceInsensitive("{ShowNameLower}", s.Show.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
+            name = name.ReplaceYear(s.Show);
             name = name.ReplaceInsensitive("{Season}", s.SeasonNumber.ToString());
             name = name.ReplaceInsensitive("{Season:2}", s.SeasonNumber.ToString("00"));
             name = name.ReplaceInsensitive("{SeasonNumber}", s.SeasonIndex.ToString());

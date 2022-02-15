@@ -23,8 +23,7 @@ namespace TVRename
             string oldLocation = Show.AutoAddFolderBase;
             string libraryRoot =
                 TVSettings.Instance.LibraryFolders.First(lf => lf.IsSubfolderOf(oldLocation));
-            string newRoot = libraryRoot.EnsureEndsWithSeparator()
-                                 + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(Show.ShowName));
+            string newRoot = libraryRoot.EnsureEndsWithSeparator() + TVSettings.Instance.DefaultTVShowFolder(Show);
 
             //Then copy any matching files to new location
             List<FileInfo> filesWeMayCopy =

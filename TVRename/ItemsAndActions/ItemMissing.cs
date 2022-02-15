@@ -47,7 +47,7 @@ namespace TVRename
         public void AddComment(string p0)
         {
             ErrorText += p0;
-            NotifyPropertyChanged("ErrorText");
+            NotifyPropertyChanged();
         }
     }
 }

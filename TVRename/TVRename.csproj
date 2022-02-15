@@ -550,6 +550,8 @@
     <Compile Include="ScanActivity\UnArchiveDownloadDirectory.cs" />
     <Compile Include="Settings\AppState\UpdateCheck.cs" />
     <Compile Include="Settings\CustomMovieName.cs" />
+    <Compile Include="Settings\CustomName.cs" />
+    <Compile Include="Settings\CustomTvShowName.cs" />
     <Compile Include="Settings\Locale.cs" />
     <Compile Include="Settings\MediaConfiguration.cs" />
     <Compile Include="Settings\MovieConfiguration.cs" />

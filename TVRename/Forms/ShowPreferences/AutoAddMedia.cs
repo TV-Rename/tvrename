@@ -38,7 +38,7 @@ namespace TVRename
 
             if (SingleTvShowFound && tvCodeFinder.TvShowInitialFoundCode.HasValue && tvCodeFinder.TvShowInitialFound != null)
             {
-                string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(tvCodeFinder.TvShowInitialFound.Name));
+                string filenameFriendly = TVSettings.Instance.DefaultTVShowFolder(tvCodeFinder.TvShowInitialFound);
                 SetShowItem(tvCodeFinder.TvShowInitialFoundCode.Value, tvCodeFinder.Source, TVSettings.Instance.DefShowLocation + System.IO.Path.DirectorySeparatorChar + filenameFriendly);
                 if (ShowConfiguration.Code == -1)
                 {
@@ -98,7 +98,7 @@ namespace TVRename
         {
             if (tabControl1.SelectedTab == tpTV)
             {
-                string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(tvCodeFinder.SelectedShow()?.Name));
+                string filenameFriendly = TVSettings.Instance.DefaultTVShowFolder(tvCodeFinder.SelectedShow());
                 lblDirectoryName.Text = System.IO.Path.DirectorySeparatorChar + filenameFriendly;
             }
         }
@@ -141,7 +141,7 @@ namespace TVRename
             MovieConfiguration.UseAutomaticFolders = true;
             MovieConfiguration.AutomaticFolderRoot = folderbase;
             MovieConfiguration.Format = TVSettings.Instance.DefMovieFolderFormat;
-                
+
             MovieConfiguration.UseCustomFolderNameFormat = false;
             MovieConfiguration.ConfigurationProvider = type == TVSettings.Instance.DefaultMovieProvider ? TVDoc.ProviderType.libraryDefault : type;
 

@@ -18,9 +18,7 @@ namespace TVRename
         {
             if (TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation && TVSettings.Instance.DefShowLocation.HasValue())
             {
-                Show.AutoAddFolderBase =
-                    TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator()
-                    + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(Show.ShowName));
+                Show.AutoAddFolderBase = TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator() + TVSettings.Instance.DefaultTVShowFolder(Show);
 
                 return;
             }
@@ -35,8 +33,8 @@ namespace TVRename
                 throw new FixCheckException("Can't fix movie as no TV Show Library Folders are specified");
             }
 
-            Show.AutoAddFolderBase = TVSettings.Instance.MovieLibraryFolders.First().EnsureEndsWithSeparator()
-                                     + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(Show.ShowName));
+            Show.AutoAddFolderBase = TVSettings.Instance.LibraryFolders.First().EnsureEndsWithSeparator()
+                                     + TVSettings.Instance.DefaultTVShowFolder(Show);
         }
 
         [NotNull]

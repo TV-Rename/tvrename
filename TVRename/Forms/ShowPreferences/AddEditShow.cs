@@ -782,7 +782,10 @@ namespace TVRename
                 return;
             }
 
-            string showName = codeFinderForm.SelectedShow()?.Name ?? txtCustomShowName.Text ?? "New Folder";
+            string showName = codeFinderForm.SelectedShow() is null
+                ? txtCustomShowName.Text ?? "New Folder"
+                : TVSettings.Instance.DefaultTVShowFolder(codeFinderForm.SelectedShow());
+
             QuickLocateForm f = new(showName, MediaConfiguration.MediaType.tv);
 
             if (f.ShowDialog(this) == DialogResult.OK)
@@ -811,7 +814,7 @@ namespace TVRename
             {
                 txtBaseFolder.Text =
                     TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator()
-                    + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(codeFinderForm.SelectedShow()?.Name));
+                    + TVSettings.Instance.DefaultTVShowFolder(codeFinderForm.SelectedShow());
             }
         }
 
