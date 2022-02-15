@@ -144,13 +144,13 @@ namespace TVRename
         [NotNull]
         public IEnumerable<MovieImage> Images(MediaImage.ImageType type)
         {
-            return images.Where(x => x.ImageStyle == type && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation) == TargetLocale.LanguageToUse(Source).Abbreviation);
+            return images.Where(x => x.ImageStyle == type && x.LocationMatches(TargetLocale.LanguageToUse(Source)));
         }
 
         [NotNull]
         public IEnumerable<MovieImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject)
         {
-            return images.Where(x => x.ImageStyle == type && x.Subject == subject && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation ) == TargetLocale.LanguageToUse(Source).Abbreviation);
+            return Images(type).Where(x => x.Subject == subject);
         }
     }
 }

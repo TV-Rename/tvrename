@@ -434,31 +434,22 @@ namespace TVRename
         [NotNull]
         public IEnumerable<ShowImage> Images(MediaImage.ImageType type)
         {
-            IEnumerable<ShowImage> y = images.Where(x => x.ImageStyle == type);
-            return FilterLanguages(y, TargetLocale.LanguageToUse(Source));
-        }
-
-        [NotNull]
-        private IEnumerable<ShowImage> FilterLanguages([NotNull] IEnumerable<ShowImage> showImages, Language languageToUse)
-        {
-            return showImages.Where(x =>
-                x.LanguageCode is null ||
-                x.LanguageCode.Equals(languageToUse.ThreeAbbreviation,StringComparison.CurrentCultureIgnoreCase) ||
-                x.LanguageCode.Equals(languageToUse.Abbreviation, StringComparison.CurrentCultureIgnoreCase)
-                );
+            Language languageToUse = TargetLocale.LanguageToUse(Source);
+            return images
+                .Where(x => x.ImageStyle == type)
+                .Where(x => x.LocationMatches(languageToUse));
         }
 
         [NotNull]
         public IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject)
         {
-            IEnumerable<ShowImage> y = images.Where(x => x.ImageStyle == type && x.Subject == subject);
-            return FilterLanguages(y, TargetLocale.LanguageToUse(Source));
+            return Images(type).Where(x => x.Subject == subject);
         }
+
         [NotNull]
         internal IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject, int seasonNumber)
         {
-            IEnumerable<ShowImage> y = images.Where(x => x.ImageStyle == type && x.Subject == subject && x.SeasonNumber == seasonNumber);
-            return FilterLanguages(y, TargetLocale.LanguageToUse(Source));
+            return Images(type, subject).Where(x => x.SeasonNumber == seasonNumber);
         }
     }
 }

@@ -1339,7 +1339,7 @@ namespace TVRename.TheTVDB
                 foreach (JToken? imageJson in r["data"]["artworks"])
                 {
                     int imageCodeType = (int) imageJson["type"];
-                    if (imageCodeType == 13) //Person Snaphot
+                    if (imageCodeType == 13) //Person Snapshot
                     {
                         continue;
                     }

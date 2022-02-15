@@ -123,7 +123,7 @@ namespace TVRename
                 httpWebRequest.Headers.Add("Authorization", "Bearer " + token);
                 httpWebRequest.Headers.Add("x-api-key", token);
             }
-            if (lang != "")
+            if (lang.HasValue())
             {
                 httpWebRequest.Headers.Add("Accept-Language", lang);
             }
