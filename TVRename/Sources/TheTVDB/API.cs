@@ -405,6 +405,11 @@ namespace TVRename.TheTVDB
             return GetUrl(code, uri, requestedLanguageCode,MediaConfiguration.MediaType.tv);
         }
 
+        public static JObject? GetSeasonV4([NotNull] ISeriesSpecifier code, int seasonId, string requestLangCode)
+        {
+            string uri = $"{TokenProvider.TVDB_API_URL}/series/{seasonId}/extended";
+            return GetUrl(code,uri, requestLangCode,MediaConfiguration.MediaType.tv);
+        }
         public static JObject? GetEpisode(int episodeId, string requestLangCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}";

@@ -1819,7 +1819,7 @@ namespace TVRename.TheTVDB
                     if (seasonType == getSeasonType(seasonJson))
                     {
                         int seasonId = (int)seasonJson["id"];
-                        string seasonName = (string)seasonJson["name"] + " " + seasonJson["number"];
+                        string seasonName = (string)seasonJson["name"];
                         int seasonSeriesId = (int)seasonJson["seriesId"];
                         int seasonNumber = (int)seasonJson["number"];
                         string seasonDescription = string.Empty;
