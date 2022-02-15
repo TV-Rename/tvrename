@@ -236,7 +236,8 @@ namespace TVRename
                     ? pe.Show.CustomNamingFormat
                     : styleString;
 
-                string showName = pe.Show.ShowName;
+                string showName = pe.Show.ShowName.Replace("[","\\[").Replace( "]", "\\]");
+
                 string episodeName = pe.Name;
                 if (urlEncode)
                 {
