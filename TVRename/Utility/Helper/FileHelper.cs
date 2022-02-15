@@ -312,18 +312,37 @@ namespace TVRename
 
         public static (bool found, string extension) IsLanguageSpecificSubtitle(this FileInfo file)
         {
+            const string TOKEN = "{EXTENSION}";
+
+            //Important we have the longer ones first
+            string[] regexPatterns =
+            {
+                @"(?<ext>\.forced\.\w{2}-\w{2}\" + TOKEN + ")$",
+                @"(?<ext>\.\w{2,3}\.forced\" + TOKEN + ")$",
+                @"(?<ext>\.forced\.\w{2,3}\" + TOKEN + ")$",
+                @"(?<ext>\.\w{2}-\w{2}\.forced\" + TOKEN + ")$",
+
+                @"(?<ext>\.\w{2,3}\" + TOKEN + ")$",
+                @"(?<ext>\.\w{2}-\w{2}\" + TOKEN + ")$",
+            };
+
             foreach (string subExtension in TVSettings.Instance.subtitleExtensionsArray)
             {
-                string regex = @"(?<ext>\.\w{2,3}\" + subExtension + ")$";
-
-                Match m = Regex.Match(file.Name, regex, RegexOptions.IgnoreCase);
-
-                if (!m.Success)
+                if (!file.Name.EndsWith(subExtension,StringComparison.CurrentCultureIgnoreCase))
                 {
                     continue;
                 }
+                foreach (string regexPattern in regexPatterns)
+                {
+                    Match m = Regex.Match(file.Name, regexPattern.Replace(TOKEN,subExtension), RegexOptions.IgnoreCase);
 
-                return (true, m.Groups["ext"].ToString());
+                    if (!m.Success)
+                    {
+                        continue;
+                    }
+
+                    return (true, m.Groups["ext"].ToString());
+                }
             }
 
             return (false, string.Empty);
