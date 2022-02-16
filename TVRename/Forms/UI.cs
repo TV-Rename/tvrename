@@ -584,7 +584,6 @@ namespace TVRename
         }
 
         private void MoreBusy() {
-            btnFullScan.Enabled = false;
             btnScan.Enabled = false;
             tbQuickScan.Enabled = false;
             tpRecentScan.Enabled = false;
@@ -595,7 +594,6 @@ namespace TVRename
 
         private void LessBusy()
         {
-            btnFullScan.Enabled = true;
             btnScan.Enabled = true;
             tbQuickScan.Enabled = true;
             tpRecentScan.Enabled = true;
@@ -3541,6 +3539,31 @@ namespace TVRename
                 return;
             }
 
+            switch (e.KeyCode)
+            {
+                case Keys.F:
+                    UiScan(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
+                    e.Handled = true;
+                    break;
+                case Keys.Q:
+                    UiScan(null, null, false, TVSettings.ScanType.Quick, MediaConfiguration.MediaType.both);
+                    e.Handled = true;
+                    break;
+                case Keys.R:
+                    UiScan(null, null, false, TVSettings.ScanType.Recent, MediaConfiguration.MediaType.both);
+                    e.Handled = true;
+                    break;
+                case Keys.D:
+                    ActionAction(true, false, false);
+                    e.Handled = true;
+                    break;
+            }
+
+            MoveToTab(e);
+        }
+
+        private void MoveToTab([NotNull] KeyEventArgs e)
+        {
             int t = GetIndex(e.KeyCode);
 
             if (t >= 0 && t < tabControl1.TabCount)
