@@ -4989,7 +4989,7 @@ namespace TVRename
         {
             if (!IsDisposed)
             {
-                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
+                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal,Handle);
                 Invoke((MethodInvoker)delegate { new DownloadProgress(cu, cts).Show(this); });
             }
         }
