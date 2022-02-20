@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System.Globalization;
 using JetBrains.Annotations;
 using System.Linq;
 
@@ -118,11 +119,11 @@ namespace TVRename
                         writer.WriteElement("title", TVSettings.Instance.NamingStyle.NameFor(Episode));
                         writer.WriteElement("mpaa", Episode.TheCachedSeries.ContentRating);
 
-                        if (Episode.FirstAired.HasValue)
+                        if (Episode.FirstAired.HasValue && Episode.FirstAired.Value > DateTime.MinValue)
                         {
-                            writer.WriteElement("year", Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
+                            writer.WriteElement("year", Episode.FirstAired.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                             writer.WriteElement("firstaired",
-                                Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
+                                Episode.FirstAired.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                         }
 
                         writer.WriteElement("runtime", Episode.TheCachedSeries.Runtime, true);

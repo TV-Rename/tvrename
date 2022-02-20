@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
@@ -27,7 +28,7 @@ namespace TVRename
             writer.WriteElement("Writer", e.Writer, true);
             writer.WriteElement("EpisodeName", e.MName, true);
 
-            writer.WriteElement("FirstAired", e.FirstAired?.ToString("yyyy-MM-dd"), true);
+            writer.WriteElement("FirstAired", e.FirstAired?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), true);
             writer.WriteElement("AirTime", e.AirTime?.ToString("HH:mm"), true);
             writer.WriteElement("AirTime", e.AirStamp);
 

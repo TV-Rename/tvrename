@@ -1,5 +1,7 @@
+using System;
 using JetBrains.Annotations;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using Alphaleonis.Win32.Filesystem;
@@ -90,9 +92,9 @@ namespace TVRename
                 }
             }
 
-            if (episode.FirstAired.HasValue)
+            if (episode.FirstAired.HasValue && episode.FirstAired.Value > DateTime.MinValue)
             {
-                root.UpdateElement("aired", episode.FirstAired.Value.ToString("yyyy-MM-dd"), true);
+                root.UpdateElement("aired", episode.FirstAired.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), true);
             }
 
             //Director(s)

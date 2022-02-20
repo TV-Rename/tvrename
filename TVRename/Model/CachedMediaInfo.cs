@@ -341,7 +341,7 @@ namespace TVRename
 
             if (FirstAired != null && FirstAired > DateTime.Parse("1000-01-01"))
             {
-                writer.WriteElement("FirstAired", FirstAired.Value.ToString("yyyy-MM-dd"));
+                writer.WriteElement("FirstAired", FirstAired.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
             }
 
             writer.WriteStartElement("Actors");

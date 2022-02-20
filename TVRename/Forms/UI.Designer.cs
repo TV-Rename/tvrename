@@ -1458,8 +1458,8 @@ namespace TVRename
             // 
             // olvDate
             // 
-            this.olvDate.AspectName = "AirDate";
-            this.olvDate.AspectToStringFormat = "{0:d}";
+            this.olvDate.AspectName = "AirDateString";
+            this.olvDate.AspectToStringFormat = "";
             this.olvDate.GroupWithItemCountFormat = "{0} ({1} items)";
             this.olvDate.GroupWithItemCountSingularFormat = "{0} (1 Item)";
             this.olvDate.MinimumWidth = 10;
@@ -1574,7 +1574,7 @@ namespace TVRename
             // 
             this.fullToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fullToolStripMenuItem.Name = "fullToolStripMenuItem";
-            this.fullToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fullToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.fullToolStripMenuItem.Text = "&Full";
             this.fullToolStripMenuItem.ToolTipText = "Scan all Movies and TV Shows";
             this.fullToolStripMenuItem.Click += new System.EventHandler(this.FullToolStripMenuItem_Click);
@@ -1583,7 +1583,7 @@ namespace TVRename
             // 
             this.recentToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.recentToolStripMenuItem.Text = "Recent";
             this.recentToolStripMenuItem.ToolTipText = "Scan TV Shows with recent aired episodes";
             this.recentToolStripMenuItem.Click += new System.EventHandler(this.RecentToolStripMenuItem_Click);
@@ -1592,7 +1592,7 @@ namespace TVRename
             // 
             this.quickToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.quickToolStripMenuItem.Name = "quickToolStripMenuItem";
-            this.quickToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.quickToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.quickToolStripMenuItem.Text = "Quick";
             this.quickToolStripMenuItem.ToolTipText = "Scan shows with missing recent aired episodes and and shows that match files in t" +
     "he search folders";

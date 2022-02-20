@@ -1022,8 +1022,12 @@ namespace TVRename
             }
 
             string airedText = ep.HasAired() ? " (Aired)" : string.Empty;
+            DateTime? airDateDt = ep.GetAirDateDt(true);
+            string airDateString = airDateDt.HasValue && airDateDt > DateTime.MinValue
+                ? airDateDt.Value.ToString("d",CultureInfo.InvariantCulture)
+                : string.Empty;
             return
-                $"<tr><th scope=\"row\">{ep.AppropriateEpNum}</th><td>{ep.GetAirDateDt(true):d}{airedText}</td><td>{ep.Name}</td><td>{status}</td><td class=\"text-right\">{searchButton}{viewButton}</td></tr>";
+                $"<tr><th scope=\"row\">{ep.AppropriateEpNum}</th><td>{airDateString}{airedText}</td><td>{ep.Name}</td><td>{status}</td><td class=\"text-right\">{searchButton}{viewButton}</td></tr>";
         }
 
         [NotNull]
