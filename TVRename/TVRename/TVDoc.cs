@@ -2223,7 +2223,7 @@ namespace TVRename
                     //If added add show ot collection
                     if (askForMatch.ShowConfiguration.Code > 0)
                     {
-                        Logger.Error($"User requested movie {file.FullName} be added as a TV Show - Ignoring for now");
+                        Logger.Warn($"User requested movie {file.FullName} be added as a TV Show - Ignoring for now");
                         return (null, null);
                     }
 

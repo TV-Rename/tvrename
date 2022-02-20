@@ -3649,14 +3649,20 @@ namespace TVRename
 
         private void bwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress,Handle);
+            if (!IsDisposed)
+            {
+                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, Handle);
+            }
             AskUserAboutShowProblems(lastScanUnattended);
             LessBusy(); //Note this is set in UiScan()
             scanProgDlg?.Close();
-            FillMyShows(true); // scanning can download more info to be displayed in my shows
-            FillMyMovies();
-            FillActionList();
-            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, Handle);
+            if (!IsDisposed)
+            {
+                FillMyShows(true); // scanning can download more info to be displayed in my shows
+                FillMyMovies();
+                FillActionList();
+                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, Handle);
+            }
             offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
         }
 
