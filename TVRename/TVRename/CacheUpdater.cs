@@ -352,7 +352,7 @@ namespace TVRename
             catch (TaskCanceledException tce)
             {
                 downloadOk = false;
-                Logger.Error(tce);
+                Logger.Warn(tce);
             }
             catch (Exception e)
             {
