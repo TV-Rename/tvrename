@@ -138,15 +138,7 @@ namespace TVRename
 
         public static bool ContainsMedia([NotNull] IEnumerable<MediaConfiguration> media, MediaConfiguration testMedia)
         {
-            foreach (MediaConfiguration testMedium in media)
-            {
-                if (testMedium.AnyIdsMatch(testMedia))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return media.Any(testMedium => testMedium.AnyIdsMatch(testMedia));
         }
 
         #region Denormalisations
@@ -700,8 +692,9 @@ namespace TVRename
 
         public void ExportMovieInfo()
         {
-            new MoviesTxt(FilmLibrary.GetSortedMovies()).RunAsThread();
-            new MoviesHtml(FilmLibrary.GetSortedMovies()).RunAsThread();
+            List<MovieConfiguration> movieConfigurations = FilmLibrary.GetSortedMovies();
+            new MoviesTxt(movieConfigurations).RunAsThread();
+            new MoviesHtml(movieConfigurations).RunAsThread();
         }
 
         public void ExportShowInfo()
@@ -2130,18 +2123,18 @@ namespace TVRename
         private void BonusAutoAdd([NotNull] FileInfo fi, IDialogParent owner)
         {
             //do an auto add
-            (MovieConfiguration? newShow, MovieConfiguration? selectedShow) = AutoAddMovieFile(fi, owner);
+            MovieConfiguration? selectedShow = AutoAddMovieFile(fi, owner);
 
-            //if new show then add and link file to it
-            if (newShow != null && newShow.Locations.Any())
+            if (selectedShow != null && ContainsMedia(FilmLibrary,selectedShow))
             {
-                LinkFileToShow(fi, newShow, new DirectoryInfo(newShow.Locations.First()));
-                Add(newShow.AsList(),true);
-            }
-            else if (selectedShow != null)
-            {
-                //if user selects existing show then do a compare for that new file for the show
+                //if user selects existing movie then do a compare for that new file for the show
                 MergeMovieFileIntoMovieConfig(fi, selectedShow, owner);
+            }
+            //if new show then add and link file to it
+            else if (selectedShow != null && selectedShow.Locations.Any())
+            {
+                LinkFileToShow(fi, selectedShow, new DirectoryInfo(selectedShow.Locations.First()));
+                Add(selectedShow.AsList(),true);
             }
             else
             {
@@ -2149,7 +2142,7 @@ namespace TVRename
             }
         }
 
-        private (MovieConfiguration?, MovieConfiguration?) AutoAddMovieFile([NotNull] FileInfo file, IDialogParent owner)
+        private MovieConfiguration? AutoAddMovieFile([NotNull] FileInfo file, IDialogParent owner)
         {
             string hint = file.RemoveExtension(TVSettings.Instance.UseFullPathNameToMatchSearchFolders) + ".";
 
@@ -2159,7 +2152,7 @@ namespace TVRename
                 Logger.Info(
                     $"Ignoring {hint} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
 
-                return (null, null);
+                return null;
             }
             //remove any search folders  from the hint. They are probably useless at helping specify the showname
             foreach (string path in TVSettings.Instance.DownloadFolders)
@@ -2179,7 +2172,7 @@ namespace TVRename
             if (string.IsNullOrWhiteSpace(refinedHint))
             {
                 Logger.Info($"Ignoring {hint} as it refines to nothing.");
-                return (null, null);
+                return null;
             }
 
             //If there are no LibraryFolders then we cant use the simplified UI
@@ -2189,61 +2182,42 @@ namespace TVRename
                     "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
                     "Can't Auto Add Movie", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                return (null, null);
+                return null;
             }
 
             //popup dialog
             AutoAddMedia askForMatch = new(refinedHint, file, true);
 
+            Logger.Info($"Auto Adding New Show/Movie by asking about for '{refinedHint}'");
+            owner.ShowChildDialog(askForMatch);
+            DialogResult dr = askForMatch.DialogResult;
+
+            switch (dr)
             {
-                Logger.Info($"Auto Adding New Show/Movie by asking about for '{refinedHint}'");
-                owner.ShowChildDialog(askForMatch);
-                DialogResult dr = askForMatch.DialogResult;
+                case DialogResult.OK when askForMatch.MovieConfiguration.Code > 0:
+                    return askForMatch.MovieConfiguration;
 
-                if (dr == DialogResult.OK)
-                {
-                    if (askForMatch.MovieConfiguration.Code > 0)
-                    {
-                        MovieConfiguration selected = askForMatch.MovieConfiguration;
-
-                        if (FilmLibrary.Contains(selected))
-                        {
-                            return (null, selected);
-                        }
-                        else
-                        {
-                            return (selected, null);
-                        }
-                    }
-
-                    //If added add show ot collection
-                    if (askForMatch.ShowConfiguration.Code > 0)
-                    {
-                        Logger.Warn($"User requested movie {file.FullName} be added as a TV Show - Ignoring for now");
-                        return (null, null);
-                    }
-
+                //If added, add show to collection
+                case DialogResult.OK when askForMatch.ShowConfiguration.Code > 0:
+                    Logger.Warn($"User requested movie {file.FullName} be added as a TV Show - Ignoring for now");
+                    break;
+                case DialogResult.OK:
                     Logger.Warn($"User did not select a movie for {file.FullName}");
-                    return (null, null);
-                }
-                else if (dr == DialogResult.Abort)
-                {
+                    break;
+                case DialogResult.Abort:
                     Logger.Info("Skippng Auto Add Process");
-                    return (null, null);
-                }
-                else if (dr == DialogResult.Ignore)
-                {
+                    break;
+                case DialogResult.Ignore:
                     Logger.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
                     TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
-                }
-                else
-                {
+                    break;
+                default:
                     Logger.Info($"Cancelled Auto adding new show/movie {hint}");
-                }
+                    break;
             }
 
             askForMatch.Dispose();
-            return (null, null);
+            return null;
         }
 
         public static void Reconnect()
