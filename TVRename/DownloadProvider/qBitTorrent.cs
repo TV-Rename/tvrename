@@ -73,7 +73,7 @@ namespace TVRename
                 List<TorrentEntry> ret = new();
                 foreach (JToken torrent in currentDownloads.Children())
                 {
-                    AddFilesFromTorrent(ret, torrent, savePath);
+                    AddFilesFromTorrent(ret, torrent, savePath.EnsureEndsWithSeparator());
                 }
                 return ret;
             }
