@@ -112,12 +112,6 @@ namespace TVRename.Forms
         private void AddTvToLibrary(int id, CachedSeriesInfo? cache)
         {
             string name = TVSettings.Instance.DefaultTVShowFolder(cache);
-            QuickLocateForm f = new(name, MediaConfiguration.MediaType.tv);
-
-            if (f.ShowDialog(this) != DialogResult.OK)
-            {
-                return;
-            }
 
             ShowConfiguration newShow = new(id, TVDoc.ProviderType.TMDB);
 
@@ -125,6 +119,21 @@ namespace TVRename.Forms
             {
                 newShow.ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
             }
+
+            if (mDoc.AlreadyContains(newShow))
+            {
+                Logger.Info($"Not adding {id}:{name} as it already exists in the library");
+                return;
+            }
+
+            QuickLocateForm f = new(name, MediaConfiguration.MediaType.tv);
+
+            if (f.ShowDialog(this) != DialogResult.OK)
+            {
+                Logger.Info($"Not adding {id}:{name} as user cancelled addition");
+                return;
+            }
+
             newShow.AutoAddFolderBase = f.DirectoryFullPath!;
 
             mDoc.Add(newShow.AsList(), true);
@@ -133,19 +142,26 @@ namespace TVRename.Forms
 
         private void AddMovieToLibrary(int id, string? name)
         {
-            QuickLocateForm f = new(name, MediaConfiguration.MediaType.movie);
-
-            if (f.ShowDialog(this) != DialogResult.OK)
-            {
-                return;
-            }
-
             // need to add a new showitem
             MovieConfiguration found = new(id, TVDoc.ProviderType.TMDB);
 
             if (found.ConfigurationProvider == TVSettings.Instance.DefaultMovieProvider)
             {
                 found.ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
+            }
+
+            if (mDoc.AlreadyContains(found))
+            {
+                Logger.Info($"Not adding {id}:{name} as it already exists in the library");
+                return;
+            }
+
+            QuickLocateForm f = new(name, MediaConfiguration.MediaType.movie);
+
+            if (f.ShowDialog(this) != DialogResult.OK)
+            {
+                Logger.Info($"Not adding {id}:{name} as the user cancelled addition");
+                return;
             }
 
             if (f.FolderNameChanged)
@@ -242,17 +258,17 @@ namespace TVRename.Forms
                 return;
             }
 
-            RecommendationRow mlastSelected = (RecommendationRow)e.Model;
+            RecommendationRow lastSelected = (RecommendationRow)e.Model;
 
             possibleMergedEpisodeRightClickMenu.Items.Clear();
 
             switch (media)
             {
                 case MediaConfiguration.MediaType.movie:
-                    AddRcMenuItem("Add Movie to Library", (_, _) => AddMovieToLibrary(mlastSelected.Key, mlastSelected.Name));
+                    AddRcMenuItem("Add Movie to Library", (_, _) => AddMovieToLibrary(lastSelected.Key, lastSelected.Name));
                     break;
                 case MediaConfiguration.MediaType.tv:
-                    AddRcMenuItem("Add TV show to Library", (_, _) => AddTvToLibrary(mlastSelected.Key, mlastSelected.Series));
+                    AddRcMenuItem("Add TV show to Library", (_, _) => AddTvToLibrary(lastSelected.Key, lastSelected.Series));
                     break;
             }
         }
@@ -281,16 +297,17 @@ namespace TVRename.Forms
         private void btnPreferences_Click(object sender, EventArgs e)
         {
             RecommendationViewPreferences prefs = new(trendingWeight, topWeight, relatedWeight, similarWeight);
-            DialogResult dalogShowDialog = prefs.ShowDialog(this);
-            if (dalogShowDialog == DialogResult.OK)
+            if (prefs.ShowDialog(this) != DialogResult.OK)
             {
-                trendingWeight = prefs.TrendingWeight;
-                topWeight = prefs.TopWeight;
-                relatedWeight = prefs.RelatedWeight;
-                similarWeight = prefs.SimilarWeight;
-
-                PopulateGrid();
+                return;
             }
+
+            trendingWeight = prefs.TrendingWeight;
+            topWeight = prefs.TopWeight;
+            relatedWeight = prefs.RelatedWeight;
+            similarWeight = prefs.SimilarWeight;
+
+            PopulateGrid();
         }
     }
 }
