@@ -159,7 +159,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Episode2}", episodeNumber.ToString("00"));
             name = Regex.Replace(name, "{AllEpisodes}", episodeNumber.ToString("00"));
             name = name.ReplaceInsensitive("{SeasonName}", seasonName ?? string.Empty);
-            name = name.ReplaceInsensitive("{EpisodeName}", epname);
+            name = name.ReplaceInsensitive("{EpisodeName}", epname.Trim());
             name = name.ReplaceInsensitive("{Number}", "");
             name = name.ReplaceInsensitive("{Number:2}", "");
             name = name.ReplaceInsensitive("{Number:3}", "");
@@ -238,7 +238,7 @@ namespace TVRename
 
                 string showName = pe.Show.ShowName.Replace("[","\\[").Replace( "]", "\\]");
 
-                string episodeName = pe.Name;
+                string episodeName = pe.Name.Trim();
                 if (urlEncode)
                 {
                     showName = Uri.EscapeDataString(showName);
