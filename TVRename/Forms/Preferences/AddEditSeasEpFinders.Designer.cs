@@ -47,11 +47,11 @@ namespace TVRename
             this.bnDelete = new System.Windows.Forms.Button();
             this.bnAdd = new System.Windows.Forms.Button();
             this.lvPreview = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.bnBrowse = new System.Windows.Forms.Button();
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.label1 = new System.Windows.Forms.Label();
@@ -66,6 +66,8 @@ namespace TVRename
             this.rdoFileSystem = new System.Windows.Forms.RadioButton();
             this.rdoTorrentQueue = new System.Windows.Forms.RadioButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.txtTestString = new System.Windows.Forms.TextBox();
+            this.rdoTextString = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -117,13 +119,20 @@ namespace TVRename
             // 
             // lvPreview
             // 
-            this.lvPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvPreview.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.columnHeader1, this.columnHeader5, this.columnHeader2, this.columnHeader3, this.columnHeader4 });
+            this.lvPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvPreview.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader5,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4});
             this.lvPreview.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvPreview.HideSelection = false;
-            this.lvPreview.Location = new System.Drawing.Point(0, 61);
+            this.lvPreview.Location = new System.Drawing.Point(0, 85);
             this.lvPreview.Name = "lvPreview";
-            this.lvPreview.Size = new System.Drawing.Size(1039, 338);
+            this.lvPreview.Size = new System.Drawing.Size(1039, 314);
             this.lvPreview.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lvPreview.TabIndex = 8;
             this.lvPreview.UseCompatibleStateImageBehavior = false;
@@ -155,7 +164,7 @@ namespace TVRename
             // bnBrowse
             // 
             this.bnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowse.Location = new System.Drawing.Point(729, 32);
+            this.bnBrowse.Location = new System.Drawing.Point(964, 57);
             this.bnBrowse.Name = "bnBrowse";
             this.bnBrowse.Size = new System.Drawing.Size(75, 23);
             this.bnBrowse.TabIndex = 9;
@@ -165,9 +174,8 @@ namespace TVRename
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(810, 36);
+            this.label1.Location = new System.Drawing.Point(99, 33);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(37, 13);
             this.label1.TabIndex = 10;
@@ -175,21 +183,23 @@ namespace TVRename
             // 
             // cbShowList
             // 
-            this.cbShowList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbShowList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cbShowList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbShowList.FormattingEnabled = true;
-            this.cbShowList.Location = new System.Drawing.Point(853, 33);
+            this.cbShowList.Location = new System.Drawing.Point(142, 30);
             this.cbShowList.Name = "cbShowList";
-            this.cbShowList.Size = new System.Drawing.Size(182, 21);
+            this.cbShowList.Size = new System.Drawing.Size(352, 21);
             this.cbShowList.TabIndex = 11;
             this.cbShowList.SelectedIndexChanged += new System.EventHandler(this.cbShowList_SelectedIndexChanged);
             // 
             // txtFolder
             // 
-            this.txtFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFolder.Location = new System.Drawing.Point(399, 33);
+            this.txtFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFolder.Location = new System.Drawing.Point(586, 59);
             this.txtFolder.Name = "txtFolder";
-            this.txtFolder.Size = new System.Drawing.Size(324, 20);
+            this.txtFolder.Size = new System.Drawing.Size(372, 20);
             this.txtFolder.TabIndex = 12;
             this.txtFolder.TextChanged += new System.EventHandler(this.txtFolder_TextChanged);
             // 
@@ -203,7 +213,7 @@ namespace TVRename
             this.chkTestAll.AutoSize = true;
             this.chkTestAll.Checked = true;
             this.chkTestAll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkTestAll.Location = new System.Drawing.Point(20, 38);
+            this.chkTestAll.Location = new System.Drawing.Point(20, 32);
             this.chkTestAll.Name = "chkTestAll";
             this.chkTestAll.Size = new System.Drawing.Size(61, 17);
             this.chkTestAll.TabIndex = 13;
@@ -223,7 +233,9 @@ namespace TVRename
             // 
             // Grid1
             // 
-            this.Grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.Grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.Grid1.BackColor = System.Drawing.SystemColors.Window;
             this.Grid1.EnableSort = true;
             this.Grid1.Location = new System.Drawing.Point(3, 10);
@@ -261,18 +273,19 @@ namespace TVRename
             // 
             this.rdoFileSystem.AutoSize = true;
             this.rdoFileSystem.Checked = true;
-            this.rdoFileSystem.Location = new System.Drawing.Point(316, 35);
+            this.rdoFileSystem.Location = new System.Drawing.Point(503, 61);
             this.rdoFileSystem.Name = "rdoFileSystem";
             this.rdoFileSystem.Size = new System.Drawing.Size(81, 17);
             this.rdoFileSystem.TabIndex = 18;
             this.rdoFileSystem.TabStop = true;
             this.rdoFileSystem.Text = "Test Folder:";
             this.rdoFileSystem.UseVisualStyleBackColor = true;
+            this.rdoFileSystem.CheckedChanged += new System.EventHandler(this.rdoFileSystem_CheckedChanged);
             // 
             // rdoTorrentQueue
             // 
             this.rdoTorrentQueue.AutoSize = true;
-            this.rdoTorrentQueue.Location = new System.Drawing.Point(219, 37);
+            this.rdoTorrentQueue.Location = new System.Drawing.Point(403, 61);
             this.rdoTorrentQueue.Name = "rdoTorrentQueue";
             this.rdoTorrentQueue.Size = new System.Drawing.Size(94, 17);
             this.rdoTorrentQueue.TabIndex = 19;
@@ -282,7 +295,9 @@ namespace TVRename
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(12, 2);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -293,6 +308,8 @@ namespace TVRename
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.txtTestString);
+            this.splitContainer1.Panel2.Controls.Add(this.rdoTextString);
             this.splitContainer1.Panel2.Controls.Add(this.lvPreview);
             this.splitContainer1.Panel2.Controls.Add(this.rdoTorrentQueue);
             this.splitContainer1.Panel2.Controls.Add(this.bnAdd);
@@ -309,6 +326,24 @@ namespace TVRename
             this.splitContainer1.Size = new System.Drawing.Size(1047, 685);
             this.splitContainer1.SplitterDistance = 279;
             this.splitContainer1.TabIndex = 20;
+            // 
+            // txtTestString
+            // 
+            this.txtTestString.Location = new System.Drawing.Point(72, 59);
+            this.txtTestString.Name = "txtTestString";
+            this.txtTestString.Size = new System.Drawing.Size(325, 20);
+            this.txtTestString.TabIndex = 21;
+            this.txtTestString.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // rdoTextString
+            // 
+            this.rdoTextString.AutoSize = true;
+            this.rdoTextString.Location = new System.Drawing.Point(20, 59);
+            this.rdoTextString.Name = "rdoTextString";
+            this.rdoTextString.Size = new System.Drawing.Size(49, 17);
+            this.rdoTextString.TabIndex = 20;
+            this.rdoTextString.Text = "Text:";
+            this.rdoTextString.UseVisualStyleBackColor = true;
             // 
             // AddEditSeasEpFinders
             // 
@@ -332,6 +367,7 @@ namespace TVRename
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
+
         }
 
 
@@ -362,5 +398,7 @@ namespace TVRename
         private System.Windows.Forms.RadioButton rdoFileSystem;
         private System.Windows.Forms.RadioButton rdoTorrentQueue;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.TextBox txtTestString;
+        private System.Windows.Forms.RadioButton rdoTextString;
     }
 }

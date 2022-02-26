@@ -336,7 +336,7 @@ namespace TVRename
                     AddItemToListView(file.Name, seas, ep, maxEp, matchRex, r);
                 }
             }
-            else
+            else if (rdoTorrentQueue.Checked)
             {
                 foreach (string filename in GetTorrentDownloads().Select(entry => entry.DownloadingTo))
                 {
@@ -350,6 +350,14 @@ namespace TVRename
 
                     AddItemToListView(filename, seas, ep, maxEp, matchRex, r);
                 }
+            }
+            else
+            {
+                string testValue = txtTestString.Text;
+                ShowConfiguration si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
+                bool r = FinderHelper.FindSeasEp(testValue, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE matchRex);
+
+                AddItemToListView(testValue, seas, ep, maxEp, matchRex, r);
             }
 
             lvPreview.EndUpdate();
@@ -506,6 +514,20 @@ namespace TVRename
 
             lvPreview.EndUpdate();
             StartTimer();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            rdoTextString.Checked = true;
+            StartTimer();
+        }
+
+        private void rdoFileSystem_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdoFileSystem.Checked)
+            {
+                StartTimer();
+            }
         }
     }
 }
