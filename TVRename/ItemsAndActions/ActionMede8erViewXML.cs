@@ -85,6 +85,7 @@ namespace TVRename
 
         public override string SeriesName => SelectedShow?.ShowName ?? Movie!.ShowName;
         public override string SeasonNumber => snum > 0 ? snum.ToString() : string.Empty;
+        public override int? SeasonNumberAsInt => snum;
         public override string EpisodeString => string.Empty;
         public override string AirDateString => string.Empty;
 

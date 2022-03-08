@@ -53,11 +53,12 @@ namespace TVRename
 
         // ReSharper disable once UnusedMember.Global
         public int? EpisodeNumber => Episode?.AppropriateEpNum;
+        public virtual int? SeasonNumberAsInt => Episode?.AppropriateSeasonNumber;
 
         [NotNull]
         public virtual string AirDateString => Episode?.GetAirDateDt(true).PrettyPrint() ?? Movie?.CachedMovie?.FirstAired.PrettyPrint() ?? string.Empty;
 
-        public DateTime? AirDate => Episode?.GetAirDateDt(true) ?? Movie?.CachedMovie?.FirstAired;
+        public virtual DateTime? AirDate => Episode?.GetAirDateDt(true) ?? Movie?.CachedMovie?.FirstAired;
         public abstract string DestinationFolder { get; }
         public abstract string DestinationFile { get; }
 

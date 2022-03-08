@@ -1417,10 +1417,12 @@ namespace TVRename
             this.olvAction.UseFiltering = true;
             this.olvAction.UseNotifyPropertyChanged = true;
             this.olvAction.View = System.Windows.Forms.View.Details;
+            this.olvAction.BeforeSorting += new System.EventHandler<BrightIdeasSoftware.BeforeSortingEventArgs>(this.olvAction_BeforeSorting);
             this.olvAction.BeforeCreatingGroups += new System.EventHandler<BrightIdeasSoftware.CreateGroupsEventArgs>(this.olvAction_BeforeCreatingGroups);
             this.olvAction.CanDrop += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.OlvAction_CanDrop);
             this.olvAction.Dropped += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.OlvAction_Dropped);
             this.olvAction.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.olv1_FormatRow);
+            this.olvAction.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.olvAction_ColumnClick);
             this.olvAction.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvAction_ItemChecked);
             this.olvAction.SelectedIndexChanged += new System.EventHandler(this.lvAction_SelectedIndexChanged);
             this.olvAction.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvAction_KeyDown);

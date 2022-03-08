@@ -35,5 +35,7 @@ namespace TVRename
 
         public override string AirDateString =>
             UpdateTime.CompareTo(DateTime.MaxValue) != 0 ? UpdateTime.ToShortDateString() : string.Empty;
+
+        public override DateTime? AirDate => UpdateTime;
     }
 }

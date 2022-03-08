@@ -84,6 +84,7 @@ namespace TVRename
         private MovieConfiguration? switchToWhenOpenMyMovies;
 
         private readonly ListViewColumnSorter lvwScheduleColumnSorter;
+        //private readonly ListViewColumnSorter lvwActionColumnSorter;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private bool IsBusy => busy != 0;
@@ -131,6 +132,8 @@ namespace TVRename
 
             lvwScheduleColumnSorter = new ListViewColumnSorter(new DateSorterWtw(3));
             lvWhenToWatch.ListViewItemSorter = lvwScheduleColumnSorter;
+
+            //lvwActionColumnSorter = new ListViewColumnSorter(new NumberAsTextSorter(1));
 
             if (mDoc.Args.Hide || !showUi)
             {
@@ -4799,9 +4802,9 @@ namespace TVRename
             olvAction.BeginUpdate();
             olvAction.ShowGroups = true;
             olvAction.AlwaysGroupByColumn = null;
+            olvAction.CustomSorter = delegate { olvAction.ListViewItemSorter = new ListViewActionItemSorter(); };
             olvAction.Sort(olvType, SortOrder.Ascending);
             olvAction.BuildGroups(olvType, SortOrder.Ascending,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
-            olvAction.CustomSorter = delegate { olvAction.ListViewItemSorter = new ListViewActionItemSorter(); };
             olvAction.EndUpdate();
         }
 
@@ -4988,7 +4991,34 @@ namespace TVRename
 
         private void olvAction_BeforeCreatingGroups(object sender, [NotNull] CreateGroupsEventArgs e)
         {
-            e.Parameters.ItemComparer = new ListViewActionItemSorter();
+            e.Parameters.ItemComparer = GetActionComparer(e.Parameters.GroupByColumn);
+
+            if (e.Parameters.PrimarySort == olvDate)
+            {
+                e.Parameters.PrimarySort = new OLVColumn("RawDate", "AirDate");
+            }
+
+            if (e.Parameters.PrimarySort == olvEpisode)
+            {
+                e.Parameters.PrimarySort = new OLVColumn("RawEp", "EpisodeNumber");
+            }
+
+            if (e.Parameters.PrimarySort == olvSeason)
+            {
+                e.Parameters.PrimarySort = new OLVColumn("RawSe", "SeasonNumberAsInt");
+            }
+        }
+
+        [NotNull]
+        private IComparer<OLVListItem> GetActionComparer([NotNull] OLVColumn column)
+        {
+            return column.Index switch
+            {
+                1 => new NumberAsTextActionComparer(column.Index),
+                2 => new NumberAsTextActionComparer(column.Index),
+                3 => new DateActionComparer(column.Index),
+                _ => new TextActionComparer(column.Index)
+            };
         }
 
         public void ShowFgDownloadProgress(CacheUpdater cu, CancellationTokenSource cts)
@@ -5005,13 +5035,7 @@ namespace TVRename
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            TreeNode n = movieTree.SelectedNode;
-            if (n is null)
-            {
-                return;
-            }
-
-            MovieConfiguration si2 = TreeNodeToMovieItem(n);
+            MovieConfiguration si2 = TreeNodeToMovieItem(movieTree?.SelectedNode);
             if (si2 != null)
             {
                 EditMovie(si2);
@@ -5301,6 +5325,34 @@ namespace TVRename
         {
             DoScanPartNotifier f = new(new CleanUpEmptyLibraryFolders(mDoc));
             f.ShowDialog();
+        }
+
+        private void olvAction_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
+        {
+            if (!olvAction.AllColumns[e.Column].Groupable && olvAction.AllColumns[e.Column].Sortable)
+            {
+                //TODO work out how to deal with this
+            }
+        }
+
+        private void olvAction_BeforeSorting(object sender, [NotNull] BeforeSortingEventArgs e)
+        {
+            if (e.ColumnToSort == olvDate)
+            {
+                e.ColumnToSort = new OLVColumn("RawDate", "AirDate");
+            }
+
+            if (e.ColumnToSort == olvEpisode)
+            {
+                e.ColumnToSort = new OLVColumn("RawEp", "EpisodeNumber");
+            }
+
+            if (e.ColumnToSort==olvSeason)
+            {
+                e.ColumnToSort = new OLVColumn("RawSe", "SeasonNumberAsInt");
+            }
+
+            olvAction.ShowSortIndicator();
         }
     }
 }

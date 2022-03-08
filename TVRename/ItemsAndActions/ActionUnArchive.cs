@@ -26,6 +26,7 @@ namespace TVRename
 
         public override string SeriesName => show.ShowName;
         public override string SeasonNumber => string.Empty;
+        public override int? SeasonNumberAsInt => null;
 
         public ActionUnArchive(FileInfo fi, ShowConfiguration showConfiguration)
         {

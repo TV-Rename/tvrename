@@ -603,7 +603,12 @@
     <Compile Include="Utility\Helper\LinqHelper.cs" />
     <Compile Include="Utility\Helper\TaskHelper.cs" />
     <Compile Include="Utility\ServerRelease.cs" />
+    <Compile Include="Utility\Sorters\DateActionComparer.cs" />
+    <Compile Include="Utility\Sorters\DateActionSorter.cs" />
     <Compile Include="Utility\Sorters\DoubleAsTextSorter.cs" />
+    <Compile Include="Utility\Sorters\NumberAsTextActionComparer.cs" />
+    <Compile Include="Utility\Sorters\ObjectListViewComparer.cs" />
+    <Compile Include="Utility\Sorters\TextActionComparer.cs" />
     <Compile Include="Utility\TorrentEntry.cs" />
     <Compile Include="Utility\UrlCache.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddMedia.cs">

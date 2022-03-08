@@ -2188,10 +2188,8 @@ namespace TVRename.TheTVDB
 
                 try
                 {
-                    foreach (JObject bannerData in jToken.Cast<JObject>())
+                    foreach (ShowImage s in jToken.Cast<JObject>().Select(bannerData => CreateShowImage(si.TvdbCode, bannerData)))
                     {
-                        ShowImage s = CreateShowImage(si.TvdbCode, bannerData);
-
                         lock (SERIES_LOCK)
                         {
                             si.AddOrUpdateImage(s);
