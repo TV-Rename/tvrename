@@ -21,7 +21,9 @@ namespace TVRename
         {
             List<ShowConfiguration> libraryShows = MDoc.TvLibrary.GetSortedShowItems();
             List<MovieConfiguration> movieConfigurations = MDoc.FilmLibrary.GetSortedMovies();
-            int totalRecords = libraryShows.Count + movieConfigurations.Count;
+            List<string> folders = TVSettings.Instance.LibraryFolders.Union(TVSettings.Instance.MovieLibraryFolders).ToList();
+
+            int totalRecords = libraryShows.Count + movieConfigurations.Count + folders.Count;
             int n = 0;
             string lastUpdate = string.Empty;
 
@@ -31,7 +33,7 @@ namespace TVRename
 
                 foreach (string folderName in si.AllProposedFolderLocations().SelectMany(folderLocation => folderLocation.Value))
                 {
-                    string action = RemoveIfEmpty(folderName);
+                    string action = RemoveIfEmpty(si, folderName);
                     if (action.HasValue())
                     {
                         lastUpdate = action;
@@ -50,7 +52,26 @@ namespace TVRename
 
                 foreach (string folderName in mi.Locations)
                 {
-                    string action = RemoveIfEmpty(folderName);
+                    string action = RemoveIfEmpty(mi, folderName);
+                    if (action.HasValue())
+                    {
+                        lastUpdate = action;
+                    }
+
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+                }
+            }
+
+            foreach (string folder in folders)
+            {
+                progress(n++, totalRecords, folder, lastUpdate);
+                DirectoryInfo directory = new DirectoryInfo(folder);
+                foreach (DirectoryInfo testDirectory in  directory.EnumerateDirectories(DirectoryEnumerationOptions.Recursive).ToList())
+                {
+                    string action = RemoveIfEmpty(testDirectory.FullName);
                     if (action.HasValue())
                     {
                         lastUpdate = action;
@@ -65,17 +86,49 @@ namespace TVRename
         }
 
         [CanBeNull]
-        private static string RemoveIfEmpty(string folderName)
+        private string RemoveIfEmpty(string folderName)
         {
             if (CanRemove(folderName))
             {
-                FileHelper.RemoveDirectory(folderName);
-                return $"Removed {folderName}";
+                //FileHelper.RemoveDirectory(folderName);
+                if (!AlreadyDeleted(MDoc.TheActionList, folderName))
+                {
+                    MDoc.TheActionList.Add(new ActionDeleteDirectory(new DirectoryInfo(folderName)));
+                    return $"Removed {folderName}";
+                }
             }
 
             return null;
         }
 
+        private static bool AlreadyDeleted([NotNull] ItemList mDocTheActionList, string folderName)
+        {
+            return mDocTheActionList.OfType<ActionDeleteDirectory>().Any(deleteDirectory => deleteDirectory.IsFor(folderName));
+        }
+
+        [CanBeNull]
+        private string RemoveIfEmpty(MovieConfiguration mi, string folderName)
+        {
+            if (CanRemove(folderName))
+            {
+                //FileHelper.RemoveDirectory(folderName);
+                MDoc.TheActionList.Add(new ActionDeleteDirectory(new DirectoryInfo(folderName),mi,TVSettings.Instance.Tidyup));
+                return $"Removed {folderName}";
+            }
+
+            return null;
+        }        [CanBeNull]
+        private string RemoveIfEmpty(ShowConfiguration si, string folderName)
+        {
+            if (CanRemove(folderName))
+            {
+                //FileHelper.RemoveDirectory(folderName);
+                MDoc.TheActionList.Add(new ActionDeleteDirectory(new DirectoryInfo(folderName),si,TVSettings.Instance.Tidyup));
+                return $"Removed {folderName}";
+            }
+
+            return null;
+        }
         private static bool CanRemove(string folderName)
         {
             if (!Directory.Exists(folderName))

@@ -15,7 +15,16 @@ namespace TVRename
     public class ActionDeleteDirectory : ActionDelete
     {
         private readonly DirectoryInfo toRemove;
+        protected readonly ShowConfiguration? SelectedShow; // if for an entire show, rather than specific episode
 
+        public ActionDeleteDirectory(DirectoryInfo remove)
+        {
+            Tidyup = TVSettings.Instance.Tidyup;
+            PercentDone = 0;
+            Episode = null;
+            Movie = null;
+            toRemove = remove;
+        }
         public ActionDeleteDirectory(DirectoryInfo remove, ProcessedEpisode ep, TVSettings.TidySettings tidyup)
         {
             Tidyup = tidyup;
@@ -33,11 +42,23 @@ namespace TVRename
             toRemove = remove;
         }
 
+        public ActionDeleteDirectory(DirectoryInfo remove, ShowConfiguration si, TVSettings.TidySettings tidyup)
+        {
+            Tidyup = tidyup;
+            PercentDone = 0;
+            Episode = null;
+            Movie = null;
+            toRemove = remove;
+            SelectedShow = si;
+        }
+
         public override string ProgressText => toRemove.Name;
         public override string Produces => toRemove.FullName;
         [NotNull]
         public override IgnoreItem Ignore => new(toRemove.FullName);
         public override string TargetFolder => toRemove.Parent.FullName;
+
+        public override string SeriesName => Episode?.Show.ShowName ?? SelectedShow?.ShowName ?? Movie?.ShowName ?? toRemove.Name;
 
         [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
@@ -89,5 +110,7 @@ namespace TVRename
         }
 
         public bool SameSource([NotNull] ActionDeleteDirectory o) => FileHelper.Same(toRemove, o.toRemove);
+
+        public bool IsFor(string folderName) => string.Equals(folderName, toRemove.FullName, StringComparison.OrdinalIgnoreCase);
     }
 }
