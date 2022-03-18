@@ -58,11 +58,24 @@ namespace TVRename
         {
             //We now want to rationlise the newItems - just in case we've added duplicates
             List<ActionTDownload> duplicateActionRss = new();
+            string[] dudTerms = TVSettings.Instance.UnwantedRSSSearchTerms();
 
             foreach (Item x in newItems)
             {
                 if (x is not ActionTDownload testActionRssOne)
                 {
+                    continue;
+                }
+
+                if (testActionRssOne.SourceName.ContainsOneOf(dudTerms))
+                {
+                    duplicateActionRss.Add(testActionRssOne);
+                    if (TVSettings.Instance.DetailedRSSJSONLogging)
+                    {
+                        LOGGER.Info(
+                            $"Removing {testActionRssOne.Produces} as contains a term in {dudTerms.ToCsv()}");
+                    }
+
                     continue;
                 }
 

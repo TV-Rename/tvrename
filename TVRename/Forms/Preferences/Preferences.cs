@@ -327,6 +327,7 @@ namespace TVRename
             s.searchSeasonWordsString = tbSeasonSearchTerms.Text;
             s.SubsFolderNamesString = txtSubtitleFolderNames.Text;
             s.preferredRSSSearchTermsString = tbPreferredRSSTerms.Text;
+            s.unwantedRSSSearchTermsString = tbUnwantedRSSTerms.Text;
             s.defaultSeasonWord = txtSeasonFolderName.Text;
             s.keepTogetherExtensionsString = txtKeepTogether.Text;
             s.ForceLowercaseFilenames = cbForceLower.Checked;
@@ -882,6 +883,7 @@ namespace TVRename
             tbSeasonSearchTerms.Text = s.GetSeasonSearchTermsString();
             txtSubtitleFolderNames.Text = s.SubsFolderNamesString;
             tbPreferredRSSTerms.Text = s.GetPreferredRSSSearchTermsString();
+            tbUnwantedRSSTerms.Text = s.GetUnwantedRSSSearchTermsString();
 
             cbKeepTogether.Checked = s.KeepTogether;
             cbLeadingZero.Checked = s.LeadingZeroOnSeason;

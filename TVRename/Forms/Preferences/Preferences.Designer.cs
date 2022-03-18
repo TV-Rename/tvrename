@@ -151,6 +151,9 @@ namespace TVRename
             this.bnAddMovieMonFolder = new System.Windows.Forms.Button();
             this.bnRemoveMovieMonFolder = new System.Windows.Forms.Button();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.txtShowFolderFormat = new System.Windows.Forms.TextBox();
+            this.label96 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.txtSeasonFormat = new System.Windows.Forms.TextBox();
             this.txtSpecialsFolderName = new System.Windows.Forms.TextBox();
@@ -512,9 +515,8 @@ namespace TVRename
             this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
-            this.button4 = new System.Windows.Forms.Button();
-            this.txtShowFolderFormat = new System.Windows.Forms.TextBox();
-            this.label96 = new System.Windows.Forms.Label();
+            this.label97 = new System.Windows.Forms.Label();
+            this.tbUnwantedRSSTerms = new System.Windows.Forms.TextBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -1842,6 +1844,35 @@ namespace TVRename
             this.groupBox6.TabIndex = 48;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Default TV Show Library Folder Format";
+            // 
+            // button4
+            // 
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button4.Location = new System.Drawing.Point(333, 72);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(62, 23);
+            this.button4.TabIndex = 34;
+            this.button4.Text = "Tags...";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // txtShowFolderFormat
+            // 
+            this.txtShowFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtShowFolderFormat.Location = new System.Drawing.Point(124, 73);
+            this.txtShowFolderFormat.Name = "txtShowFolderFormat";
+            this.txtShowFolderFormat.Size = new System.Drawing.Size(203, 20);
+            this.txtShowFolderFormat.TabIndex = 33;
+            // 
+            // label96
+            // 
+            this.label96.AutoSize = true;
+            this.label96.Location = new System.Drawing.Point(6, 77);
+            this.label96.Name = "label96";
+            this.label96.Size = new System.Drawing.Size(98, 13);
+            this.label96.TabIndex = 32;
+            this.label96.Text = "Show folder format:";
             // 
             // button1
             // 
@@ -5221,6 +5252,8 @@ namespace TVRename
             // 
             // tpJackett
             // 
+            this.tpJackett.Controls.Add(this.label97);
+            this.tpJackett.Controls.Add(this.tbUnwantedRSSTerms);
             this.tpJackett.Controls.Add(this.chkSearchJackettButton);
             this.tpJackett.Controls.Add(this.cmbSupervisedDuplicateAction);
             this.tpJackett.Controls.Add(this.label77);
@@ -5244,7 +5277,7 @@ namespace TVRename
             // chkSearchJackettButton
             // 
             this.chkSearchJackettButton.AutoSize = true;
-            this.chkSearchJackettButton.Location = new System.Drawing.Point(227, 195);
+            this.chkSearchJackettButton.Location = new System.Drawing.Point(227, 219);
             this.chkSearchJackettButton.Name = "chkSearchJackettButton";
             this.chkSearchJackettButton.Size = new System.Drawing.Size(165, 17);
             this.chkSearchJackettButton.TabIndex = 48;
@@ -5264,7 +5297,7 @@ namespace TVRename
             "Download All",
             "Ignore",
             "Use First"});
-            this.cmbSupervisedDuplicateAction.Location = new System.Drawing.Point(163, 151);
+            this.cmbSupervisedDuplicateAction.Location = new System.Drawing.Point(163, 175);
             this.cmbSupervisedDuplicateAction.Name = "cmbSupervisedDuplicateAction";
             this.cmbSupervisedDuplicateAction.Size = new System.Drawing.Size(235, 21);
             this.cmbSupervisedDuplicateAction.Sorted = true;
@@ -5273,7 +5306,7 @@ namespace TVRename
             // label77
             // 
             this.label77.AutoSize = true;
-            this.label77.Location = new System.Drawing.Point(10, 154);
+            this.label77.Location = new System.Drawing.Point(7, 178);
             this.label77.Name = "label77";
             this.label77.Size = new System.Drawing.Size(144, 13);
             this.label77.TabIndex = 46;
@@ -5292,7 +5325,7 @@ namespace TVRename
             "Download All",
             "Ignore",
             "Use First"});
-            this.cmbUnattendedDuplicateAction.Location = new System.Drawing.Point(163, 124);
+            this.cmbUnattendedDuplicateAction.Location = new System.Drawing.Point(163, 148);
             this.cmbUnattendedDuplicateAction.Name = "cmbUnattendedDuplicateAction";
             this.cmbUnattendedDuplicateAction.Size = new System.Drawing.Size(235, 21);
             this.cmbUnattendedDuplicateAction.Sorted = true;
@@ -5301,7 +5334,7 @@ namespace TVRename
             // label76
             // 
             this.label76.AutoSize = true;
-            this.label76.Location = new System.Drawing.Point(10, 127);
+            this.label76.Location = new System.Drawing.Point(7, 151);
             this.label76.Name = "label76";
             this.label76.Size = new System.Drawing.Size(147, 13);
             this.label76.TabIndex = 44;
@@ -5345,7 +5378,7 @@ namespace TVRename
             // cbSearchJackett
             // 
             this.cbSearchJackett.AutoSize = true;
-            this.cbSearchJackett.Location = new System.Drawing.Point(8, 195);
+            this.cbSearchJackett.Location = new System.Drawing.Point(8, 219);
             this.cbSearchJackett.Name = "cbSearchJackett";
             this.cbSearchJackett.Size = new System.Drawing.Size(171, 17);
             this.cbSearchJackett.TabIndex = 40;
@@ -5370,7 +5403,7 @@ namespace TVRename
             this.groupBox22.Controls.Add(this.txtJackettPort);
             this.groupBox22.Controls.Add(this.label75);
             this.groupBox22.Controls.Add(this.txtJackettServer);
-            this.groupBox22.Location = new System.Drawing.Point(6, 218);
+            this.groupBox22.Location = new System.Drawing.Point(6, 242);
             this.groupBox22.Name = "groupBox22";
             this.groupBox22.Size = new System.Drawing.Size(408, 201);
             this.groupBox22.TabIndex = 39;
@@ -5514,9 +5547,9 @@ namespace TVRename
             // 
             this.tbPreferredRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbPreferredRSSTerms.Location = new System.Drawing.Point(94, 98);
+            this.tbPreferredRSSTerms.Location = new System.Drawing.Point(103, 98);
             this.tbPreferredRSSTerms.Name = "tbPreferredRSSTerms";
-            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(304, 20);
+            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(295, 20);
             this.tbPreferredRSSTerms.TabIndex = 32;
             // 
             // tpAutoExportLibrary
@@ -5978,34 +6011,23 @@ namespace TVRename
             this.optUpdateCheckAlways.UseVisualStyleBackColor = true;
             this.optUpdateCheckAlways.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
             // 
-            // button4
+            // label97
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(333, 72);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(62, 23);
-            this.button4.TabIndex = 34;
-            this.button4.Text = "Tags...";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.label97.AutoSize = true;
+            this.label97.Location = new System.Drawing.Point(6, 127);
+            this.label97.Name = "label97";
+            this.label97.Size = new System.Drawing.Size(91, 13);
+            this.label97.TabIndex = 50;
+            this.label97.Text = "Unwanted Terms:";
             // 
-            // txtShowFolderFormat
+            // tbUnwantedRSSTerms
             // 
-            this.txtShowFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tbUnwantedRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtShowFolderFormat.Location = new System.Drawing.Point(124, 73);
-            this.txtShowFolderFormat.Name = "txtShowFolderFormat";
-            this.txtShowFolderFormat.Size = new System.Drawing.Size(203, 20);
-            this.txtShowFolderFormat.TabIndex = 33;
-            // 
-            // label96
-            // 
-            this.label96.AutoSize = true;
-            this.label96.Location = new System.Drawing.Point(6, 77);
-            this.label96.Name = "label96";
-            this.label96.Size = new System.Drawing.Size(98, 13);
-            this.label96.TabIndex = 32;
-            this.label96.Text = "Show folder format:";
+            this.tbUnwantedRSSTerms.Location = new System.Drawing.Point(103, 124);
+            this.tbUnwantedRSSTerms.Name = "tbUnwantedRSSTerms";
+            this.tbUnwantedRSSTerms.Size = new System.Drawing.Size(295, 20);
+            this.tbUnwantedRSSTerms.TabIndex = 49;
             // 
             // Preferences
             // 
@@ -6646,5 +6668,7 @@ namespace TVRename
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.TextBox txtShowFolderFormat;
         private System.Windows.Forms.Label label96;
+        private System.Windows.Forms.Label label97;
+        private System.Windows.Forms.TextBox tbUnwantedRSSTerms;
     }
 }

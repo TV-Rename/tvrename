@@ -276,8 +276,12 @@ namespace TVRename
 
         public string preferredRSSSearchTermsString = "720p;1080p";
 
+        public string unwantedRSSSearchTermsString = "hdcam;tscam;CAMRip;HDCAM;HDTS";
+
         [NotNull]
         public string[] PreferredRSSSearchTerms() => Convert(preferredRSSSearchTermsString);
+        [NotNull]
+        public string[] UnwantedRSSSearchTerms() => Convert(unwantedRSSSearchTermsString);
 
         public string OtherExtensionsString;
 
@@ -663,6 +667,7 @@ namespace TVRename
             writer.WriteElement("BaseSeasonName", defaultSeasonWord);
             writer.WriteElement("SearchSeasonNames", searchSeasonWordsString);
             writer.WriteElement("PreferredRSSSearchTerms", preferredRSSSearchTermsString);
+            writer.WriteElement("UnwantedRSSSearchTerms", unwantedRSSSearchTermsString);
             writer.WriteElement("BulkAddIgnoreRecycleBin", BulkAddIgnoreRecycleBin);
             writer.WriteElement("BulkAddCompareNoVideoFolders", BulkAddCompareNoVideoFolders);
             writer.WriteElement("AutoAddMovieTerms", AutoAddMovieTerms);
@@ -892,6 +897,7 @@ namespace TVRename
         public string GetSeasonSearchTermsString() => searchSeasonWordsString;
 
         public string GetPreferredRSSSearchTermsString() => preferredRSSSearchTermsString;
+        public string GetUnwantedRSSSearchTermsString() => unwantedRSSSearchTermsString;
 
         public static bool OKExtensionsString(string? s)
         {
@@ -1588,6 +1594,7 @@ namespace TVRename
             SubsFolderNamesString =
                 xmlSettings.ExtractString("SubsFolderNamesString", "subs;subtitle;vobsubs;sub;vobsub;subtitle");
             preferredRSSSearchTermsString = xmlSettings.ExtractString("PreferredRSSSearchTerms", "720p;1080p");
+            unwantedRSSSearchTermsString = xmlSettings.ExtractString("UnwantedRSSSearchTerms", "hdcam;tscam;CAMRip;HDCAM;HDTS");
             keepTogetherMode = xmlSettings.ExtractEnum("KeepTogetherType", KeepTogetherModes.All);
             UIScanType = xmlSettings.ExtractEnum("UIScanType", ScanType.Full);
             keepTogetherExtensionsString = xmlSettings.ExtractString("KeepTogetherExtensions", keepTogetherExtensionsStringDEFAULT);
