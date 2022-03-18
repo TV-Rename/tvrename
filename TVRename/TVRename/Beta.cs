@@ -25,7 +25,9 @@ namespace TVRename
 
             output.AppendLine("");
             output.AppendLine("##################################################");
-            output.AppendLine("File Quailty FINDER - Start");
+            output.AppendLine("File Quality FINDER - Start");
+            output.AppendLine("##################################################");
+            output.AppendLine($"Width,   Height,   Length,    ShowName,   FileName");
             output.AppendLine("##################################################");
             Logger.Info(output.ToString());
 
