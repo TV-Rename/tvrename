@@ -164,14 +164,18 @@ namespace TVRename
             int season = me.MissingEpisode.AppropriateSeasonNumber;
             int epnum = me.MissingEpisode.AppropriateEpNum;
 
-            bool regularMatch =
-                FinderHelper.FindSeasEp(dce, out int foundSeason, out int foundEpisode, out int maxEp, me.MissingEpisode.Show) &&
-                foundSeason == season &&
-                foundEpisode == epnum;
+            bool fileMatchesFilenameProcessors = FinderHelper.FindSeasEp(dce, out int foundSeason, out int foundEpisode, out int maxEp, me.MissingEpisode.Show);
 
-            if (regularMatch)
+            if (fileMatchesFilenameProcessors)
             {
-                return (true, foundSeason, foundEpisode, maxEp);
+                if (foundSeason == season && foundEpisode == epnum)
+                {
+                    return (true, foundSeason, foundEpisode, maxEp);
+                }
+                else
+                {
+                    return (false, 0, 0, 0);
+                }
             }
 
             if (me.MissingEpisode.Show.UseSequentialMatch)
