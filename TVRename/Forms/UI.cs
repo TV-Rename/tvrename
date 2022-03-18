@@ -5323,8 +5323,11 @@ namespace TVRename
 
         private void cleanLibraryFoldersToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            mDoc.TheActionList.Clear();
             DoScanPartNotifier f = new(new CleanUpEmptyLibraryFolders(mDoc));
             f.ShowDialog();
+            FillActionList();
+            FocusOnScanResults();
         }
 
         private void olvAction_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)

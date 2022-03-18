@@ -1856,6 +1856,12 @@ namespace TVRename
                 Logger.Error($"Stopping 'Scan Movie Folder' '{downloadFolder}' does not exist");
                 return;
             }
+            if (TVSettings.Instance.LibraryFolders.Contains(downloadFolder) || TVSettings.Instance.MovieLibraryFolders.Contains(downloadFolder))
+            {
+                Logger.Error($"Stopping 'Scan Movie Folder' '{downloadFolder}' as it is a library folder");
+                return;
+            }
+
             TheActionList.Clear();
 
             try
@@ -1961,11 +1967,18 @@ namespace TVRename
                 }
                 else
                 {
-                    FileInfo encumbant = GetExistingFile(chosenShow, folder);
-                    bool? deleteFile = AskForBetter(fi, encumbant, chosenShow, owner);
-                    if (deleteFile is false)
+                    FileInfo incumbent = GetExistingFile(chosenShow, folder);
+                    if (string.Compare(incumbent.FullName,fi.FullName,StringComparison.OrdinalIgnoreCase)==0)
                     {
                         fileCanBeDeleted = false;
+                    }
+                    else
+                    {
+                        bool? deleteFile = AskForBetter(fi, incumbent, chosenShow, owner);
+                        if (deleteFile is false)
+                        {
+                            fileCanBeDeleted = false;
+                        }
                     }
                 }
             }
@@ -2014,9 +2027,7 @@ namespace TVRename
         {
             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
 
-            FileHelper.VideoComparison newResult = result;
-
-            switch (newResult)
+            switch (result)
             {
                 case FileHelper.VideoComparison.secondFileBetter:
                     ScanHelper.UpgradeFile(newFile, chosenShow, existingFile, this, TheActionList);
