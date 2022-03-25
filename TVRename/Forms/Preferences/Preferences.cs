@@ -389,8 +389,9 @@ namespace TVRename
             s.MonitorFolders = cbMonitorFolder.Checked;
             s.runStartupCheck = chkScanOnStartup.Checked;
             s.runPeriodicCheck = chkScheduledScan.Checked;
-            s.periodCheckHours = int.Parse(domainUpDown1.SelectedItem?.ToString() ?? "1");
+            s.periodCheckHours = int.Parse(upDownScanHours.SelectedItem?.ToString() ?? "1");
             s.periodUpdateCacheHours = int.Parse(domainUpDown2.SelectedItem?.ToString() ?? "1");
+            s.FolderMonitorDelaySeconds = int.Parse(upDownScanSeconds.SelectedItem?.ToString() ?? "1");
 
             s.UnattendedMultiActionOutcome = ConvertToDupActEnum(cmbUnattendedDuplicateAction);
             s.UserMultiActionOutcome = ConvertToDupActEnum(cmbSupervisedDuplicateAction);
@@ -949,8 +950,9 @@ namespace TVRename
             cbMonitorFolder.Checked = s.MonitorFolders;
             chkScheduledScan.Checked = s.RunPeriodicCheck();
             chkScanOnStartup.Checked = s.RunOnStartUp();
-            SetDropdownValue(domainUpDown1, s.periodCheckHours);
+            SetDropdownValue(upDownScanHours, s.periodCheckHours);
             SetDropdownValue(domainUpDown2, s.periodUpdateCacheHours);
+            SetDropdownValue(upDownScanSeconds, s.FolderMonitorDelaySeconds);
             cbCleanUpDownloadDir.Checked = s.RemoveDownloadDirectoriesFiles;
             cbCleanUpDownloadDirMovies.Checked = s.RemoveDownloadDirectoriesFilesMatchMovies;
             cbCleanUpDownloadDirMoviesLength.Checked = s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck;

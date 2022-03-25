@@ -12,12 +12,12 @@ namespace TVRename
         private readonly System.Timers.Timer mScanDelayTimer;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public AutoFolderMonitor(TVDoc doc, UI ui)
+        public AutoFolderMonitor(TVDoc doc, UI ui, int intervalSeconds)
         {
             mDoc = doc;
             mainForm = ui;
 
-            mScanDelayTimer = new System.Timers.Timer(1000);
+            mScanDelayTimer = new System.Timers.Timer(intervalSeconds * 1000);
             mScanDelayTimer.Elapsed += mScanDelayTimer_Elapsed;
             mScanDelayTimer.Stop();
         }

@@ -63,7 +63,7 @@ namespace TVRename
             this.cbIgnoreRecycleBin = new System.Windows.Forms.CheckBox();
             this.cbIgnoreNoVideoFolders = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.domainUpDown1 = new System.Windows.Forms.DomainUpDown();
+            this.upDownScanHours = new System.Windows.Forms.DomainUpDown();
             this.chkScheduledScan = new System.Windows.Forms.CheckBox();
             this.chkScanOnStartup = new System.Windows.Forms.CheckBox();
             this.chkIgnoreAllSpecials = new System.Windows.Forms.CheckBox();
@@ -450,6 +450,8 @@ namespace TVRename
             this.txtSubtitleExtensions = new System.Windows.Forms.TextBox();
             this.chkRetainLanguageSpecificSubtitles = new System.Windows.Forms.CheckBox();
             this.tpJackett = new System.Windows.Forms.TabPage();
+            this.label97 = new System.Windows.Forms.Label();
+            this.tbUnwantedRSSTerms = new System.Windows.Forms.TextBox();
             this.chkSearchJackettButton = new System.Windows.Forms.CheckBox();
             this.cmbSupervisedDuplicateAction = new System.Windows.Forms.ComboBox();
             this.label77 = new System.Windows.Forms.Label();
@@ -515,8 +517,8 @@ namespace TVRename
             this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
-            this.label97 = new System.Windows.Forms.Label();
-            this.tbUnwantedRSSTerms = new System.Windows.Forms.TextBox();
+            this.label98 = new System.Windows.Forms.Label();
+            this.upDownScanSeconds = new System.Windows.Forms.DomainUpDown();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -637,9 +639,9 @@ namespace TVRename
             this.cbMonitorFolder.AutoSize = true;
             this.cbMonitorFolder.Location = new System.Drawing.Point(6, 127);
             this.cbMonitorFolder.Name = "cbMonitorFolder";
-            this.cbMonitorFolder.Size = new System.Drawing.Size(342, 17);
+            this.cbMonitorFolder.Size = new System.Drawing.Size(307, 17);
             this.cbMonitorFolder.TabIndex = 5;
-            this.cbMonitorFolder.Text = "&Monitor Search Folders for changes (run a scan when files change)";
+            this.cbMonitorFolder.Text = "&Monitor Search Folders (run a scan when files change) after";
             this.toolTip1.SetToolTip(this.cbMonitorFolder, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
         " \"Do\".");
             this.cbMonitorFolder.UseVisualStyleBackColor = true;
@@ -786,7 +788,6 @@ namespace TVRename
             this.domainUpDown2.Name = "domainUpDown2";
             this.domainUpDown2.Size = new System.Drawing.Size(40, 20);
             this.domainUpDown2.TabIndex = 53;
-            this.domainUpDown2.Text = "1";
             this.toolTip1.SetToolTip(this.domainUpDown2, "How often should TV Rename update itself from upstream data sources?");
             this.domainUpDown2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SuppressKeyPress);
             // 
@@ -849,25 +850,24 @@ namespace TVRename
             this.toolTip1.SetToolTip(this.label1, "If checked the system will automatically scan and complete actions on a periodic " +
         "schedule");
             // 
-            // domainUpDown1
+            // upDownScanHours
             // 
-            this.domainUpDown1.Items.Add("96");
-            this.domainUpDown1.Items.Add("48");
-            this.domainUpDown1.Items.Add("24");
-            this.domainUpDown1.Items.Add("12");
-            this.domainUpDown1.Items.Add("8");
-            this.domainUpDown1.Items.Add("6");
-            this.domainUpDown1.Items.Add("5");
-            this.domainUpDown1.Items.Add("4");
-            this.domainUpDown1.Items.Add("3");
-            this.domainUpDown1.Items.Add("2");
-            this.domainUpDown1.Items.Add("1");
-            this.domainUpDown1.Location = new System.Drawing.Point(141, 81);
-            this.domainUpDown1.Name = "domainUpDown1";
-            this.domainUpDown1.Size = new System.Drawing.Size(40, 20);
-            this.domainUpDown1.TabIndex = 46;
-            this.domainUpDown1.Text = "1";
-            this.toolTip1.SetToolTip(this.domainUpDown1, "If checked the system will automatically scan and complete actions on a periodic " +
+            this.upDownScanHours.Items.Add("96");
+            this.upDownScanHours.Items.Add("48");
+            this.upDownScanHours.Items.Add("24");
+            this.upDownScanHours.Items.Add("12");
+            this.upDownScanHours.Items.Add("8");
+            this.upDownScanHours.Items.Add("6");
+            this.upDownScanHours.Items.Add("5");
+            this.upDownScanHours.Items.Add("4");
+            this.upDownScanHours.Items.Add("3");
+            this.upDownScanHours.Items.Add("2");
+            this.upDownScanHours.Items.Add("1");
+            this.upDownScanHours.Location = new System.Drawing.Point(141, 81);
+            this.upDownScanHours.Name = "upDownScanHours";
+            this.upDownScanHours.Size = new System.Drawing.Size(40, 20);
+            this.upDownScanHours.TabIndex = 46;
+            this.toolTip1.SetToolTip(this.upDownScanHours, "If checked the system will automatically scan and complete actions on a periodic " +
         "schedule");
             // 
             // chkScheduledScan
@@ -2350,6 +2350,8 @@ namespace TVRename
             // 
             // tbSearchFolders
             // 
+            this.tbSearchFolders.Controls.Add(this.label98);
+            this.tbSearchFolders.Controls.Add(this.upDownScanSeconds);
             this.tbSearchFolders.Controls.Add(this.chkUseSearchFullPathWhenMatchingShows);
             this.tbSearchFolders.Controls.Add(this.cbCopyFutureDatedEps);
             this.tbSearchFolders.Controls.Add(this.groupBox8);
@@ -4862,7 +4864,7 @@ namespace TVRename
             this.groupBox17.Controls.Add(this.chkIgnoreAllSpecials);
             this.groupBox17.Controls.Add(this.chkMoveLibraryFiles);
             this.groupBox17.Controls.Add(this.label1);
-            this.groupBox17.Controls.Add(this.domainUpDown1);
+            this.groupBox17.Controls.Add(this.upDownScanHours);
             this.groupBox17.Controls.Add(this.chkScheduledScan);
             this.groupBox17.Controls.Add(this.chkScanOnStartup);
             this.groupBox17.Controls.Add(this.lblScanAction);
@@ -5273,6 +5275,24 @@ namespace TVRename
             this.tpJackett.TabIndex = 17;
             this.tpJackett.Text = "Jackett Search";
             this.tpJackett.UseVisualStyleBackColor = true;
+            // 
+            // label97
+            // 
+            this.label97.AutoSize = true;
+            this.label97.Location = new System.Drawing.Point(6, 127);
+            this.label97.Name = "label97";
+            this.label97.Size = new System.Drawing.Size(91, 13);
+            this.label97.TabIndex = 50;
+            this.label97.Text = "Unwanted Terms:";
+            // 
+            // tbUnwantedRSSTerms
+            // 
+            this.tbUnwantedRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbUnwantedRSSTerms.Location = new System.Drawing.Point(103, 124);
+            this.tbUnwantedRSSTerms.Name = "tbUnwantedRSSTerms";
+            this.tbUnwantedRSSTerms.Size = new System.Drawing.Size(295, 20);
+            this.tbUnwantedRSSTerms.TabIndex = 49;
             // 
             // chkSearchJackettButton
             // 
@@ -6011,23 +6031,35 @@ namespace TVRename
             this.optUpdateCheckAlways.UseVisualStyleBackColor = true;
             this.optUpdateCheckAlways.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
             // 
-            // label97
+            // label98
             // 
-            this.label97.AutoSize = true;
-            this.label97.Location = new System.Drawing.Point(6, 127);
-            this.label97.Name = "label97";
-            this.label97.Size = new System.Drawing.Size(91, 13);
-            this.label97.TabIndex = 50;
-            this.label97.Text = "Unwanted Terms:";
+            this.label98.AutoSize = true;
+            this.label98.Location = new System.Drawing.Point(355, 128);
+            this.label98.Name = "label98";
+            this.label98.Size = new System.Drawing.Size(47, 13);
+            this.label98.TabIndex = 49;
+            this.label98.Text = "seconds";
+            this.toolTip1.SetToolTip(this.label98, "If checked the system will automatically scan and complete actions on a periodic " +
+        "schedule");
             // 
-            // tbUnwantedRSSTerms
+            // upDownScanSeconds
             // 
-            this.tbUnwantedRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbUnwantedRSSTerms.Location = new System.Drawing.Point(103, 124);
-            this.tbUnwantedRSSTerms.Name = "tbUnwantedRSSTerms";
-            this.tbUnwantedRSSTerms.Size = new System.Drawing.Size(295, 20);
-            this.tbUnwantedRSSTerms.TabIndex = 49;
+            this.upDownScanSeconds.Items.Add("120");
+            this.upDownScanSeconds.Items.Add("60");
+            this.upDownScanSeconds.Items.Add("30");
+            this.upDownScanSeconds.Items.Add("15");
+            this.upDownScanSeconds.Items.Add("10");
+            this.upDownScanSeconds.Items.Add("5");
+            this.upDownScanSeconds.Items.Add("4");
+            this.upDownScanSeconds.Items.Add("3");
+            this.upDownScanSeconds.Items.Add("2");
+            this.upDownScanSeconds.Items.Add("1");
+            this.upDownScanSeconds.Location = new System.Drawing.Point(311, 126);
+            this.upDownScanSeconds.Name = "upDownScanSeconds";
+            this.upDownScanSeconds.Size = new System.Drawing.Size(40, 20);
+            this.upDownScanSeconds.TabIndex = 48;
+            this.toolTip1.SetToolTip(this.upDownScanSeconds, "If checked the system will automatically scan and complete actions on a periodic " +
+        "schedule");
             // 
             // Preferences
             // 
@@ -6489,7 +6521,7 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkIgnoreAllSpecials;
         private System.Windows.Forms.CheckBox chkMoveLibraryFiles;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DomainUpDown domainUpDown1;
+        private System.Windows.Forms.DomainUpDown upDownScanHours;
         private System.Windows.Forms.CheckBox chkScheduledScan;
         private System.Windows.Forms.CheckBox chkScanOnStartup;
         private System.Windows.Forms.Label lblScanAction;
@@ -6670,5 +6702,7 @@ namespace TVRename
         private System.Windows.Forms.Label label96;
         private System.Windows.Forms.Label label97;
         private System.Windows.Forms.TextBox tbUnwantedRSSTerms;
+        private System.Windows.Forms.Label label98;
+        private System.Windows.Forms.DomainUpDown upDownScanSeconds;
     }
 }

@@ -167,7 +167,7 @@ namespace TVRename
             ShowHideNotificationIcon();
 
             UpdateSplashStatus(splash, "Creating Monitors");
-            mAutoFolderMonitor = new AutoFolderMonitor(mDoc, this);
+            mAutoFolderMonitor = new AutoFolderMonitor(mDoc, this, TVSettings.Instance.FolderMonitorDelaySeconds);
             if (TVSettings.Instance.MonitorFolders)
             {
                 UpdateSplashStatus(splash, "Starting Monitor");
@@ -1300,6 +1300,7 @@ namespace TVRename
         }
 
         internal static string GenerateShowUiName([NotNull] MovieConfiguration show) => PostpendTheIfNeeded(show.ShowName);
+        internal static string GenerateShowUiName([NotNull] ShowConfiguration show) => PostpendTheIfNeeded(show.ShowName);
 
         [NotNull]
         public static string QuickStartGuide() => "https://www.tvrename.com/manual/quickstart/";

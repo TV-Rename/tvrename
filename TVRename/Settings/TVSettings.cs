@@ -369,6 +369,8 @@ namespace TVRename
         [NotNull]
         public string qBitTorrentProtocol => qBitTorrentUseHTTPS ? "https" : "http";
 
+        public int FolderMonitorDelaySeconds = 1;
+
         public string SubsFolderNamesString = "subs;subtitle;vobsubs;sub;vobsub;subtitle";
 
         public bool AutoSaveOnExit = false;
@@ -549,6 +551,7 @@ namespace TVRename
             writer.WriteElement("ExportShowsHTMLTo", ExportShowsHTMLTo);
             writer.WriteElement("ExportFOXML", ExportFOXML);
             writer.WriteElement("ExportFOXMLTo", ExportFOXMLTo);
+            writer.WriteElement("FolderMonitorDelaySeconds", FolderMonitorDelaySeconds);
 
             writer.WriteElement("ExportMoviesTXT", ExportMoviesTXT);
             writer.WriteElement("ExportMoviesTXTTo", ExportMoviesTXTTo);
@@ -1432,6 +1435,7 @@ namespace TVRename
         // ReSharper disable once FunctionComplexityOverflow
         public void load([NotNull] XElement xmlSettings)
         {
+            FolderMonitorDelaySeconds = xmlSettings.ExtractInt("FolderMonitorDelaySeconds", 1);
             UseColoursOnWtw = xmlSettings.ExtractBool("UseColoursOnWtw", false);
             RSSUseCloudflare = xmlSettings.ExtractBool("RSSUseCloudflare", true);
             SearchJSONUseCloudflare = xmlSettings.ExtractBool("SearchJSONUseCloudflare", true);
