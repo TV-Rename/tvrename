@@ -2430,17 +2430,17 @@ namespace TVRename.TheTVDB
         {
             //https://github.com/thetvdb/v4-api/issues/30
 
-            if (transName.HasValue() && transName != "TBA")
+            if (transName.HasValue() && !transName.IsPlaceholderName())
             {
                 return transName!;
             }
 
-            if (transName.HasValue() && transName == "TBA" && originalName.HasValue() && originalName != "TBA")
+            if (transName.HasValue() && transName.IsPlaceholderName() && originalName.HasValue() && !originalName.IsPlaceholderName())
             {
                 ///issue
             }
 
-            if (originalName.HasValue() && originalName != "TBA")
+            if (originalName.HasValue() && !originalName.IsPlaceholderName())
             {
                 return originalName!;
             }

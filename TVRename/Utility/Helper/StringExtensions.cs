@@ -19,26 +19,23 @@ namespace TVRename
         [NotNull]
         public static string ItemItems(this int n) => n == 1 ? "Item" : "Items";
 
-        public static bool IsWebLink([NotNull] this string s)
-        {
-            return s.IsHttpLink() || s.IsFtpLink();
-        }
+        public static bool IsWebLink([NotNull] this string s) => s.IsHttpLink() || s.IsFtpLink();
 
-        public static bool IsHttpLink([NotNull] this string s)
-        {
-            return s.StartsWith("http://", StringComparison.Ordinal)
-                || s.StartsWith("https://", StringComparison.Ordinal);
-        }
+        public static bool IsPlaceholderName([CanBeNull] this string s) =>
+            s is null
+            || s.Equals("TBA", StringComparison.OrdinalIgnoreCase)
+            || s.Equals("TBC", StringComparison.OrdinalIgnoreCase)
+            || s.Equals("TBD", StringComparison.OrdinalIgnoreCase);
 
-        public static bool IsFtpLink([NotNull] this string s)
-        {
-            return s.StartsWith("ftp://", StringComparison.Ordinal);
-        }
+        public static bool IsHttpLink([NotNull] this string s) =>
+            s.StartsWith("http://", StringComparison.Ordinal)
+            || s.StartsWith("https://", StringComparison.Ordinal);
 
-        public static bool IsFileLink([NotNull] this string s)
-        {
-            return s.StartsWith("file://", StringComparison.Ordinal);
-        }
+        public static bool IsFtpLink([NotNull] this string s) =>
+            s.StartsWith("ftp://", StringComparison.Ordinal);
+
+        public static bool IsFileLink([NotNull] this string s) =>
+            s.StartsWith("file://", StringComparison.Ordinal);
 
         public static string RemoveCharactersFrom(this string source, [NotNull] IEnumerable<char> badChars)
         {
