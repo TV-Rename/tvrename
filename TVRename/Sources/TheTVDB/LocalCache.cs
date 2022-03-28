@@ -259,13 +259,13 @@ namespace TVRename.TheTVDB
 
             if (showErrorMsgBox)
             {
-                CannotConnectForm ccform = ex is WebException wexy
-                    ? new("Error while obtaining token from TVDB", wexy.LoggableDetails(), TVDoc.ProviderType.TheTVDB)
-                    : new("Error while obtaining token from TVDB", ex.Message, TVDoc.ProviderType.TheTVDB)
+                CannotConnectForm form = ex is WebException e
+                    ? new CannotConnectForm("Error while obtaining token from TVDB", e.LoggableDetails(), TVDoc.ProviderType.TheTVDB)
+                    : new CannotConnectForm("Error while obtaining token from TVDB", ex.Message, TVDoc.ProviderType.TheTVDB)
                     ;
 
-                DialogResult ccresult = ccform.ShowDialog();
-                if (ccresult == DialogResult.Abort)
+                DialogResult result = form.ShowDialog();
+                if (result == DialogResult.Abort)
                 {
                     TVSettings.Instance.OfflineMode = true;
                     LastErrorMessage = string.Empty;
@@ -327,7 +327,7 @@ namespace TVRename.TheTVDB
             List<JObject> updatesResponses = new();
 
             bool moreUpdates = true;
-            int numberofCallsMade = 0;
+            int numberOfCallsMade = 0;
 
             while (moreUpdates)
             {
@@ -340,14 +340,14 @@ namespace TVRename.TheTVDB
                 //If this date is in the last week then this needs to be the last call to the update
                 const int OFFSET =0;
 
-                DateTime requestedTime = GetRequestedTime(updateFromEpochTime - OFFSET, numberofCallsMade);
+                DateTime requestedTime = GetRequestedTime(updateFromEpochTime - OFFSET, numberOfCallsMade);
 
                 if (ApiVersion.v4 != TVSettings.Instance.TvdbVersion && (DateTime.UtcNow - requestedTime).TotalDays < 7)
                 {
                     moreUpdates = false;
                 }
 
-                JObject jsonUpdateResponse = GetUpdatesJson(updateFromEpochTime - OFFSET, requestedTime, numberofCallsMade);
+                JObject jsonUpdateResponse = GetUpdatesJson(updateFromEpochTime - OFFSET, requestedTime, numberOfCallsMade);
                 if (jsonUpdateResponse is null)
                 {
                     return false;
@@ -374,7 +374,7 @@ namespace TVRename.TheTVDB
                 else
                 {
                     updatesResponses.Add(jsonUpdateResponse);
-                    numberofCallsMade++;
+                    numberOfCallsMade++;
                     maxUpdateTime = GetUpdateTime(jsonUpdateResponse);
                 }
 
@@ -383,7 +383,7 @@ namespace TVRename.TheTVDB
                     LatestUpdateTime.RegisterServerUpdate(maxUpdateTime);
 
                     LOGGER.Info(
-                        $"Obtained {numberOfResponses} responses from lastupdated query #{numberofCallsMade} - since (local) {requestedTime.ToLocalTime()} - to (local) {LatestUpdateTime}");
+                        $"Obtained {numberOfResponses} responses from lastupdated query #{numberOfCallsMade} - since (local) {requestedTime.ToLocalTime()} - to (local) {LatestUpdateTime}");
 
                     if (updateFromEpochTime == maxUpdateTime)
                     {
@@ -398,7 +398,7 @@ namespace TVRename.TheTVDB
 
                 //As a safety measure we check that no more than 52 calls are made
                 const int MAX_NUMBER_OF_CALLS = 52;
-                if ( numberofCallsMade > MAX_NUMBER_OF_CALLS && TVSettings.Instance.TvdbVersion!=ApiVersion.v4 ||(TVSettings.Instance.TvdbVersion == ApiVersion.v4 && numberofCallsMade > 1000))
+                if ( numberOfCallsMade > MAX_NUMBER_OF_CALLS && TVSettings.Instance.TvdbVersion!=ApiVersion.v4 ||(TVSettings.Instance.TvdbVersion == ApiVersion.v4 && numberOfCallsMade > 1000))
                 {
                     if (cts.IsCancellationRequested)
                     {
@@ -529,7 +529,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private DateTime GetRequestedTime(long updateFromEpochTime, int numberofCallsMade)
+        private DateTime GetRequestedTime(long updateFromEpochTime, int numberOfCallsMade)
         {
             try
             {
@@ -538,7 +538,7 @@ namespace TVRename.TheTVDB
             catch (Exception ex)
             {
                 LOGGER.Error(ex,
-                    $"Could not get updates({numberofCallsMade}): LastSuccessFullServer {LatestUpdateTime.LastSuccessfulServerUpdateTimecode()}: Series Time: {GetUpdateTimeFromShows()} {LatestUpdateTime}, Tried to parse {updateFromEpochTime}");
+                    $"Could not get updates({numberOfCallsMade}): LastSuccessFullServer {LatestUpdateTime.LastSuccessfulServerUpdateTimecode()}: Series Time: {GetUpdateTimeFromShows()} {LatestUpdateTime}, Tried to parse {updateFromEpochTime}");
             }
 
             //Have to do something!!
@@ -1336,46 +1336,46 @@ namespace TVRename.TheTVDB
         {
             if (r["data"]?["artworks"] is not null)
             {
-                foreach (JToken? imageJson in r["data"]["artworks"])
+                foreach (MovieImage mi in r["data"]["artworks"]!
+                             .Where(imageJson => !IgnoreableImageJson(imageJson))
+                             .Select(imageJson => GenerateMovieImage(si, imageJson)))
                 {
-                    int imageCodeType = (int) imageJson["type"];
-                    if (imageCodeType == 13) //Person Snapshot
-                    {
-                        continue;
-                    }
-                    MovieImage mi = new()
-                    {
-                        Id = (int)imageJson["id"],
-                        ImageUrl = API.GetImageURL((string)imageJson["image"]),
-                        ThumbnailUrl = API.GetImageURL((string)imageJson["thumbnail"]),
-                        LanguageCode = (string)imageJson["language"],
-                        Rating = (int)imageJson["score"],
-                        MovieId = si.TvdbCode,
-                        ImageStyle = MapBannerTVDBV4APICode(imageCodeType),
-                        MovieSource = TVDoc.ProviderType.TheTVDB,
-                        RatingCount = 1
-                    };
-
                     si.AddOrUpdateImage(mi);
                 }
             }
         }
+
+        private MovieImage GenerateMovieImage(CachedMovieInfo si, JToken imageJson) =>
+            new()
+            {
+                Id = (int)imageJson["id"],
+                ImageUrl = API.GetImageURL((string)imageJson["image"]),
+                ThumbnailUrl = API.GetImageURL((string)imageJson["thumbnail"]),
+                LanguageCode = (string)imageJson["language"],
+                Rating = (int)imageJson["score"],
+                MovieId = si.TvdbCode,
+                ImageStyle = MapBannerTvdbV4APICode((int) imageJson["type"]),
+                MovieSource = TVDoc.ProviderType.TheTVDB,
+                RatingCount = 1
+            };
+
+        private static bool IgnoreableImageJson(JToken imageJson) => (int) imageJson["type"] == 13; //Person Snapshot
 
         private void AddShowImagesV4(JObject r, CachedSeriesInfo si)
         {
             //JObject x = API.ImageTypesV4();
-            if (r["data"]?["artworks"] is not null)
+            if (r["data"]?["artworks"] is null)
             {
-                foreach (JToken? imageJson in r["data"]["artworks"])
-                {
-                    ShowImage mi = ConvertJsonToImage(imageJson, si);
+                return;
+            }
 
-                    si.AddOrUpdateImage(mi);
-                }
+            foreach (ShowImage mi in r["data"]["artworks"]!.Select(imageJson => ConvertJsonToImage(imageJson, si)))
+            {
+                si.AddOrUpdateImage(mi);
             }
         }
 
-        private MediaImage.ImageType MapBannerTVDBV4APICode(int v)
+        private MediaImage.ImageType MapBannerTvdbV4APICode(int v)
         {
             // from call to API.ImageTypesV4()
             return v switch
@@ -1730,7 +1730,7 @@ namespace TVRename.TheTVDB
             CachedSeriesInfo si = GenerateCoreSeriesInfoV4(r, locale,seasonType);
 
             AddAliasesV4(r, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), si);
-            AddCastAndCrewv4(r, si);
+            AddCastAndCrewV4(r, si);
             AddShowImagesV4(r, si);
             AddSeasonsV4(r, seasonType, si);
 
@@ -1789,7 +1789,7 @@ namespace TVRename.TheTVDB
             return r["data"]["genres"]?.Select(x => x["name"]?.ToString()).ToSafeList() ?? new SafeList<string>();
         }
 
-        private static void AddCastAndCrewv4(JObject r, CachedSeriesInfo si)
+        private static void AddCastAndCrewV4(JObject r, CachedSeriesInfo si)
         {
             if (r["data"]?["characters"] is not null)
             {
@@ -1978,14 +1978,14 @@ namespace TVRename.TheTVDB
                     ? API.GetSeriesV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
                     : API.GetSeries(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation);
             }
-            catch (System.IO.IOException ioex)
+            catch (System.IO.IOException e)
             {
                 LOGGER.LogIoException(
                     $"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                    ioex);
+                    e);
 
                 SayNothing();
-                LastErrorMessage = ioex.LoggableDetails();
+                LastErrorMessage = e.LoggableDetails();
                 throw new SourceConnectivityException();
             }
             catch (WebException ex)
@@ -2383,7 +2383,7 @@ namespace TVRename.TheTVDB
                 LanguageCode = (string)imageJson["language"],
                 Rating = (int)imageJson["score"],
                 SeriesId = si.TvdbCode,
-                ImageStyle = MapBannerTVDBV4APICode(imageCodeType),
+                ImageStyle = MapBannerTvdbV4APICode(imageCodeType),
                 Subject = MapSubjectTVDBV4APICode(imageCodeType),
                 SeriesSource = TVDoc.ProviderType.TheTVDB,
                 RatingCount = 1
@@ -2859,9 +2859,9 @@ namespace TVRename.TheTVDB
                 ee.Value.Done = true;
             });
 
-            foreach (ExtraEp episodetoRemove in removeEpisodeIds.Values)
+            foreach (ExtraEp episodeToRemove in removeEpisodeIds.Values)
             {
-                Series[episodetoRemove.SeriesId]?.RemoveEpisode(episodetoRemove.EpisodeId);
+                Series[episodeToRemove.SeriesId]?.RemoveEpisode(episodeToRemove.EpisodeId);
             }
 
             removeEpisodeIds.Clear();
@@ -3206,14 +3206,14 @@ namespace TVRename.TheTVDB
 
         private static string? FindTranslation(JObject r, Locale locale, string tag)
         {
-            string langaugeCode = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation;
             JToken languagesArray = r[tag];
             if (languagesArray == null ||!languagesArray.HasValues || languagesArray is not JObject)
             {
                 return null;
             }
 
-            JToken? languageValue = languagesArray[langaugeCode];
+            string languageCode = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation;
+            JToken? languageValue = languagesArray[languageCode];
             if (languageValue == null || languageValue.Type != JTokenType.String)
             {
                 return null;

@@ -94,19 +94,21 @@ namespace TVRename
         {
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new();
+            DirFilesCache dfc = new();
             sb.AppendLine(HTMLHeader(10, col));
-            sb.AppendMovie(si, col, includeDirectoryLinks);
+            sb.AppendMovie(si, col, includeDirectoryLinks,dfc);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
 
         [NotNull]
-        public static string GetMovieHtmlOverview(this CachedMovieInfo movie, RecommendationRow? recommendation)
+        public static string GetMovieHtmlOverview([NotNull] this CachedMovieInfo movie, RecommendationRow? recommendation)
         {
             Color col = Color.FromName("ButtonFace");
+            DirFilesCache dfc = new();
             StringBuilder sb = new();
             sb.AppendLine(HTMLHeader(10, col));
-            sb.AppendMovie(null, movie, col, false);
+            sb.AppendMovie(null, movie, col, false,dfc);
             if (recommendation != null)
             {
                 sb.AppendRecommendation(recommendation, col);
@@ -139,7 +141,7 @@ namespace TVRename
             string horizontalBanner = CreateHorizontalBannerHtml(si);
             string yearRange = YearRange(ser);
             string episodeSummary = ser.Episodes.Count.ToString();
-            string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
+            string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"https://www.imdb.com/title/{ser.Imdb}";
             string table = CreateEpisodeTableHeader(CreateTableRows(si, dfc, includeDirectoryLinks));
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
@@ -183,8 +185,7 @@ namespace TVRename
             if (includeDirectoryLinks)
             {
                 string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
-                explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}",
-                    "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
+                explorerButton = CreateExploreButton(urlFilename);
             }
 
             string tableRows = seasonEpisodes.Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc)).Concat();
@@ -478,7 +479,7 @@ namespace TVRename
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
             string dayTime = $"{ser.AirsDay} {ParseAirsTime(ser)}";
 
-            string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
+            string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"https://www.imdb.com/title/{ser.Imdb}";
             string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
             string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteShowUrl(ser) : string.Empty;
             string tvdbLink = ser.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser) : string.Empty;
@@ -487,8 +488,12 @@ namespace TVRename
                 ? Uri.EscapeDataString(si?.GetBestFolderLocationToOpen() ?? string.Empty)
                 : string.Empty;
             string explorerButton = includeDirectoryLinks
-                ? CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder")
+                ? CreateExploreButton(urlFilename)
                 : string.Empty;
+
+            string facebookButton = ser.FacebookId.HasValue() ? CreateButton($"https://facebook.com/{ser.FacebookId}", "<i class=\"fab fa-facebook\"></i>", "Facebook") : string.Empty;
+            string instagramButton = ser.InstagramId.HasValue() ? CreateButton($"https://instagram.com/{ser.InstagramId}", "<i class=\"fab fa-instagram\"></i>", "Instagram") : string.Empty;
+            string twitterButton = ser.TwitterId.HasValue() ? CreateButton($"https://twitter.com/{ser.TwitterId}", "<i class=\"fab fa-twitter\"></i>", "Twitter") : string.Empty;
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                 <div class=""text-center"">
@@ -542,6 +547,9 @@ namespace TVRename
                      {CreateButton(mazeLink, "TVmaze.com", "View on TVmaze")}
                      {CreateButton(tmdbLink, "TMDB.com", "View on TMDB")}
 			         {CreateButton(ser.OfficialUrl, "Official Site", "View on Official Site")}
+                    {facebookButton}
+                    {instagramButton}
+                    {twitterButton}
 			        </div>
 		            <div>
                         &nbsp;
@@ -583,7 +591,7 @@ namespace TVRename
         }
 
         private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, Color backgroundColour,
-            bool includeDirectoryLinks)
+            bool includeDirectoryLinks, DirFilesCache dfc)
         {
             CachedMovieInfo? ser = si?.CachedMovie;
 
@@ -591,10 +599,10 @@ namespace TVRename
             {
                 return;
             }
-            AppendMovie(sb, si, ser, backgroundColour, includeDirectoryLinks);
+            AppendMovie(sb, si, ser, backgroundColour, includeDirectoryLinks,dfc);
         }
 
-        private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, CachedMovieInfo ser, Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendMovie([NotNull] this StringBuilder sb, [CanBeNull] MovieConfiguration si, [NotNull] CachedMovieInfo ser, Color backgroundColour, bool includeDirectoryLinks, DirFilesCache dfc)
         {
             string poster = CreatePosterHtml(ser);
             string yearRange = ser.Year?.ToString() ?? "";
@@ -604,15 +612,15 @@ namespace TVRename
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
             string tvdbLink = ser.Slug.HasValue() ? TheTVDB.API.WebsiteMovieUrl(ser.Slug) : string.Empty;
-            string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
+            string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"https://www.imdb.com/title/{ser.Imdb}";
             string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(ser.TmdbCode) : string.Empty;
             string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
 
-            string urlFilename = includeDirectoryLinks && si != null ? Uri.EscapeDataString(si.Locations.FirstOrDefault() ?? string.Empty) : string.Empty;
-            string explorerButton = includeDirectoryLinks ? CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder") : string.Empty;
-            string viewButton = includeDirectoryLinks ? CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>", "Watch Now") : string.Empty;
+            string urlFilename = includeDirectoryLinks && (si !=null) ? Uri.EscapeDataString(dfc.FindMovieOnDisk(si).FirstOrDefault()?.FullName ?? string.Empty) : string.Empty;
+            string explorerButton = includeDirectoryLinks ? CreateExploreButton(urlFilename) : string.Empty;
+            string viewButton = includeDirectoryLinks ? CreateWatchButton(urlFilename) : string.Empty;
             string facebookButton = ser.FacebookId.HasValue() ? CreateButton($"https://facebook.com/{ser.FacebookId}", "<i class=\"fab fa-facebook\"></i>", "Facebook") : string.Empty;
-            string instaButton = ser.InstagramId.HasValue() ? CreateButton($"https://instagram.com/{ser.InstagramId}", "<i class=\"fab fa-instagram\"></i>", "Instagram") : string.Empty;
+            string instagramButton = ser.InstagramId.HasValue() ? CreateButton($"https://instagram.com/{ser.InstagramId}", "<i class=\"fab fa-instagram\"></i>", "Instagram") : string.Empty;
             string twitterButton = ser.TwitterId.HasValue() ? CreateButton($"https://twitter.com/{ser.TwitterId}", "<i class=\"fab fa-twitter\"></i>", "Twitter") : string.Empty;
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
@@ -669,7 +677,7 @@ namespace TVRename
                      {CreateButton(mazeLink, "TVmaze.com", "View on TVmaze")}
 			         {CreateButton(ser.OfficialUrl, "Official Site", "View on Official Site")}
                     {facebookButton}
-                    {instaButton}
+                    {instagramButton}
                     {twitterButton}
 			        </div>
 		            <div>
@@ -685,18 +693,14 @@ namespace TVRename
                  </div>");
         }
 
+        // ReSharper disable once SuggestBaseTypeForParameter
         private static string? EditMovieUrl([NotNull] CachedMovieInfo si)
         {
             if (si.TmdbCode > 0)
             {
                 return $"https://www.themoviedb.org/movie/{si.TmdbCode}/edit?active_nav_item=primary_facts";
             }
-            if (si.Slug.HasValue())
-            {
-                return $"https://thetvdb.com/movies/{si.Slug}/edit";
-            }
-
-            return null;
+            return si.Slug.HasValue() ? $"https://thetvdb.com/movies/{si.Slug}/edit" : null;
         }
 
         private static string? EditSeasonUrl([NotNull] ShowConfiguration si, ProcessedSeason s)
@@ -1017,7 +1021,7 @@ namespace TVRename
             {
                 foreach (string urlFilename in fl.Select(fi => Uri.EscapeDataString(fi.FullName)))
                 {
-                    viewButton += CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>", "Watch Now");
+                    viewButton += CreateWatchButton(urlFilename);
                 }
             }
 
@@ -1033,7 +1037,7 @@ namespace TVRename
         [NotNull]
         private static string GetEpisodeStatus([NotNull] ProcessedEpisode ep, bool includeDirectoryLinks, List<FileInfo>? fl)
         {
-            bool filesExist = fl != null && fl.Count > 0;
+            bool filesExist = fl is { Count: > 0 };
 
             if (includeDirectoryLinks && filesExist)
             {
@@ -1073,10 +1077,10 @@ namespace TVRename
                 return;
             }
 
-            string tablerows = si.SeasonEpisodes[s.SeasonNumber].ToList().Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc)).Concat();
+            string tableRows = si.SeasonEpisodes[s.SeasonNumber].ToList().Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc)).Concat();
 
             string seasonHeaderDiv = CreateSeasonHeaderDiv(si, s, includeDirectoryLinks);
-            string table = CreateEpisodeTableHeader(tablerows);
+            string table = CreateEpisodeTableHeader(tableRows);
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">{seasonHeaderDiv}
                 {table}
@@ -1111,8 +1115,7 @@ namespace TVRename
             if (includeDirectoryLinks)
             {
                 string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
-                explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}",
-                    "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
+                explorerButton = CreateExploreButton(urlFilename);
             }
 
             string tvdbSLug = si.CachedShow?.Slug;
@@ -1190,7 +1193,7 @@ namespace TVRename
                 ? rating + "/10" + AddRatingCount(ep.SiteRatingCount ?? 0)
                 : "";
 
-            string imdbLink = string.IsNullOrWhiteSpace(ep.ImdbCode) ? string.Empty : "http://www.imdb.com/title/" + ep.ImdbCode;
+            string imdbLink = string.IsNullOrWhiteSpace(ep.ImdbCode) ? string.Empty : "https://www.imdb.com/title/" + ep.ImdbCode;
             string productionCode = string.IsNullOrWhiteSpace(ep.ProductionCode)
                 ? string.Empty
                 : "Production Code <br/>" + ep.ProductionCode;
@@ -1221,8 +1224,8 @@ namespace TVRename
             {
                 foreach (string urlFilename in fl.Select(fi => Uri.EscapeDataString(fi.FullName)))
                 {
-                    viewButton += CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>", "Watch Now");
-                    explorerButton += CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
+                    viewButton += CreateWatchButton(urlFilename);
+                    explorerButton += CreateExploreButton(urlFilename);
                 }
             }
 
@@ -1282,6 +1285,29 @@ namespace TVRename
             }
 
             return $"<a href=\"{link}\" class=\"btn btn-outline-secondary\" role=\"button\" aria-disabled=\"true\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"{tooltip}\">{text}</a>";
+        }
+
+        [NotNull]
+        private static string CreateExploreButton(string? urlFilename)
+        {
+            if (string.IsNullOrWhiteSpace(urlFilename))
+            {
+                return string.Empty;
+            }
+
+            return CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}",
+                "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
+        }
+
+        [NotNull]
+        private static string CreateWatchButton(string? urlFilename)
+        {
+            if (string.IsNullOrWhiteSpace(urlFilename))
+            {
+                return string.Empty;
+            }
+
+            return CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>", "Watch Now");
         }
 
         [NotNull]
@@ -1412,7 +1438,7 @@ namespace TVRename
         [NotNull]
         internal static string GenreIconHtml(string genre)
         {
-            string[] availbleIcons =
+            string[] availableIcons =
             {
                 "Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama", "Family",
                 "Fantasy", "Food", "Horror", "Mini-Series", "Mystery", "Reality", "Romance", "Science-Fiction", "Soap",
@@ -1421,7 +1447,7 @@ namespace TVRename
 
             const string ROOT = "https://www.tvrename.com/assets/images/GenreIcons/";
 
-            return availbleIcons.Contains(genre)
+            return availableIcons.Contains(genre)
                 ? $@"<img width=""30"" height=""30"" src=""{ROOT}{genre}.svg"" alt=""{genre}"">"
                 : "";
         }
@@ -1433,7 +1459,7 @@ namespace TVRename
                 : string.IsNullOrWhiteSpace(actor.ActorRole) ? string.Empty
                 : " as " + actor.ActorRole;
             string tryText =
-                $@"<a href=""http://www.imdb.com/find?s=nm&q={actor.ActorName}"">{actor.ActorName}</a>{asText}";
+                $@"<a href=""https://www.imdb.com/find?s=nm&q={actor.ActorName}"">{actor.ActorName}</a>{asText}";
             return tryText;
         }
 
@@ -1460,7 +1486,7 @@ namespace TVRename
         internal static string StarRating(float f)
         {
             const string STAR = @"<i class=""fas fa-star""></i>";
-            const string HALFSTAR = @"<i class=""fas fa-star-half""></i>";
+            const string HALF_STAR = @"<i class=""fas fa-star-half""></i>";
 
             if (f < .25)
             {
@@ -1469,7 +1495,7 @@ namespace TVRename
 
             if (f <= .75)
             {
-                return HALFSTAR;
+                return HALF_STAR;
             }
 
             if (f > 1)
@@ -1536,7 +1562,7 @@ namespace TVRename
             {
                 body += first ? "<h2>Actors</h2>" : ", ";
 
-                body += "<A HREF=\"http://www.imdb.com/find?s=nm&q=" + aa.ActorName + "\">" + aa.ActorName + $"</a> as {aa.ActorRole}";
+                body += "<A HREF=\"https://www.imdb.com/find?s=nm&q=" + aa.ActorName + "\">" + aa.ActorName + $"</a> as {aa.ActorRole}";
                 first = false;
             }
 
@@ -1560,7 +1586,7 @@ namespace TVRename
             string tableHtml = string.Empty;
 
             tableHtml += GetOverviewPart("thetvdb.com", $"<A HREF=\"{tvdbLink}\">Visit</a>");
-            tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"http://www.imdb.com/title/" + ser?.Imdb + "\">Visit</a>");
+            tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"https://www.imdb.com/title/" + ser?.Imdb + "\">Visit</a>");
             tableHtml += GetOverviewPart("Runtime", ser?.Runtime);
             tableHtml += GetOverviewPart("Aliases", si.AliasNames.ToCsv());
             tableHtml += GetOverviewPart("Genres", si.Genres.ToCsv());
@@ -1732,7 +1758,7 @@ namespace TVRename
             {
                 body += first ? "<h2>Actors</h2>" : ", ";
 
-                body += "<A HREF=\"http://www.imdb.com/find?s=nm&q=" + aa.ActorName + "\">" + aa.ActorName + $"</a> as {aa.ActorRole}";
+                body += "<A HREF=\"https://www.imdb.com/find?s=nm&q=" + aa.ActorName + "\">" + aa.ActorName + $"</a> as {aa.ActorRole}";
                 first = false;
             }
 
@@ -1741,13 +1767,13 @@ namespace TVRename
             string tmdbLink = si.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(si.TmdbCode)   : string.Empty;
             string mazeLink = ser?.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
             string facebookButton = ser?.FacebookId.HasValue() ?? false ? $"https://facebook.com/{ser.FacebookId}" : string.Empty;
-            string instaButton = ser?.InstagramId.HasValue() ?? false ? $"https://instagram.com/{ser.InstagramId}" : string.Empty;
+            string instagramButton = ser?.InstagramId.HasValue() ?? false ? $"https://instagram.com/{ser.InstagramId}" : string.Empty;
             string twitterButton = ser?.TwitterId.HasValue() ?? false ? $"https://twitter.com/{ser.TwitterId}" : string.Empty;
 
             string tableHtml = string.Empty;
 
             tableHtml += GetOverviewPart("thetvdb.com", $"<A HREF=\"{tvdbLink}\">Visit</a>");
-            tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"http://www.imdb.com/title/" + ser?.Imdb + "\">Visit</a>");
+            tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"https://www.imdb.com/title/" + ser?.Imdb + "\">Visit</a>");
             if (tmdbLink.HasValue())
             {
                 tableHtml += GetOverviewPart("MovieDB", $"<A HREF=\"{tmdbLink}\">Visit</a>");
@@ -1763,9 +1789,9 @@ namespace TVRename
                 tableHtml += GetOverviewPart("Facebook", $"<A HREF=\"{facebookButton}\">Visit</a>");
             }
 
-            if (instaButton.HasValue())
+            if (instagramButton.HasValue())
             {
-                tableHtml += GetOverviewPart("Instagram", $"<A HREF=\"{instaButton}\">Visit</a>");
+                tableHtml += GetOverviewPart("Instagram", $"<A HREF=\"{instagramButton}\">Visit</a>");
             }
 
             if (twitterButton.HasValue())
@@ -1808,7 +1834,7 @@ namespace TVRename
         {
             string overviewString = string.Empty;
 
-            overviewString += GetOverviewPart("imdb.com", "<A HREF=\"http://www.imdb.com/title/" + ei.ImdbCode + "\">Visit</a>");
+            overviewString += GetOverviewPart("imdb.com", "<A HREF=\"https://www.imdb.com/title/" + ei.ImdbCode + "\">Visit</a>");
             overviewString += GetOverviewPart("Link", "<A HREF=\"" + ei.ShowUrl + "\">Visit</a>");
             overviewString += GetOverviewPart("Director", ei.EpisodeDirector);
             overviewString += GetOverviewPart("Guest Stars", ei.EpisodeGuestStars);
