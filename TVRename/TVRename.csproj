@@ -410,6 +410,7 @@
     <Compile Include="LibrarySummary\Check\FolderBaseTvCheck.cs" />
     <Compile Include="LibrarySummary\Check\MovieCheckEmptyManualFolders.cs" />
     <Compile Include="LibrarySummary\Check\MovieFolderCheck.cs" />
+    <Compile Include="LibrarySummary\Check\MovieFolderTypeCheck.cs" />
     <Compile Include="LibrarySummary\Check\MovieManualFoldersMirrorAutomaticCheck.cs" />
     <Compile Include="LibrarySummary\Check\SettingsCheck.cs" />
     <Compile Include="LibrarySummary\Check\CustomLanguageMovieCheck.cs" />
@@ -600,6 +601,7 @@
     <Compile Include="Utility\Extensions\SafeEnumerable.cs" />
     <Compile Include="Utility\Extensions\SafeEnumerator.cs" />
     <Compile Include="Utility\Extensions\SafeList.cs" />
+    <Compile Include="Utility\Extensions\SafeListExtensions.cs" />
     <Compile Include="Utility\Helper\LinqHelper.cs" />
     <Compile Include="Utility\Helper\TaskHelper.cs" />
     <Compile Include="Utility\ServerRelease.cs" />

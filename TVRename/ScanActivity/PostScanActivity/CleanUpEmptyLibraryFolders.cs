@@ -69,7 +69,7 @@ namespace TVRename
             {
                 progress(n++, totalRecords, folder, lastUpdate);
                 DirectoryInfo directory = new DirectoryInfo(folder);
-                foreach (DirectoryInfo testDirectory in  directory.EnumerateDirectories(DirectoryEnumerationOptions.Recursive).ToList())
+                foreach (DirectoryInfo testDirectory in  directory.EnumerateDirectories(DirectoryEnumerationOptions.Recursive | DirectoryEnumerationOptions.ContinueOnException).ToList())
                 {
                     string action = RemoveIfEmpty(testDirectory.FullName);
                     if (action.HasValue())
@@ -138,14 +138,19 @@ namespace TVRename
 
             try
             {
+                DirectoryInfo d = new(folderName);
+                if (FileFinder.IsSubsFolder(d))
+                {
+                    return false;
+                }
                 //nothing at all
-                bool noSubFolders = Directory.GetDirectories(folderName).Length == 0;
-                if (Directory.GetFiles(folderName).Length == 0 && noSubFolders)
+                bool noSubFolders = d.GetDirectories().Length == 0;
+                if (d.GetFiles().Length == 0 && noSubFolders)
                 {
                     return true;
                 }
 
-                bool containsMovieFiles = Directory.GetFiles(folderName,"*",System.IO.SearchOption.AllDirectories).Any(s => s.IsMovieFile());
+                bool containsMovieFiles = d.GetFiles("*",System.IO.SearchOption.AllDirectories).Any(s => s.IsMovieOrUsefulFile());
 
                 if (!containsMovieFiles && noSubFolders)
                 {

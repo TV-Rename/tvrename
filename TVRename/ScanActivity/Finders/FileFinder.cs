@@ -386,7 +386,7 @@ namespace TVRename
             return TVSettings.Instance.subtitleExtensionsArray.Contains(file.Extension);
         }
 
-        private static bool IsSubsFolder(DirectoryInfo folder)
+        public static bool IsSubsFolder(DirectoryInfo folder)
         {
             return TVSettings.Instance.SubsFolderNames.Any(x=>string.Equals(x,folder.Name,StringComparison.CurrentCultureIgnoreCase));
         }
