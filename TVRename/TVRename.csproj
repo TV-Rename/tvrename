@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\CefSharp.Common.98.1.210\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.98.1.210\build\CefSharp.Common.props')" />
-  <Import Project="..\packages\cef.redist.x86.98.1.21\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.98.1.21\build\cef.redist.x86.props')" />
-  <Import Project="..\packages\cef.redist.x64.98.1.21\build\cef.redist.x64.props" Condition="Exists('..\packages\cef.redist.x64.98.1.21\build\cef.redist.x64.props')" />
+  <Import Project="..\packages\CefSharp.Common.99.2.120\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.99.2.120\build\CefSharp.Common.props')" />
+  <Import Project="..\packages\cef.redist.x86.99.2.12\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.99.2.12\build\cef.redist.x86.props')" />
+  <Import Project="..\packages\cef.redist.x64.99.2.12\build\cef.redist.x64.props" Condition="Exists('..\packages\cef.redist.x64.99.2.12\build\cef.redist.x64.props')" />
   <Import Project="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props')" />
   <PropertyGroup>
     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
@@ -74,14 +74,14 @@
     <Reference Include="AlphaFS, Version=2.2.0.0, Culture=neutral, PublicKeyToken=4d31a58f7d7ad5c9, processorArchitecture=MSIL">
       <HintPath>..\packages\AlphaFS.2.2.6\lib\net452\AlphaFS.dll</HintPath>
     </Reference>
-    <Reference Include="CefSharp, Version=98.1.210.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>..\packages\CefSharp.Common.98.1.210\lib\net452\CefSharp.dll</HintPath>
+    <Reference Include="CefSharp, Version=99.2.120.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>..\packages\CefSharp.Common.99.2.120\lib\net452\CefSharp.dll</HintPath>
     </Reference>
-    <Reference Include="CefSharp.Core, Version=98.1.210.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>..\packages\CefSharp.Common.98.1.210\lib\net452\CefSharp.Core.dll</HintPath>
+    <Reference Include="CefSharp.Core, Version=99.2.120.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>..\packages\CefSharp.Common.99.2.120\lib\net452\CefSharp.Core.dll</HintPath>
     </Reference>
-    <Reference Include="CefSharp.WinForms, Version=98.1.210.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>..\packages\CefSharp.WinForms.98.1.210\lib\net462\CefSharp.WinForms.dll</HintPath>
+    <Reference Include="CefSharp.WinForms, Version=99.2.120.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>..\packages\CefSharp.WinForms.99.2.120\lib\net462\CefSharp.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="CloudFlareUtilities, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CloudFlareUtilities.1.3.0\lib\netstandard1.1\CloudFlareUtilities.dll</HintPath>
@@ -92,8 +92,8 @@
     <Reference Include="Ical.Net, Version=1.0.0.0, Culture=neutral, PublicKeyToken=65c0446cd019ea53, processorArchitecture=MSIL">
       <HintPath>..\packages\Ical.Net.4.2.0\lib\netstandard2.0\Ical.Net.dll</HintPath>
     </Reference>
-    <Reference Include="IMDbApiLib, Version=1.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\IMDbApiLib.1.7.1\lib\net46\IMDbApiLib.dll</HintPath>
+    <Reference Include="IMDbApiLib, Version=1.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IMDbApiLib.1.8.1\lib\net46\IMDbApiLib.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=2021.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2021.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
@@ -123,9 +123,8 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
-      <HintPath>..\packages\NLog.4.7.13\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.7.15\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="NLog.Targets.Syslog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=a15d6ba50060b73f, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.Targets.Syslog.6.0.3\lib\net471\NLog.Targets.Syslog.dll</HintPath>
@@ -133,8 +132,8 @@
     <Reference Include="NLog.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.Windows.Forms.4.5.0\lib\net35\NLog.Windows.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="NodaTime, Version=3.0.9.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
-      <HintPath>..\packages\NodaTime.3.0.9\lib\netstandard2.0\NodaTime.dll</HintPath>
+    <Reference Include="NodaTime, Version=3.0.10.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NodaTime.3.0.10\lib\netstandard2.0\NodaTime.dll</HintPath>
     </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
@@ -405,6 +404,7 @@
     <Compile Include="ItemsAndActions\ShowItemMissing.cs" />
     <Compile Include="LibrarySummary\Check\DefaultFutureMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\DefaultNoAirdateMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultUseAlternateTvCheck.cs" />
     <Compile Include="LibrarySummary\Check\FolderBaseLibraryDefaultTvCheck.cs" />
     <Compile Include="LibrarySummary\Check\FolderBaseMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\FolderBaseTvCheck.cs" />
@@ -583,20 +583,20 @@
     <Compile Include="TVRename\PossibleNewMovie.cs" />
     <Compile Include="TVRename\PossibleNewMovies.cs" />
     <Compile Include="TVRename\UpdateTimeTracker.cs" />
-    <Compile Include="Utility\BEncodeLoader.cs" />
-    <Compile Include="Utility\BTChunk.cs" />
-    <Compile Include="Utility\BTCore.cs" />
-    <Compile Include="Utility\BTDictionary.cs" />
-    <Compile Include="Utility\BTDictionaryItem.cs" />
-    <Compile Include="Utility\BTEOF.cs" />
-    <Compile Include="Utility\BTError.cs" />
-    <Compile Include="Utility\BTFile.cs" />
-    <Compile Include="Utility\BTInteger.cs" />
-    <Compile Include="Utility\BTItem.cs" />
-    <Compile Include="Utility\BTList.cs" />
-    <Compile Include="Utility\BTListOrDictionaryEnd.cs" />
-    <Compile Include="Utility\BTResume.cs" />
-    <Compile Include="Utility\BTString.cs" />
+    <Compile Include="Utility\BT\BEncodeLoader.cs" />
+    <Compile Include="Utility\BT\BTChunk.cs" />
+    <Compile Include="Utility\BT\BTCore.cs" />
+    <Compile Include="Utility\BT\BTDictionary.cs" />
+    <Compile Include="Utility\BT\BTDictionaryItem.cs" />
+    <Compile Include="Utility\BT\BTEOF.cs" />
+    <Compile Include="Utility\BT\BTError.cs" />
+    <Compile Include="Utility\BT\BTFile.cs" />
+    <Compile Include="Utility\BT\BTInteger.cs" />
+    <Compile Include="Utility\BT\BTItem.cs" />
+    <Compile Include="Utility\BT\BTList.cs" />
+    <Compile Include="Utility\BT\BTListOrDictionaryEnd.cs" />
+    <Compile Include="Utility\BT\BTResume.cs" />
+    <Compile Include="Utility\BT\BTString.cs" />
     <Compile Include="Utility\Extensions\SafeEnumerable.cs" />
     <Compile Include="Utility\Extensions\SafeEnumerator.cs" />
     <Compile Include="Utility\Extensions\SafeList.cs" />
@@ -1291,15 +1291,15 @@
     <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets'))" />
     <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
-    <Error Condition="!Exists('..\packages\cef.redist.x64.98.1.21\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.98.1.21\build\cef.redist.x64.props'))" />
-    <Error Condition="!Exists('..\packages\cef.redist.x86.98.1.21\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.98.1.21\build\cef.redist.x86.props'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.Common.98.1.210\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.98.1.210\build\CefSharp.Common.props'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.Common.98.1.210\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.98.1.210\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('..\packages\cef.redist.x64.99.2.12\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.99.2.12\build\cef.redist.x64.props'))" />
+    <Error Condition="!Exists('..\packages\cef.redist.x86.99.2.12\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.99.2.12\build\cef.redist.x86.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.99.2.120\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.99.2.120\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.99.2.120\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.99.2.120\build\CefSharp.Common.targets'))" />
   </Target>
   <Import Project="..\packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets" Condition="Exists('..\packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" />
   <Import Project="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets" Condition="Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
-  <Import Project="..\packages\CefSharp.Common.98.1.210\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.98.1.210\build\CefSharp.Common.targets')" />
+  <Import Project="..\packages\CefSharp.Common.99.2.120\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.99.2.120\build\CefSharp.Common.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
