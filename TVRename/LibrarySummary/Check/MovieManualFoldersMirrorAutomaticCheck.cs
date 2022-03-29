@@ -41,6 +41,6 @@ namespace TVRename
         }
 
         [NotNull]
-        public override string CheckName => "[Movie] Manual Season Folders Mirror Automatic";
+        protected override string MovieCheckName => "Manual Season Folders Mirror Automatic";
     }
 }

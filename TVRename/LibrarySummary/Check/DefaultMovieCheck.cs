@@ -9,7 +9,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public override string CheckName => "[Movie] " + FieldName;
+        protected override string MovieCheckName => FieldName;
         protected abstract string FieldName { get; }
         protected abstract bool Field { get; }
         protected abstract bool Default { get; }

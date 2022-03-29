@@ -25,6 +25,6 @@ namespace TVRename
         }
 
         [NotNull]
-        public override string CheckName => "[Movie] Use Default folder supplied";
+        protected override string MovieCheckName => "Use Default folder supplied";
     }
 }

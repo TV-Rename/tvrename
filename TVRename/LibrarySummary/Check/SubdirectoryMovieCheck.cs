@@ -70,6 +70,6 @@ namespace TVRename
         }
 
         [NotNull]
-        public override string CheckName => "[Movie] Use custom folder name format";
+        protected override string MovieCheckName => "Use custom folder name format";
     }
 }

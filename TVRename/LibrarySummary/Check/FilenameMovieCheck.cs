@@ -19,6 +19,6 @@ namespace TVRename
         }
 
         [NotNull]
-        public override string CheckName => "[Movie] Use Custom File Name Format";
+        protected override string MovieCheckName => "Use Custom File Name Format";
     }
 }

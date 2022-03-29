@@ -26,6 +26,6 @@ namespace TVRename
         }
 
         [NotNull]
-        public override string CheckName => "[Movie] Use default source provider";
+        protected override string MovieCheckName => "Use default source provider";
     }
 }

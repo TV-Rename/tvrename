@@ -69,6 +69,6 @@ namespace TVRename
         }
 
         [NotNull]
-        public override string CheckName => "[Movie] Movie has missing or empty manual folder";
+        protected override string MovieCheckName => "Movie has missing or empty manual folder";
     }
 }

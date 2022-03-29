@@ -70,6 +70,7 @@ namespace TVRename.Forms
                 set.Add(new MovieProviderCheck(movie, mDoc));
                 set.Add(new SubdirectoryMovieCheck(movie, mDoc));
                 set.Add(new FolderBaseMovieCheck(movie, mDoc));
+                set.Add(new MovieFolderTypeCheck(movie, mDoc));
 
                 bw.ReportProgress(100 * current++ / total, movie.ShowName);
             }

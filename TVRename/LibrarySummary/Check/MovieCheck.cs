@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     internal abstract class MovieCheck : SettingsCheck
@@ -11,15 +13,22 @@ namespace TVRename
 
         protected override void MarkMediaDirty()
         {
-            if (Movie.CachedMovie != null)
+            if (Movie.CachedMovie == null)
             {
-                Movie.CachedMovie.Dirty = true;
-                Doc.MoviesAddedOrEdited(false,true,true,null, Movie);
+                return;
             }
+
+            Movie.CachedMovie.Dirty = true;
+            Doc.MoviesAddedOrEdited(false,true,true,null, Movie);
         }
 
         public override MediaConfiguration.MediaType Type() => MediaConfiguration.MediaType.movie;
 
         public override string MediaName => Movie.ShowName;
+
+        [NotNull]
+        public sealed override string CheckName => "[Movie] " + MovieCheckName;
+
+        protected abstract string MovieCheckName { get; }
     }
 }
