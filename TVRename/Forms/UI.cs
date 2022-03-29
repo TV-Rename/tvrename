@@ -5358,5 +5358,18 @@ namespace TVRename
 
             olvAction.ShowSortIndicator();
         }
+
+        private void webTestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode n = MyShowTree.SelectedNode;
+            ShowConfiguration si = TreeNodeToShowItem(n) ?? mDoc.TvLibrary.First();
+            Form webTest = new BrowserTest(si.GetShowHtmlOverview(false));
+            webTest.ShowDialog(this);
+        }
+
+        private void downloadInstallerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Helpers.OpenUrl("https://go.microsoft.com/fwlink/p/?LinkId=2124703");
+        }
     }
 }

@@ -36,25 +36,24 @@ namespace TVRename.App
             Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
             Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
 
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
             try
             {
                 AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
+                AppDomain.CurrentDomain.UnhandledException += GlobalExceptionHandler;
+                Application.ThreadException += delegate (object _, ThreadExceptionEventArgs eventArgs)
+                {
+                    Exception e = eventArgs.Exception;
+                    Logger.Fatal(e, "UNHANDLED ERROR - Application.ThreadException");
+                    Environment.Exit(1);
+                };
             }
             catch (Exception e)
             {
                 Logger.Fatal(e);
             }
-
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            Application.ThreadException += delegate (object _, ThreadExceptionEventArgs eventArgs)
-            {
-                Exception e = eventArgs.Exception;
-                Logger.Fatal(e, "UNHANDLED ERROR - Application.ThreadException");
-                Environment.Exit(1);
-            };
-            AppDomain.CurrentDomain.UnhandledException += GlobalExceptionHandler;
 
             if (args.Contains("/?", StringComparer.OrdinalIgnoreCase))
             {

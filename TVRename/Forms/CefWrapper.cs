@@ -77,7 +77,7 @@ namespace TVRename
             }
             CheckForBroswerDependencies(false);
 
-            //Cef.EnableHighDPISupport(); todo - reinstate when we support high DPI
+            Cef.EnableHighDPISupport();
         }
 
         public void Shutdown()
