@@ -17,5 +17,9 @@ namespace TVRename
         protected override string FieldName => "Use Custom Search";
 
         protected override bool Field => Show.UseCustomSearchUrl;
+
+        protected override string CustomFieldValue => Show.CustomSearchUrl;
+
+        protected override string DefaultFieldValue => TVSettings.Instance.TheSearchers.CurrentSearch.Url;
     }
 }

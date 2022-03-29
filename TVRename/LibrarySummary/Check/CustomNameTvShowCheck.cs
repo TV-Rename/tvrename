@@ -16,5 +16,9 @@ namespace TVRename
         [NotNull]
         protected override string FieldName => "Use Custom TV Show Name";
         protected override bool Field => Show.UseCustomShowName;
+        protected override string CustomFieldValue => Show.CustomShowName;
+
+        [NotNull]
+        protected override string DefaultFieldValue => Show.CachedShow?.Name ?? string.Empty;
     }
 }

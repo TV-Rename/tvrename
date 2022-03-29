@@ -17,5 +17,10 @@ namespace TVRename
         protected override string FieldName => "Use Custom Region";
 
         protected override bool Field => Movie.UseCustomRegion;
+
+        [NotNull]
+        protected override string CustomFieldValue => Movie.CustomRegionCode??string.Empty;
+
+        protected override string DefaultFieldValue => Movie.Provider==TVDoc.ProviderType.TMDB?TVSettings.Instance.TMDBRegion.ThreeAbbreviation: string.Empty;
     }
 }

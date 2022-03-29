@@ -12,16 +12,12 @@ namespace TVRename
         public override string CheckName => "[TV] " + FieldName;
         protected abstract string FieldName { get; }
         protected abstract bool Field { get; }
+        protected abstract string CustomFieldValue { get; }
+        protected abstract string DefaultFieldValue { get; }
 
-        public override bool Check()
-        {
-            return Field;
-        }
+        public override bool Check() => Field;
 
         [NotNull]
-        public override string Explain()
-        {
-            return $"{FieldName} is enabled for this TV Show, by default is is not.";
-        }
+        public override string Explain() => $"{FieldName} is enabled for this TV Show [{CustomFieldValue}], by default is is not [{DefaultFieldValue}].";
     }
 }

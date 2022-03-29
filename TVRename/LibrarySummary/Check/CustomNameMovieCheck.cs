@@ -17,5 +17,10 @@ namespace TVRename
         protected override string FieldName => "Use Custom Name";
 
         protected override bool Field => Movie.UseCustomShowName;
+
+        protected override string CustomFieldValue => Movie.CustomShowName;
+
+        [NotNull]
+        protected override string DefaultFieldValue => Movie.CachedMovie?.Name??string.Empty;
     }
 }

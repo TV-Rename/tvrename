@@ -1,3 +1,4 @@
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -17,5 +18,10 @@ namespace TVRename
             Show.ManualFolderLocations.Clear();
             Show.AutoAddType = ShowConfiguration.AutomaticFolderType.libraryDefaultFolderFormat;
         }
+        [NotNull]
+        protected override string CustomFieldValue => Show.ManualFolderLocations.Values.SelectMany(x=>x).ToCsv();
+
+        [NotNull]
+        protected override string DefaultFieldValue => Show.AutoAddFolderBase;
     }
 }

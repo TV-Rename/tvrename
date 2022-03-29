@@ -146,5 +146,11 @@ namespace TVRename
         protected override string FieldName => "Use manual folders";
 
         protected override bool Field => Movie.UseManualLocations;
+
+        [NotNull]
+        protected override string CustomFieldValue => Movie.ManualLocations.ToCsv();
+
+        [NotNull]
+        protected override string DefaultFieldValue => Movie.AutomaticLocations().ToCsv();
     }
 }
