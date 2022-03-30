@@ -281,18 +281,10 @@ namespace TVRename
         [NotNull]
         public static IEnumerable<FileInfo> FindMovieOnDisk([NotNull] this DirFilesCache cache, [NotNull] MovieConfiguration si)
         {
-            List<FileInfo> ret = new();
-
-            foreach (FileInfo fiTemp in si.Locations
-                .Select(cache.GetFiles)
-                .SelectMany(files => files.Where(fiTemp => fiTemp.IsMovieFile())))
-            {
-                {
-                    ret.Add(fiTemp);
-                }
-            }
-
-            return ret;
+            return si.Locations
+                .SelectMany(cache.GetFiles)
+                .Where(fiTemp => fiTemp.IsMovieFile())
+                .Where(fiTemp => si.NameMatch(fiTemp,false));
         }
 
         [NotNull]
