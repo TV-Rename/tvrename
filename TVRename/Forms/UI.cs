@@ -5361,10 +5361,17 @@ namespace TVRename
 
         private void webTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeNode n = MyShowTree.SelectedNode;
-            ShowConfiguration si = TreeNodeToShowItem(n) ?? mDoc.TvLibrary.First();
-            Form webTest = new BrowserTest(si.GetShowHtmlOverview(false));
-            webTest.ShowDialog(this);
+            try
+            {
+                TreeNode n = MyShowTree.SelectedNode;
+                ShowConfiguration si = TreeNodeToShowItem(n) ?? mDoc.TvLibrary.First();
+                Form webTest = new BrowserTest(si.GetShowHtmlOverview(false));
+                webTest.ShowDialog(this);
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal(ex);
+            }
         }
 
         private void downloadInstallerToolStripMenuItem_Click(object sender, EventArgs e)
