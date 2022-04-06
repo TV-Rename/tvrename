@@ -17,7 +17,7 @@ namespace TVRename
         private List<string> donePosterJpg = new();
         private List<string> doneBannerJpg = new();
         private List<string> doneFanartJpg = new();
-        private List<string> doneTbn = new();
+        private List<string> doneThumbnails = new();
 
         public DownloadKodiImages() => Reset();
 
@@ -25,7 +25,7 @@ namespace TVRename
 
         public override void NotifyComplete([NotNull] FileInfo file)
         {
-            doneTbn.Add(file.FullName);
+            doneThumbnails.Add(file.FullName);
             base.NotifyComplete(file);
         }
 
@@ -202,7 +202,7 @@ namespace TVRename
 
         public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
         {
-            if (TVSettings.Instance.EpTBNs)
+            if (TVSettings.Instance.EpThumbnails)
             {
                 ItemList theActionList = new();
                 if (episode.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
@@ -236,12 +236,12 @@ namespace TVRename
                 return null;
             }
 
-            if (doneTbn.Contains(imgtbn.FullName))
+            if (doneThumbnails.Contains(imgtbn.FullName))
             {
                 return null;
             }
 
-            doneTbn.Add(imgtbn.FullName);
+            doneThumbnails.Add(imgtbn.FullName);
             return new ActionDownloadImage(si, ep is ProcessedEpisode episode ? episode : new ProcessedEpisode(ep, si), imgtbn, ban);
         }
 
@@ -250,7 +250,7 @@ namespace TVRename
             doneBannerJpg = new List<string>();
             donePosterJpg = new List<string>();
             doneFanartJpg = new List<string>();
-            doneTbn = new List<string>();
+            doneThumbnails = new List<string>();
         }
     }
 }

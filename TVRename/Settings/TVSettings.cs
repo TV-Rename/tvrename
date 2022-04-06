@@ -145,7 +145,7 @@ namespace TVRename
         public string qBitTorrentPort = "8080";
         public bool qBitTorrentUseHTTPS = false;
         public qBitTorrent.qBitTorrentAPIVersion qBitTorrentAPIVersion = qBitTorrent.qBitTorrentAPIVersion.v2;
-        public bool EpTBNs = false;
+        public bool EpThumbnails = false;
         public bool EpJPGs = false;
         public bool SeriesJpg = false;
         public bool ShrinkLargeMede8erImages = false;
@@ -598,7 +598,7 @@ namespace TVRename
             writer.WriteElement("SearchJSON", SearchJSON);
             writer.WriteElement("SearchJSONManualScanOnly", SearchJSONManualScanOnly);
             writer.WriteElement("SearchRSSManualScanOnly", SearchRSSManualScanOnly);
-            writer.WriteElement("EpImgs", EpTBNs);
+            writer.WriteElement("EpImgs", EpThumbnails);
             writer.WriteElement("NFOShows", NFOShows);
             writer.WriteElement("NFOEpisodes", NFOEpisodes);
             writer.WriteElement("NFOMovies", NFOMovies);
@@ -1531,7 +1531,7 @@ namespace TVRename
             SearchJSON = xmlSettings.ExtractBool("SearchJSON", false);
             SearchRSSManualScanOnly = xmlSettings.ExtractBool("SearchRSSManualScanOnly", true);
             SearchJSONManualScanOnly = xmlSettings.ExtractBool("SearchJSONManualScanOnly", true);
-            EpTBNs = xmlSettings.ExtractBool("EpImgs", false);
+            EpThumbnails = xmlSettings.ExtractBool("EpImgs", false);
             NFOMovies = xmlSettings.ExtractBool("NFOMovies", true);
             NFOShows = xmlSettings.ExtractBool("NFOShows") ?? xmlSettings.ExtractBool("NFOs", false);
             NFOEpisodes = xmlSettings.ExtractBool("NFOEpisodes") ?? xmlSettings.ExtractBool("NFOs", false);

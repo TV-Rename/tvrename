@@ -343,7 +343,7 @@ namespace TVRename
             s.CheckqBitTorrent = cbCheckqBitTorrent.Checked;
             s.RemoveCompletedTorrents = chkRemoveCompletedTorrents.Checked;
             s.SearchRSS = cbSearchRSS.Checked;
-            s.EpTBNs = cbEpTBNs.Checked;
+            s.EpThumbnails = cbEpTBNs.Checked;
             s.NFOShows = cbNFOShows.Checked;
             s.NFOEpisodes = cbNFOEpisodes.Checked;
             s.NFOMovies = cbNFOMovies.Checked;
@@ -931,7 +931,7 @@ namespace TVRename
 
             cbSearchRSSManualScanOnly.Checked = s.SearchRSSManualScanOnly;
             cbSearchRSS.Checked = s.SearchRSS;
-            cbEpTBNs.Checked = s.EpTBNs;
+            cbEpTBNs.Checked = s.EpThumbnails;
             cbWDLiveEpisodeFiles.Checked = s.wdLiveTvMeta;
             cbNFOShows.Checked = s.NFOShows;
             cbNFOEpisodes.Checked = s.NFOEpisodes;

@@ -9,11 +9,11 @@ namespace TVRename
         private const string DEFAULT_EXTENSION = ".jpg";
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
-        private List<string> doneTbn = new();
+        private List<string> doneJpg = new();
 
         public override void NotifyComplete([NotNull] FileInfo file)
         {
-            doneTbn.Add(file.FullName);
+            doneJpg.Add(file.FullName);
             base.NotifyComplete(file);
         }
         public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
@@ -33,7 +33,7 @@ namespace TVRename
 
             FileInfo imgjpg = FileHelper.FileInFolder(file.Directory, basefn + DEFAULT_EXTENSION);
 
-            if (doneTbn.Contains(imgjpg.FullName))
+            if (doneJpg.Contains(imgjpg.FullName))
             {
                 return null;
             }
@@ -48,7 +48,7 @@ namespace TVRename
 
         public sealed override void Reset()
         {
-            doneTbn = new List<string>();
+            doneJpg = new List<string>();
         }
     }
 }
