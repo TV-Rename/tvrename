@@ -29,7 +29,15 @@ namespace TVRename
 
             try
             {
-                response = HttpHelper.GetUrl(url, useCloudflareProtection);
+                try
+                {
+                    response = HttpHelper.GetUrl(url, useCloudflareProtection);
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    Logger.Warn($"Could not download RSS page at:{url} Message was: {ioe.Message}");
+                    return false;
+                }
 
                 XElement x = XElement.Load(new System.IO.StringReader(response));
 
@@ -73,7 +81,7 @@ namespace TVRename
             return true;
         }
 
-        private bool ReadChannel([NotNull] XElement x, string sourceUrl, string sourcePrefix) => x.Descendants("item").All(element => ReadItem(element, sourceUrl, sourcePrefix));
+        private bool ReadChannel([NotNull] XContainer x, string sourceUrl, string sourcePrefix) => x.Descendants("item").All(element => ReadItem(element, sourceUrl, sourcePrefix));
 
         private bool ReadItem([NotNull] XElement itemElement, string sourceUrl, string sourcePrefix)
         {
@@ -156,7 +164,7 @@ namespace TVRename
             return true;
         }
 
-        private static int GetSeeders([NotNull] XElement itemElement)
+        private static int GetSeeders([NotNull] XContainer itemElement)
         {
             return itemElement
                 .Descendants()
@@ -166,9 +174,9 @@ namespace TVRename
                 .FirstOrDefault();
         }
 
-        private static int GetSeederValue([NotNull] XElement elemenet)
+        private static int GetSeederValue([NotNull] XElement element)
         {
-            foreach (string seedersAsString in from att in elemenet.Attributes() where att.Name == "value" select att.Value)
+            foreach (string seedersAsString in from att in element.Attributes() where att.Name == "value" select att.Value)
             {
                 bool success = int.TryParse(seedersAsString, out int returnValue);
                 if (success)
@@ -180,9 +188,9 @@ namespace TVRename
             return 0;
         }
 
-        private static bool IsSeederElement([NotNull] XElement elemenet)
+        private static bool IsSeederElement([NotNull] XElement element)
         {
-            return elemenet.Attributes().Any(att => att.Name == "name" && att.Value == "seeders");
+            return element.Attributes().Any(att => att.Name == "name" && att.Value == "seeders");
         }
     }
 }

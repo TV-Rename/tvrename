@@ -35,9 +35,7 @@ namespace TVRename.TMDB
         private static readonly TMDbClient Client = new(KEY);
         [NotNull]
         public static string EpisodeGuideUrl([NotNull] ShowConfiguration selectedShow)
-        {
-            return $"http://api.themoviedb.org/3/tv/{selectedShow.TmdbId}?api_key={KEY}&language={selectedShow.LanguageToUse().Abbreviation}";
-        }
+            => $"https://api.themoviedb.org/3/tv/{selectedShow.TmdbId}?api_key={KEY}&language={selectedShow.LanguageToUse().Abbreviation}";
 
         private UpdateTimeTracker latestUpdateTime;
 
@@ -129,13 +127,14 @@ namespace TVRename.TMDB
             {
                 throw new SourceConsistencyException($"Asked to update {s.Name} from TMDB, but the Id is not for TMDB.", TVDoc.ProviderType.TMDB);
             }
-
-            if (s.Media == MediaConfiguration.MediaType.movie)
+            if (s.TmdbId is -1 or 0)
             {
-                return EnsureMovieUpdated(s, showErrorMsgBox);
+                throw new SourceConsistencyException($"Asked to update {s.Name} from TMDB, but it has no id {s.TmdbId} for TMDB.", TVDoc.ProviderType.TMDB);
             }
 
-            return EnsureSeriesUpdated(s, showErrorMsgBox);
+            return s.Media == MediaConfiguration.MediaType.movie
+                ? EnsureMovieUpdated(s, showErrorMsgBox)
+                : EnsureSeriesUpdated(s, showErrorMsgBox);
         }
 
         private bool EnsureSeriesUpdated([NotNull] ISeriesSpecifier s, bool showErrorMsgBox)
@@ -171,9 +170,9 @@ namespace TVRename.TMDB
 
                 this.AddSeriesToCache(downloadedSi);
             }
-            catch (SourceConnectivityException conex)
+            catch (SourceConnectivityException ex)
             {
-                LastErrorMessage = conex.Message;
+                LastErrorMessage = ex.Message;
                 return true;
             }
             catch (SourceConsistencyException sce)
@@ -216,9 +215,9 @@ namespace TVRename.TMDB
                 this.AddMovieToCache(downloadedSi);
                 return true;
             }
-            catch (SourceConnectivityException conex)
+            catch (SourceConnectivityException ex)
             {
-                LastErrorMessage = conex.Message;
+                LastErrorMessage = ex.Message;
                 return false;
             }
             catch (SourceConsistencyException sce)
@@ -322,9 +321,9 @@ namespace TVRename.TMDB
 
                 return true;
             }
-            catch (SourceConnectivityException conex)
+            catch (SourceConnectivityException ex)
             {
-                LastErrorMessage = conex.Message;
+                LastErrorMessage = ex.Message;
                 return false;
             }
             catch (SourceConsistencyException sce)
@@ -990,7 +989,7 @@ namespace TVRename.TMDB
             return null;
         }
 
-        public int? LookupTvbdIdByImdb(string imdbToTest, bool showErrorMsgBox)
+        private int? LookupTvdbIdByImdb(string imdbToTest)
         {
             FindContainer? results = Client.FindAsync(FindExternalSource.Imdb, imdbToTest).Result;
             LOGGER.Info($"Got {results.TvResults.Count:N0} results searching for {imdbToTest}");
@@ -1129,7 +1128,7 @@ namespace TVRename.TMDB
                 catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
                 {
                     LOGGER.LogHttpRequestException(
-                        "Error obtaining TMDB Reccomendations:",
+                        "Error obtaining TMDB Recommendations:",
                         ex);
 
                     SayNothing();
@@ -1138,7 +1137,7 @@ namespace TVRename.TMDB
                 }
                 catch (Exception e)
                 {
-                    LOGGER.Error(e,"Error obtaining TMDB Reccomendations:");
+                    LOGGER.Error(e,"Error obtaining TMDB Recommendations:");
 
                     SayNothing();
                     throw new SourceConnectivityException();
@@ -1158,13 +1157,13 @@ namespace TVRename.TMDB
                     return;
                 }
 
-                int? tmdbcode = LookupTvbdIdByImdb(imdb!, false);
-                if (!tmdbcode.HasValue)
+                int? tmdbCode = LookupTvdbIdByImdb(imdb!);
+                if (!tmdbCode.HasValue)
                 {
                     return;
                 }
 
-                arg.TmdbCode = tmdbcode.Value;
+                arg.TmdbCode = tmdbCode.Value;
             }
 
             Task<SearchContainer<SearchTv>>? related = Client.GetTvShowRecommendationsAsync(arg.TmdbCode, languageCode);
