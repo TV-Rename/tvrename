@@ -2031,7 +2031,7 @@ namespace TVRename
 
                 if (sil.Count == 1)
                 {
-                    AddRcMenuItem($"Quick Scan {si.ShowName}", (_, _) =>
+                    AddRcMenuItem($"Quick Scan \"{si.ShowName}\"", (_, _) =>
                         {
                             UiScan(sil, null, false, TVSettings.ScanType.FastSingleShow, MediaConfiguration.MediaType.tv);
                             tabControl1.SelectTab(tbAllInOne);
