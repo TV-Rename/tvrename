@@ -44,7 +44,8 @@ namespace TVRename
 
         [NotNull]
         public virtual string SeriesName => Movie?.ShowName ?? Episode?.Show.ShowName ?? string.Empty;
-
+        [CanBeNull]
+        public virtual ShowConfiguration  Series => Episode?.Show;
         [NotNull]
         public virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;
 
@@ -98,7 +99,7 @@ namespace TVRename
 
         public static bool operator >(Item left, Item right) => Compare(left, right) > 0;
 
-        public static int Compare(Item left, Item right)
+        private static int Compare(Item left, Item right)
         {
             if (ReferenceEquals(left, right))
             {

@@ -22,7 +22,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.RemoveCompletedTorrents;
 
-        protected override void DoCheck(SetProgressDelegate prog)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
             DirFilesCache dfc = new();
             foreach (IDownloadProvider source in sources)

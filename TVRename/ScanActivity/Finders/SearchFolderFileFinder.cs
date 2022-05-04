@@ -16,7 +16,7 @@ namespace TVRename
         [NotNull]
         protected override string CheckName() => "Looked in the search folders for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
             ItemList newList = new();
             ItemList toRemove = new();
@@ -31,7 +31,7 @@ namespace TVRename
                     return;
                 }
 
-                dirCache.AddFolder(prog, 0, fileCount, s, true);
+                dirCache.AddFolder(progress, 0, fileCount, s, true);
             }
             int currentItem = 0;
             int totalN = ActionList.Missing.Count + 1;

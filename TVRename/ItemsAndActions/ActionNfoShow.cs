@@ -50,7 +50,7 @@ namespace TVRename
                 XElement urlNode = episodeGuideNode.GetOrCreateElement("url");
                 urlNode.UpdateAttribute("post", "yes");
                 urlNode.UpdateAttribute("cache", "auth.json");
-                urlNode.SetValue(TheTVDB.API.BuildUrl(SelectedShow.TvdbCode, SelectedShow.LanguageToUse().Abbreviation)); 
+                urlNode.SetValue(TheTVDB.API.BuildUrl(SelectedShow.TvdbCode, SelectedShow.LanguageToUse().Abbreviation));
             }
             else if (SelectedShow?.Provider == TVDoc.ProviderType.TMDB)
             {
@@ -61,7 +61,8 @@ namespace TVRename
 
             if (cachedSeries is not null)
             {
-                root.UpdateElement("originaltitle", SelectedShow.ShowName);
+                root.UpdateElement("originaltitle", SelectedShow!.ShowName);
+                root.UpdateElement("sorttitle", UI.GenerateShowUiName(SelectedShow));
                 root.ReplaceElements("studio", cachedSeries.Networks);
                 root.UpdateElement("id", cachedSeries.TvdbCode);
                 root.UpdateElement("runtime", cachedSeries.Runtime, true);

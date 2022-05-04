@@ -22,7 +22,7 @@ namespace TVRename
         [NotNull]
         protected override string CheckName() => "Looked in the library to find missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
             if (TVSettings.Instance.RenameCheck)
             {

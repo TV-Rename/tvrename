@@ -27,7 +27,7 @@ namespace TVRename
         [NotNull]
         protected override string CheckName() => "Check JSON links for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
             if (TVSettings.Instance.SearchJSONManualScanOnly && Settings.Unattended)
             {

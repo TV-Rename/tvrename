@@ -344,15 +344,15 @@ namespace TVRename
             Item ep = (Item)rowObject;
             if (ep.Movie != null)
             {
-                return PostpendTheIfNeeded(ep.Movie.ShowName);
+                return GenerateShowUiName(ep.Movie);
             }
 
-            if (ep.SeasonNumber.HasValue())
+            if (ep.Series != null)
             {
-                return $"{PostpendTheIfNeeded(ep.SeriesName)} - Season {ep.SeasonNumber}";
+                return ep.SeasonNumber.HasValue() ? $"{GenerateShowUiName(ep.Series)} - Season {ep.SeasonNumber}" : GenerateShowUiName(ep.Series);
             }
 
-            return PostpendTheIfNeeded(ep.SeriesName);
+            return string.Empty;
         }
 
         [NotNull]
@@ -4107,7 +4107,7 @@ namespace TVRename
         }
 
         private static bool IsCopyMoveAction(Item i) =>
-            i is ActionCopyMoveRename a && a.Operation != ActionCopyMoveRename.Op.rename
+            (i is ActionCopyMoveRename a && a.Operation != ActionCopyMoveRename.Op.rename)
             || i is ActionMoveRenameDirectory;
 
         private static bool IsRenameAction(Item a) => a is ActionCopyMoveRename { Operation: ActionCopyMoveRename.Op.rename };

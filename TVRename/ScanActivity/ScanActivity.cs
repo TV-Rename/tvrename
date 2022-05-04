@@ -32,7 +32,7 @@ namespace TVRename
 
         public abstract bool Active();
 
-        protected abstract void DoCheck(SetProgressDelegate prog);
+        protected abstract void DoCheck(SetProgressDelegate progress);
 
         public void Check(SetProgressDelegate prog) =>
             Check(prog, 0, 100);

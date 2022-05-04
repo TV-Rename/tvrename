@@ -25,7 +25,7 @@ namespace TVRename
         [NotNull]
         protected override string CheckName() => "Asked Jackett for download links for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
             if (Settings.Unattended && TVSettings.Instance.SearchJackettManualScanOnly)
             {
@@ -74,7 +74,7 @@ namespace TVRename
             {
                 LOGGER.LogWebException($"Failed to access: {ex.Response.ResponseUri} got the following message:", ex);
             }
-            catch (HttpRequestException htec) when (htec.InnerException is WebException ex)
+            catch (HttpRequestException hre) when (hre.InnerException is WebException ex)
             {
                 LOGGER.LogWebException($"Failed to access: {ex.Response.ResponseUri} got the following message:", ex);
             }
@@ -141,75 +141,77 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string TextJackettUrl(MovieConfiguration actionMovieConfig)
+        private static string IndexerUrl()
         {
             string serverName = TVSettings.Instance.JackettServer;
             string serverPort = TVSettings.Instance.JackettPort;
             string allIndexer = TVSettings.Instance.JackettIndexer;
+            return $"http://{serverName}:{serverPort}{allIndexer}/";
+        }
+
+        [NotNull]
+        private static string TextJackettUrl(MovieConfiguration actionMovieConfig)
+        {
             string apikey = TVSettings.Instance.JackettAPIKey;
             const string FORMAT = "{ShowName}";
             string? text = WebUtility.UrlEncode(CustomMovieName.NameFor(actionMovieConfig, FORMAT));
             return
-                $"http://{serverName}:{serverPort}{allIndexer}/api?t=movie&q={text}&apikey={apikey}";
+                $"{IndexerUrl()}api?t=movie&q={text}&apikey={apikey}";
         }
 
         [NotNull]
         private static string NormalJackettUrl([NotNull] MovieConfiguration actionMovieConfig)
         {
-            string serverName = TVSettings.Instance.JackettServer;
-            string serverPort = TVSettings.Instance.JackettPort;
-            string allIndexer = TVSettings.Instance.JackettIndexer;
             string apikey = TVSettings.Instance.JackettAPIKey;
             return
-                $"http://{serverName}:{serverPort}{allIndexer}/api?t=movie&apikey={apikey}&tmdbid={actionMovieConfig.TmdbCode}";
+                $"{IndexerUrl()}api?t=movie&apikey={apikey}&tmdbid={actionMovieConfig.TmdbCode}";
         }
 
         [NotNull]
         private static string NormalJackettUrl([NotNull] ProcessedEpisode processedEpisode)
         {
-            string serverName = TVSettings.Instance.JackettServer;
-            string serverPort = TVSettings.Instance.JackettPort;
-            string allIndexer = TVSettings.Instance.JackettIndexer;
             string apikey = TVSettings.Instance.JackettAPIKey;
             string? simpleShowName = WebUtility.UrlEncode(processedEpisode.Show.ShowName.CompareName());
 
             return
-                $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={simpleShowName}&tvdbid={processedEpisode.Show.TvdbCode}&season={processedEpisode.AppropriateSeasonNumber}&ep={processedEpisode.AppropriateEpNum}&apikey={apikey}";
+                $"{IndexerUrl()}api?t=tvsearch&q={simpleShowName}&tvdbid={processedEpisode.Show.TvdbCode}&season={processedEpisode.AppropriateSeasonNumber}&ep={processedEpisode.AppropriateEpNum}&apikey={apikey}";
         }
 
         [NotNull]
         private static string TextJackettUrl([NotNull] ProcessedEpisode episode)
         {
-            string serverName = TVSettings.Instance.JackettServer;
-            string serverPort = TVSettings.Instance.JackettPort;
-            string allIndexer = TVSettings.Instance.JackettIndexer;
             string apikey = TVSettings.Instance.JackettAPIKey;
             const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
             string? text = WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false));
             return
-                $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={text}&apikey={apikey}";
+                $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
         }
 
         public static void SearchForEpisode([NotNull] ProcessedEpisode episode)
         {
-            string serverName = TVSettings.Instance.JackettServer;
-            string serverPort = TVSettings.Instance.JackettPort;
             const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
 
-            string url = $"http://{serverName}:{serverPort}/UI/Dashboard#search={WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false))}&tracker=&category=";
+            string url = $"{SearchServer()}UI/Dashboard#search={WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false))}&tracker=&category=";
 
             Helpers.OpenUrl(url);
         }
 
         public static void SearchForMovie(MovieConfiguration mov)
         {
-            string serverName = TVSettings.Instance.JackettServer;
-            string serverPort = TVSettings.Instance.JackettPort;
             const string FORMAT = "{ShowName} ({Year})";
 
-            string url = $"http://{serverName}:{serverPort}/UI/Dashboard#search={WebUtility.UrlEncode(CustomMovieName.NameFor(mov, FORMAT))}&tracker=&category=";
+            string url = $"{SearchServer()}UI/Dashboard#search={WebUtility.UrlEncode(CustomMovieName.NameFor(mov, FORMAT))}&tracker=&category=";
 
             Helpers.OpenUrl(url);
+        }
+
+        [NotNull]
+        private static string SearchServer()
+        {
+            string serverName = TVSettings.Instance.JackettServer;
+            string serverPort = TVSettings.Instance.JackettPort;
+
+            return $"http://{serverName}:{serverPort}/";
         }
     }
 }

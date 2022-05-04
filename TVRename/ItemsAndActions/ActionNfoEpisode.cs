@@ -80,6 +80,7 @@ namespace TVRename
             {
                 root.UpdateElement("originaltitle", show.ShowName, true);
                 root.UpdateElement("showtitle", show.ShowName, true);
+                root.UpdateElement("sorttitle", UI.GenerateShowUiName(show));
                 root.UpdateElement("season", episode.GetSeasonNumber(show.Order), true);
                 root.UpdateElement("episode", episode.GetEpisodeNumber(show.Order), true);
                 root.UpdateElement("mpaa", show.CachedShow?.ContentRating, true);

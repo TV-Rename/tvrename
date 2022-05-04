@@ -16,7 +16,7 @@ namespace TVRename
         [NotNull]
         protected override string CheckName() => "Looked in the library for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
             ItemList newList = new();
             ItemList toRemove = new();

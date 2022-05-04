@@ -23,7 +23,7 @@ namespace TVRename
         [NotNull]
         protected override string CheckName() => "Looked in the Search Folders for any new series/movies that need to be added to the library";
 
-        protected override void DoCheck(SetProgressDelegate prog)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
             //for each directory in settings directory
             //for each file in directory

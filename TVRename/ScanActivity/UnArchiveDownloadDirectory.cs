@@ -15,7 +15,7 @@ namespace TVRename
         [NotNull]
         protected override string CheckName() => "Unarchived files in download directory";
 
-        protected override void DoCheck(SetProgressDelegate prog)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
             int totalDownloadFolders = TVSettings.Instance.DownloadFolders.Count;
             int c = 0;

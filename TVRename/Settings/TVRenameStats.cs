@@ -20,7 +20,7 @@ namespace TVRename
 {
     [Serializable]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [XmlRootAttribute("Statistics", Namespace = "")]
+    [XmlRoot("Statistics", Namespace = "")]
     // ReSharper disable once InconsistentNaming
     public class TVRenameStats
     {
@@ -35,13 +35,13 @@ namespace TVRename
         public int TorrentsMatched = 0;
 
         // The following aren't saved, but are calculated when we do a scan
-        [XmlIgnoreAttribute] public int NsNumberOfEpisodes = -1; // -1 = unknown
+        [XmlIgnore] public int NsNumberOfEpisodes = -1; // -1 = unknown
 
-        [XmlIgnoreAttribute] public int NsNumberOfEpisodesExpected = 0;
-        [XmlIgnoreAttribute] public int NsNumberOfSeasons = 0;
-        [XmlIgnoreAttribute] public int NsNumberOfShows = 0;
-        [XmlIgnoreAttribute] public int NsNumberOfMovies = 0;
-        [XmlIgnoreAttribute] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        [XmlIgnore] public int NsNumberOfEpisodesExpected = 0;
+        [XmlIgnore] public int NsNumberOfSeasons = 0;
+        [XmlIgnore] public int NsNumberOfShows = 0;
+        [XmlIgnore] public int NsNumberOfMovies = 0;
+        [XmlIgnore] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVRenameStats? Load()
         {

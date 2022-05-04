@@ -15,7 +15,7 @@ namespace TVRename
         [NotNull]
         protected override string CheckName() => $"Looked in {source.Name()} for the missing files to see if they are being downloaded";
 
-        protected override void DoCheck(SetProgressDelegate prog)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
             List<TorrentEntry>? downloading = source.GetTorrentDownloads();
             if (downloading is null)

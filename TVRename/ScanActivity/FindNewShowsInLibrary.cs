@@ -22,10 +22,10 @@ namespace TVRename
         [NotNull]
         protected override string CheckName() => "Looked in the library for any new shows to be added (bulk add)";
 
-        protected override void DoCheck([NotNull] SetProgressDelegate prog)
+        protected override void DoCheck([NotNull] SetProgressDelegate progress)
         {
             BulkAddSeriesManager bam = new(MDoc);
-            bam.CheckFolders(Settings.Token, prog, false, !Settings.Unattended);
+            bam.CheckFolders(Settings.Token, progress, false, !Settings.Unattended);
             AskUserAboutShows(bam);
 
             if (!bam.AddItems.Any(s => s.CodeKnown))

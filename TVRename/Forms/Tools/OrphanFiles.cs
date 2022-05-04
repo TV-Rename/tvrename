@@ -51,13 +51,7 @@ namespace TVRename.Forms.Tools
 
         private void OlvFileIssues_MouseClick(object sender, [NotNull] MouseEventArgs e)
         {
-            if (e.Button != MouseButtons.Right)
-            {
-                return;
-            }
-
-            Point pt = ((ListView)sender).PointToScreen(new Point(e.X, e.Y));
-            if (olvFileIssues.FocusedObject is not FileIssue iss)
+            if (e.Button != MouseButtons.Right || olvFileIssues.FocusedObject is not FileIssue iss)
             {
                 return;
             }
@@ -68,6 +62,7 @@ namespace TVRename.Forms.Tools
             AddRcMenuItem("Open Folder", (_, _) => Helpers.OpenFolderSelectFile(iss.File.FullName));
             AddRcMenuItem("Episode Guide", (_, _) => MainWindow.GotoEpguideFor(iss.Show, true));
 
+            Point pt = ((ListView)sender).PointToScreen(new Point(e.X, e.Y));
             showRightClickMenu.Show(pt);
         }
 
@@ -113,40 +108,16 @@ namespace TVRename.Forms.Tools
 
                 Dictionary<int, SafeList<string>> folders = show.AllFolderLocations(true);
 
-                foreach (KeyValuePair<int, SafeList<string>> showfolders in folders)
+                foreach (string showFolder in folders
+                             .SelectMany(x=>x.Value)
+                             .Where(showFolder => !doneFolders.Contains(showFolder)))
                 {
-                    foreach (string showFolder in showfolders.Value)
+                    doneFolders.Add(showFolder);
+                    foreach (FileInfo file in new DirectoryInfo(showFolder)
+                                 .GetFiles()
+                                 .Where(file => file.IsMovieFile()))
                     {
-                        if (doneFolders.Contains(showFolder))
-                        {
-                            continue;
-                        }
-                        doneFolders.Add(showFolder);
-                        foreach (FileInfo file in new DirectoryInfo(showFolder).GetFiles()
-                            .Where(file => file.IsMovieFile()))
-                        {
-                            FinderHelper.FindSeasEp(file, out int seasonNumber, out int episodeNumber, out int _, show);
-
-                            if (seasonNumber < 0)
-                            {
-                                issues.Add(new FileIssue(show, file, "File does not match a Filename Processor"));
-                            }
-                            else if (folders.ContainsKey(seasonNumber) && !folders[seasonNumber].Contains(showFolder))
-                            {
-                                issues.Add(new FileIssue(show, file, "File is in the wrong series folder", seasonNumber, episodeNumber));
-                            }
-                            else
-                            {
-                                if (!show.SeasonEpisodes.ContainsKey(seasonNumber))
-                                {
-                                    issues.Add(new FileIssue(show, file, "Season not found", seasonNumber));
-                                }
-                                else if (!HasEpisode(show.SeasonEpisodes[seasonNumber], episodeNumber))
-                                {
-                                    issues.Add(new FileIssue(show, file, "Episode not found", seasonNumber, episodeNumber));
-                                }
-                            }
-                        }
+                        ProcessFile(file, show, folders, showFolder);
                     }
                 }
             }
@@ -154,6 +125,32 @@ namespace TVRename.Forms.Tools
             foreach (FileIssue i in issues)
             {
                 Logger.Warn($"Finding old eps for {i.Show.ShowName} S{i.SeasonNumber}E{i.EpisodeNumber} {i.File.Name} in {i.File.DirectoryName} ");
+            }
+        }
+
+        private void ProcessFile(FileInfo file, ShowConfiguration show, IReadOnlyDictionary<int, SafeList<string>> folders, string showFolder)
+        {
+            FinderHelper.FindSeasEp(file, out int seasonNumber, out int episodeNumber, out int _, show);
+
+            if (seasonNumber < 0)
+            {
+                issues.Add(new FileIssue(show, file, "File does not match a Filename Processor"));
+            }
+            else if (folders.ContainsKey(seasonNumber) && !folders[seasonNumber].Contains(showFolder))
+            {
+                issues.Add(new FileIssue(show, file, "File is in the wrong series folder", seasonNumber,
+                    episodeNumber));
+            }
+            else
+            {
+                if (!show.SeasonEpisodes.ContainsKey(seasonNumber))
+                {
+                    issues.Add(new FileIssue(show, file, "Season not found", seasonNumber));
+                }
+                else if (!HasEpisode(show.SeasonEpisodes[seasonNumber], episodeNumber))
+                {
+                    issues.Add(new FileIssue(show, file, "Episode not found", seasonNumber, episodeNumber));
+                }
             }
         }
 
