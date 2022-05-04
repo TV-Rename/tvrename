@@ -15,7 +15,7 @@ namespace TVRename
         [NotNull]
         public static Task ParallelForEachAsync<T>([NotNull] this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP = 4)
         {
-            async Task AwaitPartition(IEnumerator<T> partition)
+            async Task AwaitPartition([NotNull] IEnumerator<T> partition)
             {
                 using (partition)
                 {

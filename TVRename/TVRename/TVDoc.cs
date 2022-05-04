@@ -1621,12 +1621,13 @@ namespace TVRename
 
             foreach (MovieConfiguration? mov in FilmLibrary.Movies)
             {
-                if (mov.CachedMovie?.GetAliases() is null)
+                IEnumerable<string> enumerable = mov.CachedMovie?.GetAliases();
+                if (enumerable is null)
                 {
                     continue;
                 }
 
-                foreach (string? al in mov.CachedMovie?.GetAliases())
+                foreach (string? al in enumerable)
                 {
                     Logger.Warn($"::{mov.ShowName},{al}");
                 }

@@ -170,7 +170,7 @@ namespace TVRename
 
             if (selectedShow.CachedData != null)
             {
-                foreach (string aliasName in selectedShow.CachedData?.GetAliases())
+                foreach (string aliasName in selectedShow.CachedData.GetAliases())
                 {
                     lbSourceAliases.Items.Add(aliasName);
                 }

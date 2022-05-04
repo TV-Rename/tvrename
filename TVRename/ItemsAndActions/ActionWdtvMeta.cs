@@ -164,10 +164,10 @@ namespace TVRename
 
                         writer.WriteElement("thumbnail", Episode?.ThumbnailUrl());
                         writer.WriteElement("banner",
-                            TheTVDB.API.GetImageURL(Episode.AppropriateProcessedSeason.GetWideBannerPath()));
+                            TheTVDB.API.GetImageURL(Episode?.AppropriateProcessedSeason.GetWideBannerPath()));
 
                         writer.WriteElement("backdrop",
-                            TheTVDB.API.GetImageURL(Episode.TheCachedSeries.GetSeriesFanartPath()));
+                            TheTVDB.API.GetImageURL(Episode?.TheCachedSeries.GetSeriesFanartPath()));
 
                         writer.WriteEndElement(); // details
                     }

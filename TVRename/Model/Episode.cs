@@ -55,6 +55,7 @@ namespace TVRename
         public DateTime? AirStamp;
         public DateTime? AirTime;
 
+        // ReSharper disable once FunctionComplexityOverflow
         protected Episode([NotNull] Episode o)
         {
             EpisodeId = o.EpisodeId;

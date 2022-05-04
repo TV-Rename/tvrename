@@ -36,7 +36,7 @@ namespace TVRename
 
         public bool Filter([NotNull] MovieConfiguration show)
         {
-            bool IsNetworkOk(MovieConfiguration showItem)
+            bool IsNetworkOk([NotNull] MovieConfiguration showItem)
             {
                 List<string>? seriesInfoNetwork = showItem.CachedMovie?.Networks.ToList();
                 if (seriesInfoNetwork is null || !seriesInfoNetwork.Any())
@@ -49,7 +49,7 @@ namespace TVRename
                     : !seriesInfoNetwork.Contains(ShowNetwork);
             }
 
-            bool IsRatingOk(MovieConfiguration showItem)
+            bool IsRatingOk([NotNull] MovieConfiguration showItem)
             {
                 string? seriesInfoContentRating = showItem.CachedMovie?.ContentRating;
                 if (seriesInfoContentRating is null)
@@ -62,13 +62,13 @@ namespace TVRename
                     : !seriesInfoContentRating.Equals(ShowRating);
             }
 
-            bool IsStatusOk(MovieConfiguration showItem)
+            bool IsStatusOk([NotNull] MovieConfiguration showItem)
             {
                 return ShowStatusInclude
                     ? showItem.CachedMovie?.Status?.Equals(ShowStatus) ?? true
                     : !showItem.CachedMovie?.Status?.Equals(ShowStatus) ?? true;
             }
-            bool IsYearOk(MovieConfiguration showItem)
+            bool IsYearOk([NotNull] MovieConfiguration showItem)
             {
                 return ShowYearInclude
                     ? showItem.CachedMovie?.Year?.ToString().Equals(ShowYear) ?? true

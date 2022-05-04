@@ -33,7 +33,7 @@ namespace TVRename
 
         public bool Filter([NotNull] ShowConfiguration show)
         {
-            bool IsNetworkOk(ShowConfiguration showItem)
+            bool IsNetworkOk([NotNull] ShowConfiguration showItem)
             {
                 List<string>? seriesInfoNetwork = showItem.CachedShow?.Networks.ToList();
                 if (seriesInfoNetwork is null || !seriesInfoNetwork.HasAny())
@@ -46,7 +46,7 @@ namespace TVRename
                     : !seriesInfoNetwork.Contains(ShowNetwork);
             }
 
-            bool IsRatingOk(ShowConfiguration showItem)
+            bool IsRatingOk([NotNull] ShowConfiguration showItem)
             {
                 string? seriesInfoContentRating = showItem.CachedShow?.ContentRating;
                 if (seriesInfoContentRating is null)
@@ -59,7 +59,7 @@ namespace TVRename
                     : !seriesInfoContentRating.Equals(ShowRating);
             }
 
-            bool IsStatusOk(ShowConfiguration showItem)
+            bool IsStatusOk([NotNull] ShowConfiguration showItem)
             {
                 string? seriesInfoStatus = showItem.CachedShow?.Status;
                 if (seriesInfoStatus is null)

@@ -602,6 +602,7 @@ namespace TVRename
             AppendMovie(sb, si, ser, backgroundColour, includeDirectoryLinks,dfc);
         }
 
+        // ReSharper disable once FunctionComplexityOverflow
         private static void AppendMovie([NotNull] this StringBuilder sb, [CanBeNull] MovieConfiguration si, [NotNull] CachedMovieInfo ser, Color backgroundColour, bool includeDirectoryLinks, DirFilesCache dfc)
         {
             string poster = CreatePosterHtml(ser);

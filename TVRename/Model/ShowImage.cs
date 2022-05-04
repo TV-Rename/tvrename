@@ -72,7 +72,7 @@ namespace TVRename
 
             return legacy;
 
-            static ImageSubject Convert2(string v)
+            static ImageSubject Convert2([NotNull] string v)
             {
                 return v switch
                 {
@@ -85,7 +85,7 @@ namespace TVRename
                 };
             }
 
-            static ImageType Convert(string v)
+            static ImageType Convert([NotNull] string v)
             {
                 return v switch
                 {

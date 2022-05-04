@@ -136,30 +136,35 @@ namespace TVRename
             {
                 if (c < prioString.Data.Length && prioString.Data[c] != BTPrio.SKIP)
                 {
-                    try
-                    {
-                        string saveTo = FileHelper
-                            .FileInFolder(defaultFolder, TVSettings.Instance.FilenameFriendly(s)).Name;
-
-                        if (hasTargets)
-                        {
-                            saveTo = GetTargetSaveLocation(targetList,c) ?? saveTo;
-                        }
-
-                        bool completed = ((BTInteger)d2.GetItem("order"))?.Value == -1;
-                        int percent = completed ? 100 :
-                            PercentBitsOn((BTString)d2.GetItem("have"));
-                        TorrentEntry te = new(torrentFile, saveTo, percent, completed, torrentFile);
-                        r.Add(te);
-                    }
-                    catch (System.IO.PathTooLongException ptle)
-                    {
-                        //this is not the file we are looking for
-                        Logger.Debug(ptle);
-                    }
+                    Process(r, d2, torrentFile, defaultFolder, hasTargets, targetList, s, c);
                 }
 
                 c++;
+            }
+        }
+
+        private static void Process(List<TorrentEntry> r, BTDictionary d2, string torrentFile, string defaultFolder, bool hasTargets,
+            BTList targetList, string s, int c)
+        {
+            try
+            {
+                string saveTo = FileHelper
+                    .FileInFolder(defaultFolder, TVSettings.Instance.FilenameFriendly(s)).Name;
+
+                if (hasTargets)
+                {
+                    saveTo = GetTargetSaveLocation(targetList, c) ?? saveTo;
+                }
+
+                bool completed = ((BTInteger)d2.GetItem("order"))?.Value == -1;
+                int percent = completed ? 100 : PercentBitsOn((BTString)d2.GetItem("have"));
+                TorrentEntry te = new(torrentFile, saveTo, percent, completed, torrentFile);
+                r.Add(te);
+            }
+            catch (System.IO.PathTooLongException ptle)
+            {
+                //this is not the file we are looking for
+                Logger.Debug(ptle);
             }
         }
 
