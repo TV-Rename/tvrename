@@ -44,7 +44,7 @@ namespace TVRename
             }
 
             IEnumerable<FileInfo> possibleShowNames = GetPossibleFiles();
-            List<MediaConfiguration> addedShows = FinderHelper.FindMedia(possibleShowNames, MDoc, Settings.Owner);
+            IEnumerable<MediaConfiguration> addedShows = FinderHelper.FindMedia(possibleShowNames, MDoc, Settings.Owner);
             List<MediaConfiguration> addedShowsUnique = RemoveExistingAndDups(addedShows);
 
             List<ShowConfiguration> addedTvShows = addedShowsUnique.OfType<ShowConfiguration>().Distinct().ToList();

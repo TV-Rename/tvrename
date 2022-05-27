@@ -668,14 +668,8 @@ namespace TVRename
             return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));
         }
 
-        public static bool IgnoreHint(string hint)
-        {
-            return TVSettings.Instance.AutoAddMovieTermsArray.Any(term =>
-                hint.Contains(term, StringComparison.OrdinalIgnoreCase));
-        }
-
         [NotNull]
-        public static List<MediaConfiguration> FindMedia([NotNull] IEnumerable<FileInfo> possibleShows, TVDoc doc, IDialogParent owner)
+        public static IEnumerable<MediaConfiguration> FindMedia([NotNull] IEnumerable<FileInfo> possibleShows, TVDoc doc, IDialogParent owner)
         {
             List<MediaConfiguration> addedShows = new();
 
@@ -747,7 +741,7 @@ namespace TVRename
                     continue;
                 }
 
-                bool assumeMovie = IgnoreHint(hint) || hint.ContainsAnyCharactersFrom("0123456789");
+                bool assumeMovie = GuessType(refinedHint,hint,file,doc.TvLibrary.SeasonWords()) != MediaConfiguration.MediaType.tv;
 
                 Logger.Info($"Assuming {file.Name} ({refinedHint}) is a " + (assumeMovie
                     ? "movie."
@@ -839,6 +833,35 @@ namespace TVRename
             }
 
             return addedShows;
+        }
+
+        private static MediaConfiguration.MediaType GuessType(string refinedHint, string hint, FileInfo file,
+            IEnumerable<string> seasonWords)
+        {
+            //assuming we don't have a match so far, so we'll make a guess
+            if (hint != RemoveSe(hint))
+            {
+                //we have removed some text from the hint from the TV finders, so assume its a TV show
+                return MediaConfiguration.MediaType.tv;
+            }
+
+            if (seasonWords.Any(word => file.FullName.Contains(word)))
+            {
+                return MediaConfiguration.MediaType.tv;
+            }
+
+            if (TVSettings.Instance.AutoAddMovieTermsArray.Any(term =>
+                    hint.Contains(term, StringComparison.OrdinalIgnoreCase)))
+            {
+                return MediaConfiguration.MediaType.movie;
+            }
+
+            if (hint.ContainsAnyCharactersFrom("0123456789"))
+            {
+                return MediaConfiguration.MediaType.movie;
+            }
+
+            return MediaConfiguration.MediaType.both;
         }
 
         public static ShowConfiguration? FindBestMatchingShow([NotNull] FileInfo fi, [NotNull] IEnumerable<ShowConfiguration> shows) => FindBestMatchingShow(fi.Name, shows);

@@ -161,7 +161,7 @@ namespace TVRename
 
         public ShowConfiguration? GetShowItem(int id, TVDoc.ProviderType provider)
         {
-            if (id==0 || id==-1)
+            if (id is 0 or -1)
             {
                 return null;
             }
