@@ -4631,34 +4631,33 @@ namespace TVRename
             {
                 Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
             }
-            e.Result = html;
+            e.Result = new HtmlUpdateSettings{Argument =s,Html = html,  Web = chrInformation};
         }
 
-        private void UpdateWebInformation(object sender, [NotNull] RunWorkerCompletedEventArgs e)
+        private void UpdateWeb(object sender, [NotNull] RunWorkerCompletedEventArgs e)
         {
-            string html = e.Result as string;
-            if (html.HasValue())
+            if (e.Result is HtmlUpdateSettings result)
             {
-                SetHtmlBody(chrInformation, html!);
+                if (UiHasContextFor(result.Argument))
+                {
+                    SetHtmlBody(result.Web, result.Html);
+                }
             }
         }
 
-        private void UpdateMovieInformation(object sender, [NotNull] RunWorkerCompletedEventArgs e)
+        private bool UiHasContextFor(object context)
         {
-            string html = e.Result as string;
-            if (html.HasValue())
+            return context switch
             {
-                SetHtmlBody(chrMovieInformation, html!);
-            }
-        }
-
-        private void UpdateWebSummary(object sender, [NotNull] RunWorkerCompletedEventArgs e)
-        {
-            string html = e.Result as string;
-            if (html.HasValue())
-            {
-                SetHtmlBody(chrSummary, html!);
-            }
+                //Check to see whether context is still valid
+                MovieConfiguration when tabControl1.SelectedTab != tbMyMovies => false,
+                MovieConfiguration mc => TreeNodeToMovieItem(movieTree.SelectedNode) == mc,
+                ShowConfiguration when tabControl1.SelectedTab != tbMyShows => false,
+                ShowConfiguration sc => TreeNodeToShowItem(MyShowTree.SelectedNode) == sc,
+                ProcessedSeason when tabControl1.SelectedTab != tbMyShows => false,
+                ProcessedSeason season => TreeNodeToSeason(MyShowTree.SelectedNode) == season,
+                _ => false
+            };
         }
 
         private void BwShowHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
@@ -4675,7 +4674,14 @@ namespace TVRename
             {
                 Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
             }
-            e.Result = html;
+            e.Result = new HtmlUpdateSettings{Argument =si,Html = html,  Web = chrInformation};
+        }
+
+        public class HtmlUpdateSettings
+        {
+            public object Argument;
+            public string Html;
+            public ChromiumWebBrowser Web;
         }
 
         private void BwUpdateSchedule_DoWork(object sender, [NotNull] DoWorkEventArgs e)
@@ -4806,6 +4812,8 @@ namespace TVRename
             olvAction.CustomSorter = delegate { olvAction.ListViewItemSorter = new ListViewActionItemSorter(); };
             olvAction.Sort(olvType, SortOrder.Ascending);
             olvAction.BuildGroups(olvType, SortOrder.Ascending,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
+            //olvAction.Sort();
+            //olvAction.BuildGroups(olvType,SortOrder.Ascending);//(olvType, SortOrder.Ascending,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
             olvAction.EndUpdate();
         }
 
@@ -4866,7 +4874,7 @@ namespace TVRename
             {
                 Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
             }
-            e.Result = html;
+            e.Result = new HtmlUpdateSettings{Argument =si,Html = html,  Web = chrSummary};
         }
 
         private void BwSeasonSummaryHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
@@ -4883,7 +4891,7 @@ namespace TVRename
             {
                 Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
             }
-            e.Result = html;
+            e.Result = new HtmlUpdateSettings{Argument =s,Html = html,  Web = chrSummary};
         }
 
         private void ToolStripButton1_Click(object sender, EventArgs e)
@@ -5069,7 +5077,7 @@ namespace TVRename
             {
                 Logger.Error(exception, $"Error Occurred Creating Movie Summary for {si?.ShowName}");
             }
-            e.Result = html;
+            e.Result = new HtmlUpdateSettings(){Argument = si,Html = html,Web=chrMovieInformation};
         }
 
         private void movieCollectionSummaryLogToolStripMenuItem_Click(object sender, EventArgs e)
