@@ -77,7 +77,7 @@ namespace TVRename
             }
             CheckForBroswerDependencies(false);
 
-            Cef.EnableHighDPISupport();
+            //Cef.EnableHighDPISupport(); TODO - Reintroduce
         }
 
         public void Shutdown()

@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Windows.Forms;
 using JetBrains.Annotations;
+using Microsoft.Web.WebView2.Core;
 
 namespace TVRename.Forms.Utilities
 {
@@ -13,6 +14,11 @@ namespace TVRename.Forms.Utilities
         {
             this.content = content;
             InitializeComponent();
+
+            CoreWebView2Environment webView2Environment = 
+                 CoreWebView2Environment.CreateAsync(null,
+                    PathManager.CefCachePath).Result;
+            webEdge.EnsureCoreWebView2Async(webView2Environment).RunSynchronously();
         }
 
         private async void BrowserTest_Load(object sender, EventArgs e)
