@@ -861,6 +861,7 @@ namespace TVRename
                 return MediaConfiguration.MediaType.movie;
             }
 
+            Logger.Warn($"Could not identify type of media for {file.Name}, based on '{hint}' and '{refinedHint}'");
             return MediaConfiguration.MediaType.both;
         }
 
