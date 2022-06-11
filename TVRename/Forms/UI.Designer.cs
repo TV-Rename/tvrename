@@ -873,10 +873,8 @@ namespace TVRename
             //
             // tbnAddMovie
             //
-            this.tbnAddMovie.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbnAddMovie.Image = ((System.Drawing.Image)(resources.GetObject("tbnAddMovie.Image")));
             this.tbnAddMovie.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbnAddMovie.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbnAddMovie.Name = "tbnAddMovie";
             this.tbnAddMovie.Size = new System.Drawing.Size(68, 36);
             this.tbnAddMovie.Text = "&Add";
@@ -884,10 +882,8 @@ namespace TVRename
             //
             // btnEditMovie
             //
-            this.btnEditMovie.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEditMovie.Image = ((System.Drawing.Image)(resources.GetObject("btnEditMovie.Image")));
             this.btnEditMovie.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnEditMovie.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnEditMovie.Name = "btnEditMovie";
             this.btnEditMovie.Size = new System.Drawing.Size(66, 36);
             this.btnEditMovie.Text = "&Edit";
@@ -895,10 +891,8 @@ namespace TVRename
             //
             // btnMovieDelete
             //
-            this.btnMovieDelete.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMovieDelete.Image = ((System.Drawing.Image)(resources.GetObject("btnMovieDelete.Image")));
             this.btnMovieDelete.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnMovieDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMovieDelete.Name = "btnMovieDelete";
             this.btnMovieDelete.Size = new System.Drawing.Size(81, 36);
             this.btnMovieDelete.Text = "&Delete";
@@ -911,10 +905,8 @@ namespace TVRename
             //
             // btnMovieRefresh
             //
-            this.btnMovieRefresh.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMovieRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnMovieRefresh.Image")));
             this.btnMovieRefresh.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnMovieRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMovieRefresh.Name = "btnMovieRefresh";
             this.btnMovieRefresh.Size = new System.Drawing.Size(88, 36);
             this.btnMovieRefresh.Text = "&Refresh";
@@ -922,10 +914,8 @@ namespace TVRename
             //
             // tsbScanMovies
             //
-            this.tsbScanMovies.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.tsbScanMovies.Image = ((System.Drawing.Image)(resources.GetObject("tsbScanMovies.Image")));
             this.tsbScanMovies.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tsbScanMovies.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbScanMovies.Name = "tsbScanMovies";
             this.tsbScanMovies.Size = new System.Drawing.Size(117, 36);
             this.tsbScanMovies.Text = "Scan Movies";
@@ -934,10 +924,8 @@ namespace TVRename
             // btnMovieFilter
             //
             this.btnMovieFilter.BackColor = System.Drawing.Color.Transparent;
-            this.btnMovieFilter.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMovieFilter.Image = ((System.Drawing.Image)(resources.GetObject("btnMovieFilter.Image")));
             this.btnMovieFilter.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnMovieFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMovieFilter.Name = "btnMovieFilter";
             this.btnMovieFilter.Size = new System.Drawing.Size(72, 36);
             this.btnMovieFilter.Text = "&Filter";
@@ -952,7 +940,6 @@ namespace TVRename
             //
             this.tsbMyMoviesContextMenu.Image = ((System.Drawing.Image)(resources.GetObject("tsbMyMoviesContextMenu.Image")));
             this.tsbMyMoviesContextMenu.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tsbMyMoviesContextMenu.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbMyMoviesContextMenu.Name = "tsbMyMoviesContextMenu";
             this.tsbMyMoviesContextMenu.Size = new System.Drawing.Size(119, 36);
             this.tsbMyMoviesContextMenu.Text = "Context Menu";
@@ -1117,10 +1104,8 @@ namespace TVRename
             //
             // btnAddTVShow
             //
-            this.btnAddTVShow.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAddTVShow.Image = ((System.Drawing.Image)(resources.GetObject("btnAddTVShow.Image")));
             this.btnAddTVShow.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnAddTVShow.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAddTVShow.Name = "btnAddTVShow";
             this.btnAddTVShow.Size = new System.Drawing.Size(68, 36);
             this.btnAddTVShow.Text = "&Add";
@@ -1128,10 +1113,8 @@ namespace TVRename
             //
             // btnEditShow
             //
-            this.btnEditShow.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEditShow.Image = ((System.Drawing.Image)(resources.GetObject("btnEditShow.Image")));
             this.btnEditShow.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnEditShow.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnEditShow.Name = "btnEditShow";
             this.btnEditShow.Size = new System.Drawing.Size(66, 36);
             this.btnEditShow.Text = "&Edit";
@@ -1139,10 +1122,8 @@ namespace TVRename
             //
             // btnRemoveShow
             //
-            this.btnRemoveShow.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRemoveShow.Image = ((System.Drawing.Image)(resources.GetObject("btnRemoveShow.Image")));
             this.btnRemoveShow.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnRemoveShow.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRemoveShow.Name = "btnRemoveShow";
             this.btnRemoveShow.Size = new System.Drawing.Size(81, 36);
             this.btnRemoveShow.Text = "&Delete";
@@ -1154,7 +1135,6 @@ namespace TVRename
             this.btnHideHTMLPanel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnHideHTMLPanel.Image = ((System.Drawing.Image)(resources.GetObject("btnHideHTMLPanel.Image")));
             this.btnHideHTMLPanel.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnHideHTMLPanel.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnHideHTMLPanel.Name = "btnHideHTMLPanel";
             this.btnHideHTMLPanel.Size = new System.Drawing.Size(23, 36);
             this.btnHideHTMLPanel.Text = "Hide Details";
@@ -1166,7 +1146,6 @@ namespace TVRename
             this.btnMyShowsCollapse.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnMyShowsCollapse.Image = ((System.Drawing.Image)(resources.GetObject("btnMyShowsCollapse.Image")));
             this.btnMyShowsCollapse.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnMyShowsCollapse.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMyShowsCollapse.Name = "btnMyShowsCollapse";
             this.btnMyShowsCollapse.Size = new System.Drawing.Size(23, 36);
             this.btnMyShowsCollapse.Text = "Collapse";
@@ -1179,10 +1158,8 @@ namespace TVRename
             //
             // btnMyShowsRefresh
             //
-            this.btnMyShowsRefresh.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMyShowsRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnMyShowsRefresh.Image")));
             this.btnMyShowsRefresh.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnMyShowsRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMyShowsRefresh.Name = "btnMyShowsRefresh";
             this.btnMyShowsRefresh.Size = new System.Drawing.Size(88, 36);
             this.btnMyShowsRefresh.Text = "&Refresh";
@@ -1190,10 +1167,8 @@ namespace TVRename
             //
             // tsbScanTV
             //
-            this.tsbScanTV.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.tsbScanTV.Image = ((System.Drawing.Image)(resources.GetObject("tsbScanTV.Image")));
             this.tsbScanTV.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tsbScanTV.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbScanTV.Name = "tsbScanTV";
             this.tsbScanTV.Size = new System.Drawing.Size(90, 36);
             this.tsbScanTV.Text = "Scan TV";
@@ -1201,10 +1176,8 @@ namespace TVRename
             //
             // btnFilterMyShows
             //
-            this.btnFilterMyShows.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFilterMyShows.Image = ((System.Drawing.Image)(resources.GetObject("btnFilterMyShows.Image")));
             this.btnFilterMyShows.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnFilterMyShows.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnFilterMyShows.Name = "btnFilterMyShows";
             this.btnFilterMyShows.Size = new System.Drawing.Size(72, 36);
             this.btnFilterMyShows.Text = "&Filter";
@@ -1219,7 +1192,6 @@ namespace TVRename
             //
             this.tsbMyShowsContextMenu.Image = ((System.Drawing.Image)(resources.GetObject("tsbMyShowsContextMenu.Image")));
             this.tsbMyShowsContextMenu.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tsbMyShowsContextMenu.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbMyShowsContextMenu.Name = "tsbMyShowsContextMenu";
             this.tsbMyShowsContextMenu.Size = new System.Drawing.Size(119, 36);
             this.tsbMyShowsContextMenu.Text = "Context Menu";
@@ -1442,10 +1414,8 @@ namespace TVRename
             this.fullToolStripMenuItem,
             this.recentToolStripMenuItem,
             this.quickToolStripMenuItem});
-            this.btnScan.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnScan.Image = ((System.Drawing.Image)(resources.GetObject("btnScan.Image")));
             this.btnScan.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnScan.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnScan.Name = "btnScan";
             this.btnScan.Size = new System.Drawing.Size(89, 42);
             this.btnScan.Text = "Scan";
@@ -1453,7 +1423,6 @@ namespace TVRename
             //
             // fullToolStripMenuItem
             //
-            this.fullToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fullToolStripMenuItem.Name = "fullToolStripMenuItem";
             this.fullToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.fullToolStripMenuItem.Text = "&Full";
@@ -1462,7 +1431,6 @@ namespace TVRename
             //
             // recentToolStripMenuItem
             //
-            this.recentToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
             this.recentToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.recentToolStripMenuItem.Text = "Recent";
@@ -1471,7 +1439,6 @@ namespace TVRename
             //
             // quickToolStripMenuItem
             //
-            this.quickToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.quickToolStripMenuItem.Name = "quickToolStripMenuItem";
             this.quickToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.quickToolStripMenuItem.Text = "Quick";
@@ -1484,10 +1451,8 @@ namespace TVRename
             this.tbFullScan.AccessibleDescription = "Full Scan Button - Starts a full scan";
             this.tbFullScan.AccessibleName = "Full Scan";
             this.tbFullScan.AccessibleRole = System.Windows.Forms.AccessibleRole.ButtonMenu;
-            this.tbFullScan.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbFullScan.Image = ((System.Drawing.Image)(resources.GetObject("tbFullScan.Image")));
             this.tbFullScan.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbFullScan.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbFullScan.Name = "tbFullScan";
             this.tbFullScan.Padding = new System.Windows.Forms.Padding(3);
             this.tbFullScan.Size = new System.Drawing.Size(112, 42);
@@ -1496,10 +1461,8 @@ namespace TVRename
             //
             // tpRecentScan
             //
-            this.tpRecentScan.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tpRecentScan.Image = ((System.Drawing.Image)(resources.GetObject("tpRecentScan.Image")));
             this.tpRecentScan.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tpRecentScan.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tpRecentScan.Name = "tpRecentScan";
             this.tpRecentScan.Size = new System.Drawing.Size(127, 42);
             this.tpRecentScan.Text = "&Recent Scan";
@@ -1507,10 +1470,8 @@ namespace TVRename
             //
             // tbQuickScan
             //
-            this.tbQuickScan.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbQuickScan.Image = ((System.Drawing.Image)(resources.GetObject("tbQuickScan.Image")));
             this.tbQuickScan.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbQuickScan.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbQuickScan.Name = "tbQuickScan";
             this.tbQuickScan.Size = new System.Drawing.Size(120, 42);
             this.tbQuickScan.Text = "&Quick Scan";
@@ -1523,10 +1484,8 @@ namespace TVRename
             //
             // btnActionBTSearch
             //
-            this.btnActionBTSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnActionBTSearch.Image = ((System.Drawing.Image)(resources.GetObject("btnActionBTSearch.Image")));
             this.btnActionBTSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnActionBTSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnActionBTSearch.Name = "btnActionBTSearch";
             this.btnActionBTSearch.Size = new System.Drawing.Size(123, 42);
             this.btnActionBTSearch.Text = "BT Search";
@@ -1536,10 +1495,8 @@ namespace TVRename
             //
             // tbActionJackettSearch
             //
-            this.tbActionJackettSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbActionJackettSearch.Image = ((System.Drawing.Image)(resources.GetObject("tbActionJackettSearch.Image")));
             this.tbActionJackettSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbActionJackettSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbActionJackettSearch.Name = "tbActionJackettSearch";
             this.tbActionJackettSearch.Size = new System.Drawing.Size(142, 42);
             this.tbActionJackettSearch.Text = "Jackett Search";
@@ -1673,10 +1630,8 @@ namespace TVRename
             //
             // btnActionAction
             //
-            this.btnActionAction.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnActionAction.Image = ((System.Drawing.Image)(resources.GetObject("btnActionAction.Image")));
             this.btnActionAction.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnActionAction.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnActionAction.Name = "btnActionAction";
             this.btnActionAction.Size = new System.Drawing.Size(127, 36);
             this.btnActionAction.Text = "&Do Checked";
@@ -1687,7 +1642,6 @@ namespace TVRename
             this.btnRevertView.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.btnRevertView.Image = ((System.Drawing.Image)(resources.GetObject("btnRevertView.Image")));
             this.btnRevertView.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnRevertView.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRevertView.Name = "btnRevertView";
             this.btnRevertView.Size = new System.Drawing.Size(88, 20);
             this.btnRevertView.Text = "Revert View";
@@ -1698,7 +1652,6 @@ namespace TVRename
             this.btnPreferences.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.btnPreferences.Image = ((System.Drawing.Image)(resources.GetObject("btnPreferences.Image")));
             this.btnPreferences.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnPreferences.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnPreferences.Name = "btnPreferences";
             this.btnPreferences.Size = new System.Drawing.Size(113, 36);
             this.btnPreferences.Text = "&Preferences...";
@@ -1713,7 +1666,6 @@ namespace TVRename
             //
             this.tsbScanContextMenu.Image = ((System.Drawing.Image)(resources.GetObject("tsbScanContextMenu.Image")));
             this.tsbScanContextMenu.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tsbScanContextMenu.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbScanContextMenu.Name = "tsbScanContextMenu";
             this.tsbScanContextMenu.Size = new System.Drawing.Size(119, 36);
             this.tsbScanContextMenu.Text = "Context Menu";
@@ -1752,10 +1704,8 @@ namespace TVRename
             //
             // btnWhenToWatchCheck
             //
-            this.btnWhenToWatchCheck.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnWhenToWatchCheck.Image = ((System.Drawing.Image)(resources.GetObject("btnWhenToWatchCheck.Image")));
             this.btnWhenToWatchCheck.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnWhenToWatchCheck.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnWhenToWatchCheck.Name = "btnWhenToWatchCheck";
             this.btnWhenToWatchCheck.Size = new System.Drawing.Size(96, 36);
             this.btnWhenToWatchCheck.Text = "&Refresh";
@@ -1764,10 +1714,8 @@ namespace TVRename
             // btnScheduleBTSearch
             //
             this.btnScheduleBTSearch.DropDownButtonWidth = 20;
-            this.btnScheduleBTSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnScheduleBTSearch.Image = ((System.Drawing.Image)(resources.GetObject("btnScheduleBTSearch.Image")));
             this.btnScheduleBTSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnScheduleBTSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnScheduleBTSearch.Name = "btnScheduleBTSearch";
             this.btnScheduleBTSearch.Size = new System.Drawing.Size(132, 36);
             this.btnScheduleBTSearch.Text = "BT Search";
@@ -1777,10 +1725,8 @@ namespace TVRename
             //
             // tsbScheduleJackettSearch
             //
-            this.tsbScheduleJackettSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tsbScheduleJackettSearch.Image = ((System.Drawing.Image)(resources.GetObject("tsbScheduleJackettSearch.Image")));
             this.tsbScheduleJackettSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tsbScheduleJackettSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbScheduleJackettSearch.Name = "tsbScheduleJackettSearch";
             this.tsbScheduleJackettSearch.Size = new System.Drawing.Size(142, 36);
             this.tsbScheduleJackettSearch.Text = "Jackett Search";
@@ -1795,7 +1741,6 @@ namespace TVRename
             //
             this.btnScheduleRightClick.Image = ((System.Drawing.Image)(resources.GetObject("btnScheduleRightClick.Image")));
             this.btnScheduleRightClick.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnScheduleRightClick.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnScheduleRightClick.Name = "btnScheduleRightClick";
             this.btnScheduleRightClick.Size = new System.Drawing.Size(119, 36);
             this.btnScheduleRightClick.Text = "Context Menu";
@@ -1805,7 +1750,6 @@ namespace TVRename
             //
             this.txtWhenToWatchSynopsis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtWhenToWatchSynopsis.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtWhenToWatchSynopsis.Location = new System.Drawing.Point(3, 311);
             this.txtWhenToWatchSynopsis.Multiline = true;
             this.txtWhenToWatchSynopsis.Name = "txtWhenToWatchSynopsis";
@@ -2016,7 +1960,6 @@ namespace TVRename
             //
             this.btnUpdateAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdateAvailable.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.btnUpdateAvailable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnUpdateAvailable.Location = new System.Drawing.Point(761, 0);
             this.btnUpdateAvailable.Name = "btnUpdateAvailable";
             this.btnUpdateAvailable.Size = new System.Drawing.Size(116, 23);

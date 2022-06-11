@@ -1201,7 +1201,7 @@ namespace TVRename
         private static ToolStripItem CreateSearcherMenuItem(SearchEngine search)
         {
             ToolStripMenuItem tsi = new(search.Name.Replace("&", "&&")) { Tag = search };
-            tsi.Font = new Font(tsi.Font.FontFamily, 9, FontStyle.Regular);
+            //tsi.Font = new Font(tsi.Font.FontFamily, 9, FontStyle.Regular);
             return tsi;
         }
 
