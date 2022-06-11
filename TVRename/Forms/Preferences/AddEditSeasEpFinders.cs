@@ -54,6 +54,11 @@ namespace TVRename
 
             txtFolder.Text = initialFolder;
         }
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+            lvPreview.ScaleListViewColumns(factor);
+        }
 
         private void SetupGrid()
         {

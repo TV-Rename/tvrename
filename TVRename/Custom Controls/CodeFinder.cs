@@ -7,6 +7,7 @@
 //
 using JetBrains.Annotations;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 // Control for searching for a source provider code, checking against local cache and
@@ -50,6 +51,12 @@ namespace TVRename
             lvMatches.ListViewItemSorter = lvwCodeFinderColumnSorter;
 
             label3.Text = GetPromptLabel(Source);
+        }
+
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+            lvMatches.ScaleListViewColumns(factor);
         }
 
         public void SetSource(TVDoc.ProviderType source) => SetSource(source, null);

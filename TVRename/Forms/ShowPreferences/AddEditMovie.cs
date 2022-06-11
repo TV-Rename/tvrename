@@ -99,6 +99,11 @@ namespace TVRename
             SetMovieFolderType(si);
         }
 
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+            lvManualFolders.ScaleListViewColumns(factor);
+        }
         private void PopulateFolderTypes(MovieConfiguration.MovieFolderFormat selectedShowFormat)
         {
             cbFolderType.SuspendLayout();

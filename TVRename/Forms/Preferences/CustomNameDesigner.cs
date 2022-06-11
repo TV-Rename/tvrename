@@ -7,6 +7,7 @@
 //
 
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -43,6 +44,11 @@ namespace TVRename
             FillCombos();
         }
 
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+            lvTest.ScaleListViewColumns(factor);
+        }
         private void FillCombos()
         {
             cbTags.Items.Clear();

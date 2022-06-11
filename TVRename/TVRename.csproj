@@ -623,6 +623,7 @@
     <Compile Include="Utility\Extensions\SafeEnumerator.cs" />
     <Compile Include="Utility\Extensions\SafeList.cs" />
     <Compile Include="Utility\Extensions\SafeListExtensions.cs" />
+    <Compile Include="Utility\Extensions\UiExtensions.cs" />
     <Compile Include="Utility\Helper\LinqHelper.cs" />
     <Compile Include="Utility\Helper\TaskHelper.cs" />
     <Compile Include="Utility\ServerRelease.cs" />

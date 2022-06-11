@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -29,6 +30,11 @@ namespace TVRename
             InitializeComponent();
         }
 
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+            lvUpcoming.ScaleListViewColumns(factor);
+        }
         private void UpcomingPopup_Load(object sender, System.EventArgs e)
         {
             int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;

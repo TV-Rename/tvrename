@@ -121,7 +121,11 @@ namespace TVRename
             EnableDisableCustomNaming();
             UpdateIgnore();
         }
-
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+            lvSeasonFolders.ScaleListViewColumns(factor);
+        }
         private string SeasonPreviewText()
         {
             if (sampleProcessedSeason == null)

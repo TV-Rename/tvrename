@@ -1690,6 +1690,11 @@ namespace TVRename
         private void Preferences_FormClosing(object sender, FormClosingEventArgs e)
         {
         }
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+            lvwDefinedColors.ScaleListViewColumns(factor);
+        }
 
         private void cmDefaults_ItemClicked(object sender, [NotNull] ToolStripItemClickedEventArgs e)
         {

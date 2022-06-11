@@ -8,6 +8,7 @@
 
 using JetBrains.Annotations;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
@@ -61,7 +62,12 @@ namespace TVRename
             UpdatePreviouslySeenButtons();
             UpdateRuleButtons();
         }
-
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+            lvRuleList.ScaleListViewColumns(factor);
+            lvSeenEpisodes.ScaleListViewColumns(factor);
+        }
         private void FillSeenEpisodes(bool keepSel)
         {
             List<int> sel = new();
