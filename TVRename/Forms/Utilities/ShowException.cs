@@ -33,7 +33,7 @@ namespace TVRename
         private void ShowException_Load(object sender, EventArgs e)
         {
             string t = mException.Message + "\r\n\r\n" + mException.StackTrace;
-            txtText.Text = t;
+            txtText.Text = t.ToUiVersion();
         }
 
         private void button1_Click(object sender, EventArgs e)

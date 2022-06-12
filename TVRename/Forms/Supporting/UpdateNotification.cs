@@ -25,7 +25,7 @@ namespace TVRename.Forms
         {
             newVersion = update;
             InitializeComponent();
-            tbReleaseNotes.Text = newVersion.ReleaseNotesText;
+            tbReleaseNotes.Text = newVersion.ReleaseNotesText.ToUiVersion();
             lblStatus.Text = $@"There is new version {update} available since {update.ReleaseDate.ToLocalTime()}.";
 
             //If this call is slow then we can put it in a new thread and update the control as it comes back from GH

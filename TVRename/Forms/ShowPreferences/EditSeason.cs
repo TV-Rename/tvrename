@@ -51,7 +51,7 @@ namespace TVRename
                 ? new List<ShowRule>(si.SeasonRules[seasonNumber])
                 : new List<ShowRule>();
 
-            txtShowName.Text = si.ShowName;
+            txtShowName.Text = si.ShowName.ToUiVersion();
             txtSeasonNumber.Text = seasonNumber.ToString();
 
             FillRuleList(false, 0);

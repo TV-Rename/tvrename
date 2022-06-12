@@ -22,7 +22,7 @@ namespace TVRename
         public LinkMovie([NotNull] List<MovieConfiguration> matchingShows, [NotNull] FileInfo file)
         {
             InitializeComponent();
-            lblSourceFileName.Text = file.FullName;
+            lblSourceFileName.Text = file.FullName.ToUiVersion();
             chosenFile = file;
             DialogResult = DialogResult.Abort;
             foreach (MovieConfiguration movie in matchingShows)

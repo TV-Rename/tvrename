@@ -21,7 +21,7 @@ namespace TVRename.Forms.Tools
             mDoc.TheActionList.Clear();
             parent.FillActionList();
 
-            txtFileFormatPreview.Text = TVSettings.Instance.NamingStyle.StyleString;
+            txtFileFormatPreview.Text = TVSettings.Instance.NamingStyle.StyleString.ToUiVersion();
             txtFileFormatPreview.Enabled = false;
 
             cbShowList.Items.Add("<Auto>");

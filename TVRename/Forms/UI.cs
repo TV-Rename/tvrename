@@ -1200,8 +1200,7 @@ namespace TVRename
         [NotNull]
         private static ToolStripItem CreateSearcherMenuItem(SearchEngine search)
         {
-            ToolStripMenuItem tsi = new(search.Name.Replace("&", "&&")) { Tag = search };
-            //tsi.Font = new Font(tsi.Font.FontFamily, 9, FontStyle.Regular);
+            ToolStripMenuItem tsi = new(search.Name.ToUiVersion()) { Tag = search };
             return tsi;
         }
 
@@ -1738,11 +1737,11 @@ namespace TVRename
             }
             else if (ei.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
             {
-                txtWhenToWatchSynopsis.Text = string.Join(Environment.NewLine + Environment.NewLine, ei.SourceEpisodes.Select(episode => episode.Overview));
+                txtWhenToWatchSynopsis.Text = string.Join(Environment.NewLine + Environment.NewLine, ei.SourceEpisodes.Select(episode => episode.Overview?.ToUiVersion()));
             }
             else
             {
-                txtWhenToWatchSynopsis.Text = ei.Overview;
+                txtWhenToWatchSynopsis.Text = ei.Overview.ToUiVersion();
             }
 
             mInternalChange++;
@@ -2068,7 +2067,7 @@ namespace TVRename
 
                 foreach (FileInfo fi in fl)
                 {
-                    ToolStripMenuItem tsi = new("Watch: " + fi.FullName.Replace("&", "&&"));
+                    ToolStripMenuItem tsi = new("Watch: " + fi.FullName.ToUiVersion());
                     tsi.Click += (_, _) => { Helpers.OpenFile(fi.FullName); };
                     showRightClickMenu.Items.Add(tsi);
                 }
@@ -2090,7 +2089,7 @@ namespace TVRename
 
                         foreach (FileInfo fi in fl)
                         {
-                            ToolStripMenuItem tsisi = new("Watch: " + fi.FullName.Replace("&","&&"));
+                            ToolStripMenuItem tsisi = new("Watch: " + fi.FullName.ToUiVersion());
                             tsisi.Click += (_, _) => { Helpers.OpenFile(fi.FullName); };
 
                             tsis.DropDownItems.Add(tsisi);
@@ -2163,7 +2162,7 @@ namespace TVRename
                     first = false;
                 }
 
-                ToolStripMenuItem tsi = new("Open: " + folder.Replace("&", "&&"));
+                ToolStripMenuItem tsi = new("Open: " + folder.ToUiVersion());
                 tsi.Click += (_, _) =>
                 {
                     Helpers.OpenFolder(folder);
@@ -2181,7 +2180,7 @@ namespace TVRename
             {
                 alreadyAdded.Add(folder); // don't show the same folder more than once
 
-                ToolStripMenuItem tssi = new("Open: " + folder.Replace("&", "&&"));
+                ToolStripMenuItem tssi = new("Open: " + folder.ToUiVersion());
                 tssi.Click += (_, _) =>
                 {
                     Helpers.OpenFolder(folder);
@@ -2468,7 +2467,7 @@ namespace TVRename
 
             if (somethingDownloading)
             {
-                txtDLStatusLabel.Text = "Background download: " + dlTask;
+                txtDLStatusLabel.Text = "Background download: " + dlTask?.ToUiVersion();
             }
             else
             {
@@ -3990,7 +3989,7 @@ namespace TVRename
             {
                 if (se.Name.HasValue())
                 {
-                    ToolStripMenuItem tssi = new(se.Name);
+                    ToolStripMenuItem tssi = new(se.Name.ToUiVersion());
                     tssi.Click += (_, _) => { TVDoc.SearchForEpisode(se, ep); };
                     tsi.DropDownItems.Add(tssi);
                 }
@@ -4043,7 +4042,7 @@ namespace TVRename
 
         private void AddRcMenuItem([NotNull] string name, EventHandler command)
         {
-            ToolStripMenuItem tsi = new(name.Replace("&","&&"));
+            ToolStripMenuItem tsi = new(name.ToUiVersion());
             tsi.Click += command;
             showRightClickMenu.Items.Add(tsi);
         }

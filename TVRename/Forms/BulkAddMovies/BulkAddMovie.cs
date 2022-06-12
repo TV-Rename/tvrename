@@ -430,7 +430,7 @@ namespace TVRename
         private static void UpdateResultEntry([NotNull] PossibleNewMovie ai, [NotNull] ListViewItem lvi)
         {
             lvi.SubItems.Clear();
-            lvi.Text = ai.Directory.FullName;
+            lvi.Text = ai.Directory.FullName.ToUiVersion();
             if (ai.CodeKnown)
             {
                 CachedMovieInfo? x = ai.CachedMovie;
@@ -605,7 +605,7 @@ namespace TVRename
             lvFMNewShows.Update();
 
             pbProgress.Value = e.ProgressPercentage.Between(0,100);
-            lblStatusLabel.Text = ((PossibleNewMovie)e.UserState).RefinedHint;
+            lblStatusLabel.Text = ((PossibleNewMovie)e.UserState).RefinedHint.ToUiVersion();
             UpdateListItem((PossibleNewMovie)e.UserState, false);
         }
 
@@ -619,7 +619,7 @@ namespace TVRename
         private void bwRescan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-            lblStatusLabel.Text = e.UserState.ToString();
+            lblStatusLabel.Text = e.UserState.ToString().ToUiVersion();
         }
 
         private void bwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

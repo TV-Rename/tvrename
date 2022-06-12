@@ -517,7 +517,7 @@ namespace TVRename
 
                         foreach (FileInfo fi in fl)
                         {
-                            ToolStripMenuItem tsi = new("Watch: " + fi.FullName.Replace("&", "&&"));
+                            ToolStripMenuItem tsi = new("Watch: " + fi.FullName.ToUiVersion());
                             tsi.Click += (_, _) => { Helpers.OpenFile(fi.FullName); };
                             gridSummary.showRightClickMenu.Items.Add(tsi);
                         }
@@ -527,7 +527,7 @@ namespace TVRename
 
             private void AddRcMenuItem([NotNull] ContextMenuStrip showRightClickMenu, [NotNull] string name, EventHandler command)
             {
-                ToolStripMenuItem tsi = new(name.Replace("&", "&&"));
+                ToolStripMenuItem tsi = new(name.ToUiVersion());
                 tsi.Click += command;
                 showRightClickMenu.Items.Add(tsi);
             }
@@ -745,7 +745,7 @@ namespace TVRename
         private void BwRescan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-            lblStatus.Text = e.UserState.ToString();
+            lblStatus.Text = e.UserState.ToString().ToUiVersion();
         }
 
         private void BwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

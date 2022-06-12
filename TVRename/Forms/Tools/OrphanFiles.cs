@@ -83,7 +83,7 @@ namespace TVRename.Forms.Tools
 
         private void AddRcMenuItem([NotNull] string name, EventHandler command)
         {
-            ToolStripMenuItem tsi = new(name.Replace("&", "&&"));
+            ToolStripMenuItem tsi = new(name.ToUiVersion());
             tsi.Click += command;
             showRightClickMenu.Items.Add(tsi);
         }
@@ -162,7 +162,7 @@ namespace TVRename.Forms.Tools
         private void BwRescan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-            lblStatus.Text = e.UserState.ToString();
+            lblStatus.Text = e.UserState.ToString().ToUiVersion();
         }
 
         private void BwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

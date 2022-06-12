@@ -75,9 +75,9 @@ namespace TVRename
         private void UpdateStuff()
         {
             txtCurrent.Text =
-                TheTVDB.LocalCache.Instance.CurrentDLTask ??
-                TVmaze.LocalCache.Instance.CurrentDLTask ??
-                TMDB.LocalCache.Instance.CurrentDLTask ?? string.Empty;
+                TheTVDB.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ??
+                TVmaze.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ??
+                TMDB.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ?? string.Empty;
             pbProgressBar.Value = mDoc.DownloadPct;
             Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressValue(mDoc.DownloadPct,100,ParentForm?.Handle??Handle);
         }

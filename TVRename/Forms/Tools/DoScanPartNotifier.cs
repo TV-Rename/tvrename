@@ -21,8 +21,8 @@ namespace TVRename.Forms.Tools
         {
             pbProgress.Value = percent.Between(0, 100);
             pbProgress.Update();
-            lblMessage.Text = message ?? string.Empty;
-            lblLastUpdate.Text = lastUpdate ?? string.Empty;
+            lblMessage.Text = message?.ToUiVersion() ?? string.Empty;
+            lblLastUpdate.Text = lastUpdate?.ToUiVersion() ?? string.Empty;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

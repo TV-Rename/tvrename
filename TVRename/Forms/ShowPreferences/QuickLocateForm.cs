@@ -36,7 +36,7 @@ namespace TVRename.Forms.ShowPreferences
             cbDirectory.ResumeLayout();
 
             initialFolder = Path.DirectorySeparatorChar + hint;
-            txtShowFolder.Text = initialFolder;
+            txtShowFolder.Text = initialFolder.ToUiVersion();
         }
 
         public bool FolderNameChanged => txtShowFolder.Text != initialFolder;

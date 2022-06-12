@@ -22,9 +22,9 @@ namespace TVRename
 
             Result = FaResult.kfaCancel;
             FolderName = folderName;
-            txtShow.Text = showName;
-            txtSeason.Text = season;
-            txtFolder.Text = FolderName;
+            txtShow.Text = showName?.ToUiVersion();
+            txtSeason.Text = season?.ToUiVersion();
+            txtFolder.Text = FolderName?.ToUiVersion();
 
             if (string.IsNullOrEmpty(FolderName))
             {

@@ -182,7 +182,7 @@ namespace TVRename.Forms
 
         private void AddRcMenuItem([NotNull] string label, EventHandler command)
         {
-            ToolStripMenuItem tsi = new(label.Replace("&", "&&"));
+            ToolStripMenuItem tsi = new(label.ToUiVersion());
             tsi.Click += command;
             possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }
@@ -222,7 +222,7 @@ namespace TVRename.Forms
         private void BwScan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-            lblStatus.Text = e.UserState?.ToString();
+            lblStatus.Text = e.UserState?.ToString().ToUiVersion();
         }
 
         private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

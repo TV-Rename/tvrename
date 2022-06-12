@@ -72,7 +72,7 @@ namespace TVRename
                 txt.AppendLine();
             }
 
-            txtEmailText.Text = txt.ToString();
+            txtEmailText.Text = txt.ToString().ToUiVersion();
         }
 
         private void ExtractShowDetails(StringBuilder txt)

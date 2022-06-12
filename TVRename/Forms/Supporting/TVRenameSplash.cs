@@ -8,14 +8,14 @@ namespace TVRename
         public TVRenameSplash()
         {
             InitializeComponent();
-            lblVersion.Text = Helpers.DisplayVersion;
+            lblVersion.Text = Helpers.DisplayVersion.ToUiVersion();
         }
 
         public void UpdateStatus(string status)
         {
             if (IsHandleCreated)
             {
-                Invoke((MethodInvoker)delegate { lblStatus.Text = status; });
+                Invoke((MethodInvoker)delegate { lblStatus.Text = status.ToUiVersion(); });
             }
         }
 
@@ -31,7 +31,7 @@ namespace TVRename
         {
             if (IsHandleCreated)
             {
-                Invoke((MethodInvoker)delegate { lblInfo.Text = info; });
+                Invoke((MethodInvoker)delegate { lblInfo.Text = info.ToUiVersion(); });
             }
         }
     }

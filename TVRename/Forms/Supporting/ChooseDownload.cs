@@ -9,10 +9,10 @@ namespace TVRename.Forms.Supporting
         public ChooseDownload([NotNull] ItemMissing im, IEnumerable<ActionTDownload> options)
         {
             InitializeComponent();
-            lblEpisodeName.Text = $"{im.Show.ShowName} - {im}";
+            lblEpisodeName.Text = $"{im.Show.ShowName.ToUiVersion()} - {im}";
             if (im is MovieItemMissing mim)
             {
-                lblEpisodeName.Text = $"{mim.MovieConfig.ShowNameWithYear}";
+                lblEpisodeName.Text = $"{mim.MovieConfig.ShowNameWithYear.ToUiVersion()}";
             }
             olvSize.AspectToStringConverter = delegate (object x)
             {

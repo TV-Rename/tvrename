@@ -14,5 +14,9 @@ namespace TVRename
                 column.Width = (int)Math.Round(column.Width * factor.Width);
             }
         }
+
+        [NotNull]
+        public static string ToUiVersion([NotNull] this string source)
+            => source.ToUiVersion();
     }
 }

@@ -39,7 +39,7 @@ namespace TVRename
             BringToFront();
 
             pbProgress.Value = mainForm.FmpPercent;
-            lbMessage.Text = mainForm.FmpUpto;
+            lbMessage.Text = mainForm.FmpUpto.ToUiVersion();
 
             if (mainForm.TokenSource.IsCancellationRequested)
             {

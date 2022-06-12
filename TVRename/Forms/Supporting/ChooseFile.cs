@@ -53,7 +53,7 @@ namespace TVRename
 
         private static (int, bool, int) UpdateFields([NotNull] FileInfo file, [NotNull] Label nameLabel, [NotNull] Label dimensionsLabel, [NotNull] Label lengthLabel, [NotNull] Label sizeLabel, [NotNull] Label pathLabel)
         {
-            nameLabel.Text = file.Name;
+            nameLabel.Text = file.Name.ToUiVersion();
             int leftFrameWidth = file.GetFrameWidth();
             bool leftFrameUnknown = leftFrameWidth == -1;
             dimensionsLabel.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown" : leftFrameWidth + "x" + file.GetFrameHeight());
@@ -69,8 +69,8 @@ namespace TVRename
                     "Length: " + (leftFilmLength == -1 ? "Unknown" : leftFilmLength.Seconds() + " s");
             }
 
-            sizeLabel.Text = GetFileSize(file);
-            pathLabel.Text = file.DirectoryName;
+            sizeLabel.Text = GetFileSize(file).ToUiVersion();
+            pathLabel.Text = file.DirectoryName.ToUiVersion();
 
             return (leftFrameWidth, leftFrameUnknown, leftFilmLength);
         }

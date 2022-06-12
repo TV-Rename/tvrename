@@ -70,8 +70,8 @@ namespace TVRename
                 , 600
                 , ui.Handle);
             }
-            lblMessage.Text = msg;
-            lblDetail.Text = lastUpdate;
+            lblMessage.Text = msg?.ToUiVersion();
+            lblDetail.Text = lastUpdate?.ToUiVersion();
         }
 
         public void MediaLibProg(int p, string message, string lastUpdated)

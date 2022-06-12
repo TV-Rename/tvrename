@@ -122,7 +122,7 @@ namespace TVRename
 
             if (activeCmAction != null)
             {
-                txtFilename.Text = activeCmAction.ProgressText;
+                txtFilename.Text = activeCmAction.ProgressText.ToUiVersion();
                 SetPercentages(activeCmAction.PercentDone, totalWork == 0 ? 0.0 : workDone * 100.0 / totalWork);
             }
 
