@@ -4610,10 +4610,9 @@ namespace TVRename
             float x = tabBounds.X + xIndent;
             float y = tabBounds.Y + INDENT;
             g.DrawImage(icon, x, y);
-            Font labelFont = new("Segoe UI Semibold", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
 
             Rectangle textarea = new(tabBounds.X, tabBounds.Y + INDENT + icon.Height, tabBounds.Width, tabBounds.Height - (INDENT + icon.Height));
-            g.DrawString(tabPage.Text, labelFont, Brushes.Black, textarea, stringFlags);
+            g.DrawString(tabPage.Text, tabPage.Font, Brushes.Black, textarea, stringFlags);
         }
 
         private void BwSeasonHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
