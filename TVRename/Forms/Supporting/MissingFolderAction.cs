@@ -16,7 +16,7 @@ namespace TVRename
         public string FolderName { get; private set; }
         public FaResult Result { get; private set; }
 
-        public MissingFolderAction(string showName, string season, string folderName)
+        public MissingFolderAction([CanBeNull] string showName, [CanBeNull] string season, string folderName)
         {
             InitializeComponent();
 

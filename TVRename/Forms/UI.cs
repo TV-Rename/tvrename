@@ -1741,7 +1741,7 @@ namespace TVRename
             }
             else
             {
-                txtWhenToWatchSynopsis.Text = ei.Overview.ToUiVersion();
+                txtWhenToWatchSynopsis.Text = ei.Overview?.ToUiVersion();
             }
 
             mInternalChange++;
