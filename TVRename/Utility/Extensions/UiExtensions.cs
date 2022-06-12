@@ -17,6 +17,6 @@ namespace TVRename
 
         [NotNull]
         public static string ToUiVersion([NotNull] this string source)
-            => source.ToUiVersion();
+            => source.Replace("&", "&&");
     }
 }
