@@ -173,7 +173,7 @@ namespace TVRename
                 //Gray if the show is not checked for missing episodes in the scan
 
                 grid1[r + 1, 0] = rh;
-                grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowConfiguration));
+                grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowConfiguration,mDoc));
 
                 RowHeader rh2 = new(show.ShowConfiguration.ShowStatus)
                 {
@@ -213,7 +213,7 @@ namespace TVRename
                             Editor = { EditableMode = EditableMode.None }
                         };
 
-                    grid1[r + 1, seasonData.SeasonNumber + 2].AddController(new ShowClickEvent(this, show.ShowConfiguration, seasonData.ProcessedSeason));
+                    grid1[r + 1, seasonData.SeasonNumber + 2].AddController(new ShowClickEvent(this, show.ShowConfiguration, seasonData.ProcessedSeason, mDoc));
                 }
                 r++;
             }
@@ -333,18 +333,21 @@ namespace TVRename
             private readonly ShowSummary gridSummary;
             private readonly ProcessedSeason? processedSeason;
             private readonly ShowConfiguration show;
+            private readonly TVDoc mDoc;
 
-            public ShowClickEvent(ShowSummary gridSummary, ShowConfiguration show)
+            public ShowClickEvent(ShowSummary gridSummary, ShowConfiguration show,TVDoc doc)
             {
                 this.show = show;
                 this.gridSummary = gridSummary;
+                this.mDoc = doc;
             }
 
-            public ShowClickEvent(ShowSummary gridSummary, ShowConfiguration show, ProcessedSeason processedSeason)
+            public ShowClickEvent(ShowSummary gridSummary, ShowConfiguration show, ProcessedSeason processedSeason, TVDoc doc)
             {
                 this.show = show;
                 this.processedSeason = processedSeason;
                 this.gridSummary = gridSummary;
+                this.mDoc = doc;
             }
 
             public override void OnMouseDown(CellContext sender, [NotNull] MouseEventArgs e)
@@ -363,6 +366,7 @@ namespace TVRename
                         AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Ignoring Season", (_, _) =>
                         {
                             processedSeason.Show.IgnoreSeasons.Remove(processedSeason.SeasonNumber);
+                            mDoc.TvAddedOrEdited(false, false, false, null, processedSeason.Show);
                             gridSummary.PopulateGrid();
                         });
                     }
@@ -371,6 +375,7 @@ namespace TVRename
                         AddRcMenuItem(gridSummary.showRightClickMenu, "Ignore Season", (_, _) =>
                         {
                             processedSeason.Show.IgnoreSeasons.Add(processedSeason.SeasonNumber);
+                            mDoc.TvAddedOrEdited(false,false,false,null, processedSeason.Show);
                             gridSummary.PopulateGrid();
                         });
                     }
@@ -381,6 +386,7 @@ namespace TVRename
                     AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Checking TV Show", (_, _) =>
                     {
                         show.DoMissingCheck = false;
+                        mDoc.TvAddedOrEdited(false, false, false, null, show);
                         gridSummary.PopulateGrid();
                     });
                 }
@@ -389,6 +395,7 @@ namespace TVRename
                     AddRcMenuItem(gridSummary.showRightClickMenu, "Start Checking TV Show", (_, _) =>
                     {
                         show.DoMissingCheck = true;
+                        mDoc.TvAddedOrEdited(false, false, false, null, show);
                         gridSummary.PopulateGrid();
                     });
                 }

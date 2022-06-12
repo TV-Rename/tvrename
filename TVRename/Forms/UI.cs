@@ -2273,7 +2273,7 @@ namespace TVRename
         }
 
         private void IgnoreSeason([NotNull] ShowConfiguration si, int seasonNumber)
-        {
+        { 
             si.IgnoreSeasons.Add(seasonNumber);
             ShowAddedOrEdited(false, false, si, true);
         }
