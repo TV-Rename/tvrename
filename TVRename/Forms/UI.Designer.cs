@@ -211,14 +211,7 @@ namespace TVRename
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbScanContextMenu = new System.Windows.Forms.ToolStripButton();
             this.tbWTW = new System.Windows.Forms.TabPage();
-            this.tsWtW = new System.Windows.Forms.ToolStrip();
-            this.btnWhenToWatchCheck = new System.Windows.Forms.ToolStripButton();
-            this.btnScheduleBTSearch = new System.Windows.Forms.ToolStripSplitButton();
-            this.tsbScheduleJackettSearch = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnScheduleRightClick = new System.Windows.Forms.ToolStripButton();
-            this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
-            this.calCalendar = new System.Windows.Forms.MonthCalendar();
+            this.toolStripContainer3 = new System.Windows.Forms.ToolStripContainer();
             this.lvWhenToWatch = new TVRename.ListViewFlickerFree();
             this.columnHeader29 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader30 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -229,6 +222,14 @@ namespace TVRename
             this.columnHeader34 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader35 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tsWtW = new System.Windows.Forms.ToolStrip();
+            this.btnWhenToWatchCheck = new System.Windows.Forms.ToolStripButton();
+            this.btnScheduleBTSearch = new System.Windows.Forms.ToolStripSplitButton();
+            this.tsbScheduleJackettSearch = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnScheduleRightClick = new System.Windows.Forms.ToolStripButton();
+            this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
+            this.calCalendar = new System.Windows.Forms.MonthCalendar();
             this.ilNewIcons = new System.Windows.Forms.ImageList(this.components);
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -265,7 +266,6 @@ namespace TVRename
             this.bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwScan = new System.ComponentModel.BackgroundWorker();
             this.bwAction = new System.ComponentModel.BackgroundWorker();
-            this.toolStripContainer3 = new System.Windows.Forms.ToolStripContainer();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyMovies.SuspendLayout();
@@ -299,11 +299,11 @@ namespace TVRename
             ((System.ComponentModel.ISupportInitialize)(this.olvAction)).BeginInit();
             this.tsScanResults.SuspendLayout();
             this.tbWTW.SuspendLayout();
-            this.tsWtW.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
             this.toolStripContainer3.ContentPanel.SuspendLayout();
             this.toolStripContainer3.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer3.SuspendLayout();
+            this.tsWtW.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -1907,6 +1907,115 @@ namespace TVRename
             this.tbWTW.Text = "Schedule";
             this.tbWTW.UseVisualStyleBackColor = true;
             // 
+            // toolStripContainer3
+            // 
+            this.toolStripContainer3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // 
+            // toolStripContainer3.ContentPanel
+            // 
+            this.toolStripContainer3.ContentPanel.Controls.Add(this.lvWhenToWatch);
+            this.toolStripContainer3.ContentPanel.Size = new System.Drawing.Size(1505, 509);
+            this.toolStripContainer3.Location = new System.Drawing.Point(5, 3);
+            this.toolStripContainer3.Name = "toolStripContainer3";
+            this.toolStripContainer3.Size = new System.Drawing.Size(1505, 576);
+            this.toolStripContainer3.TabIndex = 11;
+            this.toolStripContainer3.Text = "toolStripContainer3";
+            // 
+            // toolStripContainer3.TopToolStripPanel
+            // 
+            this.toolStripContainer3.TopToolStripPanel.Controls.Add(this.tsWtW);
+            // 
+            // lvWhenToWatch
+            // 
+            this.lvWhenToWatch.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader29,
+            this.columnHeader30,
+            this.columnHeader31,
+            this.columnHeader32,
+            this.columnHeader36,
+            this.columnHeader33,
+            this.columnHeader34,
+            this.columnHeader1,
+            this.columnHeader35});
+            this.lvWhenToWatch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvWhenToWatch.FullRowSelect = true;
+            listViewGroup1.Header = "Recently Aired";
+            listViewGroup1.Name = "justPassed";
+            listViewGroup2.Header = "Next 7 Days";
+            listViewGroup2.Name = "next7days";
+            listViewGroup2.Tag = "1";
+            listViewGroup3.Header = "Future Episodes";
+            listViewGroup3.Name = "futureEps";
+            listViewGroup4.Header = "Later";
+            listViewGroup4.Name = "later";
+            listViewGroup4.Tag = "2";
+            this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4});
+            this.lvWhenToWatch.HideSelection = false;
+            this.lvWhenToWatch.Location = new System.Drawing.Point(0, 0);
+            this.lvWhenToWatch.Margin = new System.Windows.Forms.Padding(6);
+            this.lvWhenToWatch.Name = "lvWhenToWatch";
+            this.lvWhenToWatch.ShowItemToolTips = true;
+            this.lvWhenToWatch.Size = new System.Drawing.Size(1505, 509);
+            this.lvWhenToWatch.SmallImageList = this.ilIcons;
+            this.lvWhenToWatch.TabIndex = 3;
+            this.lvWhenToWatch.UseCompatibleStateImageBehavior = false;
+            this.lvWhenToWatch.View = System.Windows.Forms.View.Details;
+            this.lvWhenToWatch.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvWhenToWatch_ColumnClick);
+            this.lvWhenToWatch.SelectedIndexChanged += new System.EventHandler(this.lvWhenToWatch_Click);
+            this.lvWhenToWatch.DoubleClick += new System.EventHandler(this.lvWhenToWatch_DoubleClick);
+            this.lvWhenToWatch.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvWhenToWatch_MouseClick);
+            // 
+            // columnHeader29
+            // 
+            this.columnHeader29.Text = "Show";
+            this.columnHeader29.Width = 343;
+            // 
+            // columnHeader30
+            // 
+            this.columnHeader30.Text = "Season";
+            this.columnHeader30.Width = 94;
+            // 
+            // columnHeader31
+            // 
+            this.columnHeader31.Text = "Episode";
+            this.columnHeader31.Width = 101;
+            // 
+            // columnHeader32
+            // 
+            this.columnHeader32.Text = "Air Date";
+            this.columnHeader32.Width = 148;
+            // 
+            // columnHeader36
+            // 
+            this.columnHeader36.Text = "Time";
+            this.columnHeader36.Width = 110;
+            // 
+            // columnHeader33
+            // 
+            this.columnHeader33.Text = "Day";
+            this.columnHeader33.Width = 77;
+            // 
+            // columnHeader34
+            // 
+            this.columnHeader34.Text = "How Long";
+            this.columnHeader34.Width = 126;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Network";
+            this.columnHeader1.Width = 183;
+            // 
+            // columnHeader35
+            // 
+            this.columnHeader35.Text = "Episode Name";
+            this.columnHeader35.Width = 660;
+            // 
             // tsWtW
             // 
             this.tsWtW.Dock = System.Windows.Forms.DockStyle.None;
@@ -1973,13 +2082,13 @@ namespace TVRename
             // 
             this.txtWhenToWatchSynopsis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtWhenToWatchSynopsis.Location = new System.Drawing.Point(6, 588);
+            this.txtWhenToWatchSynopsis.Location = new System.Drawing.Point(6, 583);
             this.txtWhenToWatchSynopsis.Margin = new System.Windows.Forms.Padding(6);
             this.txtWhenToWatchSynopsis.Multiline = true;
             this.txtWhenToWatchSynopsis.Name = "txtWhenToWatchSynopsis";
             this.txtWhenToWatchSynopsis.ReadOnly = true;
             this.txtWhenToWatchSynopsis.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtWhenToWatchSynopsis.Size = new System.Drawing.Size(1155, 294);
+            this.txtWhenToWatchSynopsis.Size = new System.Drawing.Size(1155, 299);
             this.txtWhenToWatchSynopsis.TabIndex = 4;
             // 
             // calCalendar
@@ -1991,95 +2100,6 @@ namespace TVRename
             this.calCalendar.Name = "calCalendar";
             this.calCalendar.TabIndex = 5;
             this.calCalendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calCalendar_DateSelected);
-            // 
-            // lvWhenToWatch
-            // 
-            this.lvWhenToWatch.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader29,
-            this.columnHeader30,
-            this.columnHeader31,
-            this.columnHeader32,
-            this.columnHeader36,
-            this.columnHeader33,
-            this.columnHeader34,
-            this.columnHeader1,
-            this.columnHeader35});
-            this.lvWhenToWatch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lvWhenToWatch.FullRowSelect = true;
-            listViewGroup1.Header = "Recently Aired";
-            listViewGroup1.Name = "justPassed";
-            listViewGroup2.Header = "Next 7 Days";
-            listViewGroup2.Name = "next7days";
-            listViewGroup2.Tag = "1";
-            listViewGroup3.Header = "Future Episodes";
-            listViewGroup3.Name = "futureEps";
-            listViewGroup4.Header = "Later";
-            listViewGroup4.Name = "later";
-            listViewGroup4.Tag = "2";
-            this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4});
-            this.lvWhenToWatch.HideSelection = false;
-            this.lvWhenToWatch.Location = new System.Drawing.Point(0, 0);
-            this.lvWhenToWatch.Margin = new System.Windows.Forms.Padding(6);
-            this.lvWhenToWatch.Name = "lvWhenToWatch";
-            this.lvWhenToWatch.ShowItemToolTips = true;
-            this.lvWhenToWatch.Size = new System.Drawing.Size(2634, 935);
-            this.lvWhenToWatch.SmallImageList = this.ilIcons;
-            this.lvWhenToWatch.TabIndex = 3;
-            this.lvWhenToWatch.UseCompatibleStateImageBehavior = false;
-            this.lvWhenToWatch.View = System.Windows.Forms.View.Details;
-            this.lvWhenToWatch.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvWhenToWatch_ColumnClick);
-            this.lvWhenToWatch.SelectedIndexChanged += new System.EventHandler(this.lvWhenToWatch_Click);
-            this.lvWhenToWatch.DoubleClick += new System.EventHandler(this.lvWhenToWatch_DoubleClick);
-            this.lvWhenToWatch.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvWhenToWatch_MouseClick);
-            // 
-            // columnHeader29
-            // 
-            this.columnHeader29.Text = "Show";
-            this.columnHeader29.Width = 343;
-            // 
-            // columnHeader30
-            // 
-            this.columnHeader30.Text = "Season";
-            this.columnHeader30.Width = 94;
-            // 
-            // columnHeader31
-            // 
-            this.columnHeader31.Text = "Episode";
-            this.columnHeader31.Width = 101;
-            // 
-            // columnHeader32
-            // 
-            this.columnHeader32.Text = "Air Date";
-            this.columnHeader32.Width = 148;
-            // 
-            // columnHeader36
-            // 
-            this.columnHeader36.Text = "Time";
-            this.columnHeader36.Width = 110;
-            // 
-            // columnHeader33
-            // 
-            this.columnHeader33.Text = "Day";
-            this.columnHeader33.Width = 77;
-            // 
-            // columnHeader34
-            // 
-            this.columnHeader34.Text = "How Long";
-            this.columnHeader34.Width = 126;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Network";
-            this.columnHeader1.Width = 183;
-            // 
-            // columnHeader35
-            // 
-            this.columnHeader35.Text = "Episode Name";
-            this.columnHeader35.Width = 660;
             // 
             // ilNewIcons
             // 
@@ -2337,26 +2357,6 @@ namespace TVRename
             this.bwAction.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwAction_DoWork);
             this.bwAction.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwAction_RunWorkerCompleted);
             // 
-            // toolStripContainer3
-            // 
-            this.toolStripContainer3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            // 
-            // toolStripContainer3.ContentPanel
-            // 
-            this.toolStripContainer3.ContentPanel.Controls.Add(this.lvWhenToWatch);
-            this.toolStripContainer3.ContentPanel.Size = new System.Drawing.Size(1505, 534);
-            this.toolStripContainer3.Location = new System.Drawing.Point(6, 3);
-            this.toolStripContainer3.Name = "toolStripContainer3";
-            this.toolStripContainer3.Size = new System.Drawing.Size(1505, 576);
-            this.toolStripContainer3.TabIndex = 11;
-            this.toolStripContainer3.Text = "toolStripContainer3";
-            // 
-            // toolStripContainer3.TopToolStripPanel
-            // 
-            this.toolStripContainer3.TopToolStripPanel.Controls.Add(this.tsWtW);
-            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
@@ -2426,14 +2426,14 @@ namespace TVRename
             this.tsScanResults.PerformLayout();
             this.tbWTW.ResumeLayout(false);
             this.tbWTW.PerformLayout();
-            this.tsWtW.ResumeLayout(false);
-            this.tsWtW.PerformLayout();
-            this.tableLayoutPanel2.ResumeLayout(false);
             this.toolStripContainer3.ContentPanel.ResumeLayout(false);
             this.toolStripContainer3.TopToolStripPanel.ResumeLayout(false);
             this.toolStripContainer3.TopToolStripPanel.PerformLayout();
             this.toolStripContainer3.ResumeLayout(false);
             this.toolStripContainer3.PerformLayout();
+            this.tsWtW.ResumeLayout(false);
+            this.tsWtW.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
