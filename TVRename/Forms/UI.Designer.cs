@@ -122,16 +122,7 @@ namespace TVRename
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tbMyMovies = new System.Windows.Forms.TabPage();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.tbnAddMovie = new System.Windows.Forms.ToolStripButton();
-            this.btnEditMovie = new System.Windows.Forms.ToolStripButton();
-            this.btnMovieDelete = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnMovieRefresh = new System.Windows.Forms.ToolStripButton();
-            this.tsbScanMovies = new System.Windows.Forms.ToolStripButton();
-            this.btnMovieFilter = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbMyMoviesContextMenu = new System.Windows.Forms.ToolStripButton();
+            this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.movieTree = new System.Windows.Forms.TreeView();
             this.filterMoviesTextbox = new System.Windows.Forms.TextBox();
@@ -142,6 +133,16 @@ namespace TVRename
             this.chrMovieImages = new CefSharp.WinForms.ChromiumWebBrowser();
             this.tpMovieTrailer = new System.Windows.Forms.TabPage();
             this.chrMovieTrailer = new CefSharp.WinForms.ChromiumWebBrowser();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.tbnAddMovie = new System.Windows.Forms.ToolStripButton();
+            this.btnEditMovie = new System.Windows.Forms.ToolStripButton();
+            this.btnMovieDelete = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnMovieRefresh = new System.Windows.Forms.ToolStripButton();
+            this.tsbScanMovies = new System.Windows.Forms.ToolStripButton();
+            this.btnMovieFilter = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbMyMoviesContextMenu = new System.Windows.Forms.ToolStripButton();
             this.tbMyShows = new System.Windows.Forms.TabPage();
             this.tsMyShows = new System.Windows.Forms.ToolStrip();
             this.btnAddTVShow = new System.Windows.Forms.ToolStripButton();
@@ -263,10 +264,13 @@ namespace TVRename
             this.bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwScan = new System.ComponentModel.BackgroundWorker();
             this.bwAction = new System.ComponentModel.BackgroundWorker();
+            this.toolStripContainer2 = new System.Windows.Forms.ToolStripContainer();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyMovies.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
+            this.toolStripContainer1.ContentPanel.SuspendLayout();
+            this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
+            this.toolStripContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -275,6 +279,7 @@ namespace TVRename
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tpMovieTrailer.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
             this.tsMyShows.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -292,6 +297,9 @@ namespace TVRename
             this.tbWTW.SuspendLayout();
             this.tsWtW.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.toolStripContainer2.ContentPanel.SuspendLayout();
+            this.toolStripContainer2.TopToolStripPanel.SuspendLayout();
+            this.toolStripContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -837,7 +845,7 @@ namespace TVRename
             this.tabControl1.ImageList = this.ilNewIcons;
             this.tabControl1.ItemSize = new System.Drawing.Size(100, 100);
             this.tabControl1.Location = new System.Drawing.Point(0, 44);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(6);
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -850,19 +858,168 @@ namespace TVRename
             // 
             // tbMyMovies
             // 
-            this.tbMyMovies.Controls.Add(this.toolStrip1);
-            this.tbMyMovies.Controls.Add(this.splitContainer2);
+            this.tbMyMovies.Controls.Add(this.toolStripContainer1);
             this.tbMyMovies.ImageKey = "4632196-48.png";
             this.tbMyMovies.Location = new System.Drawing.Point(104, 4);
-            this.tbMyMovies.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbMyMovies.Margin = new System.Windows.Forms.Padding(6);
             this.tbMyMovies.Name = "tbMyMovies";
             this.tbMyMovies.Size = new System.Drawing.Size(1513, 884);
             this.tbMyMovies.TabIndex = 12;
             this.tbMyMovies.Text = "Movies";
             this.tbMyMovies.UseVisualStyleBackColor = true;
             // 
+            // toolStripContainer1
+            // 
+            // 
+            // toolStripContainer1.ContentPanel
+            // 
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.splitContainer2);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1513, 842);
+            this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
+            this.toolStripContainer1.Name = "toolStripContainer1";
+            this.toolStripContainer1.Size = new System.Drawing.Size(1513, 884);
+            this.toolStripContainer1.TabIndex = 11;
+            this.toolStripContainer1.Text = "toolStripContainer1";
+            // 
+            // toolStripContainer1.TopToolStripPanel
+            // 
+            this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip1);
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(6);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.movieTree);
+            this.splitContainer2.Panel1.Controls.Add(this.filterMoviesTextbox);
+            this.splitContainer2.Panel1MinSize = 100;
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.tabControl3);
+            this.splitContainer2.Panel2MinSize = 100;
+            this.splitContainer2.Size = new System.Drawing.Size(1513, 842);
+            this.splitContainer2.SplitterDistance = 362;
+            this.splitContainer2.SplitterWidth = 7;
+            this.splitContainer2.TabIndex = 12;
+            // 
+            // movieTree
+            // 
+            this.movieTree.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.movieTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.movieTree.HideSelection = false;
+            this.movieTree.Location = new System.Drawing.Point(0, 29);
+            this.movieTree.Margin = new System.Windows.Forms.Padding(6);
+            this.movieTree.Name = "movieTree";
+            this.movieTree.Size = new System.Drawing.Size(358, 809);
+            this.movieTree.TabIndex = 0;
+            this.movieTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MyMoviesTree_AfterSelect);
+            this.movieTree.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MyMoviesTree_MouseClick);
+            // 
+            // filterMoviesTextbox
+            // 
+            this.filterMoviesTextbox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.filterMoviesTextbox.Location = new System.Drawing.Point(0, 0);
+            this.filterMoviesTextbox.Margin = new System.Windows.Forms.Padding(6);
+            this.filterMoviesTextbox.Name = "filterMoviesTextbox";
+            this.filterMoviesTextbox.Size = new System.Drawing.Size(358, 29);
+            this.filterMoviesTextbox.TabIndex = 1;
+            this.filterMoviesTextbox.SizeChanged += new System.EventHandler(this.filterMoviesTextBox_SizeChanged);
+            this.filterMoviesTextbox.TextChanged += new System.EventHandler(this.filterMoviesTextBox_TextChanged);
+            // 
+            // tabControl3
+            // 
+            this.tabControl3.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+            this.tabControl3.Controls.Add(this.tabPage1);
+            this.tabControl3.Controls.Add(this.tabPage2);
+            this.tabControl3.Controls.Add(this.tpMovieTrailer);
+            this.tabControl3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl3.Location = new System.Drawing.Point(0, 0);
+            this.tabControl3.Margin = new System.Windows.Forms.Padding(6);
+            this.tabControl3.Name = "tabControl3";
+            this.tabControl3.SelectedIndex = 0;
+            this.tabControl3.Size = new System.Drawing.Size(1140, 838);
+            this.tabControl3.TabIndex = 7;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.chrMovieInformation);
+            this.tabPage1.Location = new System.Drawing.Point(4, 36);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(6);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(6);
+            this.tabPage1.Size = new System.Drawing.Size(1132, 798);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Information";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // chrMovieInformation
+            // 
+            this.chrMovieInformation.ActivateBrowserOnCreation = false;
+            this.chrMovieInformation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chrMovieInformation.Location = new System.Drawing.Point(6, 6);
+            this.chrMovieInformation.Margin = new System.Windows.Forms.Padding(6);
+            this.chrMovieInformation.Name = "chrMovieInformation";
+            this.chrMovieInformation.Size = new System.Drawing.Size(1120, 786);
+            this.chrMovieInformation.TabIndex = 1;
+            this.chrMovieInformation.Visible = false;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.chrMovieImages);
+            this.tabPage2.Location = new System.Drawing.Point(4, 36);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(6);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(6);
+            this.tabPage2.Size = new System.Drawing.Size(314, 284);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Images";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // chrMovieImages
+            // 
+            this.chrMovieImages.ActivateBrowserOnCreation = false;
+            this.chrMovieImages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chrMovieImages.Location = new System.Drawing.Point(6, 6);
+            this.chrMovieImages.Margin = new System.Windows.Forms.Padding(6);
+            this.chrMovieImages.Name = "chrMovieImages";
+            this.chrMovieImages.Size = new System.Drawing.Size(302, 272);
+            this.chrMovieImages.TabIndex = 1;
+            this.chrMovieImages.Visible = false;
+            // 
+            // tpMovieTrailer
+            // 
+            this.tpMovieTrailer.Controls.Add(this.chrMovieTrailer);
+            this.tpMovieTrailer.Location = new System.Drawing.Point(4, 36);
+            this.tpMovieTrailer.Margin = new System.Windows.Forms.Padding(6);
+            this.tpMovieTrailer.Name = "tpMovieTrailer";
+            this.tpMovieTrailer.Padding = new System.Windows.Forms.Padding(6);
+            this.tpMovieTrailer.Size = new System.Drawing.Size(314, 284);
+            this.tpMovieTrailer.TabIndex = 2;
+            this.tpMovieTrailer.Text = "Trailer";
+            this.tpMovieTrailer.UseVisualStyleBackColor = true;
+            // 
+            // chrMovieTrailer
+            // 
+            this.chrMovieTrailer.ActivateBrowserOnCreation = false;
+            this.chrMovieTrailer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chrMovieTrailer.Location = new System.Drawing.Point(6, 6);
+            this.chrMovieTrailer.Margin = new System.Windows.Forms.Padding(6);
+            this.chrMovieTrailer.Name = "chrMovieTrailer";
+            this.chrMovieTrailer.Size = new System.Drawing.Size(302, 272);
+            this.chrMovieTrailer.TabIndex = 2;
+            this.chrMovieTrailer.Visible = false;
+            // 
             // toolStrip1
             // 
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(28, 28);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -875,10 +1032,10 @@ namespace TVRename
             this.btnMovieFilter,
             this.toolStripSeparator16,
             this.tsbMyMoviesContextMenu});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Location = new System.Drawing.Point(5, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
-            this.toolStrip1.Size = new System.Drawing.Size(1513, 42);
+            this.toolStrip1.Size = new System.Drawing.Size(856, 42);
             this.toolStrip1.TabIndex = 13;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -956,146 +1113,12 @@ namespace TVRename
             this.tsbMyMoviesContextMenu.Text = "Context Menu";
             this.tsbMyMoviesContextMenu.Click += new System.EventHandler(this.tsbMyMoviesContextMenu_Click);
             // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer2.Location = new System.Drawing.Point(-1, 46);
-            this.splitContainer2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.splitContainer2.Name = "splitContainer2";
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.movieTree);
-            this.splitContainer2.Panel1.Controls.Add(this.filterMoviesTextbox);
-            this.splitContainer2.Panel1MinSize = 100;
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.tabControl3);
-            this.splitContainer2.Panel2MinSize = 100;
-            this.splitContainer2.Size = new System.Drawing.Size(1518, 842);
-            this.splitContainer2.SplitterDistance = 362;
-            this.splitContainer2.SplitterWidth = 7;
-            this.splitContainer2.TabIndex = 12;
-            // 
-            // movieTree
-            // 
-            this.movieTree.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.movieTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.movieTree.HideSelection = false;
-            this.movieTree.Location = new System.Drawing.Point(0, 29);
-            this.movieTree.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.movieTree.Name = "movieTree";
-            this.movieTree.Size = new System.Drawing.Size(358, 809);
-            this.movieTree.TabIndex = 0;
-            this.movieTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MyMoviesTree_AfterSelect);
-            this.movieTree.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MyMoviesTree_MouseClick);
-            // 
-            // filterMoviesTextbox
-            // 
-            this.filterMoviesTextbox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.filterMoviesTextbox.Location = new System.Drawing.Point(0, 0);
-            this.filterMoviesTextbox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.filterMoviesTextbox.Name = "filterMoviesTextbox";
-            this.filterMoviesTextbox.Size = new System.Drawing.Size(358, 29);
-            this.filterMoviesTextbox.TabIndex = 1;
-            this.filterMoviesTextbox.SizeChanged += new System.EventHandler(this.filterMoviesTextBox_SizeChanged);
-            this.filterMoviesTextbox.TextChanged += new System.EventHandler(this.filterMoviesTextBox_TextChanged);
-            // 
-            // tabControl3
-            // 
-            this.tabControl3.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
-            this.tabControl3.Controls.Add(this.tabPage1);
-            this.tabControl3.Controls.Add(this.tabPage2);
-            this.tabControl3.Controls.Add(this.tpMovieTrailer);
-            this.tabControl3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl3.Location = new System.Drawing.Point(0, 0);
-            this.tabControl3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.tabControl3.Name = "tabControl3";
-            this.tabControl3.SelectedIndex = 0;
-            this.tabControl3.Size = new System.Drawing.Size(1145, 838);
-            this.tabControl3.TabIndex = 7;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.chrMovieInformation);
-            this.tabPage1.Location = new System.Drawing.Point(4, 36);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.tabPage1.Size = new System.Drawing.Size(1137, 798);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Information";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // chrMovieInformation
-            // 
-            this.chrMovieInformation.ActivateBrowserOnCreation = false;
-            this.chrMovieInformation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chrMovieInformation.Location = new System.Drawing.Point(6, 6);
-            this.chrMovieInformation.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.chrMovieInformation.Name = "chrMovieInformation";
-            this.chrMovieInformation.Size = new System.Drawing.Size(1125, 786);
-            this.chrMovieInformation.TabIndex = 1;
-            this.chrMovieInformation.Visible = false;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.chrMovieImages);
-            this.tabPage2.Location = new System.Drawing.Point(4, 36);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.tabPage2.Size = new System.Drawing.Size(892, 756);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Images";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // chrMovieImages
-            // 
-            this.chrMovieImages.ActivateBrowserOnCreation = false;
-            this.chrMovieImages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chrMovieImages.Location = new System.Drawing.Point(6, 6);
-            this.chrMovieImages.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.chrMovieImages.Name = "chrMovieImages";
-            this.chrMovieImages.Size = new System.Drawing.Size(880, 744);
-            this.chrMovieImages.TabIndex = 1;
-            this.chrMovieImages.Visible = false;
-            // 
-            // tpMovieTrailer
-            // 
-            this.tpMovieTrailer.Controls.Add(this.chrMovieTrailer);
-            this.tpMovieTrailer.Location = new System.Drawing.Point(4, 36);
-            this.tpMovieTrailer.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.tpMovieTrailer.Name = "tpMovieTrailer";
-            this.tpMovieTrailer.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.tpMovieTrailer.Size = new System.Drawing.Size(892, 756);
-            this.tpMovieTrailer.TabIndex = 2;
-            this.tpMovieTrailer.Text = "Trailer";
-            this.tpMovieTrailer.UseVisualStyleBackColor = true;
-            // 
-            // chrMovieTrailer
-            // 
-            this.chrMovieTrailer.ActivateBrowserOnCreation = false;
-            this.chrMovieTrailer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chrMovieTrailer.Location = new System.Drawing.Point(6, 6);
-            this.chrMovieTrailer.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.chrMovieTrailer.Name = "chrMovieTrailer";
-            this.chrMovieTrailer.Size = new System.Drawing.Size(880, 744);
-            this.chrMovieTrailer.TabIndex = 2;
-            this.chrMovieTrailer.Visible = false;
-            // 
             // tbMyShows
             // 
-            this.tbMyShows.Controls.Add(this.tsMyShows);
-            this.tbMyShows.Controls.Add(this.splitContainer1);
+            this.tbMyShows.Controls.Add(this.toolStripContainer2);
             this.tbMyShows.ImageKey = "3790574-48.png";
             this.tbMyShows.Location = new System.Drawing.Point(104, 4);
-            this.tbMyShows.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbMyShows.Margin = new System.Windows.Forms.Padding(6);
             this.tbMyShows.Name = "tbMyShows";
             this.tbMyShows.Size = new System.Drawing.Size(1513, 884);
             this.tbMyShows.TabIndex = 9;
@@ -1104,6 +1127,7 @@ namespace TVRename
             // 
             // tsMyShows
             // 
+            this.tsMyShows.Dock = System.Windows.Forms.DockStyle.None;
             this.tsMyShows.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.tsMyShows.ImageScalingSize = new System.Drawing.Size(28, 28);
             this.tsMyShows.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1118,10 +1142,10 @@ namespace TVRename
             this.btnFilterMyShows,
             this.toolStripSeparator13,
             this.tsbMyShowsContextMenu});
-            this.tsMyShows.Location = new System.Drawing.Point(0, 0);
+            this.tsMyShows.Location = new System.Drawing.Point(5, 0);
             this.tsMyShows.Name = "tsMyShows";
             this.tsMyShows.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
-            this.tsMyShows.Size = new System.Drawing.Size(1513, 42);
+            this.tsMyShows.Size = new System.Drawing.Size(894, 42);
             this.tsMyShows.TabIndex = 11;
             this.tsMyShows.Text = "toolStrip1";
             // 
@@ -1222,13 +1246,11 @@ namespace TVRename
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 46);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(6);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -1241,7 +1263,7 @@ namespace TVRename
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl2);
             this.splitContainer1.Panel2MinSize = 100;
-            this.splitContainer1.Size = new System.Drawing.Size(1508, 838);
+            this.splitContainer1.Size = new System.Drawing.Size(1513, 842);
             this.splitContainer1.SplitterDistance = 337;
             this.splitContainer1.SplitterWidth = 7;
             this.splitContainer1.TabIndex = 8;
@@ -1252,9 +1274,9 @@ namespace TVRename
             this.MyShowTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MyShowTree.HideSelection = false;
             this.MyShowTree.Location = new System.Drawing.Point(0, 29);
-            this.MyShowTree.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.MyShowTree.Margin = new System.Windows.Forms.Padding(6);
             this.MyShowTree.Name = "MyShowTree";
-            this.MyShowTree.Size = new System.Drawing.Size(333, 805);
+            this.MyShowTree.Size = new System.Drawing.Size(333, 809);
             this.MyShowTree.TabIndex = 0;
             this.MyShowTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MyShowTree_AfterSelect);
             this.MyShowTree.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MyShowTree_MouseClick);
@@ -1263,7 +1285,7 @@ namespace TVRename
             // 
             this.filterTextBox.Dock = System.Windows.Forms.DockStyle.Top;
             this.filterTextBox.Location = new System.Drawing.Point(0, 0);
-            this.filterTextBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.filterTextBox.Margin = new System.Windows.Forms.Padding(6);
             this.filterTextBox.Name = "filterTextBox";
             this.filterTextBox.Size = new System.Drawing.Size(333, 29);
             this.filterTextBox.TabIndex = 1;
@@ -1279,20 +1301,20 @@ namespace TVRename
             this.tabControl2.Controls.Add(this.tabPage3);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
-            this.tabControl2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tabControl2.Margin = new System.Windows.Forms.Padding(6);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(1160, 834);
+            this.tabControl2.Size = new System.Drawing.Size(1165, 838);
             this.tabControl2.TabIndex = 7;
             // 
             // tpInformation
             // 
             this.tpInformation.Controls.Add(this.chrInformation);
             this.tpInformation.Location = new System.Drawing.Point(4, 36);
-            this.tpInformation.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tpInformation.Margin = new System.Windows.Forms.Padding(6);
             this.tpInformation.Name = "tpInformation";
-            this.tpInformation.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.tpInformation.Size = new System.Drawing.Size(1152, 794);
+            this.tpInformation.Padding = new System.Windows.Forms.Padding(6);
+            this.tpInformation.Size = new System.Drawing.Size(1157, 798);
             this.tpInformation.TabIndex = 0;
             this.tpInformation.Text = "Information";
             this.tpInformation.UseVisualStyleBackColor = true;
@@ -1302,9 +1324,9 @@ namespace TVRename
             this.chrInformation.ActivateBrowserOnCreation = false;
             this.chrInformation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrInformation.Location = new System.Drawing.Point(6, 6);
-            this.chrInformation.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.chrInformation.Margin = new System.Windows.Forms.Padding(6);
             this.chrInformation.Name = "chrInformation";
-            this.chrInformation.Size = new System.Drawing.Size(1140, 782);
+            this.chrInformation.Size = new System.Drawing.Size(1145, 786);
             this.chrInformation.TabIndex = 1;
             this.chrInformation.Visible = false;
             // 
@@ -1312,10 +1334,10 @@ namespace TVRename
             // 
             this.tpImages.Controls.Add(this.chrImages);
             this.tpImages.Location = new System.Drawing.Point(4, 36);
-            this.tpImages.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tpImages.Margin = new System.Windows.Forms.Padding(6);
             this.tpImages.Name = "tpImages";
-            this.tpImages.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.tpImages.Size = new System.Drawing.Size(892, 756);
+            this.tpImages.Padding = new System.Windows.Forms.Padding(6);
+            this.tpImages.Size = new System.Drawing.Size(1152, 794);
             this.tpImages.TabIndex = 1;
             this.tpImages.Text = "Images";
             this.tpImages.UseVisualStyleBackColor = true;
@@ -1325,9 +1347,9 @@ namespace TVRename
             this.chrImages.ActivateBrowserOnCreation = false;
             this.chrImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrImages.Location = new System.Drawing.Point(6, 6);
-            this.chrImages.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.chrImages.Margin = new System.Windows.Forms.Padding(6);
             this.chrImages.Name = "chrImages";
-            this.chrImages.Size = new System.Drawing.Size(880, 744);
+            this.chrImages.Size = new System.Drawing.Size(1140, 782);
             this.chrImages.TabIndex = 1;
             this.chrImages.Visible = false;
             // 
@@ -1335,10 +1357,10 @@ namespace TVRename
             // 
             this.tpSummary.Controls.Add(this.chrSummary);
             this.tpSummary.Location = new System.Drawing.Point(4, 36);
-            this.tpSummary.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tpSummary.Margin = new System.Windows.Forms.Padding(6);
             this.tpSummary.Name = "tpSummary";
-            this.tpSummary.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.tpSummary.Size = new System.Drawing.Size(892, 756);
+            this.tpSummary.Padding = new System.Windows.Forms.Padding(6);
+            this.tpSummary.Size = new System.Drawing.Size(1152, 794);
             this.tpSummary.TabIndex = 2;
             this.tpSummary.Text = "Summary";
             this.tpSummary.UseVisualStyleBackColor = true;
@@ -1348,9 +1370,9 @@ namespace TVRename
             this.chrSummary.ActivateBrowserOnCreation = false;
             this.chrSummary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrSummary.Location = new System.Drawing.Point(6, 6);
-            this.chrSummary.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.chrSummary.Margin = new System.Windows.Forms.Padding(6);
             this.chrSummary.Name = "chrSummary";
-            this.chrSummary.Size = new System.Drawing.Size(880, 744);
+            this.chrSummary.Size = new System.Drawing.Size(1140, 782);
             this.chrSummary.TabIndex = 2;
             this.chrSummary.Visible = false;
             // 
@@ -1358,10 +1380,10 @@ namespace TVRename
             // 
             this.tabPage3.Controls.Add(this.chrTvTrailer);
             this.tabPage3.Location = new System.Drawing.Point(4, 36);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(6);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.tabPage3.Size = new System.Drawing.Size(892, 756);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(6);
+            this.tabPage3.Size = new System.Drawing.Size(1152, 794);
             this.tabPage3.TabIndex = 3;
             this.tabPage3.Text = "Trailer";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1371,9 +1393,9 @@ namespace TVRename
             this.chrTvTrailer.ActivateBrowserOnCreation = false;
             this.chrTvTrailer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrTvTrailer.Location = new System.Drawing.Point(6, 6);
-            this.chrTvTrailer.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.chrTvTrailer.Margin = new System.Windows.Forms.Padding(6);
             this.chrTvTrailer.Name = "chrTvTrailer";
-            this.chrTvTrailer.Size = new System.Drawing.Size(880, 744);
+            this.chrTvTrailer.Size = new System.Drawing.Size(1140, 782);
             this.chrTvTrailer.TabIndex = 2;
             this.chrTvTrailer.Visible = false;
             // 
@@ -1383,7 +1405,7 @@ namespace TVRename
             this.tbAllInOne.Controls.Add(this.tsScanResults);
             this.tbAllInOne.ImageKey = "322497-48 (1).png";
             this.tbAllInOne.Location = new System.Drawing.Point(104, 4);
-            this.tbAllInOne.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbAllInOne.Margin = new System.Windows.Forms.Padding(6);
             this.tbAllInOne.Name = "tbAllInOne";
             this.tbAllInOne.Size = new System.Drawing.Size(1513, 884);
             this.tbAllInOne.TabIndex = 11;
@@ -1423,7 +1445,7 @@ namespace TVRename
             this.olvAction.IncludeColumnHeadersInCopy = true;
             this.olvAction.IsSimpleDropSink = true;
             this.olvAction.Location = new System.Drawing.Point(0, 48);
-            this.olvAction.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.olvAction.Margin = new System.Windows.Forms.Padding(6);
             this.olvAction.Name = "olvAction";
             this.olvAction.ShowCommandMenuOnRightClick = true;
             this.olvAction.ShowGroups = false;
@@ -1857,7 +1879,7 @@ namespace TVRename
             this.tbWTW.Controls.Add(this.lvWhenToWatch);
             this.tbWTW.ImageKey = "115762-48.png";
             this.tbWTW.Location = new System.Drawing.Point(104, 4);
-            this.tbWTW.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbWTW.Margin = new System.Windows.Forms.Padding(6);
             this.tbWTW.Name = "tbWTW";
             this.tbWTW.Size = new System.Drawing.Size(1513, 884);
             this.tbWTW.TabIndex = 4;
@@ -1930,7 +1952,7 @@ namespace TVRename
             this.txtWhenToWatchSynopsis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWhenToWatchSynopsis.Location = new System.Drawing.Point(6, 588);
-            this.txtWhenToWatchSynopsis.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.txtWhenToWatchSynopsis.Margin = new System.Windows.Forms.Padding(6);
             this.txtWhenToWatchSynopsis.Multiline = true;
             this.txtWhenToWatchSynopsis.Name = "txtWhenToWatchSynopsis";
             this.txtWhenToWatchSynopsis.ReadOnly = true;
@@ -1981,7 +2003,7 @@ namespace TVRename
             listViewGroup4});
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 48);
-            this.lvWhenToWatch.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.lvWhenToWatch.Margin = new System.Windows.Forms.Padding(6);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
             this.lvWhenToWatch.ShowItemToolTips = true;
             this.lvWhenToWatch.Size = new System.Drawing.Size(1511, 536);
@@ -2085,20 +2107,20 @@ namespace TVRename
             this.tableLayoutPanel2.Controls.Add(this.tsNextShowTxt, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanel2.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 942);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 935);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(6);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1621, 35);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1621, 42);
             this.tableLayoutPanel2.TabIndex = 9;
             // 
             // pbProgressBarx
             // 
             this.pbProgressBarx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbProgressBarx.Location = new System.Drawing.Point(1383, 7);
-            this.pbProgressBarx.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.pbProgressBarx.Location = new System.Drawing.Point(1383, 14);
+            this.pbProgressBarx.Margin = new System.Windows.Forms.Padding(6);
             this.pbProgressBarx.Name = "pbProgressBarx";
             this.pbProgressBarx.Size = new System.Drawing.Size(232, 22);
             this.pbProgressBarx.Step = 1;
@@ -2109,7 +2131,7 @@ namespace TVRename
             // 
             this.txtDLStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDLStatusLabel.Location = new System.Drawing.Point(735, 11);
+            this.txtDLStatusLabel.Location = new System.Drawing.Point(735, 18);
             this.txtDLStatusLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.txtDLStatusLabel.Name = "txtDLStatusLabel";
             this.txtDLStatusLabel.Size = new System.Drawing.Size(636, 24);
@@ -2121,7 +2143,7 @@ namespace TVRename
             // 
             this.tsNextShowTxt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tsNextShowTxt.Location = new System.Drawing.Point(6, 11);
+            this.tsNextShowTxt.Location = new System.Drawing.Point(6, 18);
             this.tsNextShowTxt.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.tsNextShowTxt.Name = "tsNextShowTxt";
             this.tsNextShowTxt.Size = new System.Drawing.Size(717, 24);
@@ -2237,7 +2259,7 @@ namespace TVRename
             this.btnUpdateAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdateAvailable.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.btnUpdateAvailable.Location = new System.Drawing.Point(1395, 0);
-            this.btnUpdateAvailable.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnUpdateAvailable.Margin = new System.Windows.Forms.Padding(6);
             this.btnUpdateAvailable.Name = "btnUpdateAvailable";
             this.btnUpdateAvailable.Size = new System.Drawing.Size(213, 42);
             this.btnUpdateAvailable.TabIndex = 10;
@@ -2295,6 +2317,24 @@ namespace TVRename
             this.bwAction.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwAction_DoWork);
             this.bwAction.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwAction_RunWorkerCompleted);
             // 
+            // toolStripContainer2
+            // 
+            // 
+            // toolStripContainer2.ContentPanel
+            // 
+            this.toolStripContainer2.ContentPanel.Controls.Add(this.splitContainer1);
+            this.toolStripContainer2.ContentPanel.Size = new System.Drawing.Size(1513, 842);
+            this.toolStripContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.toolStripContainer2.Location = new System.Drawing.Point(0, 0);
+            this.toolStripContainer2.Name = "toolStripContainer2";
+            this.toolStripContainer2.Size = new System.Drawing.Size(1513, 884);
+            this.toolStripContainer2.TabIndex = 11;
+            this.toolStripContainer2.Text = "toolStripContainer2";
+            // 
+            // toolStripContainer2.TopToolStripPanel
+            // 
+            this.toolStripContainer2.TopToolStripPanel.Controls.Add(this.tsMyShows);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
@@ -2308,7 +2348,7 @@ namespace TVRename
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "UI";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
@@ -2323,9 +2363,11 @@ namespace TVRename
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tbMyMovies.ResumeLayout(false);
-            this.tbMyMovies.PerformLayout();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.toolStripContainer1.ContentPanel.ResumeLayout(false);
+            this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer1.TopToolStripPanel.PerformLayout();
+            this.toolStripContainer1.ResumeLayout(false);
+            this.toolStripContainer1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -2335,8 +2377,9 @@ namespace TVRename
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tpMovieTrailer.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.tbMyShows.ResumeLayout(false);
-            this.tbMyShows.PerformLayout();
             this.tsMyShows.ResumeLayout(false);
             this.tsMyShows.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -2359,6 +2402,11 @@ namespace TVRename
             this.tsWtW.ResumeLayout(false);
             this.tsWtW.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
+            this.toolStripContainer2.ContentPanel.ResumeLayout(false);
+            this.toolStripContainer2.TopToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer2.TopToolStripPanel.PerformLayout();
+            this.toolStripContainer2.ResumeLayout(false);
+            this.toolStripContainer2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2577,5 +2625,7 @@ namespace TVRename
         private ToolStripSeparator toolStripSeparator22;
         private ToolStripMenuItem webTestToolStripMenuItem;
         private ToolStripMenuItem downloadInstallerToolStripMenuItem;
+        private ToolStripContainer toolStripContainer1;
+        private ToolStripContainer toolStripContainer2;
     }
 }
