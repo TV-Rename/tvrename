@@ -50,10 +50,10 @@ namespace TVRename
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -211,6 +211,10 @@ namespace TVRename
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbScanContextMenu = new System.Windows.Forms.ToolStripButton();
             this.tbWTW = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.calCalendar = new System.Windows.Forms.MonthCalendar();
+            this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
             this.toolStripContainer3 = new System.Windows.Forms.ToolStripContainer();
             this.lvWhenToWatch = new TVRename.ListViewFlickerFree();
             this.columnHeader29 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -228,9 +232,6 @@ namespace TVRename
             this.tsbScheduleJackettSearch = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.btnScheduleRightClick = new System.Windows.Forms.ToolStripButton();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
-            this.calCalendar = new System.Windows.Forms.MonthCalendar();
             this.ilNewIcons = new System.Windows.Forms.ImageList(this.components);
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -269,7 +270,6 @@ namespace TVRename
             this.bwAction = new System.ComponentModel.BackgroundWorker();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyMovies.SuspendLayout();
@@ -303,14 +303,14 @@ namespace TVRename
             ((System.ComponentModel.ISupportInitialize)(this.olvAction)).BeginInit();
             this.tsScanResults.SuspendLayout();
             this.tbWTW.SuspendLayout();
+            this.tableLayoutPanel4.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.toolStripContainer3.ContentPanel.SuspendLayout();
             this.toolStripContainer3.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer3.SuspendLayout();
             this.tsWtW.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.tableLayoutPanel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -977,7 +977,7 @@ namespace TVRename
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(4320, 2603);
+            this.tabPage2.Size = new System.Drawing.Size(459, 515);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Images";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -988,7 +988,7 @@ namespace TVRename
             this.chrMovieImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrMovieImages.Location = new System.Drawing.Point(3, 3);
             this.chrMovieImages.Name = "chrMovieImages";
-            this.chrMovieImages.Size = new System.Drawing.Size(4314, 2597);
+            this.chrMovieImages.Size = new System.Drawing.Size(453, 509);
             this.chrMovieImages.TabIndex = 1;
             this.chrMovieImages.Visible = false;
             // 
@@ -998,7 +998,7 @@ namespace TVRename
             this.tpMovieTrailer.Location = new System.Drawing.Point(4, 25);
             this.tpMovieTrailer.Name = "tpMovieTrailer";
             this.tpMovieTrailer.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMovieTrailer.Size = new System.Drawing.Size(4320, 2603);
+            this.tpMovieTrailer.Size = new System.Drawing.Size(459, 515);
             this.tpMovieTrailer.TabIndex = 2;
             this.tpMovieTrailer.Text = "Trailer";
             this.tpMovieTrailer.UseVisualStyleBackColor = true;
@@ -1009,7 +1009,7 @@ namespace TVRename
             this.chrMovieTrailer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrMovieTrailer.Location = new System.Drawing.Point(3, 3);
             this.chrMovieTrailer.Name = "chrMovieTrailer";
-            this.chrMovieTrailer.Size = new System.Drawing.Size(4314, 2597);
+            this.chrMovieTrailer.Size = new System.Drawing.Size(453, 509);
             this.chrMovieTrailer.TabIndex = 2;
             this.chrMovieTrailer.Visible = false;
             // 
@@ -1226,7 +1226,7 @@ namespace TVRename
             this.tpImages.Location = new System.Drawing.Point(4, 25);
             this.tpImages.Name = "tpImages";
             this.tpImages.Padding = new System.Windows.Forms.Padding(3);
-            this.tpImages.Size = new System.Drawing.Size(4345, 2603);
+            this.tpImages.Size = new System.Drawing.Size(484, 515);
             this.tpImages.TabIndex = 1;
             this.tpImages.Text = "Images";
             this.tpImages.UseVisualStyleBackColor = true;
@@ -1237,7 +1237,7 @@ namespace TVRename
             this.chrImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrImages.Location = new System.Drawing.Point(3, 3);
             this.chrImages.Name = "chrImages";
-            this.chrImages.Size = new System.Drawing.Size(4339, 2597);
+            this.chrImages.Size = new System.Drawing.Size(478, 509);
             this.chrImages.TabIndex = 1;
             this.chrImages.Visible = false;
             // 
@@ -1247,7 +1247,7 @@ namespace TVRename
             this.tpSummary.Location = new System.Drawing.Point(4, 25);
             this.tpSummary.Name = "tpSummary";
             this.tpSummary.Padding = new System.Windows.Forms.Padding(3);
-            this.tpSummary.Size = new System.Drawing.Size(4345, 2603);
+            this.tpSummary.Size = new System.Drawing.Size(484, 515);
             this.tpSummary.TabIndex = 2;
             this.tpSummary.Text = "Summary";
             this.tpSummary.UseVisualStyleBackColor = true;
@@ -1258,7 +1258,7 @@ namespace TVRename
             this.chrSummary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrSummary.Location = new System.Drawing.Point(3, 3);
             this.chrSummary.Name = "chrSummary";
-            this.chrSummary.Size = new System.Drawing.Size(4339, 2597);
+            this.chrSummary.Size = new System.Drawing.Size(478, 509);
             this.chrSummary.TabIndex = 2;
             this.chrSummary.Visible = false;
             // 
@@ -1268,7 +1268,7 @@ namespace TVRename
             this.tabPage3.Location = new System.Drawing.Point(4, 25);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(4345, 2603);
+            this.tabPage3.Size = new System.Drawing.Size(484, 515);
             this.tabPage3.TabIndex = 3;
             this.tabPage3.Text = "Trailer";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1279,13 +1279,13 @@ namespace TVRename
             this.chrTvTrailer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrTvTrailer.Location = new System.Drawing.Point(3, 3);
             this.chrTvTrailer.Name = "chrTvTrailer";
-            this.chrTvTrailer.Size = new System.Drawing.Size(4339, 2597);
+            this.chrTvTrailer.Size = new System.Drawing.Size(478, 509);
             this.chrTvTrailer.TabIndex = 2;
             this.chrTvTrailer.Visible = false;
             // 
             // tsMyShows
             // 
-            this.tsMyShows.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tsMyShows.Dock = System.Windows.Forms.DockStyle.None;
             this.tsMyShows.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.tsMyShows.ImageScalingSize = new System.Drawing.Size(28, 28);
             this.tsMyShows.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1876,6 +1876,60 @@ namespace TVRename
             this.tbWTW.Text = "Schedule";
             this.tbWTW.UseVisualStyleBackColor = true;
             // 
+            // tableLayoutPanel4
+            // 
+            this.tableLayoutPanel4.ColumnCount = 1;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel4.Controls.Add(this.tableLayoutPanel1, 0, 1);
+            this.tableLayoutPanel4.Controls.Add(this.toolStripContainer3, 0, 0);
+            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.RowCount = 2;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 162F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(837, 587);
+            this.tableLayoutPanel4.TabIndex = 13;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 227F));
+            this.tableLayoutPanel1.Controls.Add(this.calCalendar, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.txtWhenToWatchSynopsis, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(2, 427);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(833, 158);
+            this.tableLayoutPanel1.TabIndex = 4;
+            // 
+            // calCalendar
+            // 
+            this.calCalendar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.calCalendar.Location = new System.Drawing.Point(606, 0);
+            this.calCalendar.Margin = new System.Windows.Forms.Padding(0);
+            this.calCalendar.MaxSelectionCount = 1;
+            this.calCalendar.Name = "calCalendar";
+            this.calCalendar.TabIndex = 5;
+            this.calCalendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calCalendar_DateSelected);
+            // 
+            // txtWhenToWatchSynopsis
+            // 
+            this.txtWhenToWatchSynopsis.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtWhenToWatchSynopsis.Location = new System.Drawing.Point(0, 0);
+            this.txtWhenToWatchSynopsis.Margin = new System.Windows.Forms.Padding(0);
+            this.txtWhenToWatchSynopsis.Multiline = true;
+            this.txtWhenToWatchSynopsis.Name = "txtWhenToWatchSynopsis";
+            this.txtWhenToWatchSynopsis.ReadOnly = true;
+            this.txtWhenToWatchSynopsis.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtWhenToWatchSynopsis.Size = new System.Drawing.Size(606, 158);
+            this.txtWhenToWatchSynopsis.TabIndex = 4;
+            // 
             // toolStripContainer3
             // 
             // 
@@ -1910,21 +1964,21 @@ namespace TVRename
             this.columnHeader35});
             this.lvWhenToWatch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvWhenToWatch.FullRowSelect = true;
-            listViewGroup5.Header = "Recently Aired";
-            listViewGroup5.Name = "justPassed";
-            listViewGroup6.Header = "Next 7 Days";
-            listViewGroup6.Name = "next7days";
-            listViewGroup6.Tag = "1";
-            listViewGroup7.Header = "Future Episodes";
-            listViewGroup7.Name = "futureEps";
-            listViewGroup8.Header = "Later";
-            listViewGroup8.Name = "later";
-            listViewGroup8.Tag = "2";
+            listViewGroup1.Header = "Recently Aired";
+            listViewGroup1.Name = "justPassed";
+            listViewGroup2.Header = "Next 7 Days";
+            listViewGroup2.Name = "next7days";
+            listViewGroup2.Tag = "1";
+            listViewGroup3.Header = "Future Episodes";
+            listViewGroup3.Name = "futureEps";
+            listViewGroup4.Header = "Later";
+            listViewGroup4.Name = "later";
+            listViewGroup4.Tag = "2";
             this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup5,
-            listViewGroup6,
-            listViewGroup7,
-            listViewGroup8});
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4});
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 0);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
@@ -2045,45 +2099,6 @@ namespace TVRename
             this.btnScheduleRightClick.Size = new System.Drawing.Size(119, 36);
             this.btnScheduleRightClick.Text = "Context Menu";
             this.btnScheduleRightClick.Click += new System.EventHandler(this.ToolStripButton1_Click);
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 227F));
-            this.tableLayoutPanel1.Controls.Add(this.calCalendar, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.txtWhenToWatchSynopsis, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(2, 427);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(833, 158);
-            this.tableLayoutPanel1.TabIndex = 4;
-            // 
-            // txtWhenToWatchSynopsis
-            // 
-            this.txtWhenToWatchSynopsis.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtWhenToWatchSynopsis.Location = new System.Drawing.Point(0, 0);
-            this.txtWhenToWatchSynopsis.Margin = new System.Windows.Forms.Padding(0);
-            this.txtWhenToWatchSynopsis.Multiline = true;
-            this.txtWhenToWatchSynopsis.Name = "txtWhenToWatchSynopsis";
-            this.txtWhenToWatchSynopsis.ReadOnly = true;
-            this.txtWhenToWatchSynopsis.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtWhenToWatchSynopsis.Size = new System.Drawing.Size(606, 158);
-            this.txtWhenToWatchSynopsis.TabIndex = 4;
-            // 
-            // calCalendar
-            // 
-            this.calCalendar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.calCalendar.Location = new System.Drawing.Point(606, 0);
-            this.calCalendar.Margin = new System.Windows.Forms.Padding(0);
-            this.calCalendar.MaxSelectionCount = 1;
-            this.calCalendar.Name = "calCalendar";
-            this.calCalendar.TabIndex = 5;
-            this.calCalendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calCalendar_DateSelected);
             // 
             // ilNewIcons
             // 
@@ -2356,21 +2371,6 @@ namespace TVRename
             this.panel1.Size = new System.Drawing.Size(945, 595);
             this.panel1.TabIndex = 12;
             // 
-            // tableLayoutPanel4
-            // 
-            this.tableLayoutPanel4.ColumnCount = 1;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Controls.Add(this.tableLayoutPanel1, 0, 1);
-            this.tableLayoutPanel4.Controls.Add(this.toolStripContainer3, 0, 0);
-            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 2;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 162F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(837, 587);
-            this.tableLayoutPanel4.TabIndex = 13;
-            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2439,6 +2439,9 @@ namespace TVRename
             this.tsScanResults.ResumeLayout(false);
             this.tsScanResults.PerformLayout();
             this.tbWTW.ResumeLayout(false);
+            this.tableLayoutPanel4.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.toolStripContainer3.ContentPanel.ResumeLayout(false);
             this.toolStripContainer3.TopToolStripPanel.ResumeLayout(false);
             this.toolStripContainer3.TopToolStripPanel.PerformLayout();
@@ -2446,11 +2449,8 @@ namespace TVRename
             this.toolStripContainer3.PerformLayout();
             this.tsWtW.ResumeLayout(false);
             this.tsWtW.PerformLayout();
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
-            this.tableLayoutPanel4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

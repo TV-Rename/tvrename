@@ -51,8 +51,8 @@ namespace TVRename
 
                     writer.WriteElement("id", missing.MissingEpisode.Show.TvdbCode);
                     writer.WriteElement("title", missing.MissingEpisode.TheCachedSeries.Name);
-                    writer.WriteElement("season", Helpers.Pad(missing.MissingEpisode.AppropriateSeasonNumber));
-                    writer.WriteElement("episode", Helpers.Pad(missing.MissingEpisode.AppropriateEpNum));
+                    writer.WriteElement("season", missing.MissingEpisode.AppropriateSeasonNumber.Pad());
+                    writer.WriteElement("episode", missing.MissingEpisode.AppropriateEpNum.Pad());
                     writer.WriteElement("episodeName", missing.MissingEpisode.Name);
                     writer.WriteElement("description", missing.MissingEpisode.Overview);
 

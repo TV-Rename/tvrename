@@ -58,7 +58,7 @@ namespace TVRename
                     string path = movie.CachedMovie?.PosterUrl;
                     if (!string.IsNullOrEmpty(path))
                     {
-                        theActionList.Add(new ActionDownloadImage(movie, null, posterJpg, path, false));
+                        theActionList.Add(new ActionDownloadMovieImage(movie, posterJpg, path, false));
                         donePosterJpg.Add(file.Directory.FullName);
                     }
                 }
@@ -69,7 +69,7 @@ namespace TVRename
                                   ?? string.Empty;
                     if (!string.IsNullOrEmpty(path))
                     {
-                        theActionList.Add(new ActionDownloadImage(movie, null, bannerJpg, path, false));
+                        theActionList.Add(new ActionDownloadMovieImage(movie, bannerJpg, path, false));
                         doneBannerJpg.Add(file.Directory.FullName);
                     }
                 }
@@ -79,7 +79,7 @@ namespace TVRename
                     string path = movie.CachedMovie?.FanartUrl;
                     if (!string.IsNullOrEmpty(path))
                     {
-                        theActionList.Add(new ActionDownloadImage(movie, null, fanartJpg, path));
+                        theActionList.Add(new ActionDownloadMovieImage(movie, fanartJpg, path));
                         doneFanartJpg.Add(file.Directory.FullName);
                     }
                 }
@@ -113,7 +113,7 @@ namespace TVRename
                         string path = si.CachedShow?.GetSeriesPosterPath();
                         if (!string.IsNullOrEmpty(path))
                         {
-                            theActionList.Add(new ActionDownloadImage(si, null, posterJpg, path, false));
+                            theActionList.Add(new ActionDownloadTvShowImage(si,  posterJpg, path, false));
                             donePosterJpg.Add(si.AutoAddFolderBase);
                         }
                     }
@@ -123,7 +123,7 @@ namespace TVRename
                         string path = si.CachedShow?.GetSeriesWideBannerPath();
                         if (!string.IsNullOrEmpty(path))
                         {
-                            theActionList.Add(new ActionDownloadImage(si, null, bannerJpg, path, false));
+                            theActionList.Add(new ActionDownloadTvShowImage(si, bannerJpg, path, false));
                             doneBannerJpg.Add(si.AutoAddFolderBase);
                         }
                     }
@@ -133,7 +133,7 @@ namespace TVRename
                         string path = si.CachedShow?.GetSeriesFanartPath();
                         if (!string.IsNullOrEmpty(path))
                         {
-                            theActionList.Add(new ActionDownloadImage(si, null, fanartJpg, path));
+                            theActionList.Add(new ActionDownloadTvShowImage(si, fanartJpg, path));
                             doneFanartJpg.Add(si.AutoAddFolderBase);
                         }
                     }
@@ -165,7 +165,7 @@ namespace TVRename
                     string path = si.CachedShow?.GetSeasonBannerPath(snum);
                     if (!string.IsNullOrEmpty(path))
                     {
-                        theActionList.Add(new ActionDownloadImage(si, null, posterJpg, path));
+                        theActionList.Add(new ActionDownloadSeasonImage(si, snum, posterJpg, path));
                     }
                 }
 
@@ -175,7 +175,7 @@ namespace TVRename
                     string path = si.CachedShow?.GetSeasonWideBannerPath(snum);
                     if (!string.IsNullOrEmpty(path))
                     {
-                        theActionList.Add(new ActionDownloadImage(si, null, bannerJpg, path));
+                        theActionList.Add(new ActionDownloadSeasonImage(si, snum, bannerJpg, path));
                     }
                 }
                 return theActionList;

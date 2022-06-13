@@ -27,7 +27,7 @@ namespace TVRename
 
                     if (!string.IsNullOrEmpty(bannerPath))
                     {
-                        theActionList.Add(new ActionDownloadImage(si, null, fi, bannerPath, false));
+                        theActionList.Add(new ActionDownloadTvShowImage(si, fi, bannerPath));
                     }
 
                     DoneFanartJpg.Add(fi.FullName);
@@ -54,7 +54,7 @@ namespace TVRename
 
                         if (!string.IsNullOrEmpty(bannerPath))
                         {
-                            theActionList.Add(new ActionDownloadImage(si, null, fi, bannerPath, false));
+                            theActionList.Add(new ActionDownloadMovieImage(si, fi, bannerPath));
                         }
 
                         DoneFanartJpg.Add(fi.FullName);

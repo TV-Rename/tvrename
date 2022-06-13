@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using BrightIdeasSoftware;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -45,8 +46,14 @@ namespace TVRename
             return 1;
         }
 
-        return d1.CompareTo(d2);
+        int primary = d1.CompareTo(d2);
+        return primary == 0 ?
+            String.Compare(GetDefault(x!), GetDefault(y!), StringComparison.Ordinal)
+            : primary;
         }
+
+    [NotNull]
+    private string GetDefault([NotNull] OLVListItem p) => ((Item)p.RowObject).OrderKey;
 
     protected abstract T GetValue(OLVListItem x,int columnId);
     }

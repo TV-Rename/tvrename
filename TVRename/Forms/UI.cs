@@ -5008,12 +5008,17 @@ namespace TVRename
             if (e.Parameters.PrimarySort == olvEpisode)
             {
                 e.Parameters.PrimarySort = new OLVColumn("RawEp", "EpisodeNumber");
+                e.Parameters.GroupComparer = new SeasonGroupComparer(e.Parameters.GroupByOrder);
             }
 
-            if (e.Parameters.PrimarySort == olvSeason)
+            if (e.Parameters.PrimarySort == olvSeason || e.Parameters.PrimarySort.AspectName == "SeasonNumberAsInt")
             {
                 e.Parameters.PrimarySort = new OLVColumn("RawSe", "SeasonNumberAsInt");
+                e.Parameters.GroupComparer = new SeasonGroupComparer(e.Parameters.GroupByOrder);
             }
+
+            e.Parameters.SecondarySort = new OLVColumn("key", "OrderKey");
+            e.Parameters.SecondarySortOrder = SortOrder.Ascending;
         }
 
         [NotNull]
@@ -5362,6 +5367,8 @@ namespace TVRename
                 e.ColumnToSort = new OLVColumn("RawSe", "SeasonNumberAsInt");
             }
 
+            e.SecondaryColumnToSort = new OLVColumn("AbsoluteOrder", "OrderKey");
+            e.SecondarySortOrder = SortOrder.Ascending;
             olvAction.ShowSortIndicator();
         }
 
@@ -5384,5 +5391,64 @@ namespace TVRename
         {
             Helpers.OpenUrl("https://go.microsoft.com/fwlink/p/?LinkId=2124703");
         }
+    }
+
+    /// <summary>
+    /// This comparer sort list view specificallly for sesaons so that they appear in the season order
+    /// OLVGroups have a "SortValue" property,
+    /// which is used if present. Otherwise, the titles of the groups will be compared.
+    /// </summary>
+    public class SeasonGroupComparer : IComparer<OLVGroup>
+    {
+        /// <summary>
+        /// Create a group comparer
+        /// </summary>
+        /// <param name="order">The ordering for column values</param>
+        public SeasonGroupComparer(SortOrder order)
+        {
+            this.sortOrder = order;
+        }
+
+        /// <summary>
+        /// Compare the two groups. OLVGroups have a "SortValue" property,
+        /// which is used if present. Otherwise, the titles of the groups will be compared.
+        /// </summary>
+        /// <param name="x">group1</param>
+        /// <param name="y">group2</param>
+        /// <returns>An ordering indication: -1, 0, 1</returns>
+        public int Compare(OLVGroup x, OLVGroup y)
+        {
+            if (x is null || y is null)
+            {
+                return 0;
+            }
+
+            // If we can compare the sort values, do that.
+            // Otherwise do a case insensitive compare on the group header.
+            int result;
+            if (x.Items.Any() && y.Items.Any())
+            {
+                result = CompareValue(x).CompareTo(CompareValue(y));
+            }
+            else if (x.SortValue != null && y.SortValue != null)
+            {
+                result = x.SortValue.CompareTo(y.SortValue);
+            }
+            else
+            {
+                result = string.Compare(x.Header, y.Header, StringComparison.CurrentCultureIgnoreCase);
+            }
+
+            if (this.sortOrder == SortOrder.Descending)
+            {
+                return 0 - result;
+            }
+
+            return result;
+        }
+
+        private int CompareValue([NotNull] OLVGroup x) => ((Item)x.Items.First().RowObject).SeasonNumberAsInt ?? 0;
+
+        private readonly SortOrder sortOrder;
     }
 }

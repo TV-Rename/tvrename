@@ -46,7 +46,7 @@ namespace TVRename
 
             if (!string.IsNullOrEmpty(downloadPath))
             {
-                theActionList.Add(new ActionDownloadImage(mc, null, fi, downloadPath));
+                theActionList.Add(new ActionDownloadMovieImage(mc, fi, downloadPath));
             }
 
             doneFolderJpg.Add(fi.FullName);
@@ -82,7 +82,7 @@ namespace TVRename
 
                 if (!string.IsNullOrEmpty(downloadPath))
                 {
-                    theActionList.Add(new ActionDownloadImage(si, null, fi, downloadPath, false));
+                    theActionList.Add(new ActionDownloadTvShowImage(si, fi, downloadPath, false));
                 }
 
                 doneFolderJpg.Add(fi.FullName);
@@ -110,7 +110,7 @@ namespace TVRename
 
                 if (!string.IsNullOrEmpty(bannerPath))
                 {
-                    theActionList.Add(new ActionDownloadImage(si, null, fi, bannerPath,
+                    theActionList.Add(new ActionDownloadSeasonImage(si, snum, fi, bannerPath,
                         TVSettings.Instance.ShrinkLargeMede8erImages));
                 }
 

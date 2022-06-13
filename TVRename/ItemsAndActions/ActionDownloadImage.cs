@@ -16,11 +16,55 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System;
 
+    public class ActionDownloadSeasonImage : ActionDownloadImage
+    {
+        private readonly int seasonNumber;
+        public ActionDownloadSeasonImage(ShowConfiguration si, int snum, FileInfo dest, string path)
+            : this(si, snum, dest, path, false)
+        {
+        }
+
+        public ActionDownloadSeasonImage(ShowConfiguration si, int snum, FileInfo dest, string path, bool shrink)
+            : base(si, null, dest, path, shrink)
+        {
+            seasonNumber = snum;
+        }
+
+        public override string SeasonNumber => seasonNumber != 0 ? seasonNumber.ToString() : TVSettings.SpecialsListViewName;
+        public override int? SeasonNumberAsInt => seasonNumber;
+        public override ShowConfiguration Series => Si as ShowConfiguration;
+    }
+    public class ActionDownloadTvShowImage : ActionDownloadImage
+    {
+        public ActionDownloadTvShowImage(ShowConfiguration si,FileInfo dest, string path)
+            : this(si,  dest, path, false)
+        {
+        }
+
+        public ActionDownloadTvShowImage(ShowConfiguration si, FileInfo dest, string path, bool shrink)
+            : base(si, null, dest, path, shrink)
+        {
+        }
+        public override ShowConfiguration Series => Si as ShowConfiguration;
+    }
+    public class ActionDownloadMovieImage : ActionDownloadImage
+    {
+        public ActionDownloadMovieImage(MovieConfiguration si, FileInfo dest, string path)
+            : this(si, dest, path, false)
+        {
+        }
+
+        public ActionDownloadMovieImage(MovieConfiguration si, FileInfo dest, string path, bool shrink)
+            : base(si, null, dest, path, shrink)
+        {
+        }
+    }
+
     public class ActionDownloadImage : ActionDownload
     {
         private readonly string path;
         private readonly FileInfo destination;
-        private readonly MediaConfiguration si;
+        protected readonly MediaConfiguration Si;
         private readonly bool shrinkLargeMede8ErImage;
 
         public ActionDownloadImage(MediaConfiguration si, ProcessedEpisode? pe, FileInfo dest, string path) : this(si, pe, dest, path, false)
@@ -30,7 +74,7 @@ namespace TVRename
         public ActionDownloadImage(MediaConfiguration si, ProcessedEpisode? pe, FileInfo dest, string path, bool shrink)
         {
             Episode = pe;
-            this.si = si;
+            this.Si = si;
             destination = dest;
             this.path = path;
             shrinkLargeMede8ErImage = shrink;
@@ -97,7 +141,7 @@ namespace TVRename
         {
             try
             {
-                byte[]? theData = si.Provider == TVDoc.ProviderType.TheTVDB
+                byte[]? theData = Si.Provider == TVDoc.ProviderType.TheTVDB
                     ? TheTVDB.LocalCache.Instance.GetTvdbDownload(path)
                     : HttpHelper.Download(path, false);
 
@@ -174,7 +218,7 @@ namespace TVRename
 
         public override int IconNumber => 5;
         public override IgnoreItem? Ignore => GenerateIgnore(destination.FullName);
-        public override string SeriesName => Episode != null ? Episode.Show.ShowName : si.ShowName;
+        public override string SeriesName => Episode != null ? Episode.Show.ShowName : Si.ShowName;
         public override string DestinationFolder => TargetFolder;
         public override string DestinationFile => destination.Name;
         public override string SourceDetails => path;

@@ -57,6 +57,10 @@ namespace TVRename
         public virtual int? SeasonNumberAsInt => Episode?.AppropriateSeasonNumber;
 
         [NotNull]
+        public virtual string OrderKey => SeasonNumberAsInt?.Pad(2) + "-" +
+                                          Episode?.AppropriateEpNum.Pad(4) + "-" + AirDateString;
+
+        [NotNull]
         public virtual string AirDateString => Episode?.GetAirDateDt(true).PrettyPrint() ?? Movie?.CachedMovie?.FirstAired.PrettyPrint() ?? string.Empty;
 
         public virtual DateTime? AirDate => Episode?.GetAirDateDt(true) ?? Movie?.CachedMovie?.FirstAired;

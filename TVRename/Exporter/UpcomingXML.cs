@@ -48,8 +48,8 @@ namespace TVRename
                     writer.WriteElement("ShowTvMazeId", ei.Show.TVmazeCode);
                     writer.WriteElement("ShowIMDB", ei.Show.ImdbCode);
                     writer.WriteElement("SeriesName", ei.Show.Name);
-                    writer.WriteElement("SeasonNumber", Helpers.Pad(ei.AppropriateSeasonNumber));
-                    writer.WriteElement("EpisodeNumber", Helpers.Pad(ei.AppropriateEpNum));
+                    writer.WriteElement("SeasonNumber", ei.AppropriateSeasonNumber.Pad());
+                    writer.WriteElement("EpisodeNumber", ei.AppropriateEpNum.Pad());
                     writer.WriteElement("EpisodeName", ei.Name);
 
                     writer.WriteStartElement("available");

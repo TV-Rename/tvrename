@@ -185,7 +185,7 @@ namespace TVRename
         public static string DebugText => " ** Debug Build **";
 
         [NotNull]
-        public static string Pad(int i)
+        public static string Pad(this int i)
         {
             if (i.ToString().Length > 1)
             {
@@ -193,6 +193,12 @@ namespace TVRename
             }
 
             return "0" + i;
+        }
+
+        [NotNull]
+        public static string Pad(this int i, int size)
+        {
+            return i.ToString().Length >= size ? i.ToString() : i.ToString().PadLeft(size,'0');
         }
 
         [NotNull]
