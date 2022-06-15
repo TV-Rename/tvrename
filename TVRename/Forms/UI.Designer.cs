@@ -673,10 +673,7 @@ namespace TVRename
             this.episodeFileQualitySummaryLogToolStripMenuItem,
             this.toolStripSeparator19,
             this.accuracyCheckLogToolStripMenuItem,
-            this.tMDBAccuracyCheckLogToolStripMenuItem,
-            this.toolStripSeparator22,
-            this.webTestToolStripMenuItem,
-            this.downloadInstallerToolStripMenuItem});
+            this.tMDBAccuracyCheckLogToolStripMenuItem});
             this.betaToolsToolStripMenuItem.Name = "betaToolsToolStripMenuItem";
             this.betaToolsToolStripMenuItem.Size = new System.Drawing.Size(42, 20);
             this.betaToolsToolStripMenuItem.Text = "Beta";
@@ -713,25 +710,6 @@ namespace TVRename
             this.tMDBAccuracyCheckLogToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
             this.tMDBAccuracyCheckLogToolStripMenuItem.Text = "TMDB Accuracy Check (Log)";
             this.tMDBAccuracyCheckLogToolStripMenuItem.Click += new System.EventHandler(this.tMDBAccuracyCheckLogToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator22
-            // 
-            this.toolStripSeparator22.Name = "toolStripSeparator22";
-            this.toolStripSeparator22.Size = new System.Drawing.Size(259, 6);
-            // 
-            // webTestToolStripMenuItem
-            // 
-            this.webTestToolStripMenuItem.Name = "webTestToolStripMenuItem";
-            this.webTestToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
-            this.webTestToolStripMenuItem.Text = "Web Test";
-            this.webTestToolStripMenuItem.Click += new System.EventHandler(this.webTestToolStripMenuItem_Click);
-            // 
-            // downloadInstallerToolStripMenuItem
-            // 
-            this.downloadInstallerToolStripMenuItem.Name = "downloadInstallerToolStripMenuItem";
-            this.downloadInstallerToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
-            this.downloadInstallerToolStripMenuItem.Text = "Download Installer";
-            this.downloadInstallerToolStripMenuItem.Click += new System.EventHandler(this.downloadInstallerToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
