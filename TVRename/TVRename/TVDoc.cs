@@ -146,6 +146,7 @@ namespace TVRename
             UpdateIdsFromCache();
             UpdateNamesFromCache();
             TvLibrary.GenDict();
+            FilmLibrary.UpdateCollectionInformation();
         }
 
         private void UpdateNamesFromCache()

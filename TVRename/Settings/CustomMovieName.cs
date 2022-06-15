@@ -28,6 +28,7 @@ namespace TVRename
             "{CollectionName}",
             "{MovieType}",
             "{CollectionFolder}",
+            "{CollectionOrder}",
         };
 
         [NotNull]
@@ -76,34 +77,31 @@ namespace TVRename
         [NotNull]
         public static string NameFor(MovieConfiguration? m, string styleString, bool urlEncode, bool isfilename)
         {
-            string name = styleString;
-
             if (m?.ShowName is null)
             {
                 return string.Empty;
             }
 
-            string showname = m.ShowName;
-            if (urlEncode)
-            {
-                showname = Uri.EscapeDataString(showname);
-            }
+            string showname = urlEncode
+                ? Uri.EscapeDataString(m.ShowName)
+                : m.ShowName;
+                
+            string name = styleString
+                .ReplaceInsensitive("{CollectionFolder}", m.InCollection ? "{collectionName}\\" : string.Empty)
+                .ReplaceInsensitive("{ShowName}", showname)
+                .ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower())
+                .ReplaceInsensitive("{ShowNameLower}", showname.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"))
+                .ReplaceYear(m)
+                .ReplaceInsensitive("{ContentRating}", m.CachedMovie?.ContentRating)
+                .ReplaceInsensitive("{Year}", m.CachedMovie?.Year.ToString())
+                .ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb)
+                .ReplaceInsensitive("{CollectionName}", m.CachedMovie?.CollectionName)
+                .ReplaceInsensitive("{CollectionOrder}", m.CollectionOrder?.ToString())
+                .ReplaceInsensitive("{MovieType}", m.CachedMovie?.MovieType);
 
-            name = name.ReplaceInsensitive("{CollectionFolder}", m.InCollection ? "{collectionName}\\" : string.Empty);
-            name = name.ReplaceInsensitive("{ShowName}", showname);
-            name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
-            name = name.ReplaceInsensitive("{ShowNameLower}", showname.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
-            name = name.ReplaceYear(m);
-            name = name.ReplaceInsensitive("{ContentRating}", m.CachedMovie?.ContentRating);
-            name = name.ReplaceInsensitive("{Year}", m.CachedMovie?.Year.ToString());
-            name = name.ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb);
-            name = name.ReplaceInsensitive("{CollectionName}", m.CachedMovie?.CollectionName);
-            name = name.ReplaceInsensitive("{MovieType}", m.CachedMovie?.MovieType);
-            if (urlEncode)
-            {
-                return name.Trim();
-            }
-            return isfilename ? TVSettings.Instance.FilenameFriendly(name.Trim()) : TVSettings.DirectoryFriendly(name.Trim());
+            return urlEncode ? name.Trim()
+                : isfilename ? TVSettings.Instance.FilenameFriendly(name.Trim())
+                : TVSettings.DirectoryFriendly(name.Trim());
         }
 
         [NotNull]

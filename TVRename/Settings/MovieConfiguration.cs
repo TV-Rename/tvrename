@@ -269,6 +269,9 @@ namespace TVRename
         }
 
         public bool InCollection => CachedMovie?.InCollection ?? false;
+
+        public int? CollectionOrder;
+
         public void WriteXmlSettings([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("MovieItem");

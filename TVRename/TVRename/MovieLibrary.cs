@@ -172,5 +172,23 @@ namespace TVRename
         }
 
         public MovieConfiguration? GetMovie([NotNull] ISeriesSpecifier ai) => GetMovie(ai.Id(), ai.Provider);
+
+        public void UpdateCollectionInformation()
+        {
+            foreach (MovieConfiguration mov in Movies.Where(mov => mov.InCollection))
+            {
+                mov.CollectionOrder = GetCollectionPosition(mov);
+            }
+        }
+
+        private int? GetCollectionPosition(MovieConfiguration movieConfiguration)
+        {
+            return Movies
+                .Where(m => m.InCollection)
+                .Select(m => m.CachedMovie)
+                .Where(c => c is not null)
+                .Where(c => c.CollectionName == movieConfiguration.CachedMovie?.CollectionName)
+                .Count(c => c.FirstAired <= movieConfiguration.CachedMovie?.FirstAired);
+        }
     }
 }
