@@ -636,7 +636,7 @@ namespace TVRename
 
         private void CheckToEnableAddButton()
         {
-            bool isNumber = Regex.Match(txtSeasonNumber.Text, "^[0-9]+$").Success;
+            bool isNumber = txtSeasonNumber.Text.IsNumeric();
             bnAdd.Enabled = isNumber && !string.IsNullOrEmpty(txtSeasonNumber.Text);
         }
 

@@ -407,9 +407,7 @@ namespace TVRename
                     return returnFilename.Remove(0, showNameHint.Length);
                 }
 
-                bool nameIsNumber = Regex.Match(showNameHint!, "^[0-9]+$").Success;
-
-                if (nameIsNumber && returnFilename.Contains(showNameHint!)) // e.g. "24", or easy exact match of show name at start of filename
+                if (showNameHint.IsNumeric() && returnFilename.Contains(showNameHint!)) // e.g. "24", or easy exact match of show name at start of filename
                 {
                     return Regex.Replace(returnFilename, "(^|\\W)" + showNameHint + "\\b", string.Empty);
                 }

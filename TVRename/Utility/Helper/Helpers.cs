@@ -12,11 +12,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 
@@ -285,39 +282,6 @@ namespace TVRename
 
         [NotNull]
         public static string TranslateColorToHtml(Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
-
-        [NotNull]
-        public static string CompareName(this string n)
-        {
-            n = n.ToLower();
-            n = RemoveDiacritics(n);
-            n = n.Replace(".", " ");
-            n = n.Replace("'", "");
-            n = n.Replace("&", "and");
-            n = n.Replace("!", "");
-            n = n.Replace("*", "");
-            n = Regex.Replace(n, "[_\\W]+", " ");
-            n = Regex.Replace(n, "[^\\w ]", " ");
-            return n.Trim();
-        }
-
-        [NotNull]
-        public static string RemoveDiacritics([NotNull] this string stIn)
-        {
-            // From http://blogs.msdn.com/b/michkap/archive/2007/05/14/2629747.aspx
-            string stFormD = stIn.Normalize(NormalizationForm.FormD);
-            StringBuilder sb = new();
-
-            foreach (char t in stFormD)
-            {
-                UnicodeCategory uc = CharUnicodeInfo.GetUnicodeCategory(t);
-                if (uc != UnicodeCategory.NonSpacingMark)
-                {
-                    sb.Append(t);
-                }
-            }
-            return sb.ToString().Normalize(NormalizationForm.FormC);
-        }
 
         public static DateTime GetMinWindowsTime(DateTime dateTime)
         {

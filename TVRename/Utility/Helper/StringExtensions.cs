@@ -8,6 +8,7 @@
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -56,6 +57,39 @@ namespace TVRename
         public static bool IsNumeric(this string text) => int.TryParse(text, out int _);
 
         public static bool HasValue(this string? s) => !string.IsNullOrWhiteSpace(s);
+
+        [NotNull]
+        public static string CompareName(this string n)
+        {
+            n = n.ToLower();
+            n = RemoveDiacritics(n);
+            n = n.Replace(".", " ");
+            n = n.Replace("'", "");
+            n = n.Replace("&", "and");
+            n = n.Replace("!", "");
+            n = n.Replace("*", "");
+            n = Regex.Replace(n, "[_\\W]+", " ");
+            n = Regex.Replace(n, "[^\\w ]", " ");
+            return n.Trim();
+        }
+
+        [NotNull]
+        public static string RemoveDiacritics([NotNull] this string stIn)
+        {
+            // From http://blogs.msdn.com/b/michkap/archive/2007/05/14/2629747.aspx
+            string stFormD = stIn.Normalize(NormalizationForm.FormD);
+            StringBuilder sb = new();
+
+            foreach (char t in stFormD)
+            {
+                UnicodeCategory uc = CharUnicodeInfo.GetUnicodeCategory(t);
+                if (uc != UnicodeCategory.NonSpacingMark)
+                {
+                    sb.Append(t);
+                }
+            }
+            return sb.ToString().Normalize(NormalizationForm.FormC);
+        }
 
         [NotNull]
         public static string RemovePattern(this string baseText, [NotNull] string pattern)

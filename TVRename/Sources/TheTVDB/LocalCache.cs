@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -2887,9 +2886,7 @@ namespace TVRename.TheTVDB
 
             text = text.RemoveDiacritics(); // API doesn't like accented characters
 
-            bool isNumber = Regex.Match(text, "^[0-9]+$").Success;
-
-            if (isNumber)
+            if (text.IsNumeric())
             {
                 if (int.TryParse(text, out int textAsInt))
                 {

@@ -210,9 +210,7 @@ namespace TVRename.TVmaze
         {
             if (type == MediaConfiguration.MediaType.tv)
             {
-                bool isNumber = System.Text.RegularExpressions.Regex.Match(text, "^[0-9]+$").Success;
-
-                if (isNumber)
+                if (text.IsNumeric())
                 {
                     if (int.TryParse(text, out int textAsInt))
                     {
