@@ -7,7 +7,6 @@
 //
 using JetBrains.Annotations;
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 // Control for searching for a source provider code, checking against local cache and
