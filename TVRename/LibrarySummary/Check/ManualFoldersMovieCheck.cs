@@ -18,81 +18,89 @@ namespace TVRename
             {
                 throw new FixCheckException("Movie has no automatic folder root");
             }
-            if (Movie.ManualLocations.Count > 1)
+            switch (Movie.ManualLocations.Count)
             {
-                throw new FixCheckException("Movie has multiple manual locations - unclear which to copy across");
-            }
-            if (Movie.ManualLocations.Count == 0)
-            {
-                //no files to copy
-                Movie.UseAutomaticFolders = true;
-                Movie.UseManualLocations = false;
-                return;
-            }
-
-            if (Movie.ManualLocations.Count == 1)
-            {
-                DirectoryInfo source = new(Movie.ManualLocations.First());
-                if (!source.Exists)
-                {
-                    Movie.UseManualLocations = false;
+                case > 1:
+                    throw new FixCheckException("Movie has multiple manual locations - unclear which to copy across");
+                case 0:
+                    //no files to copy
                     Movie.UseAutomaticFolders = true;
-                    return;
-                }
-
-                if (!source.EnumerateFiles().Any() && !source.EnumerateDirectories().Any())
-                {
-                    //directory has nothing in it
-                    FileHelper.RemoveDirectory(source.FullName);
                     Movie.UseManualLocations = false;
+                    return;
+                case 1:
+                {
+                    DirectoryInfo source = new(Movie.ManualLocations.First());
+                    if (!source.Exists)
+                    {
+                        Movie.UseManualLocations = false;
+                        Movie.UseAutomaticFolders = true;
+                        return;
+                    }
+
+                    if (!source.EnumerateFiles().Any() && !source.EnumerateDirectories().Any())
+                    {
+                        //directory has nothing in it
+                        FileHelper.RemoveDirectory(source.FullName);
+                        Movie.UseManualLocations = false;
+                        Movie.UseAutomaticFolders = true;
+                        return;
+                    }
+
+                    //try to copy/move files
+                    List<string> automaticLocations = Movie.AutomaticLocations().ToList();
+
+                    if (automaticLocations.Count > 1)
+                    {
+                        throw new FixCheckException("Multiple target locations for the automated folders");
+                    }
+
+                    if (!automaticLocations.Any())
+                    {
+                        throw new FixCheckException("No target automatic folders can be established");
+                    }
+
+                    string automaticLocation = automaticLocations.First();
+                    if (source.FullName.Equals(automaticLocation, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        Movie.UseAutomaticFolders = true;
+                        Movie.UseManualLocations = false;
+                        return;
+                    }
+
+                    TryToMoveFiles(source, automaticLocation);
                     Movie.UseAutomaticFolders = true;
-                    return;
-                }
-
-                Movie.UseAutomaticFolders = true;
-                //try to copy/move files
-                List<string> automaticLocations = Movie.AutomaticLocations().ToList();
-
-                if (automaticLocations.Count > 1)
-                {
-                    throw new FixCheckException("Multiple target locations for the automated folders");
-                }
-
-                if (!automaticLocations.Any())
-                {
-                    throw new FixCheckException("No target automatic folders can be established");
-                }
-
-                if (source.FullName.Equals(automaticLocations.First(), StringComparison.CurrentCultureIgnoreCase))
-                {
                     Movie.UseManualLocations = false;
-                    return;
+                    break;
                 }
+            }
+        }
 
-                //Do we want to copy the whole folder or just some files from witin?
-                //we have one location to copy to
+        private void TryToMoveFiles([NotNull] DirectoryInfo manualSource, string automaticDestination)
+        {
+            //Do we want to copy the whole folder or just some files from within?
+            //we have one location to copy to
 
-                bool manualLocationOnlyHasOneMovie = source.EnumerateFiles().Where(f => f.IsMovieFile()).All(file => Movie.NameMatch(file, false));
-                try
+            bool manualLocationOnlyHasOneMovie = manualSource.EnumerateFiles().Where(f => f.IsMovieFile())
+                .All(file => Movie.NameMatch(file, false));
+
+            try
+            {
+                if (manualLocationOnlyHasOneMovie)
                 {
-                    if (manualLocationOnlyHasOneMovie)
-                    {
-                        CopyOrMove(source, automaticLocations.First());
-                    }
-                    else
-                    {
-                        MoveFiles(
-                            source.EnumerateFiles().Where(f => f.IsMovieFile())
-                                .Where(file => Movie.NameMatch(file, false)),
-                            automaticLocations.First());
-                    }
+                    CopyOrMove(manualSource, automaticDestination);
                 }
-                catch (System.IO.IOException ioe)
+                else
                 {
-                    throw new FixCheckException(ioe.Message);
+                    MoveFiles(
+                        manualSource.EnumerateFiles()
+                            .Where(f => f.IsMovieFile())
+                            .Where(file => Movie.NameMatch(file, false)),
+                        automaticDestination);
                 }
-
-                Movie.UseManualLocations = false;
+            }
+            catch (System.IO.IOException ioe)
+            {
+                throw new FixCheckException(ioe.Message);
             }
         }
 
@@ -101,7 +109,9 @@ namespace TVRename
             Directory.CreateDirectory(destination);
             foreach (FileInfo? f in where)
             {
-                f.MoveTo(System.IO.Path.Combine(destination, f.Name));
+                string destinationPath = System.IO.Path.Combine(destination, f.Name);
+                f.MoveTo(destinationPath);
+                LOGGER.Info($"Moved {f.FullName} to {destinationPath}");
             }
         }
 
@@ -123,22 +133,17 @@ namespace TVRename
                     if (!File.Exists(destFile))
                     {
                         file.MoveTo(destFile);
-                        //File.Move(file, destFile);
 
                         LOGGER.Info($"Moved {file.FullName} to {destFile}");
                     }
                 }
 
-                if (Directory.IsEmpty(fromDirectory.FullName))
-                {
-                    fromDirectory.Delete(false);
-                    LOGGER.Info($"Deleted empty directory {fromDirectory.FullName}");
-                }
+                FileHelper.DoTidyUp(fromDirectory, TVSettings.Instance.Tidyup);
                 return;
             }
 
             fromDirectory.MoveTo(toDirectory);
-            //Directory.Move(fromDirectpry, toDirectory);
+
             LOGGER.Info($"Moved whole directory {fromDirectory.FullName } to {toDirectory}");
         }
 
