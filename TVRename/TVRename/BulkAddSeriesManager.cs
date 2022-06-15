@@ -75,8 +75,7 @@ namespace TVRename
             }
 
             //Try removing any year
-            string showNameNoYear =
-                Regex.Replace(showName, @"\(\d{4}\)", "").Trim();
+            string showNameNoYear = showName.RemoveBracketedYear();
 
             //Remove anything we can from hint to make it cleaner and hence more likely to match
             string refinedHint = FinderHelper.RemoveSeriesEpisodeIndicators(showNameNoYear, library.SeasonWords());

@@ -143,8 +143,7 @@ namespace TVRename
                 int newPossibleYear = mat.Groups[1].Value.ToInt(0);
 
                 //Try removing any year
-                string showNameNoYear =
-                    Regex.Replace(RefinedHint.Trim(), @"\s\d{4}$", "").Trim();
+                string showNameNoYear = RefinedHint.RemoveYearFromEnd();
 
                 //Remove anything we can from hint to make it cleaner and hence more likely to match
                 string refinedHint = showNameNoYear;

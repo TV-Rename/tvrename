@@ -696,7 +696,7 @@ namespace TVRename
                 }
 
                 //Remove any (nnnn) in the hint - probably a year
-                string refinedHint = Regex.Replace(hint, @"\(\d{4}\)", "");
+                string refinedHint = hint.RemoveBracketedYear();
 
                 //Remove anything we can from hint to make it cleaner and hence more likely to match
                 refinedHint = RemoveSeriesEpisodeIndicators(refinedHint, doc.TvLibrary.SeasonWords());

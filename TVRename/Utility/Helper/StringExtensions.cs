@@ -58,6 +58,42 @@ namespace TVRename
         public static bool HasValue(this string? s) => !string.IsNullOrWhiteSpace(s);
 
         [NotNull]
+        public static string RemovePattern(this string baseText, [NotNull] string pattern)
+        {
+            if (!baseText.HasValue())
+            {
+                return string.Empty;
+            }
+
+            Match mat = Regex.Match(baseText.Trim(), pattern);
+
+            if (mat.Success)
+            {
+                //Try removing any year
+                return Regex.Replace(baseText.Trim(), pattern, string.Empty).Trim();
+            }
+
+            return baseText.Trim();
+        }
+
+        [NotNull]
+        public static string RemoveBracketedYear([NotNull] this string baseText)
+            => baseText
+                .RemovePattern(@"\(\d{4}\)")
+                .RemovePattern(@"\[\d{4}\]");
+
+        [NotNull]
+        public static string RemoveYearFromEnd([NotNull] this string baseText)
+            => baseText
+                .RemovePattern(@"\s\d{4}$");
+
+        [NotNull]
+        public static string RemoveBracketedYearFromEnd([NotNull] this string baseText)
+            => baseText
+                .RemovePattern(@"\s\[\d{4}\]$")
+                .RemovePattern(@"\s\(\d{4}\)$");
+
+        [NotNull]
         public static string ReplaceInsensitive([NotNull] this string source, [NotNull] string search, string? replacement)
         {
             if (!source.HasValue())

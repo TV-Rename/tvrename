@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
+using System;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -8,25 +7,10 @@ namespace TVRename
     {
         [NotNull]
         public static string ReplaceYear(this string source, [CanBeNull] MediaConfiguration config)
-        {
-            return ReplaceYear(source, config?.Name);
-        }
+            => ReplaceYear(source, config?.Name??string.Empty);
 
         [NotNull]
-        private static string RemoveYear(this string source)
-        {
-            if (!source.HasValue())
-            {
-                return string.Empty;
-            }
-            const string PATTERN = @".*\ \(\d{4}\)";
-            return Regex.IsMatch(source, PATTERN)
-                ? source.Substring(0,source.Length-7)
-                : source;
-        }
-
-        [NotNull]
-        public static string ReplaceYear(this string source, string? showName)
+        public static string ReplaceYear(this string source, string showName)
         {
             if (!source.HasValue())
             {
@@ -36,7 +20,7 @@ namespace TVRename
             const string TAG = "{ShowNameNoYear}";
 
             return source.Contains(TAG, StringComparison.OrdinalIgnoreCase)
-                ? source.ReplaceInsensitive(TAG, showName.RemoveYear())
+                ? source.ReplaceInsensitive(TAG, showName.RemoveBracketedYearFromEnd())
                 : source;
         }
     }

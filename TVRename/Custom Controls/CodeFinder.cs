@@ -258,17 +258,7 @@ namespace TVRename
 
         [NotNull]
         private static string RemoveTrailingYear([NotNull] string baseText)
-        {
-            const string PATTERN = @"\s(\d{4})$";
-            System.Text.RegularExpressions.Match mat = System.Text.RegularExpressions.Regex.Match(baseText.Trim(), PATTERN);
-
-            if (mat.Success)
-            {
-                //Try removing any year
-                return System.Text.RegularExpressions.Regex.Replace(baseText.Trim(), PATTERN, string.Empty).Trim();
-            }
-            return baseText.Trim();
-        }
+            => baseText.RemovePattern(@"\s(\d{4})$");
 
         private string GetLabel(TVDoc.ProviderType source)
         {

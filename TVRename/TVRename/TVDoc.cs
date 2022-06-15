@@ -16,7 +16,6 @@ using Polly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
@@ -2176,7 +2175,7 @@ namespace TVRename
             }
 
             //Remove any (nnnn) in the hint - probably a year
-            string refinedHint = Regex.Replace(hint, @"\(\d{4}\)", "");
+            string refinedHint = hint.RemoveBracketedYear();
 
             //Remove anything we can from hint to make it cleaner and hence more likely to match
             refinedHint = FinderHelper.RemoveSeriesEpisodeIndicators(refinedHint, TvLibrary.SeasonWords());
