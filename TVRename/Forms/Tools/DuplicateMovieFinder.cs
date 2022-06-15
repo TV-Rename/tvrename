@@ -66,6 +66,7 @@ namespace TVRename.Forms
                                 .Where(info => info.Exists)
                                 .SelectMany(d => d.GetFiles())
                                 .Where(f => f.IsMovieFile())
+                                .Where(fiTemp => movie.NameMatch(fiTemp, false))
                                 .Distinct()
                                 .ToList();
 
