@@ -36,6 +36,9 @@ namespace TVRename
         {
             selectedShow = si;
             mDoc = doc;
+            codeFinderForm =
+                new MovieCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider) { Dock = DockStyle.Fill };
+
             InitializeComponent();
             HasChanged = false;
 
@@ -46,9 +49,6 @@ namespace TVRename
                                             TVSettings.Instance.MovieFolderFormat) + ")";
 
             lblSeasonWordPreview.ForeColor = Color.DarkGray;
-
-            codeFinderForm =
-                new MovieCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider) { Dock = DockStyle.Fill };
 
             codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 

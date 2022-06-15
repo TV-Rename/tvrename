@@ -48,6 +48,8 @@ namespace TVRename
             sampleProcessedSeason = si.GetFirstAvailableSeason();
             sampleEpisode = si.GetFirstAvailableEpisode();
             addingNewShow = si.TvdbCode == -1 && si.TmdbCode == -1 && si.TVmazeCode == -1;
+            codeFinderForm = new TvCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider) { Dock = DockStyle.Fill };
+
             InitializeComponent();
             HasChanged = false;
 
@@ -55,8 +57,6 @@ namespace TVRename
             lblSeasonWordPreview.ForeColor = Color.DarkGray;
 
             SetupDropDowns(si);
-
-            codeFinderForm = new TvCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider) { Dock = DockStyle.Fill };
 
             codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 

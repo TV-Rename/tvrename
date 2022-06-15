@@ -23,9 +23,9 @@ namespace TVRename
 
         public BulkAddEditMovie([NotNull] PossibleNewMovie hint)
         {
+            codeFinderControl = new MovieCodeFinder("", TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
             InitializeComponent();
 
-            codeFinderControl = new MovieCodeFinder("", TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
             codeFinderControl.SelectionChanged += CodeChanged;
             codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;
 

@@ -23,9 +23,9 @@ namespace TVRename
 
         public BulkAddEditShow([NotNull] PossibleNewTvShow hint)
         {
+            codeFinderControl = new TvCodeFinder("", TVSettings.Instance.DefaultProvider) { Dock = DockStyle.Fill };
             InitializeComponent();
 
-            codeFinderControl = new TvCodeFinder("", TVSettings.Instance.DefaultProvider) { Dock = DockStyle.Fill };
             codeFinderControl.SelectionChanged += CodeChanged;
             codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;
             label1.Text = $"Search for {TVSettings.Instance.DefaultProvider.PrettyPrint()} entry, by partial name or ID:";
