@@ -1800,7 +1800,7 @@ namespace TVRename
 
             Graphics g = e.Graphics;
 
-            g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(BackColor),
+            g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(tcTabs.BackColor),
                 e.Bounds);
 
             // Get the item from the collection.
@@ -1816,7 +1816,7 @@ namespace TVRename
                 LineAlignment = StringAlignment.Center
             };
 
-            g.DrawString(tabPage.Text, tcTabs.Font, Brushes.Black, tabBounds, new StringFormat(stringFlags));
+            g.DrawString(tabPage.Text, tcTabs.Font, new SolidBrush(tcTabs.ForeColor), tabBounds, stringFlags);
         }
 
         #region Folder Add & Remove

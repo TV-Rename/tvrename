@@ -72,6 +72,8 @@ namespace TVRename
             this.lstMovieMonitorFolders = new System.Windows.Forms.ListBox();
             this.chkIncludeMoviesQuickRecent = new System.Windows.Forms.CheckBox();
             this.tbCleanUpDownloadDirMoviesLength = new System.Windows.Forms.TextBox();
+            this.label98 = new System.Windows.Forms.Label();
+            this.upDownScanSeconds = new System.Windows.Forms.DomainUpDown();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.KODIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -517,8 +519,6 @@ namespace TVRename
             this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
-            this.label98 = new System.Windows.Forms.Label();
-            this.upDownScanSeconds = new System.Windows.Forms.DomainUpDown();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -598,44 +598,44 @@ namespace TVRename
             ((System.ComponentModel.ISupportInitialize)(this.pbuUpdates)).BeginInit();
             this.grpUpdateIntervalOption.SuspendLayout();
             this.SuspendLayout();
-            //
+            // 
             // OKButton
-            //
+            // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.OKButton.Location = new System.Drawing.Point(412, 587);
+            this.OKButton.Location = new System.Drawing.Point(412, 618);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(75, 23);
             this.OKButton.TabIndex = 0;
             this.OKButton.Text = "OK";
             this.OKButton.UseVisualStyleBackColor = true;
             this.OKButton.Click += new System.EventHandler(this.OKButton_Click);
-            //
+            // 
             // bnCancel
-            //
+            // 
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(493, 587);
+            this.bnCancel.Location = new System.Drawing.Point(497, 618);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 1;
             this.bnCancel.Text = "Cancel";
             this.bnCancel.UseVisualStyleBackColor = true;
             this.bnCancel.Click += new System.EventHandler(this.CancelButton_Click);
-            //
+            // 
             // saveFile
-            //
+            // 
             this.saveFile.Filter = resources.GetString("saveFile.Filter");
-            //
+            // 
             // folderBrowser
-            //
+            // 
             this.folderBrowser.ShowNewFolderButton = false;
-            //
+            // 
             // openFile
-            //
+            // 
             this.openFile.Filter = "Torrent files (*.torrent)|*.torrent|All files (*.*)|*.*";
-            //
+            // 
             // cbMonitorFolder
-            //
+            // 
             this.cbMonitorFolder.AutoSize = true;
             this.cbMonitorFolder.Location = new System.Drawing.Point(6, 127);
             this.cbMonitorFolder.Name = "cbMonitorFolder";
@@ -645,50 +645,50 @@ namespace TVRename
             this.toolTip1.SetToolTip(this.cbMonitorFolder, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
         " \"Do\".");
             this.cbMonitorFolder.UseVisualStyleBackColor = true;
-            //
+            // 
             // txtEmptyIgnoreExtensions
-            //
-            this.txtEmptyIgnoreExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtEmptyIgnoreExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtEmptyIgnoreExtensions.Location = new System.Drawing.Point(95, 161);
             this.txtEmptyIgnoreExtensions.Name = "txtEmptyIgnoreExtensions";
-            this.txtEmptyIgnoreExtensions.Size = new System.Drawing.Size(318, 20);
+            this.txtEmptyIgnoreExtensions.Size = new System.Drawing.Size(308, 20);
             this.txtEmptyIgnoreExtensions.TabIndex = 5;
             this.toolTip1.SetToolTip(this.txtEmptyIgnoreExtensions, "For example \".par2;.nzb;.nfo\"");
-            //
+            // 
             // txtEmptyIgnoreWords
-            //
-            this.txtEmptyIgnoreWords.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtEmptyIgnoreWords.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtEmptyIgnoreWords.Location = new System.Drawing.Point(95, 111);
             this.txtEmptyIgnoreWords.Name = "txtEmptyIgnoreWords";
-            this.txtEmptyIgnoreWords.Size = new System.Drawing.Size(318, 20);
+            this.txtEmptyIgnoreWords.Size = new System.Drawing.Size(308, 20);
             this.txtEmptyIgnoreWords.TabIndex = 3;
             this.toolTip1.SetToolTip(this.txtEmptyIgnoreWords, "For example \"sample\"");
-            //
+            // 
             // lbSearchFolders
-            //
+            // 
             this.lbSearchFolders.AllowDrop = true;
-            this.lbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.lbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbSearchFolders.FormattingEnabled = true;
             this.lbSearchFolders.Location = new System.Drawing.Point(5, 207);
             this.lbSearchFolders.Name = "lbSearchFolders";
             this.lbSearchFolders.ScrollAlwaysVisible = true;
-            this.lbSearchFolders.Size = new System.Drawing.Size(405, 69);
+            this.lbSearchFolders.Size = new System.Drawing.Size(395, 69);
             this.lbSearchFolders.TabIndex = 1;
             this.toolTip1.SetToolTip(this.lbSearchFolders, resources.GetString("lbSearchFolders.ToolTip"));
             this.lbSearchFolders.SelectedIndexChanged += new System.EventHandler(this.lbSearchFolders_SelectedIndexChanged);
             this.lbSearchFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragDrop);
             this.lbSearchFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragOver);
             this.lbSearchFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbSearchFolders_KeyDown);
-            //
+            // 
             // lstFMMonitorFolders
-            //
+            // 
             this.lstFMMonitorFolders.AllowDrop = true;
-            this.lstFMMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.lstFMMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstFMMonitorFolders.FormattingEnabled = true;
             this.lstFMMonitorFolders.IntegralHeight = false;
@@ -696,60 +696,60 @@ namespace TVRename
             this.lstFMMonitorFolders.Name = "lstFMMonitorFolders";
             this.lstFMMonitorFolders.ScrollAlwaysVisible = true;
             this.lstFMMonitorFolders.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lstFMMonitorFolders.Size = new System.Drawing.Size(408, 97);
+            this.lstFMMonitorFolders.Size = new System.Drawing.Size(398, 97);
             this.lstFMMonitorFolders.TabIndex = 32;
             this.toolTip1.SetToolTip(this.lstFMMonitorFolders, resources.GetString("lstFMMonitorFolders.ToolTip"));
             this.lstFMMonitorFolders.SelectedIndexChanged += new System.EventHandler(this.lstFMMonitorFolders_SelectedIndexChanged);
             this.lstFMMonitorFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFMMonitorFolders_DragDrop);
             this.lstFMMonitorFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.FileIcon_DragOver);
             this.lstFMMonitorFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstFMMonitorFolders_KeyDown);
-            //
+            // 
             // tbIgnoreSuffixes
-            //
-            this.tbIgnoreSuffixes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbIgnoreSuffixes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbIgnoreSuffixes.Location = new System.Drawing.Point(100, 101);
             this.tbIgnoreSuffixes.Name = "tbIgnoreSuffixes";
-            this.tbIgnoreSuffixes.Size = new System.Drawing.Size(305, 20);
+            this.tbIgnoreSuffixes.Size = new System.Drawing.Size(295, 20);
             this.tbIgnoreSuffixes.TabIndex = 15;
             this.toolTip1.SetToolTip(this.tbIgnoreSuffixes, "These terms and any text after them will be ignored when\r\nsearching on TVDB for t" +
         "he show title based on the filename.");
-            //
+            // 
             // tbMovieTerms
-            //
-            this.tbMovieTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbMovieTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbMovieTerms.Location = new System.Drawing.Point(100, 75);
             this.tbMovieTerms.Name = "tbMovieTerms";
-            this.tbMovieTerms.Size = new System.Drawing.Size(305, 20);
+            this.tbMovieTerms.Size = new System.Drawing.Size(295, 20);
             this.tbMovieTerms.TabIndex = 13;
             this.toolTip1.SetToolTip(this.tbMovieTerms, "If a filename contains any of these terms then it is assumed\r\nthat it is a Film a" +
         "nd not a TV Show. Hence \'Auto Add\' is not\r\ninvoked for this file.");
-            //
+            // 
             // txtKeepTogether
-            //
-            this.txtKeepTogether.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtKeepTogether.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtKeepTogether.Location = new System.Drawing.Point(204, 311);
             this.txtKeepTogether.Name = "txtKeepTogether";
-            this.txtKeepTogether.Size = new System.Drawing.Size(204, 20);
+            this.txtKeepTogether.Size = new System.Drawing.Size(194, 20);
             this.txtKeepTogether.TabIndex = 23;
             this.toolTip1.SetToolTip(this.txtKeepTogether, "Which file extensions should be copied from the Search\r\nFolders into the library?" +
         "");
-            //
+            // 
             // txtOtherExtensions
-            //
-            this.txtOtherExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtOtherExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOtherExtensions.Location = new System.Drawing.Point(99, 259);
             this.txtOtherExtensions.Name = "txtOtherExtensions";
-            this.txtOtherExtensions.Size = new System.Drawing.Size(309, 20);
+            this.txtOtherExtensions.Size = new System.Drawing.Size(299, 20);
             this.txtOtherExtensions.TabIndex = 7;
             this.toolTip1.SetToolTip(this.txtOtherExtensions, "Which file extensions in the library should be renamed along\r\nwith the video file" +
         "s?");
-            //
+            // 
             // cbCopyFutureDatedEps
-            //
+            // 
             this.cbCopyFutureDatedEps.AutoSize = true;
             this.cbCopyFutureDatedEps.Location = new System.Drawing.Point(6, 150);
             this.cbCopyFutureDatedEps.Name = "cbCopyFutureDatedEps";
@@ -759,9 +759,9 @@ namespace TVRename
             this.toolTip1.SetToolTip(this.cbCopyFutureDatedEps, "If set then any episodes in the search folders will be copied into the library, e" +
         "ven if they are yet to officially air.");
             this.cbCopyFutureDatedEps.UseVisualStyleBackColor = true;
-            //
+            // 
             // label40
-            //
+            // 
             this.label40.AutoSize = true;
             this.label40.Location = new System.Drawing.Point(161, 153);
             this.label40.Name = "label40";
@@ -770,9 +770,9 @@ namespace TVRename
             this.label40.Text = "hours";
             this.toolTip1.SetToolTip(this.label40, "If checked the system will automatically scan and complete actions on a periodic " +
         "schedule");
-            //
+            // 
             // domainUpDown2
-            //
+            // 
             this.domainUpDown2.Items.Add("96");
             this.domainUpDown2.Items.Add("48");
             this.domainUpDown2.Items.Add("24");
@@ -790,21 +790,21 @@ namespace TVRename
             this.domainUpDown2.TabIndex = 53;
             this.toolTip1.SetToolTip(this.domainUpDown2, "How often should TV Rename update itself from upstream data sources?");
             this.domainUpDown2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SuppressKeyPress);
-            //
+            // 
             // tbSeasonSearchTerms
-            //
-            this.tbSeasonSearchTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbSeasonSearchTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbSeasonSearchTerms.Location = new System.Drawing.Point(126, 85);
             this.tbSeasonSearchTerms.Name = "tbSeasonSearchTerms";
-            this.tbSeasonSearchTerms.Size = new System.Drawing.Size(268, 20);
+            this.tbSeasonSearchTerms.Size = new System.Drawing.Size(258, 20);
             this.tbSeasonSearchTerms.TabIndex = 22;
             this.toolTip1.SetToolTip(this.tbSeasonSearchTerms, "Which terms should the system look for in directory\r\nnames that indicate that the" +
         " folder contains a season\'s\r\nworth of episodes for a show.\r\nThey should be separ" +
         "ated by a semi-colon - ; ");
-            //
+            // 
             // chkForceBulkAddToUseSettingsOnly
-            //
+            // 
             this.chkForceBulkAddToUseSettingsOnly.AutoSize = true;
             this.chkForceBulkAddToUseSettingsOnly.Location = new System.Drawing.Point(6, 65);
             this.chkForceBulkAddToUseSettingsOnly.Name = "chkForceBulkAddToUseSettingsOnly";
@@ -815,9 +815,9 @@ namespace TVRename
         "ended) then Bulk Add finds addition season words from each show\'s configuration." +
         "");
             this.chkForceBulkAddToUseSettingsOnly.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbIgnoreRecycleBin
-            //
+            // 
             this.cbIgnoreRecycleBin.AutoSize = true;
             this.cbIgnoreRecycleBin.Location = new System.Drawing.Point(6, 42);
             this.cbIgnoreRecycleBin.Name = "cbIgnoreRecycleBin";
@@ -826,9 +826,9 @@ namespace TVRename
             this.cbIgnoreRecycleBin.Text = "Ignore &Recycle Bin";
             this.toolTip1.SetToolTip(this.cbIgnoreRecycleBin, "If set then Bulk Add ignores all files in the Recycle Bin");
             this.cbIgnoreRecycleBin.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbIgnoreNoVideoFolders
-            //
+            // 
             this.cbIgnoreNoVideoFolders.AutoSize = true;
             this.cbIgnoreNoVideoFolders.Location = new System.Drawing.Point(6, 19);
             this.cbIgnoreNoVideoFolders.Name = "cbIgnoreNoVideoFolders";
@@ -838,9 +838,9 @@ namespace TVRename
             this.toolTip1.SetToolTip(this.cbIgnoreNoVideoFolders, "If set then only folders that contain video files are considered for the \'Bulk Ad" +
         "d\' feature");
             this.cbIgnoreNoVideoFolders.UseVisualStyleBackColor = true;
-            //
+            // 
             // label1
-            //
+            // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(185, 83);
             this.label1.Name = "label1";
@@ -849,9 +849,9 @@ namespace TVRename
             this.label1.Text = "hours";
             this.toolTip1.SetToolTip(this.label1, "If checked the system will automatically scan and complete actions on a periodic " +
         "schedule");
-            //
+            // 
             // upDownScanHours
-            //
+            // 
             this.upDownScanHours.Items.Add("96");
             this.upDownScanHours.Items.Add("48");
             this.upDownScanHours.Items.Add("24");
@@ -869,9 +869,9 @@ namespace TVRename
             this.upDownScanHours.TabIndex = 46;
             this.toolTip1.SetToolTip(this.upDownScanHours, "If checked the system will automatically scan and complete actions on a periodic " +
         "schedule");
-            //
+            // 
             // chkScheduledScan
-            //
+            // 
             this.chkScheduledScan.AutoSize = true;
             this.chkScheduledScan.Location = new System.Drawing.Point(10, 82);
             this.chkScheduledScan.Name = "chkScheduledScan";
@@ -881,9 +881,9 @@ namespace TVRename
             this.toolTip1.SetToolTip(this.chkScheduledScan, "If checked the system will automatically scan and complete actions on a periodic " +
         "schedule");
             this.chkScheduledScan.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkScanOnStartup
-            //
+            // 
             this.chkScanOnStartup.AutoSize = true;
             this.chkScanOnStartup.Location = new System.Drawing.Point(10, 59);
             this.chkScanOnStartup.Name = "chkScanOnStartup";
@@ -892,9 +892,9 @@ namespace TVRename
             this.chkScanOnStartup.Text = "&Scan on Startup";
             this.toolTip1.SetToolTip(this.chkScanOnStartup, "If checked the system will automatically scan and complete actions on startup");
             this.chkScanOnStartup.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkIgnoreAllSpecials
-            //
+            // 
             this.chkIgnoreAllSpecials.AutoSize = true;
             this.chkIgnoreAllSpecials.Location = new System.Drawing.Point(29, 210);
             this.chkIgnoreAllSpecials.Name = "chkIgnoreAllSpecials";
@@ -903,9 +903,9 @@ namespace TVRename
             this.chkIgnoreAllSpecials.Text = "Ignore Specials for all TV Shows";
             this.toolTip1.SetToolTip(this.chkIgnoreAllSpecials, "Ignores \'specials\' season for all TV shows");
             this.chkIgnoreAllSpecials.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbAutoSaveOnExit
-            //
+            // 
             this.cbAutoSaveOnExit.AutoSize = true;
             this.cbAutoSaveOnExit.Location = new System.Drawing.Point(13, 150);
             this.cbAutoSaveOnExit.Name = "cbAutoSaveOnExit";
@@ -914,9 +914,9 @@ namespace TVRename
             this.cbAutoSaveOnExit.Text = "Auto save on Exit";
             this.toolTip1.SetToolTip(this.cbAutoSaveOnExit, "Should the system ask the user or always save when the application is shutdown?");
             this.cbAutoSaveOnExit.UseVisualStyleBackColor = true;
-            //
+            // 
             // label84
-            //
+            // 
             this.label84.AutoSize = true;
             this.label84.Location = new System.Drawing.Point(10, 48);
             this.label84.Name = "label84";
@@ -924,11 +924,11 @@ namespace TVRename
             this.label84.TabIndex = 26;
             this.label84.Text = "&Preferred region:";
             this.toolTip1.SetToolTip(this.label84, "TMDB will return release dates and certifications based on your location");
-            //
+            // 
             // lstMovieMonitorFolders
-            //
+            // 
             this.lstMovieMonitorFolders.AllowDrop = true;
-            this.lstMovieMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.lstMovieMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstMovieMonitorFolders.FormattingEnabled = true;
             this.lstMovieMonitorFolders.IntegralHeight = false;
@@ -936,16 +936,16 @@ namespace TVRename
             this.lstMovieMonitorFolders.Name = "lstMovieMonitorFolders";
             this.lstMovieMonitorFolders.ScrollAlwaysVisible = true;
             this.lstMovieMonitorFolders.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lstMovieMonitorFolders.Size = new System.Drawing.Size(408, 97);
+            this.lstMovieMonitorFolders.Size = new System.Drawing.Size(398, 97);
             this.lstMovieMonitorFolders.TabIndex = 49;
             this.toolTip1.SetToolTip(this.lstMovieMonitorFolders, resources.GetString("lstMovieMonitorFolders.ToolTip"));
             this.lstMovieMonitorFolders.SelectedIndexChanged += new System.EventHandler(this.lstMovieMonitorFolders_SelectedIndexChanged);
             this.lstMovieMonitorFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstMovieMonitorFolders_DragDrop);
             this.lstMovieMonitorFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.FileIcon_DragOver);
             this.lstMovieMonitorFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstMovieMonitorFolders_KeyDown);
-            //
+            // 
             // chkIncludeMoviesQuickRecent
-            //
+            // 
             this.chkIncludeMoviesQuickRecent.AutoSize = true;
             this.chkIncludeMoviesQuickRecent.Location = new System.Drawing.Point(226, 19);
             this.chkIncludeMoviesQuickRecent.Name = "chkIncludeMoviesQuickRecent";
@@ -954,17 +954,47 @@ namespace TVRename
             this.chkIncludeMoviesQuickRecent.Text = "&Include Movies in Quick/Recent";
             this.toolTip1.SetToolTip(this.chkIncludeMoviesQuickRecent, "If checked the system will automatically scan and complete actions on startup");
             this.chkIncludeMoviesQuickRecent.UseVisualStyleBackColor = true;
-            //
+            // 
             // tbCleanUpDownloadDirMoviesLength
-            //
+            // 
             this.tbCleanUpDownloadDirMoviesLength.Location = new System.Drawing.Point(216, 65);
             this.tbCleanUpDownloadDirMoviesLength.Name = "tbCleanUpDownloadDirMoviesLength";
             this.tbCleanUpDownloadDirMoviesLength.Size = new System.Drawing.Size(55, 20);
             this.tbCleanUpDownloadDirMoviesLength.TabIndex = 14;
             this.toolTip1.SetToolTip(this.tbCleanUpDownloadDirMoviesLength, "Number of letters that the name of the movie must be. To prevent \'Up\' ");
-            //
+            // 
+            // label98
+            // 
+            this.label98.AutoSize = true;
+            this.label98.Location = new System.Drawing.Point(355, 128);
+            this.label98.Name = "label98";
+            this.label98.Size = new System.Drawing.Size(47, 13);
+            this.label98.TabIndex = 49;
+            this.label98.Text = "seconds";
+            this.toolTip1.SetToolTip(this.label98, "If checked the system will automatically scan and complete actions on a periodic " +
+        "schedule");
+            // 
+            // upDownScanSeconds
+            // 
+            this.upDownScanSeconds.Items.Add("120");
+            this.upDownScanSeconds.Items.Add("60");
+            this.upDownScanSeconds.Items.Add("30");
+            this.upDownScanSeconds.Items.Add("15");
+            this.upDownScanSeconds.Items.Add("10");
+            this.upDownScanSeconds.Items.Add("5");
+            this.upDownScanSeconds.Items.Add("4");
+            this.upDownScanSeconds.Items.Add("3");
+            this.upDownScanSeconds.Items.Add("2");
+            this.upDownScanSeconds.Items.Add("1");
+            this.upDownScanSeconds.Location = new System.Drawing.Point(311, 126);
+            this.upDownScanSeconds.Name = "upDownScanSeconds";
+            this.upDownScanSeconds.Size = new System.Drawing.Size(40, 20);
+            this.upDownScanSeconds.TabIndex = 48;
+            this.toolTip1.SetToolTip(this.upDownScanSeconds, "If checked the system will automatically scan and complete actions on a periodic " +
+        "schedule");
+            // 
             // cmDefaults
-            //
+            // 
             this.cmDefaults.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.KODIToolStripMenuItem,
             this.pyTivoToolStripMenuItem,
@@ -973,37 +1003,37 @@ namespace TVRename
             this.cmDefaults.Name = "cmDefaults";
             this.cmDefaults.Size = new System.Drawing.Size(121, 92);
             this.cmDefaults.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.cmDefaults_ItemClicked);
-            //
+            // 
             // KODIToolStripMenuItem
-            //
+            // 
             this.KODIToolStripMenuItem.Name = "KODIToolStripMenuItem";
             this.KODIToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.KODIToolStripMenuItem.Tag = "1";
             this.KODIToolStripMenuItem.Text = "&KODI";
-            //
+            // 
             // pyTivoToolStripMenuItem
-            //
+            // 
             this.pyTivoToolStripMenuItem.Name = "pyTivoToolStripMenuItem";
             this.pyTivoToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.pyTivoToolStripMenuItem.Tag = "2";
             this.pyTivoToolStripMenuItem.Text = "&pyTivo";
-            //
+            // 
             // mede8erToolStripMenuItem
-            //
+            // 
             this.mede8erToolStripMenuItem.Name = "mede8erToolStripMenuItem";
             this.mede8erToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.mede8erToolStripMenuItem.Tag = "3";
             this.mede8erToolStripMenuItem.Text = "&Mede8er";
-            //
+            // 
             // noneToolStripMenuItem
-            //
+            // 
             this.noneToolStripMenuItem.Name = "noneToolStripMenuItem";
             this.noneToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
-            //
+            // 
             // tpDisplay
-            //
+            // 
             this.tpDisplay.Controls.Add(this.chkShowAccessibilityOptions);
             this.tpDisplay.Controls.Add(this.cbUseColoursOnWtw);
             this.tpDisplay.Controls.Add(this.chkBasicShowDetails);
@@ -1025,16 +1055,16 @@ namespace TVRename
             this.tpDisplay.Controls.Add(this.chkShowInTaskbar);
             this.tpDisplay.Controls.Add(this.cbNotificationIcon);
             this.tpDisplay.Controls.Add(this.pbDisplay);
-            this.tpDisplay.Location = new System.Drawing.Point(139, 4);
+            this.tpDisplay.Location = new System.Drawing.Point(149, 4);
             this.tpDisplay.Name = "tpDisplay";
             this.tpDisplay.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDisplay.Size = new System.Drawing.Size(417, 561);
+            this.tpDisplay.Size = new System.Drawing.Size(407, 592);
             this.tpDisplay.TabIndex = 13;
             this.tpDisplay.Text = "Display";
             this.tpDisplay.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkShowAccessibilityOptions
-            //
+            // 
             this.chkShowAccessibilityOptions.AutoSize = true;
             this.chkShowAccessibilityOptions.Location = new System.Drawing.Point(220, 288);
             this.chkShowAccessibilityOptions.Name = "chkShowAccessibilityOptions";
@@ -1042,9 +1072,9 @@ namespace TVRename
             this.chkShowAccessibilityOptions.TabIndex = 45;
             this.chkShowAccessibilityOptions.Text = "Show Accessibilty Options";
             this.chkShowAccessibilityOptions.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbUseColoursOnWtw
-            //
+            // 
             this.cbUseColoursOnWtw.AutoSize = true;
             this.cbUseColoursOnWtw.Location = new System.Drawing.Point(220, 311);
             this.cbUseColoursOnWtw.Name = "cbUseColoursOnWtw";
@@ -1052,9 +1082,9 @@ namespace TVRename
             this.cbUseColoursOnWtw.TabIndex = 44;
             this.cbUseColoursOnWtw.Text = "Use Colours on Schedule";
             this.cbUseColoursOnWtw.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkBasicShowDetails
-            //
+            // 
             this.chkBasicShowDetails.AutoSize = true;
             this.chkBasicShowDetails.Location = new System.Drawing.Point(10, 311);
             this.chkBasicShowDetails.Name = "chkBasicShowDetails";
@@ -1062,9 +1092,9 @@ namespace TVRename
             this.chkBasicShowDetails.TabIndex = 43;
             this.chkBasicShowDetails.Text = "Show Basic Show Details";
             this.chkBasicShowDetails.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkPostpendThe
-            //
+            // 
             this.chkPostpendThe.AutoSize = true;
             this.chkPostpendThe.Location = new System.Drawing.Point(10, 216);
             this.chkPostpendThe.Name = "chkPostpendThe";
@@ -1072,11 +1102,11 @@ namespace TVRename
             this.chkPostpendThe.TabIndex = 42;
             this.chkPostpendThe.Text = "Move \'The\' to the end of tv show/movie names";
             this.chkPostpendThe.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox11
-            //
-            this.groupBox11.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox11.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox11.Controls.Add(this.label7);
             this.groupBox11.Controls.Add(this.cboShowStatus);
@@ -1088,13 +1118,13 @@ namespace TVRename
             this.groupBox11.Controls.Add(this.lvwDefinedColors);
             this.groupBox11.Location = new System.Drawing.Point(6, 334);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(402, 221);
+            this.groupBox11.Size = new System.Drawing.Size(392, 221);
             this.groupBox11.TabIndex = 41;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Show Colouring";
-            //
+            // 
             // label7
-            //
+            // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(2, 169);
@@ -1102,9 +1132,9 @@ namespace TVRename
             this.label7.Size = new System.Drawing.Size(40, 13);
             this.label7.TabIndex = 16;
             this.label7.Text = "&Status:";
-            //
+            // 
             // cboShowStatus
-            //
+            // 
             this.cboShowStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cboShowStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboShowStatus.FormattingEnabled = true;
@@ -1112,9 +1142,9 @@ namespace TVRename
             this.cboShowStatus.Name = "cboShowStatus";
             this.cboShowStatus.Size = new System.Drawing.Size(346, 21);
             this.cboShowStatus.TabIndex = 15;
-            //
+            // 
             // label5
-            //
+            // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(3, 200);
@@ -1122,18 +1152,18 @@ namespace TVRename
             this.label5.Size = new System.Drawing.Size(58, 13);
             this.label5.TabIndex = 14;
             this.label5.Text = "&Text Color:";
-            //
+            // 
             // txtShowStatusColor
-            //
+            // 
             this.txtShowStatusColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtShowStatusColor.Location = new System.Drawing.Point(67, 193);
             this.txtShowStatusColor.Name = "txtShowStatusColor";
             this.txtShowStatusColor.Size = new System.Drawing.Size(100, 20);
             this.txtShowStatusColor.TabIndex = 13;
             this.txtShowStatusColor.TextChanged += new System.EventHandler(this.txtShowStatusColor_TextChanged);
-            //
+            // 
             // btnSelectColor
-            //
+            // 
             this.btnSelectColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSelectColor.Location = new System.Drawing.Point(173, 192);
             this.btnSelectColor.Name = "btnSelectColor";
@@ -1142,9 +1172,9 @@ namespace TVRename
             this.btnSelectColor.Text = "Select &Color";
             this.btnSelectColor.UseVisualStyleBackColor = true;
             this.btnSelectColor.Click += new System.EventHandler(this.btnSelectColor_Click);
-            //
+            // 
             // bnRemoveDefinedColor
-            //
+            // 
             this.bnRemoveDefinedColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveDefinedColor.Enabled = false;
             this.bnRemoveDefinedColor.Location = new System.Drawing.Point(3, 137);
@@ -1154,22 +1184,22 @@ namespace TVRename
             this.bnRemoveDefinedColor.Text = "&Remove";
             this.bnRemoveDefinedColor.UseVisualStyleBackColor = true;
             this.bnRemoveDefinedColor.Click += new System.EventHandler(this.bnRemoveDefinedColor_Click);
-            //
+            // 
             // btnAddShowStatusColoring
-            //
+            // 
             this.btnAddShowStatusColoring.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddShowStatusColoring.Location = new System.Drawing.Point(321, 192);
+            this.btnAddShowStatusColoring.Location = new System.Drawing.Point(311, 192);
             this.btnAddShowStatusColoring.Name = "btnAddShowStatusColoring";
             this.btnAddShowStatusColoring.Size = new System.Drawing.Size(75, 23);
             this.btnAddShowStatusColoring.TabIndex = 11;
             this.btnAddShowStatusColoring.Text = "&Add";
             this.btnAddShowStatusColoring.UseVisualStyleBackColor = true;
             this.btnAddShowStatusColoring.Click += new System.EventHandler(this.btnAddShowStatusColoring_Click);
-            //
+            // 
             // lvwDefinedColors
-            //
-            this.lvwDefinedColors.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.lvwDefinedColors.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvwDefinedColors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colShowStatus,
@@ -1179,26 +1209,26 @@ namespace TVRename
             this.lvwDefinedColors.Location = new System.Drawing.Point(6, 19);
             this.lvwDefinedColors.MultiSelect = false;
             this.lvwDefinedColors.Name = "lvwDefinedColors";
-            this.lvwDefinedColors.Size = new System.Drawing.Size(390, 112);
+            this.lvwDefinedColors.Size = new System.Drawing.Size(380, 112);
             this.lvwDefinedColors.TabIndex = 9;
             this.lvwDefinedColors.UseCompatibleStateImageBehavior = false;
             this.lvwDefinedColors.View = System.Windows.Forms.View.Details;
             this.lvwDefinedColors.SelectedIndexChanged += new System.EventHandler(this.EnableDisable);
             this.lvwDefinedColors.DoubleClick += new System.EventHandler(this.lvwDefinedColors_DoubleClick);
-            //
+            // 
             // colShowStatus
-            //
+            // 
             this.colShowStatus.Text = "Show Status";
             this.colShowStatus.Width = 297;
-            //
+            // 
             // colColor
-            //
+            // 
             this.colColor.Text = "Color";
             this.colColor.Width = 92;
-            //
+            // 
             // label61
-            //
-            this.label61.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.label61.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label61.AutoSize = true;
             this.label61.Location = new System.Drawing.Point(7, 7);
@@ -1207,9 +1237,9 @@ namespace TVRename
             this.label61.TabIndex = 40;
             this.label61.Text = "Settings that contol the way that TV Rename looks. These do\r\nnot have any impact " +
     "on the main scanning, just on the way \r\nthe interface looks.";
-            //
+            // 
             // cbLeadingZero
-            //
+            // 
             this.cbLeadingZero.AutoSize = true;
             this.cbLeadingZero.Location = new System.Drawing.Point(10, 288);
             this.cbLeadingZero.Name = "cbLeadingZero";
@@ -1217,27 +1247,27 @@ namespace TVRename
             this.cbLeadingZero.TabIndex = 38;
             this.cbLeadingZero.Text = "&Leading 0 on Season numbers";
             this.cbLeadingZero.UseVisualStyleBackColor = true;
-            //
+            // 
             // txtSeasonFolderName
-            //
-            this.txtSeasonFolderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtSeasonFolderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeasonFolderName.Location = new System.Drawing.Point(114, 262);
             this.txtSeasonFolderName.Name = "txtSeasonFolderName";
-            this.txtSeasonFolderName.Size = new System.Drawing.Size(294, 20);
+            this.txtSeasonFolderName.Size = new System.Drawing.Size(284, 20);
             this.txtSeasonFolderName.TabIndex = 37;
-            //
+            // 
             // label35
-            //
+            // 
             this.label35.AutoSize = true;
             this.label35.Location = new System.Drawing.Point(7, 265);
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(80, 13);
             this.label35.TabIndex = 36;
             this.label35.Text = "&Seasons name:";
-            //
+            // 
             // chkHideWtWSpoilers
-            //
+            // 
             this.chkHideWtWSpoilers.AutoSize = true;
             this.chkHideWtWSpoilers.Location = new System.Drawing.Point(220, 193);
             this.chkHideWtWSpoilers.Name = "chkHideWtWSpoilers";
@@ -1245,9 +1275,9 @@ namespace TVRename
             this.chkHideWtWSpoilers.TabIndex = 35;
             this.chkHideWtWSpoilers.Text = "Hide Spoilers in Schedule";
             this.chkHideWtWSpoilers.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkHideMyShowsSpoilers
-            //
+            // 
             this.chkHideMyShowsSpoilers.AutoSize = true;
             this.chkHideMyShowsSpoilers.Location = new System.Drawing.Point(10, 193);
             this.chkHideMyShowsSpoilers.Name = "chkHideMyShowsSpoilers";
@@ -1255,9 +1285,9 @@ namespace TVRename
             this.chkHideMyShowsSpoilers.TabIndex = 34;
             this.chkHideMyShowsSpoilers.Text = "Hide Spoilers in \'TV Shows\'";
             this.chkHideMyShowsSpoilers.UseVisualStyleBackColor = true;
-            //
+            // 
             // rbWTWScan
-            //
+            // 
             this.rbWTWScan.AutoSize = true;
             this.rbWTWScan.Location = new System.Drawing.Point(28, 98);
             this.rbWTWScan.Name = "rbWTWScan";
@@ -1265,9 +1295,9 @@ namespace TVRename
             this.rbWTWScan.TabIndex = 27;
             this.rbWTWScan.Text = "S&can";
             this.rbWTWScan.UseVisualStyleBackColor = true;
-            //
+            // 
             // rbWTWSearch
-            //
+            // 
             this.rbWTWSearch.AutoSize = true;
             this.rbWTWSearch.Checked = true;
             this.rbWTWSearch.Location = new System.Drawing.Point(28, 79);
@@ -1277,9 +1307,9 @@ namespace TVRename
             this.rbWTWSearch.TabStop = true;
             this.rbWTWSearch.Text = "S&earch";
             this.rbWTWSearch.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbStartupTab
-            //
+            // 
             this.cbStartupTab.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbStartupTab.FormattingEnabled = true;
             this.cbStartupTab.Items.AddRange(new object[] {
@@ -1291,9 +1321,9 @@ namespace TVRename
             this.cbStartupTab.Name = "cbStartupTab";
             this.cbStartupTab.Size = new System.Drawing.Size(135, 21);
             this.cbStartupTab.TabIndex = 29;
-            //
+            // 
             // cbAutoSelInMyShows
-            //
+            // 
             this.cbAutoSelInMyShows.AutoSize = true;
             this.cbAutoSelInMyShows.Location = new System.Drawing.Point(10, 239);
             this.cbAutoSelInMyShows.Name = "cbAutoSelInMyShows";
@@ -1301,9 +1331,9 @@ namespace TVRename
             this.cbAutoSelInMyShows.TabIndex = 33;
             this.cbAutoSelInMyShows.Text = "&Automatically select show and season in \'TV Shows\'";
             this.cbAutoSelInMyShows.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbShowEpisodePictures
-            //
+            // 
             this.cbShowEpisodePictures.AutoSize = true;
             this.cbShowEpisodePictures.Location = new System.Drawing.Point(10, 170);
             this.cbShowEpisodePictures.Name = "cbShowEpisodePictures";
@@ -1311,27 +1341,27 @@ namespace TVRename
             this.cbShowEpisodePictures.TabIndex = 32;
             this.cbShowEpisodePictures.Text = "S&how episode pictures in episode guides";
             this.cbShowEpisodePictures.UseVisualStyleBackColor = true;
-            //
+            // 
             // label11
-            //
+            // 
             this.label11.AutoSize = true;
             this.label11.Location = new System.Drawing.Point(7, 64);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(154, 13);
             this.label11.TabIndex = 25;
             this.label11.Text = "Double-click in Schedule does:";
-            //
+            // 
             // label6
-            //
+            // 
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(7, 123);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(62, 13);
             this.label6.TabIndex = 28;
             this.label6.Text = "&Startup tab:";
-            //
+            // 
             // chkShowInTaskbar
-            //
+            // 
             this.chkShowInTaskbar.AutoSize = true;
             this.chkShowInTaskbar.Location = new System.Drawing.Point(220, 147);
             this.chkShowInTaskbar.Name = "chkShowInTaskbar";
@@ -1340,9 +1370,9 @@ namespace TVRename
             this.chkShowInTaskbar.Text = "Show in &taskbar";
             this.chkShowInTaskbar.UseVisualStyleBackColor = true;
             this.chkShowInTaskbar.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // cbNotificationIcon
-            //
+            // 
             this.cbNotificationIcon.AutoSize = true;
             this.cbNotificationIcon.Location = new System.Drawing.Point(10, 147);
             this.cbNotificationIcon.Name = "cbNotificationIcon";
@@ -1351,53 +1381,53 @@ namespace TVRename
             this.cbNotificationIcon.Text = "Show &notification area icon";
             this.cbNotificationIcon.UseVisualStyleBackColor = true;
             this.cbNotificationIcon.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // pbDisplay
-            //
+            // 
             this.pbDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbDisplay.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbDisplay.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbDisplay.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbDisplay.Location = new System.Drawing.Point(368, 6);
+            this.pbDisplay.Location = new System.Drawing.Point(358, 6);
             this.pbDisplay.Name = "pbDisplay";
             this.pbDisplay.Size = new System.Drawing.Size(43, 40);
             this.pbDisplay.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbDisplay.TabIndex = 39;
             this.pbDisplay.TabStop = false;
             this.pbDisplay.Click += new System.EventHandler(this.pbDisplay_Click);
-            //
+            // 
             // tpRSSJSONSearch
-            //
+            // 
             this.tpRSSJSONSearch.Controls.Add(this.pbRSSJSONSearch);
             this.tpRSSJSONSearch.Controls.Add(this.label59);
             this.tpRSSJSONSearch.Controls.Add(this.cbSearchJSON);
             this.tpRSSJSONSearch.Controls.Add(this.cbSearchRSS);
             this.tpRSSJSONSearch.Controls.Add(this.gbJSON);
             this.tpRSSJSONSearch.Controls.Add(this.gbRSS);
-            this.tpRSSJSONSearch.Location = new System.Drawing.Point(139, 4);
+            this.tpRSSJSONSearch.Location = new System.Drawing.Point(149, 4);
             this.tpRSSJSONSearch.Name = "tpRSSJSONSearch";
             this.tpRSSJSONSearch.Padding = new System.Windows.Forms.Padding(3);
-            this.tpRSSJSONSearch.Size = new System.Drawing.Size(417, 561);
+            this.tpRSSJSONSearch.Size = new System.Drawing.Size(407, 592);
             this.tpRSSJSONSearch.TabIndex = 12;
             this.tpRSSJSONSearch.Text = "RSS/JSON Search";
             this.tpRSSJSONSearch.UseVisualStyleBackColor = true;
-            //
+            // 
             // pbRSSJSONSearch
-            //
+            // 
             this.pbRSSJSONSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbRSSJSONSearch.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbRSSJSONSearch.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbRSSJSONSearch.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbRSSJSONSearch.Location = new System.Drawing.Point(368, 6);
+            this.pbRSSJSONSearch.Location = new System.Drawing.Point(358, 6);
             this.pbRSSJSONSearch.Name = "pbRSSJSONSearch";
             this.pbRSSJSONSearch.Size = new System.Drawing.Size(43, 40);
             this.pbRSSJSONSearch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbRSSJSONSearch.TabIndex = 38;
             this.pbRSSJSONSearch.TabStop = false;
             this.pbRSSJSONSearch.Click += new System.EventHandler(this.pbRSSJSONSearch_Click);
-            //
+            // 
             // label59
-            //
+            // 
             this.label59.AutoSize = true;
             this.label59.Location = new System.Drawing.Point(3, 13);
             this.label59.Name = "label59";
@@ -1406,9 +1436,9 @@ namespace TVRename
             this.label59.Text = "If an episode is missing from your library, TV Rename will look in the \r\nfollowin" +
     "g URLs for appropriate files to download. It will use the torrent \r\nhandlers to " +
     "download the file(s)";
-            //
+            // 
             // cbSearchJSON
-            //
+            // 
             this.cbSearchJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbSearchJSON.AutoSize = true;
             this.cbSearchJSON.Location = new System.Drawing.Point(8, 320);
@@ -1418,9 +1448,9 @@ namespace TVRename
             this.cbSearchJSON.Text = "Search &JSON for missing files";
             this.cbSearchJSON.UseVisualStyleBackColor = true;
             this.cbSearchJSON.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // cbSearchRSS
-            //
+            // 
             this.cbSearchRSS.AutoSize = true;
             this.cbSearchRSS.Location = new System.Drawing.Point(6, 66);
             this.cbSearchRSS.Name = "cbSearchRSS";
@@ -1429,10 +1459,10 @@ namespace TVRename
             this.cbSearchRSS.Text = "&Search RSS for missing files";
             this.cbSearchRSS.UseVisualStyleBackColor = true;
             this.cbSearchRSS.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // gbJSON
-            //
-            this.gbJSON.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.gbJSON.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbJSON.Controls.Add(this.label78);
             this.gbJSON.Controls.Add(this.tbJSONSeedersToken);
@@ -1450,42 +1480,42 @@ namespace TVRename
             this.gbJSON.Controls.Add(this.tbJSONURL);
             this.gbJSON.Location = new System.Drawing.Point(6, 343);
             this.gbJSON.Name = "gbJSON";
-            this.gbJSON.Size = new System.Drawing.Size(408, 199);
+            this.gbJSON.Size = new System.Drawing.Size(398, 199);
             this.gbJSON.TabIndex = 33;
             this.gbJSON.TabStop = false;
             this.gbJSON.Text = "JSON Search";
-            //
+            // 
             // label78
-            //
+            // 
             this.label78.AutoSize = true;
             this.label78.Location = new System.Drawing.Point(7, 175);
             this.label78.Name = "label78";
             this.label78.Size = new System.Drawing.Size(83, 13);
             this.label78.TabIndex = 42;
             this.label78.Text = "Seeders Token:";
-            //
+            // 
             // tbJSONSeedersToken
-            //
-            this.tbJSONSeedersToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbJSONSeedersToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONSeedersToken.Location = new System.Drawing.Point(98, 172);
             this.tbJSONSeedersToken.Name = "tbJSONSeedersToken";
-            this.tbJSONSeedersToken.Size = new System.Drawing.Size(305, 20);
+            this.tbJSONSeedersToken.Size = new System.Drawing.Size(295, 20);
             this.tbJSONSeedersToken.TabIndex = 41;
-            //
+            // 
             // cbJSONCloudflareProtection
-            //
+            // 
             this.cbJSONCloudflareProtection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbJSONCloudflareProtection.AutoSize = true;
-            this.cbJSONCloudflareProtection.Location = new System.Drawing.Point(253, 19);
+            this.cbJSONCloudflareProtection.Location = new System.Drawing.Point(243, 19);
             this.cbJSONCloudflareProtection.Name = "cbJSONCloudflareProtection";
             this.cbJSONCloudflareProtection.Size = new System.Drawing.Size(145, 17);
             this.cbJSONCloudflareProtection.TabIndex = 40;
             this.cbJSONCloudflareProtection.Text = "Use Cloudflare protection";
             this.cbJSONCloudflareProtection.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbSearchJSONManualScanOnly
-            //
+            // 
             this.cbSearchJSONManualScanOnly.AutoSize = true;
             this.cbSearchJSONManualScanOnly.Location = new System.Drawing.Point(9, 19);
             this.cbSearchJSONManualScanOnly.Name = "cbSearchJSONManualScanOnly";
@@ -1493,101 +1523,101 @@ namespace TVRename
             this.cbSearchJSONManualScanOnly.TabIndex = 38;
             this.cbSearchJSONManualScanOnly.Text = "Only on manual scans";
             this.cbSearchJSONManualScanOnly.UseVisualStyleBackColor = true;
-            //
+            // 
             // label55
-            //
+            // 
             this.label55.AutoSize = true;
             this.label55.Location = new System.Drawing.Point(6, 149);
             this.label55.Name = "label55";
             this.label55.Size = new System.Drawing.Size(64, 13);
             this.label55.TabIndex = 39;
             this.label55.Text = "Size Token:";
-            //
+            // 
             // tbJSONFilesizeToken
-            //
-            this.tbJSONFilesizeToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbJSONFilesizeToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONFilesizeToken.Location = new System.Drawing.Point(97, 146);
             this.tbJSONFilesizeToken.Name = "tbJSONFilesizeToken";
-            this.tbJSONFilesizeToken.Size = new System.Drawing.Size(305, 20);
+            this.tbJSONFilesizeToken.Size = new System.Drawing.Size(295, 20);
             this.tbJSONFilesizeToken.TabIndex = 38;
-            //
+            // 
             // label51
-            //
+            // 
             this.label51.AutoSize = true;
             this.label51.Location = new System.Drawing.Point(6, 97);
             this.label51.Name = "label51";
             this.label51.Size = new System.Drawing.Size(86, 13);
             this.label51.TabIndex = 37;
             this.label51.Text = "Filename Token:";
-            //
+            // 
             // tbJSONFilenameToken
-            //
-            this.tbJSONFilenameToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbJSONFilenameToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONFilenameToken.Location = new System.Drawing.Point(98, 94);
             this.tbJSONFilenameToken.Name = "tbJSONFilenameToken";
-            this.tbJSONFilenameToken.Size = new System.Drawing.Size(305, 20);
+            this.tbJSONFilenameToken.Size = new System.Drawing.Size(295, 20);
             this.tbJSONFilenameToken.TabIndex = 36;
-            //
+            // 
             // label50
-            //
+            // 
             this.label50.AutoSize = true;
             this.label50.Location = new System.Drawing.Point(6, 123);
             this.label50.Name = "label50";
             this.label50.Size = new System.Drawing.Size(66, 13);
             this.label50.TabIndex = 35;
             this.label50.Text = "URL Token:";
-            //
+            // 
             // tbJSONURLToken
-            //
-            this.tbJSONURLToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbJSONURLToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONURLToken.Location = new System.Drawing.Point(98, 120);
             this.tbJSONURLToken.Name = "tbJSONURLToken";
-            this.tbJSONURLToken.Size = new System.Drawing.Size(305, 20);
+            this.tbJSONURLToken.Size = new System.Drawing.Size(295, 20);
             this.tbJSONURLToken.TabIndex = 34;
-            //
+            // 
             // label49
-            //
+            // 
             this.label49.AutoSize = true;
             this.label49.Location = new System.Drawing.Point(6, 71);
             this.label49.Name = "label49";
             this.label49.Size = new System.Drawing.Size(62, 13);
             this.label49.TabIndex = 33;
             this.label49.Text = "Root Node:";
-            //
+            // 
             // tbJSONRootNode
-            //
-            this.tbJSONRootNode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbJSONRootNode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONRootNode.Location = new System.Drawing.Point(98, 68);
             this.tbJSONRootNode.Name = "tbJSONRootNode";
-            this.tbJSONRootNode.Size = new System.Drawing.Size(305, 20);
+            this.tbJSONRootNode.Size = new System.Drawing.Size(295, 20);
             this.tbJSONRootNode.TabIndex = 32;
-            //
+            // 
             // label48
-            //
+            // 
             this.label48.AutoSize = true;
             this.label48.Location = new System.Drawing.Point(6, 45);
             this.label48.Name = "label48";
             this.label48.Size = new System.Drawing.Size(32, 13);
             this.label48.TabIndex = 31;
             this.label48.Text = "URL:";
-            //
+            // 
             // tbJSONURL
-            //
-            this.tbJSONURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbJSONURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONURL.Location = new System.Drawing.Point(97, 42);
             this.tbJSONURL.Name = "tbJSONURL";
-            this.tbJSONURL.Size = new System.Drawing.Size(305, 20);
+            this.tbJSONURL.Size = new System.Drawing.Size(295, 20);
             this.tbJSONURL.TabIndex = 30;
-            //
+            // 
             // gbRSS
-            //
-            this.gbRSS.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.gbRSS.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbRSS.Controls.Add(this.cbRSSCloudflareProtection);
             this.gbRSS.Controls.Add(this.cbSearchRSSManualScanOnly);
@@ -1598,24 +1628,24 @@ namespace TVRename
             this.gbRSS.Controls.Add(this.bnRSSAdd);
             this.gbRSS.Location = new System.Drawing.Point(3, 86);
             this.gbRSS.Name = "gbRSS";
-            this.gbRSS.Size = new System.Drawing.Size(407, 228);
+            this.gbRSS.Size = new System.Drawing.Size(397, 228);
             this.gbRSS.TabIndex = 32;
             this.gbRSS.TabStop = false;
             this.gbRSS.Text = "RSS Search";
-            //
+            // 
             // cbRSSCloudflareProtection
-            //
+            // 
             this.cbRSSCloudflareProtection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbRSSCloudflareProtection.AutoSize = true;
-            this.cbRSSCloudflareProtection.Location = new System.Drawing.Point(256, 19);
+            this.cbRSSCloudflareProtection.Location = new System.Drawing.Point(246, 19);
             this.cbRSSCloudflareProtection.Name = "cbRSSCloudflareProtection";
             this.cbRSSCloudflareProtection.Size = new System.Drawing.Size(145, 17);
             this.cbRSSCloudflareProtection.TabIndex = 41;
             this.cbRSSCloudflareProtection.Text = "Use Cloudflare protection";
             this.cbRSSCloudflareProtection.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbSearchRSSManualScanOnly
-            //
+            // 
             this.cbSearchRSSManualScanOnly.AutoSize = true;
             this.cbSearchRSSManualScanOnly.Location = new System.Drawing.Point(6, 19);
             this.cbSearchRSSManualScanOnly.Name = "cbSearchRSSManualScanOnly";
@@ -1623,11 +1653,11 @@ namespace TVRename
             this.cbSearchRSSManualScanOnly.TabIndex = 37;
             this.cbSearchRSSManualScanOnly.Text = "Only on manual scans";
             this.cbSearchRSSManualScanOnly.UseVisualStyleBackColor = true;
-            //
+            // 
             // RSSGrid
-            //
-            this.RSSGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.RSSGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.RSSGrid.BackColor = System.Drawing.SystemColors.Window;
             this.RSSGrid.EnableSort = true;
@@ -1635,22 +1665,22 @@ namespace TVRename
             this.RSSGrid.Name = "RSSGrid";
             this.RSSGrid.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
             this.RSSGrid.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.RSSGrid.Size = new System.Drawing.Size(395, 134);
+            this.RSSGrid.Size = new System.Drawing.Size(385, 134);
             this.RSSGrid.TabIndex = 26;
             this.RSSGrid.TabStop = true;
             this.RSSGrid.ToolTipText = "";
-            //
+            // 
             // label25
-            //
+            // 
             this.label25.AutoSize = true;
             this.label25.Location = new System.Drawing.Point(3, 39);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(99, 13);
             this.label25.TabIndex = 25;
             this.label25.Text = "Torrent RSS URLs:";
-            //
+            // 
             // bnRSSRemove
-            //
+            // 
             this.bnRSSRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRSSRemove.Location = new System.Drawing.Point(87, 198);
             this.bnRSSRemove.Name = "bnRSSRemove";
@@ -1659,9 +1689,9 @@ namespace TVRename
             this.bnRSSRemove.Text = "&Remove";
             this.bnRSSRemove.UseVisualStyleBackColor = true;
             this.bnRSSRemove.Click += new System.EventHandler(this.bnRSSRemove_Click);
-            //
+            // 
             // bnRSSGo
-            //
+            // 
             this.bnRSSGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRSSGo.Location = new System.Drawing.Point(168, 198);
             this.bnRSSGo.Name = "bnRSSGo";
@@ -1670,9 +1700,9 @@ namespace TVRename
             this.bnRSSGo.Text = "&Open";
             this.bnRSSGo.UseVisualStyleBackColor = true;
             this.bnRSSGo.Click += new System.EventHandler(this.bnRSSGo_Click);
-            //
+            // 
             // bnRSSAdd
-            //
+            // 
             this.bnRSSAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRSSAdd.Location = new System.Drawing.Point(6, 198);
             this.bnRSSAdd.Name = "bnRSSAdd";
@@ -1681,9 +1711,9 @@ namespace TVRename
             this.bnRSSAdd.Text = "&Add";
             this.bnRSSAdd.UseVisualStyleBackColor = true;
             this.bnRSSAdd.Click += new System.EventHandler(this.bnRSSAdd_Click);
-            //
+            // 
             // tpLibraryFolders
-            //
+            // 
             this.tpLibraryFolders.Controls.Add(this.groupBox23);
             this.tpLibraryFolders.Controls.Add(this.label87);
             this.tpLibraryFolders.Controls.Add(this.bnOpenMovieMonFolder);
@@ -1698,17 +1728,17 @@ namespace TVRename
             this.tpLibraryFolders.Controls.Add(this.bnRemoveMonFolder);
             this.tpLibraryFolders.Controls.Add(this.pbLibraryFolders);
             this.tpLibraryFolders.Controls.Add(this.lstFMMonitorFolders);
-            this.tpLibraryFolders.Location = new System.Drawing.Point(139, 4);
+            this.tpLibraryFolders.Location = new System.Drawing.Point(149, 4);
             this.tpLibraryFolders.Name = "tpLibraryFolders";
             this.tpLibraryFolders.Padding = new System.Windows.Forms.Padding(3);
-            this.tpLibraryFolders.Size = new System.Drawing.Size(417, 561);
+            this.tpLibraryFolders.Size = new System.Drawing.Size(407, 592);
             this.tpLibraryFolders.TabIndex = 10;
             this.tpLibraryFolders.Text = "Library Folders";
             this.tpLibraryFolders.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox23
-            //
-            this.groupBox23.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox23.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox23.Controls.Add(this.button3);
             this.groupBox23.Controls.Add(this.txtMovieFilenameFormat);
@@ -1718,71 +1748,71 @@ namespace TVRename
             this.groupBox23.Controls.Add(this.label85);
             this.groupBox23.Location = new System.Drawing.Point(9, 455);
             this.groupBox23.Name = "groupBox23";
-            this.groupBox23.Size = new System.Drawing.Size(401, 86);
+            this.groupBox23.Size = new System.Drawing.Size(391, 86);
             this.groupBox23.TabIndex = 54;
             this.groupBox23.TabStop = false;
             this.groupBox23.Text = "Default Movie Library Folder Format";
-            //
+            // 
             // button3
-            //
+            // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(333, 51);
+            this.button3.Location = new System.Drawing.Point(323, 51);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(62, 23);
             this.button3.TabIndex = 34;
             this.button3.Text = "Tags...";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
-            //
+            // 
             // txtMovieFilenameFormat
-            //
-            this.txtMovieFilenameFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtMovieFilenameFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMovieFilenameFormat.Location = new System.Drawing.Point(124, 52);
             this.txtMovieFilenameFormat.Name = "txtMovieFilenameFormat";
-            this.txtMovieFilenameFormat.Size = new System.Drawing.Size(203, 20);
+            this.txtMovieFilenameFormat.Size = new System.Drawing.Size(193, 20);
             this.txtMovieFilenameFormat.TabIndex = 33;
-            //
+            // 
             // label90
-            //
+            // 
             this.label90.AutoSize = true;
             this.label90.Location = new System.Drawing.Point(6, 56);
             this.label90.Name = "label90";
             this.label90.Size = new System.Drawing.Size(84, 13);
             this.label90.TabIndex = 32;
             this.label90.Text = "Filename format:";
-            //
+            // 
             // button2
-            //
+            // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(333, 22);
+            this.button2.Location = new System.Drawing.Point(323, 22);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(62, 23);
             this.button2.TabIndex = 31;
             this.button2.Text = "Tags...";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
-            //
+            // 
             // txtMovieFolderFormat
-            //
-            this.txtMovieFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtMovieFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMovieFolderFormat.Location = new System.Drawing.Point(124, 23);
             this.txtMovieFolderFormat.Name = "txtMovieFolderFormat";
-            this.txtMovieFolderFormat.Size = new System.Drawing.Size(203, 20);
+            this.txtMovieFolderFormat.Size = new System.Drawing.Size(193, 20);
             this.txtMovieFolderFormat.TabIndex = 30;
-            //
+            // 
             // label85
-            //
+            // 
             this.label85.AutoSize = true;
             this.label85.Location = new System.Drawing.Point(6, 27);
             this.label85.Name = "label85";
             this.label85.Size = new System.Drawing.Size(71, 13);
             this.label85.TabIndex = 29;
             this.label85.Text = "&Folder format:";
-            //
+            // 
             // label87
-            //
+            // 
             this.label87.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label87.AutoSize = true;
             this.label87.Location = new System.Drawing.Point(6, 307);
@@ -1790,9 +1820,9 @@ namespace TVRename
             this.label87.Size = new System.Drawing.Size(107, 13);
             this.label87.TabIndex = 53;
             this.label87.Text = "Movie &Library Folders";
-            //
+            // 
             // bnOpenMovieMonFolder
-            //
+            // 
             this.bnOpenMovieMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnOpenMovieMonFolder.Enabled = false;
             this.bnOpenMovieMonFolder.Location = new System.Drawing.Point(168, 426);
@@ -1802,9 +1832,9 @@ namespace TVRename
             this.bnOpenMovieMonFolder.Text = "&Open";
             this.bnOpenMovieMonFolder.UseVisualStyleBackColor = true;
             this.bnOpenMovieMonFolder.Click += new System.EventHandler(this.bnOpenMovieMonFolder_Click);
-            //
+            // 
             // bnAddMovieMonFolder
-            //
+            // 
             this.bnAddMovieMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnAddMovieMonFolder.Location = new System.Drawing.Point(6, 426);
             this.bnAddMovieMonFolder.Name = "bnAddMovieMonFolder";
@@ -1813,9 +1843,9 @@ namespace TVRename
             this.bnAddMovieMonFolder.Text = "&Add";
             this.bnAddMovieMonFolder.UseVisualStyleBackColor = true;
             this.bnAddMovieMonFolder.Click += new System.EventHandler(this.bnAddMovieMonFolder_Click);
-            //
+            // 
             // bnRemoveMovieMonFolder
-            //
+            // 
             this.bnRemoveMovieMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveMovieMonFolder.Enabled = false;
             this.bnRemoveMovieMonFolder.Location = new System.Drawing.Point(87, 426);
@@ -1825,10 +1855,10 @@ namespace TVRename
             this.bnRemoveMovieMonFolder.Text = "&Remove";
             this.bnRemoveMovieMonFolder.UseVisualStyleBackColor = true;
             this.bnRemoveMovieMonFolder.Click += new System.EventHandler(this.bnRemoveMovieMonFolder_Click);
-            //
+            // 
             // groupBox6
-            //
-            this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox6.Controls.Add(this.button4);
             this.groupBox6.Controls.Add(this.txtShowFolderFormat);
@@ -1840,90 +1870,90 @@ namespace TVRename
             this.groupBox6.Controls.Add(this.label13);
             this.groupBox6.Location = new System.Drawing.Point(9, 201);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(401, 100);
+            this.groupBox6.Size = new System.Drawing.Size(391, 100);
             this.groupBox6.TabIndex = 48;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Default TV Show Library Folder Format";
-            //
+            // 
             // button4
-            //
+            // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(333, 72);
+            this.button4.Location = new System.Drawing.Point(323, 72);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(62, 23);
             this.button4.TabIndex = 34;
             this.button4.Text = "Tags...";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
-            //
+            // 
             // txtShowFolderFormat
-            //
-            this.txtShowFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtShowFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtShowFolderFormat.Location = new System.Drawing.Point(124, 73);
             this.txtShowFolderFormat.Name = "txtShowFolderFormat";
-            this.txtShowFolderFormat.Size = new System.Drawing.Size(203, 20);
+            this.txtShowFolderFormat.Size = new System.Drawing.Size(193, 20);
             this.txtShowFolderFormat.TabIndex = 33;
-            //
+            // 
             // label96
-            //
+            // 
             this.label96.AutoSize = true;
             this.label96.Location = new System.Drawing.Point(6, 77);
             this.label96.Name = "label96";
             this.label96.Size = new System.Drawing.Size(98, 13);
             this.label96.TabIndex = 32;
             this.label96.Text = "Show folder format:";
-            //
+            // 
             // button1
-            //
+            // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(333, 46);
+            this.button1.Location = new System.Drawing.Point(323, 46);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(62, 23);
             this.button1.TabIndex = 31;
             this.button1.Text = "Tags...";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            //
+            // 
             // txtSeasonFormat
-            //
-            this.txtSeasonFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtSeasonFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeasonFormat.Location = new System.Drawing.Point(124, 47);
             this.txtSeasonFormat.Name = "txtSeasonFormat";
-            this.txtSeasonFormat.Size = new System.Drawing.Size(203, 20);
+            this.txtSeasonFormat.Size = new System.Drawing.Size(193, 20);
             this.txtSeasonFormat.TabIndex = 30;
-            //
+            // 
             // txtSpecialsFolderName
-            //
-            this.txtSpecialsFolderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtSpecialsFolderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSpecialsFolderName.Location = new System.Drawing.Point(124, 21);
             this.txtSpecialsFolderName.Name = "txtSpecialsFolderName";
-            this.txtSpecialsFolderName.Size = new System.Drawing.Size(271, 20);
+            this.txtSpecialsFolderName.Size = new System.Drawing.Size(261, 20);
             this.txtSpecialsFolderName.TabIndex = 28;
-            //
+            // 
             // label47
-            //
+            // 
             this.label47.AutoSize = true;
             this.label47.Location = new System.Drawing.Point(6, 51);
             this.label47.Name = "label47";
             this.label47.Size = new System.Drawing.Size(112, 13);
             this.label47.TabIndex = 29;
             this.label47.Text = "&Seasons folder format:";
-            //
+            // 
             // label13
-            //
+            // 
             this.label13.AutoSize = true;
             this.label13.Location = new System.Drawing.Point(6, 24);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(108, 13);
             this.label13.TabIndex = 27;
             this.label13.Text = "&Specials folder name:";
-            //
+            // 
             // label65
-            //
-            this.label65.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.label65.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label65.AutoSize = true;
             this.label65.Location = new System.Drawing.Point(6, 6);
@@ -1932,18 +1962,18 @@ namespace TVRename
             this.label65.TabIndex = 44;
             this.label65.Text = "TV Rename considers 2 sets of folders. Library Folders are the\r\nbase folders for " +
     "a sorted collection of files";
-            //
+            // 
             // label56
-            //
+            // 
             this.label56.AutoSize = true;
             this.label56.Location = new System.Drawing.Point(3, 53);
             this.label56.Name = "label56";
             this.label56.Size = new System.Drawing.Size(92, 13);
             this.label56.TabIndex = 36;
             this.label56.Text = "TV &Library Folders";
-            //
+            // 
             // bnOpenMonFolder
-            //
+            // 
             this.bnOpenMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnOpenMonFolder.Enabled = false;
             this.bnOpenMonFolder.Location = new System.Drawing.Point(168, 172);
@@ -1953,9 +1983,9 @@ namespace TVRename
             this.bnOpenMonFolder.Text = "&Open";
             this.bnOpenMonFolder.UseVisualStyleBackColor = true;
             this.bnOpenMonFolder.Click += new System.EventHandler(this.bnOpenMonFolder_Click);
-            //
+            // 
             // bnAddMonFolder
-            //
+            // 
             this.bnAddMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnAddMonFolder.Location = new System.Drawing.Point(6, 172);
             this.bnAddMonFolder.Name = "bnAddMonFolder";
@@ -1964,9 +1994,9 @@ namespace TVRename
             this.bnAddMonFolder.Text = "&Add";
             this.bnAddMonFolder.UseVisualStyleBackColor = true;
             this.bnAddMonFolder.Click += new System.EventHandler(this.bnAddMonFolder_Click);
-            //
+            // 
             // bnRemoveMonFolder
-            //
+            // 
             this.bnRemoveMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveMonFolder.Enabled = false;
             this.bnRemoveMonFolder.Location = new System.Drawing.Point(87, 172);
@@ -1976,23 +2006,23 @@ namespace TVRename
             this.bnRemoveMonFolder.Text = "&Remove";
             this.bnRemoveMonFolder.UseVisualStyleBackColor = true;
             this.bnRemoveMonFolder.Click += new System.EventHandler(this.bnRemoveMonFolder_Click);
-            //
+            // 
             // pbLibraryFolders
-            //
+            // 
             this.pbLibraryFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbLibraryFolders.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbLibraryFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbLibraryFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbLibraryFolders.Location = new System.Drawing.Point(368, 6);
+            this.pbLibraryFolders.Location = new System.Drawing.Point(358, 6);
             this.pbLibraryFolders.Name = "pbLibraryFolders";
             this.pbLibraryFolders.Size = new System.Drawing.Size(43, 40);
             this.pbLibraryFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbLibraryFolders.TabIndex = 43;
             this.pbLibraryFolders.TabStop = false;
             this.pbLibraryFolders.Click += new System.EventHandler(this.pbLibraryFolders_Click);
-            //
+            // 
             // tpTorrentNZB
-            //
+            // 
             this.tpTorrentNZB.Controls.Add(this.pbuTorrentNZB);
             this.tpTorrentNZB.Controls.Add(this.label58);
             this.tpTorrentNZB.Controls.Add(this.cbCheckqBitTorrent);
@@ -2001,30 +2031,30 @@ namespace TVRename
             this.tpTorrentNZB.Controls.Add(this.qBitTorrent);
             this.tpTorrentNZB.Controls.Add(this.gbSAB);
             this.tpTorrentNZB.Controls.Add(this.gbuTorrent);
-            this.tpTorrentNZB.Location = new System.Drawing.Point(139, 4);
+            this.tpTorrentNZB.Location = new System.Drawing.Point(149, 4);
             this.tpTorrentNZB.Name = "tpTorrentNZB";
             this.tpTorrentNZB.Padding = new System.Windows.Forms.Padding(3);
-            this.tpTorrentNZB.Size = new System.Drawing.Size(417, 561);
+            this.tpTorrentNZB.Size = new System.Drawing.Size(407, 592);
             this.tpTorrentNZB.TabIndex = 4;
             this.tpTorrentNZB.Text = "Torrents / NZB";
             this.tpTorrentNZB.UseVisualStyleBackColor = true;
-            //
+            // 
             // pbuTorrentNZB
-            //
+            // 
             this.pbuTorrentNZB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbuTorrentNZB.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbuTorrentNZB.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbuTorrentNZB.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbuTorrentNZB.Location = new System.Drawing.Point(368, 6);
+            this.pbuTorrentNZB.Location = new System.Drawing.Point(358, 6);
             this.pbuTorrentNZB.Name = "pbuTorrentNZB";
             this.pbuTorrentNZB.Size = new System.Drawing.Size(43, 40);
             this.pbuTorrentNZB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbuTorrentNZB.TabIndex = 21;
             this.pbuTorrentNZB.TabStop = false;
             this.pbuTorrentNZB.Click += new System.EventHandler(this.pictureBox1_Click);
-            //
+            // 
             // label58
-            //
+            // 
             this.label58.AutoSize = true;
             this.label58.Location = new System.Drawing.Point(3, 6);
             this.label58.Name = "label58";
@@ -2032,9 +2062,9 @@ namespace TVRename
             this.label58.TabIndex = 20;
             this.label58.Text = "If an episode is missing from your library, TV Rename will look in the \r\nfollowin" +
     "g locations to see whether it is already being downloaded.";
-            //
+            // 
             // cbCheckqBitTorrent
-            //
+            // 
             this.cbCheckqBitTorrent.AutoSize = true;
             this.cbCheckqBitTorrent.Location = new System.Drawing.Point(6, 285);
             this.cbCheckqBitTorrent.Name = "cbCheckqBitTorrent";
@@ -2043,9 +2073,9 @@ namespace TVRename
             this.cbCheckqBitTorrent.Text = "Check &qBitTorrent queue";
             this.cbCheckqBitTorrent.UseVisualStyleBackColor = true;
             this.cbCheckqBitTorrent.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // cbCheckSABnzbd
-            //
+            // 
             this.cbCheckSABnzbd.AutoSize = true;
             this.cbCheckSABnzbd.Location = new System.Drawing.Point(6, 66);
             this.cbCheckSABnzbd.Name = "cbCheckSABnzbd";
@@ -2054,9 +2084,9 @@ namespace TVRename
             this.cbCheckSABnzbd.Text = "Check SA&Bnzbd queue";
             this.cbCheckSABnzbd.UseVisualStyleBackColor = true;
             this.cbCheckSABnzbd.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // cbCheckuTorrent
-            //
+            // 
             this.cbCheckuTorrent.AutoSize = true;
             this.cbCheckuTorrent.Location = new System.Drawing.Point(6, 176);
             this.cbCheckuTorrent.Name = "cbCheckuTorrent";
@@ -2065,10 +2095,10 @@ namespace TVRename
             this.cbCheckuTorrent.Text = "C&heck µTorrent queue";
             this.cbCheckuTorrent.UseVisualStyleBackColor = true;
             this.cbCheckuTorrent.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // qBitTorrent
-            //
-            this.qBitTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.qBitTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.qBitTorrent.Controls.Add(this.chkBitTorrentUseHTTPS);
             this.qBitTorrent.Controls.Add(this.chkRemoveCompletedTorrents);
@@ -2085,25 +2115,25 @@ namespace TVRename
             this.qBitTorrent.Controls.Add(this.label42);
             this.qBitTorrent.Location = new System.Drawing.Point(6, 308);
             this.qBitTorrent.Name = "qBitTorrent";
-            this.qBitTorrent.Size = new System.Drawing.Size(405, 176);
+            this.qBitTorrent.Size = new System.Drawing.Size(395, 176);
             this.qBitTorrent.TabIndex = 7;
             this.qBitTorrent.TabStop = false;
             this.qBitTorrent.Text = "qBitTorrent";
-            //
+            // 
             // chkBitTorrentUseHTTPS
-            //
+            // 
             this.chkBitTorrentUseHTTPS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkBitTorrentUseHTTPS.AutoSize = true;
-            this.chkBitTorrentUseHTTPS.Location = new System.Drawing.Point(315, 51);
+            this.chkBitTorrentUseHTTPS.Location = new System.Drawing.Point(305, 51);
             this.chkBitTorrentUseHTTPS.Name = "chkBitTorrentUseHTTPS";
             this.chkBitTorrentUseHTTPS.Size = new System.Drawing.Size(84, 17);
             this.chkBitTorrentUseHTTPS.TabIndex = 43;
             this.chkBitTorrentUseHTTPS.Text = "Use HTTPS";
             this.chkBitTorrentUseHTTPS.UseVisualStyleBackColor = true;
             this.chkBitTorrentUseHTTPS.CheckedChanged += new System.EventHandler(this.chkBitTorrentUseHTTPS_CheckedChanged);
-            //
+            // 
             // chkRemoveCompletedTorrents
-            //
+            // 
             this.chkRemoveCompletedTorrents.AutoSize = true;
             this.chkRemoveCompletedTorrents.Location = new System.Drawing.Point(75, 125);
             this.chkRemoveCompletedTorrents.Name = "chkRemoveCompletedTorrents";
@@ -2111,9 +2141,9 @@ namespace TVRename
             this.chkRemoveCompletedTorrents.TabIndex = 22;
             this.chkRemoveCompletedTorrents.Text = "Automatically Remove Completed";
             this.chkRemoveCompletedTorrents.UseVisualStyleBackColor = true;
-            //
+            // 
             // llqBitTorrentLink
-            //
+            // 
             this.llqBitTorrentLink.AutoSize = true;
             this.llqBitTorrentLink.Location = new System.Drawing.Point(76, 146);
             this.llqBitTorrentLink.Name = "llqBitTorrentLink";
@@ -2122,18 +2152,18 @@ namespace TVRename
             this.llqBitTorrentLink.TabStop = true;
             this.llqBitTorrentLink.Text = "llqBitTorrentLink";
             this.llqBitTorrentLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1_LinkClicked);
-            //
+            // 
             // label79
-            //
+            // 
             this.label79.AutoSize = true;
             this.label79.Location = new System.Drawing.Point(8, 145);
             this.label79.Name = "label79";
             this.label79.Size = new System.Drawing.Size(21, 13);
             this.label79.TabIndex = 41;
             this.label79.Text = "UI:";
-            //
+            // 
             // rdoqBitTorrentAPIVersionv2
-            //
+            // 
             this.rdoqBitTorrentAPIVersionv2.AutoSize = true;
             this.rdoqBitTorrentAPIVersionv2.Location = new System.Drawing.Point(225, 75);
             this.rdoqBitTorrentAPIVersionv2.Name = "rdoqBitTorrentAPIVersionv2";
@@ -2142,9 +2172,9 @@ namespace TVRename
             this.rdoqBitTorrentAPIVersionv2.TabStop = true;
             this.rdoqBitTorrentAPIVersionv2.Text = "v4.1+";
             this.rdoqBitTorrentAPIVersionv2.UseVisualStyleBackColor = true;
-            //
+            // 
             // rdoqBitTorrentAPIVersionv1
-            //
+            // 
             this.rdoqBitTorrentAPIVersionv1.AutoSize = true;
             this.rdoqBitTorrentAPIVersionv1.Location = new System.Drawing.Point(137, 75);
             this.rdoqBitTorrentAPIVersionv1.Name = "rdoqBitTorrentAPIVersionv1";
@@ -2153,9 +2183,9 @@ namespace TVRename
             this.rdoqBitTorrentAPIVersionv1.TabStop = true;
             this.rdoqBitTorrentAPIVersionv1.Text = "v3.2 to v4.0";
             this.rdoqBitTorrentAPIVersionv1.UseVisualStyleBackColor = true;
-            //
+            // 
             // rdoqBitTorrentAPIVersionv0
-            //
+            // 
             this.rdoqBitTorrentAPIVersionv0.AutoSize = true;
             this.rdoqBitTorrentAPIVersionv0.Location = new System.Drawing.Point(76, 75);
             this.rdoqBitTorrentAPIVersionv0.Name = "rdoqBitTorrentAPIVersionv0";
@@ -2164,18 +2194,18 @@ namespace TVRename
             this.rdoqBitTorrentAPIVersionv0.TabStop = true;
             this.rdoqBitTorrentAPIVersionv0.Text = "< v3.1";
             this.rdoqBitTorrentAPIVersionv0.UseVisualStyleBackColor = true;
-            //
+            // 
             // label29
-            //
+            // 
             this.label29.AutoSize = true;
             this.label29.Location = new System.Drawing.Point(11, 77);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(45, 13);
             this.label29.TabIndex = 21;
             this.label29.Text = "Version:";
-            //
+            // 
             // cbDownloadTorrentBeforeDownloading
-            //
+            // 
             this.cbDownloadTorrentBeforeDownloading.AutoSize = true;
             this.cbDownloadTorrentBeforeDownloading.Location = new System.Drawing.Point(75, 102);
             this.cbDownloadTorrentBeforeDownloading.Name = "cbDownloadTorrentBeforeDownloading";
@@ -2183,48 +2213,48 @@ namespace TVRename
             this.cbDownloadTorrentBeforeDownloading.TabIndex = 20;
             this.cbDownloadTorrentBeforeDownloading.Text = "Download .torrent files before downloading";
             this.cbDownloadTorrentBeforeDownloading.UseVisualStyleBackColor = true;
-            //
+            // 
             // tbqBitTorrentHost
-            //
-            this.tbqBitTorrentHost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbqBitTorrentHost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbqBitTorrentHost.Location = new System.Drawing.Point(75, 19);
             this.tbqBitTorrentHost.Name = "tbqBitTorrentHost";
-            this.tbqBitTorrentHost.Size = new System.Drawing.Size(324, 20);
+            this.tbqBitTorrentHost.Size = new System.Drawing.Size(314, 20);
             this.tbqBitTorrentHost.TabIndex = 1;
             this.tbqBitTorrentHost.TextChanged += new System.EventHandler(this.QBitDetailsChanged);
-            //
+            // 
             // tbqBitTorrentPort
-            //
-            this.tbqBitTorrentPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbqBitTorrentPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbqBitTorrentPort.Location = new System.Drawing.Point(75, 48);
             this.tbqBitTorrentPort.Name = "tbqBitTorrentPort";
-            this.tbqBitTorrentPort.Size = new System.Drawing.Size(227, 20);
+            this.tbqBitTorrentPort.Size = new System.Drawing.Size(217, 20);
             this.tbqBitTorrentPort.TabIndex = 4;
             this.tbqBitTorrentPort.TextChanged += new System.EventHandler(this.QBitDetailsChanged);
-            //
+            // 
             // label41
-            //
+            // 
             this.label41.AutoSize = true;
             this.label41.Location = new System.Drawing.Point(11, 51);
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(29, 13);
             this.label41.TabIndex = 3;
             this.label41.Text = "Port:";
-            //
+            // 
             // label42
-            //
+            // 
             this.label42.AutoSize = true;
             this.label42.Location = new System.Drawing.Point(11, 22);
             this.label42.Name = "label42";
             this.label42.Size = new System.Drawing.Size(32, 13);
             this.label42.TabIndex = 0;
             this.label42.Text = "Host:";
-            //
+            // 
             // gbSAB
-            //
-            this.gbSAB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.gbSAB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbSAB.Controls.Add(this.txtSABHostPort);
             this.gbSAB.Controls.Add(this.txtSABAPIKey);
@@ -2232,50 +2262,50 @@ namespace TVRename
             this.gbSAB.Controls.Add(this.label9);
             this.gbSAB.Location = new System.Drawing.Point(6, 89);
             this.gbSAB.Name = "gbSAB";
-            this.gbSAB.Size = new System.Drawing.Size(405, 81);
+            this.gbSAB.Size = new System.Drawing.Size(395, 81);
             this.gbSAB.TabIndex = 6;
             this.gbSAB.TabStop = false;
             this.gbSAB.Text = "SABnzbd";
-            //
+            // 
             // txtSABHostPort
-            //
-            this.txtSABHostPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtSABHostPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSABHostPort.Location = new System.Drawing.Point(75, 19);
             this.txtSABHostPort.Name = "txtSABHostPort";
-            this.txtSABHostPort.Size = new System.Drawing.Size(324, 20);
+            this.txtSABHostPort.Size = new System.Drawing.Size(314, 20);
             this.txtSABHostPort.TabIndex = 1;
-            //
+            // 
             // txtSABAPIKey
-            //
-            this.txtSABAPIKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtSABAPIKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSABAPIKey.Location = new System.Drawing.Point(75, 48);
             this.txtSABAPIKey.Name = "txtSABAPIKey";
-            this.txtSABAPIKey.Size = new System.Drawing.Size(324, 20);
+            this.txtSABAPIKey.Size = new System.Drawing.Size(314, 20);
             this.txtSABAPIKey.TabIndex = 4;
-            //
+            // 
             // label8
-            //
+            // 
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(11, 51);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(48, 13);
             this.label8.TabIndex = 3;
             this.label8.Text = "API Key:";
-            //
+            // 
             // label9
-            //
+            // 
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(11, 22);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(51, 13);
             this.label9.TabIndex = 0;
             this.label9.Text = "Host:Port";
-            //
+            // 
             // gbuTorrent
-            //
-            this.gbuTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.gbuTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbuTorrent.Controls.Add(this.bnUTBrowseResumeDat);
             this.gbuTorrent.Controls.Add(this.txtUTResumeDatPath);
@@ -2285,71 +2315,71 @@ namespace TVRename
             this.gbuTorrent.Controls.Add(this.txtRSSuTorrentPath);
             this.gbuTorrent.Location = new System.Drawing.Point(6, 199);
             this.gbuTorrent.Name = "gbuTorrent";
-            this.gbuTorrent.Size = new System.Drawing.Size(405, 80);
+            this.gbuTorrent.Size = new System.Drawing.Size(395, 80);
             this.gbuTorrent.TabIndex = 5;
             this.gbuTorrent.TabStop = false;
             this.gbuTorrent.Text = "µTorrent";
-            //
+            // 
             // bnUTBrowseResumeDat
-            //
+            // 
             this.bnUTBrowseResumeDat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnUTBrowseResumeDat.Location = new System.Drawing.Point(324, 46);
+            this.bnUTBrowseResumeDat.Location = new System.Drawing.Point(314, 46);
             this.bnUTBrowseResumeDat.Name = "bnUTBrowseResumeDat";
             this.bnUTBrowseResumeDat.Size = new System.Drawing.Size(75, 23);
             this.bnUTBrowseResumeDat.TabIndex = 5;
             this.bnUTBrowseResumeDat.Text = "Bro&wse...";
             this.bnUTBrowseResumeDat.UseVisualStyleBackColor = true;
             this.bnUTBrowseResumeDat.Click += new System.EventHandler(this.bnUTBrowseResumeDat_Click);
-            //
+            // 
             // txtUTResumeDatPath
-            //
-            this.txtUTResumeDatPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtUTResumeDatPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtUTResumeDatPath.Location = new System.Drawing.Point(75, 48);
             this.txtUTResumeDatPath.Name = "txtUTResumeDatPath";
-            this.txtUTResumeDatPath.Size = new System.Drawing.Size(243, 20);
+            this.txtUTResumeDatPath.Size = new System.Drawing.Size(233, 20);
             this.txtUTResumeDatPath.TabIndex = 4;
-            //
+            // 
             // bnRSSBrowseuTorrent
-            //
+            // 
             this.bnRSSBrowseuTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnRSSBrowseuTorrent.Location = new System.Drawing.Point(324, 16);
+            this.bnRSSBrowseuTorrent.Location = new System.Drawing.Point(314, 16);
             this.bnRSSBrowseuTorrent.Name = "bnRSSBrowseuTorrent";
             this.bnRSSBrowseuTorrent.Size = new System.Drawing.Size(75, 23);
             this.bnRSSBrowseuTorrent.TabIndex = 2;
             this.bnRSSBrowseuTorrent.Text = "&Browse...";
             this.bnRSSBrowseuTorrent.UseVisualStyleBackColor = true;
             this.bnRSSBrowseuTorrent.Click += new System.EventHandler(this.bnRSSBrowseuTorrent_Click);
-            //
+            // 
             // label27
-            //
+            // 
             this.label27.AutoSize = true;
             this.label27.Location = new System.Drawing.Point(7, 22);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(62, 13);
             this.label27.TabIndex = 0;
             this.label27.Text = "A&pplication:";
-            //
+            // 
             // label26
-            //
+            // 
             this.label26.AutoSize = true;
             this.label26.Location = new System.Drawing.Point(7, 51);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(62, 13);
             this.label26.TabIndex = 3;
             this.label26.Text = "resume.&dat:";
-            //
+            // 
             // txtRSSuTorrentPath
-            //
-            this.txtRSSuTorrentPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtRSSuTorrentPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtRSSuTorrentPath.Location = new System.Drawing.Point(75, 19);
             this.txtRSSuTorrentPath.Name = "txtRSSuTorrentPath";
-            this.txtRSSuTorrentPath.Size = new System.Drawing.Size(243, 20);
+            this.txtRSSuTorrentPath.Size = new System.Drawing.Size(233, 20);
             this.txtRSSuTorrentPath.TabIndex = 1;
-            //
+            // 
             // tbSearchFolders
-            //
+            // 
             this.tbSearchFolders.Controls.Add(this.label98);
             this.tbSearchFolders.Controls.Add(this.upDownScanSeconds);
             this.tbSearchFolders.Controls.Add(this.chkUseSearchFullPathWhenMatchingShows);
@@ -2367,15 +2397,15 @@ namespace TVRename
             this.tbSearchFolders.Controls.Add(this.pbSearchFolders);
             this.tbSearchFolders.Controls.Add(this.lbSearchFolders);
             this.tbSearchFolders.Controls.Add(this.label23);
-            this.tbSearchFolders.Location = new System.Drawing.Point(139, 4);
+            this.tbSearchFolders.Location = new System.Drawing.Point(149, 4);
             this.tbSearchFolders.Name = "tbSearchFolders";
-            this.tbSearchFolders.Size = new System.Drawing.Size(417, 561);
+            this.tbSearchFolders.Size = new System.Drawing.Size(407, 592);
             this.tbSearchFolders.TabIndex = 3;
             this.tbSearchFolders.Text = "Search Folders";
             this.tbSearchFolders.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkUseSearchFullPathWhenMatchingShows
-            //
+            // 
             this.chkUseSearchFullPathWhenMatchingShows.AutoSize = true;
             this.chkUseSearchFullPathWhenMatchingShows.Location = new System.Drawing.Point(6, 171);
             this.chkUseSearchFullPathWhenMatchingShows.Name = "chkUseSearchFullPathWhenMatchingShows";
@@ -2383,10 +2413,10 @@ namespace TVRename
             this.chkUseSearchFullPathWhenMatchingShows.TabIndex = 42;
             this.chkUseSearchFullPathWhenMatchingShows.Text = "Use name of Search Folder when searching for a match between a file and media";
             this.chkUseSearchFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox8
-            //
-            this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox8.Controls.Add(this.cbMovieHigherQuality);
             this.groupBox8.Controls.Add(this.label53);
@@ -2397,13 +2427,13 @@ namespace TVRename
             this.groupBox8.Controls.Add(this.cbHigherQuality);
             this.groupBox8.Location = new System.Drawing.Point(6, 442);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(406, 115);
+            this.groupBox8.Size = new System.Drawing.Size(396, 115);
             this.groupBox8.TabIndex = 40;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Upgrade media when better quality files are found";
-            //
+            // 
             // cbMovieHigherQuality
-            //
+            // 
             this.cbMovieHigherQuality.AutoSize = true;
             this.cbMovieHigherQuality.Location = new System.Drawing.Point(6, 36);
             this.cbMovieHigherQuality.Name = "cbMovieHigherQuality";
@@ -2411,53 +2441,53 @@ namespace TVRename
             this.cbMovieHigherQuality.TabIndex = 39;
             this.cbMovieHigherQuality.Text = "Update movies when higher-quality ones found in Search Folders";
             this.cbMovieHigherQuality.UseVisualStyleBackColor = true;
-            //
+            // 
             // label53
-            //
+            // 
             this.label53.AutoSize = true;
             this.label53.Location = new System.Drawing.Point(7, 89);
             this.label53.Name = "label53";
             this.label53.Size = new System.Drawing.Size(129, 13);
             this.label53.TabIndex = 36;
             this.label53.Text = "Consider a file better if it is";
-            //
+            // 
             // label54
-            //
+            // 
             this.label54.AutoSize = true;
             this.label54.Location = new System.Drawing.Point(173, 88);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(129, 13);
             this.label54.TabIndex = 38;
             this.label54.Text = "% higher resolution/longer";
-            //
+            // 
             // tbPercentBetter
-            //
+            // 
             this.tbPercentBetter.Location = new System.Drawing.Point(141, 85);
             this.tbPercentBetter.Name = "tbPercentBetter";
             this.tbPercentBetter.Size = new System.Drawing.Size(28, 20);
             this.tbPercentBetter.TabIndex = 37;
             this.tbPercentBetter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
-            //
+            // 
             // tbPriorityOverrideTerms
-            //
-            this.tbPriorityOverrideTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbPriorityOverrideTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbPriorityOverrideTerms.Location = new System.Drawing.Point(141, 59);
             this.tbPriorityOverrideTerms.Name = "tbPriorityOverrideTerms";
-            this.tbPriorityOverrideTerms.Size = new System.Drawing.Size(263, 20);
+            this.tbPriorityOverrideTerms.Size = new System.Drawing.Size(253, 20);
             this.tbPriorityOverrideTerms.TabIndex = 35;
-            //
+            // 
             // label52
-            //
+            // 
             this.label52.AutoSize = true;
             this.label52.Location = new System.Drawing.Point(8, 62);
             this.label52.Name = "label52";
             this.label52.Size = new System.Drawing.Size(110, 13);
             this.label52.TabIndex = 34;
             this.label52.Text = "Priority override terms:";
-            //
+            // 
             // cbHigherQuality
-            //
+            // 
             this.cbHigherQuality.AutoSize = true;
             this.cbHigherQuality.Location = new System.Drawing.Point(6, 19);
             this.cbHigherQuality.Name = "cbHigherQuality";
@@ -2465,10 +2495,10 @@ namespace TVRename
             this.cbHigherQuality.TabIndex = 33;
             this.cbHigherQuality.Text = "Update episodes when higher-quality ones found in Search Folders";
             this.cbHigherQuality.UseVisualStyleBackColor = true;
-            //
+            // 
             // label67
-            //
-            this.label67.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.label67.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label67.AutoEllipsis = true;
             this.label67.AutoSize = true;
@@ -2477,10 +2507,10 @@ namespace TVRename
             this.label67.Size = new System.Drawing.Size(331, 39);
             this.label67.TabIndex = 39;
             this.label67.Text = resources.GetString("label67.Text");
-            //
+            // 
             // gbAutoAdd
-            //
-            this.gbAutoAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.gbAutoAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbAutoAdd.Controls.Add(this.cbAutomateAutoAddWhenOneMovieFound);
             this.gbAutoAdd.Controls.Add(this.cbAutomateAutoAddWhenOneShowFound);
@@ -2491,13 +2521,13 @@ namespace TVRename
             this.gbAutoAdd.Controls.Add(this.tbMovieTerms);
             this.gbAutoAdd.Location = new System.Drawing.Point(6, 311);
             this.gbAutoAdd.Name = "gbAutoAdd";
-            this.gbAutoAdd.Size = new System.Drawing.Size(407, 125);
+            this.gbAutoAdd.Size = new System.Drawing.Size(397, 125);
             this.gbAutoAdd.TabIndex = 36;
             this.gbAutoAdd.TabStop = false;
             this.gbAutoAdd.Text = "Auto Add Movies & TV Shows from Search Folders";
-            //
+            // 
             // cbAutomateAutoAddWhenOneMovieFound
-            //
+            // 
             this.cbAutomateAutoAddWhenOneMovieFound.AutoSize = true;
             this.cbAutomateAutoAddWhenOneMovieFound.Location = new System.Drawing.Point(20, 58);
             this.cbAutomateAutoAddWhenOneMovieFound.Name = "cbAutomateAutoAddWhenOneMovieFound";
@@ -2505,9 +2535,9 @@ namespace TVRename
             this.cbAutomateAutoAddWhenOneMovieFound.TabIndex = 18;
             this.cbAutomateAutoAddWhenOneMovieFound.Text = "Auto Add when only one movie found";
             this.cbAutomateAutoAddWhenOneMovieFound.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbAutomateAutoAddWhenOneShowFound
-            //
+            // 
             this.cbAutomateAutoAddWhenOneShowFound.AutoSize = true;
             this.cbAutomateAutoAddWhenOneShowFound.Location = new System.Drawing.Point(20, 39);
             this.cbAutomateAutoAddWhenOneShowFound.Name = "cbAutomateAutoAddWhenOneShowFound";
@@ -2515,9 +2545,9 @@ namespace TVRename
             this.cbAutomateAutoAddWhenOneShowFound.TabIndex = 17;
             this.cbAutomateAutoAddWhenOneShowFound.Text = "Auto Add when only one tv show found";
             this.cbAutomateAutoAddWhenOneShowFound.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkAutoSearchForDownloadedFiles
-            //
+            // 
             this.chkAutoSearchForDownloadedFiles.AutoSize = true;
             this.chkAutoSearchForDownloadedFiles.Location = new System.Drawing.Point(6, 19);
             this.chkAutoSearchForDownloadedFiles.Name = "chkAutoSearchForDownloadedFiles";
@@ -2525,27 +2555,27 @@ namespace TVRename
             this.chkAutoSearchForDownloadedFiles.TabIndex = 16;
             this.chkAutoSearchForDownloadedFiles.Text = "Notify when new media is found";
             this.chkAutoSearchForDownloadedFiles.UseVisualStyleBackColor = true;
-            //
+            // 
             // label43
-            //
+            // 
             this.label43.AutoSize = true;
             this.label43.Location = new System.Drawing.Point(4, 104);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(78, 13);
             this.label43.TabIndex = 14;
             this.label43.Text = "&Ignore suffixes:";
-            //
+            // 
             // label44
-            //
+            // 
             this.label44.AutoSize = true;
             this.label44.Location = new System.Drawing.Point(4, 78);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(71, 13);
             this.label44.TabIndex = 12;
             this.label44.Text = "&Movie Terms:";
-            //
+            // 
             // cbLeaveOriginals
-            //
+            // 
             this.cbLeaveOriginals.AutoSize = true;
             this.cbLeaveOriginals.Location = new System.Drawing.Point(17, 81);
             this.cbLeaveOriginals.Name = "cbLeaveOriginals";
@@ -2553,9 +2583,9 @@ namespace TVRename
             this.cbLeaveOriginals.TabIndex = 35;
             this.cbLeaveOriginals.Text = "&Copy files, don\'t move";
             this.cbLeaveOriginals.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbSearchLocally
-            //
+            // 
             this.cbSearchLocally.AutoSize = true;
             this.cbSearchLocally.Checked = true;
             this.cbSearchLocally.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -2566,9 +2596,9 @@ namespace TVRename
             this.cbSearchLocally.Text = "&Look in \"Search Folders\" for missing files";
             this.cbSearchLocally.UseVisualStyleBackColor = true;
             this.cbSearchLocally.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // chkAutoMergeDownloadEpisodes
-            //
+            // 
             this.chkAutoMergeDownloadEpisodes.AutoSize = true;
             this.chkAutoMergeDownloadEpisodes.Location = new System.Drawing.Point(6, 104);
             this.chkAutoMergeDownloadEpisodes.Name = "chkAutoMergeDownloadEpisodes";
@@ -2576,9 +2606,9 @@ namespace TVRename
             this.chkAutoMergeDownloadEpisodes.TabIndex = 32;
             this.chkAutoMergeDownloadEpisodes.Text = "Automatically create merge rules based on files in Search Folders";
             this.chkAutoMergeDownloadEpisodes.UseVisualStyleBackColor = true;
-            //
+            // 
             // bnOpenSearchFolder
-            //
+            // 
             this.bnOpenSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnOpenSearchFolder.Enabled = false;
             this.bnOpenSearchFolder.Location = new System.Drawing.Point(168, 282);
@@ -2588,9 +2618,9 @@ namespace TVRename
             this.bnOpenSearchFolder.Text = "&Open";
             this.bnOpenSearchFolder.UseVisualStyleBackColor = true;
             this.bnOpenSearchFolder.Click += new System.EventHandler(this.bnOpenSearchFolder_Click);
-            //
+            // 
             // bnRemoveSearchFolder
-            //
+            // 
             this.bnRemoveSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveSearchFolder.Enabled = false;
             this.bnRemoveSearchFolder.Location = new System.Drawing.Point(87, 282);
@@ -2600,9 +2630,9 @@ namespace TVRename
             this.bnRemoveSearchFolder.Text = "&Remove";
             this.bnRemoveSearchFolder.UseVisualStyleBackColor = true;
             this.bnRemoveSearchFolder.Click += new System.EventHandler(this.bnRemoveSearchFolder_Click);
-            //
+            // 
             // bnAddSearchFolder
-            //
+            // 
             this.bnAddSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnAddSearchFolder.Location = new System.Drawing.Point(6, 282);
             this.bnAddSearchFolder.Name = "bnAddSearchFolder";
@@ -2611,32 +2641,32 @@ namespace TVRename
             this.bnAddSearchFolder.Text = "&Add";
             this.bnAddSearchFolder.UseVisualStyleBackColor = true;
             this.bnAddSearchFolder.Click += new System.EventHandler(this.bnAddSearchFolder_Click);
-            //
+            // 
             // pbSearchFolders
-            //
+            // 
             this.pbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbSearchFolders.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbSearchFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbSearchFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbSearchFolders.Location = new System.Drawing.Point(368, 6);
+            this.pbSearchFolders.Location = new System.Drawing.Point(358, 6);
             this.pbSearchFolders.Name = "pbSearchFolders";
             this.pbSearchFolders.Size = new System.Drawing.Size(43, 40);
             this.pbSearchFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbSearchFolders.TabIndex = 37;
             this.pbSearchFolders.TabStop = false;
             this.pbSearchFolders.Click += new System.EventHandler(this.pbSearchFolders_Click);
-            //
+            // 
             // label23
-            //
+            // 
             this.label23.AutoSize = true;
             this.label23.Location = new System.Drawing.Point(6, 191);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(78, 13);
             this.label23.TabIndex = 0;
             this.label23.Text = "&Search Folders";
-            //
+            // 
             // tbMediaCenter
-            //
+            // 
             this.tbMediaCenter.Controls.Add(this.groupBox16);
             this.tbMediaCenter.Controls.Add(this.groupBox13);
             this.tbMediaCenter.Controls.Add(this.groupBox14);
@@ -2645,28 +2675,28 @@ namespace TVRename
             this.tbMediaCenter.Controls.Add(this.label64);
             this.tbMediaCenter.Controls.Add(this.bnMCPresets);
             this.tbMediaCenter.Controls.Add(this.pbMediaCenter);
-            this.tbMediaCenter.Location = new System.Drawing.Point(139, 4);
+            this.tbMediaCenter.Location = new System.Drawing.Point(149, 4);
             this.tbMediaCenter.Name = "tbMediaCenter";
             this.tbMediaCenter.Padding = new System.Windows.Forms.Padding(3);
-            this.tbMediaCenter.Size = new System.Drawing.Size(417, 561);
+            this.tbMediaCenter.Size = new System.Drawing.Size(407, 592);
             this.tbMediaCenter.TabIndex = 8;
             this.tbMediaCenter.Text = "Media Centres";
             this.tbMediaCenter.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox16
-            //
-            this.groupBox16.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox16.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox16.Controls.Add(this.cbWDLiveEpisodeFiles);
             this.groupBox16.Location = new System.Drawing.Point(9, 355);
             this.groupBox16.Name = "groupBox16";
-            this.groupBox16.Size = new System.Drawing.Size(402, 50);
+            this.groupBox16.Size = new System.Drawing.Size(392, 50);
             this.groupBox16.TabIndex = 41;
             this.groupBox16.TabStop = false;
             this.groupBox16.Text = "WD TV Live Hub";
-            //
+            // 
             // cbWDLiveEpisodeFiles
-            //
+            // 
             this.cbWDLiveEpisodeFiles.AutoSize = true;
             this.cbWDLiveEpisodeFiles.Location = new System.Drawing.Point(6, 23);
             this.cbWDLiveEpisodeFiles.Name = "cbWDLiveEpisodeFiles";
@@ -2674,23 +2704,23 @@ namespace TVRename
             this.cbWDLiveEpisodeFiles.TabIndex = 25;
             this.cbWDLiveEpisodeFiles.Text = "WD TV Live Hub Episode Files (.xml)";
             this.cbWDLiveEpisodeFiles.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox13
-            //
-            this.groupBox13.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox13.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox13.Controls.Add(this.cbXMLFiles);
             this.groupBox13.Controls.Add(this.cbSeriesJpg);
             this.groupBox13.Controls.Add(this.cbShrinkLarge);
             this.groupBox13.Location = new System.Drawing.Point(9, 249);
             this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(402, 100);
+            this.groupBox13.Size = new System.Drawing.Size(392, 100);
             this.groupBox13.TabIndex = 40;
             this.groupBox13.TabStop = false;
             this.groupBox13.Text = "Mede8er";
-            //
+            // 
             // cbXMLFiles
-            //
+            // 
             this.cbXMLFiles.AutoSize = true;
             this.cbXMLFiles.Location = new System.Drawing.Point(6, 42);
             this.cbXMLFiles.Name = "cbXMLFiles";
@@ -2698,9 +2728,9 @@ namespace TVRename
             this.cbXMLFiles.TabIndex = 8;
             this.cbXMLFiles.Text = "&XML files for shows and episodes";
             this.cbXMLFiles.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbSeriesJpg
-            //
+            // 
             this.cbSeriesJpg.AutoSize = true;
             this.cbSeriesJpg.Location = new System.Drawing.Point(6, 19);
             this.cbSeriesJpg.Name = "cbSeriesJpg";
@@ -2708,9 +2738,9 @@ namespace TVRename
             this.cbSeriesJpg.TabIndex = 7;
             this.cbSeriesJpg.Text = "&Create cachedSeries poster (cachedSeries.jpg)";
             this.cbSeriesJpg.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbShrinkLarge
-            //
+            // 
             this.cbShrinkLarge.AutoSize = true;
             this.cbShrinkLarge.Location = new System.Drawing.Point(6, 65);
             this.cbShrinkLarge.Name = "cbShrinkLarge";
@@ -2718,22 +2748,22 @@ namespace TVRename
             this.cbShrinkLarge.TabIndex = 9;
             this.cbShrinkLarge.Text = "S&hrink large cachedSeries and episode images to 156 x 232 pixels";
             this.cbShrinkLarge.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox14
-            //
-            this.groupBox14.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox14.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox14.Controls.Add(this.cbMeta);
             this.groupBox14.Controls.Add(this.cbMetaSubfolder);
             this.groupBox14.Location = new System.Drawing.Point(9, 178);
             this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(402, 65);
+            this.groupBox14.Size = new System.Drawing.Size(392, 65);
             this.groupBox14.TabIndex = 40;
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "pyTivo";
-            //
+            // 
             // cbMeta
-            //
+            // 
             this.cbMeta.AutoSize = true;
             this.cbMeta.Location = new System.Drawing.Point(6, 19);
             this.cbMeta.Name = "cbMeta";
@@ -2742,9 +2772,9 @@ namespace TVRename
             this.cbMeta.Text = "&Meta files for episodes (.txt)";
             this.cbMeta.UseVisualStyleBackColor = true;
             this.cbMeta.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // cbMetaSubfolder
-            //
+            // 
             this.cbMetaSubfolder.AutoSize = true;
             this.cbMetaSubfolder.Location = new System.Drawing.Point(6, 42);
             this.cbMetaSubfolder.Name = "cbMetaSubfolder";
@@ -2752,10 +2782,10 @@ namespace TVRename
             this.cbMetaSubfolder.TabIndex = 5;
             this.cbMetaSubfolder.Text = "Pl&ace Meta files in .meta subfolder";
             this.cbMetaSubfolder.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox15
-            //
-            this.groupBox15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox15.Controls.Add(this.cbNFOMovies);
             this.groupBox15.Controls.Add(this.cbEpTBNs);
@@ -2764,13 +2794,13 @@ namespace TVRename
             this.groupBox15.Controls.Add(this.cbNFOEpisodes);
             this.groupBox15.Location = new System.Drawing.Point(9, 72);
             this.groupBox15.Name = "groupBox15";
-            this.groupBox15.Size = new System.Drawing.Size(402, 100);
+            this.groupBox15.Size = new System.Drawing.Size(392, 100);
             this.groupBox15.TabIndex = 40;
             this.groupBox15.TabStop = false;
             this.groupBox15.Text = "Kodi";
-            //
+            // 
             // cbNFOMovies
-            //
+            // 
             this.cbNFOMovies.AutoSize = true;
             this.cbNFOMovies.Location = new System.Drawing.Point(6, 58);
             this.cbNFOMovies.Name = "cbNFOMovies";
@@ -2778,19 +2808,19 @@ namespace TVRename
             this.cbNFOMovies.TabIndex = 25;
             this.cbNFOMovies.Text = "&NFO files for movies";
             this.cbNFOMovies.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbEpTBNs
-            //
+            // 
             this.cbEpTBNs.AutoSize = true;
             this.cbEpTBNs.Location = new System.Drawing.Point(6, 19);
             this.cbEpTBNs.Name = "cbEpTBNs";
-            this.cbEpTBNs.Size = new System.Drawing.Size(148, 17);
+            this.cbEpTBNs.Size = new System.Drawing.Size(179, 17);
             this.cbEpTBNs.TabIndex = 1;
             this.cbEpTBNs.Text = "&Episode Thumbnails (-thumb.jpg)";
             this.cbEpTBNs.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbNFOShows
-            //
+            // 
             this.cbNFOShows.AutoSize = true;
             this.cbNFOShows.Location = new System.Drawing.Point(6, 40);
             this.cbNFOShows.Name = "cbNFOShows";
@@ -2798,9 +2828,9 @@ namespace TVRename
             this.cbNFOShows.TabIndex = 2;
             this.cbNFOShows.Text = "&NFO files for shows";
             this.cbNFOShows.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbKODIImages
-            //
+            // 
             this.cbKODIImages.AutoSize = true;
             this.cbKODIImages.Location = new System.Drawing.Point(6, 78);
             this.cbKODIImages.Name = "cbKODIImages";
@@ -2808,9 +2838,9 @@ namespace TVRename
             this.cbKODIImages.TabIndex = 17;
             this.cbKODIImages.Text = "Download &Images (fanart, poster, banner.jpg)";
             this.cbKODIImages.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbNFOEpisodes
-            //
+            // 
             this.cbNFOEpisodes.AutoSize = true;
             this.cbNFOEpisodes.Location = new System.Drawing.Point(151, 40);
             this.cbNFOEpisodes.Name = "cbNFOEpisodes";
@@ -2818,10 +2848,10 @@ namespace TVRename
             this.cbNFOEpisodes.TabIndex = 24;
             this.cbNFOEpisodes.Text = "&NFO files for episodes";
             this.cbNFOEpisodes.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox12
-            //
-            this.groupBox12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox12.Controls.Add(this.cbFantArtJpg);
             this.groupBox12.Controls.Add(this.cbFolderJpg);
@@ -2829,13 +2859,13 @@ namespace TVRename
             this.groupBox12.Controls.Add(this.panel1);
             this.groupBox12.Location = new System.Drawing.Point(9, 411);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(402, 112);
+            this.groupBox12.Size = new System.Drawing.Size(392, 112);
             this.groupBox12.TabIndex = 39;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "General";
-            //
+            // 
             // cbFantArtJpg
-            //
+            // 
             this.cbFantArtJpg.AutoSize = true;
             this.cbFantArtJpg.Location = new System.Drawing.Point(9, 65);
             this.cbFantArtJpg.Name = "cbFantArtJpg";
@@ -2843,9 +2873,9 @@ namespace TVRename
             this.cbFantArtJpg.TabIndex = 15;
             this.cbFantArtJpg.Text = "Fanar&t Image (fanart.jpg)";
             this.cbFantArtJpg.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbFolderJpg
-            //
+            // 
             this.cbFolderJpg.AutoSize = true;
             this.cbFolderJpg.Location = new System.Drawing.Point(9, 22);
             this.cbFolderJpg.Name = "cbFolderJpg";
@@ -2853,9 +2883,9 @@ namespace TVRename
             this.cbFolderJpg.TabIndex = 11;
             this.cbFolderJpg.Text = "&Folder image (folder.jpg)";
             this.cbFolderJpg.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbEpThumbJpg
-            //
+            // 
             this.cbEpThumbJpg.AutoSize = true;
             this.cbEpThumbJpg.Location = new System.Drawing.Point(9, 88);
             this.cbEpThumbJpg.Name = "cbEpThumbJpg";
@@ -2863,9 +2893,9 @@ namespace TVRename
             this.cbEpThumbJpg.TabIndex = 16;
             this.cbEpThumbJpg.Text = "Episode Thumbnails (.&jpg)";
             this.cbEpThumbJpg.UseVisualStyleBackColor = true;
-            //
+            // 
             // panel1
-            //
+            // 
             this.panel1.Controls.Add(this.rbFolderBanner);
             this.panel1.Controls.Add(this.rbFolderPoster);
             this.panel1.Controls.Add(this.rbFolderFanArt);
@@ -2874,9 +2904,9 @@ namespace TVRename
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(280, 24);
             this.panel1.TabIndex = 22;
-            //
+            // 
             // rbFolderBanner
-            //
+            // 
             this.rbFolderBanner.AutoSize = true;
             this.rbFolderBanner.Location = new System.Drawing.Point(0, 3);
             this.rbFolderBanner.Name = "rbFolderBanner";
@@ -2885,9 +2915,9 @@ namespace TVRename
             this.rbFolderBanner.TabStop = true;
             this.rbFolderBanner.Text = "&Banner";
             this.rbFolderBanner.UseVisualStyleBackColor = true;
-            //
+            // 
             // rbFolderPoster
-            //
+            // 
             this.rbFolderPoster.AutoSize = true;
             this.rbFolderPoster.Location = new System.Drawing.Point(60, 3);
             this.rbFolderPoster.Name = "rbFolderPoster";
@@ -2896,9 +2926,9 @@ namespace TVRename
             this.rbFolderPoster.TabStop = true;
             this.rbFolderPoster.Text = "&Poster";
             this.rbFolderPoster.UseVisualStyleBackColor = true;
-            //
+            // 
             // rbFolderFanArt
-            //
+            // 
             this.rbFolderFanArt.AutoSize = true;
             this.rbFolderFanArt.Location = new System.Drawing.Point(121, 3);
             this.rbFolderFanArt.Name = "rbFolderFanArt";
@@ -2907,9 +2937,9 @@ namespace TVRename
             this.rbFolderFanArt.TabStop = true;
             this.rbFolderFanArt.Text = "Fan A&rt";
             this.rbFolderFanArt.UseVisualStyleBackColor = true;
-            //
+            // 
             // rbFolderSeasonPoster
-            //
+            // 
             this.rbFolderSeasonPoster.AutoSize = true;
             this.rbFolderSeasonPoster.Location = new System.Drawing.Point(186, 3);
             this.rbFolderSeasonPoster.Name = "rbFolderSeasonPoster";
@@ -2918,9 +2948,9 @@ namespace TVRename
             this.rbFolderSeasonPoster.TabStop = true;
             this.rbFolderSeasonPoster.Text = "Seaso&n Poster";
             this.rbFolderSeasonPoster.UseVisualStyleBackColor = true;
-            //
+            // 
             // label64
-            //
+            // 
             this.label64.AutoSize = true;
             this.label64.Location = new System.Drawing.Point(6, 7);
             this.label64.Name = "label64";
@@ -2929,34 +2959,34 @@ namespace TVRename
             this.label64.Text = "While scanning your library folders TV Rename can create and\r\ndownload additional" +
     " files to help video playing applications to\r\nunderstand what is in your library" +
     " and display it in a nicer way.";
-            //
+            // 
             // bnMCPresets
-            //
+            // 
             this.bnMCPresets.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnMCPresets.Location = new System.Drawing.Point(336, 533);
+            this.bnMCPresets.Location = new System.Drawing.Point(326, 533);
             this.bnMCPresets.Name = "bnMCPresets";
             this.bnMCPresets.Size = new System.Drawing.Size(75, 23);
             this.bnMCPresets.TabIndex = 16;
             this.bnMCPresets.Text = "Pre&sets...";
             this.bnMCPresets.UseVisualStyleBackColor = true;
             this.bnMCPresets.Click += new System.EventHandler(this.bnMCPresets_Click);
-            //
+            // 
             // pbMediaCenter
-            //
+            // 
             this.pbMediaCenter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbMediaCenter.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbMediaCenter.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbMediaCenter.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbMediaCenter.Location = new System.Drawing.Point(368, 6);
+            this.pbMediaCenter.Location = new System.Drawing.Point(358, 6);
             this.pbMediaCenter.Name = "pbMediaCenter";
             this.pbMediaCenter.Size = new System.Drawing.Size(43, 40);
             this.pbMediaCenter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbMediaCenter.TabIndex = 27;
             this.pbMediaCenter.TabStop = false;
             this.pbMediaCenter.Click += new System.EventHandler(this.pictureBox7_Click);
-            //
+            // 
             // tbFolderDeleting
-            //
+            // 
             this.tbFolderDeleting.Controls.Add(this.cbDeleteMovieFromDisk);
             this.tbFolderDeleting.Controls.Add(this.groupBox28);
             this.tbFolderDeleting.Controls.Add(this.label69);
@@ -2973,16 +3003,16 @@ namespace TVRename
             this.tbFolderDeleting.Controls.Add(this.cbEmptyIgnoreExtensions);
             this.tbFolderDeleting.Controls.Add(this.cbDeleteEmpty);
             this.tbFolderDeleting.Controls.Add(this.pbFolderDeleting);
-            this.tbFolderDeleting.Location = new System.Drawing.Point(139, 4);
+            this.tbFolderDeleting.Location = new System.Drawing.Point(149, 4);
             this.tbFolderDeleting.Name = "tbFolderDeleting";
             this.tbFolderDeleting.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFolderDeleting.Size = new System.Drawing.Size(417, 561);
+            this.tbFolderDeleting.Size = new System.Drawing.Size(407, 592);
             this.tbFolderDeleting.TabIndex = 9;
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDeleteMovieFromDisk
-            //
+            // 
             this.cbDeleteMovieFromDisk.AutoSize = true;
             this.cbDeleteMovieFromDisk.Location = new System.Drawing.Point(16, 371);
             this.cbDeleteMovieFromDisk.Name = "cbDeleteMovieFromDisk";
@@ -2990,10 +3020,10 @@ namespace TVRename
             this.cbDeleteMovieFromDisk.TabIndex = 42;
             this.cbDeleteMovieFromDisk.Text = "Ask to delete from disk when deleting movie from database";
             this.cbDeleteMovieFromDisk.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox28
-            //
-            this.groupBox28.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox28.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox28.Controls.Add(this.tbCleanUpDownloadDirMoviesLength);
             this.groupBox28.Controls.Add(this.cbCleanUpDownloadDirMoviesLength);
@@ -3001,13 +3031,13 @@ namespace TVRename
             this.groupBox28.Controls.Add(this.cbCleanUpDownloadDir);
             this.groupBox28.Location = new System.Drawing.Point(16, 242);
             this.groupBox28.Name = "groupBox28";
-            this.groupBox28.Size = new System.Drawing.Size(395, 100);
+            this.groupBox28.Size = new System.Drawing.Size(385, 100);
             this.groupBox28.TabIndex = 41;
             this.groupBox28.TabStop = false;
             this.groupBox28.Text = "Clean Up Search Folders";
-            //
+            // 
             // cbCleanUpDownloadDirMoviesLength
-            //
+            // 
             this.cbCleanUpDownloadDirMoviesLength.AutoSize = true;
             this.cbCleanUpDownloadDirMoviesLength.Location = new System.Drawing.Point(45, 65);
             this.cbCleanUpDownloadDirMoviesLength.Name = "cbCleanUpDownloadDirMoviesLength";
@@ -3015,9 +3045,9 @@ namespace TVRename
             this.cbCleanUpDownloadDirMoviesLength.TabIndex = 13;
             this.cbCleanUpDownloadDirMoviesLength.Text = "Only include movies longer than";
             this.cbCleanUpDownloadDirMoviesLength.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbCleanUpDownloadDirMovies
-            //
+            // 
             this.cbCleanUpDownloadDirMovies.AutoSize = true;
             this.cbCleanUpDownloadDirMovies.Location = new System.Drawing.Point(6, 42);
             this.cbCleanUpDownloadDirMovies.Name = "cbCleanUpDownloadDirMovies";
@@ -3025,9 +3055,9 @@ namespace TVRename
             this.cbCleanUpDownloadDirMovies.TabIndex = 12;
             this.cbCleanUpDownloadDirMovies.Text = "Clean up already copied movie files from search folders";
             this.cbCleanUpDownloadDirMovies.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbCleanUpDownloadDir
-            //
+            // 
             this.cbCleanUpDownloadDir.AutoSize = true;
             this.cbCleanUpDownloadDir.Location = new System.Drawing.Point(6, 19);
             this.cbCleanUpDownloadDir.Name = "cbCleanUpDownloadDir";
@@ -3035,9 +3065,9 @@ namespace TVRename
             this.cbCleanUpDownloadDir.TabIndex = 11;
             this.cbCleanUpDownloadDir.Text = "Clean up already copied episode files from search folders";
             this.cbCleanUpDownloadDir.UseVisualStyleBackColor = true;
-            //
+            // 
             // label69
-            //
+            // 
             this.label69.AutoSize = true;
             this.label69.Location = new System.Drawing.Point(6, 6);
             this.label69.Name = "label69";
@@ -3045,9 +3075,9 @@ namespace TVRename
             this.label69.TabIndex = 40;
             this.label69.Text = "TV Rename can clean up the search folders to keep them\r\nclear of unused files and" +
     " duplicate downloads.";
-            //
+            // 
             // cbDeleteShowFromDisk
-            //
+            // 
             this.cbDeleteShowFromDisk.AutoSize = true;
             this.cbDeleteShowFromDisk.Location = new System.Drawing.Point(16, 348);
             this.cbDeleteShowFromDisk.Name = "cbDeleteShowFromDisk";
@@ -3055,40 +3085,40 @@ namespace TVRename
             this.cbDeleteShowFromDisk.TabIndex = 13;
             this.cbDeleteShowFromDisk.Text = "Ask to delete from disk when deleting tv show from database";
             this.cbDeleteShowFromDisk.UseVisualStyleBackColor = true;
-            //
+            // 
             // label32
-            //
+            // 
             this.label32.AutoSize = true;
             this.label32.Location = new System.Drawing.Point(13, 168);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(0, 13);
             this.label32.TabIndex = 6;
-            //
+            // 
             // label30
-            //
+            // 
             this.label30.AutoSize = true;
             this.label30.Location = new System.Drawing.Point(13, 43);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(0, 13);
             this.label30.TabIndex = 1;
-            //
+            // 
             // txtEmptyMaxSize
-            //
+            // 
             this.txtEmptyMaxSize.Location = new System.Drawing.Point(218, 186);
             this.txtEmptyMaxSize.Name = "txtEmptyMaxSize";
             this.txtEmptyMaxSize.Size = new System.Drawing.Size(55, 20);
             this.txtEmptyMaxSize.TabIndex = 8;
-            //
+            // 
             // label31
-            //
+            // 
             this.label31.AutoSize = true;
             this.label31.Location = new System.Drawing.Point(281, 193);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(0, 13);
             this.label31.TabIndex = 9;
-            //
+            // 
             // cbRecycleNotDelete
-            //
+            // 
             this.cbRecycleNotDelete.AutoSize = true;
             this.cbRecycleNotDelete.Location = new System.Drawing.Point(16, 219);
             this.cbRecycleNotDelete.Name = "cbRecycleNotDelete";
@@ -3096,9 +3126,9 @@ namespace TVRename
             this.cbRecycleNotDelete.TabIndex = 10;
             this.cbRecycleNotDelete.Text = "Folders with files are moved to the &recycle bin, not deleted";
             this.cbRecycleNotDelete.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbEmptyMaxSize
-            //
+            // 
             this.cbEmptyMaxSize.AutoSize = true;
             this.cbEmptyMaxSize.Location = new System.Drawing.Point(35, 188);
             this.cbEmptyMaxSize.Name = "cbEmptyMaxSize";
@@ -3106,9 +3136,9 @@ namespace TVRename
             this.cbEmptyMaxSize.TabIndex = 7;
             this.cbEmptyMaxSize.Text = "&Maximum total file size to delete:";
             this.cbEmptyMaxSize.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbEmptyIgnoreWords
-            //
+            // 
             this.cbEmptyIgnoreWords.AutoSize = true;
             this.cbEmptyIgnoreWords.Location = new System.Drawing.Point(35, 88);
             this.cbEmptyIgnoreWords.Name = "cbEmptyIgnoreWords";
@@ -3116,9 +3146,9 @@ namespace TVRename
             this.cbEmptyIgnoreWords.TabIndex = 2;
             this.cbEmptyIgnoreWords.Text = "Ignore any files with these &words in their name: (semicolon separated list)";
             this.cbEmptyIgnoreWords.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbEmptyIgnoreExtensions
-            //
+            // 
             this.cbEmptyIgnoreExtensions.AutoSize = true;
             this.cbEmptyIgnoreExtensions.Location = new System.Drawing.Point(35, 138);
             this.cbEmptyIgnoreExtensions.Name = "cbEmptyIgnoreExtensions";
@@ -3126,9 +3156,9 @@ namespace TVRename
             this.cbEmptyIgnoreExtensions.TabIndex = 4;
             this.cbEmptyIgnoreExtensions.Text = "&Ignore files with these extensions: (semicolon separated list)";
             this.cbEmptyIgnoreExtensions.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDeleteEmpty
-            //
+            // 
             this.cbDeleteEmpty.AutoSize = true;
             this.cbDeleteEmpty.Location = new System.Drawing.Point(16, 65);
             this.cbDeleteEmpty.Name = "cbDeleteEmpty";
@@ -3136,53 +3166,53 @@ namespace TVRename
             this.cbDeleteEmpty.TabIndex = 0;
             this.cbDeleteEmpty.Text = "&Delete empty folders after moving files (from Search Folders)";
             this.cbDeleteEmpty.UseVisualStyleBackColor = true;
-            //
+            // 
             // pbFolderDeleting
-            //
+            // 
             this.pbFolderDeleting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbFolderDeleting.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbFolderDeleting.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbFolderDeleting.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFolderDeleting.Location = new System.Drawing.Point(368, 6);
+            this.pbFolderDeleting.Location = new System.Drawing.Point(358, 6);
             this.pbFolderDeleting.Name = "pbFolderDeleting";
             this.pbFolderDeleting.Size = new System.Drawing.Size(43, 40);
             this.pbFolderDeleting.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbFolderDeleting.TabIndex = 24;
             this.pbFolderDeleting.TabStop = false;
             this.pbFolderDeleting.Click += new System.EventHandler(this.pbFolderDeleting_Click);
-            //
+            // 
             // tbAutoExport
-            //
+            // 
             this.tbAutoExport.Controls.Add(this.pbuExportEpisodes);
             this.tbAutoExport.Controls.Add(this.label88);
             this.tbAutoExport.Controls.Add(this.groupBox10);
             this.tbAutoExport.Controls.Add(this.groupBox5);
             this.tbAutoExport.Controls.Add(this.groupBox4);
             this.tbAutoExport.Controls.Add(this.groupBox2);
-            this.tbAutoExport.Location = new System.Drawing.Point(139, 4);
+            this.tbAutoExport.Location = new System.Drawing.Point(149, 4);
             this.tbAutoExport.Name = "tbAutoExport";
             this.tbAutoExport.Padding = new System.Windows.Forms.Padding(3);
-            this.tbAutoExport.Size = new System.Drawing.Size(417, 561);
+            this.tbAutoExport.Size = new System.Drawing.Size(407, 592);
             this.tbAutoExport.TabIndex = 2;
             this.tbAutoExport.Text = "Episode Export";
             this.tbAutoExport.UseVisualStyleBackColor = true;
-            //
+            // 
             // pbuExportEpisodes
-            //
+            // 
             this.pbuExportEpisodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbuExportEpisodes.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbuExportEpisodes.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbuExportEpisodes.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbuExportEpisodes.Location = new System.Drawing.Point(367, 8);
+            this.pbuExportEpisodes.Location = new System.Drawing.Point(357, 8);
             this.pbuExportEpisodes.Name = "pbuExportEpisodes";
             this.pbuExportEpisodes.Size = new System.Drawing.Size(43, 40);
             this.pbuExportEpisodes.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbuExportEpisodes.TabIndex = 44;
             this.pbuExportEpisodes.TabStop = false;
             this.pbuExportEpisodes.Click += new System.EventHandler(this.pbuExportEpisodes_Click);
-            //
+            // 
             // label88
-            //
+            // 
             this.label88.AutoSize = true;
             this.label88.Location = new System.Drawing.Point(3, 3);
             this.label88.Name = "label88";
@@ -3190,10 +3220,10 @@ namespace TVRename
             this.label88.TabIndex = 43;
             this.label88.Text = "TV Rename can export information about episodes\r\nin various formats. Some focus o" +
     "n upcoming episodes\r\nand others are based on recently aired.";
-            //
+            // 
             // groupBox10
-            //
-            this.groupBox10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox10.Controls.Add(this.bnBrowseWPL);
             this.groupBox10.Controls.Add(this.txtWPL);
@@ -3207,35 +3237,35 @@ namespace TVRename
             this.groupBox10.Controls.Add(this.bnBrowseXSPF);
             this.groupBox10.Controls.Add(this.txtXSPF);
             this.groupBox10.Controls.Add(this.cbXSPF);
-            this.groupBox10.Location = new System.Drawing.Point(12, 343);
+            this.groupBox10.Location = new System.Drawing.Point(7, 343);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(405, 135);
+            this.groupBox10.Size = new System.Drawing.Size(395, 135);
             this.groupBox10.TabIndex = 5;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "Recent Playlist";
-            //
+            // 
             // bnBrowseWPL
-            //
+            // 
             this.bnBrowseWPL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseWPL.Location = new System.Drawing.Point(322, 104);
+            this.bnBrowseWPL.Location = new System.Drawing.Point(312, 104);
             this.bnBrowseWPL.Name = "bnBrowseWPL";
             this.bnBrowseWPL.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseWPL.TabIndex = 27;
             this.bnBrowseWPL.Text = "Browse...";
             this.bnBrowseWPL.UseVisualStyleBackColor = true;
             this.bnBrowseWPL.Click += new System.EventHandler(this.bnBrowseWPL_Click);
-            //
+            // 
             // txtWPL
-            //
-            this.txtWPL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtWPL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWPL.Location = new System.Drawing.Point(65, 106);
             this.txtWPL.Name = "txtWPL";
-            this.txtWPL.Size = new System.Drawing.Size(250, 20);
+            this.txtWPL.Size = new System.Drawing.Size(240, 20);
             this.txtWPL.TabIndex = 26;
-            //
+            // 
             // cbWPL
-            //
+            // 
             this.cbWPL.AutoSize = true;
             this.cbWPL.Location = new System.Drawing.Point(8, 108);
             this.cbWPL.Name = "cbWPL";
@@ -3244,29 +3274,29 @@ namespace TVRename
             this.cbWPL.Text = "WPL";
             this.cbWPL.UseVisualStyleBackColor = true;
             this.cbWPL.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // bnBrowseASX
-            //
+            // 
             this.bnBrowseASX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseASX.Location = new System.Drawing.Point(322, 76);
+            this.bnBrowseASX.Location = new System.Drawing.Point(312, 76);
             this.bnBrowseASX.Name = "bnBrowseASX";
             this.bnBrowseASX.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseASX.TabIndex = 24;
             this.bnBrowseASX.Text = "Browse...";
             this.bnBrowseASX.UseVisualStyleBackColor = true;
             this.bnBrowseASX.Click += new System.EventHandler(this.bnBrowseASX_Click);
-            //
+            // 
             // txtASX
-            //
-            this.txtASX.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtASX.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtASX.Location = new System.Drawing.Point(65, 78);
             this.txtASX.Name = "txtASX";
-            this.txtASX.Size = new System.Drawing.Size(250, 20);
+            this.txtASX.Size = new System.Drawing.Size(240, 20);
             this.txtASX.TabIndex = 23;
-            //
+            // 
             // cbASX
-            //
+            // 
             this.cbASX.AutoSize = true;
             this.cbASX.Location = new System.Drawing.Point(8, 80);
             this.cbASX.Name = "cbASX";
@@ -3275,29 +3305,29 @@ namespace TVRename
             this.cbASX.Text = "ASX";
             this.cbASX.UseVisualStyleBackColor = true;
             this.cbASX.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // bnBrowseM3U
-            //
+            // 
             this.bnBrowseM3U.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseM3U.Location = new System.Drawing.Point(321, 46);
+            this.bnBrowseM3U.Location = new System.Drawing.Point(311, 46);
             this.bnBrowseM3U.Name = "bnBrowseM3U";
             this.bnBrowseM3U.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseM3U.TabIndex = 19;
             this.bnBrowseM3U.Text = "Browse...";
             this.bnBrowseM3U.UseVisualStyleBackColor = true;
             this.bnBrowseM3U.Click += new System.EventHandler(this.bnBrowseM3U_Click);
-            //
+            // 
             // txtM3U
-            //
-            this.txtM3U.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtM3U.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtM3U.Location = new System.Drawing.Point(65, 49);
             this.txtM3U.Name = "txtM3U";
-            this.txtM3U.Size = new System.Drawing.Size(250, 20);
+            this.txtM3U.Size = new System.Drawing.Size(240, 20);
             this.txtM3U.TabIndex = 18;
-            //
+            // 
             // cbM3U
-            //
+            // 
             this.cbM3U.AutoSize = true;
             this.cbM3U.Location = new System.Drawing.Point(8, 51);
             this.cbM3U.Name = "cbM3U";
@@ -3306,29 +3336,29 @@ namespace TVRename
             this.cbM3U.Text = "M3U/8";
             this.cbM3U.UseVisualStyleBackColor = true;
             this.cbM3U.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // bnBrowseXSPF
-            //
+            // 
             this.bnBrowseXSPF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseXSPF.Location = new System.Drawing.Point(322, 18);
+            this.bnBrowseXSPF.Location = new System.Drawing.Point(312, 18);
             this.bnBrowseXSPF.Name = "bnBrowseXSPF";
             this.bnBrowseXSPF.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseXSPF.TabIndex = 2;
             this.bnBrowseXSPF.Text = "Browse...";
             this.bnBrowseXSPF.UseVisualStyleBackColor = true;
             this.bnBrowseXSPF.Click += new System.EventHandler(this.bnBrowseXSPF_Click);
-            //
+            // 
             // txtXSPF
-            //
-            this.txtXSPF.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtXSPF.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtXSPF.Location = new System.Drawing.Point(64, 20);
             this.txtXSPF.Name = "txtXSPF";
-            this.txtXSPF.Size = new System.Drawing.Size(252, 20);
+            this.txtXSPF.Size = new System.Drawing.Size(242, 20);
             this.txtXSPF.TabIndex = 1;
-            //
+            // 
             // cbXSPF
-            //
+            // 
             this.cbXSPF.AutoSize = true;
             this.cbXSPF.Location = new System.Drawing.Point(8, 22);
             this.cbXSPF.Name = "cbXSPF";
@@ -3337,34 +3367,34 @@ namespace TVRename
             this.cbXSPF.Text = "XSPF";
             this.cbXSPF.UseVisualStyleBackColor = true;
             this.cbXSPF.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // groupBox5
-            //
-            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.Controls.Add(this.bnBrowseFOXML);
             this.groupBox5.Controls.Add(this.cbFOXML);
             this.groupBox5.Controls.Add(this.txtFOXML);
-            this.groupBox5.Location = new System.Drawing.Point(12, 282);
+            this.groupBox5.Location = new System.Drawing.Point(10, 282);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(405, 55);
+            this.groupBox5.Size = new System.Drawing.Size(395, 55);
             this.groupBox5.TabIndex = 3;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Finding and Organising";
-            //
+            // 
             // bnBrowseFOXML
-            //
+            // 
             this.bnBrowseFOXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseFOXML.Location = new System.Drawing.Point(321, 19);
+            this.bnBrowseFOXML.Location = new System.Drawing.Point(311, 19);
             this.bnBrowseFOXML.Name = "bnBrowseFOXML";
             this.bnBrowseFOXML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseFOXML.TabIndex = 2;
             this.bnBrowseFOXML.Text = "Browse...";
             this.bnBrowseFOXML.UseVisualStyleBackColor = true;
             this.bnBrowseFOXML.Click += new System.EventHandler(this.bnBrowseFOXML_Click);
-            //
+            // 
             // cbFOXML
-            //
+            // 
             this.cbFOXML.AutoSize = true;
             this.cbFOXML.Location = new System.Drawing.Point(8, 23);
             this.cbFOXML.Name = "cbFOXML";
@@ -3373,43 +3403,43 @@ namespace TVRename
             this.cbFOXML.Text = "XML";
             this.cbFOXML.UseVisualStyleBackColor = true;
             this.cbFOXML.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // txtFOXML
-            //
-            this.txtFOXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtFOXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFOXML.Location = new System.Drawing.Point(64, 21);
             this.txtFOXML.Name = "txtFOXML";
-            this.txtFOXML.Size = new System.Drawing.Size(251, 20);
+            this.txtFOXML.Size = new System.Drawing.Size(241, 20);
             this.txtFOXML.TabIndex = 1;
-            //
+            // 
             // groupBox4
-            //
-            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.Controls.Add(this.bnBrowseRenamingXML);
             this.groupBox4.Controls.Add(this.cbRenamingXML);
             this.groupBox4.Controls.Add(this.txtRenamingXML);
-            this.groupBox4.Location = new System.Drawing.Point(12, 219);
+            this.groupBox4.Location = new System.Drawing.Point(11, 219);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(405, 57);
+            this.groupBox4.Size = new System.Drawing.Size(395, 57);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Renaming";
-            //
+            // 
             // bnBrowseRenamingXML
-            //
+            // 
             this.bnBrowseRenamingXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseRenamingXML.Location = new System.Drawing.Point(321, 19);
+            this.bnBrowseRenamingXML.Location = new System.Drawing.Point(311, 19);
             this.bnBrowseRenamingXML.Name = "bnBrowseRenamingXML";
             this.bnBrowseRenamingXML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseRenamingXML.TabIndex = 2;
             this.bnBrowseRenamingXML.Text = "Browse...";
             this.bnBrowseRenamingXML.UseVisualStyleBackColor = true;
             this.bnBrowseRenamingXML.Click += new System.EventHandler(this.bnBrowseRenamingXML_Click);
-            //
+            // 
             // cbRenamingXML
-            //
+            // 
             this.cbRenamingXML.AutoSize = true;
             this.cbRenamingXML.Location = new System.Drawing.Point(8, 23);
             this.cbRenamingXML.Name = "cbRenamingXML";
@@ -3418,19 +3448,19 @@ namespace TVRename
             this.cbRenamingXML.Text = "XML";
             this.cbRenamingXML.UseVisualStyleBackColor = true;
             this.cbRenamingXML.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // txtRenamingXML
-            //
-            this.txtRenamingXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtRenamingXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtRenamingXML.Location = new System.Drawing.Point(64, 21);
             this.txtRenamingXML.Name = "txtRenamingXML";
-            this.txtRenamingXML.Size = new System.Drawing.Size(251, 20);
+            this.txtRenamingXML.Size = new System.Drawing.Size(241, 20);
             this.txtRenamingXML.TabIndex = 1;
-            //
+            // 
             // groupBox2
-            //
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.bnBrowseWTWTXT);
             this.groupBox2.Controls.Add(this.txtWTWTXT);
@@ -3451,35 +3481,35 @@ namespace TVRename
             this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.txtExportRSSMaxDays);
             this.groupBox2.Controls.Add(this.txtExportRSSMaxShows);
-            this.groupBox2.Location = new System.Drawing.Point(12, 54);
+            this.groupBox2.Location = new System.Drawing.Point(9, 54);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(405, 159);
+            this.groupBox2.Size = new System.Drawing.Size(395, 159);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Schedule";
-            //
+            // 
             // bnBrowseWTWTXT
-            //
+            // 
             this.bnBrowseWTWTXT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseWTWTXT.Location = new System.Drawing.Point(322, 102);
+            this.bnBrowseWTWTXT.Location = new System.Drawing.Point(312, 102);
             this.bnBrowseWTWTXT.Name = "bnBrowseWTWTXT";
             this.bnBrowseWTWTXT.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseWTWTXT.TabIndex = 27;
             this.bnBrowseWTWTXT.Text = "Browse...";
             this.bnBrowseWTWTXT.UseVisualStyleBackColor = true;
             this.bnBrowseWTWTXT.Click += new System.EventHandler(this.bnBrowseWTWTXT_Click);
-            //
+            // 
             // txtWTWTXT
-            //
-            this.txtWTWTXT.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtWTWTXT.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWTWTXT.Location = new System.Drawing.Point(65, 104);
             this.txtWTWTXT.Name = "txtWTWTXT";
-            this.txtWTWTXT.Size = new System.Drawing.Size(250, 20);
+            this.txtWTWTXT.Size = new System.Drawing.Size(240, 20);
             this.txtWTWTXT.TabIndex = 26;
-            //
+            // 
             // cbWTWTXT
-            //
+            // 
             this.cbWTWTXT.AutoSize = true;
             this.cbWTWTXT.Location = new System.Drawing.Point(8, 106);
             this.cbWTWTXT.Name = "cbWTWTXT";
@@ -3488,29 +3518,29 @@ namespace TVRename
             this.cbWTWTXT.Text = "TXT";
             this.cbWTWTXT.UseVisualStyleBackColor = true;
             this.cbWTWTXT.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // bnBrowseWTWICAL
-            //
+            // 
             this.bnBrowseWTWICAL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseWTWICAL.Location = new System.Drawing.Point(322, 76);
+            this.bnBrowseWTWICAL.Location = new System.Drawing.Point(312, 76);
             this.bnBrowseWTWICAL.Name = "bnBrowseWTWICAL";
             this.bnBrowseWTWICAL.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseWTWICAL.TabIndex = 24;
             this.bnBrowseWTWICAL.Text = "Browse...";
             this.bnBrowseWTWICAL.UseVisualStyleBackColor = true;
             this.bnBrowseWTWICAL.Click += new System.EventHandler(this.bnBrowseWTWICAL_Click);
-            //
+            // 
             // txtWTWICAL
-            //
-            this.txtWTWICAL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtWTWICAL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWTWICAL.Location = new System.Drawing.Point(65, 78);
             this.txtWTWICAL.Name = "txtWTWICAL";
-            this.txtWTWICAL.Size = new System.Drawing.Size(250, 20);
+            this.txtWTWICAL.Size = new System.Drawing.Size(240, 20);
             this.txtWTWICAL.TabIndex = 23;
-            //
+            // 
             // cbWTWICAL
-            //
+            // 
             this.cbWTWICAL.AutoSize = true;
             this.cbWTWICAL.Location = new System.Drawing.Point(8, 80);
             this.cbWTWICAL.Name = "cbWTWICAL";
@@ -3519,46 +3549,46 @@ namespace TVRename
             this.cbWTWICAL.Text = "iCal";
             this.cbWTWICAL.UseVisualStyleBackColor = true;
             this.cbWTWICAL.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // label4
-            //
+            // 
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(327, 133);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(59, 13);
             this.label4.TabIndex = 21;
             this.label4.Text = "in the past.";
-            //
+            // 
             // txtExportRSSDaysPast
-            //
+            // 
             this.txtExportRSSDaysPast.Location = new System.Drawing.Point(291, 130);
             this.txtExportRSSDaysPast.Name = "txtExportRSSDaysPast";
             this.txtExportRSSDaysPast.Size = new System.Drawing.Size(28, 20);
             this.txtExportRSSDaysPast.TabIndex = 20;
             this.txtExportRSSDaysPast.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
-            //
+            // 
             // bnBrowseWTWXML
-            //
+            // 
             this.bnBrowseWTWXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseWTWXML.Location = new System.Drawing.Point(321, 46);
+            this.bnBrowseWTWXML.Location = new System.Drawing.Point(311, 46);
             this.bnBrowseWTWXML.Name = "bnBrowseWTWXML";
             this.bnBrowseWTWXML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseWTWXML.TabIndex = 19;
             this.bnBrowseWTWXML.Text = "Browse...";
             this.bnBrowseWTWXML.UseVisualStyleBackColor = true;
             this.bnBrowseWTWXML.Click += new System.EventHandler(this.bnBrowseWTWXML_Click);
-            //
+            // 
             // txtWTWXML
-            //
-            this.txtWTWXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtWTWXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWTWXML.Location = new System.Drawing.Point(65, 49);
             this.txtWTWXML.Name = "txtWTWXML";
-            this.txtWTWXML.Size = new System.Drawing.Size(250, 20);
+            this.txtWTWXML.Size = new System.Drawing.Size(240, 20);
             this.txtWTWXML.TabIndex = 18;
-            //
+            // 
             // cbWTWXML
-            //
+            // 
             this.cbWTWXML.AutoSize = true;
             this.cbWTWXML.Location = new System.Drawing.Point(8, 51);
             this.cbWTWXML.Name = "cbWTWXML";
@@ -3567,29 +3597,29 @@ namespace TVRename
             this.cbWTWXML.Text = "XML";
             this.cbWTWXML.UseVisualStyleBackColor = true;
             this.cbWTWXML.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // bnBrowseWTWRSS
-            //
+            // 
             this.bnBrowseWTWRSS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseWTWRSS.Location = new System.Drawing.Point(322, 18);
+            this.bnBrowseWTWRSS.Location = new System.Drawing.Point(312, 18);
             this.bnBrowseWTWRSS.Name = "bnBrowseWTWRSS";
             this.bnBrowseWTWRSS.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseWTWRSS.TabIndex = 2;
             this.bnBrowseWTWRSS.Text = "Browse...";
             this.bnBrowseWTWRSS.UseVisualStyleBackColor = true;
             this.bnBrowseWTWRSS.Click += new System.EventHandler(this.bnBrowseWTWRSS_Click);
-            //
+            // 
             // txtWTWRSS
-            //
-            this.txtWTWRSS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtWTWRSS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWTWRSS.Location = new System.Drawing.Point(64, 20);
             this.txtWTWRSS.Name = "txtWTWRSS";
-            this.txtWTWRSS.Size = new System.Drawing.Size(252, 20);
+            this.txtWTWRSS.Size = new System.Drawing.Size(242, 20);
             this.txtWTWRSS.TabIndex = 1;
-            //
+            // 
             // cbWTWRSS
-            //
+            // 
             this.cbWTWRSS.AutoSize = true;
             this.cbWTWRSS.Location = new System.Drawing.Point(8, 22);
             this.cbWTWRSS.Name = "cbWTWRSS";
@@ -3598,52 +3628,52 @@ namespace TVRename
             this.cbWTWRSS.Text = "RSS";
             this.cbWTWRSS.UseVisualStyleBackColor = true;
             this.cbWTWRSS.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // label17
-            //
+            // 
             this.label17.AutoSize = true;
             this.label17.Location = new System.Drawing.Point(209, 133);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(79, 13);
             this.label17.TabIndex = 7;
             this.label17.Text = "days worth and";
-            //
+            // 
             // label16
-            //
+            // 
             this.label16.AutoSize = true;
             this.label16.Location = new System.Drawing.Point(117, 133);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(52, 13);
             this.label16.TabIndex = 5;
             this.label16.Text = "shows, or";
-            //
+            // 
             // label15
-            //
+            // 
             this.label15.AutoSize = true;
             this.label15.Location = new System.Drawing.Point(6, 133);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(71, 13);
             this.label15.TabIndex = 3;
             this.label15.Text = "No more than";
-            //
+            // 
             // txtExportRSSMaxDays
-            //
+            // 
             this.txtExportRSSMaxDays.Location = new System.Drawing.Point(175, 130);
             this.txtExportRSSMaxDays.Name = "txtExportRSSMaxDays";
             this.txtExportRSSMaxDays.Size = new System.Drawing.Size(28, 20);
             this.txtExportRSSMaxDays.TabIndex = 6;
             this.txtExportRSSMaxDays.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
-            //
+            // 
             // txtExportRSSMaxShows
-            //
+            // 
             this.txtExportRSSMaxShows.Location = new System.Drawing.Point(83, 130);
             this.txtExportRSSMaxShows.Name = "txtExportRSSMaxShows";
             this.txtExportRSSMaxShows.Size = new System.Drawing.Size(28, 20);
             this.txtExportRSSMaxShows.TabIndex = 4;
             this.txtExportRSSMaxShows.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
-            //
+            // 
             // tbFilesAndFolders
-            //
+            // 
             this.tbFilesAndFolders.Controls.Add(this.chkUnArchiveFilesInDownloadDirectory);
             this.tbFilesAndFolders.Controls.Add(this.cbFileNameCaseSensitiveMatch);
             this.tbFilesAndFolders.Controls.Add(this.chkUseLibraryFullPathWhenMatchingShows);
@@ -3666,16 +3696,16 @@ namespace TVRename
             this.tbFilesAndFolders.Controls.Add(this.cbForceLower);
             this.tbFilesAndFolders.Controls.Add(this.cbIgnoreSamples);
             this.tbFilesAndFolders.Controls.Add(this.pbFilesAndFolders);
-            this.tbFilesAndFolders.Location = new System.Drawing.Point(139, 4);
+            this.tbFilesAndFolders.Location = new System.Drawing.Point(149, 4);
             this.tbFilesAndFolders.Name = "tbFilesAndFolders";
             this.tbFilesAndFolders.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFilesAndFolders.Size = new System.Drawing.Size(417, 561);
+            this.tbFilesAndFolders.Size = new System.Drawing.Size(407, 592);
             this.tbFilesAndFolders.TabIndex = 1;
             this.tbFilesAndFolders.Text = "Files and Folders";
             this.tbFilesAndFolders.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkUnArchiveFilesInDownloadDirectory
-            //
+            // 
             this.chkUnArchiveFilesInDownloadDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkUnArchiveFilesInDownloadDirectory.AutoSize = true;
             this.chkUnArchiveFilesInDownloadDirectory.Location = new System.Drawing.Point(3, 440);
@@ -3684,9 +3714,9 @@ namespace TVRename
             this.chkUnArchiveFilesInDownloadDirectory.TabIndex = 43;
             this.chkUnArchiveFilesInDownloadDirectory.Text = "Extract Archives found in Search Folders";
             this.chkUnArchiveFilesInDownloadDirectory.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbFileNameCaseSensitiveMatch
-            //
+            // 
             this.cbFileNameCaseSensitiveMatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbFileNameCaseSensitiveMatch.AutoSize = true;
             this.cbFileNameCaseSensitiveMatch.Location = new System.Drawing.Point(3, 417);
@@ -3695,9 +3725,9 @@ namespace TVRename
             this.cbFileNameCaseSensitiveMatch.TabIndex = 42;
             this.cbFileNameCaseSensitiveMatch.Text = "Case Sensitive Match for Filenames";
             this.cbFileNameCaseSensitiveMatch.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkUseLibraryFullPathWhenMatchingShows
-            //
+            // 
             this.chkUseLibraryFullPathWhenMatchingShows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkUseLibraryFullPathWhenMatchingShows.AutoSize = true;
             this.chkUseLibraryFullPathWhenMatchingShows.Location = new System.Drawing.Point(3, 394);
@@ -3707,10 +3737,10 @@ namespace TVRename
             this.chkUseLibraryFullPathWhenMatchingShows.Text = "Use name of Library Folder when searching for a match between a file and a tv sho" +
     "w";
             this.chkUseLibraryFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
-            //
+            // 
             // label66
-            //
-            this.label66.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.label66.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label66.AutoSize = true;
             this.label66.Location = new System.Drawing.Point(6, 7);
@@ -3720,38 +3750,38 @@ namespace TVRename
             this.label66.Text = "These preferences control how TV Rename copies files across from\r\nyour search fol" +
     "ders to your library. Often there are other files that\r\nyou\'d like copied as wel" +
     "l.";
-            //
+            // 
             // txtMaxSampleSize
-            //
+            // 
             this.txtMaxSampleSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtMaxSampleSize.Location = new System.Drawing.Point(169, 346);
             this.txtMaxSampleSize.Name = "txtMaxSampleSize";
             this.txtMaxSampleSize.Size = new System.Drawing.Size(53, 20);
             this.txtMaxSampleSize.TabIndex = 14;
             this.txtMaxSampleSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
-            //
+            // 
             // txtVideoExtensions
-            //
-            this.txtVideoExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtVideoExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtVideoExtensions.Location = new System.Drawing.Point(99, 233);
             this.txtVideoExtensions.Name = "txtVideoExtensions";
-            this.txtVideoExtensions.Size = new System.Drawing.Size(309, 20);
+            this.txtVideoExtensions.Size = new System.Drawing.Size(299, 20);
             this.txtVideoExtensions.TabIndex = 5;
-            //
+            // 
             // bnTags
-            //
+            // 
             this.bnTags.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnTags.Location = new System.Drawing.Point(458, 328);
+            this.bnTags.Location = new System.Drawing.Point(448, 328);
             this.bnTags.Name = "bnTags";
             this.bnTags.Size = new System.Drawing.Size(75, 23);
             this.bnTags.TabIndex = 24;
             this.bnTags.Text = "Tags...";
             this.bnTags.UseVisualStyleBackColor = true;
             this.bnTags.Click += new System.EventHandler(this.bnTags_Click);
-            //
+            // 
             // label39
-            //
+            // 
             this.label39.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label39.AutoSize = true;
             this.label39.Location = new System.Drawing.Point(25, 315);
@@ -3759,9 +3789,9 @@ namespace TVRename
             this.label39.Size = new System.Drawing.Size(21, 13);
             this.label39.TabIndex = 22;
             this.label39.Text = "Do";
-            //
+            // 
             // cbKeepTogetherMode
-            //
+            // 
             this.cbKeepTogetherMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbKeepTogetherMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbKeepTogetherMode.FormattingEnabled = true;
@@ -3775,9 +3805,9 @@ namespace TVRename
             this.cbKeepTogetherMode.Sorted = true;
             this.cbKeepTogetherMode.TabIndex = 21;
             this.cbKeepTogetherMode.SelectedIndexChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // bnReplaceRemove
-            //
+            // 
             this.bnReplaceRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnReplaceRemove.Location = new System.Drawing.Point(90, 196);
             this.bnReplaceRemove.Name = "bnReplaceRemove";
@@ -3786,9 +3816,9 @@ namespace TVRename
             this.bnReplaceRemove.Text = "&Remove";
             this.bnReplaceRemove.UseVisualStyleBackColor = true;
             this.bnReplaceRemove.Click += new System.EventHandler(this.bnReplaceRemove_Click);
-            //
+            // 
             // bnReplaceAdd
-            //
+            // 
             this.bnReplaceAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnReplaceAdd.Location = new System.Drawing.Point(9, 196);
             this.bnReplaceAdd.Name = "bnReplaceAdd";
@@ -3797,20 +3827,20 @@ namespace TVRename
             this.bnReplaceAdd.Text = "&Add";
             this.bnReplaceAdd.UseVisualStyleBackColor = true;
             this.bnReplaceAdd.Click += new System.EventHandler(this.bnReplaceAdd_Click);
-            //
+            // 
             // label3
-            //
+            // 
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(6, 60);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(120, 13);
             this.label3.TabIndex = 0;
             this.label3.Text = "Filename Replacements";
-            //
+            // 
             // ReplacementsGrid
-            //
-            this.ReplacementsGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.ReplacementsGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ReplacementsGrid.BackColor = System.Drawing.SystemColors.Window;
             this.ReplacementsGrid.EnableSort = true;
@@ -3818,13 +3848,13 @@ namespace TVRename
             this.ReplacementsGrid.Name = "ReplacementsGrid";
             this.ReplacementsGrid.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
             this.ReplacementsGrid.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.ReplacementsGrid.Size = new System.Drawing.Size(402, 114);
+            this.ReplacementsGrid.Size = new System.Drawing.Size(392, 114);
             this.ReplacementsGrid.TabIndex = 1;
             this.ReplacementsGrid.TabStop = true;
             this.ReplacementsGrid.ToolTipText = "";
-            //
+            // 
             // label19
-            //
+            // 
             this.label19.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label19.AutoSize = true;
             this.label19.Location = new System.Drawing.Point(225, 349);
@@ -3832,9 +3862,9 @@ namespace TVRename
             this.label19.Size = new System.Drawing.Size(55, 13);
             this.label19.TabIndex = 15;
             this.label19.Text = "MB in size";
-            //
+            // 
             // label22
-            //
+            // 
             this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label22.AutoSize = true;
             this.label22.Location = new System.Drawing.Point(3, 262);
@@ -3842,9 +3872,9 @@ namespace TVRename
             this.label22.Size = new System.Drawing.Size(89, 13);
             this.label22.TabIndex = 6;
             this.label22.Text = "&Other extensions:";
-            //
+            // 
             // label14
-            //
+            // 
             this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label14.AutoSize = true;
             this.label14.Location = new System.Drawing.Point(3, 236);
@@ -3852,9 +3882,9 @@ namespace TVRename
             this.label14.Size = new System.Drawing.Size(90, 13);
             this.label14.TabIndex = 4;
             this.label14.Text = "&Video extensions:";
-            //
+            // 
             // cbKeepTogether
-            //
+            // 
             this.cbKeepTogether.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbKeepTogether.AutoSize = true;
             this.cbKeepTogether.Location = new System.Drawing.Point(6, 285);
@@ -3864,9 +3894,9 @@ namespace TVRename
             this.cbKeepTogether.Text = "&Copy/Move files with same base name as video from Search Folders";
             this.cbKeepTogether.UseVisualStyleBackColor = true;
             this.cbKeepTogether.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // cbForceLower
-            //
+            // 
             this.cbForceLower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbForceLower.AutoSize = true;
             this.cbForceLower.Location = new System.Drawing.Point(3, 371);
@@ -3875,9 +3905,9 @@ namespace TVRename
             this.cbForceLower.TabIndex = 16;
             this.cbForceLower.Text = "&Make all filenames lower case";
             this.cbForceLower.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbIgnoreSamples
-            //
+            // 
             this.cbIgnoreSamples.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbIgnoreSamples.AutoSize = true;
             this.cbIgnoreSamples.Location = new System.Drawing.Point(3, 348);
@@ -3886,23 +3916,23 @@ namespace TVRename
             this.cbIgnoreSamples.TabIndex = 13;
             this.cbIgnoreSamples.Text = "&Ignore \"sample\" videos, up to";
             this.cbIgnoreSamples.UseVisualStyleBackColor = true;
-            //
+            // 
             // pbFilesAndFolders
-            //
+            // 
             this.pbFilesAndFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbFilesAndFolders.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbFilesAndFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbFilesAndFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFilesAndFolders.Location = new System.Drawing.Point(368, 6);
+            this.pbFilesAndFolders.Location = new System.Drawing.Point(358, 6);
             this.pbFilesAndFolders.Name = "pbFilesAndFolders";
             this.pbFilesAndFolders.Size = new System.Drawing.Size(43, 40);
             this.pbFilesAndFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbFilesAndFolders.TabIndex = 33;
             this.pbFilesAndFolders.TabStop = false;
             this.pbFilesAndFolders.Click += new System.EventHandler(this.pbFilesAndFolders_Click);
-            //
+            // 
             // tbGeneral
-            //
+            // 
             this.tbGeneral.Controls.Add(this.cbAutoSaveOnExit);
             this.tbGeneral.Controls.Add(this.chkAutoAddAsPartOfQuickRename);
             this.tbGeneral.Controls.Add(this.chkShareCriticalLogs);
@@ -3912,16 +3942,16 @@ namespace TVRename
             this.tbGeneral.Controls.Add(this.cbMode);
             this.tbGeneral.Controls.Add(this.label34);
             this.tbGeneral.Controls.Add(this.label2);
-            this.tbGeneral.Location = new System.Drawing.Point(139, 4);
+            this.tbGeneral.Location = new System.Drawing.Point(149, 4);
             this.tbGeneral.Name = "tbGeneral";
             this.tbGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tbGeneral.Size = new System.Drawing.Size(417, 561);
+            this.tbGeneral.Size = new System.Drawing.Size(407, 592);
             this.tbGeneral.TabIndex = 0;
             this.tbGeneral.Text = "General";
             this.tbGeneral.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkAutoAddAsPartOfQuickRename
-            //
+            // 
             this.chkAutoAddAsPartOfQuickRename.AutoSize = true;
             this.chkAutoAddAsPartOfQuickRename.Location = new System.Drawing.Point(13, 127);
             this.chkAutoAddAsPartOfQuickRename.Name = "chkAutoAddAsPartOfQuickRename";
@@ -3929,9 +3959,9 @@ namespace TVRename
             this.chkAutoAddAsPartOfQuickRename.TabIndex = 43;
             this.chkAutoAddAsPartOfQuickRename.Text = "Auto-Add as part of Quick Rename";
             this.chkAutoAddAsPartOfQuickRename.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkShareCriticalLogs
-            //
+            // 
             this.chkShareCriticalLogs.AutoSize = true;
             this.chkShareCriticalLogs.Location = new System.Drawing.Point(13, 104);
             this.chkShareCriticalLogs.Name = "chkShareCriticalLogs";
@@ -3939,10 +3969,10 @@ namespace TVRename
             this.chkShareCriticalLogs.TabIndex = 42;
             this.chkShareCriticalLogs.Text = "Share critical Logs to help defeat bugs";
             this.chkShareCriticalLogs.UseVisualStyleBackColor = true;
-            //
+            // 
             // label60
-            //
-            this.label60.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.label60.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label60.AutoSize = true;
             this.label60.Location = new System.Drawing.Point(6, 6);
@@ -3950,31 +3980,31 @@ namespace TVRename
             this.label60.Size = new System.Drawing.Size(293, 26);
             this.label60.TabIndex = 38;
             this.label60.Text = "General settings to control TV Rename\'s scan and download\r\nbehaviour";
-            //
+            // 
             // pbGeneral
-            //
+            // 
             this.pbGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbGeneral.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbGeneral.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbGeneral.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbGeneral.Location = new System.Drawing.Point(368, 6);
+            this.pbGeneral.Location = new System.Drawing.Point(358, 6);
             this.pbGeneral.Name = "pbGeneral";
             this.pbGeneral.Size = new System.Drawing.Size(43, 40);
             this.pbGeneral.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbGeneral.TabIndex = 23;
             this.pbGeneral.TabStop = false;
             this.pbGeneral.Click += new System.EventHandler(this.pbGeneral_Click);
-            //
+            // 
             // txtWTWDays
-            //
+            // 
             this.txtWTWDays.Location = new System.Drawing.Point(13, 51);
             this.txtWTWDays.Name = "txtWTWDays";
             this.txtWTWDays.Size = new System.Drawing.Size(28, 20);
             this.txtWTWDays.TabIndex = 1;
             this.txtWTWDays.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
-            //
+            // 
             // cbMode
-            //
+            // 
             this.cbMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbMode.FormattingEnabled = true;
             this.cbMode.Items.AddRange(new object[] {
@@ -3985,30 +4015,30 @@ namespace TVRename
             this.cbMode.Size = new System.Drawing.Size(146, 21);
             this.cbMode.Sorted = true;
             this.cbMode.TabIndex = 19;
-            //
+            // 
             // label34
-            //
+            // 
             this.label34.AutoSize = true;
             this.label34.Location = new System.Drawing.Point(11, 80);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(37, 13);
             this.label34.TabIndex = 18;
             this.label34.Text = "&Mode:";
-            //
+            // 
             // label2
-            //
+            // 
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(47, 54);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(111, 13);
             this.label2.TabIndex = 2;
             this.label2.Text = "days counts as recent";
-            //
+            // 
             // tcTabs
-            //
+            // 
             this.tcTabs.Alignment = System.Windows.Forms.TabAlignment.Left;
-            this.tcTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.tcTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tcTabs.Controls.Add(this.tbGeneral);
             this.tcTabs.Controls.Add(this.tpDisplay);
@@ -4029,18 +4059,18 @@ namespace TVRename
             this.tcTabs.Controls.Add(this.tpAutoExportLibrary);
             this.tcTabs.Controls.Add(this.tbAppUpdate);
             this.tcTabs.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
-            this.tcTabs.ItemSize = new System.Drawing.Size(30, 135);
+            this.tcTabs.ItemSize = new System.Drawing.Size(30, 145);
             this.tcTabs.Location = new System.Drawing.Point(12, 12);
             this.tcTabs.Multiline = true;
             this.tcTabs.Name = "tcTabs";
             this.tcTabs.SelectedIndex = 0;
-            this.tcTabs.Size = new System.Drawing.Size(560, 569);
+            this.tcTabs.Size = new System.Drawing.Size(560, 600);
             this.tcTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
-            //
+            // 
             // tpDataSources
-            //
+            // 
             this.tpDataSources.Controls.Add(this.panel3);
             this.tpDataSources.Controls.Add(this.panel2);
             this.tpDataSources.Controls.Add(this.label83);
@@ -4056,24 +4086,24 @@ namespace TVRename
             this.tpDataSources.Controls.Add(this.groupBox20);
             this.tpDataSources.Controls.Add(this.label33);
             this.tpDataSources.Controls.Add(this.pbSources);
-            this.tpDataSources.Location = new System.Drawing.Point(139, 4);
+            this.tpDataSources.Location = new System.Drawing.Point(149, 4);
             this.tpDataSources.Name = "tpDataSources";
-            this.tpDataSources.Size = new System.Drawing.Size(417, 561);
+            this.tpDataSources.Size = new System.Drawing.Size(407, 592);
             this.tpDataSources.TabIndex = 15;
             this.tpDataSources.Text = "Data Sources";
             this.tpDataSources.UseVisualStyleBackColor = true;
-            //
+            // 
             // panel3
-            //
+            // 
             this.panel3.Controls.Add(this.rdoMovieTMDB);
             this.panel3.Controls.Add(this.rdoMovieTheTVDB);
             this.panel3.Location = new System.Drawing.Point(129, 90);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(260, 29);
             this.panel3.TabIndex = 63;
-            //
+            // 
             // rdoMovieTMDB
-            //
+            // 
             this.rdoMovieTMDB.AutoSize = true;
             this.rdoMovieTMDB.Location = new System.Drawing.Point(173, 4);
             this.rdoMovieTMDB.Name = "rdoMovieTMDB";
@@ -4082,9 +4112,9 @@ namespace TVRename
             this.rdoMovieTMDB.TabStop = true;
             this.rdoMovieTMDB.Text = "TMDB";
             this.rdoMovieTMDB.UseVisualStyleBackColor = true;
-            //
+            // 
             // rdoMovieTheTVDB
-            //
+            // 
             this.rdoMovieTheTVDB.AutoSize = true;
             this.rdoMovieTheTVDB.Location = new System.Drawing.Point(3, 4);
             this.rdoMovieTheTVDB.Name = "rdoMovieTheTVDB";
@@ -4093,9 +4123,9 @@ namespace TVRename
             this.rdoMovieTheTVDB.TabStop = true;
             this.rdoMovieTheTVDB.Text = "The TVDB";
             this.rdoMovieTheTVDB.UseVisualStyleBackColor = true;
-            //
+            // 
             // panel2
-            //
+            // 
             this.panel2.Controls.Add(this.rdoTVTMDB);
             this.panel2.Controls.Add(this.rdoTVTVMaze);
             this.panel2.Controls.Add(this.rdoTVTVDB);
@@ -4103,9 +4133,9 @@ namespace TVRename
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(260, 29);
             this.panel2.TabIndex = 62;
-            //
+            // 
             // rdoTVTMDB
-            //
+            // 
             this.rdoTVTMDB.AutoSize = true;
             this.rdoTVTMDB.Location = new System.Drawing.Point(173, 4);
             this.rdoTVTMDB.Name = "rdoTVTMDB";
@@ -4114,9 +4144,9 @@ namespace TVRename
             this.rdoTVTMDB.TabStop = true;
             this.rdoTVTMDB.Text = "TMDB";
             this.rdoTVTMDB.UseVisualStyleBackColor = true;
-            //
+            // 
             // rdoTVTVMaze
-            //
+            // 
             this.rdoTVTVMaze.AutoSize = true;
             this.rdoTVTVMaze.Location = new System.Drawing.Point(90, 3);
             this.rdoTVTVMaze.Name = "rdoTVTVMaze";
@@ -4125,9 +4155,9 @@ namespace TVRename
             this.rdoTVTVMaze.TabStop = true;
             this.rdoTVTVMaze.Text = "TV Maze";
             this.rdoTVTVMaze.UseVisualStyleBackColor = true;
-            //
+            // 
             // rdoTVTVDB
-            //
+            // 
             this.rdoTVTVDB.AutoSize = true;
             this.rdoTVTVDB.Location = new System.Drawing.Point(3, 3);
             this.rdoTVTVDB.Name = "rdoTVTVDB";
@@ -4136,9 +4166,9 @@ namespace TVRename
             this.rdoTVTVDB.TabStop = true;
             this.rdoTVTVDB.Text = "The TVDB";
             this.rdoTVTVDB.UseVisualStyleBackColor = true;
-            //
+            // 
             // label83
-            //
+            // 
             this.label83.AutoSize = true;
             this.label83.Location = new System.Drawing.Point(9, 94);
             this.label83.Name = "label83";
@@ -4146,10 +4176,10 @@ namespace TVRename
             this.label83.TabIndex = 61;
             this.label83.Text = "Default Movie Source:";
             this.label83.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            //
+            // 
             // gbTMDB
-            //
-            this.gbTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.gbTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbTMDB.Controls.Add(this.label84);
             this.gbTMDB.Controls.Add(this.cbTMDBRegions);
@@ -4160,13 +4190,13 @@ namespace TVRename
             this.gbTMDB.Controls.Add(this.cbTMDBLanguages);
             this.gbTMDB.Location = new System.Drawing.Point(12, 396);
             this.gbTMDB.Name = "gbTMDB";
-            this.gbTMDB.Size = new System.Drawing.Size(394, 100);
+            this.gbTMDB.Size = new System.Drawing.Size(384, 100);
             this.gbTMDB.TabIndex = 58;
             this.gbTMDB.TabStop = false;
             this.gbTMDB.Text = "TMDB";
-            //
+            // 
             // cbTMDBRegions
-            //
+            // 
             this.cbTMDBRegions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTMDBRegions.FormattingEnabled = true;
             this.cbTMDBRegions.Location = new System.Drawing.Point(116, 45);
@@ -4174,43 +4204,43 @@ namespace TVRename
             this.cbTMDBRegions.Size = new System.Drawing.Size(146, 21);
             this.cbTMDBRegions.Sorted = true;
             this.cbTMDBRegions.TabIndex = 27;
-            //
+            // 
             // label80
-            //
+            // 
             this.label80.AutoSize = true;
             this.label80.Location = new System.Drawing.Point(10, 75);
             this.label80.Name = "label80";
             this.label80.Size = new System.Drawing.Size(114, 13);
             this.label80.TabIndex = 23;
             this.label80.Text = "Refresh entire series  if";
-            //
+            // 
             // label81
-            //
+            // 
             this.label81.AutoSize = true;
             this.label81.Location = new System.Drawing.Point(162, 75);
             this.label81.Name = "label81";
             this.label81.Size = new System.Drawing.Size(132, 13);
             this.label81.TabIndex = 25;
             this.label81.Text = "% of episodes are updated";
-            //
+            // 
             // tbTMDBPercentDirty
-            //
+            // 
             this.tbTMDBPercentDirty.Location = new System.Drawing.Point(127, 72);
             this.tbTMDBPercentDirty.Name = "tbTMDBPercentDirty";
             this.tbTMDBPercentDirty.Size = new System.Drawing.Size(28, 20);
             this.tbTMDBPercentDirty.TabIndex = 24;
-            //
+            // 
             // label82
-            //
+            // 
             this.label82.AutoSize = true;
             this.label82.Location = new System.Drawing.Point(11, 22);
             this.label82.Name = "label82";
             this.label82.Size = new System.Drawing.Size(100, 13);
             this.label82.TabIndex = 18;
             this.label82.Text = "&Preferred language:";
-            //
+            // 
             // cbTMDBLanguages
-            //
+            // 
             this.cbTMDBLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTMDBLanguages.FormattingEnabled = true;
             this.cbTMDBLanguages.Location = new System.Drawing.Point(117, 19);
@@ -4218,10 +4248,10 @@ namespace TVRename
             this.cbTMDBLanguages.Size = new System.Drawing.Size(146, 21);
             this.cbTMDBLanguages.Sorted = true;
             this.cbTMDBLanguages.TabIndex = 19;
-            //
+            // 
             // label63
-            //
-            this.label63.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.label63.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label63.AutoSize = true;
             this.label63.Location = new System.Drawing.Point(9, 3);
@@ -4230,56 +4260,56 @@ namespace TVRename
             this.label63.TabIndex = 57;
             this.label63.Text = "TV Rename downloads information from upstream sources to understand\r\nwhich shows " +
     "have epiosdes";
-            //
+            // 
             // label57
-            //
+            // 
             this.label57.AutoSize = true;
             this.label57.Location = new System.Drawing.Point(9, 153);
             this.label57.Name = "label57";
             this.label57.Size = new System.Drawing.Size(104, 13);
             this.label57.TabIndex = 55;
             this.label57.Text = "Update cache every";
-            //
+            // 
             // txtParallelDownloads
-            //
+            // 
             this.txtParallelDownloads.Location = new System.Drawing.Point(95, 119);
             this.txtParallelDownloads.Name = "txtParallelDownloads";
             this.txtParallelDownloads.Size = new System.Drawing.Size(28, 20);
             this.txtParallelDownloads.TabIndex = 51;
             this.txtParallelDownloads.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
-            //
+            // 
             // label21
-            //
+            // 
             this.label21.AutoSize = true;
             this.label21.Location = new System.Drawing.Point(9, 122);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(82, 13);
             this.label21.TabIndex = 50;
             this.label21.Text = "&Download up to";
-            //
+            // 
             // label20
-            //
+            // 
             this.label20.AutoSize = true;
             this.label20.Location = new System.Drawing.Point(129, 122);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(146, 13);
             this.label20.TabIndex = 52;
             this.label20.Text = "shows/images simultaneously";
-            //
+            // 
             // groupBox21
-            //
-            this.groupBox21.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox21.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox21.Location = new System.Drawing.Point(12, 290);
             this.groupBox21.Name = "groupBox21";
-            this.groupBox21.Size = new System.Drawing.Size(394, 100);
+            this.groupBox21.Size = new System.Drawing.Size(384, 100);
             this.groupBox21.TabIndex = 49;
             this.groupBox21.TabStop = false;
             this.groupBox21.Text = "TV Maze";
-            //
+            // 
             // groupBox20
-            //
-            this.groupBox20.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox20.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox20.Controls.Add(this.label91);
             this.groupBox20.Controls.Add(this.cbTVDBVersion);
@@ -4290,22 +4320,22 @@ namespace TVRename
             this.groupBox20.Controls.Add(this.cbTVDBLanguages);
             this.groupBox20.Location = new System.Drawing.Point(12, 184);
             this.groupBox20.Name = "groupBox20";
-            this.groupBox20.Size = new System.Drawing.Size(394, 100);
+            this.groupBox20.Size = new System.Drawing.Size(384, 100);
             this.groupBox20.TabIndex = 48;
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "TheTVDB";
-            //
+            // 
             // label91
-            //
+            // 
             this.label91.AutoSize = true;
             this.label91.Location = new System.Drawing.Point(10, 75);
             this.label91.Name = "label91";
             this.label91.Size = new System.Drawing.Size(45, 13);
             this.label91.TabIndex = 26;
             this.label91.Text = "Version:";
-            //
+            // 
             // cbTVDBVersion
-            //
+            // 
             this.cbTVDBVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTVDBVersion.FormattingEnabled = true;
             this.cbTVDBVersion.Items.AddRange(new object[] {
@@ -4316,44 +4346,44 @@ namespace TVRename
             this.cbTVDBVersion.Size = new System.Drawing.Size(146, 21);
             this.cbTVDBVersion.Sorted = true;
             this.cbTVDBVersion.TabIndex = 27;
-            //
+            // 
             // label37
-            //
+            // 
             this.label37.AutoSize = true;
             this.label37.Location = new System.Drawing.Point(10, 49);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(114, 13);
             this.label37.TabIndex = 23;
             this.label37.Text = "Refresh entire series  if";
-            //
+            // 
             // label38
-            //
+            // 
             this.label38.AutoSize = true;
             this.label38.Location = new System.Drawing.Point(162, 49);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(132, 13);
             this.label38.TabIndex = 25;
             this.label38.Text = "% of episodes are updated";
-            //
+            // 
             // tbPercentDirty
-            //
+            // 
             this.tbPercentDirty.Location = new System.Drawing.Point(127, 46);
             this.tbPercentDirty.Name = "tbPercentDirty";
             this.tbPercentDirty.Size = new System.Drawing.Size(28, 20);
             this.tbPercentDirty.TabIndex = 24;
             this.tbPercentDirty.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
-            //
+            // 
             // label10
-            //
+            // 
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(11, 22);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(100, 13);
             this.label10.TabIndex = 18;
             this.label10.Text = "&Preferred language:";
-            //
+            // 
             // cbTVDBLanguages
-            //
+            // 
             this.cbTVDBLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTVDBLanguages.FormattingEnabled = true;
             this.cbTVDBLanguages.Items.AddRange(new object[] {
@@ -4365,9 +4395,9 @@ namespace TVRename
             this.cbTVDBLanguages.Size = new System.Drawing.Size(146, 21);
             this.cbTVDBLanguages.Sorted = true;
             this.cbTVDBLanguages.TabIndex = 19;
-            //
+            // 
             // label33
-            //
+            // 
             this.label33.AutoSize = true;
             this.label33.Location = new System.Drawing.Point(9, 65);
             this.label33.Name = "label33";
@@ -4375,38 +4405,38 @@ namespace TVRename
             this.label33.TabIndex = 47;
             this.label33.Text = "Default TV Show Source:";
             this.label33.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            //
+            // 
             // pbSources
-            //
+            // 
             this.pbSources.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbSources.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbSources.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbSources.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbSources.Location = new System.Drawing.Point(371, 3);
+            this.pbSources.Location = new System.Drawing.Point(361, 3);
             this.pbSources.Name = "pbSources";
             this.pbSources.Size = new System.Drawing.Size(43, 40);
             this.pbSources.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbSources.TabIndex = 56;
             this.pbSources.TabStop = false;
             this.pbSources.Click += new System.EventHandler(this.pbSources_Click);
-            //
+            // 
             // tpMovieDefaults
-            //
+            // 
             this.tpMovieDefaults.Controls.Add(this.label86);
             this.tpMovieDefaults.Controls.Add(this.groupBox24);
             this.tpMovieDefaults.Controls.Add(this.groupBox25);
             this.tpMovieDefaults.Controls.Add(this.pbMovieDefaults);
-            this.tpMovieDefaults.Location = new System.Drawing.Point(139, 4);
+            this.tpMovieDefaults.Location = new System.Drawing.Point(149, 4);
             this.tpMovieDefaults.Name = "tpMovieDefaults";
             this.tpMovieDefaults.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMovieDefaults.Size = new System.Drawing.Size(417, 561);
+            this.tpMovieDefaults.Size = new System.Drawing.Size(407, 592);
             this.tpMovieDefaults.TabIndex = 18;
             this.tpMovieDefaults.Text = "Movies Defaults";
             this.tpMovieDefaults.UseVisualStyleBackColor = true;
-            //
+            // 
             // label86
-            //
-            this.label86.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.label86.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label86.AutoSize = true;
             this.label86.Location = new System.Drawing.Point(7, 11);
@@ -4416,10 +4446,10 @@ namespace TVRename
             this.label86.Text = "These settings control the defaults used to add a new movie to the \r\nsystem. Once" +
     " the show has been created, you will need to modify\r\nits configuration directly." +
     "";
-            //
+            // 
             // groupBox24
-            //
-            this.groupBox24.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox24.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox24.Controls.Add(this.cmbDefMovieFolderFormat);
             this.groupBox24.Controls.Add(this.label95);
@@ -4428,42 +4458,42 @@ namespace TVRename
             this.groupBox24.Controls.Add(this.cbDefMovieAutoFolders);
             this.groupBox24.Location = new System.Drawing.Point(6, 59);
             this.groupBox24.Name = "groupBox24";
-            this.groupBox24.Size = new System.Drawing.Size(401, 134);
+            this.groupBox24.Size = new System.Drawing.Size(391, 134);
             this.groupBox24.TabIndex = 61;
             this.groupBox24.TabStop = false;
             this.groupBox24.Text = "Default Movie Settings";
-            //
+            // 
             // cmbDefMovieFolderFormat
-            //
-            this.cmbDefMovieFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.cmbDefMovieFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbDefMovieFolderFormat.FormattingEnabled = true;
             this.cmbDefMovieFolderFormat.Location = new System.Drawing.Point(139, 99);
             this.cmbDefMovieFolderFormat.Name = "cmbDefMovieFolderFormat";
-            this.cmbDefMovieFolderFormat.Size = new System.Drawing.Size(256, 21);
+            this.cmbDefMovieFolderFormat.Size = new System.Drawing.Size(246, 21);
             this.cmbDefMovieFolderFormat.TabIndex = 7;
-            //
+            // 
             // label95
-            //
+            // 
             this.label95.AutoSize = true;
             this.label95.Location = new System.Drawing.Point(6, 102);
             this.label95.Name = "label95";
             this.label95.Size = new System.Drawing.Size(127, 13);
             this.label95.TabIndex = 6;
             this.label95.Text = "Default movie folder type:";
-            //
+            // 
             // cmbDefMovieLocation
-            //
-            this.cmbDefMovieLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.cmbDefMovieLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbDefMovieLocation.FormattingEnabled = true;
             this.cmbDefMovieLocation.Location = new System.Drawing.Point(29, 68);
             this.cmbDefMovieLocation.Name = "cmbDefMovieLocation";
-            this.cmbDefMovieLocation.Size = new System.Drawing.Size(366, 21);
+            this.cmbDefMovieLocation.Size = new System.Drawing.Size(356, 21);
             this.cmbDefMovieLocation.TabIndex = 2;
-            //
+            // 
             // cbDefMovieUseDefLocation
-            //
+            // 
             this.cbDefMovieUseDefLocation.AutoSize = true;
             this.cbDefMovieUseDefLocation.Location = new System.Drawing.Point(9, 43);
             this.cbDefMovieUseDefLocation.Name = "cbDefMovieUseDefLocation";
@@ -4471,9 +4501,9 @@ namespace TVRename
             this.cbDefMovieUseDefLocation.TabIndex = 1;
             this.cbDefMovieUseDefLocation.Text = "Use Default Location";
             this.cbDefMovieUseDefLocation.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDefMovieAutoFolders
-            //
+            // 
             this.cbDefMovieAutoFolders.AutoSize = true;
             this.cbDefMovieAutoFolders.Location = new System.Drawing.Point(9, 20);
             this.cbDefMovieAutoFolders.Name = "cbDefMovieAutoFolders";
@@ -4481,10 +4511,10 @@ namespace TVRename
             this.cbDefMovieAutoFolders.TabIndex = 0;
             this.cbDefMovieAutoFolders.Text = "Use Automatic Folders";
             this.cbDefMovieAutoFolders.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox25
-            //
-            this.groupBox25.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox25.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox25.Controls.Add(this.cbDefMovieIncludeNoAirdate);
             this.groupBox25.Controls.Add(this.cbDefMovieIncludeFuture);
@@ -4492,13 +4522,13 @@ namespace TVRename
             this.groupBox25.Controls.Add(this.cbDefMovieDoRenaming);
             this.groupBox25.Location = new System.Drawing.Point(6, 199);
             this.groupBox25.Name = "groupBox25";
-            this.groupBox25.Size = new System.Drawing.Size(401, 116);
+            this.groupBox25.Size = new System.Drawing.Size(391, 116);
             this.groupBox25.TabIndex = 60;
             this.groupBox25.TabStop = false;
             this.groupBox25.Text = "Default Advanced Settings";
-            //
+            // 
             // cbDefMovieIncludeNoAirdate
-            //
+            // 
             this.cbDefMovieIncludeNoAirdate.AutoSize = true;
             this.cbDefMovieIncludeNoAirdate.Location = new System.Drawing.Point(25, 88);
             this.cbDefMovieIncludeNoAirdate.Name = "cbDefMovieIncludeNoAirdate";
@@ -4506,9 +4536,9 @@ namespace TVRename
             this.cbDefMovieIncludeNoAirdate.TabIndex = 53;
             this.cbDefMovieIncludeNoAirdate.Text = "Include check when movie has no release date";
             this.cbDefMovieIncludeNoAirdate.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDefMovieIncludeFuture
-            //
+            // 
             this.cbDefMovieIncludeFuture.AutoSize = true;
             this.cbDefMovieIncludeFuture.Location = new System.Drawing.Point(25, 65);
             this.cbDefMovieIncludeFuture.Name = "cbDefMovieIncludeFuture";
@@ -4516,9 +4546,9 @@ namespace TVRename
             this.cbDefMovieIncludeFuture.TabIndex = 54;
             this.cbDefMovieIncludeFuture.Text = "Include check when movie has a future release date";
             this.cbDefMovieIncludeFuture.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDefMovieDoMissing
-            //
+            // 
             this.cbDefMovieDoMissing.AutoSize = true;
             this.cbDefMovieDoMissing.Location = new System.Drawing.Point(6, 42);
             this.cbDefMovieDoMissing.Name = "cbDefMovieDoMissing";
@@ -4526,9 +4556,9 @@ namespace TVRename
             this.cbDefMovieDoMissing.TabIndex = 52;
             this.cbDefMovieDoMissing.Text = "Do &missing check";
             this.cbDefMovieDoMissing.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDefMovieDoRenaming
-            //
+            // 
             this.cbDefMovieDoRenaming.AutoSize = true;
             this.cbDefMovieDoRenaming.Location = new System.Drawing.Point(6, 19);
             this.cbDefMovieDoRenaming.Name = "cbDefMovieDoRenaming";
@@ -4536,38 +4566,38 @@ namespace TVRename
             this.cbDefMovieDoRenaming.TabIndex = 51;
             this.cbDefMovieDoRenaming.Text = "Do &renaming";
             this.cbDefMovieDoRenaming.UseVisualStyleBackColor = true;
-            //
+            // 
             // pbMovieDefaults
-            //
+            // 
             this.pbMovieDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbMovieDefaults.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbMovieDefaults.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbMovieDefaults.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbMovieDefaults.Location = new System.Drawing.Point(368, 10);
+            this.pbMovieDefaults.Location = new System.Drawing.Point(358, 10);
             this.pbMovieDefaults.Name = "pbMovieDefaults";
             this.pbMovieDefaults.Size = new System.Drawing.Size(43, 40);
             this.pbMovieDefaults.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbMovieDefaults.TabIndex = 62;
             this.pbMovieDefaults.TabStop = false;
             this.pbMovieDefaults.Click += new System.EventHandler(this.pbMovieDefaults_Click);
-            //
+            // 
             // tpShowDefaults
-            //
+            // 
             this.tpShowDefaults.Controls.Add(this.label18);
             this.tpShowDefaults.Controls.Add(this.groupBox19);
             this.tpShowDefaults.Controls.Add(this.groupBox18);
             this.tpShowDefaults.Controls.Add(this.pictureBox1);
-            this.tpShowDefaults.Location = new System.Drawing.Point(139, 4);
+            this.tpShowDefaults.Location = new System.Drawing.Point(149, 4);
             this.tpShowDefaults.Name = "tpShowDefaults";
             this.tpShowDefaults.Padding = new System.Windows.Forms.Padding(3);
-            this.tpShowDefaults.Size = new System.Drawing.Size(417, 561);
+            this.tpShowDefaults.Size = new System.Drawing.Size(407, 592);
             this.tpShowDefaults.TabIndex = 14;
             this.tpShowDefaults.Text = "TV Show Defaults";
             this.tpShowDefaults.UseVisualStyleBackColor = true;
-            //
+            // 
             // label18
-            //
-            this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label18.AutoSize = true;
             this.label18.Location = new System.Drawing.Point(7, 7);
@@ -4576,10 +4606,10 @@ namespace TVRename
             this.label18.TabIndex = 59;
             this.label18.Text = "These settings control the defaults used to add a new show to the \r\nsystem. Once " +
     "the show has been created, you will need to modify\r\nits configuration directly.";
-            //
+            // 
             // groupBox19
-            //
-            this.groupBox19.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox19.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox19.Controls.Add(this.label24);
             this.groupBox19.Controls.Add(this.cbTimeZone);
@@ -4591,13 +4621,13 @@ namespace TVRename
             this.groupBox19.Controls.Add(this.cbDefShowAutoFolders);
             this.groupBox19.Location = new System.Drawing.Point(6, 55);
             this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(401, 176);
+            this.groupBox19.Size = new System.Drawing.Size(391, 176);
             this.groupBox19.TabIndex = 57;
             this.groupBox19.TabStop = false;
             this.groupBox19.Text = "Default TV Show Settings";
-            //
+            // 
             // label24
-            //
+            // 
             this.label24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label24.AutoSize = true;
             this.label24.Location = new System.Drawing.Point(9, 149);
@@ -4606,20 +4636,20 @@ namespace TVRename
             this.label24.TabIndex = 6;
             this.label24.Text = "Airs in &Timezone:";
             this.label24.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            //
+            // 
             // cbTimeZone
-            //
-            this.cbTimeZone.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.cbTimeZone.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbTimeZone.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTimeZone.FormattingEnabled = true;
             this.cbTimeZone.Location = new System.Drawing.Point(102, 141);
             this.cbTimeZone.Name = "cbTimeZone";
-            this.cbTimeZone.Size = new System.Drawing.Size(293, 21);
+            this.cbTimeZone.Size = new System.Drawing.Size(283, 21);
             this.cbTimeZone.TabIndex = 7;
-            //
+            // 
             // rbDefShowUseSubFolders
-            //
+            // 
             this.rbDefShowUseSubFolders.AutoSize = true;
             this.rbDefShowUseSubFolders.Location = new System.Drawing.Point(175, 113);
             this.rbDefShowUseSubFolders.Name = "rbDefShowUseSubFolders";
@@ -4628,9 +4658,9 @@ namespace TVRename
             this.rbDefShowUseSubFolders.TabStop = true;
             this.rbDefShowUseSubFolders.Text = "in subdirectories";
             this.rbDefShowUseSubFolders.UseVisualStyleBackColor = true;
-            //
+            // 
             // rbDefShowUseBase
-            //
+            // 
             this.rbDefShowUseBase.AutoSize = true;
             this.rbDefShowUseBase.Location = new System.Drawing.Point(29, 113);
             this.rbDefShowUseBase.Name = "rbDefShowUseBase";
@@ -4639,28 +4669,28 @@ namespace TVRename
             this.rbDefShowUseBase.TabStop = true;
             this.rbDefShowUseBase.Text = "in base folder";
             this.rbDefShowUseBase.UseVisualStyleBackColor = true;
-            //
+            // 
             // label12
-            //
+            // 
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(9, 96);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(121, 13);
             this.label12.TabIndex = 3;
             this.label12.Text = "Default season location:";
-            //
+            // 
             // cmbDefShowLocation
-            //
-            this.cmbDefShowLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.cmbDefShowLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbDefShowLocation.FormattingEnabled = true;
             this.cmbDefShowLocation.Location = new System.Drawing.Point(29, 68);
             this.cmbDefShowLocation.Name = "cmbDefShowLocation";
-            this.cmbDefShowLocation.Size = new System.Drawing.Size(366, 21);
+            this.cmbDefShowLocation.Size = new System.Drawing.Size(356, 21);
             this.cmbDefShowLocation.TabIndex = 2;
-            //
+            // 
             // cbDefShowUseDefLocation
-            //
+            // 
             this.cbDefShowUseDefLocation.AutoSize = true;
             this.cbDefShowUseDefLocation.Location = new System.Drawing.Point(9, 43);
             this.cbDefShowUseDefLocation.Name = "cbDefShowUseDefLocation";
@@ -4669,9 +4699,9 @@ namespace TVRename
             this.cbDefShowUseDefLocation.Text = "Use Default Location";
             this.cbDefShowUseDefLocation.UseVisualStyleBackColor = true;
             this.cbDefShowUseDefLocation.CheckedChanged += new System.EventHandler(this.CbDefShowUseDefLocation_CheckedChanged);
-            //
+            // 
             // cbDefShowAutoFolders
-            //
+            // 
             this.cbDefShowAutoFolders.AutoSize = true;
             this.cbDefShowAutoFolders.Location = new System.Drawing.Point(9, 20);
             this.cbDefShowAutoFolders.Name = "cbDefShowAutoFolders";
@@ -4679,10 +4709,10 @@ namespace TVRename
             this.cbDefShowAutoFolders.TabIndex = 0;
             this.cbDefShowAutoFolders.Text = "Use Automatic Season Folders";
             this.cbDefShowAutoFolders.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox18
-            //
-            this.groupBox18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox18.Controls.Add(this.cbDefShowAlternateOrder);
             this.groupBox18.Controls.Add(this.cbDefShowEpNameMatching);
@@ -4698,13 +4728,13 @@ namespace TVRename
             this.groupBox18.Controls.Add(this.cbDefShowNextAirdate);
             this.groupBox18.Location = new System.Drawing.Point(6, 237);
             this.groupBox18.Name = "groupBox18";
-            this.groupBox18.Size = new System.Drawing.Size(401, 258);
+            this.groupBox18.Size = new System.Drawing.Size(391, 258);
             this.groupBox18.TabIndex = 56;
             this.groupBox18.TabStop = false;
             this.groupBox18.Text = "Default Advanced Settings";
-            //
+            // 
             // cbDefShowAlternateOrder
-            //
+            // 
             this.cbDefShowAlternateOrder.AutoSize = true;
             this.cbDefShowAlternateOrder.Location = new System.Drawing.Point(115, 28);
             this.cbDefShowAlternateOrder.Name = "cbDefShowAlternateOrder";
@@ -4713,9 +4743,9 @@ namespace TVRename
             this.cbDefShowAlternateOrder.Text = "Use Alternate Order";
             this.cbDefShowAlternateOrder.UseVisualStyleBackColor = true;
             this.cbDefShowAlternateOrder.CheckedChanged += new System.EventHandler(this.cbDefShowAlternateOrder_CheckedChanged);
-            //
+            // 
             // cbDefShowEpNameMatching
-            //
+            // 
             this.cbDefShowEpNameMatching.AutoSize = true;
             this.cbDefShowEpNameMatching.Location = new System.Drawing.Point(29, 231);
             this.cbDefShowEpNameMatching.Name = "cbDefShowEpNameMatching";
@@ -4723,18 +4753,18 @@ namespace TVRename
             this.cbDefShowEpNameMatching.TabIndex = 58;
             this.cbDefShowEpNameMatching.Text = "Look for episode title in filenames";
             this.cbDefShowEpNameMatching.UseVisualStyleBackColor = true;
-            //
+            // 
             // label68
-            //
+            // 
             this.label68.AutoSize = true;
             this.label68.Location = new System.Drawing.Point(9, 165);
             this.label68.Name = "label68";
             this.label68.Size = new System.Drawing.Size(180, 13);
             this.label68.TabIndex = 57;
             this.label68.Text = "When finding missing episodes (only)";
-            //
+            // 
             // cbDefShowAirdateMatching
-            //
+            // 
             this.cbDefShowAirdateMatching.AutoSize = true;
             this.cbDefShowAirdateMatching.Location = new System.Drawing.Point(29, 208);
             this.cbDefShowAirdateMatching.Name = "cbDefShowAirdateMatching";
@@ -4742,9 +4772,9 @@ namespace TVRename
             this.cbDefShowAirdateMatching.TabIndex = 56;
             this.cbDefShowAirdateMatching.Text = "&Look for airdate in filenames";
             this.cbDefShowAirdateMatching.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDefShowSpecialsCount
-            //
+            // 
             this.cbDefShowSpecialsCount.AutoSize = true;
             this.cbDefShowSpecialsCount.Location = new System.Drawing.Point(9, 74);
             this.cbDefShowSpecialsCount.Name = "cbDefShowSpecialsCount";
@@ -4752,9 +4782,9 @@ namespace TVRename
             this.cbDefShowSpecialsCount.TabIndex = 50;
             this.cbDefShowSpecialsCount.Text = "S&pecials count as episodes";
             this.cbDefShowSpecialsCount.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDefShowSequentialMatching
-            //
+            // 
             this.cbDefShowSequentialMatching.AutoSize = true;
             this.cbDefShowSequentialMatching.Location = new System.Drawing.Point(29, 185);
             this.cbDefShowSequentialMatching.Name = "cbDefShowSequentialMatching";
@@ -4762,9 +4792,9 @@ namespace TVRename
             this.cbDefShowSequentialMatching.TabIndex = 53;
             this.cbDefShowSequentialMatching.Text = "Use sequential number matching";
             this.cbDefShowSequentialMatching.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDefShowIncludeNoAirdate
-            //
+            // 
             this.cbDefShowIncludeNoAirdate.AutoSize = true;
             this.cbDefShowIncludeNoAirdate.Location = new System.Drawing.Point(175, 143);
             this.cbDefShowIncludeNoAirdate.Name = "cbDefShowIncludeNoAirdate";
@@ -4772,9 +4802,9 @@ namespace TVRename
             this.cbDefShowIncludeNoAirdate.TabIndex = 54;
             this.cbDefShowIncludeNoAirdate.Text = "Include no airdate";
             this.cbDefShowIncludeNoAirdate.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDefShowDoMissingCheck
-            //
+            // 
             this.cbDefShowDoMissingCheck.AutoSize = true;
             this.cbDefShowDoMissingCheck.Location = new System.Drawing.Point(9, 120);
             this.cbDefShowDoMissingCheck.Name = "cbDefShowDoMissingCheck";
@@ -4782,9 +4812,9 @@ namespace TVRename
             this.cbDefShowDoMissingCheck.TabIndex = 52;
             this.cbDefShowDoMissingCheck.Text = "Do &missing check";
             this.cbDefShowDoMissingCheck.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDefShowDVDOrder
-            //
+            // 
             this.cbDefShowDVDOrder.AutoSize = true;
             this.cbDefShowDVDOrder.Location = new System.Drawing.Point(9, 28);
             this.cbDefShowDVDOrder.Name = "cbDefShowDVDOrder";
@@ -4793,9 +4823,9 @@ namespace TVRename
             this.cbDefShowDVDOrder.Text = "&Use DVD Order";
             this.cbDefShowDVDOrder.UseVisualStyleBackColor = true;
             this.cbDefShowDVDOrder.CheckedChanged += new System.EventHandler(this.cbDefShowDVDOrder_CheckedChanged);
-            //
+            // 
             // cbDefShowIncludeFuture
-            //
+            // 
             this.cbDefShowIncludeFuture.AutoSize = true;
             this.cbDefShowIncludeFuture.Location = new System.Drawing.Point(29, 143);
             this.cbDefShowIncludeFuture.Name = "cbDefShowIncludeFuture";
@@ -4803,9 +4833,9 @@ namespace TVRename
             this.cbDefShowIncludeFuture.TabIndex = 55;
             this.cbDefShowIncludeFuture.Text = "Include future episodes";
             this.cbDefShowIncludeFuture.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDefShowDoRenaming
-            //
+            // 
             this.cbDefShowDoRenaming.AutoSize = true;
             this.cbDefShowDoRenaming.Location = new System.Drawing.Point(9, 97);
             this.cbDefShowDoRenaming.Name = "cbDefShowDoRenaming";
@@ -4813,9 +4843,9 @@ namespace TVRename
             this.cbDefShowDoRenaming.TabIndex = 51;
             this.cbDefShowDoRenaming.Text = "Do &renaming";
             this.cbDefShowDoRenaming.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbDefShowNextAirdate
-            //
+            // 
             this.cbDefShowNextAirdate.AutoSize = true;
             this.cbDefShowNextAirdate.Location = new System.Drawing.Point(9, 51);
             this.cbDefShowNextAirdate.Name = "cbDefShowNextAirdate";
@@ -4823,41 +4853,40 @@ namespace TVRename
             this.cbDefShowNextAirdate.TabIndex = 49;
             this.cbDefShowNextAirdate.Text = "Show &next airdate in \'Schedule\'";
             this.cbDefShowNextAirdate.UseVisualStyleBackColor = true;
-            //
+            // 
             // pictureBox1
-            //
+            // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox1.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pictureBox1.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox1.Location = new System.Drawing.Point(368, 6);
+            this.pictureBox1.Location = new System.Drawing.Point(358, 6);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(43, 40);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 58;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click_1);
-            //
+            // 
             // tpScanSettings
-            //
+            // 
             this.tpScanSettings.Controls.Add(this.groupBox17);
             this.tpScanSettings.Controls.Add(this.groupBox1);
             this.tpScanSettings.Controls.Add(this.cbScanIncludesBulkAdd);
             this.tpScanSettings.Controls.Add(this.gbBulkAdd);
             this.tpScanSettings.Controls.Add(this.label62);
             this.tpScanSettings.Controls.Add(this.pbScanOptions);
-            this.tpScanSettings.Location = new System.Drawing.Point(139, 4);
+            this.tpScanSettings.Location = new System.Drawing.Point(149, 4);
             this.tpScanSettings.Name = "tpScanSettings";
             this.tpScanSettings.Padding = new System.Windows.Forms.Padding(3);
-            this.tpScanSettings.Size = new System.Drawing.Size(417, 561);
+            this.tpScanSettings.Size = new System.Drawing.Size(407, 592);
             this.tpScanSettings.TabIndex = 16;
             this.tpScanSettings.Text = "Scan Settings";
             this.tpScanSettings.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox17
-            //
-            this.groupBox17.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox17.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox17.Controls.Add(this.cbIgnorePreviouslySeenMovies);
             this.groupBox17.Controls.Add(this.chkIncludeMoviesQuickRecent);
@@ -4878,13 +4907,13 @@ namespace TVRename
             this.groupBox17.Controls.Add(this.cbMissing);
             this.groupBox17.Location = new System.Drawing.Point(7, 49);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(405, 246);
+            this.groupBox17.Size = new System.Drawing.Size(395, 246);
             this.groupBox17.TabIndex = 49;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Scan Options";
-            //
+            // 
             // cbIgnorePreviouslySeenMovies
-            //
+            // 
             this.cbIgnorePreviouslySeenMovies.AutoSize = true;
             this.cbIgnorePreviouslySeenMovies.Location = new System.Drawing.Point(213, 187);
             this.cbIgnorePreviouslySeenMovies.Name = "cbIgnorePreviouslySeenMovies";
@@ -4892,9 +4921,9 @@ namespace TVRename
             this.cbIgnorePreviouslySeenMovies.TabIndex = 51;
             this.cbIgnorePreviouslySeenMovies.Text = "Ignore Movies Previously Seen";
             this.cbIgnorePreviouslySeenMovies.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkMoveLibraryFiles
-            //
+            // 
             this.chkMoveLibraryFiles.AutoSize = true;
             this.chkMoveLibraryFiles.Checked = true;
             this.chkMoveLibraryFiles.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -4904,18 +4933,18 @@ namespace TVRename
             this.chkMoveLibraryFiles.TabIndex = 48;
             this.chkMoveLibraryFiles.Text = "Move Files within Library to Keep it Tidy";
             this.chkMoveLibraryFiles.UseVisualStyleBackColor = true;
-            //
+            // 
             // lblScanAction
-            //
+            // 
             this.lblScanAction.AutoSize = true;
             this.lblScanAction.Location = new System.Drawing.Point(9, 19);
             this.lblScanAction.Name = "lblScanAction";
             this.lblScanAction.Size = new System.Drawing.Size(121, 13);
             this.lblScanAction.TabIndex = 43;
             this.lblScanAction.Text = "Default Auto &Scan Type";
-            //
+            // 
             // rdoQuickScan
-            //
+            // 
             this.rdoQuickScan.AutoSize = true;
             this.rdoQuickScan.Location = new System.Drawing.Point(141, 36);
             this.rdoQuickScan.Name = "rdoQuickScan";
@@ -4924,9 +4953,9 @@ namespace TVRename
             this.rdoQuickScan.TabStop = true;
             this.rdoQuickScan.Text = "&Quick";
             this.rdoQuickScan.UseVisualStyleBackColor = true;
-            //
+            // 
             // rdoRecentScan
-            //
+            // 
             this.rdoRecentScan.AutoSize = true;
             this.rdoRecentScan.Location = new System.Drawing.Point(75, 36);
             this.rdoRecentScan.Name = "rdoRecentScan";
@@ -4935,9 +4964,9 @@ namespace TVRename
             this.rdoRecentScan.TabStop = true;
             this.rdoRecentScan.Text = "&Recent";
             this.rdoRecentScan.UseVisualStyleBackColor = true;
-            //
+            // 
             // rdoFullScan
-            //
+            // 
             this.rdoFullScan.AutoSize = true;
             this.rdoFullScan.Location = new System.Drawing.Point(28, 36);
             this.rdoFullScan.Name = "rdoFullScan";
@@ -4946,9 +4975,9 @@ namespace TVRename
             this.rdoFullScan.TabStop = true;
             this.rdoFullScan.Text = "&Full";
             this.rdoFullScan.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbIgnorePreviouslySeen
-            //
+            // 
             this.cbIgnorePreviouslySeen.AutoSize = true;
             this.cbIgnorePreviouslySeen.Location = new System.Drawing.Point(30, 187);
             this.cbIgnorePreviouslySeen.Name = "cbIgnorePreviouslySeen";
@@ -4956,9 +4985,9 @@ namespace TVRename
             this.cbIgnorePreviouslySeen.TabIndex = 39;
             this.cbIgnorePreviouslySeen.Text = "Ignore Episodes Previously Seen";
             this.cbIgnorePreviouslySeen.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkPreventMove
-            //
+            // 
             this.chkPreventMove.AutoSize = true;
             this.chkPreventMove.Location = new System.Drawing.Point(30, 145);
             this.chkPreventMove.Name = "chkPreventMove";
@@ -4966,18 +4995,18 @@ namespace TVRename
             this.chkPreventMove.TabIndex = 38;
             this.chkPreventMove.Text = "Pre&vent move of files (just rename)";
             this.chkPreventMove.UseVisualStyleBackColor = true;
-            //
+            // 
             // label28
-            //
+            // 
             this.label28.AutoSize = true;
             this.label28.Location = new System.Drawing.Point(9, 106);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(141, 13);
             this.label28.TabIndex = 35;
             this.label28.Text = "\"Scan\" checks and actions:";
-            //
+            // 
             // cbRenameCheck
-            //
+            // 
             this.cbRenameCheck.AutoSize = true;
             this.cbRenameCheck.Checked = true;
             this.cbRenameCheck.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -4987,9 +5016,9 @@ namespace TVRename
             this.cbRenameCheck.TabIndex = 36;
             this.cbRenameCheck.Text = "&Rename Check";
             this.cbRenameCheck.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbMissing
-            //
+            // 
             this.cbMissing.AutoSize = true;
             this.cbMissing.Checked = true;
             this.cbMissing.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -5000,10 +5029,10 @@ namespace TVRename
             this.cbMissing.Text = "&Missing Check";
             this.cbMissing.UseVisualStyleBackColor = true;
             this.cbMissing.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // groupBox1
-            //
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.chkChooseWhenMultipleEpisodesMatch);
             this.groupBox1.Controls.Add(this.cbxUpdateAirDate);
@@ -5011,13 +5040,13 @@ namespace TVRename
             this.groupBox1.Controls.Add(this.chkAutoMergeLibraryEpisodes);
             this.groupBox1.Location = new System.Drawing.Point(6, 301);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(404, 115);
+            this.groupBox1.Size = new System.Drawing.Size(394, 115);
             this.groupBox1.TabIndex = 48;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Additional Scan Options";
-            //
+            // 
             // chkChooseWhenMultipleEpisodesMatch
-            //
+            // 
             this.chkChooseWhenMultipleEpisodesMatch.AutoSize = true;
             this.chkChooseWhenMultipleEpisodesMatch.Location = new System.Drawing.Point(6, 88);
             this.chkChooseWhenMultipleEpisodesMatch.Name = "chkChooseWhenMultipleEpisodesMatch";
@@ -5025,9 +5054,9 @@ namespace TVRename
             this.chkChooseWhenMultipleEpisodesMatch.TabIndex = 42;
             this.chkChooseWhenMultipleEpisodesMatch.Text = "Choose between episodes in library when multiple match";
             this.chkChooseWhenMultipleEpisodesMatch.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbxUpdateAirDate
-            //
+            // 
             this.cbxUpdateAirDate.AutoSize = true;
             this.cbxUpdateAirDate.Location = new System.Drawing.Point(6, 19);
             this.cbxUpdateAirDate.Name = "cbxUpdateAirDate";
@@ -5035,9 +5064,9 @@ namespace TVRename
             this.cbxUpdateAirDate.TabIndex = 39;
             this.cbxUpdateAirDate.Text = "Update files and folders with air date";
             this.cbxUpdateAirDate.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbAutoCreateFolders
-            //
+            // 
             this.cbAutoCreateFolders.AutoSize = true;
             this.cbAutoCreateFolders.Location = new System.Drawing.Point(6, 65);
             this.cbAutoCreateFolders.Name = "cbAutoCreateFolders";
@@ -5045,9 +5074,9 @@ namespace TVRename
             this.cbAutoCreateFolders.TabIndex = 37;
             this.cbAutoCreateFolders.Text = "&Automatically create missing folders";
             this.cbAutoCreateFolders.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkAutoMergeLibraryEpisodes
-            //
+            // 
             this.chkAutoMergeLibraryEpisodes.AutoSize = true;
             this.chkAutoMergeLibraryEpisodes.Location = new System.Drawing.Point(6, 42);
             this.chkAutoMergeLibraryEpisodes.Name = "chkAutoMergeLibraryEpisodes";
@@ -5055,10 +5084,10 @@ namespace TVRename
             this.chkAutoMergeLibraryEpisodes.TabIndex = 41;
             this.chkAutoMergeLibraryEpisodes.Text = "Automatically create merge rules for merged library episodes";
             this.chkAutoMergeLibraryEpisodes.UseVisualStyleBackColor = true;
-            //
+            // 
             // cbScanIncludesBulkAdd
-            //
-            this.cbScanIncludesBulkAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.cbScanIncludesBulkAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbScanIncludesBulkAdd.AutoSize = true;
             this.cbScanIncludesBulkAdd.Location = new System.Drawing.Point(7, 422);
@@ -5067,10 +5096,10 @@ namespace TVRename
             this.cbScanIncludesBulkAdd.TabIndex = 47;
             this.cbScanIncludesBulkAdd.Text = "Do Bulk-Add as part of scan";
             this.cbScanIncludesBulkAdd.UseVisualStyleBackColor = true;
-            //
+            // 
             // gbBulkAdd
-            //
-            this.gbBulkAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.gbBulkAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbBulkAdd.Controls.Add(this.tbSeasonSearchTerms);
             this.gbBulkAdd.Controls.Add(this.label36);
@@ -5079,23 +5108,23 @@ namespace TVRename
             this.gbBulkAdd.Controls.Add(this.cbIgnoreNoVideoFolders);
             this.gbBulkAdd.Location = new System.Drawing.Point(7, 445);
             this.gbBulkAdd.Name = "gbBulkAdd";
-            this.gbBulkAdd.Size = new System.Drawing.Size(404, 111);
+            this.gbBulkAdd.Size = new System.Drawing.Size(394, 111);
             this.gbBulkAdd.TabIndex = 46;
             this.gbBulkAdd.TabStop = false;
             this.gbBulkAdd.Text = "Bulk Add TV Shows from Library Folders";
-            //
+            // 
             // label36
-            //
+            // 
             this.label36.AutoSize = true;
             this.label36.Location = new System.Drawing.Point(6, 88);
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(109, 13);
             this.label36.TabIndex = 21;
             this.label36.Text = "Season search terms:";
-            //
+            // 
             // label62
-            //
-            this.label62.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.label62.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label62.AutoSize = true;
             this.label62.Location = new System.Drawing.Point(6, 3);
@@ -5103,69 +5132,69 @@ namespace TVRename
             this.label62.Size = new System.Drawing.Size(293, 26);
             this.label62.TabIndex = 40;
             this.label62.Text = "General settings to control TV Rename\'s scan and download\r\nbehaviour";
-            //
+            // 
             // pbScanOptions
-            //
+            // 
             this.pbScanOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbScanOptions.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbScanOptions.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbScanOptions.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbScanOptions.Location = new System.Drawing.Point(368, 3);
+            this.pbScanOptions.Location = new System.Drawing.Point(358, 3);
             this.pbScanOptions.Name = "pbScanOptions";
             this.pbScanOptions.Size = new System.Drawing.Size(43, 40);
             this.pbScanOptions.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbScanOptions.TabIndex = 39;
             this.pbScanOptions.TabStop = false;
             this.pbScanOptions.Click += new System.EventHandler(this.pbScanOptions_Click);
-            //
+            // 
             // tpSubtitles
-            //
+            // 
             this.tpSubtitles.Controls.Add(this.groupBox29);
             this.tpSubtitles.Controls.Add(this.label93);
             this.tpSubtitles.Controls.Add(this.pictureBox2);
             this.tpSubtitles.Controls.Add(this.groupBox9);
-            this.tpSubtitles.Location = new System.Drawing.Point(139, 4);
+            this.tpSubtitles.Location = new System.Drawing.Point(149, 4);
             this.tpSubtitles.Name = "tpSubtitles";
             this.tpSubtitles.Padding = new System.Windows.Forms.Padding(3);
-            this.tpSubtitles.Size = new System.Drawing.Size(417, 561);
+            this.tpSubtitles.Size = new System.Drawing.Size(407, 592);
             this.tpSubtitles.TabIndex = 21;
             this.tpSubtitles.Text = "Subtitles";
             this.tpSubtitles.UseVisualStyleBackColor = true;
-            //
+            // 
             // groupBox29
-            //
-            this.groupBox29.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox29.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox29.Controls.Add(this.label94);
             this.groupBox29.Controls.Add(this.txtSubtitleFolderNames);
             this.groupBox29.Controls.Add(this.cbCopySubsFolders);
             this.groupBox29.Location = new System.Drawing.Point(6, 160);
             this.groupBox29.Name = "groupBox29";
-            this.groupBox29.Size = new System.Drawing.Size(408, 78);
+            this.groupBox29.Size = new System.Drawing.Size(398, 78);
             this.groupBox29.TabIndex = 44;
             this.groupBox29.TabStop = false;
             this.groupBox29.Text = "Subtitle Folders";
-            //
+            // 
             // label94
-            //
+            // 
             this.label94.AutoSize = true;
             this.label94.Location = new System.Drawing.Point(3, 45);
             this.label94.Name = "label94";
             this.label94.Size = new System.Drawing.Size(113, 13);
             this.label94.TabIndex = 30;
             this.label94.Text = "&Subtitle Folder Names:";
-            //
+            // 
             // txtSubtitleFolderNames
-            //
-            this.txtSubtitleFolderNames.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtSubtitleFolderNames.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSubtitleFolderNames.Location = new System.Drawing.Point(122, 42);
             this.txtSubtitleFolderNames.Name = "txtSubtitleFolderNames";
-            this.txtSubtitleFolderNames.Size = new System.Drawing.Size(280, 20);
+            this.txtSubtitleFolderNames.Size = new System.Drawing.Size(270, 20);
             this.txtSubtitleFolderNames.TabIndex = 31;
-            //
+            // 
             // cbCopySubsFolders
-            //
+            // 
             this.cbCopySubsFolders.AutoSize = true;
             this.cbCopySubsFolders.Location = new System.Drawing.Point(6, 19);
             this.cbCopySubsFolders.Name = "cbCopySubsFolders";
@@ -5173,10 +5202,10 @@ namespace TVRename
             this.cbCopySubsFolders.TabIndex = 29;
             this.cbCopySubsFolders.Text = "Copy subtitle folders";
             this.cbCopySubsFolders.UseVisualStyleBackColor = true;
-            //
+            // 
             // label93
-            //
-            this.label93.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.label93.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label93.AutoSize = true;
             this.label93.Location = new System.Drawing.Point(3, 3);
@@ -5185,23 +5214,23 @@ namespace TVRename
             this.label93.TabIndex = 43;
             this.label93.Text = "These preferences control how TV Rename finds and retains\r\nsubtitles and subtitle" +
     " files.";
-            //
+            // 
             // pictureBox2
-            //
+            // 
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox2.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pictureBox2.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox2.Location = new System.Drawing.Point(365, 2);
+            this.pictureBox2.Location = new System.Drawing.Point(355, 2);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(43, 40);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox2.TabIndex = 42;
             this.pictureBox2.TabStop = false;
-            //
+            // 
             // groupBox9
-            //
-            this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox9.Controls.Add(this.cbTxtToSub);
             this.groupBox9.Controls.Add(this.label46);
@@ -5209,13 +5238,13 @@ namespace TVRename
             this.groupBox9.Controls.Add(this.chkRetainLanguageSpecificSubtitles);
             this.groupBox9.Location = new System.Drawing.Point(6, 48);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(408, 106);
+            this.groupBox9.Size = new System.Drawing.Size(398, 106);
             this.groupBox9.TabIndex = 41;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Subtitles";
-            //
+            // 
             // cbTxtToSub
-            //
+            // 
             this.cbTxtToSub.AutoSize = true;
             this.cbTxtToSub.Location = new System.Drawing.Point(6, 42);
             this.cbTxtToSub.Name = "cbTxtToSub";
@@ -5223,27 +5252,27 @@ namespace TVRename
             this.cbTxtToSub.TabIndex = 32;
             this.cbTxtToSub.Text = "&Rename .txt to .sub";
             this.cbTxtToSub.UseVisualStyleBackColor = true;
-            //
+            // 
             // label46
-            //
+            // 
             this.label46.AutoSize = true;
             this.label46.Location = new System.Drawing.Point(3, 70);
             this.label46.Name = "label46";
             this.label46.Size = new System.Drawing.Size(98, 13);
             this.label46.TabIndex = 30;
             this.label46.Text = "&Subtitle extensions:";
-            //
+            // 
             // txtSubtitleExtensions
-            //
-            this.txtSubtitleExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtSubtitleExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSubtitleExtensions.Location = new System.Drawing.Point(107, 67);
             this.txtSubtitleExtensions.Name = "txtSubtitleExtensions";
-            this.txtSubtitleExtensions.Size = new System.Drawing.Size(295, 20);
+            this.txtSubtitleExtensions.Size = new System.Drawing.Size(285, 20);
             this.txtSubtitleExtensions.TabIndex = 31;
-            //
+            // 
             // chkRetainLanguageSpecificSubtitles
-            //
+            // 
             this.chkRetainLanguageSpecificSubtitles.AutoSize = true;
             this.chkRetainLanguageSpecificSubtitles.Location = new System.Drawing.Point(6, 19);
             this.chkRetainLanguageSpecificSubtitles.Name = "chkRetainLanguageSpecificSubtitles";
@@ -5251,9 +5280,9 @@ namespace TVRename
             this.chkRetainLanguageSpecificSubtitles.TabIndex = 29;
             this.chkRetainLanguageSpecificSubtitles.Text = "Retain &Language Specific Subtitles";
             this.chkRetainLanguageSpecificSubtitles.UseVisualStyleBackColor = true;
-            //
+            // 
             // tpJackett
-            //
+            // 
             this.tpJackett.Controls.Add(this.label97);
             this.tpJackett.Controls.Add(this.tbUnwantedRSSTerms);
             this.tpJackett.Controls.Add(this.chkSearchJackettButton);
@@ -5268,34 +5297,34 @@ namespace TVRename
             this.tpJackett.Controls.Add(this.groupBox22);
             this.tpJackett.Controls.Add(this.label45);
             this.tpJackett.Controls.Add(this.tbPreferredRSSTerms);
-            this.tpJackett.Location = new System.Drawing.Point(139, 4);
+            this.tpJackett.Location = new System.Drawing.Point(149, 4);
             this.tpJackett.Name = "tpJackett";
             this.tpJackett.Padding = new System.Windows.Forms.Padding(3);
-            this.tpJackett.Size = new System.Drawing.Size(417, 561);
+            this.tpJackett.Size = new System.Drawing.Size(407, 592);
             this.tpJackett.TabIndex = 17;
             this.tpJackett.Text = "Jackett Search";
             this.tpJackett.UseVisualStyleBackColor = true;
-            //
+            // 
             // label97
-            //
+            // 
             this.label97.AutoSize = true;
             this.label97.Location = new System.Drawing.Point(6, 127);
             this.label97.Name = "label97";
             this.label97.Size = new System.Drawing.Size(91, 13);
             this.label97.TabIndex = 50;
             this.label97.Text = "Unwanted Terms:";
-            //
+            // 
             // tbUnwantedRSSTerms
-            //
-            this.tbUnwantedRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbUnwantedRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbUnwantedRSSTerms.Location = new System.Drawing.Point(103, 124);
             this.tbUnwantedRSSTerms.Name = "tbUnwantedRSSTerms";
-            this.tbUnwantedRSSTerms.Size = new System.Drawing.Size(295, 20);
+            this.tbUnwantedRSSTerms.Size = new System.Drawing.Size(285, 20);
             this.tbUnwantedRSSTerms.TabIndex = 49;
-            //
+            // 
             // chkSearchJackettButton
-            //
+            // 
             this.chkSearchJackettButton.AutoSize = true;
             this.chkSearchJackettButton.Location = new System.Drawing.Point(227, 219);
             this.chkSearchJackettButton.Name = "chkSearchJackettButton";
@@ -5303,10 +5332,10 @@ namespace TVRename
             this.chkSearchJackettButton.TabIndex = 48;
             this.chkSearchJackettButton.Text = "Show \'Search &Jackett\' button";
             this.chkSearchJackettButton.UseVisualStyleBackColor = true;
-            //
+            // 
             // cmbSupervisedDuplicateAction
-            //
-            this.cmbSupervisedDuplicateAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.cmbSupervisedDuplicateAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbSupervisedDuplicateAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSupervisedDuplicateAction.FormattingEnabled = true;
@@ -5319,22 +5348,22 @@ namespace TVRename
             "Use First"});
             this.cmbSupervisedDuplicateAction.Location = new System.Drawing.Point(163, 175);
             this.cmbSupervisedDuplicateAction.Name = "cmbSupervisedDuplicateAction";
-            this.cmbSupervisedDuplicateAction.Size = new System.Drawing.Size(235, 21);
+            this.cmbSupervisedDuplicateAction.Size = new System.Drawing.Size(225, 21);
             this.cmbSupervisedDuplicateAction.Sorted = true;
             this.cmbSupervisedDuplicateAction.TabIndex = 47;
-            //
+            // 
             // label77
-            //
+            // 
             this.label77.AutoSize = true;
             this.label77.Location = new System.Drawing.Point(7, 178);
             this.label77.Name = "label77";
             this.label77.Size = new System.Drawing.Size(144, 13);
             this.label77.TabIndex = 46;
             this.label77.Text = "Supervised Duplicate Action:";
-            //
+            // 
             // cmbUnattendedDuplicateAction
-            //
-            this.cmbUnattendedDuplicateAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.cmbUnattendedDuplicateAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbUnattendedDuplicateAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbUnattendedDuplicateAction.FormattingEnabled = true;
@@ -5347,21 +5376,21 @@ namespace TVRename
             "Use First"});
             this.cmbUnattendedDuplicateAction.Location = new System.Drawing.Point(163, 148);
             this.cmbUnattendedDuplicateAction.Name = "cmbUnattendedDuplicateAction";
-            this.cmbUnattendedDuplicateAction.Size = new System.Drawing.Size(235, 21);
+            this.cmbUnattendedDuplicateAction.Size = new System.Drawing.Size(225, 21);
             this.cmbUnattendedDuplicateAction.Sorted = true;
             this.cmbUnattendedDuplicateAction.TabIndex = 45;
-            //
+            // 
             // label76
-            //
+            // 
             this.label76.AutoSize = true;
             this.label76.Location = new System.Drawing.Point(7, 151);
             this.label76.Name = "label76";
             this.label76.Size = new System.Drawing.Size(147, 13);
             this.label76.TabIndex = 44;
             this.label76.Text = "Unattended Duplicate Action:";
-            //
+            // 
             // cbDetailedRSSJSONLogging
-            //
+            // 
             this.cbDetailedRSSJSONLogging.AutoSize = true;
             this.cbDetailedRSSJSONLogging.Location = new System.Drawing.Point(8, 75);
             this.cbDetailedRSSJSONLogging.Name = "cbDetailedRSSJSONLogging";
@@ -5369,23 +5398,23 @@ namespace TVRename
             this.cbDetailedRSSJSONLogging.TabIndex = 43;
             this.cbDetailedRSSJSONLogging.Text = "Detailed logging (useful when setting up RSS/JSON Feeds)";
             this.cbDetailedRSSJSONLogging.UseVisualStyleBackColor = false;
-            //
+            // 
             // pbuJackett
-            //
+            // 
             this.pbuJackett.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbuJackett.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbuJackett.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbuJackett.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbuJackett.Location = new System.Drawing.Point(368, 12);
+            this.pbuJackett.Location = new System.Drawing.Point(358, 12);
             this.pbuJackett.Name = "pbuJackett";
             this.pbuJackett.Size = new System.Drawing.Size(43, 40);
             this.pbuJackett.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbuJackett.TabIndex = 42;
             this.pbuJackett.TabStop = false;
             this.pbuJackett.Click += new System.EventHandler(this.pbuJackett_Click);
-            //
+            // 
             // label70
-            //
+            // 
             this.label70.AutoSize = true;
             this.label70.Location = new System.Drawing.Point(4, 7);
             this.label70.Name = "label70";
@@ -5394,9 +5423,9 @@ namespace TVRename
             this.label70.Text = "If an episode is missing from your library, TV Rename will talk to a\r\nrunning Jac" +
     "kett instance for appropriate files to download. It will \r\nuse the torrent handl" +
     "ers to download the file(s)";
-            //
+            // 
             // cbSearchJackett
-            //
+            // 
             this.cbSearchJackett.AutoSize = true;
             this.cbSearchJackett.Location = new System.Drawing.Point(8, 219);
             this.cbSearchJackett.Name = "cbSearchJackett";
@@ -5405,10 +5434,10 @@ namespace TVRename
             this.cbSearchJackett.Text = "Search &Jackett for missing files";
             this.cbSearchJackett.UseVisualStyleBackColor = true;
             this.cbSearchJackett.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // groupBox22
-            //
-            this.groupBox22.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox22.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox22.Controls.Add(this.chkUseJackettTextSearch);
             this.groupBox22.Controls.Add(this.chkSkipJackettFullScans);
@@ -5425,13 +5454,13 @@ namespace TVRename
             this.groupBox22.Controls.Add(this.txtJackettServer);
             this.groupBox22.Location = new System.Drawing.Point(6, 242);
             this.groupBox22.Name = "groupBox22";
-            this.groupBox22.Size = new System.Drawing.Size(408, 201);
+            this.groupBox22.Size = new System.Drawing.Size(398, 201);
             this.groupBox22.TabIndex = 39;
             this.groupBox22.TabStop = false;
             this.groupBox22.Text = "Jackett Search";
-            //
+            // 
             // chkUseJackettTextSearch
-            //
+            // 
             this.chkUseJackettTextSearch.AutoSize = true;
             this.chkUseJackettTextSearch.Location = new System.Drawing.Point(98, 146);
             this.chkUseJackettTextSearch.Name = "chkUseJackettTextSearch";
@@ -5439,9 +5468,9 @@ namespace TVRename
             this.chkUseJackettTextSearch.TabIndex = 42;
             this.chkUseJackettTextSearch.Text = "Use text search";
             this.chkUseJackettTextSearch.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkSkipJackettFullScans
-            //
+            // 
             this.chkSkipJackettFullScans.AutoSize = true;
             this.chkSkipJackettFullScans.Location = new System.Drawing.Point(248, 19);
             this.chkSkipJackettFullScans.Name = "chkSkipJackettFullScans";
@@ -5449,9 +5478,9 @@ namespace TVRename
             this.chkSkipJackettFullScans.TabIndex = 41;
             this.chkSkipJackettFullScans.Text = "Skip Jackett On Full Scans";
             this.chkSkipJackettFullScans.UseVisualStyleBackColor = true;
-            //
+            // 
             // llJackettLink
-            //
+            // 
             this.llJackettLink.AutoSize = true;
             this.llJackettLink.Location = new System.Drawing.Point(98, 170);
             this.llJackettLink.Name = "llJackettLink";
@@ -5460,18 +5489,18 @@ namespace TVRename
             this.llJackettLink.TabStop = true;
             this.llJackettLink.Text = "linkLabel1";
             this.llJackettLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LlJackettLink_LinkClicked);
-            //
+            // 
             // label71
-            //
+            // 
             this.label71.AutoSize = true;
             this.label71.Location = new System.Drawing.Point(6, 170);
             this.label71.Name = "label71";
             this.label71.Size = new System.Drawing.Size(72, 13);
             this.label71.TabIndex = 39;
             this.label71.Text = "Configuration:";
-            //
+            // 
             // cbSearchJackettOnManualScansOnly
-            //
+            // 
             this.cbSearchJackettOnManualScansOnly.AutoSize = true;
             this.cbSearchJackettOnManualScansOnly.Location = new System.Drawing.Point(9, 19);
             this.cbSearchJackettOnManualScansOnly.Name = "cbSearchJackettOnManualScansOnly";
@@ -5479,131 +5508,131 @@ namespace TVRename
             this.cbSearchJackettOnManualScansOnly.TabIndex = 38;
             this.cbSearchJackettOnManualScansOnly.Text = "Only on manual scans";
             this.cbSearchJackettOnManualScansOnly.UseVisualStyleBackColor = true;
-            //
+            // 
             // label72
-            //
+            // 
             this.label72.AutoSize = true;
             this.label72.Location = new System.Drawing.Point(6, 97);
             this.label72.Name = "label72";
             this.label72.Size = new System.Drawing.Size(70, 13);
             this.label72.TabIndex = 37;
             this.label72.Text = "Indexer Path:";
-            //
+            // 
             // txtJackettIndexer
-            //
-            this.txtJackettIndexer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtJackettIndexer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtJackettIndexer.Location = new System.Drawing.Point(98, 94);
             this.txtJackettIndexer.Name = "txtJackettIndexer";
-            this.txtJackettIndexer.Size = new System.Drawing.Size(305, 20);
+            this.txtJackettIndexer.Size = new System.Drawing.Size(295, 20);
             this.txtJackettIndexer.TabIndex = 36;
-            //
+            // 
             // label73
-            //
+            // 
             this.label73.AutoSize = true;
             this.label73.Location = new System.Drawing.Point(6, 123);
             this.label73.Name = "label73";
             this.label73.Size = new System.Drawing.Size(48, 13);
             this.label73.TabIndex = 35;
             this.label73.Text = "API Key:";
-            //
+            // 
             // txtJackettAPIKey
-            //
-            this.txtJackettAPIKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtJackettAPIKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtJackettAPIKey.Location = new System.Drawing.Point(98, 120);
             this.txtJackettAPIKey.Name = "txtJackettAPIKey";
-            this.txtJackettAPIKey.Size = new System.Drawing.Size(305, 20);
+            this.txtJackettAPIKey.Size = new System.Drawing.Size(295, 20);
             this.txtJackettAPIKey.TabIndex = 34;
-            //
+            // 
             // label74
-            //
+            // 
             this.label74.AutoSize = true;
             this.label74.Location = new System.Drawing.Point(6, 71);
             this.label74.Name = "label74";
             this.label74.Size = new System.Drawing.Size(29, 13);
             this.label74.TabIndex = 33;
             this.label74.Text = "Port:";
-            //
+            // 
             // txtJackettPort
-            //
-            this.txtJackettPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtJackettPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtJackettPort.Location = new System.Drawing.Point(98, 68);
             this.txtJackettPort.Name = "txtJackettPort";
-            this.txtJackettPort.Size = new System.Drawing.Size(305, 20);
+            this.txtJackettPort.Size = new System.Drawing.Size(295, 20);
             this.txtJackettPort.TabIndex = 32;
             this.txtJackettPort.TextChanged += new System.EventHandler(this.JackettDetailsUpdate);
-            //
+            // 
             // label75
-            //
+            // 
             this.label75.AutoSize = true;
             this.label75.Location = new System.Drawing.Point(6, 45);
             this.label75.Name = "label75";
             this.label75.Size = new System.Drawing.Size(41, 13);
             this.label75.TabIndex = 31;
             this.label75.Text = "Server:";
-            //
+            // 
             // txtJackettServer
-            //
-            this.txtJackettServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtJackettServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtJackettServer.Location = new System.Drawing.Point(97, 42);
             this.txtJackettServer.Name = "txtJackettServer";
-            this.txtJackettServer.Size = new System.Drawing.Size(305, 20);
+            this.txtJackettServer.Size = new System.Drawing.Size(295, 20);
             this.txtJackettServer.TabIndex = 30;
             this.txtJackettServer.TextChanged += new System.EventHandler(this.JackettDetailsUpdate);
-            //
+            // 
             // label45
-            //
+            // 
             this.label45.AutoSize = true;
             this.label45.Location = new System.Drawing.Point(6, 101);
             this.label45.Name = "label45";
             this.label45.Size = new System.Drawing.Size(85, 13);
             this.label45.TabIndex = 33;
             this.label45.Text = "Preferred Terms:";
-            //
+            // 
             // tbPreferredRSSTerms
-            //
-            this.tbPreferredRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.tbPreferredRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbPreferredRSSTerms.Location = new System.Drawing.Point(103, 98);
             this.tbPreferredRSSTerms.Name = "tbPreferredRSSTerms";
-            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(295, 20);
+            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(285, 20);
             this.tbPreferredRSSTerms.TabIndex = 32;
-            //
+            // 
             // tpAutoExportLibrary
-            //
+            // 
             this.tpAutoExportLibrary.Controls.Add(this.pbuShowExport);
             this.tpAutoExportLibrary.Controls.Add(this.label89);
             this.tpAutoExportLibrary.Controls.Add(this.groupBox26);
             this.tpAutoExportLibrary.Controls.Add(this.groupBox7);
             this.tpAutoExportLibrary.Controls.Add(this.groupBox27);
             this.tpAutoExportLibrary.Controls.Add(this.groupBox3);
-            this.tpAutoExportLibrary.Location = new System.Drawing.Point(139, 4);
+            this.tpAutoExportLibrary.Location = new System.Drawing.Point(149, 4);
             this.tpAutoExportLibrary.Name = "tpAutoExportLibrary";
             this.tpAutoExportLibrary.Padding = new System.Windows.Forms.Padding(3);
-            this.tpAutoExportLibrary.Size = new System.Drawing.Size(417, 561);
+            this.tpAutoExportLibrary.Size = new System.Drawing.Size(407, 592);
             this.tpAutoExportLibrary.TabIndex = 19;
             this.tpAutoExportLibrary.Text = "Library Export";
             this.tpAutoExportLibrary.UseVisualStyleBackColor = true;
-            //
+            // 
             // pbuShowExport
-            //
+            // 
             this.pbuShowExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbuShowExport.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbuShowExport.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbuShowExport.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbuShowExport.Location = new System.Drawing.Point(368, 16);
+            this.pbuShowExport.Location = new System.Drawing.Point(358, 16);
             this.pbuShowExport.Name = "pbuShowExport";
             this.pbuShowExport.Size = new System.Drawing.Size(43, 40);
             this.pbuShowExport.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbuShowExport.TabIndex = 44;
             this.pbuShowExport.TabStop = false;
             this.pbuShowExport.Click += new System.EventHandler(this.pbuShowExport_Click);
-            //
+            // 
             // label89
-            //
+            // 
             this.label89.AutoSize = true;
             this.label89.Location = new System.Drawing.Point(4, 11);
             this.label89.Name = "label89";
@@ -5611,10 +5640,10 @@ namespace TVRename
             this.label89.TabIndex = 43;
             this.label89.Text = "TV Rename can export information about\r\nshows, movies and episodes in various for" +
     "mats.";
-            //
+            // 
             // groupBox26
-            //
-            this.groupBox26.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox26.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox26.Controls.Add(this.bnBrowseMoviesHTML);
             this.groupBox26.Controls.Add(this.cbMoviesHTML);
@@ -5624,24 +5653,24 @@ namespace TVRename
             this.groupBox26.Controls.Add(this.txtMoviesTXTTo);
             this.groupBox26.Location = new System.Drawing.Point(10, 300);
             this.groupBox26.Name = "groupBox26";
-            this.groupBox26.Size = new System.Drawing.Size(404, 72);
+            this.groupBox26.Size = new System.Drawing.Size(394, 72);
             this.groupBox26.TabIndex = 10;
             this.groupBox26.TabStop = false;
             this.groupBox26.Text = "All Movies";
-            //
+            // 
             // bnBrowseMoviesHTML
-            //
+            // 
             this.bnBrowseMoviesHTML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseMoviesHTML.Location = new System.Drawing.Point(321, 45);
+            this.bnBrowseMoviesHTML.Location = new System.Drawing.Point(311, 45);
             this.bnBrowseMoviesHTML.Name = "bnBrowseMoviesHTML";
             this.bnBrowseMoviesHTML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMoviesHTML.TabIndex = 8;
             this.bnBrowseMoviesHTML.Text = "Browse...";
             this.bnBrowseMoviesHTML.UseVisualStyleBackColor = true;
             this.bnBrowseMoviesHTML.Click += new System.EventHandler(this.bnBrowseMoviesHTML_Click);
-            //
+            // 
             // cbMoviesHTML
-            //
+            // 
             this.cbMoviesHTML.AutoSize = true;
             this.cbMoviesHTML.Location = new System.Drawing.Point(8, 49);
             this.cbMoviesHTML.Name = "cbMoviesHTML";
@@ -5650,29 +5679,29 @@ namespace TVRename
             this.cbMoviesHTML.Text = "HTML";
             this.cbMoviesHTML.UseVisualStyleBackColor = true;
             this.cbMoviesHTML.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // txtMoviesHTMLTo
-            //
-            this.txtMoviesHTMLTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtMoviesHTMLTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMoviesHTMLTo.Location = new System.Drawing.Point(64, 47);
             this.txtMoviesHTMLTo.Name = "txtMoviesHTMLTo";
-            this.txtMoviesHTMLTo.Size = new System.Drawing.Size(251, 20);
+            this.txtMoviesHTMLTo.Size = new System.Drawing.Size(241, 20);
             this.txtMoviesHTMLTo.TabIndex = 7;
-            //
+            // 
             // bnBrowseMoviesTXT
-            //
+            // 
             this.bnBrowseMoviesTXT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseMoviesTXT.Location = new System.Drawing.Point(321, 21);
+            this.bnBrowseMoviesTXT.Location = new System.Drawing.Point(311, 21);
             this.bnBrowseMoviesTXT.Name = "bnBrowseMoviesTXT";
             this.bnBrowseMoviesTXT.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMoviesTXT.TabIndex = 5;
             this.bnBrowseMoviesTXT.Text = "Browse...";
             this.bnBrowseMoviesTXT.UseVisualStyleBackColor = true;
             this.bnBrowseMoviesTXT.Click += new System.EventHandler(this.bnBrowseMoviesTXT_Click);
-            //
+            // 
             // cbMoviesTXT
-            //
+            // 
             this.cbMoviesTXT.AutoSize = true;
             this.cbMoviesTXT.Location = new System.Drawing.Point(8, 25);
             this.cbMoviesTXT.Name = "cbMoviesTXT";
@@ -5681,19 +5710,19 @@ namespace TVRename
             this.cbMoviesTXT.Text = "TXT";
             this.cbMoviesTXT.UseVisualStyleBackColor = true;
             this.cbMoviesTXT.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // txtMoviesTXTTo
-            //
-            this.txtMoviesTXTTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtMoviesTXTTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMoviesTXTTo.Location = new System.Drawing.Point(64, 23);
             this.txtMoviesTXTTo.Name = "txtMoviesTXTTo";
-            this.txtMoviesTXTTo.Size = new System.Drawing.Size(250, 20);
+            this.txtMoviesTXTTo.Size = new System.Drawing.Size(240, 20);
             this.txtMoviesTXTTo.TabIndex = 4;
-            //
+            // 
             // groupBox7
-            //
-            this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox7.Controls.Add(this.bnBrowseShowsHTML);
             this.groupBox7.Controls.Add(this.cbShowsHTML);
@@ -5703,24 +5732,24 @@ namespace TVRename
             this.groupBox7.Controls.Add(this.txtShowsTXTTo);
             this.groupBox7.Location = new System.Drawing.Point(10, 142);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(404, 72);
+            this.groupBox7.Size = new System.Drawing.Size(394, 72);
             this.groupBox7.TabIndex = 6;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "All TV Shows";
-            //
+            // 
             // bnBrowseShowsHTML
-            //
+            // 
             this.bnBrowseShowsHTML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseShowsHTML.Location = new System.Drawing.Point(321, 45);
+            this.bnBrowseShowsHTML.Location = new System.Drawing.Point(311, 45);
             this.bnBrowseShowsHTML.Name = "bnBrowseShowsHTML";
             this.bnBrowseShowsHTML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseShowsHTML.TabIndex = 8;
             this.bnBrowseShowsHTML.Text = "Browse...";
             this.bnBrowseShowsHTML.UseVisualStyleBackColor = true;
             this.bnBrowseShowsHTML.Click += new System.EventHandler(this.bnBrowseShowsHTML_Click);
-            //
+            // 
             // cbShowsHTML
-            //
+            // 
             this.cbShowsHTML.AutoSize = true;
             this.cbShowsHTML.Location = new System.Drawing.Point(8, 49);
             this.cbShowsHTML.Name = "cbShowsHTML";
@@ -5729,29 +5758,29 @@ namespace TVRename
             this.cbShowsHTML.Text = "HTML";
             this.cbShowsHTML.UseVisualStyleBackColor = true;
             this.cbShowsHTML.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // txtShowsHTMLTo
-            //
-            this.txtShowsHTMLTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtShowsHTMLTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtShowsHTMLTo.Location = new System.Drawing.Point(64, 47);
             this.txtShowsHTMLTo.Name = "txtShowsHTMLTo";
-            this.txtShowsHTMLTo.Size = new System.Drawing.Size(251, 20);
+            this.txtShowsHTMLTo.Size = new System.Drawing.Size(241, 20);
             this.txtShowsHTMLTo.TabIndex = 7;
-            //
+            // 
             // bnBrowseShowsTXT
-            //
+            // 
             this.bnBrowseShowsTXT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseShowsTXT.Location = new System.Drawing.Point(321, 21);
+            this.bnBrowseShowsTXT.Location = new System.Drawing.Point(311, 21);
             this.bnBrowseShowsTXT.Name = "bnBrowseShowsTXT";
             this.bnBrowseShowsTXT.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseShowsTXT.TabIndex = 5;
             this.bnBrowseShowsTXT.Text = "Browse...";
             this.bnBrowseShowsTXT.UseVisualStyleBackColor = true;
             this.bnBrowseShowsTXT.Click += new System.EventHandler(this.bnBrowseShowsTXT_Click);
-            //
+            // 
             // cbShowsTXT
-            //
+            // 
             this.cbShowsTXT.AutoSize = true;
             this.cbShowsTXT.Location = new System.Drawing.Point(8, 25);
             this.cbShowsTXT.Name = "cbShowsTXT";
@@ -5760,19 +5789,19 @@ namespace TVRename
             this.cbShowsTXT.Text = "TXT";
             this.cbShowsTXT.UseVisualStyleBackColor = true;
             this.cbShowsTXT.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // txtShowsTXTTo
-            //
-            this.txtShowsTXTTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtShowsTXTTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtShowsTXTTo.Location = new System.Drawing.Point(64, 23);
             this.txtShowsTXTTo.Name = "txtShowsTXTTo";
-            this.txtShowsTXTTo.Size = new System.Drawing.Size(250, 20);
+            this.txtShowsTXTTo.Size = new System.Drawing.Size(240, 20);
             this.txtShowsTXTTo.TabIndex = 4;
-            //
+            // 
             // groupBox27
-            //
-            this.groupBox27.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox27.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox27.Controls.Add(this.bnBrowseMissingMoviesCSV);
             this.groupBox27.Controls.Add(this.bnBrowseMissingMoviesXML);
@@ -5782,44 +5811,44 @@ namespace TVRename
             this.groupBox27.Controls.Add(this.txtMissingMoviesXML);
             this.groupBox27.Location = new System.Drawing.Point(9, 220);
             this.groupBox27.Name = "groupBox27";
-            this.groupBox27.Size = new System.Drawing.Size(405, 79);
+            this.groupBox27.Size = new System.Drawing.Size(395, 79);
             this.groupBox27.TabIndex = 9;
             this.groupBox27.TabStop = false;
             this.groupBox27.Text = "Missing Movies";
-            //
+            // 
             // bnBrowseMissingMoviesCSV
-            //
+            // 
             this.bnBrowseMissingMoviesCSV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseMissingMoviesCSV.Location = new System.Drawing.Point(321, 47);
+            this.bnBrowseMissingMoviesCSV.Location = new System.Drawing.Point(311, 47);
             this.bnBrowseMissingMoviesCSV.Name = "bnBrowseMissingMoviesCSV";
             this.bnBrowseMissingMoviesCSV.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingMoviesCSV.TabIndex = 2;
             this.bnBrowseMissingMoviesCSV.Text = "Browse...";
             this.bnBrowseMissingMoviesCSV.UseVisualStyleBackColor = true;
             this.bnBrowseMissingMoviesCSV.Click += new System.EventHandler(this.bnBrowseMissingMoviesCSV_Click);
-            //
+            // 
             // bnBrowseMissingMoviesXML
-            //
+            // 
             this.bnBrowseMissingMoviesXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseMissingMoviesXML.Location = new System.Drawing.Point(322, 19);
+            this.bnBrowseMissingMoviesXML.Location = new System.Drawing.Point(312, 19);
             this.bnBrowseMissingMoviesXML.Name = "bnBrowseMissingMoviesXML";
             this.bnBrowseMissingMoviesXML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingMoviesXML.TabIndex = 5;
             this.bnBrowseMissingMoviesXML.Text = "Browse...";
             this.bnBrowseMissingMoviesXML.UseVisualStyleBackColor = true;
             this.bnBrowseMissingMoviesXML.Click += new System.EventHandler(this.bnBrowseMissingMoviesXML_Click);
-            //
+            // 
             // txtMissingMoviesCSV
-            //
-            this.txtMissingMoviesCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtMissingMoviesCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMissingMoviesCSV.Location = new System.Drawing.Point(64, 48);
             this.txtMissingMoviesCSV.Name = "txtMissingMoviesCSV";
-            this.txtMissingMoviesCSV.Size = new System.Drawing.Size(251, 20);
+            this.txtMissingMoviesCSV.Size = new System.Drawing.Size(241, 20);
             this.txtMissingMoviesCSV.TabIndex = 1;
-            //
+            // 
             // cbMissingMoviesXML
-            //
+            // 
             this.cbMissingMoviesXML.AutoSize = true;
             this.cbMissingMoviesXML.Location = new System.Drawing.Point(8, 23);
             this.cbMissingMoviesXML.Name = "cbMissingMoviesXML";
@@ -5828,9 +5857,9 @@ namespace TVRename
             this.cbMissingMoviesXML.Text = "XML";
             this.cbMissingMoviesXML.UseVisualStyleBackColor = true;
             this.cbMissingMoviesXML.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // cbMissingMoviesCSV
-            //
+            // 
             this.cbMissingMoviesCSV.AutoSize = true;
             this.cbMissingMoviesCSV.Location = new System.Drawing.Point(9, 48);
             this.cbMissingMoviesCSV.Name = "cbMissingMoviesCSV";
@@ -5839,19 +5868,19 @@ namespace TVRename
             this.cbMissingMoviesCSV.Text = "CSV";
             this.cbMissingMoviesCSV.UseVisualStyleBackColor = true;
             this.cbMissingMoviesCSV.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // txtMissingMoviesXML
-            //
-            this.txtMissingMoviesXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtMissingMoviesXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMissingMoviesXML.Location = new System.Drawing.Point(64, 21);
             this.txtMissingMoviesXML.Name = "txtMissingMoviesXML";
-            this.txtMissingMoviesXML.Size = new System.Drawing.Size(251, 20);
+            this.txtMissingMoviesXML.Size = new System.Drawing.Size(241, 20);
             this.txtMissingMoviesXML.TabIndex = 4;
-            //
+            // 
             // groupBox3
-            //
-            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.bnBrowseMissingCSV);
             this.groupBox3.Controls.Add(this.bnBrowseMissingXML);
@@ -5861,44 +5890,44 @@ namespace TVRename
             this.groupBox3.Controls.Add(this.txtMissingXML);
             this.groupBox3.Location = new System.Drawing.Point(9, 62);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(405, 79);
+            this.groupBox3.Size = new System.Drawing.Size(395, 79);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Missing Episodes";
-            //
+            // 
             // bnBrowseMissingCSV
-            //
+            // 
             this.bnBrowseMissingCSV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(321, 47);
+            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(311, 47);
             this.bnBrowseMissingCSV.Name = "bnBrowseMissingCSV";
             this.bnBrowseMissingCSV.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingCSV.TabIndex = 2;
             this.bnBrowseMissingCSV.Text = "Browse...";
             this.bnBrowseMissingCSV.UseVisualStyleBackColor = true;
             this.bnBrowseMissingCSV.Click += new System.EventHandler(this.bnBrowseMissingCSV_Click);
-            //
+            // 
             // bnBrowseMissingXML
-            //
+            // 
             this.bnBrowseMissingXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseMissingXML.Location = new System.Drawing.Point(322, 19);
+            this.bnBrowseMissingXML.Location = new System.Drawing.Point(312, 19);
             this.bnBrowseMissingXML.Name = "bnBrowseMissingXML";
             this.bnBrowseMissingXML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingXML.TabIndex = 5;
             this.bnBrowseMissingXML.Text = "Browse...";
             this.bnBrowseMissingXML.UseVisualStyleBackColor = true;
             this.bnBrowseMissingXML.Click += new System.EventHandler(this.bnBrowseMissingXML_Click);
-            //
+            // 
             // txtMissingCSV
-            //
-            this.txtMissingCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtMissingCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMissingCSV.Location = new System.Drawing.Point(64, 48);
             this.txtMissingCSV.Name = "txtMissingCSV";
-            this.txtMissingCSV.Size = new System.Drawing.Size(251, 20);
+            this.txtMissingCSV.Size = new System.Drawing.Size(241, 20);
             this.txtMissingCSV.TabIndex = 1;
-            //
+            // 
             // cbMissingXML
-            //
+            // 
             this.cbMissingXML.AutoSize = true;
             this.cbMissingXML.Location = new System.Drawing.Point(8, 23);
             this.cbMissingXML.Name = "cbMissingXML";
@@ -5907,9 +5936,9 @@ namespace TVRename
             this.cbMissingXML.Text = "XML";
             this.cbMissingXML.UseVisualStyleBackColor = true;
             this.cbMissingXML.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // cbMissingCSV
-            //
+            // 
             this.cbMissingCSV.AutoSize = true;
             this.cbMissingCSV.Location = new System.Drawing.Point(9, 48);
             this.cbMissingCSV.Name = "cbMissingCSV";
@@ -5918,53 +5947,55 @@ namespace TVRename
             this.cbMissingCSV.Text = "CSV";
             this.cbMissingCSV.UseVisualStyleBackColor = true;
             this.cbMissingCSV.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            //
+            // 
             // txtMissingXML
-            //
-            this.txtMissingXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            // 
+            this.txtMissingXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMissingXML.Location = new System.Drawing.Point(64, 21);
             this.txtMissingXML.Name = "txtMissingXML";
-            this.txtMissingXML.Size = new System.Drawing.Size(251, 20);
+            this.txtMissingXML.Size = new System.Drawing.Size(241, 20);
             this.txtMissingXML.TabIndex = 4;
-            //
+            // 
             // tbAppUpdate
-            //
+            // 
             this.tbAppUpdate.Controls.Add(this.pbuUpdates);
             this.tbAppUpdate.Controls.Add(this.label92);
             this.tbAppUpdate.Controls.Add(this.grpUpdateIntervalOption);
-            this.tbAppUpdate.Location = new System.Drawing.Point(139, 4);
+            this.tbAppUpdate.Location = new System.Drawing.Point(149, 4);
             this.tbAppUpdate.Name = "tbAppUpdate";
-            this.tbAppUpdate.Size = new System.Drawing.Size(417, 561);
+            this.tbAppUpdate.Size = new System.Drawing.Size(407, 592);
             this.tbAppUpdate.TabIndex = 20;
             this.tbAppUpdate.Text = "App Updates";
             this.tbAppUpdate.UseVisualStyleBackColor = true;
-            //
+            // 
             // pbuUpdates
-            //
+            // 
             this.pbuUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbuUpdates.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbuUpdates.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbuUpdates.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbuUpdates.Location = new System.Drawing.Point(367, 14);
+            this.pbuUpdates.Location = new System.Drawing.Point(357, 14);
             this.pbuUpdates.Name = "pbuUpdates";
             this.pbuUpdates.Size = new System.Drawing.Size(43, 40);
             this.pbuUpdates.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbuUpdates.TabIndex = 46;
             this.pbuUpdates.TabStop = false;
             this.pbuUpdates.Click += new System.EventHandler(this.pbuUpdates_Click);
-            //
+            // 
             // label92
-            //
+            // 
             this.label92.AutoSize = true;
             this.label92.Location = new System.Drawing.Point(3, 9);
             this.label92.Name = "label92";
             this.label92.Size = new System.Drawing.Size(230, 26);
             this.label92.TabIndex = 45;
             this.label92.Text = "Define how TV Rename alerts users about new\r\nversions being available";
-            //
+            // 
             // grpUpdateIntervalOption
-            //
+            // 
+            this.grpUpdateIntervalOption.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grpUpdateIntervalOption.Controls.Add(this.chkNoPopupOnUpdate);
             this.grpUpdateIntervalOption.Controls.Add(this.chkUpdateCheckEnabled);
             this.grpUpdateIntervalOption.Controls.Add(this.cboUpdateCheckInterval);
@@ -5972,12 +6003,12 @@ namespace TVRename
             this.grpUpdateIntervalOption.Controls.Add(this.optUpdateCheckAlways);
             this.grpUpdateIntervalOption.Location = new System.Drawing.Point(11, 60);
             this.grpUpdateIntervalOption.Name = "grpUpdateIntervalOption";
-            this.grpUpdateIntervalOption.Size = new System.Drawing.Size(399, 135);
+            this.grpUpdateIntervalOption.Size = new System.Drawing.Size(389, 135);
             this.grpUpdateIntervalOption.TabIndex = 1;
             this.grpUpdateIntervalOption.TabStop = false;
-            //
+            // 
             // chkNoPopupOnUpdate
-            //
+            // 
             this.chkNoPopupOnUpdate.AutoSize = true;
             this.chkNoPopupOnUpdate.Location = new System.Drawing.Point(16, 112);
             this.chkNoPopupOnUpdate.Name = "chkNoPopupOnUpdate";
@@ -5985,9 +6016,9 @@ namespace TVRename
             this.chkNoPopupOnUpdate.TabIndex = 2;
             this.chkNoPopupOnUpdate.Text = "No dialog when an update is available";
             this.chkNoPopupOnUpdate.UseVisualStyleBackColor = true;
-            //
+            // 
             // chkUpdateCheckEnabled
-            //
+            // 
             this.chkUpdateCheckEnabled.AutoSize = true;
             this.chkUpdateCheckEnabled.BackColor = System.Drawing.Color.White;
             this.chkUpdateCheckEnabled.Location = new System.Drawing.Point(0, 1);
@@ -5997,18 +6028,18 @@ namespace TVRename
             this.chkUpdateCheckEnabled.Text = "Check for Updates";
             this.chkUpdateCheckEnabled.UseVisualStyleBackColor = false;
             this.chkUpdateCheckEnabled.CheckedChanged += new System.EventHandler(this.chkUpdateCheckEnabled_CheckedChanged);
-            //
+            // 
             // cboUpdateCheckInterval
-            //
+            // 
             this.cboUpdateCheckInterval.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboUpdateCheckInterval.FormattingEnabled = true;
             this.cboUpdateCheckInterval.Location = new System.Drawing.Point(16, 78);
             this.cboUpdateCheckInterval.Name = "cboUpdateCheckInterval";
             this.cboUpdateCheckInterval.Size = new System.Drawing.Size(166, 21);
             this.cboUpdateCheckInterval.TabIndex = 2;
-            //
+            // 
             // optUpdateCheckInterval
-            //
+            // 
             this.optUpdateCheckInterval.AutoSize = true;
             this.optUpdateCheckInterval.Location = new System.Drawing.Point(16, 54);
             this.optUpdateCheckInterval.Name = "optUpdateCheckInterval";
@@ -6018,9 +6049,9 @@ namespace TVRename
             this.optUpdateCheckInterval.Text = "at certain intervals";
             this.optUpdateCheckInterval.UseVisualStyleBackColor = true;
             this.optUpdateCheckInterval.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
-            //
+            // 
             // optUpdateCheckAlways
-            //
+            // 
             this.optUpdateCheckAlways.AutoSize = true;
             this.optUpdateCheckAlways.Location = new System.Drawing.Point(16, 30);
             this.optUpdateCheckAlways.Name = "optUpdateCheckAlways";
@@ -6030,39 +6061,9 @@ namespace TVRename
             this.optUpdateCheckAlways.Text = "on every start";
             this.optUpdateCheckAlways.UseVisualStyleBackColor = true;
             this.optUpdateCheckAlways.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
-            //
-            // label98
-            //
-            this.label98.AutoSize = true;
-            this.label98.Location = new System.Drawing.Point(355, 128);
-            this.label98.Name = "label98";
-            this.label98.Size = new System.Drawing.Size(47, 13);
-            this.label98.TabIndex = 49;
-            this.label98.Text = "seconds";
-            this.toolTip1.SetToolTip(this.label98, "If checked the system will automatically scan and complete actions on a periodic " +
-        "schedule");
-            //
-            // upDownScanSeconds
-            //
-            this.upDownScanSeconds.Items.Add("120");
-            this.upDownScanSeconds.Items.Add("60");
-            this.upDownScanSeconds.Items.Add("30");
-            this.upDownScanSeconds.Items.Add("15");
-            this.upDownScanSeconds.Items.Add("10");
-            this.upDownScanSeconds.Items.Add("5");
-            this.upDownScanSeconds.Items.Add("4");
-            this.upDownScanSeconds.Items.Add("3");
-            this.upDownScanSeconds.Items.Add("2");
-            this.upDownScanSeconds.Items.Add("1");
-            this.upDownScanSeconds.Location = new System.Drawing.Point(311, 126);
-            this.upDownScanSeconds.Name = "upDownScanSeconds";
-            this.upDownScanSeconds.Size = new System.Drawing.Size(40, 20);
-            this.upDownScanSeconds.TabIndex = 48;
-            this.toolTip1.SetToolTip(this.upDownScanSeconds, "If checked the system will automatically scan and complete actions on a periodic " +
-        "schedule");
-            //
+            // 
             // Preferences
-            //
+            // 
             this.AcceptButton = this.OKButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -6075,7 +6076,7 @@ namespace TVRename
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(600, 660);
+            this.MinimumSize = new System.Drawing.Size(600, 658);
             this.Name = "Preferences";
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;

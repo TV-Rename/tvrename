@@ -103,6 +103,7 @@ namespace TVRename
         {
             base.ScaleControl(factor, specified);
             lvManualFolders.ScaleListViewColumns(factor);
+            codeFinderForm.lvMatches.ScaleListViewColumns(factor);
         }
         private void PopulateFolderTypes(MovieConfiguration.MovieFolderFormat selectedShowFormat)
         {

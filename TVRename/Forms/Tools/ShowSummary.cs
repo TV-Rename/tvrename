@@ -116,7 +116,7 @@ namespace TVRename
             // Draw season
             for (int c = chkHideSpecials.Checked ? 1 : 0; c < maxSeason + 1; c++)
             {
-                h = new ColumnHeader(ProcessedSeason.UIFullSeasonWord(c))
+                h = new ColumnHeader(c==0?ProcessedSeason.UIFullSeasonWord(c):c.ToString())
                 {
                     AutomaticSortEnabled = false,
                     ResizeEnabled = false

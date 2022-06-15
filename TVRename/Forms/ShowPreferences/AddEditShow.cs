@@ -125,6 +125,7 @@ namespace TVRename
         {
             base.ScaleControl(factor, specified);
             lvSeasonFolders.ScaleListViewColumns(factor);
+            codeFinderForm.lvMatches.ScaleListViewColumns(factor);
         }
         private string SeasonPreviewText()
         {

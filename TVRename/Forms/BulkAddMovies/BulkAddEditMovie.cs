@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System.Drawing;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -47,7 +48,11 @@ namespace TVRename
             Code = -1;
             Provider = TVDoc.ProviderType.libraryDefault;
         }
-
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+            codeFinderControl.lvMatches.ScaleListViewColumns(factor);
+        }
         private void MatchDoubleClick(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;

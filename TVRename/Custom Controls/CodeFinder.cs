@@ -53,12 +53,6 @@ namespace TVRename
             label3.Text = GetPromptLabel(Source);
         }
 
-        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-        {
-            base.ScaleControl(factor, specified);
-            lvMatches.ScaleListViewColumns(factor);
-        }
-
         public void SetSource(TVDoc.ProviderType source) => SetSource(source, null);
 
         public void SetSource(TVDoc.ProviderType source, MediaConfiguration? mi)
@@ -168,15 +162,14 @@ namespace TVRename
                 mInternal = true;
                 lvMatches.BeginUpdate();
 
-                string what = RemoveTrailingYear(txtFindThis.Text.CompareName());
-
-                int matchedMedia = 0;
-
                 if (!txtFindThis.Text.HasValue() && lvMatches.Items.Count == 1 && lvMatches.Items[0].SubItems[1].Text == DEFAULT_MESSAGE)
                 {
                     //we have no further information
                     return false;
                 }
+                string what = txtFindThis.Text.CompareName().RemoveYearFromEnd();
+
+                int matchedMedia = 0;
 
                 lvMatches.Items.Clear();
                 if (!string.IsNullOrEmpty(what))
@@ -255,10 +248,6 @@ namespace TVRename
             }
             DoFind(true);
         }
-
-        [NotNull]
-        private static string RemoveTrailingYear([NotNull] string baseText)
-            => baseText.RemovePattern(@"\s(\d{4})$");
 
         private string GetLabel(TVDoc.ProviderType source)
         {

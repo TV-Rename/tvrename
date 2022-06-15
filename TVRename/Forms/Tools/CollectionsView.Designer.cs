@@ -63,7 +63,7 @@ namespace TVRename.Forms
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 13);
+            this.label1.Location = new System.Drawing.Point(13, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(46, 13);
             this.label1.TabIndex = 7;
@@ -182,7 +182,7 @@ namespace TVRename.Forms
             // chkRemoveCompleted
             // 
             this.chkRemoveCompleted.AutoSize = true;
-            this.chkRemoveCompleted.Location = new System.Drawing.Point(78, 9);
+            this.chkRemoveCompleted.Location = new System.Drawing.Point(78, 6);
             this.chkRemoveCompleted.Name = "chkRemoveCompleted";
             this.chkRemoveCompleted.Size = new System.Drawing.Size(173, 17);
             this.chkRemoveCompleted.TabIndex = 13;
