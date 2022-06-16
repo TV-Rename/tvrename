@@ -4599,19 +4599,18 @@ namespace TVRename
             const int INDENT = 15;
 
             //GetIcon
-            Image? icon = tabCtrl.ImageList?.Images[tabPage.ImageKey];
-            if (icon is null)
+            if (tabCtrl.ImageList?.Images[tabPage.ImageKey]  is Bitmap bit)
             {
-                return;
+                ScaleBitmapLogicalToDevice(ref bit);
+
+                float xIndent = (tabBounds.Width - bit.Width) / 2.0f;
+                float x = tabBounds.X + xIndent;
+                float y = tabBounds.Y + INDENT;
+                g.DrawImage(bit, x, y);
+
+                Rectangle textarea = new(tabBounds.X, tabBounds.Y + INDENT + bit.Height, tabBounds.Width, tabBounds.Height - (INDENT + bit.Height));
+                g.DrawString(tabPage.Text, tabPage.Font, new SolidBrush(ForeColor), textarea, stringFlags);
             }
-
-            float xIndent = (tabBounds.Width - icon.Width) / 2.0f;
-            float x = tabBounds.X + xIndent;
-            float y = tabBounds.Y + INDENT;
-            g.DrawImage(icon, x, y);
-
-            Rectangle textarea = new(tabBounds.X, tabBounds.Y + INDENT + icon.Height, tabBounds.Width, tabBounds.Height - (INDENT + icon.Height));
-            g.DrawString(tabPage.Text, tabPage.Font, Brushes.Black, textarea, stringFlags);
         }
 
         private void BwSeasonHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
