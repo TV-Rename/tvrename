@@ -64,7 +64,6 @@ namespace TVRename
 
             Cell colTitleModel = new()
             {
-                ElementText = new ActorsGrid.RotatedText(-90.0f),
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
                 TextAlignment = ContentAlignment.BottomCenter
