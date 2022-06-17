@@ -730,9 +730,24 @@ namespace TVRename
         private void Scan()
         {
             btnRefresh.Visible = false;
+            EnableCheckboxes(false);
+
             pbProgress.Visible = true;
             lblStatus.Visible = true;
             bwRescan.RunWorkerAsync();
+        }
+
+        private void EnableCheckboxes(bool enabled)
+        {
+            chkHideIgnored.Enabled = enabled;
+            chkHideComplete.Enabled = enabled;
+            chkHideSpecials.Enabled = enabled;
+            chkHideUnaired.Enabled = enabled;
+            chkHideNotScanned.Enabled = enabled;
+            chkOnlyShowEnded.Enabled = enabled;
+            chkHideDiskEps.Enabled = enabled;
+
+            btnClear.Enabled = enabled;
         }
 
         private void BwRescan_DoWork(object sender, DoWorkEventArgs e)
@@ -750,6 +765,8 @@ namespace TVRename
         private void BwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             btnRefresh.Visible = true;
+            EnableCheckboxes(true);
+
             pbProgress.Visible = false;
             lblStatus.Visible = false;
             PopulateGrid();

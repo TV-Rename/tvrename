@@ -2405,6 +2405,7 @@ namespace TVRename.TheTVDB
             catch (MediaNotFoundException mnfe)
             {
                 LOGGER.Error(mnfe, "Episode (+ Translations) claimed to exist, but got a 404 when searching for them. Ignoring Episode, but might be worth a full refresh of the show and contacting TVDB if it does not get resolved");
+                si.Dirty = true;
             }
             catch (SourceConnectivityException sce1)
             {

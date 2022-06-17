@@ -1854,12 +1854,12 @@ namespace TVRename
         {
             if (!Directory.Exists(downloadFolder))
             {
-                Logger.Error($"Stopping 'Scan Movie Folder' '{downloadFolder}' does not exist");
+                Logger.Warn($"Stopping 'Scan Movie Folder' '{downloadFolder}' does not exist");
                 return;
             }
             if (TVSettings.Instance.LibraryFolders.Contains(downloadFolder) || TVSettings.Instance.MovieLibraryFolders.Contains(downloadFolder))
             {
-                Logger.Error($"Stopping 'Scan Movie Folder' '{downloadFolder}' as it is a library folder");
+                Logger.Warn($"Stopping 'Scan Movie Folder' '{downloadFolder}' as it is a library folder");
                 return;
             }
 
