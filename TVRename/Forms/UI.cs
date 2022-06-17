@@ -113,6 +113,8 @@ namespace TVRename
             chrMovieTrailer.RequestHandler = new BrowserRequestHandler();
             chrTvTrailer.RequestHandler = new BrowserRequestHandler();
 
+            tabControl1.ItemSize = LogicalToDeviceUnits(tabControl1.ItemSize);
+
             ScanAndDo = ScanAndAction;
             ReceiveArgumentDelegate = ReceiveArgs;
 

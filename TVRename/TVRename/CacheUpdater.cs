@@ -202,9 +202,9 @@ namespace TVRename
             {
                 Logger.Error(sce, sce.Message);
             }
-            catch (TaskCanceledException sce)
+            catch (TaskCanceledException tce)
             {
-                Logger.Warn(sce, sce.Message);
+                Logger.Warn(tce.Message);
             }
             catch (Exception e)
             {
