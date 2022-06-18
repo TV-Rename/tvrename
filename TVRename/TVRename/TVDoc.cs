@@ -1859,7 +1859,9 @@ namespace TVRename
             }
             if (TVSettings.Instance.LibraryFolders.Contains(downloadFolder) || TVSettings.Instance.MovieLibraryFolders.Contains(downloadFolder))
             {
-                Logger.Warn($"Stopping 'Scan Movie Folder' '{downloadFolder}' as it is a library folder");
+                string msg = $"Stopping 'Scan Movie Folder' '{downloadFolder}' as it is a library folder. Either remove the folder from the library in Preferences or use Bulk Add to add shows that are already copied to the library.";
+                Logger.Warn(msg);
+                MessageBox.Show(msg, "Can't scan folder", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
