@@ -318,6 +318,11 @@ namespace TVRename
             //Important we have the longer ones first
             string[] regexPatterns =
             {
+                @"(?<ext>\.synced\.\w{2}-\w{2}\" + TOKEN + ")$",
+                @"(?<ext>\.synced\.\w{2,3}\" + TOKEN + ")$",
+                @"(?<ext>\.\w{2,3}\.synced\" + TOKEN + ")$",
+                @"(?<ext>\.\w{2}-\w{2}\.synced\" + TOKEN + ")$",
+
                 @"(?<ext>\.forced\.\w{2}-\w{2}\" + TOKEN + ")$",
                 @"(?<ext>\.forced\.\w{2,3}\" + TOKEN + ")$",
                 @"(?<ext>\.\w{2,3}\.forced\" + TOKEN + ")$",
