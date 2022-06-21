@@ -72,7 +72,6 @@ namespace TVRename
             {
                 CopySubsFolders(newList);
             }
-
             if (!TVSettings.Instance.LeaveOriginals)
             {
                 ReorganiseToLeaveOriginals(newList);

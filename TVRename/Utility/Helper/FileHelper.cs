@@ -842,6 +842,15 @@ namespace TVRename
             new(@"(?<base>.*)[ ._-]+(?<part>[A-D])$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         };
 
+        public static bool IsRecycleBin([NotNull] this DirectoryInfo di2)
+        {
+            bool endsWith = di2.FullName.Contains("$RECYCLE.BIN", StringComparison.OrdinalIgnoreCase)
+                            || di2.FullName.Contains("\\@Recycle\\", StringComparison.OrdinalIgnoreCase)
+                            || di2.FullName.EndsWith("\\@Recycle", StringComparison.OrdinalIgnoreCase);
+
+            return endsWith;
+        }
+
         [NotNull]
         public static string MovieFileNameBase([NotNull] this FileInfo movieFile)
         {

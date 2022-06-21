@@ -12,8 +12,9 @@ namespace TVRename
 
     public class PossibleNewMovie : ISeriesSpecifier
     {
-        public readonly string MovieStub;
-        public readonly DirectoryInfo Directory;
+        private readonly string movieStub;
+        private readonly FileInfo movieFile;
+        public DirectoryInfo Directory => movieFile.Directory;
 
         // ReSharper disable once InconsistentNaming
         public string RefinedHint;
@@ -35,8 +36,8 @@ namespace TVRename
 
         public PossibleNewMovie([NotNull] FileInfo possibleMovieFile, bool andGuess, bool showErrorMsgBox)
         {
-            MovieStub = possibleMovieFile.MovieFileNameBase();
-            Directory = possibleMovieFile.Directory;
+            movieStub = possibleMovieFile.MovieFileNameBase();
+            movieFile = possibleMovieFile;
 
             (string? directoryRefinedHint, int? directoryPossibleYear) = GuessShowName(possibleMovieFile.Directory.Name);
             (string? fileRefinedHint, int? filePossibleYear) = GuessShowName(possibleMovieFile.MovieFileNameBase());
@@ -55,7 +56,7 @@ namespace TVRename
             //TODO  make generic, as this assumes TMDB
 
             //Lookup based on TMDB ID Being Present
-            int? tmdbId = ConvertToInt(FindShowCode("tmdbid", "tmdb"));
+            int? tmdbId = FindShowCode("tmdbid", "tmdb").ToInt();
             Locale preferredLocale = new();
 
             int? tmdbCode = ValidateOnTMDB(tmdbId, preferredLocale, showErrorMsgBox);
@@ -109,7 +110,7 @@ namespace TVRename
             }
 
             //Tweak the hints and do another Search on TMDB
-            int? tvdbId = ConvertToInt(FindShowCode("tvdbid", "tvdb"));
+            int? tvdbId = FindShowCode("tvdbid", "tvdb").ToInt();
             if (tvdbId.HasValue)
             {
                 CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, showErrorMsgBox, preferredLocale);
@@ -189,22 +190,9 @@ namespace TVRename
             return null;
         }
 
-        private static int? ConvertToInt(string? s)
-        {
-            if (s.HasValue())
-            {
-                if (int.TryParse(s, out int x))
-                {
-                    return x;
-                }
-            }
-
-            return null;
-        }
-
         private string? FindShowCode(string simpleIdCode, string uniqueIdCode)
         {
-            List<string> possibleFilenames = new() { $"{MovieStub}.nfo", $"{MovieStub}.xml" };
+            List<string> possibleFilenames = new() { $"{movieStub}.nfo", $"{movieStub}.xml" };
             foreach (string fileName in possibleFilenames)
             {
                 try
@@ -295,42 +283,11 @@ namespace TVRename
 
         private static (string hint, int? year) GuessShowName(string refinedHint)
         {
-            refinedHint = refinedHint.CompareName();
-            int? possibleYear = null;
+            refinedHint = FinderHelper.RemoveSceneTerms(refinedHint.CompareName());
 
-            List<string> removeCrapAfterTerms =
-                new() { "1080p", "720p", "dvdrip", "webrip", "brrip", "r5", "BDrip", "limited", "dvdscr", "unrated", "tv", "bluray", "hdrip", "3d", "xvid", "r6rip" };
+            (refinedHint, int? possibleYear) = FinderHelper.SplitIntoTitleYear(refinedHint);
 
-            foreach (string? removeCrapAfterTerm in removeCrapAfterTerms)
-            {
-                if (refinedHint.Contains(removeCrapAfterTerm))
-                {
-                    string pattern2 = @"(?:^|\s|$)" + Regex.Escape(removeCrapAfterTerm) + @"(?:^|\s|$)";
-                    Match match = Regex.Match(refinedHint, pattern2);
-                    if (match.Success)
-                    {
-                        refinedHint = refinedHint.RemoveAfter(removeCrapAfterTerm);
-                    }
-                }
-            }
-
-            const string PATTERN = @"\s(\d{4})$";
-            Match m = Regex.Match(refinedHint.Trim(), PATTERN);
-            if (m.Success)
-            {
-                //Seems like we have a year in the date
-
-                //Work out the year
-                int.TryParse(m.Groups[1].Value, out int year);
-                possibleYear = year;
-
-                //remove year from string
-                refinedHint = Regex.Replace(refinedHint.Trim(), PATTERN, " ");
-            }
-
-            refinedHint = refinedHint.CompareName();
-
-            return (refinedHint, possibleYear);
+            return (refinedHint.CompareName(), possibleYear);
         }
 
         public TVDoc.ProviderType Provider => SourceProvider;
@@ -351,10 +308,14 @@ namespace TVRename
 
         public ProcessedSeason.SeasonType SeasonOrder => throw new InvalidOperationException();
 
+        public bool HasStub => !string.IsNullOrWhiteSpace(movieStub);
+
         public void UpdateId(int id, TVDoc.ProviderType source)
         {
             SourceProvider = source;
             ProviderCode = id;
         }
+
+        public bool Matches([NotNull] PossibleNewMovie ai) => movieStub.Equals(ai.movieStub, StringComparison.CurrentCultureIgnoreCase);
     }
 }

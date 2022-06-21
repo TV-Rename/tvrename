@@ -110,6 +110,7 @@ namespace TVRename
             return baseText.Trim();
         }
 
+        //Remove any (nnnn) in the hint - probably a year
         [NotNull]
         public static string RemoveBracketedYear([NotNull] this string baseText)
             => baseText
@@ -363,16 +364,17 @@ namespace TVRename
                     .Select(s => s.Trim());
         }
        
-    public static int? ToInt(this string value)
+        public static int? ToInt(this string value)
         {
-            try
+            if (value.HasValue())
             {
-                return int.Parse(value);
+                if (int.TryParse(value, out int x))
+                {
+                    return x;
+                }
             }
-            catch (Exception)
-            {
-                return null;
-            }
+
+            return null;
         }
 
         [NotNull]

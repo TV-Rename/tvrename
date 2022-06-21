@@ -2161,7 +2161,7 @@ namespace TVRename
             string hint = file.RemoveExtension(TVSettings.Instance.UseFullPathNameToMatchSearchFolders) + ".";
 
             //If the hint contains certain terms then we'll ignore it
-            if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
+            if (TVSettings.Instance.IgnoredAutoAddHints.Contains(file.RemoveExtension()))
             {
                 Logger.Info(
                     $"Ignoring {hint} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
@@ -2169,13 +2169,7 @@ namespace TVRename
                 return null;
             }
             //remove any search folders  from the hint. They are probably useless at helping specify the showname
-            foreach (string path in TVSettings.Instance.DownloadFolders)
-            {
-                if (hint.StartsWith(path, StringComparison.OrdinalIgnoreCase))
-                {
-                    hint = hint.RemoveFirst(path.Length);
-                }
-            }
+            hint = FinderHelper.RemoveDownloadFolders(hint);
 
             //Remove any (nnnn) in the hint - probably a year
             string refinedHint = hint.RemoveBracketedYear();
@@ -2223,7 +2217,7 @@ namespace TVRename
                     break;
                 case DialogResult.Ignore:
                     Logger.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
-                    TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
+                    TVSettings.Instance.IgnoredAutoAddHints.Add(file.RemoveExtension());
                     break;
                 default:
                     Logger.Info($"Cancelled Auto adding new show/movie {hint}");

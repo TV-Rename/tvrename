@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 
 namespace TVRename
@@ -7,7 +6,7 @@ namespace TVRename
     {
         public void AddIfNew(PossibleNewMovie ai)
         {
-            if (this.Any(m => m.MovieStub.Equals(ai.MovieStub, StringComparison.CurrentCultureIgnoreCase)))
+            if (this.Any(m => m.Matches(ai)))
             {
                 return;
             }

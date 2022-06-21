@@ -446,7 +446,7 @@ namespace TVRename
                 lvi.SubItems.Add(string.Empty);
             }
             lvi.Tag = ai;
-            lvi.ImageIndex = ai.CodeKnown && !string.IsNullOrWhiteSpace(ai.MovieStub) ? 1 : 0;
+            lvi.ImageIndex = ai.CodeKnown && ai.HasStub ? 1 : 0;
         }
 
         private void UpdateListItem(PossibleNewMovie ai, bool makevis)

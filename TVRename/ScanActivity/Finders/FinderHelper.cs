@@ -666,171 +666,265 @@ namespace TVRename
             return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));
         }
 
+        public static (string title, int? year) SplitIntoTitleYear(string hint)
+        {
+            const string PATTERN = @"\s(\d{4})$";
+            Match m = Regex.Match(hint.Trim(), PATTERN);
+            int? possibleYear = null;
+            if (m.Success)
+            {
+                //Seems like we have a year in the date
+
+                //Work out the year
+                int.TryParse(m.Groups[1].Value, out int year);
+                possibleYear = year;
+
+                //remove year from string
+                hint = Regex.Replace(hint.Trim(), PATTERN, " ");
+            }
+
+            return (hint, possibleYear);
+        }
+
+        public static string RemoveSceneTerms(string refinedHint)
+        {
+            List<string> removeCrapAfterTerms =
+                new()
+                {
+                    "1080p",
+                    "720p",
+                    "dvdrip",
+                    "webrip",
+                    "brrip",
+                    "r5",
+                    "BDrip",
+                    "limited",
+                    "dvdscr",
+                    "unrated",
+                    "tv",
+                    "bluray",
+                    "hdrip",
+                    "3d",
+                    "xvid",
+                    "r6rip"
+                };
+
+            foreach (string removeCrapAfterTerm in removeCrapAfterTerms)
+            {
+                if (refinedHint.Contains(removeCrapAfterTerm))
+                {
+                    string pattern2 = @"(?:^|\s|$)" + Regex.Escape(removeCrapAfterTerm) + @"(?:^|\s|$)";
+                    Match match = Regex.Match(refinedHint, pattern2);
+                    if (match.Success)
+                    {
+                        refinedHint = refinedHint.RemoveAfter(removeCrapAfterTerm);
+                    }
+                }
+            }
+
+            return refinedHint;
+        }
+
         [NotNull]
-        public static IEnumerable<MediaConfiguration> FindMedia([NotNull] IEnumerable<FileInfo> possibleShows, TVDoc doc, IDialogParent owner)
+        public static IEnumerable<MediaConfiguration> FindMedia([NotNull] IEnumerable<FileInfo> possibleShows,
+            TVDoc doc, IDialogParent owner)
         {
             List<MediaConfiguration> addedShows = new();
-
-            foreach (FileInfo file in possibleShows)
+            try
             {
-                string hint = file.RemoveExtension(TVSettings.Instance.UseFullPathNameToMatchSearchFolders) + ".";
-
-                //remove any search folders  from the hint. They are probbably useless at helping specify the showname
-                foreach (string path in TVSettings.Instance.DownloadFolders)
+                foreach (FileInfo file in possibleShows)
                 {
-                    if (hint.StartsWith(path, StringComparison.OrdinalIgnoreCase))
-                    {
-                        hint = hint.RemoveFirst(path.Length);
-                    }
+                    FindMedia(file, addedShows, doc, owner);
                 }
 
-                //If the hint contains certain terms then we'll ignore it
-                if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
-                {
-                    Logger.Info(
-                        $"Ignoring {hint} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
+                return addedShows;
+            }
+            catch (AutoAddCancelledException ex)
+            {
+                return addedShows;
+            }
+        }
 
-                    continue;
-                }
+        private static void FindMedia([NotNull] FileInfo file, List<MediaConfiguration> addedShows, TVDoc doc, IDialogParent owner)
+        {
+            //If the hint contains certain terms then we'll ignore it
+            if (TVSettings.Instance.IgnoredAutoAddHints.Contains(file.RemoveExtension()))
+            {
+                Logger.Info(
+                    $"Ignoring {file.RemoveExtension()} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
 
-                //Remove any (nnnn) in the hint - probably a year
-                string refinedHint = hint.RemoveBracketedYear();
+                return;
+            }
 
-                //Remove anything we can from hint to make it cleaner and hence more likely to match
-                refinedHint = RemoveSeriesEpisodeIndicators(refinedHint, doc.TvLibrary.SeasonWords());
+            string filehint = file.RemoveExtension() + ".";
+            string dirhint = RemoveDownloadFolders(file.DirectoryName);
 
-                if (string.IsNullOrWhiteSpace(refinedHint))
-                {
-                    Logger.Info($"Ignoring {hint} as it refines to nothing.");
-                    continue;
-                }
+            filehint = RemoveSceneTerms(filehint.CompareName()).RemoveBracketedYear().RemoveYearFromEnd();
+            dirhint = RemoveSceneTerms(dirhint.CompareName()).RemoveBracketedYear().RemoveYearFromEnd();
 
-                //if hint doesn't match existing added shows
-                if (LookForSeries(refinedHint, addedShows))
-                {
-                    Logger.Info($"Ignoring {hint}({refinedHint}) as it matches shows already being added.");
-                    continue;
-                }
-                if (LookForMovies(refinedHint, addedShows))
-                {
-                    Logger.Info($"Ignoring {hint}({refinedHint}) as it matches existing movies already being added: {addedShows.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
-                    continue;
-                }
+            string hint = filehint==dirhint ? filehint
+                : TVSettings.Instance.UseFullPathNameToMatchSearchFolders ? dirhint+ " " + filehint
+                : filehint;
 
-                //if hint doesn't match existing added shows
-                if (LookForSeries(refinedHint, doc.TvLibrary.Shows))
-                {
-                    Logger.Info($"Ignoring {hint}({refinedHint}) as it matches shows already in the library.");
-                    continue;
-                }
-                if (LookForMovies(refinedHint, doc.FilmLibrary.Movies))
-                {
-                    Logger.Info($"Ignoring {hint}({refinedHint}) as it matches existing movies already in the library: {doc.FilmLibrary.Movies.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
-                    continue;
-                }
+            string refinedHint = hint.RemoveBracketedYear();
 
-                //If there are no LibraryFolders then we cant use the simplified UI
-                if (TVSettings.Instance.LibraryFolders.Count + TVSettings.Instance.MovieLibraryFolders.Count == 0)
-                {
-                    MessageBox.Show(
-                        "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
-                        "Can't Auto Add Media", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //Remove anything we can from hint to make it cleaner and hence more likely to match
+            refinedHint = RemoveSeriesEpisodeIndicators(refinedHint, doc.TvLibrary.SeasonWords());
 
-                    continue;
-                }
+            if (string.IsNullOrWhiteSpace(refinedHint))
+            {
+                Logger.Info($"Ignoring {hint} as it refines to nothing.");
+                return;
+            }
 
-                bool assumeMovie = GuessType(refinedHint,hint,file,doc.TvLibrary.SeasonWords()) != MediaConfiguration.MediaType.tv;
+            //if hint doesn't match existing added shows
+            if (LookForSeries(refinedHint, addedShows))
+            {
+                Logger.Info($"Ignoring {hint}({refinedHint}) as it matches shows already being added.");
+                return;
+            }
 
-                Logger.Info($"Assuming {file.Name} ({refinedHint}) is a " + (assumeMovie
-                    ? "movie."
-                    : "TV Series."));
+            if (LookForMovies(refinedHint, addedShows))
+            {
+                Logger.Info(
+                    $"Ignoring {hint}({refinedHint}) as it matches existing movies already being added: {addedShows.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
 
-                if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
-                {
-                    //TODO - Make generic, currently uses TMDB only
-                    CachedMovieInfo? foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null, new Locale(), true, true);
-                    if (foundMovie != null)
-                    {
-                        // no need to popup dialog
-                        Logger.Info($"Auto Adding New Movie for '{refinedHint}' (directly) : {foundMovie.Name}");
+                return;
+            }
 
-                        MovieConfiguration newMovie = new()
-                        {
-                            TmdbCode = foundMovie.TmdbCode,
-                            UseAutomaticFolders = true,
-                            AutomaticFolderRoot = TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty,
-                            Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile,
-                            UseCustomFolderNameFormat = false,
-                            ConfigurationProvider = foundMovie.Source
-                        };
+            //if hint doesn't match existing added shows
+            if (LookForSeries(refinedHint, doc.TvLibrary.Shows))
+            {
+                Logger.Warn($"Ignoring {hint}({refinedHint}) as it matches shows already in the library.");
+                return;
+            }
 
-                        if (!hint.Contains(foundMovie.Name, StringComparison.OrdinalIgnoreCase))
-                        {
-                            newMovie.AliasNames.Add(hint);
-                        }
+            if (LookForMovies(refinedHint, doc.FilmLibrary.Movies))
+            {
+                Logger.Warn(
+                    $"Ignoring {hint}({refinedHint}) as it matches existing movies already in the library: {doc.FilmLibrary.Movies.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
 
-                        addedShows.Add(newMovie);
-                        doc.Stats().AutoAddedMovies++;
-                        continue;
-                    }
-                }
-                //popup dialog
-                AutoAddMedia askForMatch = new(refinedHint, file, assumeMovie);
+                return;
+            }
 
-                if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound && TVSettings.Instance.AutomateAutoAddWhenOneShowFound)
+            //If there are no LibraryFolders then we can't use the simplified UI
+            if (TVSettings.Instance.LibraryFolders.Count + TVSettings.Instance.MovieLibraryFolders.Count == 0)
+            {
+                MessageBox.Show(
+                    "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
+                    "Can't Auto Add Media", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return;
+            }
+
+            bool assumeMovie = GuessType(refinedHint, hint, file, doc.TvLibrary.SeasonWords()) !=
+                               MediaConfiguration.MediaType.tv;
+
+            Logger.Info($"Assuming {file.Name} ({refinedHint}) is a " + (assumeMovie
+                ? "movie."
+                : "TV Series."));
+
+            if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() &&
+                TVSettings.Instance.DefMovieUseDefaultLocation && TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
+            {
+                //TODO - Make generic, currently uses TMDB only
+                CachedMovieInfo foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null, new Locale(), true, true);
+                if (foundMovie != null)
                 {
                     // no need to popup dialog
-                    Logger.Info($"Auto Adding New Show for '{refinedHint}' : {askForMatch.ShowConfiguration.CachedShow?.Name}");
-                    addedShows.Add(askForMatch.ShowConfiguration);
-                    doc.Stats().AutoAddedShows++;
-                }
-                else if (askForMatch.SingleMovieFound && !askForMatch.SingleTvShowFound && TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
-                {
-                    // no need to popup dialog
-                    Logger.Info($"Auto Adding New Movie for '{refinedHint}' : {askForMatch.MovieConfiguration.CachedMovie?.Name}");
-                    addedShows.Add(askForMatch.MovieConfiguration);
+                    Logger.Info($"Auto Adding New Movie for '{refinedHint}' (directly) : {foundMovie.Name}");
+
+                    MovieConfiguration newMovie = new()
+                    {
+                        TmdbCode = foundMovie.TmdbCode,
+                        UseAutomaticFolders = true,
+                        AutomaticFolderRoot = TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty,
+                        Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile,
+                        UseCustomFolderNameFormat = false,
+                        ConfigurationProvider = foundMovie.Source
+                    };
+
+                    if (!hint.Contains(foundMovie.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        newMovie.AliasNames.Add(hint);
+                    }
+
+                    addedShows.Add(newMovie);
                     doc.Stats().AutoAddedMovies++;
+                    return;
+                }
+            }
+
+            //popup dialog
+            AutoAddMedia askForMatch = new(refinedHint, file, assumeMovie);
+
+            if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound &&
+                TVSettings.Instance.AutomateAutoAddWhenOneShowFound)
+            {
+                // no need to popup dialog
+                Logger.Info($"Auto Adding New Show for '{refinedHint}' : {askForMatch.ShowConfiguration.CachedShow?.Name}");
+                addedShows.Add(askForMatch.ShowConfiguration);
+                doc.Stats().AutoAddedShows++;
+            }
+            else if (askForMatch.SingleMovieFound && !askForMatch.SingleTvShowFound &&
+                     TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
+            {
+                // no need to popup dialog
+                Logger.Info($"Auto Adding New Movie for '{refinedHint}' : {askForMatch.MovieConfiguration.CachedMovie?.Name}");
+                addedShows.Add(askForMatch.MovieConfiguration);
+                doc.Stats().AutoAddedMovies++;
+            }
+            else
+            {
+                Logger.Info($"Auto Adding New Show/Movie by asking about for '{refinedHint}'");
+                owner.ShowChildDialog(askForMatch);
+                DialogResult dr = askForMatch.DialogResult;
+
+                if (dr == DialogResult.OK)
+                {
+                    //If added add show to the collection
+                    if (askForMatch.ShowConfiguration.Code > 0)
+                    {
+                        addedShows.Add(askForMatch.ShowConfiguration);
+                        doc.Stats().AutoAddedShows++;
+                    }
+                    else if (askForMatch.MovieConfiguration.Code > 0)
+                    {
+                        addedShows.Add(askForMatch.MovieConfiguration);
+                        doc.Stats().AutoAddedMovies++;
+                    }
+                }
+                else if (dr == DialogResult.Abort)
+                {
+                    Logger.Info("Skippng Auto Add Process");
+                    throw new AutoAddCancelledException();
+                }
+                else if (dr == DialogResult.Ignore)
+                {
+                    Logger.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
+                    TVSettings.Instance.IgnoredAutoAddHints.Add(file.RemoveExtension());
                 }
                 else
                 {
-                    Logger.Info($"Auto Adding New Show/Movie by asking about for '{refinedHint}'");
-                    owner.ShowChildDialog(askForMatch);
-                    DialogResult dr = askForMatch.DialogResult;
-
-                    if (dr == DialogResult.OK)
-                    {
-                        //If added add show ot collection
-                        if (askForMatch.ShowConfiguration.Code > 0)
-                        {
-                            addedShows.Add(askForMatch.ShowConfiguration);
-                            doc.Stats().AutoAddedShows++;
-                        }
-                        else if (askForMatch.MovieConfiguration.Code > 0)
-                        {
-                            addedShows.Add(askForMatch.MovieConfiguration);
-                            doc.Stats().AutoAddedMovies++;
-                        }
-                    }
-                    else if (dr == DialogResult.Abort)
-                    {
-                        Logger.Info("Skippng Auto Add Process");
-                        break;
-                    }
-                    else if (dr == DialogResult.Ignore)
-                    {
-                        Logger.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
-                        TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
-                    }
-                    else
-                    {
-                        Logger.Info($"Cancelled Auto adding new show/movie {hint}");
-                    }
+                    Logger.Info($"Cancelled Auto adding new show/movie {hint}");
                 }
-
-                askForMatch.Dispose();
             }
 
-            return addedShows;
+            askForMatch.Dispose();
+        }
+
+        public static string RemoveDownloadFolders(string hint)
+        {
+            //remove any search folders  from the hint. They are probably useless at helping specify the show's name
+            foreach (string path in TVSettings.Instance.DownloadFolders)
+            {
+                if (hint.StartsWith(path, StringComparison.OrdinalIgnoreCase))
+                {
+                    hint = hint.RemoveFirst(path.Length);
+                }
+            }
+
+            return hint;
         }
 
         private static MediaConfiguration.MediaType GuessType(string refinedHint, string hint, FileInfo file,
@@ -854,12 +948,7 @@ namespace TVRename
                 return MediaConfiguration.MediaType.movie;
             }
 
-            if (hint.ContainsAnyCharactersFrom("0123456789"))
-            {
-                return MediaConfiguration.MediaType.movie;
-            }
-
-            Logger.Warn($"Could not identify type of media for {file.Name}, based on '{hint}' and '{refinedHint}'");
+            Logger.Error($"Could not identify type of media for {file.Name}, based on '{hint}' and '{refinedHint}'");
             return MediaConfiguration.MediaType.both;
         }
 
@@ -945,5 +1034,9 @@ namespace TVRename
 
             return new FileInfo(folder.EnsureEndsWithSeparator() + filename);
         }
+    }
+
+    internal class AutoAddCancelledException : Exception
+    {
     }
 }

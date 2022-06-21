@@ -302,7 +302,7 @@ namespace TVRename
                     return (false, subDirectories);
                 }
 
-                if (TVSettings.Instance.BulkAddIgnoreRecycleBin && IsRecycleBin(di2))
+                if (TVSettings.Instance.BulkAddIgnoreRecycleBin && di2.IsRecycleBin())
                 {
                     return (false, subDirectories);
                 }
@@ -323,15 +323,6 @@ namespace TVRename
                 Logger.Info($"Can't access {di2.FullName}, so ignoring it" );
                 return (true, null);
             }
-        }
-
-        private static bool IsRecycleBin([NotNull] DirectoryInfo di2)
-        {
-            bool endsWith = di2.FullName.Contains("$RECYCLE.BIN", StringComparison.OrdinalIgnoreCase)
-                            || di2.FullName.Contains("\\@Recycle\\", StringComparison.OrdinalIgnoreCase)
-                            || di2.FullName.EndsWith("\\@Recycle", StringComparison.OrdinalIgnoreCase);
-
-            return endsWith;
         }
 
         private static bool RejectFolderIfIncludedInShow(bool fullLogging, [NotNull] ShowConfiguration si, string theFolder)
