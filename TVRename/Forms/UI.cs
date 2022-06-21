@@ -2265,7 +2265,7 @@ namespace TVRename
         private ItemList GetSelectedItems() => new() { olvAction.SelectedObjects.OfType<Item>() };
 
         [NotNull]
-        private ItemList GetCheckedItems() => new() { mDoc.TheActionList.Checked };
+        private ItemList GetCheckedItems() => new() { mDoc.TheActionList.Checked.Intersect(olvAction.FilteredObjects.OfType<Item>()) };
 
         private void IncludeSeason([NotNull] ShowConfiguration si, int seasonNumber)
         {
@@ -4813,6 +4813,7 @@ namespace TVRename
             olvAction.BuildGroups(olvType, SortOrder.Ascending,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
             //olvAction.Sort();
             //olvAction.BuildGroups(olvType,SortOrder.Ascending);//(olvType, SortOrder.Ascending,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
+            olvAction.ResetColumnFiltering();
             olvAction.EndUpdate();
         }
 
