@@ -342,21 +342,16 @@ namespace TVRename
                 @"(?<ext>\.\w{2}-\w{2}\" + TOKEN + ")$",
             };
 
-            foreach (string subExtension in TVSettings.Instance.subtitleExtensionsArray)
+            foreach (string subExtension in TVSettings.Instance.subtitleExtensionsArray
+                         .Where(subExtension => file.Name.EndsWith(subExtension, StringComparison.CurrentCultureIgnoreCase))
+                     )
             {
-                if (!file.Name.EndsWith(subExtension,StringComparison.CurrentCultureIgnoreCase))
+                foreach (Match m in regexPatterns
+                             .Select(oldpattern =>  oldpattern.Replace(TOKEN, subExtension))
+                             .Select(regexPattern => Regex.Match(file.Name, regexPattern, RegexOptions.IgnoreCase))
+                             .Where(m=>m.Success)
+                         )
                 {
-                    continue;
-                }
-                foreach (string regexPattern in regexPatterns)
-                {
-                    Match m = Regex.Match(file.Name, regexPattern.Replace(TOKEN,subExtension), RegexOptions.IgnoreCase);
-
-                    if (!m.Success)
-                    {
-                        continue;
-                    }
-
                     return (true, m.Groups["ext"].ToString());
                 }
             }
