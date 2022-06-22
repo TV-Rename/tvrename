@@ -285,9 +285,9 @@ namespace TVRename
         {
             refinedHint = FinderHelper.RemoveSceneTerms(refinedHint.CompareName());
 
-            (refinedHint, int? possibleYear) = FinderHelper.SplitIntoTitleYear(refinedHint);
+            (string newRefinedHint, int? possibleYear) = FinderHelper.SplitIntoTitleYear(refinedHint);
 
-            return (refinedHint.CompareName(), possibleYear);
+            return (newRefinedHint.CompareName(), possibleYear);
         }
 
         public TVDoc.ProviderType Provider => SourceProvider;

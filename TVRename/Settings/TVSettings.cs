@@ -1209,14 +1209,13 @@ namespace TVRename
                 return false;
             }
 
-            switch (keepTogetherMode)
+            return keepTogetherMode switch
             {
-                case KeepTogetherModes.All: return true;
-                case KeepTogetherModes.Just: return keepTogetherExtensionsArray.Contains(fileExtension);
-                case KeepTogetherModes.AllBut: return !keepTogetherExtensionsArray.Contains(fileExtension);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                KeepTogetherModes.All => true,
+                KeepTogetherModes.Just => keepTogetherExtensionsArray.Contains(fileExtension),
+                KeepTogetherModes.AllBut => !keepTogetherExtensionsArray.Contains(fileExtension),
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         public class TidySettings
