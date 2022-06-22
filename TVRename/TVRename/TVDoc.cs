@@ -2015,7 +2015,7 @@ namespace TVRename
         private void LinkFileToShow([NotNull] FileInfo fi, [NotNull] MovieConfiguration chosenShow, [NotNull] DirectoryInfo folder)
         {
             string newBase = TVSettings.Instance.FilenameFriendly(chosenShow.ProposedFilename);
-            string newName = fi.Name.Replace(RenameAndMissingMovieCheck.GetBase(fi), newBase);
+            string newName = fi.Name.Replace(fi.MovieFileNameBase(), newBase);
             FileInfo newFile = FileHelper.FileInFolder(folder, newName);
 
             TheActionList.Add(new ActionCopyMoveRename(fi, newFile, chosenShow, this));
@@ -2066,7 +2066,7 @@ namespace TVRename
                 return true;
             }
 
-            List<string> bases = movieFiles.Select(RenameAndMissingMovieCheck.GetBase).Distinct().ToList();
+            List<string> bases = movieFiles.Select(fi=>fi.MovieFileNameBase()).Distinct().ToList();
             string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
 
             if (bases.Count == 1)

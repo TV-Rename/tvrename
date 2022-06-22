@@ -45,8 +45,6 @@ namespace TVRename
                 return;
             }
 
-            FileInfo[] files = dfc.GetFiles(folder);
-
             bool renCheck = TVSettings.Instance.RenameCheck && si.DoRename && Directory.Exists(folder); // renaming check needs the folder to exist
 
             bool missCheck = TVSettings.Instance.MissingCheck && si.DoMissingCheck;
@@ -56,39 +54,36 @@ namespace TVRename
                 return;
             }
 
-            if (si.IsDvdBluRay())
+            switch (si.Format)
             {
-                string targetFile = si.Format == MovieConfiguration.MovieFolderFormat.bluray
-                    ? Path.Combine(folder, "BDMV", "index.bdmv")
-                    : Path.Combine(folder, "VIDEO_TS", "VIDEO_TS.IFO");
-
-                if (File.Exists(targetFile))
-                {
-                    Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, new FileInfo(targetFile)));
-                    FileIsCorrect(si, targetFile);
-                }
-                else
-                {
-                    FileIsMissing(si, folder);
-                }
-                return;
+                case MovieConfiguration.MovieFolderFormat.multiPerDirectory:
+                    CheckMultiPartMovieFolder(si, settings, folder, dfc, renCheck, missCheck);
+                    return;
+                case MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile:
+                    CheckSingleMovieFolder(si, settings, folder, dfc, renCheck);
+                    return;
+                case MovieConfiguration.MovieFolderFormat.dvd:
+                case MovieConfiguration.MovieFolderFormat.bluray:
+                    CheckDvdBluRayMovieFolder(si, folder);
+                    return;
+                default:
+                    LOGGER.Error($"Unclear how to check {si.Name} with format {si.Format.PrettyPrint()}.");
+                    return;
             }
+        }
 
+        private void CheckSingleMovieFolder([NotNull] MovieConfiguration si, TVDoc.ScanSettings settings, [NotNull] string folder, [NotNull] DirFilesCache dfc, bool renCheck)
+        {
+            FileInfo[] files = dfc.GetFiles(folder);
             FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).ToArray();
+            List<string> bases = movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct().ToList();
+            string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
 
             if (movieFiles.Length == 0)
             {
                 FileIsMissing(si, folder);
                 return;
             }
-
-            if (settings.Token.IsCancellationRequested)
-            {
-                return;
-            }
-
-            List<string> bases = movieFiles.Select(GetBase).Distinct().ToList();
-            string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
 
             if (bases.Count == 1 && bases[0].Equals(newBase))
             {
@@ -97,68 +92,116 @@ namespace TVRename
                 //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
                 //it has all the required files for that show
                 Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, movieFiles.First(m => m.Name.StartsWith(newBase, StringComparison.Ordinal))));
+                FileIsCorrect(si, movieFiles.First().FullName);
+                return;
+            }
+
+            if (renCheck && bases.Select(b => b.ToLower()).Distinct().Count() == 1 &&
+                bases.All(b => b.Equals(newBase, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                //We have a case sensitive issue and have been asked to rename
+                if (TVSettings.Instance.FileNameCaseSensitiveMatch)
+                {
+                    foreach (string baseString in bases)
+                    {
+                        PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                    }
+                }
+                Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, movieFiles.First(m => m.Name.StartsWith(newBase, StringComparison.OrdinalIgnoreCase))));
+                return;
+            }
+
+            if (bases.Any(b => b.Equals(newBase, StringComparison.Ordinal)))
+            {
+                FileInfo matchingFile = movieFiles
+                    .FirstOrDefault(m => m.Name.StartsWith(newBase, StringComparison.Ordinal));
+
+                if (matchingFile != null)
+                {
+                    Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, matchingFile));
+                    FileIsCorrect(si, matchingFile.FullName);
+                    LOGGER.Warn($"{matchingFile.Name} matches {newBase}, but other files are present; please review.");
+                    return;
+                }
+
+                LOGGER.Error($"Bases match {bases.ToCsv()}, but no file do {movieFiles.ToCsv()}");
+            }
+
+            LOGGER.Error($"Unclear what to do with '{bases.ToCsv()}' for {si} with {newBase}. Marking as missing.");
+            FileIsMissing(si, folder);
+        }
+
+        private void CheckMultiPartMovieFolder([NotNull] MovieConfiguration si, TVDoc.ScanSettings settings, [NotNull] string folder, [NotNull] DirFilesCache dfc,
+            bool renCheck, bool missCheck)
+        {
+            FileInfo[] files = dfc.GetFiles(folder);
+            FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).ToArray();
+            List<string> bases = movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct().ToList();
+            string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
+
+            if (movieFiles.Length == 0)
+            {
+                FileIsMissing(si, folder);
+                return;
+            }
+
+            //we have 3 options - matching file / close file that needs rename / else it's missing
+            if (bases.Any(x => x.Equals(newBase)))
+            {
+                Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si,
+                    movieFiles.First(m => m.Name.StartsWith(newBase, StringComparison.Ordinal))));
 
                 return;
             }
 
-            if (si.Format==MovieConfiguration.MovieFolderFormat.multiPerDirectory)
+            if (renCheck)
             {
-                //we have 3 options - matching file / close file that needs rename / else it's missing
-                if (bases.Any(x => x.Equals(newBase)))
+                //This section deals with files that have had a 1 year rename
+                List<string> matchingBases = bases.Where(x => IsClose(x, si)).ToList();
+                if (matchingBases.Any())
                 {
-                    Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, movieFiles.First(m => m.Name.StartsWith(newBase, StringComparison.Ordinal))));
+                    foreach (string baseString in matchingBases)
+                    {
+                        //rename all files with this base
+                        PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                    }
 
                     return;
                 }
 
-                if (renCheck)
+                List<string> matchingBases2 = bases.Where(x => MatchesBase(x, newBase)).ToList();
+                if (matchingBases2.Any())
                 {
-                    //This section deals with files that have had a 1 year rename
-                    List<string> matchingBases = bases.Where(x => IsClose(x, si)).ToList();
-                    if (matchingBases.Any())
+                    foreach (string baseString in matchingBases2)
                     {
-                        foreach (string baseString in matchingBases)
-                        {
-                            //rename all files with this base
-                            PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
-                        }
-
-                        return;
+                        //rename all files with this base
+                        PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
                     }
 
-                    List<string> matchingBases2 = bases.Where(x => MatchesBase(x, newBase)).ToList();
-                    if (matchingBases2.Any())
-                    {
-                        foreach (string baseString in matchingBases2)
-                        {
-                            //rename all files with this base
-                            PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
-                        }
-
-                        return;
-                    }
+                    return;
                 }
-
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if (missCheck)
-                {
-                    FileIsMissing(si, folder);
-                }
-                return;
             }
 
-            if (renCheck && bases.Count == 1 && !bases[0].Equals(newBase, StringComparison.CurrentCultureIgnoreCase))
+            if (missCheck)
             {
-                string baseString = bases[0];
+                FileIsMissing(si, folder);
+            }
+        }
 
-                PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+        private void CheckDvdBluRayMovieFolder([NotNull] MovieConfiguration si, string folder)
+        {
+            string targetFile = si.Format == MovieConfiguration.MovieFolderFormat.bluray
+                ? Path.Combine(folder, "BDMV", "index.bdmv")
+                : Path.Combine(folder, "VIDEO_TS", "VIDEO_TS.IFO");
+
+            if (File.Exists(targetFile))
+            {
+                Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, new FileInfo(targetFile)));
+                FileIsCorrect(si, targetFile);
             }
             else
             {
-                if (movieFiles.First().IsMovieFile())
-                {
-                    FileIsCorrect(si, movieFiles.First().FullName);
-                }
+                FileIsMissing(si, folder);
             }
         }
 
@@ -245,13 +288,6 @@ namespace TVRename
             return baseFileName.Equals(targetFolderEarlier) || baseFileName.Equals(targetFolderLater) || baseFileName.Equals(targetFolder);
         }
 
-        [NotNull]
-        public static string GetBase([NotNull] FileInfo fileInfo)
-        {
-            //The base is the filename with no multipart extensions
-            return fileInfo.MovieFileNameBase();
-        }
-
         private void FileIsMissing(MovieConfiguration si, string folder)
         {
             // second part of missing check is to see what is missing!
@@ -267,6 +303,7 @@ namespace TVRename
                 {
                     // then add it as officially missing
                     Doc.TheActionList.Add(new MovieItemMissing(si, folder));
+                    LOGGER.Info($"Identified that {si.Name} is missing from {folder}.");
                 }
                 else
                 {

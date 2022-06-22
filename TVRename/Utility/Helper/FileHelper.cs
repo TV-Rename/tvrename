@@ -588,6 +588,9 @@ namespace TVRename
             return new FileSystemProperties(null, null, null);
         }
 
+        [NotNull]
+        public static string ToCsv([NotNull] this IEnumerable<FileInfo> files) => files.Select(f => f.Name).ToCsv();
+
         public static void Rotate(string filenameBase)
         {
             if (File.Exists(filenameBase))
