@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Windows.Forms;
 
@@ -10,9 +9,9 @@ namespace TVRename
         {
         }
 
-        protected override int CompareListViewItem([NotNull] ListViewItem x, [NotNull] ListViewItem y) => (int)(1000 * (ParseAsDouble(x) - ParseAsDouble(y)));
+        protected override int CompareListViewItem(ListViewItem x, ListViewItem y) => (int)(1000 * (ParseAsDouble(x) - ParseAsDouble(y)));
 
-        private double ParseAsDouble([NotNull] ListViewItem cellItem)
+        private double ParseAsDouble(ListViewItem cellItem)
         {
             string value = cellItem.SubItems[Col].Text;
 

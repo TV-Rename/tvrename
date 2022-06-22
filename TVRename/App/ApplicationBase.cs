@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using Microsoft.VisualBasic.ApplicationServices;
 using NLog;
 using NLog.Config;
@@ -22,7 +21,7 @@ namespace TVRename.App
     internal class ApplicationBase : WindowsFormsApplicationBase
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private TVDoc doc;
+        private TVDoc? doc;
 
         /// <summary>
         /// Initializes the splash screen.
@@ -109,7 +108,7 @@ namespace TVRename.App
 
         /*  Triggered when the user is actually logging off or shutting down the system
          */
-        private void OnSessionEnded(object sender, [NotNull] SessionEndedEventArgs e )
+        private void OnSessionEnded(object sender, SessionEndedEventArgs e )
         {
             if (doc?.Dirty() ?? false)
             {
@@ -119,8 +118,7 @@ namespace TVRename.App
             doc?.Closing();
         }
 
-        [NotNull]
-        private static TVDoc LoadSettings([NotNull] CommandLineArgs commandLineArgs)
+        private static TVDoc LoadSettings(CommandLineArgs commandLineArgs)
         {
             bool recover = false;
             string recoverText = string.Empty;
@@ -201,7 +199,7 @@ namespace TVRename.App
             return doc;
         }
 
-        private static void SetupCustomSettings([NotNull] CommandLineArgs commandLineArgs)
+        private static void SetupCustomSettings(CommandLineArgs commandLineArgs)
         {
             // Check arguments for custom settings path
             if (!string.IsNullOrEmpty(commandLineArgs.UserFilePath))

@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 using System.Xml;
 using System.Xml.Serialization;
@@ -83,7 +82,7 @@ namespace TVRename
             return sc;
         }
 
-        private void SaveToFile([NotNull] string toFile)
+        private void SaveToFile(string toFile)
         {
             System.IO.DirectoryInfo? di = new System.IO.FileInfo(toFile).Directory;
             if (di is null)

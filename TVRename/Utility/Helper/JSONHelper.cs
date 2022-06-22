@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -42,7 +41,7 @@ namespace TVRename
             return DateTime.Parse("20:00");
         }
 
-        public static bool ContainsTyped<T>([NotNull] this JArray arr, [CanBeNull] T item)
+        public static bool ContainsTyped<T>(this JArray arr, T? item)
         {
             return System.Linq.Enumerable.Any(arr, it =>
              {
@@ -58,7 +57,6 @@ namespace TVRename
              });
         }
 
-        [NotNull]
         public static string Flatten(this JToken? ja, string delimiter)
         {
             if (ja is null)
@@ -97,7 +95,7 @@ namespace TVRename
             }
         }
 
-        public static int ExtractStringToInt([NotNull] this JObject r, [NotNull] string key)
+        public static int ExtractStringToInt(this JObject r, string key)
         {
             string valueAsString = (string)r[key];
 

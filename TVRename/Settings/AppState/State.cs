@@ -2,7 +2,6 @@ using NLog;
 using System;
 using System.Xml;
 using System.Xml.Serialization;
-using JetBrains.Annotations;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename.Settings.AppState
@@ -41,7 +40,7 @@ namespace TVRename.Settings.AppState
             SaveToFile(PathManager.StateFile.FullName);
         }
 
-        private void SaveToFile([NotNull] string path)
+        private void SaveToFile(string path)
         {
             XmlSerializer serializer = new(typeof(State));
             XmlWriterSettings xmlWriterSettings = new() { Indent = true };

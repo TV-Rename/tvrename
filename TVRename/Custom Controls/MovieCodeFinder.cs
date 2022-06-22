@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     public class MovieCodeFinder : CodeFinder
     {
-        public MovieCodeFinder([CanBeNull] string? initialHint, TVDoc.ProviderType source) : base(initialHint, MediaConfiguration.MediaType.movie, source)
+        public MovieCodeFinder(string? initialHint, TVDoc.ProviderType source) : base(initialHint, MediaConfiguration.MediaType.movie, source)
         {
             lvMatches.Columns.Clear();
             lvMatches.Columns.Add(new ColumnHeader { Text = "Code", Width = 44 });
@@ -19,8 +18,7 @@ namespace TVRename
         }
         public CachedMovieInfo? MovieInitialFound { get; private set; }
         public int? MovieInitialFoundCode => MovieInitialFound?.IdCode(Source);
-        [NotNull]
-        private static ListViewItem NewLvi([NotNull] CachedMovieInfo si, int num, bool numberMatch)
+        private static ListViewItem NewLvi(CachedMovieInfo si, int num, bool numberMatch)
         {
             ListViewItem lvi = new() { Text = num.ToString() };
             lvi.SubItems.Add(si.Name);
@@ -37,7 +35,7 @@ namespace TVRename
             return lvi;
         }
 
-        protected override int FindMedia([NotNull] MediaCache cache, bool numeric, int matchnum, string what)
+        protected override int FindMedia(MediaCache cache, bool numeric, int matchnum, string what)
         {
             List<KeyValuePair<int, CachedMovieInfo>> lvis;
             lock (cache.MOVIE_LOCK)

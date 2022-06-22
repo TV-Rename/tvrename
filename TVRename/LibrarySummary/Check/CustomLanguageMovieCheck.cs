@@ -1,10 +1,8 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class CustomLanguageMovieCheck : CustomMovieCheck
     {
-        public CustomLanguageMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        public CustomLanguageMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 
@@ -13,7 +11,6 @@ namespace TVRename
             Movie.UseCustomLanguage = false;
         }
 
-        [NotNull]
         protected override string FieldName => "Use Custom Language";
 
         protected override bool Field => Movie.UseCustomLanguage;

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using NLog;
 using Alphaleonis.Win32.Filesystem;
 
@@ -52,7 +51,6 @@ namespace TVRename
             return 100 * bitsOn / totalBits;
         }
 
-        [NotNull]
         public List<TorrentEntry> AllFilesBeingDownloaded()
         {
             List<TorrentEntry> r = new();
@@ -129,7 +127,7 @@ namespace TVRename
             return r;
         }
 
-        private static void ProcessFiles(List<TorrentEntry> r, BTDictionary d2, BTString prioString, string torrentFile, [NotNull] List<string> a, string defaultFolder, bool hasTargets, BTList targetList)
+        private static void ProcessFiles(List<TorrentEntry> r, BTDictionary d2, BTString prioString, string torrentFile, List<string> a, string defaultFolder, bool hasTargets, BTList targetList)
         {
             int c = 0;
             foreach (string s in a)
@@ -168,7 +166,7 @@ namespace TVRename
             }
         }
 
-        private static string? GetTargetSaveLocation([NotNull] BTList targetList, int c)
+        private static string? GetTargetSaveLocation(BTList targetList, int c)
         {
             // see if there is a target for this (the c'th) file
             foreach (BTItem t in targetList.Items)

@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,7 +14,6 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportMoviesHTML;
 
         protected override string Location() => TVSettings.Instance.ExportMoviesHTMLTo;
-        [NotNull]
         protected override string Name() => "Movies HTML Exporter";
         protected override void Do()
         {
@@ -39,8 +37,7 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private static string CreateHtml([NotNull] MovieConfiguration si)
+        private static string CreateHtml(MovieConfiguration si)
         {
             CachedMovieInfo cachedSeries = si.CachedMovie;
             if (cachedSeries is null)

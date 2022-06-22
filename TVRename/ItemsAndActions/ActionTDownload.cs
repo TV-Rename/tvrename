@@ -5,8 +5,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     using Alphaleonis.Win32.Filesystem;
@@ -41,7 +39,7 @@ namespace TVRename
             this.becomes = becomes;
         }
 
-        public ActionTDownload([NotNull] RSSItem rss, [NotNull] ItemMissing me, ItemDownloading becomes)
+        public ActionTDownload(RSSItem rss, ItemMissing me, ItemDownloading becomes)
         {
             SourceName = rss.Title;
             url = rss.URL;
@@ -59,14 +57,12 @@ namespace TVRename
         #region Action Members
 
         public override string ProgressText => SourceName;
-        [NotNull]
         public override string Name => "Get Torrent";
         public override long SizeOfWork => 1000000;
         public override string Produces => url;
 
         public override Item Becomes() => becomes;
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             bool isDownloadable = url.IsWebLink();
@@ -114,7 +110,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         private FileInfo DownloadFile()
         {
             byte[] r = HttpHelper.GetUrlBytes(url, true);
@@ -133,7 +128,6 @@ namespace TVRename
         {
         }
 
-        [NotNull]
         private static string SaveDownloadedData(byte[] r, string name)
         {
             string saveTemp = Path.GetTempPath().EnsureEndsWithSeparator() + TVSettings.Instance.FilenameFriendly(name);
@@ -164,14 +158,12 @@ namespace TVRename
 
         public override string SourceDetails => $"{SourceName} ({(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}) [{Seeders} Seeds]";
 
-        [NotNull]
         public string SizePretty => $"{(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}";
 
         public override string? TargetFolder => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).DirectoryName;
 
         private string? TargetFilename => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).Name;
 
-        [NotNull]
         public override string ScanListViewGroup => "lvgActionDownloadRSS";
 
         public override int IconNumber => 6;

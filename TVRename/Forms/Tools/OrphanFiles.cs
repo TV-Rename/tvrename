@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -42,14 +41,13 @@ namespace TVRename.Forms.Tools
             return ep.Directory;
         }
 
-        [NotNull]
         private static object GroupSeasonKeyDelegate(object rowObject)
         {
             FileIssue ep = (FileIssue)rowObject;
             return ep.SeasonNumber.HasValue ? $"{ep.Showname} - Season {ep.SeasonNumber}" : ep.Showname;
         }
 
-        private void OlvFileIssues_MouseClick(object sender, [NotNull] MouseEventArgs e)
+        private void OlvFileIssues_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Right || olvFileIssues.FocusedObject is not FileIssue iss)
             {
@@ -81,7 +79,7 @@ namespace TVRename.Forms.Tools
             }
         }
 
-        private void AddRcMenuItem([NotNull] string name, EventHandler command)
+        private void AddRcMenuItem(string name, EventHandler command)
         {
             ToolStripMenuItem tsi = new(name.ToUiVersion());
             tsi.Click += command;
@@ -154,12 +152,12 @@ namespace TVRename.Forms.Tools
             }
         }
 
-        private static bool HasEpisode([NotNull] IEnumerable<ProcessedEpisode> showSeasonEpisode, int episodeNumber)
+        private static bool HasEpisode(IEnumerable<ProcessedEpisode> showSeasonEpisode, int episodeNumber)
         {
             return showSeasonEpisode.Any(episode => episodeNumber == episode.AppropriateEpNum);
         }
 
-        private void BwRescan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
+        private void BwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
             lblStatus.Text = e.UserState.ToString().ToUiVersion();
@@ -178,7 +176,7 @@ namespace TVRename.Forms.Tools
             AutosizeColumns(olvFileIssues);
         }
 
-        private static void AutosizeColumns([NotNull] BrightIdeasSoftware.ObjectListView olv)
+        private static void AutosizeColumns(BrightIdeasSoftware.ObjectListView olv)
         {
             foreach (ColumnHeader col in olv.Columns)
             {

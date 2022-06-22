@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class DefaultNoAirdateMovieCheck : DefaultMovieCheck
     {
-        public DefaultNoAirdateMovieCheck([NotNull] MovieConfiguration show, TVDoc doc) : base(show, doc)
+        public DefaultNoAirdateMovieCheck(MovieConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
-        [NotNull]
         protected override string FieldName => "No Airdate Movie Check";
 
         protected override bool Field => Movie.ForceCheckNoAirdate;

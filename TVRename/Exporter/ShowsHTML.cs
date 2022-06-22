@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -45,8 +44,7 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private static string CreateHtml([NotNull] ShowConfiguration si)
+        private static string CreateHtml(ShowConfiguration si)
         {
             CachedSeriesInfo? cachedSeries = si.CachedShow;
             if (cachedSeries is null)
@@ -80,7 +78,6 @@ namespace TVRename
             </div></div></div>";
         }
 
-        [NotNull]
         protected override string Name() => "Show HTML Exporter";
     }
 }

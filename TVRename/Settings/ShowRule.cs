@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using System.Xml;
 using System.Xml.Linq;
 
@@ -48,7 +48,7 @@ namespace TVRename
             return $"ShowRule: {ActionInWords()} with parameters {First}, {Second} and usertext: {UserSuppliedText} ({RenumberAfter})";
         }
 
-        public void WriteXml([NotNull] XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("Rule");
             writer.WriteElement("DoWhatNow", (int)DoWhatNow);
@@ -59,7 +59,6 @@ namespace TVRename
             writer.WriteEndElement(); // Rule
         }
 
-        [NotNull]
         public string ActionInWords()
         {
             return DoWhatNow switch

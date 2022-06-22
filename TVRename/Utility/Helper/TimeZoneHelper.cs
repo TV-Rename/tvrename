@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -18,13 +18,10 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        [NotNull]
         public static IEnumerable<string> ZoneNames() => DateTimeZoneProviders.Tzdb.Ids;
 
-        [NotNull]
         public static string DefaultTimeZone() => "America/New_York";
 
-        [NotNull]
         public static string TimeZoneForNetwork(string? network, string defaultTimeZone)
         {
             string[] uktv = { "Sky Atlantic (UK)", "BBC One", "Sky1", "BBC Two", "ITV", "Nick Jr.", "BBC Three", "Channel 4", "CBeebies", "Sky Box Office", "Watch", "ITV2", "National Geographic (UK)", "V", "ITV Encore", "ITV1", "BBC", "E4", "Channel 5 (UK)", "BBC Four", "ITVBe" };

@@ -1,7 +1,6 @@
 using System;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -12,7 +11,7 @@ namespace TVRename
         public TVDoc.ProviderType SeriesSource;
         public int? SeasonNumber;
 
-        public ShowImage(int seriesId, TVDoc.ProviderType source, [NotNull] XElement r) : base(r)
+        public ShowImage(int seriesId, TVDoc.ProviderType source, XElement r) : base(r)
         {
             SeriesId = r.ExtractInt("SeriesId") ?? seriesId; // thetvdb cachedSeries id
             SeasonId = r.ExtractInt("SeasonId");
@@ -24,7 +23,7 @@ namespace TVRename
         {
         }
 
-        public void WriteXml([NotNull] XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("ShowImage");
             WriteCoreXml(writer);
@@ -34,8 +33,7 @@ namespace TVRename
             writer.WriteEndElement(); //ShowImage
         }
 
-        [NotNull]
-        internal static ShowImage GenerateFromLegacyBannerXml(int seriesId, [NotNull] XElement r, TVDoc.ProviderType source)
+        internal static ShowImage GenerateFromLegacyBannerXml(int seriesId, XElement r, TVDoc.ProviderType source)
         {
             // <Banner>
             //        <id>708811</id>
@@ -72,7 +70,7 @@ namespace TVRename
 
             return legacy;
 
-            static ImageSubject Convert2([NotNull] string v)
+            static ImageSubject Convert2(string v)
             {
                 return v switch
                 {
@@ -85,7 +83,7 @@ namespace TVRename
                 };
             }
 
-            static ImageType Convert([NotNull] string v)
+            static ImageType Convert(string v)
             {
                 return v switch
                 {

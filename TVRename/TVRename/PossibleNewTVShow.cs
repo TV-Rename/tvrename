@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -49,7 +48,6 @@ namespace TVRename
 
         public int TvdbId => Provider == TVDoc.ProviderType.TheTVDB && CodeKnown ? ProviderCode : -1;
 
-        [NotNull]
         public string Name => RefinedHint ?? string.Empty;
 
         public MediaConfiguration.MediaType Media => MediaConfiguration.MediaType.tv;

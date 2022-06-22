@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ namespace TVRename
             value > max ? max :
             value;
 
-        public static bool In<T>([CanBeNull] this T item, [NotNull] params T[] items)
+        public static bool In<T>(this T? item, params T[] items)
         {
             if (items == null)
             {
@@ -50,7 +50,6 @@ namespace TVRename
             return items.Contains(item);
         }
 
-        [NotNull]
         public static string PrettyPrint(this TVSettings.ScanType st)
         {
             return st switch
@@ -64,7 +63,6 @@ namespace TVRename
             };
         }
 
-        [NotNull]
         public static string PrettyPrint(this MovieConfiguration.MovieFolderFormat format)
         {
             return format switch
@@ -77,7 +75,6 @@ namespace TVRename
             };
         }
 
-        [NotNull]
         public static string PrettyPrint(this MediaConfiguration.MediaType st)
         {
             return st switch
@@ -89,7 +86,6 @@ namespace TVRename
             };
         }
 
-        [NotNull]
         public static string PrettyPrint(this ProcessedSeason.SeasonType st)
         {
             return st switch
@@ -102,7 +98,6 @@ namespace TVRename
             };
         }
 
-        [NotNull]
         public static string PrettyPrint(this TVDoc.ProviderType type)
         {
             return type switch
@@ -130,7 +125,7 @@ namespace TVRename
             list[secondIndex] = temp;
         }
 
-        public static void SafeInvoke([NotNull] this Control uiElement, System.Action updater, bool forceSynchronous)
+        public static void SafeInvoke(this Control uiElement, System.Action updater, bool forceSynchronous)
         {
             if (uiElement is null)
             {
@@ -165,7 +160,6 @@ namespace TVRename
         /// <value>
         /// The application display version.
         /// </value>
-        [NotNull]
         public static string DisplayVersion
         {
             get
@@ -178,10 +172,8 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public static string DebugText => " ** Debug Build **";
 
-        [NotNull]
         public static string Pad(this int i)
         {
             if (i.ToString().Length > 1)
@@ -192,13 +184,11 @@ namespace TVRename
             return "0" + i;
         }
 
-        [NotNull]
         public static string Pad(this int i, int size)
         {
             return i.ToString().Length >= size ? i.ToString() : i.ToString().PadLeft(size,'0');
         }
 
-        [NotNull]
         public static string PrettyPrint(this DateTime? dt)
         {
             if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
@@ -270,17 +260,15 @@ namespace TVRename
 
         public static Color WarningColor() => Color.FromArgb(255, 210, 210);
 
-        [NotNull]
-        public static T LongestShowName<T>([NotNull] this IEnumerable<T> media) where T : MediaConfiguration
+        public static T LongestShowName<T>(this IEnumerable<T> media) where T : MediaConfiguration
         {
             IEnumerable<T> mediaConfigurations = media as T[] ?? media.ToArray();
             int longestName = mediaConfigurations.Select(configuration => configuration.ShowName.Length).Max();
             return mediaConfigurations.First(config => config.ShowName.Length == longestName);
         }
 
-        public static bool Contains([NotNull] string source, [NotNull] string toCheck, StringComparison comp) => source.IndexOf(toCheck, comp) >= 0;
+        public static bool Contains(string source, string toCheck, StringComparison comp) => source.IndexOf(toCheck, comp) >= 0;
 
-        [NotNull]
         public static string TranslateColorToHtml(Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
 
         public static DateTime GetMinWindowsTime(DateTime dateTime)

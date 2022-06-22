@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class DefaultDoMissingTvCheck : DefaultTvShowCheck
     {
-        public DefaultDoMissingTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        public DefaultDoMissingTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
-        [NotNull]
         protected override string FieldName => "Do Missing Check";
 
         protected override bool Field => Show.DoMissingCheck;

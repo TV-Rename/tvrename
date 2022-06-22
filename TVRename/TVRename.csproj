@@ -27,7 +27,8 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>Latest</LangVersion>
+	<Nullable>enable</Nullable>
 	<NullableContextOptions>enable</NullableContextOptions>
     <Deterministic>true</Deterministic>
     <PublishUrl>publish\</PublishUrl>
@@ -55,6 +56,8 @@
     <WarningLevel>0</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>AnyCPU</PlatformTarget>
+	<LangVersion>Latest</LangVersion>
+	<Nullable>enable</Nullable>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -66,6 +69,8 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>AnyCPU</PlatformTarget>
+	<LangVersion>Latest</LangVersion>
+	<Nullable>enable</Nullable>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>

@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ namespace TVRename
 {
     internal class ManualFoldersMovieCheck : CustomMovieCheck
     {
-        public ManualFoldersMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        public ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 
@@ -75,7 +74,7 @@ namespace TVRename
             }
         }
 
-        private void TryToMoveFiles([NotNull] DirectoryInfo manualSource, string automaticDestination)
+        private void TryToMoveFiles(DirectoryInfo manualSource, string automaticDestination)
         {
             //Do we want to copy the whole folder or just some files from within?
             //we have one location to copy to
@@ -104,7 +103,7 @@ namespace TVRename
             }
         }
 
-        private void MoveFiles([NotNull] IEnumerable<FileInfo> where, string destination)
+        private void MoveFiles(IEnumerable<FileInfo> where, string destination)
         {
             Directory.CreateDirectory(destination);
             foreach (FileInfo? f in where)
@@ -115,7 +114,7 @@ namespace TVRename
             }
         }
 
-        private void CopyOrMove([NotNull] DirectoryInfo fromDirectory, string toDirectory)
+        private void CopyOrMove(DirectoryInfo fromDirectory, string toDirectory)
         {
             DirectoryInfo target = new(toDirectory);
 
@@ -147,15 +146,12 @@ namespace TVRename
             LOGGER.Info($"Moved whole directory {fromDirectory.FullName } to {toDirectory}");
         }
 
-        [NotNull]
         protected override string FieldName => "Use manual folders";
 
         protected override bool Field => Movie.UseManualLocations;
 
-        [NotNull]
         protected override string CustomFieldValue => Movie.ManualLocations.ToCsv();
 
-        [NotNull]
         protected override string DefaultFieldValue => Movie.AutomaticLocations().ToCsv();
     }
 }

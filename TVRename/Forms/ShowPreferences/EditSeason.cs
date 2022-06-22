@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -34,7 +33,7 @@ namespace TVRename
         private readonly List<ProcessedEpisode> episodesToAddToSeen;
         private readonly List<ProcessedEpisode> episodesToRemoveFromSeen;
 
-        public EditSeason([NotNull] ShowConfiguration si, int seasonNumber, CustomEpisodeName style)
+        public EditSeason(ShowConfiguration si, int seasonNumber, CustomEpisodeName style)
         {
             mOriginalEps = ShowLibrary.GenerateEpisodes(si, seasonNumber, false);
 
@@ -276,7 +275,6 @@ namespace TVRename
             lbEpsPreview.EndUpdate();
         }
 
-        [NotNull]
         private IEnumerable<ProcessedEpisode> ProcessedEpisodes()
         {
             List<ProcessedEpisode> pel = new();
@@ -354,7 +352,7 @@ namespace TVRename
             bnRuleDown.Enabled = anythingSelected;
         }
 
-        private void LvSeenEpisodes_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
+        private void LvSeenEpisodes_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             if (e.Column == 0)
             {

@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -29,7 +28,7 @@ namespace TVRename
         private readonly ProcessedSeason.SeasonType mOrder;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public AddModifyRule(ShowRule rule, [NotNull] ShowConfiguration show, IEnumerable<ProcessedEpisode> s)
+        public AddModifyRule(ShowRule rule, ShowConfiguration show, IEnumerable<ProcessedEpisode> s)
         {
             mRule = rule;
             eps = s;

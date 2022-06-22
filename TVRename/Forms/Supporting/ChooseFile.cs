@@ -10,7 +10,6 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Humanizer;
-using JetBrains.Annotations;
 using NLog;
 using Alphaleonis.Win32.Filesystem;
 
@@ -29,7 +28,7 @@ namespace TVRename
         private readonly FileInfo leftFile;
         private readonly FileInfo rightFile;
 
-        public ChooseFile([NotNull] FileInfo left, [NotNull] FileInfo right)
+        public ChooseFile(FileInfo left, FileInfo right)
         {
             InitializeComponent();
 
@@ -51,7 +50,7 @@ namespace TVRename
             SetBoldFrameWidth(leftFrameWidth, rightFrameWidth);
         }
 
-        private static (int, bool, int) UpdateFields([NotNull] FileInfo file, [NotNull] Label nameLabel, [NotNull] Label dimensionsLabel, [NotNull] Label lengthLabel, [NotNull] Label sizeLabel, [NotNull] Label pathLabel)
+        private static (int, bool, int) UpdateFields(FileInfo file, Label nameLabel, Label dimensionsLabel, Label lengthLabel, Label sizeLabel, Label pathLabel)
         {
             nameLabel.Text = file.Name.ToUiVersion();
             int leftFrameWidth = file.GetFrameWidth();
@@ -75,9 +74,9 @@ namespace TVRename
             return (leftFrameWidth, leftFrameUnknown, leftFilmLength);
         }
 
-        private static string GetFileSize([NotNull] FileInfo file) => file.Length.Bytes().Humanize("#.#");
+        private static string GetFileSize(FileInfo file) => file.Length.Bytes().Humanize("#.#");
 
-        private void SetBoldFileSize([NotNull] FileInfo left, [NotNull] FileInfo right)
+        private void SetBoldFileSize(FileInfo left, FileInfo right)
         {
             try
             {

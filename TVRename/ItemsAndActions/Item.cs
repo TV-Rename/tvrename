@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -30,44 +29,37 @@ namespace TVRename
 
         public ItemMissing? UndoItemMissing; //Item to revert to if we have to cancel this action
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         // This method is called by the Set accessor of each property.
         // The CallerMemberName attribute that is applied to the optional propertyName
         // parameter causes the property name of the caller to be substituted as an argument.
-        protected void NotifyPropertyChanged([CallerMemberName] [CanBeNull] string propertyName = null)
+        protected void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         protected static IgnoreItem? GenerateIgnore(string? file) => string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
 
-        [NotNull]
         public virtual string SeriesName => Movie?.ShowName ?? Episode?.Show.ShowName ?? string.Empty;
-        [CanBeNull]
-        public virtual ShowConfiguration  Series => Episode?.Show;
-        [NotNull]
+        public virtual ShowConfiguration?  Series => Episode?.Show;
         public virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;
 
-        [NotNull]
         public virtual string EpisodeString => Episode?.EpNumsAsString() ?? string.Empty;
 
         // ReSharper disable once UnusedMember.Global
         public int? EpisodeNumber => Episode?.AppropriateEpNum;
         public virtual int? SeasonNumberAsInt => Episode?.AppropriateSeasonNumber;
 
-        [NotNull]
         public virtual string OrderKey => SeasonNumberAsInt?.Pad(2) + "-" +
                                           Episode?.AppropriateEpNum.Pad(4) + "-" + AirDateString;
 
-        [NotNull]
         public virtual string AirDateString => Episode?.GetAirDateDt(true).PrettyPrint() ?? Movie?.CachedMovie?.FirstAired.PrettyPrint() ?? string.Empty;
 
         public virtual DateTime? AirDate => Episode?.GetAirDateDt(true) ?? Movie?.CachedMovie?.FirstAired;
         public abstract string DestinationFolder { get; }
         public abstract string DestinationFile { get; }
 
-        [NotNull]
         public virtual string SourceDetails => string.Empty;
 
         private string errorTextValue;
@@ -89,7 +81,7 @@ namespace TVRename
             return CompareTo(other) == 0;
         }
 
-        public static bool operator ==([CanBeNull] Item left, [CanBeNull] Item right)
+        public static bool operator ==(Item? left, Item? right)
         {
             if (left is null)
             {
@@ -97,13 +89,13 @@ namespace TVRename
             }
             return left.Equals(right);
         }
-        public static bool operator !=([CanBeNull] Item left, [CanBeNull] Item right) => !(left == right);
+        public static bool operator !=(Item? left, Item? right) => !(left == right);
 
         public static bool operator <(Item left, Item right) => Compare(left, right) < 0;
 
         public static bool operator >(Item left, Item right) => Compare(left, right) > 0;
 
-        private static int Compare(Item left, Item right)
+        private static int Compare(Item? left, Item? right)
         {
             if (ReferenceEquals(left, right))
             {

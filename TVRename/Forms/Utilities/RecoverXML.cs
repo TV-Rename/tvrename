@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
@@ -58,7 +57,7 @@ namespace TVRename
             Setup(lbTMDB, "No Cache", availableTmdbFiles);
         }
 
-        private static void Setup([NotNull] ListBox lb, [NotNull] string defaultValue, [NotNull] IReadOnlyCollection<FileInfo> files)
+        private static void Setup(ListBox lb, string defaultValue, IReadOnlyCollection<FileInfo> files)
         {
             lb.Items.Add(defaultValue);
             if (files.Count > 0)
@@ -82,7 +81,7 @@ namespace TVRename
             Close();
         }
 
-        private static FileInfo? GetFile([NotNull] ListControl lb, IReadOnlyList<FileInfo> fileInfos)
+        private static FileInfo? GetFile(ListControl lb, IReadOnlyList<FileInfo> fileInfos)
         {
             // we added a 'none' item at the top of the list, so adjust for that
             int n = lb.SelectedIndex;

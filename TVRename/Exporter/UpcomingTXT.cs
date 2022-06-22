@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -14,7 +13,6 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportWTWTXT;
 
         protected override string Location() => TVSettings.Instance.ExportWTWTXTTo;
-        [NotNull]
         protected override string Name() => "Upcoming TXT Exporter";
 
         protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode> elist)
@@ -38,11 +36,9 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         private string HeaderLine() => FormattedLine("Show", "Network", "Day", "Time");
 
-        [NotNull]
-        private string ConvertToLine([NotNull] ProcessedEpisode ei)
+        private string ConvertToLine(ProcessedEpisode ei)
         {
             DateTime? stTime = ei.GetAirDateDt(true);
 
@@ -57,7 +53,6 @@ namespace TVRename
             return FormattedLine(niceName, ei.TheCachedSeries.Networks.ToCsv(), startTime.ToString("ddd, d MMM"), startTime.ToString("HH:mm"));
         }
 
-        [NotNull]
         private string FormattedLine(string niceName, string network, string day, string time)
         {
             return $"{day,-15} {time,-10} {network.First(15),-15} {niceName.First(80),-80}";

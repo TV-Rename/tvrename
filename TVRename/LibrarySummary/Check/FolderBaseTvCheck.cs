@@ -1,17 +1,15 @@
-using JetBrains.Annotations;
 using System.Linq;
 
 namespace TVRename
 {
     internal class FolderBaseTvCheck : TvShowCheck
     {
-        public FolderBaseTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        public FolderBaseTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
         public override bool Check() => !Show.AutoAddFolderBase.HasValue() && Show.AutoAddNewSeasons();
 
-        [NotNull]
         public override string Explain() => "This TV show does not have an automatic folder base specified.";
 
         protected override void FixInternal()
@@ -37,7 +35,6 @@ namespace TVRename
                                      + TVSettings.Instance.DefaultTVShowFolder(Show);
         }
 
-        [NotNull]
         public override string CheckName => "[TV] Has an automatic base folder supplied";
     }
 }

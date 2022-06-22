@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -9,7 +8,7 @@ namespace TVRename
     {
         public byte[] Data;
 
-        public BTString([NotNull] string s) : base(BTChunk.kString)
+        public BTString(string s) : base(BTChunk.kString)
         {
             Data = System.Text.Encoding.UTF8.GetBytes(s);
         }
@@ -21,10 +20,8 @@ namespace TVRename
 
         public override string AsText() => "String=" + AsString();
 
-        [NotNull]
         public string AsString() => System.Text.Encoding.UTF8.GetString(Data);
 
-        [NotNull]
         public static string CharsToHex(byte[] data, int start, int n)
         {
             string r = string.Empty;
@@ -36,7 +33,6 @@ namespace TVRename
             return r;
         }
 
-        [NotNull]
         public string PieceAsNiceString(int pieceNum) => CharsToHex(Data, pieceNum * 20, 20);
 
         public override void Tree(TreeNodeCollection tn)
@@ -45,7 +41,7 @@ namespace TVRename
             tn.Add(n);
         }
 
-        public override void Write([NotNull] System.IO.Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
             // Byte strings are encoded as follows: <string length encoded in base ten ASCII>:<string data>
 

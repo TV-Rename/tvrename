@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,17 +30,14 @@ namespace TVRename
             "{CollectionOrder}",
         };
 
-        [NotNull]
         public static List<string> ExamplePresets(MovieConfiguration s)
         {
             return Presets.Select(example => NameFor(s, example)).ToList();
         }
 
-        [NotNull]
         public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false, true);
 
-        [NotNull]
-        public static string DirectoryNameFor(MovieConfiguration? m, [NotNull] string styleString)
+        public static string DirectoryNameFor(MovieConfiguration? m, string styleString)
         {
             if (styleString.StartsWith("{collectionFolder}", StringComparison.OrdinalIgnoreCase))
             {
@@ -54,7 +50,6 @@ namespace TVRename
             return NameFor(m, styleString, false, false);
         }
 
-        [NotNull]
         public static string NameFor(MovieConfiguration m, string styleString, string? extension)
         {
             string r = NameFor(m, styleString);
@@ -74,7 +69,6 @@ namespace TVRename
             return r + extension;
         }
 
-        [NotNull]
         public static string NameFor(MovieConfiguration? m, string styleString, bool urlEncode, bool isfilename)
         {
             if (m?.ShowName is null)
@@ -104,7 +98,6 @@ namespace TVRename
                 : TVSettings.DirectoryFriendly(name.Trim());
         }
 
-        [NotNull]
         public static string GetTextFromPattern(string styleString)
         {
             string name = styleString;
@@ -119,8 +112,7 @@ namespace TVRename
             return name.Trim();
         }
 
-        [NotNull]
-        public static string NameFor(MovieConfiguration m, [NotNull] string styleString, int year)
+        public static string NameFor(MovieConfiguration m, string styleString, int year)
         {
             string styleStringNewYear = styleString.ReplaceInsensitive("{Year}", year.ToString());
 

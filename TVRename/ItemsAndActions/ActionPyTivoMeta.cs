@@ -7,7 +7,6 @@
 //
 
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -16,17 +15,15 @@ namespace TVRename
 
     public class ActionPyTivoMeta : ActionWriteMetadata
     {
-        public ActionPyTivoMeta(FileInfo nfo, [NotNull] ProcessedEpisode pe) : base(nfo, pe.Show)
+        public ActionPyTivoMeta(FileInfo nfo, ProcessedEpisode pe) : base(nfo, pe.Show)
         {
             Episode = pe;
         }
 
         #region Action Members
 
-        [NotNull]
         public override string Name => "Write pyTivo Meta";
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             if (Episode is null)

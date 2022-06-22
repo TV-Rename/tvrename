@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -15,7 +14,6 @@ namespace TVRename
             throw new NotSupportedException();
         }
 
-        [NotNull]
         public string Name() => "uTorrent";
 
         public void StartUrlDownload(string torrentUrl)
@@ -54,7 +52,7 @@ namespace TVRename
             }
         }
 
-        public void StartTorrentDownload([NotNull] FileInfo torrentFile)
+        public void StartTorrentDownload(FileInfo torrentFile)
         {
             System.Diagnostics.Process.Start(TVSettings.Instance.uTorrentPath, "\""+torrentFile.FullName+ "\"");
         }

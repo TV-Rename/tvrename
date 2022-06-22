@@ -7,7 +7,6 @@
 //
 using Alphaleonis.Win32.Filesystem;
 using Humanizer;
-using JetBrains.Annotations;
 using MediaInfo;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
@@ -126,7 +125,7 @@ namespace TVRename
             DeleteOrRecycleFolder(di, settings);
         }
 
-        private static bool CanDelete(FileInfo fi, [NotNull] TVSettings.TidySettings settings)
+        private static bool CanDelete(FileInfo fi, TVSettings.TidySettings settings)
         {
             bool extensionOkToRemove = settings.EmptyIgnoreExtensions &&
                               settings.EmptyIgnoreExtensionsArray.Contains(fi.Extension);
@@ -137,7 +136,7 @@ namespace TVRename
             return extensionOkToRemove || fileOkToRemove;
         }
 
-        public static int GetFrameWidth([NotNull] this FileInfo movieFile)
+        public static int GetFrameWidth(this FileInfo movieFile)
         {
             return GetMetaDetails(movieFile, o => o.Properties.System.Video.FrameWidth, Parse, "GetFrameWidth",
                 wrapper => wrapper.Width, i => i);
@@ -152,7 +151,7 @@ namespace TVRename
             same
         }
 
-        public static VideoComparison BetterQualityFile(FileInfo incumbantFile, [NotNull] FileInfo newFile)
+        public static VideoComparison BetterQualityFile(FileInfo incumbantFile, FileInfo newFile)
         {
             if (!newFile.IsMovieFile())
             {
@@ -231,7 +230,7 @@ namespace TVRename
             return VideoComparison.similar;
         }
 
-        public static int GetFrameHeight([NotNull] this FileInfo movieFile)
+        public static int GetFrameHeight(this FileInfo movieFile)
         {
             return GetMetaDetails(movieFile, o => o.Properties.System.Video.FrameHeight, Parse, "GetFrameHeight",
                 wrapper => wrapper.Height, i => i);
@@ -247,7 +246,7 @@ namespace TVRename
             return -1;
         }
 
-        public static bool IsImportant([NotNull] this DirectoryInfo info)
+        public static bool IsImportant(this DirectoryInfo info)
         {
             if (info.Name.Equals("subs", StringComparison.OrdinalIgnoreCase))
             {
@@ -292,15 +291,15 @@ namespace TVRename
             return true;
         }
 
-        public static bool IsSampleFile([NotNull] this FileInfo fi) => Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) &&
-                                                                         fi.Length / (1024 * 1024) < TVSettings.Instance.SampleFileMaxSizeMB;
+        public static bool IsSampleFile(this FileInfo fi) => Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) &&
+                                                                fi.Length / (1024 * 1024) < TVSettings.Instance.SampleFileMaxSizeMB;
 
-        public static bool IsDeletedStubFile([NotNull] this FileInfo fi) =>
+        public static bool IsDeletedStubFile(this FileInfo fi) =>
             (fi.Name.StartsWith("-.", StringComparison.Ordinal) || fi.Name.StartsWith("._", StringComparison.Ordinal)) && fi.Length / 1024 < 10;
 
-        public static bool IsMovieFile([NotNull] this FileInfo file) => TVSettings.Instance.FileHasUsefulExtension(file, false);
+        public static bool IsMovieFile(this FileInfo file) => TVSettings.Instance.FileHasUsefulExtension(file, false);
 
-        public static bool IsArchiveFile([NotNull] this FileInfo file)
+        public static bool IsArchiveFile(this FileInfo file)
         {
             const string ARCHIVE_EXTENSIONS = ".zip;.rar;.tar;.tar.gz;.gz;.7z";
             return ARCHIVE_EXTENSIONS.Split(';')
@@ -308,8 +307,8 @@ namespace TVRename
                 .Any(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public static bool IsMovieFile([NotNull] this string filename) => TVSettings.Instance.FileHasUsefulExtension(filename, false);
-        public static bool IsMovieOrUsefulFile([NotNull] this FileInfo file) => TVSettings.Instance.FileHasUsefulExtension(file, true);
+        public static bool IsMovieFile(this string filename) => TVSettings.Instance.FileHasUsefulExtension(filename, false);
+        public static bool IsMovieOrUsefulFile(this FileInfo file) => TVSettings.Instance.FileHasUsefulExtension(file, true);
 
         public static (bool found, string extension) IsLanguageSpecificSubtitle(this FileInfo file)
         {
@@ -359,15 +358,14 @@ namespace TVRename
             return (false, string.Empty);
         }
 
-        public static string UrlPathFullName([NotNull] this FileInfo baseFile)
+        public static string UrlPathFullName(this FileInfo baseFile)
         {
             return baseFile.FullName;
         }
 
-        [NotNull]
-        public static FileInfo WithExtension([NotNull] this FileInfo baseFile, string extension) => new(baseFile.RemoveExtension(true) + extension);
+        public static FileInfo WithExtension(this FileInfo baseFile, string extension) => new(baseFile.RemoveExtension(true) + extension);
 
-        private static int GetMetaDetails([NotNull] this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string, FileInfo, int> parseMethod, string operation, Func<MediaInfoWrapper, int> meExtractMethod, Func<int, int> meParseMethod)
+        private static int GetMetaDetails(this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string, FileInfo, int> parseMethod, string operation, Func<MediaInfoWrapper, int> meExtractMethod, Func<int, int> meParseMethod)
         {
             try
             {
@@ -420,7 +418,7 @@ namespace TVRename
             return -1;
         }
 
-        public static int GetFilmLength([NotNull] this FileInfo movieFile)
+        public static int GetFilmLength(this FileInfo movieFile)
         {
             return GetMetaDetails(movieFile, o => o.Properties.System.Media.Duration, ParseDuration,
                 "GetFilmLength", wrapper => wrapper.Duration, ParseMwDuration);
@@ -470,7 +468,7 @@ namespace TVRename
                    && Array.Exists(Directory.GetFiles(name), s => s == Path.GetFullPath(filename));
         }
 
-        public static bool SameDirectoryLocation([NotNull] this string directoryPath1, [NotNull] string directoryPath2)
+        public static bool SameDirectoryLocation(this string directoryPath1, string directoryPath2)
         {
             // http://stackoverflow.com/questions/1794025/how-to-check-whether-2-directoryinfo-objects-are-pointing-to-the-same-directory
             try
@@ -486,8 +484,7 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private static string NormalizePath([NotNull] this string path)
+        private static string NormalizePath(this string path)
         {
             //https://stackoverflow.com/questions/2281531/how-can-i-compare-directory-paths-in-c
             return Path.GetFullPath(new Uri(path).LocalPath)
@@ -495,18 +492,15 @@ namespace TVRename
                 .ToUpperInvariant();
         }
 
-        [NotNull]
-        public static string RemoveExtension([NotNull] this FileInfo file) => RemoveExtension(file, false);
+        public static string RemoveExtension(this FileInfo file) => RemoveExtension(file, false);
 
-        [NotNull]
-        public static string RemoveExtension([NotNull] this FileInfo file, bool useFullPath)
+        public static string RemoveExtension(this FileInfo file, bool useFullPath)
         {
             string root = useFullPath ? file.FullName : file.Name;
             return root.RemoveLast(file.Extension.Length);
         }
 
-        [NotNull]
-        public static string GetFilmDetails([NotNull] this FileInfo movieFile)
+        public static string GetFilmDetails(this FileInfo movieFile)
         {
             using (ShellPropertyCollection properties = new(movieFile.FullName))
             {
@@ -541,18 +535,15 @@ namespace TVRename
             return thisOne.Length >= l && string.Equals(thisOne.Substring(0, l), ofThat, StringComparison.CurrentCultureIgnoreCase);
         }
 
-        [NotNull]
-        public static string TrimSlash([NotNull] this string s) // trim trailing slash
+        public static string TrimSlash(this string s) // trim trailing slash
         {
             return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
 
         // ReSharper disable once InconsistentNaming
-        [NotNull]
         public static string GBMB(this long value) => GBMB(value, 2);
 
         // ReSharper disable once InconsistentNaming
-        [NotNull]
         public static string GBMB(this long value, int decimalPlaces)
         {
             const long ONE_KB = 1024;
@@ -578,7 +569,6 @@ namespace TVRename
         /// </summary>
         /// <param name="volumeIdentifier">The path whose volume properties are to be queried.</param>
         /// <returns>A <see cref="FileSystemProperties"/> containing the properties for the specified file system.</returns>
-        [NotNull]
         public static FileSystemProperties GetProperties(string volumeIdentifier)
         {
             if (NativeMethods.GetDiskFreeSpaceEx(volumeIdentifier, out ulong available, out ulong total, out ulong free))
@@ -588,8 +578,7 @@ namespace TVRename
             return new FileSystemProperties(null, null, null);
         }
 
-        [NotNull]
-        public static string ToCsv([NotNull] this IEnumerable<FileInfo> files) => files.Select(f => f.Name).ToCsv();
+        public static string ToCsv(this IEnumerable<FileInfo> files) => files.Select(f => f.Name).ToCsv();
 
         public static void Rotate(string filenameBase)
         {
@@ -613,12 +602,12 @@ namespace TVRename
             }
         }
 
-        public static bool Same([NotNull] FileInfo a, [NotNull] FileInfo b)
+        public static bool Same(FileInfo a, FileInfo b)
         {
             return string.Compare(a.FullName, b.FullName, StringComparison.OrdinalIgnoreCase) == 0; // true->ignore case
         }
 
-        public static bool Same([NotNull] DirectoryInfo a, [NotNull] DirectoryInfo b)
+        public static bool Same(DirectoryInfo a, DirectoryInfo b)
         {
             string n1 = a.FullName.EnsureEndsWithSeparator();
             string n2 = b.FullName.EnsureEndsWithSeparator();
@@ -626,8 +615,7 @@ namespace TVRename
             return string.Compare(n1, n2, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        [NotNull]
-        public static string EnsureEndsWithSeparator([NotNull] this string source)
+        public static string EnsureEndsWithSeparator(this string source)
         {
             if (!source.HasValue())
             {
@@ -640,10 +628,9 @@ namespace TVRename
             return source.Trim() + Path.DirectorySeparatorChar;
         }
 
-        [NotNull]
-        public static FileInfo FileInFolder([NotNull] string dir, string fn) => new(dir.EnsureEndsWithSeparator() + fn);
+        public static FileInfo FileInFolder(string dir, string fn) => new(dir.EnsureEndsWithSeparator() + fn);
 
-        public static void RemoveDirectory([NotNull] string folderName)
+        public static void RemoveDirectory(string folderName)
         {
             try
             {
@@ -697,8 +684,7 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        public static FileInfo FileInFolder([NotNull] DirectoryInfo di, string fn) => FileInFolder(di.FullName, fn);
+        public static FileInfo FileInFolder(DirectoryInfo di, string fn) => FileInFolder(di.FullName, fn);
 
         // see if showname is somewhere in filename
         public static bool SimplifyAndCheckFilename(string filename, string showName, bool simplifyfilename, bool simplifyshowname)
@@ -732,7 +718,6 @@ namespace TVRename
             return SimplifyAndCheckFilename(filename, showName, true, true);
         }
 
-        [NotNull]
         public static string MakeValidPath(string? input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -750,7 +735,7 @@ namespace TVRename
             return directoryName;
         }
 
-        public static bool IgnoreFile([NotNull] this FileInfo fi)
+        public static bool IgnoreFile(this FileInfo fi)
         {
             if (!fi.IsMovieFile())
             {
@@ -770,7 +755,7 @@ namespace TVRename
             return false;
         }
 
-        internal static bool FileExistsCaseSensitive([NotNull] IEnumerable<FileInfo> files, FileInfo newFile)
+        internal static bool FileExistsCaseSensitive(IEnumerable<FileInfo> files, FileInfo newFile)
         {
             return files.Any(testFile => string.Equals(testFile.Name, newFile.Name, StringComparison.CurrentCulture));
         }
@@ -798,7 +783,7 @@ namespace TVRename
             return Ending.Any(end => HasEnding(f1, f2, end));
         }
 
-        private static bool HasEnding([NotNull] FileInfo f1, FileInfo f2, string part)
+        private static bool HasEnding(FileInfo f1, FileInfo f2, string part)
         {
             if (f1.FileNameNoExt().EndsWith(part + "1", true, CultureInfo.CurrentCulture) &&
                 f2.FileNameNoExt().EndsWith(part + "2", true, CultureInfo.CurrentCulture))
@@ -834,10 +819,8 @@ namespace TVRename
             return false;
         }
 
-        [NotNull]
-        public static string FileNameNoExt([NotNull] this FileInfo f) => f.Name.RemoveAfter(f.Extension);
-        [NotNull]
-        public static string FileFullNameNoExt([NotNull] this FileInfo f) => f.FullName.RemoveAfter(f.Extension);
+        public static string FileNameNoExt(this FileInfo f) => f.Name.RemoveAfter(f.Extension);
+        public static string FileFullNameNoExt(this FileInfo f) => f.FullName.RemoveAfter(f.Extension);
 
         private static readonly Regex[] MovieMultiPartRegex =
         {
@@ -845,7 +828,7 @@ namespace TVRename
             new(@"(?<base>.*)[ ._-]+(?<part>[A-D])$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         };
 
-        public static bool IsRecycleBin([NotNull] this DirectoryInfo di2)
+        public static bool IsRecycleBin(this DirectoryInfo di2)
         {
             bool endsWith = di2.FullName.Contains("$RECYCLE.BIN", StringComparison.OrdinalIgnoreCase)
                             || di2.FullName.Contains("\\@Recycle\\", StringComparison.OrdinalIgnoreCase)
@@ -854,8 +837,7 @@ namespace TVRename
             return endsWith;
         }
 
-        [NotNull]
-        public static string MovieFileNameBase([NotNull] this FileInfo movieFile)
+        public static string MovieFileNameBase(this FileInfo movieFile)
         {
             string longbase = movieFile.FileNameNoExt();
             foreach (Match x in MovieMultiPartRegex.Select(tets => tets.Match(longbase)).Where(x => x.Success))

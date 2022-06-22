@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class MissingMovieCsv : ActionListExporter
@@ -9,7 +7,6 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportMissingMoviesCSV;
-        [NotNull]
         protected override string Name() => "Missing Movie CSV Exporter";
 
         protected override string Location() => TVSettings.Instance.ExportMissingMoviesCSVTo;

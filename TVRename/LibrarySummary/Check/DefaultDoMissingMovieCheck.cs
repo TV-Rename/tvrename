@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class DefaultDoMissingMovieCheck : DefaultMovieCheck
     {
-        public DefaultDoMissingMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        public DefaultDoMissingMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 
-        [NotNull]
         protected override string FieldName => "Do Missing Check";
 
         protected override bool Field => Movie.DoMissingCheck;

@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,14 +15,13 @@ namespace TVRename
 {
     internal class MergeLibraryEpisodes : ScanShowActivity
     {
-        public MergeLibraryEpisodes([NotNull] TVDoc doc) : base(doc)
+        public MergeLibraryEpisodes(TVDoc doc) : base(doc)
         {
         }
 
-        [NotNull]
         protected override string ActivityName() => "Created Merge Rules for episodes in the library";
 
-        protected override void Check(ShowConfiguration si, DirFilesCache dfc, [NotNull] TVDoc.ScanSettings settings)
+        protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             if (settings.Token.IsCancellationRequested)
             {
@@ -61,7 +59,7 @@ namespace TVRename
         }
 
         // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-        private static void MergeShowEpisodes([NotNull] ShowConfiguration si, DirFilesCache dfc, CancellationToken token, int snum, IEnumerable<string> folders)
+        private static void MergeShowEpisodes(ShowConfiguration si, DirFilesCache dfc, CancellationToken token, int snum, IEnumerable<string> folders)
         {
             if (snum == 0 && si.CountSpecials)
             {

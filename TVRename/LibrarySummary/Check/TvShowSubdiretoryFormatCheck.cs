@@ -1,11 +1,10 @@
-﻿using System;
-using JetBrains.Annotations;
+using System;
 
 namespace TVRename
 {
     internal class TvShowSubdiretoryFormatCheck : TvShowCheck
     {
-        public TvShowSubdiretoryFormatCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        public TvShowSubdiretoryFormatCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
@@ -26,10 +25,8 @@ namespace TVRename
             return ShowConfiguration.AutomaticFolderType.libraryDefaultFolderFormat;
         }
 
-        [NotNull]
         public override string Explain() => $"TV Show does not use the library default ({DefaultShowFormat()}) for folders creation, it uses {GetShowFormatText()} ({Show.AutoAddType})";
 
-        [NotNull]
         private string GetShowFormatText()
         {
             return Show.AutoAddType switch
@@ -50,7 +47,6 @@ namespace TVRename
             //TODO Should move files from the old location to the new one!!
         }
 
-        [NotNull]
         public override string CheckName => "[TV] Use Custom season subfolder Format";
     }
 }

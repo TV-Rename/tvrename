@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +7,12 @@ namespace TVRename
 {
     internal class SubdirectoryMovieCheck : MovieCheck
     {
-        public SubdirectoryMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        public SubdirectoryMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 
         public override bool Check() => Movie.UseCustomFolderNameFormat;
 
-        [NotNull]
         public override string Explain() => $"This movie does not use the standard folder naming format '{TVSettings.Instance.MovieFolderFormat}', it uses '{Movie.CustomFolderNameFormat}'";
 
         protected override void FixInternal()
@@ -69,7 +67,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         protected override string MovieCheckName => "Use custom folder name format";
     }
 }

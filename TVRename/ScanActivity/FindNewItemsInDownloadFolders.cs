@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +19,6 @@ namespace TVRename
         {
         }
 
-        [NotNull]
         protected override string CheckName() => "Looked in the Search Folders for any new series/movies that need to be added to the library";
 
         protected override void DoCheck(SetProgressDelegate progress)
@@ -67,8 +65,7 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private List<MediaConfiguration> RemoveExistingAndDups([NotNull] IEnumerable<MediaConfiguration> addedShows)
+        private List<MediaConfiguration> RemoveExistingAndDups(IEnumerable<MediaConfiguration> addedShows)
         {
             List<MediaConfiguration> returnList = new();
             foreach (MediaConfiguration testMedia in addedShows)
@@ -87,7 +84,6 @@ namespace TVRename
             return returnList;
         }
 
-        [NotNull]
         private IEnumerable<FileInfo> GetPossibleFiles()
         {
             List<FileInfo> possibleShowNames = new();

@@ -1,11 +1,10 @@
-using JetBrains.Annotations;
 using System;
 
 namespace TVRename
 {
     public class ShowItemMissing : ItemMissing
     {
-        public ShowItemMissing([NotNull] ProcessedEpisode pe, [NotNull] string whereItShouldBeFolder)
+        public ShowItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder)
         {
             Episode = pe;
             Filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe, null, whereItShouldBeFolder.Length));
@@ -15,7 +14,6 @@ namespace TVRename
 
         #region Item Members
 
-        [NotNull]
         public ProcessedEpisode MissingEpisode => Episode ?? throw new InvalidOperationException();
 
         public override bool SameAs(Item o)
@@ -23,7 +21,6 @@ namespace TVRename
             return o is ShowItemMissing missing && string.CompareOrdinal(missing.TheFileNoExt, TheFileNoExt) == 0;
         }
 
-        [NotNull]
         public override string Name => "Missing Episode";
 
         public override int CompareTo(Item o)

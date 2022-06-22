@@ -1,16 +1,13 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class MovieProviderCheck : MovieCheck
     {
-        public MovieProviderCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        public MovieProviderCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 
         public override bool Check() => Movie.ConfigurationProvider != TVDoc.ProviderType.libraryDefault;
 
-        [NotNull]
         public override string Explain() => $"This movie does not use the library default ({TVSettings.Instance.DefaultMovieProvider.PrettyPrint()}), it uses {Movie.ConfigurationProvider.PrettyPrint()} (Hardcoded)";
 
         protected override void FixInternal()
@@ -25,7 +22,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         protected override string MovieCheckName => "Use default source provider";
     }
 }

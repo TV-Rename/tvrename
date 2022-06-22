@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using BrightIdeasSoftware;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -22,14 +21,14 @@ namespace TVRename
         col = column;
     }
 
-    public int Compare(OLVListItem x, OLVListItem y)
+    public int Compare(OLVListItem? x, OLVListItem? y)
     {
         if (col == -1)
         {
             return 0;
         }
-        T d1 = GetValue(x,col);
-        T d2 = GetValue(y,col);
+        T? d1 = GetValue(x,col);
+        T? d2 = GetValue(y,col);
 
         if (d1 is null && d2 is null)
         {
@@ -48,13 +47,12 @@ namespace TVRename
 
         int primary = d1.CompareTo(d2);
         return primary == 0 ?
-            String.Compare(GetDefault(x!), GetDefault(y!), StringComparison.Ordinal)
+            string.Compare(GetDefault(x), GetDefault(y), StringComparison.Ordinal)
             : primary;
         }
 
-    [NotNull]
-    private string GetDefault([NotNull] OLVListItem p) => ((Item)p.RowObject).OrderKey;
+    private string GetDefault(OLVListItem p) => ((Item)p.RowObject).OrderKey;
 
-    protected abstract T GetValue(OLVListItem x,int columnId);
+    protected abstract T? GetValue(OLVListItem x,int columnId);
     }
 }

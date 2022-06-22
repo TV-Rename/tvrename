@@ -1,5 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
+using System;
 using NLog;
 using Alphaleonis.Win32.Filesystem;
 
@@ -9,7 +8,7 @@ namespace TVRename
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] ProcessedEpisode pep, IDialogParent owner, TVDoc doc, ItemList returnActions)
+        public static bool? AskUserAboutFileReplacement(FileInfo newFile, FileInfo existingFile, ProcessedEpisode pep, IDialogParent owner, TVDoc doc, ItemList returnActions)
         {
             try
             {
@@ -47,7 +46,7 @@ namespace TVRename
 
         /// <summary>Asks user about whether to replace a file.</summary>
         /// <returns>false if the newFile is needed.</returns>
-        public static bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] MovieConfiguration pep, IDialogParent owner, TVDoc doc, ItemList returnActions)
+        public static bool? AskUserAboutFileReplacement(FileInfo newFile, FileInfo existingFile, MovieConfiguration pep, IDialogParent owner, TVDoc doc, ItemList returnActions)
         {
             try
             {
@@ -83,7 +82,7 @@ namespace TVRename
             }
         }
 
-        public static void UpgradeFile([NotNull] FileInfo fi, ProcessedEpisode pep, [NotNull] FileInfo existingFile, TVDoc doc, [NotNull] ItemList actions)
+        public static void UpgradeFile(FileInfo fi, ProcessedEpisode pep, FileInfo existingFile, TVDoc doc, ItemList actions)
         {
             if (existingFile.Extension != fi.Extension)
             {
@@ -99,7 +98,7 @@ namespace TVRename
                 $"Using {fi.FullName} to replace {existingFile.FullName} as it is better quality");
         }
 
-        public static void UpgradeFile([NotNull] FileInfo fi, MovieConfiguration pep, [NotNull] FileInfo existingFile, TVDoc doc, [NotNull] ItemList actions)
+        public static void UpgradeFile(FileInfo fi, MovieConfiguration pep, FileInfo existingFile, TVDoc doc, ItemList actions)
         {
             if (existingFile.Extension != fi.Extension)
             {

@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using NodaTime;
 using System;
 using System.Collections.Concurrent;
@@ -128,7 +127,7 @@ namespace TVRename
             SetId(type, code);
         }
 
-        public void AddEpisode([NotNull] Episode e)
+        public void AddEpisode(Episode e)
         {
             ProcessedSeason airedProcessedSeason = GetOrAddAiredSeason(e.AiredSeasonNumber, e.SeasonId);
             airedProcessedSeason.AddUpdateEpisode(e);
@@ -137,7 +136,6 @@ namespace TVRename
             dvdProcessedSeason.AddUpdateEpisode(e);
         }
 
-        [NotNull]
         public string ShowStatus => CachedShow?.Status ?? "Unknown";
 
         public ProcessedSeason GetOrAddAiredSeason(int num, int seasonId)
@@ -195,7 +193,6 @@ namespace TVRename
             airedSeasons.Values.ForEach(s => s.RemoveEpisode(episodeId));
         }
 
-        [NotNull]
         internal ProcessedEpisode GetEpisode(int seasF, int epF)
         {
             if (!SeasonEpisodes.ContainsKey(seasF))
@@ -241,7 +238,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         private DateTimeZone FigureOutTimeZone()
         {
             string tzstr = ShowTimeZone;
@@ -290,7 +286,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public DateTimeZone GetTimeZone()
         {
             if (seriesTimeZone is null || lastFiguredTz != ShowTimeZone)
@@ -300,7 +295,7 @@ namespace TVRename
             return seriesTimeZone;
         }
 
-        public ShowConfiguration([NotNull] XElement xmlSettings) : this()
+        public ShowConfiguration(XElement xmlSettings) : this()
         {
             CustomShowName = xmlSettings.ExtractString("ShowName");
             UseCustomShowName = xmlSettings.ExtractBool("UseCustomShowName", false);
@@ -351,7 +346,7 @@ namespace TVRename
             return value is null ? AutomaticFolderType.libraryDefaultFolderFormat : (AutomaticFolderType)value;
         }
 
-        private void UpgradeFromOldSeasonFormat([NotNull] XElement xmlSettings)
+        private void UpgradeFromOldSeasonFormat(XElement xmlSettings)
         {
             //These variables have been discontinued (JULY 2018).  If we have any then we should migrate to the new values
             bool upgradeFromOldAutoAddFunction = xmlSettings.Descendants("AutoAddNewSeasons").Any()
@@ -388,7 +383,7 @@ namespace TVRename
             }
         }
 
-        private void SetupIgnoreRules([NotNull] XElement xmlSettings)
+        private void SetupIgnoreRules(XElement xmlSettings)
         {
             foreach (int seasonNumber in xmlSettings.Descendants("IgnoreSeasons").Descendants("Ignore").Select(ig => XmlConvert.ToInt32(ig.Value)).Distinct())
             {
@@ -396,7 +391,7 @@ namespace TVRename
             }
         }
 
-        private void SetupSeasonRules([NotNull] XElement xmlSettings)
+        private void SetupSeasonRules(XElement xmlSettings)
         {
             foreach (XElement rulesSet in xmlSettings.Descendants("Rules"))
             {
@@ -416,7 +411,7 @@ namespace TVRename
             }
         }
 
-        private void SetupSeasonFolders([NotNull] XElement xmlSettings)
+        private void SetupSeasonFolders(XElement xmlSettings)
         {
             foreach (XElement seasonFolder in xmlSettings.Descendants("SeasonFolders"))
             {
@@ -446,13 +441,11 @@ namespace TVRename
 
         protected override MediaType GetMediaType() => MediaType.tv;
 
-        [NotNull]
         protected override MediaCache LocalCache()
         {
             return LocalCache(Provider == TVDoc.ProviderType.libraryDefault ? TVSettings.Instance.DefaultProvider : Provider);
         }
 
-        [NotNull]
         private static MediaCache LocalCache(TVDoc.ProviderType provider) => TVDoc.GetMediaCache(provider);
 
         public enum ShowAirStatus
@@ -569,7 +562,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public IEnumerable<KeyValuePair<int, List<ProcessedEpisode>>> ActiveSeasons
         {
             get
@@ -601,7 +593,6 @@ namespace TVRename
             return SeasonRules.ContainsKey(n) ? SeasonRules[n] : null;
         }
 
-        [NotNull]
         private string AutoFolderNameForSeason(ProcessedSeason? s)
         {
             string r = AutoAddFolderBase;
@@ -661,7 +652,7 @@ namespace TVRename
             return max;
         }
 
-        public void WriteXmlSettings([NotNull] XmlWriter writer)
+        public void WriteXmlSettings(XmlWriter writer)
         {
             writer.WriteStartElement("ShowItem");
 
@@ -752,7 +743,6 @@ namespace TVRename
         }
 
         // ReSharper disable once UnusedMember.Global
-        [NotNull]
         public Dictionary<int, List<ProcessedEpisode>> GetDvdSeasons()
         {
             //We will create this on the fly
@@ -772,7 +762,6 @@ namespace TVRename
             return returnValue;
         }
 
-        [NotNull]
         protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
         {
             Dictionary<int, SafeList<string>> fld = new();
@@ -858,7 +847,6 @@ namespace TVRename
 
         public bool InOneFolder() => AutoAddType == AutomaticFolderType.baseOnly;
 
-        [NotNull]
         public string AutoFolderNameForSeason(int snum) => AutoFolderNameForSeason(GetSeason(snum));
 
         public bool AutoAddNewSeasons() => AutoAddType != AutomaticFolderType.none;
@@ -893,7 +881,6 @@ namespace TVRename
             return true;
         }
 
-        [NotNull]
         public IEnumerable<int> GetSeasonKeys()
         {
             int[] numbers = new int[SeasonEpisodes.Keys.Count];
@@ -908,7 +895,6 @@ namespace TVRename
             dvdSeasons.Clear();
         }
 
-        [NotNull]
         public IEnumerable<Episode> EpisodesToUse()
         {
             List<Episode> returnValue = new();

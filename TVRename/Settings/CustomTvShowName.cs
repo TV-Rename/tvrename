@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -27,22 +26,18 @@ namespace TVRename
             "{Imdb}",
         };
 
-        [NotNull]
         public static List<string> ExamplePresets(ShowConfiguration s)
         {
             return Presets.Select(example => NameFor(s, example)).ToList();
         }
 
-        [NotNull]
         public static string NameFor(ShowConfiguration? m, string styleString) => NameFor(m, styleString, false, true);
 
-        [NotNull]
-        public static string DirectoryNameFor(ShowConfiguration? m, [NotNull] string styleString)
+        public static string DirectoryNameFor(ShowConfiguration? m, string styleString)
         {
             return NameFor(m, styleString, false, false);
         }
 
-        [NotNull]
         public static string NameFor(ShowConfiguration m, string styleString, string? extension)
         {
             string r = NameFor(m, styleString);
@@ -62,8 +57,7 @@ namespace TVRename
             return r + extension;
         }
 
-        [NotNull]
-        private static string NameFor([CanBeNull] CachedSeriesInfo showConfiguration, string styleString, bool urlEncode, bool isfilename)
+        private static string NameFor(CachedSeriesInfo? showConfiguration, string styleString, bool urlEncode, bool isfilename)
         {
             return NameFor(showConfiguration?.Name, showConfiguration, styleString, urlEncode, isfilename);
         }
@@ -92,9 +86,9 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
             name = name.ReplaceInsensitive("{ShowNameLower}", showname.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
             name = name.ReplaceYear(showName);
-            name = name.ReplaceInsensitive("{ContentRating}", si?.ContentRating);
-            name = name.ReplaceInsensitive("{Year}", si?.Year);
-            name = name.ReplaceInsensitive("{Imdb}", si?.Imdb);
+            name = name.ReplaceInsensitive("{ContentRating}", si.ContentRating);
+            name = name.ReplaceInsensitive("{Year}", si.Year);
+            name = name.ReplaceInsensitive("{Imdb}", si.Imdb);
 
             if (urlEncode)
             {
@@ -103,7 +97,6 @@ namespace TVRename
             return isfilename ? TVSettings.Instance.FilenameFriendly(name.Trim()) : TVSettings.DirectoryFriendly(name.Trim());
         }
 
-        [NotNull]
         public static string GetTextFromPattern(string styleString)
         {
             string name = styleString;
@@ -118,7 +111,6 @@ namespace TVRename
             return name.Trim();
         }
 
-        [NotNull]
         public static string DirectoryNameFor(CachedSeriesInfo showConfiguration, string styleString)
         {
             return NameFor(showConfiguration, styleString, false, false);

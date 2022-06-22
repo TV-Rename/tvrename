@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class DefaultSequentialMatchingTvCheck : DefaultTvShowCheck
     {
-        public DefaultSequentialMatchingTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        public DefaultSequentialMatchingTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
-        [NotNull]
         protected override string FieldName => "Do Sequential Matching Check";
 
         protected override bool Field => Show.UseSequentialMatch;

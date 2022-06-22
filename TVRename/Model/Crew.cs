@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -23,7 +22,7 @@ namespace TVRename
             CreditId = creditId;
         }
 
-        public Crew([NotNull] XElement r)
+        public Crew(XElement r)
         {
             Id = r.ExtractInt("Id") ?? throw new SourceConsistencyException("Error Extracting Id for Crew", TVDoc.ProviderType.TheTVDB);
             ImageUrl = r.ExtractString("Image");
@@ -38,7 +37,7 @@ namespace TVRename
             Name = name;
         }
 
-        public void WriteXml([NotNull] XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("CrewMember");
             writer.WriteElement("Id", Id);

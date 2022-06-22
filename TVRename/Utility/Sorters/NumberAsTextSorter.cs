@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using System;
 using System.Windows.Forms;
 
@@ -17,9 +17,9 @@ namespace TVRename
         {
         }
 
-        protected override int CompareListViewItem([NotNull] ListViewItem x, [NotNull] ListViewItem y) => ParseAsInt(x) - ParseAsInt(y);
+        protected override int CompareListViewItem(ListViewItem x, ListViewItem y) => ParseAsInt(x) - ParseAsInt(y);
 
-        private int ParseAsInt([NotNull] ListViewItem cellItem)
+        private int ParseAsInt(ListViewItem cellItem)
         {
             string value = cellItem.SubItems[Col].Text;
 

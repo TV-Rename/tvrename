@@ -1,13 +1,12 @@
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     internal static class CachePersistorMapping
     {
-        public static void WriteEpisodeXml([NotNull] this XmlWriter writer, [NotNull] Episode e)
+        public static void WriteEpisodeXml(this XmlWriter writer, Episode e)
         {
             writer.WriteStartElement("Episode");
 
@@ -46,8 +45,7 @@ namespace TVRename
 
             writer.WriteEndElement(); //Episode
         }
-        [NotNull]
-        public static Episode CreateEpisode([NotNull] this XElement r)
+        public static Episode CreateEpisode(this XElement r)
         {
             return new Episode
             {
@@ -91,7 +89,7 @@ namespace TVRename
             };
         }
 
-        private static int ExtractAndParse([NotNull] XElement r, string key)
+        private static int ExtractAndParse(XElement r, string key)
         {
             string value = r.ExtractString(key);
             int.TryParse(value, out int intValue);

@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -41,7 +40,7 @@ namespace TVRename
         private readonly TVDoc mDoc;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public AddEditShow([NotNull] ShowConfiguration si, TVDoc doc)
+        public AddEditShow(ShowConfiguration si, TVDoc doc)
         {
             selectedShow = si;
             mDoc = doc;
@@ -153,7 +152,7 @@ namespace TVRename
             }
         }
 
-        private void SetupLanguages([NotNull] ShowConfiguration si)
+        private void SetupLanguages(ShowConfiguration si)
         {
             chkCustomLanguage.Checked = si.UseCustomLanguage;
             if (chkCustomLanguage.Checked)
@@ -169,7 +168,7 @@ namespace TVRename
             cbLanguage.Enabled = chkCustomLanguage.Checked;
         }
 
-        private void SetupRegions([NotNull] ShowConfiguration si)
+        private void SetupRegions(ShowConfiguration si)
         {
             chkCustomRegion.Checked = si.UseCustomRegion;
             if (chkCustomLanguage.Checked && si.CustomRegionCode.HasValue())
@@ -200,7 +199,7 @@ namespace TVRename
             txtTagList2.Text = tl.ToString();
         }
 
-        private void SetIgnoreSeasons([NotNull] ShowConfiguration si)
+        private void SetIgnoreSeasons(ShowConfiguration si)
         {
             bool first = true;
             si.IgnoreSeasons.Sort();
@@ -216,7 +215,7 @@ namespace TVRename
             }
         }
 
-        private void SetAutoAdd([NotNull] ShowConfiguration si)
+        private void SetAutoAdd(ShowConfiguration si)
         {
             switch (si.AutoAddType)
             {
@@ -244,7 +243,7 @@ namespace TVRename
             }
         }
 
-        private void SetProvider([NotNull] ShowConfiguration si)
+        private void SetProvider(ShowConfiguration si)
         {
             switch (si.ConfigurationProvider)
             {
@@ -269,7 +268,7 @@ namespace TVRename
             }
         }
 
-        private void SetManualFolders([NotNull] ShowConfiguration si)
+        private void SetManualFolders(ShowConfiguration si)
         {
             foreach (KeyValuePair<int, List<string>> kvp in si.ManualFolderLocations)
             {
@@ -285,7 +284,7 @@ namespace TVRename
             lvSeasonFolders.Sort();
         }
 
-        private void SetupDropDowns([NotNull] ShowConfiguration si)
+        private void SetupDropDowns(ShowConfiguration si)
         {
             cbTimeZone.BeginUpdate();
             cbTimeZone.Items.Clear();
@@ -706,7 +705,7 @@ namespace TVRename
             }
         }
 
-        private void tbShowAlias_KeyDown(object sender, [NotNull] KeyEventArgs e)
+        private void tbShowAlias_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {

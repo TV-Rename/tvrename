@@ -8,7 +8,6 @@
 
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -98,7 +97,7 @@ namespace TVRename
             DeleteSelectedFolder(lstFMMonitorFolders, TVSettings.Instance.MovieLibraryFolders);
         }
 
-        private void DeleteSelectedFolder([NotNull] ListBox lb, IList<string> folders)
+        private void DeleteSelectedFolder(ListBox lb, IList<string> folders)
         {
             for (int i = lb.SelectedIndices.Count - 1; i >= 0; i--)
             {
@@ -210,22 +209,22 @@ namespace TVRename
             bwRescan.RunWorkerAsync();
         }
 
-        private void lstFMMonitorFolders_DragOver(object _, [NotNull] DragEventArgs e)
+        private void lstFMMonitorFolders_DragOver(object _, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lstFMIgnoreFolders_DragOver(object _, [NotNull] DragEventArgs e)
+        private void lstFMIgnoreFolders_DragOver(object _, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lstFMMonitorFolders_DragDrop(object _, [NotNull] DragEventArgs e)
+        private void lstFMMonitorFolders_DragDrop(object _, DragEventArgs e)
         {
             AddDraggedFiles(e, TVSettings.Instance.MovieLibraryFolders);
         }
 
-        private void lvFMNewShows_DragDrop(object _, [NotNull] DragEventArgs e)
+        private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
@@ -246,12 +245,12 @@ namespace TVRename
             }
         }
 
-        private void lstFMIgnoreFolders_DragDrop(object _, [NotNull] DragEventArgs e)
+        private void lstFMIgnoreFolders_DragDrop(object _, DragEventArgs e)
         {
             AddDraggedFiles(e, TVSettings.Instance.IgnoreFolders);
         }
 
-        private void AddDraggedFiles([NotNull] DragEventArgs e, ICollection<string> strings)
+        private void AddDraggedFiles(DragEventArgs e, ICollection<string> strings)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
@@ -273,7 +272,7 @@ namespace TVRename
             FillFolderStringLists();
         }
 
-        private void lstFMMonitorFolders_KeyDown(object _, [NotNull] KeyEventArgs e)
+        private void lstFMMonitorFolders_KeyDown(object _, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -281,7 +280,7 @@ namespace TVRename
             }
         }
 
-        private void lstFMIgnoreFolders_KeyDown(object _, [NotNull] KeyEventArgs e)
+        private void lstFMIgnoreFolders_KeyDown(object _, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -302,7 +301,7 @@ namespace TVRename
             bwIdentify.RunWorkerAsync();
         }
 
-        private static void AutoMatchMovie([NotNull] CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
+        private static void AutoMatchMovie(CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
         {
             if (cts.IsCancellationRequested)
             {
@@ -364,12 +363,12 @@ namespace TVRename
             FillFolderStringLists();
         }
 
-        private void lvFMNewShows_DragOver(object _, [NotNull] DragEventArgs e)
+        private void lvFMNewShows_DragOver(object _, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lvFMNewShows_KeyDown(object sender, [NotNull] KeyEventArgs e)
+        private void lvFMNewShows_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -427,7 +426,7 @@ namespace TVRename
             lvFMNewShows.Update();
         }
 
-        private static void UpdateResultEntry([NotNull] PossibleNewMovie ai, [NotNull] ListViewItem lvi)
+        private static void UpdateResultEntry(PossibleNewMovie ai, ListViewItem lvi)
         {
             lvi.SubItems.Clear();
             lvi.Text = ai.Directory.FullName.ToUiVersion();
@@ -536,7 +535,7 @@ namespace TVRename
             FillNewShowList(false);
         }
 
-        private void EditEntry([NotNull] PossibleNewMovie fme)
+        private void EditEntry(PossibleNewMovie fme)
         {
             BulkAddEditMovie ed = new(fme);
             if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)
@@ -600,7 +599,7 @@ namespace TVRename
             cts.Cancel();
         }
 
-        private void bwIdentify_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
+        private void bwIdentify_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             lvFMNewShows.Update();
 
@@ -616,7 +615,7 @@ namespace TVRename
             lblStatusLabel.Visible = false;
         }
 
-        private void bwRescan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
+        private void bwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
             lblStatusLabel.Text = e.UserState.ToString().ToUiVersion();

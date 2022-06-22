@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename.Forms
 {
@@ -14,7 +13,7 @@ namespace TVRename.Forms
         public readonly CachedMovieInfo? Movie;
         private readonly CachedMediaInfo? cachedMediaInfo;
         private readonly int trendingWeight, topWeight, relatedWeight, similarWeight, maxRelated, maxSimilar;
-        public RecommendationRow([NotNull] RecommendationResult x, MediaConfiguration.MediaType t, int trendingWeight, int topWeight, int relatedWeight, int similarWeight, int maxRelated, int maxSimilar)
+        public RecommendationRow(RecommendationResult x, MediaConfiguration.MediaType t, int trendingWeight, int topWeight, int relatedWeight, int similarWeight, int maxRelated, int maxSimilar)
         {
             result = x;
             type = t;
@@ -67,11 +66,8 @@ namespace TVRename.Forms
 
         public double RecommendationScore => result.GetScore(trendingWeight, topWeight, relatedWeight, similarWeight, maxRelated, maxSimilar);
 
-        [NotNull]
         public string Reason => result.Similar.Select(configuration => configuration.ShowName).ToCsv() + "-" + result.Related.Select(configuration => configuration.ShowName).ToCsv();
-        [NotNull]
         public string Similar => result.Similar.Select(configuration => configuration.ShowName).ToCsv();
-        [NotNull]
         public string Related => result.Related.Select(configuration => configuration.ShowName).ToCsv();
     }
 }

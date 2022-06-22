@@ -8,7 +8,6 @@
 
 using Alphaleonis.Win32.Filesystem;
 using System;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -18,7 +17,6 @@ namespace TVRename
         private readonly string desiredLocationNoExt;
 
         public override IgnoreItem? Ignore => GenerateIgnore(desiredLocationNoExt);
-        [NotNull]
         public override string ScanListViewGroup => "lvgDownloading";
 
         public override string? DestinationFolder => TargetFolder;
@@ -57,7 +55,6 @@ namespace TVRename
 
         public override bool SameAs(Item o) => o is ItemDownloading torrent && entry == torrent.entry;
 
-        [NotNull]
         public override string Name => "Already Downloading";
 
         public override bool CheckedItem { get => false; set { }  }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -36,7 +35,7 @@ namespace TVRename
             DefaultValues();
         }
 
-        public CachedMovieInfo([NotNull] XElement seriesXml, TVDoc.ProviderType source) : base(source)
+        public CachedMovieInfo(XElement seriesXml, TVDoc.ProviderType source) : base(source)
         {
             DefaultValues();
             IsSearchResultOnly = false;
@@ -61,7 +60,7 @@ namespace TVRename
         }
 
         // ReSharper disable once FunctionComplexityOverflow
-        public void Merge([NotNull] CachedMovieInfo o)
+        public void Merge(CachedMovieInfo o)
         {
             if (o.IsSearchResultOnly && !IsSearchResultOnly)
             {
@@ -116,7 +115,7 @@ namespace TVRename
             images.MergeImages(o.images);
         }
 
-        public void WriteXml([NotNull] XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("Movie");
             WriteCommonFields(writer);
@@ -141,13 +140,11 @@ namespace TVRename
             images.Add(image);
         }
 
-        [NotNull]
         public IEnumerable<MovieImage> Images(MediaImage.ImageType type)
         {
             return images.Where(x => x.ImageStyle == type && x.LocationMatches(TargetLocale.LanguageToUse(Source)));
         }
 
-        [NotNull]
         public IEnumerable<MovieImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject)
         {
             return Images(type).Where(x => x.Subject == subject);

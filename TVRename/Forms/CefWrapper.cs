@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
-using JetBrains.Annotations;
 using Microsoft.Win32;
 using MscVersion;
 using NLog;
@@ -20,7 +19,6 @@ namespace TVRename
         private static volatile CefWrapper? InternalInstance;
         private static readonly object SyncRoot = new();
 
-        [NotNull]
         public static CefWrapper Instance
         {
             get
@@ -161,15 +159,13 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private static string VersionToString([NotNull] VcRuntimeVersion arg) => $"{arg.MscVer}-{arg.Architecture}-{arg.Version}";
-        [NotNull]
+        private static string VersionToString(VcRuntimeVersion arg) => $"{arg.MscVer}-{arg.Architecture}-{arg.Version}";
         private static IEnumerable<string> Vc2015Installed()
         {
             const string DEPENDENCIES_PATH = @"SOFTWARE\Classes\Installer\Dependencies";
             List<string> returnValue = new();
 
-            using (RegistryKey dependencies = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH))
+            using (RegistryKey? dependencies = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH))
             {
                 if (dependencies == null)
                 {
@@ -178,7 +174,7 @@ namespace TVRename
 
                 foreach (string subKeyName in dependencies.GetSubKeyNames().Where(n => !n.ToLower().Contains("dotnet") && !n.ToLower().Contains("microsoft")))
                 {
-                    using (RegistryKey subDir = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH + "\\" + subKeyName))
+                    using (RegistryKey? subDir = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH + "\\" + subKeyName))
                     {
                         string value = subDir?.GetValue("DisplayName")?.ToString();
                         if (string.IsNullOrEmpty(value))

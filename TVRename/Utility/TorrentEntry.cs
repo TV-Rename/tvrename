@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     public class TorrentEntry : IDownloadInformation // represents a torrent downloading in a downloader(Torrent)
@@ -23,7 +21,6 @@ namespace TVRename
 
         string IDownloadInformation.Destination => DownloadingTo;
 
-        [NotNull]
         string IDownloadInformation.RemainingText => PercentDone == -1 ? "" : PercentDone + "% Complete";
     }
 }

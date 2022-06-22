@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -733,7 +733,7 @@ namespace TVRename
                 this.angle = angle;
             }
 
-            protected override void OnDraw([NotNull] DevAge.Drawing.GraphicsCache graphics, RectangleF area)
+            protected override void OnDraw(DevAge.Drawing.GraphicsCache graphics, RectangleF area)
             {
                 System.Drawing.Drawing2D.GraphicsState state = graphics.Graphics.Save();
                 try

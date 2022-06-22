@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Linq;
 using System.Net;
@@ -22,7 +21,6 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchJackett;
 
-        [NotNull]
         protected override string CheckName() => "Asked Jackett for download links for the missing files";
 
         protected override void DoCheck(SetProgressDelegate progress)
@@ -82,7 +80,7 @@ namespace TVRename
             ActionList.Replace(toRemove, newItems);
         }
 
-        private static void FindMissingEpisode([NotNull] ShowItemMissing action, ItemList toRemove, [NotNull] ItemList newItems)
+        private static void FindMissingEpisode(ShowItemMissing action, ItemList toRemove, ItemList newItems)
         {
             ProcessedEpisode processedEpisode = action.MissingEpisode;
             string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(processedEpisode) : NormalJackettUrl(processedEpisode);
@@ -112,7 +110,7 @@ namespace TVRename
             newItems.AddNullableRange(newItemsForThisMissingEpisode);
         }
 
-        private static void FindMissingEpisode([NotNull] MovieItemMissing action, ItemList toRemove, [NotNull] ItemList newItems)
+        private static void FindMissingEpisode(MovieItemMissing action, ItemList toRemove, ItemList newItems)
         {
             string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.MovieConfig) : NormalJackettUrl(action.MovieConfig);
 
@@ -140,7 +138,6 @@ namespace TVRename
             newItems.AddNullableRange(newItemsForThisMissingEpisode);
         }
 
-        [NotNull]
         private static string IndexerUrl()
         {
             string serverName = TVSettings.Instance.JackettServer;
@@ -149,7 +146,6 @@ namespace TVRename
             return $"http://{serverName}:{serverPort}{allIndexer}/";
         }
 
-        [NotNull]
         private static string TextJackettUrl(MovieConfiguration actionMovieConfig)
         {
             string apikey = TVSettings.Instance.JackettAPIKey;
@@ -159,16 +155,14 @@ namespace TVRename
                 $"{IndexerUrl()}api?t=movie&q={text}&apikey={apikey}";
         }
 
-        [NotNull]
-        private static string NormalJackettUrl([NotNull] MovieConfiguration actionMovieConfig)
+        private static string NormalJackettUrl(MovieConfiguration actionMovieConfig)
         {
             string apikey = TVSettings.Instance.JackettAPIKey;
             return
                 $"{IndexerUrl()}api?t=movie&apikey={apikey}&tmdbid={actionMovieConfig.TmdbCode}";
         }
 
-        [NotNull]
-        private static string NormalJackettUrl([NotNull] ProcessedEpisode processedEpisode)
+        private static string NormalJackettUrl(ProcessedEpisode processedEpisode)
         {
             string apikey = TVSettings.Instance.JackettAPIKey;
             string? simpleShowName = WebUtility.UrlEncode(processedEpisode.Show.ShowName.CompareName());
@@ -177,8 +171,7 @@ namespace TVRename
                 $"{IndexerUrl()}api?t=tvsearch&q={simpleShowName}&tvdbid={processedEpisode.Show.TvdbCode}&season={processedEpisode.AppropriateSeasonNumber}&ep={processedEpisode.AppropriateEpNum}&apikey={apikey}";
         }
 
-        [NotNull]
-        private static string TextJackettUrl([NotNull] ProcessedEpisode episode)
+        private static string TextJackettUrl(ProcessedEpisode episode)
         {
             string apikey = TVSettings.Instance.JackettAPIKey;
             const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
@@ -187,7 +180,7 @@ namespace TVRename
                 $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
         }
 
-        public static void SearchForEpisode([NotNull] ProcessedEpisode episode)
+        public static void SearchForEpisode(ProcessedEpisode episode)
         {
             const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
 
@@ -205,7 +198,6 @@ namespace TVRename
             Helpers.OpenUrl(url);
         }
 
-        [NotNull]
         private static string SearchServer()
         {
             string serverName = TVSettings.Instance.JackettServer;

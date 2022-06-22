@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -150,7 +149,7 @@ namespace TVRename
             }
         }
 
-        private static void OutputSettingsFile([NotNull] StringBuilder txt)
+        private static void OutputSettingsFile(StringBuilder txt)
         {
             try
             {

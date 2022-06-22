@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
 using System;
 
 namespace TVRename
 {
     public class ActionOutcome
     {
-        [NotNull]
         public static ActionOutcome NoOutcomeYet() => new() {Done = false, Error = false };
 
-        [NotNull]
         public static ActionOutcome Success() => new() {Done = true, Error = false };
 
         private ActionOutcome()
@@ -36,7 +33,6 @@ namespace TVRename
 
         public Exception? LastError { get; }
 
-        [NotNull]
         public static ActionOutcome CompleteFail() => new("Complete Fail");
     }
 }

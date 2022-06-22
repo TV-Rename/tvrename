@@ -1,19 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     internal class FolderBaseLibraryDefaultTvCheck : TvShowCheck
     {
-        public FolderBaseLibraryDefaultTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        public FolderBaseLibraryDefaultTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
         public override bool Check() => Show.AutoAddFolderBase.HasValue() && TVSettings.Instance.LibraryFolders.Any(lf => lf.IsSubfolderOf(Show.AutoAddFolderBase));
 
-        [NotNull]
         public override string Explain() => "This TV show's folder is a Library folder. This indicates that the files are stored at the root of the library.";
 
         protected override void FixInternal()
@@ -44,7 +42,6 @@ namespace TVRename
             Show.AutoAddFolderBase = newRoot;
         }
 
-        [NotNull]
         public override string CheckName => "[TV] Has an base folder that is a library folder";
     }
 }

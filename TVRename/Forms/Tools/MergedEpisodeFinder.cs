@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +12,7 @@ namespace TVRename.Forms
         private readonly TVDoc mDoc;
         private readonly UI mainUi;
 
-        public MergedEpisodeFinder([NotNull] TVDoc doc, UI main)
+        public MergedEpisodeFinder(TVDoc doc, UI main)
         {
             InitializeComponent();
             dupEps = new List<PossibleMergedEpisode>();
@@ -100,7 +99,7 @@ namespace TVRename.Forms
             UpdateUI();
         }
 
-        private void lvDuplicates_MouseClick(object sender, [NotNull] MouseEventArgs e)
+        private void lvDuplicates_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Right)
             {
@@ -138,14 +137,14 @@ namespace TVRename.Forms
             possibleMergedEpisodeRightClickMenu.Show(pt);
         }
 
-        private void AddRcMenuItem([NotNull] string label, EventHandler command)
+        private void AddRcMenuItem(string label, EventHandler command)
         {
             ToolStripMenuItem tsi = new(label.ToUiVersion());
             tsi.Click += command;
             possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }
 
-        private void AddRule([NotNull] PossibleMergedEpisode selected, [NotNull] ShowConfiguration si, [NotNull] ListViewItem lastClicked)
+        private void AddRule(PossibleMergedEpisode selected, ShowConfiguration si, ListViewItem lastClicked)
         {
             ShowRule sr = selected.GenerateRule();
 
@@ -177,13 +176,13 @@ namespace TVRename.Forms
             possibleMergedEpisodeRightClickMenu.Close();
         }
 
-        private void BwScan_DoWork([NotNull] object sender, DoWorkEventArgs e)
+        private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
             System.Threading.Thread.CurrentThread.Name ??= "MergedEpisode Scan Thread"; // Can only set it once
             dupEps = MergedEpisodeFinderController.FindDoubleEps(mDoc, (BackgroundWorker)sender);
         }
 
-        private void BwScan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
+        private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
             lblStatus.Text = e.UserState.ToString().ToUiVersion();

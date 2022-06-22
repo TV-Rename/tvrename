@@ -1,6 +1,5 @@
 using System;
 using BrightIdeasSoftware;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -10,7 +9,7 @@ namespace TVRename
         {
         }
 
-        protected override int GetValue([NotNull] OLVListItem x, int columnId)
+        protected override int GetValue(OLVListItem x, int columnId)
         {
             string value = x.SubItems[columnId].Text;
 

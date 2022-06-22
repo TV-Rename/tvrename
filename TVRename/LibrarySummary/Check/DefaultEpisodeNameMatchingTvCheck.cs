@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class DefaultEpisodeNameMatchingTvCheck : DefaultTvShowCheck
     {
-        public DefaultEpisodeNameMatchingTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        public DefaultEpisodeNameMatchingTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
-        [NotNull]
         protected override string FieldName => "Do EpisodeName Matching Check";
 
         protected override bool Field => Show.UseEpNameMatch;

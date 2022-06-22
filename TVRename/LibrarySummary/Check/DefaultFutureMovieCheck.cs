@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class DefaultFutureMovieCheck : DefaultMovieCheck
     {
-        public DefaultFutureMovieCheck([NotNull] MovieConfiguration show, TVDoc doc) : base(show, doc)
+        public DefaultFutureMovieCheck(MovieConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
-        [NotNull]
         protected override string FieldName => "Do Future Movies Check";
 
         protected override bool Field => Movie.ForceCheckFuture;

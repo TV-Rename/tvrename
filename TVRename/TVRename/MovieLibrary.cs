@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -10,10 +9,8 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        [NotNull]
         public IEnumerable<MovieConfiguration> Movies => this;
 
-        [NotNull]
         public List<(int, string)> Collections => Movies
             .Where(a => a.InCollection)
             .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
@@ -22,7 +19,6 @@ namespace TVRename
             .Distinct()
             .ToList();
 
-        [NotNull]
         public IEnumerable<string> GetGenres()
         {
             List<string> allGenres = new();
@@ -121,7 +117,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public List<MovieConfiguration> GetSortedMovies()
         {
             List<MovieConfiguration> returnList = Movies.ToList();
@@ -129,7 +124,6 @@ namespace TVRename
             return returnList;
         }
 
-        [NotNull]
         public IEnumerable<string> GetNetworks()
         {
             return Movies
@@ -140,7 +134,6 @@ namespace TVRename
                 .OrderBy(s => s);
         }
 
-        [NotNull]
         public IEnumerable<string> GetContentRatings()
         {
             return Movies.Select(si => si.CachedMovie)
@@ -150,7 +143,6 @@ namespace TVRename
                 .OrderBy(s => s);
         }
 
-        [NotNull]
         public IEnumerable<string> GetYears()
         {
             return Movies.Select(si => si.CachedMovie?.Year)
@@ -160,7 +152,6 @@ namespace TVRename
                 .OrderBy(s => s);
         }
 
-        [NotNull]
         public IEnumerable<string> GetStatuses()
         {
             return Movies
@@ -171,7 +162,7 @@ namespace TVRename
                 .OrderBy(s => s);
         }
 
-        public MovieConfiguration? GetMovie([NotNull] ISeriesSpecifier ai) => GetMovie(ai.Id(), ai.Provider);
+        public MovieConfiguration? GetMovie(ISeriesSpecifier ai) => GetMovie(ai.Id(), ai.Provider);
 
         public void UpdateCollectionInformation()
         {

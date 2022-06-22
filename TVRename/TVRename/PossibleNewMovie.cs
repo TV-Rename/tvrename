@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,10 +30,9 @@ namespace TVRename
         public bool CodeKnown => !CodeUnknown;
         public bool CodeUnknown => ProviderCode <= 0;
 
-        [NotNull]
         public string CodeString => CodeUnknown ? "<Unknown>" : $"{ProviderCode} ({SourceProvider.PrettyPrint()})";
 
-        public PossibleNewMovie([NotNull] FileInfo possibleMovieFile, bool andGuess, bool showErrorMsgBox)
+        public PossibleNewMovie(FileInfo possibleMovieFile, bool andGuess, bool showErrorMsgBox)
         {
             movieStub = possibleMovieFile.MovieFileNameBase();
             movieFile = possibleMovieFile;
@@ -229,7 +227,7 @@ namespace TVRename
             return null;
         }
 
-        private static string? FindShowCode([NotNull] FileInfo file, string simpleIdCode, [CanBeNull] string uniqueIdCode)
+        private static string? FindShowCode(FileInfo file, string simpleIdCode, string? uniqueIdCode)
         {
             try
             {
@@ -316,6 +314,6 @@ namespace TVRename
             ProviderCode = id;
         }
 
-        public bool Matches([NotNull] PossibleNewMovie ai) => movieStub.Equals(ai.movieStub, StringComparison.CurrentCultureIgnoreCase);
+        public bool Matches(PossibleNewMovie ai) => movieStub.Equals(ai.movieStub, StringComparison.CurrentCultureIgnoreCase);
     }
 }

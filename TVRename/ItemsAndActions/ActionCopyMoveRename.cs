@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System.Diagnostics;
 using System.Security.AccessControl;
 
@@ -59,7 +58,6 @@ namespace TVRename
 
         #region Action Members
 
-        [NotNull]
         public override string Name => Operation == Op.rename ? "Rename" : IsMoveRename() ? "Move" : "Copy";
 
         public override string ProgressText => To.Name;
@@ -67,7 +65,6 @@ namespace TVRename
         // 0.0 to 100.0
         public override long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             // read NTFS permissions (if any)
@@ -184,7 +181,7 @@ namespace TVRename
             return ActionOutcome.Success();
         }
 
-        private void UpdateStats([NotNull] TVRenameStats stats)
+        private void UpdateStats(TVRenameStats stats)
         {
             switch (Operation)
             {
@@ -241,15 +238,12 @@ namespace TVRename
 
         #endregion Action Members
 
-        [NotNull]
         public ProcessedEpisode SourceEpisode => Episode ?? throw new InvalidOperationException();
 
         #region Item Members
 
-        [NotNull]
         public override IgnoreItem Ignore => new(To.FullName);
 
-        [NotNull]
         public override string ScanListViewGroup
         {
             get
@@ -268,8 +262,7 @@ namespace TVRename
 
         #endregion Item Members
 
-        [NotNull]
-        private static string TempFor([NotNull] FileSystemInfo f) => f.FullName + ".tvrenametemp";
+        private static string TempFor(FileSystemInfo f) => f.FullName + ".tvrenametemp";
 
         public bool QuickOperation()
         {
@@ -284,7 +277,7 @@ namespace TVRename
         }
 
         // ReSharper disable once UnusedMember.Local
-        private static void KeepTimestamps([NotNull] FileSystemInfo from, [NotNull] FileSystemInfo to)
+        private static void KeepTimestamps(FileSystemInfo from, FileSystemInfo to)
         {
             to.CreationTime = from.CreationTime;
             to.CreationTimeUtc = from.CreationTimeUtc;
@@ -304,7 +297,7 @@ namespace TVRename
         private bool IsMoveRename() // same thing to the OS
             => Operation == Op.move || Operation == Op.rename;
 
-        public bool SameSource([NotNull] ActionCopyMoveRename o) => FileHelper.Same(From, o.From);
+        public bool SameSource(ActionCopyMoveRename o) => FileHelper.Same(From, o.From);
 
         private long SourceFileSize()
         {
@@ -323,7 +316,6 @@ namespace TVRename
         public override string SourceDetails => From.FullName;
 
         public DirectoryInfo SourceDirectory => From.Directory;
-        [NotNull]
         public string DestinationBaseName=> To.FileNameNoExt();
     }
 }

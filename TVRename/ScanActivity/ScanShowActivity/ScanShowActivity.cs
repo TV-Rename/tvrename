@@ -6,8 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     public abstract class ScanShowActivity : ScanMediaActivity
@@ -23,7 +21,7 @@ namespace TVRename
             }
         }
 
-        protected ScanShowActivity([NotNull] TVDoc doc) : base(doc)
+        protected ScanShowActivity(TVDoc doc) : base(doc)
         {
         }
     }

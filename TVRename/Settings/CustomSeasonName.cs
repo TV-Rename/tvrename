@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,16 +52,13 @@ namespace TVRename
             "{TotalNumberOfEpisodes}"
         };
 
-        [NotNull]
         public static List<string> ExamplePresets(ProcessedSeason s)
         {
             return Presets.Select(example => NameFor(s, example)).ToList();
         }
 
-        [NotNull]
         public static string NameFor(ProcessedSeason s, string styleString) => NameFor(s, styleString, false);
 
-        [NotNull]
         private static string NameFor(ProcessedSeason? s, string styleString, bool urlEncode)
         {
             string name = styleString;
@@ -97,7 +93,6 @@ namespace TVRename
             return TVSettings.DirectoryFriendly(name.Trim());
         }
 
-        [NotNull]
         public static string GetTextFromPattern(string styleString)
         {
             string name = styleString;

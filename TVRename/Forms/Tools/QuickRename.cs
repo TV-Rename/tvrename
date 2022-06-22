@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,7 +11,7 @@ namespace TVRename.Forms.Tools
         private readonly UI parent;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public QuickRename([NotNull] TVDoc tvDoc, UI ui)
+        public QuickRename(TVDoc tvDoc, UI ui)
         {
             mDoc = tvDoc;
             parent = ui;
@@ -49,7 +48,7 @@ namespace TVRename.Forms.Tools
             }
         }
 
-        private void Panel1_DragDrop(object sender, [NotNull] DragEventArgs e)
+        private void Panel1_DragDrop(object sender, DragEventArgs e)
         {
             Logger.Info("Starting quick rename.");
             // Get a list of filenames being dragged
@@ -66,7 +65,7 @@ namespace TVRename.Forms.Tools
             Logger.Info("Finished quick rename.");
         }
 
-        private void ProcessDirectory([NotNull] DirectoryInfo droppedDir)
+        private void ProcessDirectory(DirectoryInfo droppedDir)
         {
             if ((droppedDir.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
             {
@@ -85,7 +84,7 @@ namespace TVRename.Forms.Tools
             }
         }
 
-        private void ProcessUnknown([NotNull] FileInfo droppedFile, IDialogParent owner)
+        private void ProcessUnknown(FileInfo droppedFile, IDialogParent owner)
         {
             if ((droppedFile.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
             {
@@ -97,7 +96,7 @@ namespace TVRename.Forms.Tools
             }
         }
 
-        private void ProcessFile([NotNull] FileInfo droppedFile, IDialogParent owner)
+        private void ProcessFile(FileInfo droppedFile, IDialogParent owner)
         {
             if ((droppedFile.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
             {
@@ -189,7 +188,7 @@ namespace TVRename.Forms.Tools
             }
         }
 
-        private void Panel1_DragEnter(object sender, [NotNull] DragEventArgs e)
+        private void Panel1_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.All;
         }

@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +20,11 @@ namespace TVRename
     {
         #region Action Members
 
-        protected ActionNfo([NotNull] FileInfo where, [NotNull] ShowConfiguration sI) : base(where, sI)
+        protected ActionNfo(FileInfo where, ShowConfiguration sI) : base(where, sI)
         {
         }
 
-        protected ActionNfo([NotNull] FileInfo where, [NotNull] MovieConfiguration mc) : base(where, mc)
+        protected ActionNfo(FileInfo where, MovieConfiguration mc) : base(where, mc)
         {
         }
 
@@ -91,7 +90,6 @@ namespace TVRename
 
         protected abstract string RootName();
 
-        [NotNull]
         protected abstract ActionOutcome UpdateFile();
 
         protected static void UpdateAmongstElements(XElement e, string elementName, string? value)
@@ -116,7 +114,7 @@ namespace TVRename
             e.Add(new XElement(elementName, value));
         }
 
-        protected static void UpdateRatings([NotNull] XElement root, string rating, int votes)
+        protected static void UpdateRatings(XElement root, string rating, int votes)
         {
             XElement ratingsNode = root.GetOrCreateElement("ratings");
 
@@ -130,7 +128,7 @@ namespace TVRename
             ratingNode.UpdateElement("votes", votes, true);
         }
 
-        protected static void UpdateId([NotNull] XElement root, string idType, [NotNull] string defaultState, string? idValue)
+        protected static void UpdateId(XElement root, string idType, string defaultState, string? idValue)
         {
             if (idValue is null)
             {
@@ -156,7 +154,7 @@ namespace TVRename
             }
         }
 
-        protected static void ReplaceActors([NotNull] XElement root, [NotNull] IEnumerable<Actor> selectedShowActors)
+        protected static void ReplaceActors(XElement root, IEnumerable<Actor> selectedShowActors)
         {
             IEnumerable<Actor> showActors = selectedShowActors as Actor[] ?? selectedShowActors.ToArray();
             if (!showActors.ToList().Any())
@@ -194,7 +192,7 @@ namespace TVRename
             }
         }
 
-        protected static void ReplaceThumbs(XElement root, string aspectAttributeName, [NotNull] IEnumerable<MediaImage> images)
+        protected static void ReplaceThumbs(XElement root, string aspectAttributeName, IEnumerable<MediaImage> images)
         {
             {
                 List<MediaImage> newImages = images.ToList();
@@ -222,7 +220,7 @@ namespace TVRename
             }
         }
 
-        protected static void ReplaceFanart(XElement root, [NotNull] IEnumerable<MediaImage> images)
+        protected static void ReplaceFanart(XElement root, IEnumerable<MediaImage> images)
         {
             {
                 List<MediaImage> newImages = images.ToList();
@@ -252,7 +250,7 @@ namespace TVRename
             }
         }
 
-        protected static void UpdateId([NotNull] XElement root, [NotNull] string idType, [NotNull] string defaultState, int idValue)
+        protected static void UpdateId(XElement root, string idType, string defaultState, int idValue)
         {
             UpdateId(root, idType, defaultState, idValue.ToString());
         }

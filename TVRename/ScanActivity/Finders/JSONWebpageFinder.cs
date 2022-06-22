@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -24,7 +23,6 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchJSON;
 
-        [NotNull]
         protected override string CheckName() => "Check JSON links for the missing files";
 
         protected override void DoCheck(SetProgressDelegate progress)
@@ -85,7 +83,7 @@ namespace TVRename
             ActionList.Replace(toRemove, newItems);
         }
 
-        private static void FindMissingEpisode([NotNull] ShowItemMissing action, ItemList toRemove, ItemList newItems, UrlCache cache)
+        private static void FindMissingEpisode(ShowItemMissing action, ItemList toRemove, ItemList newItems, UrlCache cache)
         {
             ProcessedEpisode pe = action.MissingEpisode;
 
@@ -204,7 +202,7 @@ namespace TVRename
             newItems.AddNullableRange(newItemsForThisMissingEpisode);
         }
 
-        private static void RemoveDuplicates([NotNull] ItemList newItemsForThisMissingEpisode)
+        private static void RemoveDuplicates(ItemList newItemsForThisMissingEpisode)
         {
             foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
             {

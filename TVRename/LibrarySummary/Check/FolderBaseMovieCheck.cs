@@ -1,17 +1,15 @@
-using JetBrains.Annotations;
 using System.Linq;
 
 namespace TVRename
 {
     internal class FolderBaseMovieCheck : MovieCheck
     {
-        public FolderBaseMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        public FolderBaseMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 
         public override bool Check() => Movie.UseAutomaticFolders && !Movie.AutomaticFolderRoot.HasValue();
 
-        [NotNull]
         public override string Explain() => "This Movie does not have an automatic folder base specified.";
 
         protected override void FixInternal()
@@ -24,7 +22,6 @@ namespace TVRename
             };
         }
 
-        [NotNull]
         protected override string MovieCheckName => "Use Default folder supplied";
     }
 }

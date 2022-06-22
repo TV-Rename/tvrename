@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,7 +24,7 @@ namespace TVRename.Forms
         private int relatedWeight = 100;
         private int similarWeight = 100;
 
-        private RecommendationView([NotNull] TVDoc doc, UI main)
+        private RecommendationView(TVDoc doc, UI main)
         {
             InitializeComponent();
             recs = new Recomendations();
@@ -43,7 +42,7 @@ namespace TVRename.Forms
             olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
         }
 
-        public RecommendationView([NotNull] TVDoc doc, UI main, MediaConfiguration.MediaType type) : this(doc, main)
+        public RecommendationView(TVDoc doc, UI main, MediaConfiguration.MediaType type) : this(doc, main)
         {
             media = type;
             switch (type)
@@ -62,14 +61,14 @@ namespace TVRename.Forms
             Scan();
         }
 
-        public RecommendationView([NotNull] TVDoc doc, UI main, IEnumerable<MovieConfiguration> m) : this(doc, main)
+        public RecommendationView(TVDoc doc, UI main, IEnumerable<MovieConfiguration> m) : this(doc, main)
         {
             media = MediaConfiguration.MediaType.movie;
             movies = m;
             Scan();
         }
 
-        public RecommendationView([NotNull] TVDoc doc, UI main, IEnumerable<ShowConfiguration> s) : this(doc, main)
+        public RecommendationView(TVDoc doc, UI main, IEnumerable<ShowConfiguration> s) : this(doc, main)
         {
             media = MediaConfiguration.MediaType.tv;
             tvShows = s;
@@ -180,7 +179,7 @@ namespace TVRename.Forms
             addedMovies.Add(found);
         }
 
-        private void AddRcMenuItem([NotNull] string label, EventHandler command)
+        private void AddRcMenuItem(string label, EventHandler command)
         {
             ToolStripMenuItem tsi = new(label.ToUiVersion());
             tsi.Click += command;
@@ -219,7 +218,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void BwScan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
+        private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
             lblStatus.Text = e.UserState?.ToString().ToUiVersion();
@@ -251,7 +250,7 @@ namespace TVRename.Forms
             bwScan.RunWorkerAsync();
         }
 
-        private void lvRecommendations_CellRightClick(object sender, [NotNull] BrightIdeasSoftware.CellRightClickEventArgs e)
+        private void lvRecommendations_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
         {
             if (e.Model is null)
             {
@@ -273,7 +272,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void lvRecommendations_ItemSelectionChanged(object sender, [NotNull] ListViewItemSelectionChangedEventArgs e)
+        private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             if ((e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject is not RecommendationRow rr)
             {

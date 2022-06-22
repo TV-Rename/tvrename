@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using NodaTime;
 using System;
 using System.Collections.Concurrent;
@@ -50,7 +50,6 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        [NotNull]
         public static string UISeasonWord(int season)
         {
             if (TVSettings.Instance.defaultSeasonWord.Length > 1 && TVSettings.Instance.LeadingZeroOnSeason)
@@ -215,7 +214,7 @@ namespace TVRename
 
         public string? GetWideBannerPath() => Show.CachedShow?.GetSeasonWideBannerPath(SeasonNumber);
 
-        public void AddUpdateEpisode([NotNull] Episode newEpisode)
+        public void AddUpdateEpisode(Episode newEpisode)
         {
             Episodes.AddOrUpdate(newEpisode.EpisodeId, newEpisode, (_, _) => newEpisode);
         }
@@ -235,7 +234,6 @@ namespace TVRename
 
         public bool IsSpecial => SeasonNumber == 0;
 
-        [NotNull]
         // ReSharper disable once InconsistentNaming
         public string TVDBWebsiteUrl => TheTVDB.API.WebsiteSeasonUrl(this);
 

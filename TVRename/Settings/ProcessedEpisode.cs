@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,6 @@ namespace TVRename
         public ProcessedSeason TheAiredProcessedSeason;
         public ProcessedSeason TheDvdProcessedSeason;
 
-        [NotNull]
         // ReSharper disable once InconsistentNaming
         public string TVDBWebsiteUrl => TheTVDB.API.WebsiteEpisodeUrl(this);
 
@@ -30,7 +28,7 @@ namespace TVRename
             merged
         }
 
-        public ProcessedEpisode([NotNull] ProcessedEpisode o)
+        public ProcessedEpisode(ProcessedEpisode o)
             : base(o)
         {
             NextToAir = o.NextToAir;
@@ -44,7 +42,7 @@ namespace TVRename
             SourceEpisodes = new List<Episode>();
         }
 
-        public ProcessedEpisode([NotNull] Episode e, [NotNull] ShowConfiguration si)
+        public ProcessedEpisode(Episode e, ShowConfiguration si)
             : base(e)
         {
             OverallNumber = -1;
@@ -58,7 +56,7 @@ namespace TVRename
             SourceEpisodes = new List<Episode>();
         }
 
-        public ProcessedEpisode([NotNull] ProcessedEpisode e, [NotNull] ShowConfiguration si, ProcessedEpisodeType t)
+        public ProcessedEpisode(ProcessedEpisode e, ShowConfiguration si, ProcessedEpisodeType t)
             : base(e)
         {
             OverallNumber = -1;
@@ -72,7 +70,7 @@ namespace TVRename
             SourceEpisodes = new List<Episode>();
         }
 
-        public ProcessedEpisode([NotNull] ProcessedEpisode e, [NotNull] ShowConfiguration si, List<Episode> episodes)
+        public ProcessedEpisode(ProcessedEpisode e, ShowConfiguration si, List<Episode> episodes)
             : base(e)
         {
             OverallNumber = -1;
@@ -86,7 +84,7 @@ namespace TVRename
             TheDvdProcessedSeason = e.TheDvdProcessedSeason;
         }
 
-        public ProcessedEpisode([NotNull] ProcessedEpisode pe, ShowConfiguration si, [NotNull] string name, int airedEpNum, int dvdEpNum, int epNum2)
+        public ProcessedEpisode(ProcessedEpisode pe, ShowConfiguration si, string name, int airedEpNum, int dvdEpNum, int epNum2)
             : base(pe)
         {
             //This is used when a new episode is inserted
@@ -135,7 +133,6 @@ namespace TVRename
 
         public bool PreviouslySeen => TVSettings.Instance.PreviouslySeenEpisodes.Contains(EpisodeId);
 
-        [NotNull]
         public string SeasonNumberAsText => AppropriateSeasonNumber != 0 ? AppropriateSeasonNumber.ToString() : TVSettings.SpecialsListViewName;
 
         public string? WebsiteUrl
@@ -151,7 +148,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public string EpNumsAsString()
         {
             if (AppropriateEpNum == EpNum2)
@@ -162,7 +158,7 @@ namespace TVRename
             return AppropriateEpNum + "-" + EpNum2;
         }
 
-        public static int EpNumberSorter([NotNull] ProcessedEpisode e1, [NotNull] ProcessedEpisode e2)
+        public static int EpNumberSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.AiredEpNum;
             int ep2 = e2.AiredEpNum;
@@ -171,7 +167,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        public static int DVDOrderSorter([NotNull] ProcessedEpisode e1, [NotNull] ProcessedEpisode e2)
+        public static int DVDOrderSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.DvdEpNum;
             int ep2 = e2.DvdEpNum;
@@ -197,7 +193,6 @@ namespace TVRename
             return GetAirDateDt(Show.GetTimeZone());
         }
 
-        [NotNull]
         public string HowLong()
         {
             DateTime? airsdt = GetAirDateDt(true);
@@ -228,14 +223,12 @@ namespace TVRename
             return Math.Round(ts.TotalMinutes) + "min";
         }
 
-        [NotNull]
         public string DayOfWeek()
         {
             DateTime? dt = GetAirDateDt(true);
             return dt != null ? dt.Value.ToString("ddd") : "-";
         }
 
-        [NotNull]
         public string TimeOfDay()
         {
             DateTime? dt = GetAirDateDt(true);

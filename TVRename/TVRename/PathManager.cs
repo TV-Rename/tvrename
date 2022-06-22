@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 
 namespace TVRename
@@ -50,8 +49,7 @@ namespace TVRename
             UserDefinedBasePath = path;
         }
 
-        [NotNull]
-        private static FileInfo GetFileInfo([NotNull] string file)
+        private static FileInfo GetFileInfo(string file)
         {
             string path = UserDefinedBasePath.HasValue()
                 ? UserDefinedBasePath
@@ -61,29 +59,22 @@ namespace TVRename
             return new FileInfo(System.IO.Path.Combine(path, file));
         }
 
-        [NotNull]
         public static FileInfo StateFile => GetFileInfo(STATE_FILE_NAME);
 
-        [NotNull]
         public static FileInfo StatisticsFile => GetFileInfo(STATISTICS_FILE_NAME);
 
         // ReSharper disable once InconsistentNaming
-        [NotNull]
         public static FileInfo UILayoutFile => GetFileInfo(UI_LAYOUT_FILE_NAME);
 
         // ReSharper disable once InconsistentNaming
-        [NotNull]
         public static FileInfo TVDBFile => GetFileInfo(TVDB_FILE_NAME);
 
         // ReSharper disable once InconsistentNaming
-        [NotNull]
         public static FileInfo TVmazeFile => GetFileInfo(TVMAZE_FILE_NAME);
 
-        [NotNull]
         public static FileInfo TmdbFile => GetFileInfo(TMDB_FILE_NAME);
 
         // ReSharper disable once InconsistentNaming
-        [NotNull]
         public static FileInfo TVDocSettingsFile => GetFileInfo(SETTINGS_FILE_NAME);
 
         public static string CefCachePath

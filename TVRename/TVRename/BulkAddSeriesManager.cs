@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +32,7 @@ namespace TVRename
             mDoc = doc;
         }
 
-        public static void GuessShowItem([NotNull] PossibleNewTvShow ai, [NotNull] ShowLibrary library, bool showErrorMsgBox)
+        public static void GuessShowItem(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
         {
             Language languageToUse = TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB
                 ? TVSettings.Instance.TMDBLanguage
@@ -131,7 +130,7 @@ namespace TVRename
             return -1;
         }
 
-        private static int FindTvdbShowCode([NotNull] FileInfo file)
+        private static int FindTvdbShowCode(FileInfo file)
         {
             try
             {
@@ -184,8 +183,7 @@ namespace TVRename
             return -1;
         }
 
-        [NotNull]
-        private static string GuessShowName([NotNull] PossibleNewTvShow ai, [NotNull] ShowLibrary library)
+        private static string GuessShowName(PossibleNewTvShow ai, ShowLibrary library)
         {
             // see if we can guess a season number and show name, too
             // Assume is blah\blah\blah\show\season X
@@ -218,7 +216,7 @@ namespace TVRename
             return showName;
         }
 
-        private bool HasSeasonFolders([NotNull] DirectoryInfo di, out DirectoryInfo[]? subDirs, [NotNull] out string folderFormat)
+        private bool HasSeasonFolders(DirectoryInfo di, out DirectoryInfo[]? subDirs, out string folderFormat)
         {
             try
             {
@@ -268,7 +266,7 @@ namespace TVRename
             return false;
         }
 
-        public (bool finished, DirectoryInfo[]? subDirs) CheckFolderForShows([NotNull] DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
+        public (bool finished, DirectoryInfo[]? subDirs) CheckFolderForShows(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
         {
             try
             {
@@ -325,7 +323,7 @@ namespace TVRename
             }
         }
 
-        private static bool RejectFolderIfIncludedInShow(bool fullLogging, [NotNull] ShowConfiguration si, string theFolder)
+        private static bool RejectFolderIfIncludedInShow(bool fullLogging, ShowConfiguration si, string theFolder)
         {
             if (si.AutoAddNewSeasons() && !string.IsNullOrEmpty(si.AutoAddFolderBase) &&
                 theFolder.IsSubfolderOf(si.AutoAddFolderBase))
@@ -364,12 +362,12 @@ namespace TVRename
             return false;
         }
 
-        private static bool HasFilmFiles([NotNull] DirectoryInfo directory)
+        private static bool HasFilmFiles(DirectoryInfo directory)
         {
             return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
         }
 
-        private void CheckFolderForShows([NotNull] DirectoryInfo di, CancellationToken token, bool fullLogging, bool showErrorMsgBox)
+        private void CheckFolderForShows(DirectoryInfo di, CancellationToken token, bool fullLogging, bool showErrorMsgBox)
         {
             if (!di.Exists)
             {
@@ -420,8 +418,7 @@ namespace TVRename
             AddItems.Clear();
         }
 
-        [NotNull]
-        private List<ShowConfiguration> AddToLibrary([NotNull] IEnumerable<PossibleNewTvShow> ais)
+        private List<ShowConfiguration> AddToLibrary(IEnumerable<PossibleNewTvShow> ais)
         {
             List<ShowConfiguration> touchedShows = new();
             foreach (PossibleNewTvShow ai in ais)
@@ -457,7 +454,7 @@ namespace TVRename
             return touchedShows;
         }
 
-        public void CheckFolders(CancellationToken token, [NotNull] SetProgressDelegate prog, bool detailedLogging, bool showErrorMsgBox)
+        public void CheckFolders(CancellationToken token, SetProgressDelegate prog, bool detailedLogging, bool showErrorMsgBox)
         {
             // Check the  folder list, and build up a new "AddItems" list.
             // guessing what the shows actually are isn't done here.  That is done by

@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +12,6 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchLocally;
 
-        [NotNull]
         protected override string CheckName() => "Looked in the search folders for the missing files";
 
         protected override void DoCheck(SetProgressDelegate progress)
@@ -80,8 +78,7 @@ namespace TVRename
             ActionList.Replace(toRemove, newList);
         }
 
-        [NotNull]
-        private List<FileInfo> FindMatchedFiles([NotNull] DirCache dirCache, MovieItemMissing movieMissingAction, Dictionary<FileInfo, ItemList> thisRound)
+        private List<FileInfo> FindMatchedFiles(DirCache dirCache, MovieItemMissing movieMissingAction, Dictionary<FileInfo, ItemList> thisRound)
         {
             List<FileInfo> matchedFiles = new();
 
@@ -106,8 +103,7 @@ namespace TVRename
             return matchedFiles;
         }
 
-        [NotNull]
-        private List<FileInfo> FindMatchedFiles([NotNull] DirCache dirCache, ShowItemMissing me, Dictionary<FileInfo,ItemList> thisRound)
+        private List<FileInfo> FindMatchedFiles(DirCache dirCache, ShowItemMissing me, Dictionary<FileInfo,ItemList> thisRound)
         {
             List<FileInfo> matchedFiles = new();
 

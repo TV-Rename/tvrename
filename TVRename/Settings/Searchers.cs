@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,7 +76,7 @@ namespace TVRename
             }
         }
 
-        private SearchEngine? GenerateSearchEngine([NotNull] XElement x)
+        private SearchEngine? GenerateSearchEngine(XElement x)
         {
             string? url = x.Attribute("URL")?.Value.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
             string? url2 = x.Attribute("URL2")?.Value;
@@ -96,7 +95,7 @@ namespace TVRename
             CurrentSearch = s;
         }
 
-        public void WriteXml([NotNull] XmlWriter writer, [NotNull] string startElementName)
+        public void WriteXml(XmlWriter writer, string startElementName)
         {
             writer.WriteStartElement(startElementName);
             writer.WriteElement("Current", CurrentSearch.Name);

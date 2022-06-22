@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -164,7 +163,7 @@ namespace TVRename
             mDownloaderThread = null;
         }
 
-        private void GetThread([NotNull] object codeIn)
+        private void GetThread(object codeIn)
         {
             System.Diagnostics.Debug.Assert(workerSemaphore != null);
 
@@ -235,7 +234,7 @@ namespace TVRename
             workerSemaphore = null;
         }
 
-        private void Downloader([NotNull] object token)
+        private void Downloader(object token)
         {
             // do background downloads of webpages
             Logger.Info("*******************************");
@@ -244,7 +243,7 @@ namespace TVRename
             CancellationToken cts = (CancellationToken)token;
             try
             {
-                if (downloadIds is null || downloadIds.Count == 0)
+                if (downloadIds.Count == 0)
                 {
                     DownloadDone = true;
                     downloadOk = true;

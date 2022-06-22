@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -81,16 +80,12 @@ namespace TVRename
 
         public override string ToString() => $"{GetMediaType()}: ({ConfigurationProvider.PrettyPrint()}) TVDB:{TvdbCode} TMDB:{TmdbCode} TVMaze:{TVmazeCode} ({CustomShowName},{CustomLanguageCode},{CustomRegionCode}) [{LastName}]";
 
-        [NotNull]
         public Dictionary<int, SafeList<string>> AllExistngFolderLocations() => AllFolderLocations(true, true);
 
-        [NotNull]
         public Dictionary<int, SafeList<string>> AllProposedFolderLocations() => AllFolderLocations(true, false);
 
-        [NotNull]
         public Dictionary<int, SafeList<string>> AllFolderLocationsEpCheck(bool checkExist) => AllFolderLocations(true, checkExist);
 
-        [NotNull]
         public Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo) => AllFolderLocations(manualToo, true);
 
         public enum MediaType
@@ -143,21 +138,20 @@ namespace TVRename
             }
         }
 
-        public bool AnyIdsMatch([NotNull] MediaConfiguration newShow) =>
+        public bool AnyIdsMatch(MediaConfiguration newShow) =>
             IdsMatch(TvdbCode, newShow.TvdbCode) ||
             IdsMatch(TVmazeCode, newShow.TVmazeCode) ||
             IdsMatch(TmdbCode, newShow.TmdbCode);
 
         private static bool IdsMatch(int code1, int code2) => code1 == code2 && code1 > 0;
 
-        public static int CompareNames([NotNull] MediaConfiguration x, [NotNull] MediaConfiguration y)
+        public static int CompareNames(MediaConfiguration x, MediaConfiguration y)
         {
             string ones = x.ShowName;
             string twos = y.ShowName;
             return string.Compare(ones, twos, StringComparison.Ordinal);
         }
 
-        [NotNull]
         public IEnumerable<string> GetActorNames()
         {
             return Actors.Select(x => x.ActorName);
@@ -199,13 +193,10 @@ namespace TVRename
 
         protected abstract TVDoc.ProviderType DefaultProvider();
 
-        [NotNull]
         public IEnumerable<string> Genres => CachedData?.Genres.Distinct() ?? new List<string>();
 
-        [NotNull]
         public IEnumerable<Actor> Actors => CachedData?.GetActors() ?? new List<Actor>();
 
-        [NotNull]
         protected IEnumerable<string> GetSimplifiedPossibleShowNames()
         {
             List<string> possibles = new();
@@ -241,7 +232,7 @@ namespace TVRename
                 CachedMediaInfo ser = CachedData;
                 if (ser?.Name.HasValue() ?? false)
                 {
-                    return ser.Name!;
+                    return ser.Name;
                 }
                 if (LastName.HasValue())
                 {
@@ -252,7 +243,7 @@ namespace TVRename
             }
         }
 
-        protected void SetupAliases([NotNull] XElement xmlSettings)
+        protected void SetupAliases(XElement xmlSettings)
         {
             foreach (string alias in xmlSettings.Descendants("AliasNames").Descendants("Alias").Select(alias => alias.Value).Distinct())
             {
@@ -260,7 +251,7 @@ namespace TVRename
             }
         }
 
-        public bool NameMatch([NotNull] FileSystemInfo file, bool useFullPath) => NameMatch(useFullPath ? file.FullName : file.Name);
+        public bool NameMatch(FileSystemInfo file, bool useFullPath) => NameMatch(useFullPath ? file.FullName : file.Name);
 
         public bool NameMatch(string text)
         {
@@ -272,7 +263,7 @@ namespace TVRename
             return GetSimplifiedPossibleShowNames().Any(name => name.Contains(text.CompareName(), StringComparison.OrdinalIgnoreCase));
         }
 
-        public int LengthNameMatch([NotNull] FileInfo file, bool useFullPath)
+        public int LengthNameMatch(FileInfo file, bool useFullPath)
         {
             string filename = useFullPath ? file.FullName : file.Name;
             return GetSimplifiedPossibleShowNames().Select(name => FileHelper.SimplifyAndCheckFilenameLength(filename.CompareName(), name, false, false)).Max();

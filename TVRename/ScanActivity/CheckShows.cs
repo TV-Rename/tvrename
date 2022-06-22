@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -19,7 +18,6 @@ namespace TVRename
         {
         }
 
-        [NotNull]
         protected override string CheckName() => "Looked in the library to find missing files";
 
         protected override void DoCheck(SetProgressDelegate progress)

@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class DefaultUseAlternateTvCheck : DefaultTvShowCheck
     {
-        public DefaultUseAlternateTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        public DefaultUseAlternateTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
-        [NotNull]
         protected override string FieldName => "Use Alternate Order Check";
 
         protected override bool Field => Show.AlternateOrder;

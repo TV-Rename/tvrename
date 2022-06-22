@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,28 +17,27 @@ namespace TVRename
 {
     public static class StringExtensions
     {
-        [NotNull]
         public static string ItemItems(this int n) => n == 1 ? "Item" : "Items";
 
-        public static bool IsWebLink([NotNull] this string s) => s.IsHttpLink() || s.IsFtpLink();
+        public static bool IsWebLink(this string s) => s.IsHttpLink() || s.IsFtpLink();
 
-        public static bool IsPlaceholderName([CanBeNull] this string s) =>
+        public static bool IsPlaceholderName(this string? s) =>
             s is null
             || s.Equals("TBA", StringComparison.OrdinalIgnoreCase)
             || s.Equals("TBC", StringComparison.OrdinalIgnoreCase)
             || s.Equals("TBD", StringComparison.OrdinalIgnoreCase);
 
-        public static bool IsHttpLink([NotNull] this string s) =>
+        public static bool IsHttpLink(this string s) =>
             s.StartsWith("http://", StringComparison.Ordinal)
             || s.StartsWith("https://", StringComparison.Ordinal);
 
-        public static bool IsFtpLink([NotNull] this string s) =>
+        public static bool IsFtpLink(this string s) =>
             s.StartsWith("ftp://", StringComparison.Ordinal);
 
-        public static bool IsFileLink([NotNull] this string s) =>
+        public static bool IsFileLink(this string s) =>
             s.StartsWith("file://", StringComparison.Ordinal);
 
-        public static string RemoveCharactersFrom(this string source, [NotNull] IEnumerable<char> badChars)
+        public static string RemoveCharactersFrom(this string source, IEnumerable<char> badChars)
         {
             string returnValue = source;
             foreach (char x in badChars)
@@ -49,7 +48,7 @@ namespace TVRename
             return returnValue;
         }
 
-        public static bool Contains([NotNull] this string source, [NotNull] string toCheck, StringComparison comp)
+        public static bool Contains(this string source, string toCheck, StringComparison comp)
         {
             return source.IndexOf(toCheck, comp) >= 0;
         }
@@ -58,7 +57,6 @@ namespace TVRename
 
         public static bool HasValue(this string? s) => !string.IsNullOrWhiteSpace(s);
 
-        [NotNull]
         public static string CompareName(this string n)
         {
             n = n.ToLower();
@@ -73,8 +71,7 @@ namespace TVRename
             return n.Trim();
         }
 
-        [NotNull]
-        public static string RemoveDiacritics([NotNull] this string stIn)
+        public static string RemoveDiacritics(this string stIn)
         {
             // From http://blogs.msdn.com/b/michkap/archive/2007/05/14/2629747.aspx
             string stFormD = stIn.Normalize(NormalizationForm.FormD);
@@ -91,8 +88,7 @@ namespace TVRename
             return sb.ToString().Normalize(NormalizationForm.FormC);
         }
 
-        [NotNull]
-        public static string RemovePattern(this string baseText, [NotNull] string pattern)
+        public static string RemovePattern(this string baseText, string pattern)
         {
             if (!baseText.HasValue())
             {
@@ -111,25 +107,21 @@ namespace TVRename
         }
 
         //Remove any (nnnn) in the hint - probably a year
-        [NotNull]
-        public static string RemoveBracketedYear([NotNull] this string baseText)
+        public static string RemoveBracketedYear(this string baseText)
             => baseText
                 .RemovePattern(@"\(\d{4}\)")
                 .RemovePattern(@"\[\d{4}\]");
 
-        [NotNull]
-        public static string RemoveYearFromEnd([NotNull] this string baseText)
+        public static string RemoveYearFromEnd(this string baseText)
             => baseText
                 .RemovePattern(@"\s\d{4}$");
 
-        [NotNull]
-        public static string RemoveBracketedYearFromEnd([NotNull] this string baseText)
+        public static string RemoveBracketedYearFromEnd(this string baseText)
             => baseText
                 .RemovePattern(@"\s\[\d{4}\]$")
                 .RemovePattern(@"\s\(\d{4}\)$");
 
-        [NotNull]
-        public static string ReplaceInsensitive([NotNull] this string source, [NotNull] string search, string? replacement)
+        public static string ReplaceInsensitive(this string source, string search, string? replacement)
         {
             if (!source.HasValue())
             {
@@ -143,8 +135,7 @@ namespace TVRename
                 RegexOptions.IgnoreCase);
         }
 
-        [NotNull]
-        public static string ReplaceInsensitiveLazy(this string? source, [NotNull] string search, Lazy<string?> replacement, StringComparison comparison)
+        public static string ReplaceInsensitiveLazy(this string? source, string search, Lazy<string?> replacement, StringComparison comparison)
         {
             if (source == null)
             {
@@ -188,18 +179,17 @@ namespace TVRename
             return sb.ToString();
         }
 
-        public static bool ContainsAnyCharactersFrom(this string source, [NotNull] IEnumerable<char> possibleChars)
+        public static bool ContainsAnyCharactersFrom(this string source, IEnumerable<char> possibleChars)
         {
             return possibleChars.Any(testChar => source.Contains(testChar.ToString()));
         }
 
-        public static bool ContainsAnyCharactersFrom(this string source, [NotNull] string possibleChars)
+        public static bool ContainsAnyCharactersFrom(this string source, string possibleChars)
         {
             return ContainsAnyCharactersFrom(source, possibleChars.ToCharArray());
         }
 
-        [NotNull]
-        public static string UppercaseFirst([CanBeNull] this string str)
+        public static string UppercaseFirst(this string? str)
         {
             if (string.IsNullOrEmpty(str))
             {
@@ -211,13 +201,11 @@ namespace TVRename
 
         public static bool IsNullOrWhitespace(this string? text) => string.IsNullOrWhiteSpace(text);
 
-        [NotNull]
-        public static string RemoveLastCharacter([NotNull] this string instr)
+        public static string RemoveLastCharacter(this string instr)
         {
             return instr.Substring(0, instr.Length - 1);
         }
 
-        [NotNull]
         public static string First(this string s, int charsToDisplay)
         {
             if (s.HasValue())
@@ -228,28 +216,24 @@ namespace TVRename
             return string.Empty;
         }
 
-        [NotNull]
-        public static string Initial([NotNull] this string str) => str.HasValue() ? str.Substring(0, 1) : string.Empty;
+        public static string Initial(this string str) => str.HasValue() ? str.Substring(0, 1) : string.Empty;
 
-        [NotNull]
-        public static string RemoveLast([NotNull] this string instr, int number)
+        public static string RemoveLast(this string instr, int number)
         {
             return instr.Substring(0, instr.Length - number);
         }
 
-        [NotNull]
-        public static string RemoveFirstCharacter([NotNull] this string instr)
+        public static string RemoveFirstCharacter(this string instr)
         {
             return instr.Substring(1);
         }
 
-        [NotNull]
-        public static string RemoveFirst([NotNull] this string instr, int number)
+        public static string RemoveFirst(this string instr, int number)
         {
             return instr.Substring(number);
         }
 
-        public static string GetCommonStartString([NotNull] IEnumerable<string> testValues)
+        public static string GetCommonStartString(IEnumerable<string> testValues)
         {
             string root = string.Empty;
             bool first = true;
@@ -268,8 +252,7 @@ namespace TVRename
             return root;
         }
 
-        [NotNull]
-        public static string TrimEnd([NotNull] this string root, [NotNull] string ending)
+        public static string TrimEnd(this string root, string ending)
         {
             if (!root.HasValue())
             {
@@ -283,8 +266,7 @@ namespace TVRename
             return root.RemoveLast(ending.Length);
         }
 
-        [NotNull]
-        public static string TrimStartString([NotNull] this string root, [NotNull] string startString)
+        public static string TrimStartString(this string root, string startString)
         {
             if (!root.HasValue())
             {
@@ -298,8 +280,7 @@ namespace TVRename
             return root.RemoveFirst(startString.Length);
         }
 
-        [NotNull]
-        public static string RemoveAfter([NotNull] this string root, [NotNull] string ending)
+        public static string RemoveAfter(this string root, string ending)
         {
             if (root.IndexOf(ending, StringComparison.OrdinalIgnoreCase) != -1)
             {
@@ -309,7 +290,7 @@ namespace TVRename
             return root;
         }
 
-        public static string TrimEnd(this string root, [NotNull] IEnumerable<string> endings)
+        public static string TrimEnd(this string root, IEnumerable<string> endings)
         {
             string trimmedString = root;
             foreach (string ending in endings)
@@ -319,8 +300,7 @@ namespace TVRename
             return trimmedString;
         }
 
-        [NotNull]
-        public static string GetCommonStartString([NotNull] string first, [NotNull] string second)
+        public static string GetCommonStartString(string first, string second)
         {
             StringBuilder builder = new();
 
@@ -339,23 +319,17 @@ namespace TVRename
             return builder.ToString();
         }
 
-        public static bool ContainsOneOf([NotNull] this string source, [NotNull] IEnumerable<string> terms) => terms.Any(source.Contains);
+        public static bool ContainsOneOf(this string source, IEnumerable<string> terms) => terms.Any(source.Contains);
 
-        [NotNull]
-        public static string ToCsv([NotNull] this IEnumerable<string> values) => string.Join(", ", values);
+        public static string ToCsv(this IEnumerable<string> values) => string.Join(", ", values);
 
-        [NotNull]
-        public static string ToCsv([NotNull] this IEnumerable<int> values) => string.Join(",", values);
+        public static string ToCsv(this IEnumerable<int> values) => string.Join(",", values);
 
-        [NotNull]
-        public static string ToPsv([NotNull] this IEnumerable<string> values) => string.Join("|", values);
+        public static string ToPsv(this IEnumerable<string> values) => string.Join("|", values);
 
-        [NotNull]
         public static IEnumerable<string> FromPsv(this string aggregate) => aggregate.FromSepValues('|');
-        [NotNull]
         public static IEnumerable<string> FromCsv(this string aggregate) => aggregate.FromSepValues(',');
-        [NotNull]
-        private static IEnumerable<string> FromSepValues([CanBeNull] this string aggregate, char delimiter)
+        private static IEnumerable<string> FromSepValues(this string? aggregate, char delimiter)
         {
             return string.IsNullOrEmpty(aggregate)
                 ? new string[] { }
@@ -377,7 +351,6 @@ namespace TVRename
             return null;
         }
 
-        [NotNull]
-        public static string Concat([NotNull] this IEnumerable<string> values) => string.Join(string.Empty, values);
+        public static string Concat(this IEnumerable<string> values) => string.Join(string.Empty, values);
     }
 }

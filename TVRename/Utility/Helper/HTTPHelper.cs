@@ -1,5 +1,4 @@
 using CloudFlareUtilities;
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -17,10 +16,9 @@ namespace TVRename
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        [NotNull]
-        internal static MultipartFormDataContent AddFile([NotNull] this MultipartFormDataContent @this,
+        internal static MultipartFormDataContent AddFile(this MultipartFormDataContent @this,
             string name,
-            [NotNull] string path,
+            string path,
             string contentType = "application/octet-stream")
         {
             System.IO.FileStream stream = System.IO.File.OpenRead(path);
@@ -102,14 +100,12 @@ namespace TVRename
             return new byte[] { };
         }
 
-        [NotNull]
-        public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, string? token)
+        public static string HttpRequest(string method, string url, string json, string contentType, string? token)
         {
             return HttpRequest(method, url, json, contentType, token, string.Empty);
         }
 
-        [NotNull]
-        public static string HttpRequest([NotNull] string method, [NotNull] string url, string? postContent,
+        public static string HttpRequest(string method, string url, string? postContent,
             string? contentType, string? token, string? lang)
         {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -150,8 +146,7 @@ namespace TVRename
             return result;
         }
 
-        [NotNull]
-        public static string Obtain([NotNull] string url)
+        public static string Obtain(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
@@ -170,7 +165,7 @@ namespace TVRename
             }
         }
 
-        public static void LogWebException([NotNull] this Logger l, string message, [NotNull] WebException wex)
+        public static void LogWebException(this Logger l, string message, WebException wex)
         {
             if (wex.IsUnimportant())
             {
@@ -182,12 +177,12 @@ namespace TVRename
             }
         }
 
-        public static void LogIoException([NotNull] this Logger l, string message, [NotNull] System.IO.IOException wex)
+        public static void LogIoException(this Logger l, string message, System.IO.IOException wex)
         {
             l.Warn(message + " " + wex.LoggableDetails());
         }
 
-        public static void LogHttpRequestException([NotNull] this Logger l, string message, [NotNull] HttpRequestException wex)
+        public static void LogHttpRequestException(this Logger l, string message, HttpRequestException wex)
         {
             if (wex.IsUnimportant())
             {
@@ -199,7 +194,7 @@ namespace TVRename
             }
         }
 
-        private static bool IsUnimportant([NotNull] this WebException ex)
+        private static bool IsUnimportant(this WebException ex)
         {
             switch (ex.Status)
             {
@@ -221,7 +216,7 @@ namespace TVRename
             }
         }
 
-        private static bool IsUnimportant([NotNull] this HttpRequestException ex)
+        private static bool IsUnimportant(this HttpRequestException ex)
         {
             if (ex.InnerException is WebException wex)
             {
@@ -230,7 +225,7 @@ namespace TVRename
             return true;
         }
 
-        public static bool Is404([NotNull] this WebException ex)
+        public static bool Is404(this WebException ex)
         {
             if (ex.Status != WebExceptionStatus.ProtocolError)
             {
@@ -245,7 +240,7 @@ namespace TVRename
             return resp.StatusCode == HttpStatusCode.NotFound;
         }
 
-        public static byte[] Download([NotNull] string url, bool forceReload)
+        public static byte[] Download(string url, bool forceReload)
         {
             WebClient wc = new();
 
@@ -257,8 +252,7 @@ namespace TVRename
             return wc.DownloadData(url);
         }
 
-        [NotNull]
-        public static string LoggableDetails([NotNull] this System.IO.IOException ex)
+        public static string LoggableDetails(this System.IO.IOException ex)
         {
             StringBuilder s = new();
             s.Append($"IOException obtained. {ex.Message}");
@@ -269,8 +263,7 @@ namespace TVRename
             return s.ToString();
         }
 
-        [NotNull]
-        public static string LoggableDetails([NotNull] this WebException ex)
+        public static string LoggableDetails(this WebException ex)
         {
             StringBuilder s = new();
             s.Append($"WebException {ex.Status} obtained. {ex.Message}");
@@ -293,8 +286,7 @@ namespace TVRename
             return s.ToString();
         }
 
-        [NotNull]
-        public static string LoggableDetails([NotNull] this HttpRequestException ex)
+        public static string LoggableDetails(this HttpRequestException ex)
         {
             StringBuilder s = new();
             s.Append($"HttpRequestException obtained. {ex.Message}");
@@ -315,15 +307,12 @@ namespace TVRename
             return s.ToString();
         }
 
-        [NotNull]
-        public static JObject JsonHttpGetRequest([NotNull] string url, string? authToken) =>
+        public static JObject JsonHttpGetRequest(string url, string? authToken) =>
             JObject.Parse(HttpRequest("GET", url, null, "application/json", authToken, string.Empty));
 
-        [NotNull]
-        public static JArray JsonListHttpGetRequest([NotNull] string url, string? authToken) =>
+        public static JArray JsonListHttpGetRequest(string url, string? authToken) =>
             JArray.Parse(HttpRequest("GET", url, null, "application/json", authToken, string.Empty));
 
-        [NotNull]
         public static JObject JsonHttpPostRequest(string url, JObject request, bool retry)
         {
             TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
@@ -343,7 +332,6 @@ namespace TVRename
             return JObject.Parse(response);
         }
 
-        [NotNull]
         public static string GetHttpParameters(Dictionary<string, string>? parameters)
         {
             if (parameters is null)
@@ -362,7 +350,7 @@ namespace TVRename
             return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
         }
 
-        public static void RetryOnException(int times, TimeSpan delay, string url, Func<Exception, bool> retryableException, [NotNull] System.Action operation, System.Action? updateOperation)
+        public static void RetryOnException(int times, TimeSpan delay, string url, Func<Exception, bool> retryableException, System.Action operation, System.Action? updateOperation)
         {
             if (times <= 0)
             {
@@ -400,7 +388,7 @@ namespace TVRename
             } while (true);
         }
 
-        public static async Task RetryOnExceptionAsync<TException>(int times, TimeSpan delay, string url, [NotNull] Func<Task> operation) where TException : Exception
+        public static async Task RetryOnExceptionAsync<TException>(int times, TimeSpan delay, string url, Func<Task> operation) where TException : Exception
         {
             if (times <= 0)
             {

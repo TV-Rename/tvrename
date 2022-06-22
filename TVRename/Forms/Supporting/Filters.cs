@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using System;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,7 +18,7 @@ namespace TVRename.Forms
         private const string IS_NOT = "is not";
         private const string IS = "is";
 
-        public Filters([NotNull] TVDoc doc)
+        public Filters(TVDoc doc)
         {
             this.doc = doc;
             InitializeComponent();
@@ -85,7 +85,7 @@ namespace TVRename.Forms
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            ShowFilter filter = TVSettings.Instance.Filter ?? new ShowFilter();
+            ShowFilter filter = TVSettings.Instance.Filter;
 
             filter.ShowName = string.IsNullOrEmpty(tbShowName.Text) ? null : tbShowName.Text;
             filter.ShowStatus = string.IsNullOrEmpty(cmbShowStatus.Text) ? null : cmbShowStatus.SelectedItem.ToString();
@@ -107,12 +107,12 @@ namespace TVRename.Forms
             SeasonFilter sFilter = TVSettings.Instance.SeasonFilter;
             sFilter.HideIgnoredSeasons = chkHideIgnoredSeasons.Checked;
 
-            doc?.SetDirty();
+            doc.SetDirty();
             DialogResult = DialogResult.OK;
             Close();
         }
 
-        private static bool GetIncludeStatus([NotNull] ComboBox comboBox)
+        private static bool GetIncludeStatus(ComboBox comboBox)
         {
             if (!comboBox.Text.HasValue())
             {

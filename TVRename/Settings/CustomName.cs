@@ -1,15 +1,12 @@
 using System;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     public static class CustomName
     {
-        [NotNull]
-        public static string ReplaceYear(this string source, [CanBeNull] MediaConfiguration config)
+        public static string ReplaceYear(this string source, MediaConfiguration? config)
             => ReplaceYear(source, config?.Name??string.Empty);
 
-        [NotNull]
         public static string ReplaceYear(this string source, string showName)
         {
             if (!source.HasValue())

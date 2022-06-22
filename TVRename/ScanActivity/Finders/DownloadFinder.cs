@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System.Collections.Generic;
 
 namespace TVRename
@@ -19,7 +18,7 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
-        protected static bool RssMatch([NotNull] RSSItem rss, [NotNull] ProcessedEpisode pe)
+        protected static bool RssMatch(RSSItem rss, ProcessedEpisode pe)
         {
             string simpleShowName = pe.Show.ShowName.CompareName();
             string simpleSeriesName = pe.TheCachedSeries.Name.CompareName();
@@ -46,15 +45,14 @@ namespace TVRename
             return true;
         }
 
-        protected static bool RssMatch([NotNull] RSSItem rss, [NotNull] MovieConfiguration pe)
+        protected static bool RssMatch(RSSItem rss, MovieConfiguration pe)
         {
             string simpleShowName = pe.ShowName.CompareName();
 
             return FileHelper.SimplifyAndCheckFilename(rss.ShowName.HasValue() ? rss.ShowName : rss.Title, simpleShowName, true, false);
         }
 
-        [NotNull]
-        protected static IEnumerable<ActionTDownload> FindDuplicates([NotNull] ItemList newItems)
+        protected static IEnumerable<ActionTDownload> FindDuplicates(ItemList newItems)
         {
             //We now want to rationlise the newItems - just in case we've added duplicates
             List<ActionTDownload> duplicateActionRss = new();

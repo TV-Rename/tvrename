@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -19,7 +18,7 @@ namespace TVRename
         private readonly FileInfo chosenFile;
         public MovieConfiguration? ChosenShow;
 
-        public LinkMovie([NotNull] List<MovieConfiguration> matchingShows, [NotNull] FileInfo file)
+        public LinkMovie(List<MovieConfiguration> matchingShows, FileInfo file)
         {
             InitializeComponent();
             lblSourceFileName.Text = file.FullName.ToUiVersion();

@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,7 +25,7 @@ namespace TVRename
         public string Prerelease { get; }
         public string Build { get; }
 
-        public Release([NotNull] string version, VersionType type)
+        public Release(string version, VersionType type)
         {
             if (string.IsNullOrWhiteSpace(version))
             {

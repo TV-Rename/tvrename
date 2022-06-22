@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
@@ -26,7 +26,6 @@ namespace TVRename
 
         private ConcurrentDictionary<int, Episode> sourceEpisodes;
 
-        [NotNull]
         public ICollection<Episode> Episodes => sourceEpisodes.Values;
 
         public void ClearEpisodes() => sourceEpisodes.Clear();
@@ -49,7 +48,6 @@ namespace TVRename
                 .Select(adt => adt.Value)
                 .Max(airDateTime => (int?)airDateTime.Year);
 
-        [NotNull]
         public string Year => FirstAired?.Year.ToString() ?? $"{MinYear}";
 
         public IEnumerable<Season> Seasons => seasons;
@@ -75,13 +73,13 @@ namespace TVRename
             AirsTime = null;
         }
 
-        public CachedSeriesInfo([NotNull] XElement seriesXml, TVDoc.ProviderType source) : this(source)
+        public CachedSeriesInfo(XElement seriesXml, TVDoc.ProviderType source) : this(source)
         {
             LoadXml(seriesXml);
             IsSearchResultOnly = false;
         }
 
-        public CachedSeriesInfo([NotNull] JObject json, Locale locale, bool searchResult, TVDoc.ProviderType source) : this(locale, source)
+        public CachedSeriesInfo(JObject json, Locale locale, bool searchResult, TVDoc.ProviderType source) : this(locale, source)
         {
             LoadJson(json);
             IsSearchResultOnly = searchResult;
@@ -100,7 +98,7 @@ namespace TVRename
             }
         }
 
-        public CachedSeriesInfo([NotNull] JObject json, [NotNull] JObject jsonInDefaultLang, Locale locale, TVDoc.ProviderType source) : this(locale, source)
+        public CachedSeriesInfo(JObject json, JObject jsonInDefaultLang, Locale locale, TVDoc.ProviderType source) : this(locale, source)
         {
             LoadJson(json, jsonInDefaultLang);
             IsSearchResultOnly = false;
@@ -121,7 +119,7 @@ namespace TVRename
         }
 
         // ReSharper disable once FunctionComplexityOverflow
-        public void Merge([NotNull] CachedSeriesInfo o)
+        public void Merge(CachedSeriesInfo o)
         {
             if (o.IsSearchResultOnly && !IsSearchResultOnly)
             {
@@ -187,7 +185,7 @@ namespace TVRename
 
             images.MergeImages(o.images);
         }
-        private void LoadXml([NotNull] XElement seriesXml)
+        private void LoadXml(XElement seriesXml)
         {
             LoadCommonXml(seriesXml);
 
@@ -211,7 +209,7 @@ namespace TVRename
             }
         }
 
-        internal void AddBanners(int seriesId, [NotNull] IEnumerable<ShowImage> enumerable)
+        internal void AddBanners(int seriesId, IEnumerable<ShowImage> enumerable)
         {
             foreach (ShowImage s in enumerable)
             {
@@ -219,7 +217,7 @@ namespace TVRename
             }
         }
 
-        private void LoadSeasons([NotNull] XElement seriesXml)
+        private void LoadSeasons(XElement seriesXml)
         {
             seasons = new List<Season>();
             foreach (Season s in seriesXml.Descendants("Seasons").Descendants("Season").Select(xml => new Season(xml)))
@@ -228,7 +226,7 @@ namespace TVRename
             }
         }
 
-        private void LoadImages([NotNull] XElement seriesXml)
+        private void LoadImages(XElement seriesXml)
         {
             images = new ShowImages();
             foreach (ShowImage s in seriesXml.Descendants("Images").Descendants("ShowImage").Select(xml => new ShowImage(IdCode(Source),Source, xml)))
@@ -237,7 +235,7 @@ namespace TVRename
             }
         }
 
-        private void LoadJson([NotNull] JObject r)
+        private void LoadJson(JObject r)
         {
             AirsDay = ((string)r["airsDayOfWeek"])?.Trim();
             string airsTimeString = (string)r["airsTime"];
@@ -275,7 +273,6 @@ namespace TVRename
             int.TryParse(siteRatingVotesString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRatingVotes);
         }
 
-        [NotNull]
         internal Episode GetEpisode(int epId)
         {
             if (sourceEpisodes.TryGetValue(epId, out Episode returnValue))
@@ -285,7 +282,7 @@ namespace TVRename
             throw new ShowConfiguration.EpisodeNotFoundException();
         }
 
-        private void LoadJson([NotNull] JObject bestLanguageR, [NotNull] JObject backupLanguageR)
+        private void LoadJson(JObject bestLanguageR, JObject backupLanguageR)
         {
             //Here we have two pieces of JSON. One in local language and one in the default language (English).
             //We will populate with the best language frst and then fill in any gaps with the backup Language
@@ -329,7 +326,7 @@ namespace TVRename
             }
         }
 
-        public void WriteXml([NotNull] XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("Series");
             WriteCommonFields(writer);
@@ -394,7 +391,7 @@ namespace TVRename
             }
         }
 
-        public void AddEpisode([NotNull] Episode episode)
+        public void AddEpisode(Episode episode)
         {
             sourceEpisodes.AddOrUpdate(episode.EpisodeId, episode,(_, _) => episode);
             episode.SetSeriesSeason(this);
@@ -423,7 +420,7 @@ namespace TVRename
             return seasons.FirstOrDefault(season => season.SeasonNumber == sSeasonNumber);
         }
 
-        public bool IsCacheFor([NotNull] ShowConfiguration show) => show.TmdbCode == TmdbCode || show.TvdbId == TvdbCode || show.TvMazeId == TvMazeCode;
+        public bool IsCacheFor(ShowConfiguration show) => show.TmdbCode == TmdbCode || show.TvdbId == TvdbCode || show.TvMazeId == TvMazeCode;
 
         public void AddOrUpdateImage(ShowImage showImage)
         {
@@ -431,7 +428,6 @@ namespace TVRename
             images.Add(showImage);
         }
 
-        [NotNull]
         public IEnumerable<ShowImage> Images(MediaImage.ImageType type)
         {
             Language languageToUse = TargetLocale.LanguageToUse(Source);
@@ -440,13 +436,11 @@ namespace TVRename
                 .Where(x => x.LocationMatches(languageToUse));
         }
 
-        [NotNull]
         public IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject)
         {
             return Images(type).Where(x => x.Subject == subject);
         }
 
-        [NotNull]
         internal IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject, int seasonNumber)
         {
             return Images(type, subject).Where(x => x.SeasonNumber == seasonNumber);

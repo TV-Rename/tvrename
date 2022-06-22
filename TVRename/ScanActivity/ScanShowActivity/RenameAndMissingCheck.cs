@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +9,14 @@ namespace TVRename
     {
         private readonly DownloadIdentifiersController downloadIdentifiers;
 
-        [NotNull]
         protected override string ActivityName() => "Rename & Missing Check";
         protected override bool Active() => true;
-        public RenameAndMissingCheck([NotNull] TVDoc doc) : base(doc)
+        public RenameAndMissingCheck(TVDoc doc) : base(doc)
         {
             downloadIdentifiers = new DownloadIdentifiersController();
         }
 
-        protected override void Check([NotNull] ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
             if (allFolders.Count == 0) // no folders defined for this show
@@ -68,7 +66,7 @@ namespace TVRename
             } // for each season of this show
         }
 
-        private void CheckSeason([NotNull] ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, [NotNull] SafeList<string> folders, bool timeForBannerUpdate)
+        private void CheckSeason(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, SafeList<string> folders, bool timeForBannerUpdate)
         {
             bool folderNotDefined = folders.Count == 0;
             if (folderNotDefined && TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons())
@@ -89,7 +87,7 @@ namespace TVRename
             } // for each folder for this season of this show
         }
 
-        private void CheckSeasonFolder(ShowConfiguration si, DirFilesCache dfc, [NotNull] TVDoc.ScanSettings settings, int snum,
+        private void CheckSeasonFolder(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum,
             bool timeForBannerUpdate, string folder)
         {
             if (settings.Token.IsCancellationRequested)
@@ -214,7 +212,7 @@ namespace TVRename
                 }
             } // up to date check, for each episode
         }
-        private FileInfo? CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep, IEnumerable<FileInfo> files, TVDoc.ScanSettings settings)
+        private FileInfo? CheckFile(string folder, FileInfo fi, FileInfo actualFile, string newName, ProcessedEpisode ep, IEnumerable<FileInfo> files, TVDoc.ScanSettings settings)
         {
             if (TVSettings.Instance.RetainLanguageSpecificSubtitles)
             {

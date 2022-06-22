@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +29,7 @@ namespace TVRename
             }
         }
 
-        public static void RemoveRange<T>(this List<T> source, [NotNull] IEnumerable<T> items)
+        public static void RemoveRange<T>(this List<T> source, IEnumerable<T> items)
         {
             foreach (T item in items)
             {
@@ -38,36 +37,33 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        public static IList<T> DeepClone<T>([NotNull] this IEnumerable<T> listToClone) where T : ICloneable
+        public static IList<T> DeepClone<T>(this IEnumerable<T> listToClone) where T : ICloneable
         {
             return listToClone.Select(item => (T)item.Clone()).ToList();
         }
 
-        [NotNull]
-        public static IList<T> Clone<T>([NotNull] this IEnumerable<T> listToClone)
+        public static IList<T> Clone<T>(this IEnumerable<T> listToClone)
         {
             return listToClone.Select(item => item).ToList();
         }
 
-        public static void ForEach<T>([NotNull] this IEnumerable<T> source, Action<T> action)
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             foreach (T item in source) { action(item); }
         }
 
-        [NotNull]
-        public static IEnumerable<int> Keys([NotNull] this IEnumerable<KeyValuePair<int, List<ProcessedEpisode>>> source)
+        public static IEnumerable<int> Keys(this IEnumerable<KeyValuePair<int, List<ProcessedEpisode>>> source)
         {
             return source.Select(pair => pair.Key).ToList();
         }
 
-        public static int MaxOrDefault<T>([NotNull] this IEnumerable<T> enumeration, Func<T, int> selector, int defaultValue)
+        public static int MaxOrDefault<T>(this IEnumerable<T> enumeration, Func<T, int> selector, int defaultValue)
         {
             IEnumerable<T> enumerable = enumeration.ToList();
             return enumerable.Any() ? enumerable.Max(selector) : defaultValue;
         }
 
-        public static int MinOrDefault<T>([NotNull] this IEnumerable<T> enumeration, Func<T, int> selector, int defaultValue)
+        public static int MinOrDefault<T>(this IEnumerable<T> enumeration, Func<T, int> selector, int defaultValue)
         {
             IEnumerable<T> enumerable = enumeration.ToList();
             return enumerable.Any() ? enumerable.Min(selector) : defaultValue;

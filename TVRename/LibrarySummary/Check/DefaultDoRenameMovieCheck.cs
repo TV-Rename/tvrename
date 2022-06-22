@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class DefaultDoRenameMovieCheck : DefaultMovieCheck
     {
-        public DefaultDoRenameMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        public DefaultDoRenameMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 
-        [NotNull]
         protected override string FieldName => "Rename Check";
 
         protected override bool Field => Movie.DoRename;

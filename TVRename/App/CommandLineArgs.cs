@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +43,7 @@ namespace TVRename
         /// Initializes a new instance populated with values parsed from the command line arguments.
         /// </summary>
         /// <param name="args">The command line arguments.</param>
-        public CommandLineArgs([NotNull] IReadOnlyCollection<string> args)
+        public CommandLineArgs(IReadOnlyCollection<string> args)
         {
             Hide = args.Contains("/hide", StringComparer.OrdinalIgnoreCase);
             RenameCheck = !args.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase);
@@ -67,7 +66,7 @@ namespace TVRename
             MissingFolder = DecodeMissingFolderType(args);
         }
 
-        private static MissingFolderBehavior DecodeMissingFolderType([NotNull] IReadOnlyCollection<string> args)
+        private static MissingFolderBehavior DecodeMissingFolderType(IReadOnlyCollection<string> args)
         {
             if (args.Contains("/createmissing", StringComparer.OrdinalIgnoreCase))
             {
@@ -80,7 +79,6 @@ namespace TVRename
             return MissingFolderBehavior.ask;
         }
 
-        [NotNull]
         public static string Helptext()
         {
             StringBuilder output = new();
@@ -115,7 +113,7 @@ namespace TVRename
             MissingFolder = previousMissingFolderBehavior;
         }
 
-        public void TemporarilyUse([NotNull] CommandLineArgs localArgs)
+        public void TemporarilyUse(CommandLineArgs localArgs)
         {
             // Temporarily override behavior for missing folders
             previousMissingFolderBehavior = MissingFolder;

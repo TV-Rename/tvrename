@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -11,7 +10,7 @@ namespace TVRename
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
         private List<string> doneJpg = new();
 
-        public override void NotifyComplete([NotNull] FileInfo file)
+        public override void NotifyComplete(FileInfo file)
         {
             doneJpg.Add(file.FullName);
             base.NotifyComplete(file);

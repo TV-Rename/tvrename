@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename.Forms.ShowPreferences
 {
@@ -9,7 +8,7 @@ namespace TVRename.Forms.ShowPreferences
     {
         public ProcessedEpisode? ChosenEpisode;
 
-        public NewSeenEpisode([NotNull] IEnumerable<ProcessedEpisode> eps)
+        public NewSeenEpisode(IEnumerable<ProcessedEpisode> eps)
         {
             InitializeComponent();
 

@@ -1,16 +1,13 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class FilenameMovieCheck : MovieCheck
     {
-        public FilenameMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        public FilenameMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 
         public override bool Check() => Movie.UseCustomNamingFormat;
 
-        [NotNull]
         public override string Explain() => $"This movie does not use the standard file naming format '{TVSettings.Instance.MovieFilenameFormat}', it uses '{Movie.CustomNamingFormat}'";
 
         protected override void FixInternal()
@@ -18,7 +15,6 @@ namespace TVRename
             Movie.UseCustomNamingFormat = false;
         }
 
-        [NotNull]
         protected override string MovieCheckName => "Use Custom File Name Format";
     }
 }

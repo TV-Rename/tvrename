@@ -1,16 +1,13 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class TvShowProviderCheck : TvShowCheck
     {
-        public TvShowProviderCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        public TvShowProviderCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
         public override bool Check() => Show.ConfigurationProvider != TVDoc.ProviderType.libraryDefault;
 
-        [NotNull]
         public override string Explain() => $"TV Show does not use the library default, ({TVSettings.Instance.DefaultProvider.PrettyPrint()}), it uses {Show.ConfigurationProvider.PrettyPrint()} (Hardcoded)";
 
         protected override void FixInternal()
@@ -25,7 +22,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public override string CheckName => "[TV] Use default source provider";
     }
 }

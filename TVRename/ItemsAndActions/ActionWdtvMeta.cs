@@ -7,7 +7,6 @@
 //
 
 using System.Globalization;
-using JetBrains.Annotations;
 using System.Linq;
 
 namespace TVRename
@@ -18,7 +17,7 @@ namespace TVRename
 
     public class ActionWdtvMeta : ActionWriteMetadata
     {
-        public ActionWdtvMeta(FileInfo where, [NotNull] ProcessedEpisode pe) : base(where, pe.Show)
+        public ActionWdtvMeta(FileInfo where, ProcessedEpisode pe) : base(where, pe.Show)
         {
             Episode = pe;
         }
@@ -30,10 +29,8 @@ namespace TVRename
 
         #region Action Members
 
-        [NotNull]
         public override string Name => "Write WD TV Live Hub Meta";
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             return Episode != null ? WriteEpisodeMetaDataFile() :
@@ -42,7 +39,6 @@ namespace TVRename
             //todo WDTV Movie support WriteMovieXml();
         }
 
-        [NotNull]
         private ActionOutcome WriteSeriesXml()
         {
             try
@@ -98,7 +94,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         private ActionOutcome WriteEpisodeMetaDataFile()
         {
             if (Episode != null)

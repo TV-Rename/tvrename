@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -21,7 +20,7 @@ namespace TVRename.Forms
         private const string GITHUB_CONVERSION_URL = "https://api.github.com/markdown";
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public UpdateNotification([NotNull] ServerRelease update)
+        public UpdateNotification(ServerRelease update)
         {
             newVersion = update;
             InitializeComponent();
@@ -99,7 +98,7 @@ namespace TVRename.Forms
             DialogResult = DialogResult.Abort;
         }
 
-        private void NavigateTo(object sender, [NotNull] WebBrowserNavigatingEventArgs e)
+        private void NavigateTo(object sender, WebBrowserNavigatingEventArgs e)
         {
             string url = e.Url.AbsoluteUri;
 

@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -87,7 +86,6 @@ namespace TVRename
 
         #region Action Members
 
-        [NotNull]
         public override string Name => "Download";
 
         public override string ProgressText => destination.Name;
@@ -98,8 +96,7 @@ namespace TVRename
         public override long SizeOfWork => 1000000;
 
         // http://www.codeproject.com/Articles/2941/Resizing-a-Photographic-image-with-GDI-for-NET
-        [NotNull]
-        private static Image MaxSize([NotNull] Image imgPhoto, int width, int height)
+        private static Image MaxSize(Image imgPhoto, int width, int height)
         {
             int sourceWidth = imgPhoto.Width;
             int sourceHeight = imgPhoto.Height;
@@ -136,7 +133,6 @@ namespace TVRename
             return bmPhoto;
         }
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try
@@ -167,7 +163,6 @@ namespace TVRename
             return ActionOutcome.Success();
         }
 
-        [NotNull]
         private byte[] ConvertBytes(byte[] theData)
         {
             try
@@ -222,7 +217,6 @@ namespace TVRename
         public override string DestinationFolder => TargetFolder;
         public override string DestinationFile => destination.Name;
         public override string SourceDetails => path;
-        [NotNull]
         public override string ScanListViewGroup => "lvgActionDownload";
         public override string TargetFolder => destination.DirectoryName;
 

@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System.Collections.Concurrent;
 
 namespace TVRename
@@ -15,7 +14,7 @@ namespace TVRename
     {
         private readonly ConcurrentDictionary<string, string> internalCache = new();
 
-        public string GetUrl([NotNull] string s, bool instanceSearchJsonUseCloudflare)
+        public string GetUrl(string s, bool instanceSearchJsonUseCloudflare)
         {
             if (internalCache.TryGetValue(s, out string value))
             {

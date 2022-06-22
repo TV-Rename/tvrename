@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -12,7 +11,6 @@ namespace TVRename
         { }
 
         public override bool Active() => TVSettings.Instance.UnArchiveFilesInDownloadDirectory;
-        [NotNull]
         protected override string CheckName() => "Unarchived files in download directory";
 
         protected override void DoCheck(SetProgressDelegate progress)
@@ -92,6 +90,6 @@ namespace TVRename
             }
         }
 
-        private bool HasMissing([NotNull] MovieConfiguration x, [NotNull] FileInfo fi) => FinderHelper.FileNeeded(fi,x,new DirFilesCache());
+        private bool HasMissing(MovieConfiguration x, FileInfo fi) => FinderHelper.FileNeeded(fi,x,new DirFilesCache());
     }
 }

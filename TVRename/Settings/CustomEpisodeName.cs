@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -85,11 +85,9 @@ namespace TVRename
             "{ShowImdb}"
         };
 
-        [NotNull]
-        public string NameFor([NotNull] ProcessedEpisode pe) => NameFor(pe, string.Empty, 0);
+        public string NameFor(ProcessedEpisode pe) => NameFor(pe, string.Empty, 0);
 
-        [NotNull]
-        public string NameFor([NotNull] ProcessedEpisode pe, string? extension, int folderNameLength)
+        public string NameFor(ProcessedEpisode pe, string? extension, int folderNameLength)
         {
             const int MAX_LENGTH = 260;
             int maxFilenameLength = MAX_LENGTH - 1 - folderNameLength - (extension?.Length ?? 5); //Assume a max 5 character extension
@@ -110,12 +108,10 @@ namespace TVRename
             return r.Substring(0, Math.Min(r.Length, maxFilenameLength)) + extension;
         }
 
-        [NotNull]
-        public string GetTargetEpisodeName([NotNull] ShowConfiguration show, [NotNull] Episode ep)
+        public string GetTargetEpisodeName(ShowConfiguration show, Episode ep)
             => GetTargetEpisodeName(show, ep, false);
 
-        [NotNull]
-        private string GetTargetEpisodeName([NotNull] ShowConfiguration show, [NotNull] Episode ep, bool urlEncode)
+        private string GetTargetEpisodeName(ShowConfiguration show, Episode ep, bool urlEncode)
         {
             //note this is for an Episode and not a ProcessedEpisode
             string name = StyleString;
@@ -182,7 +178,6 @@ namespace TVRename
             return name.Trim();
         }
 
-        [NotNull]
         private static string ReplaceDates(bool urlEncode, string name, DateTime? airdt)
         {
             if (!name.Contains("{ShortDate}") && !name.Contains("{LongDate}") && !name.Contains("{YMDDate}"))
@@ -224,11 +219,9 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        public static string NameForNoExt([NotNull] ProcessedEpisode pe, [NotNull] string styleString) => NameForNoExt(pe, styleString, false);
+        public static string NameForNoExt(ProcessedEpisode pe, string styleString) => NameForNoExt(pe, styleString, false);
 
-        [NotNull]
-        public static string NameForNoExt([NotNull] ProcessedEpisode pe, [NotNull] string styleString, bool urlEncode)
+        public static string NameForNoExt(ProcessedEpisode pe, string styleString, bool urlEncode)
         {
             try
             {
@@ -295,8 +288,7 @@ namespace TVRename
             return string.Empty;
         }
 
-        [NotNull]
-        private static string AllEpsText([NotNull] ProcessedEpisode pe)
+        private static string AllEpsText(ProcessedEpisode pe)
         {
             string allEps = string.Empty;
             for (int i = pe.AppropriateEpNum; i <= pe.EpNum2; i++)

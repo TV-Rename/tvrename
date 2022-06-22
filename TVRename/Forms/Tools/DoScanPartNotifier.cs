@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename.Forms.Tools
 {
@@ -17,7 +16,7 @@ namespace TVRename.Forms.Tools
             bwDo.RunWorkerAsync();
         }
 
-        private void Update(int percent, [CanBeNull] string message,[CanBeNull] string lastUpdate)
+        private void Update(int percent, string? message,string? lastUpdate)
         {
             pbProgress.Value = percent.Between(0, 100);
             pbProgress.Update();
@@ -45,7 +44,7 @@ namespace TVRename.Forms.Tools
             });
         }
 
-        private void bwDo_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
+        private void bwDo_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             Tuple<string, string> updateMessages = e.UserState as Tuple<string, string>;
             Update(e.ProgressPercentage, updateMessages?.Item1,updateMessages?.Item2);

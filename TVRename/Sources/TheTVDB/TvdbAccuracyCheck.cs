@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -8,14 +7,14 @@ namespace TVRename.TheTVDB
 {
     internal class TvdbAccuracyCheck
     {
-        [NotNull] internal readonly List<string> Issues;
-        [NotNull] internal readonly List<CachedSeriesInfo> ShowsToUpdate;
-        [NotNull] internal readonly List<CachedMovieInfo> MoviesToUpdate;
-        [NotNull] private readonly LocalCache lc;
+        internal readonly List<string> Issues;
+        internal readonly List<CachedSeriesInfo> ShowsToUpdate;
+        internal readonly List<CachedMovieInfo> MoviesToUpdate;
+        private readonly LocalCache lc;
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public TvdbAccuracyCheck([NotNull] LocalCache localCache)
+        public TvdbAccuracyCheck(LocalCache localCache)
         {
             lc = localCache;
             Issues = new List<string>();
@@ -23,7 +22,7 @@ namespace TVRename.TheTVDB
             MoviesToUpdate = new List<CachedMovieInfo>();
         }
 
-        public void ServerAccuracyCheck([NotNull] CachedMovieInfo si)
+        public void ServerAccuracyCheck(CachedMovieInfo si)
         {
             Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
             try
@@ -52,7 +51,7 @@ namespace TVRename.TheTVDB
                 Issues.Add($"Failed to compare {si.Name} as we could not download the cachedSeries details.");
             }
         }
-        public void ServerAccuracyCheck([NotNull] CachedSeriesInfo si)
+        public void ServerAccuracyCheck(CachedSeriesInfo si)
         {
             Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
@@ -108,7 +107,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        public void ServerAccuracyCheckV4([NotNull] CachedSeriesInfo si)
+        public void ServerAccuracyCheckV4(CachedSeriesInfo si)
         {
             try
             {
@@ -140,7 +139,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private void FindOrphanEpisodes([NotNull] CachedSeriesInfo si, List<int> serverEpIds)
+        private void FindOrphanEpisodes(CachedSeriesInfo si, List<int> serverEpIds)
         {
             foreach (Episode localEp in si.Episodes)
             {
@@ -154,7 +153,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private void EnsureUpdated([NotNull] CachedSeriesInfo si)
+        private void EnsureUpdated(CachedSeriesInfo si)
         {
             si.Dirty = true;
             if (!ShowsToUpdate.Contains(si))
@@ -163,7 +162,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private int EpisodeAccuracyCheck([NotNull] CachedSeriesInfo si, [NotNull] JToken t)
+        private int EpisodeAccuracyCheck(CachedSeriesInfo si, JToken t)
         {
             long serverUpdateTime = (long)t["lastUpdated"];
             int epId = (int)t["id"];
@@ -192,7 +191,7 @@ namespace TVRename.TheTVDB
             return epId;
         }
 
-        private void EpisodeAccuracyCheck([NotNull] CachedSeriesInfo si, [NotNull] Episode t)
+        private void EpisodeAccuracyCheck(CachedSeriesInfo si, Episode t)
         {
             long serverUpdateTime = t.SrvLastUpdated;
             int epId = t.EpisodeId;
@@ -219,7 +218,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private bool Match([NotNull] CachedMovieInfo newSi, [NotNull] CachedMovieInfo si)
+        private bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
         {
             if (newSi.CollectionName != si.CollectionName)
             {

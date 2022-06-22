@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +12,6 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.RenameCheck && TVSettings.Instance.MissingCheck && TVSettings.Instance.MoveLibraryFiles;
 
-        [NotNull]
         protected override string CheckName() => "Looked in the library for the missing files";
 
         protected override void DoCheck(SetProgressDelegate progress)
@@ -69,7 +67,7 @@ namespace TVRename
             ActionList.Replace(toRemove, newList);
         }
 
-        private void FindMovie([NotNull] MovieItemMissing mim, DirFilesCache dfc, ItemList newList, ItemList toRemove)
+        private void FindMovie(MovieItemMissing mim, DirFilesCache dfc, ItemList newList, ItemList toRemove)
         {
             if (!mim.MovieConfig.UseAutomaticFolders)
             {
@@ -104,7 +102,7 @@ namespace TVRename
             newList.Add(new ActionMoveRenameDirectory(sourceFolder, targetFolder, mim.MovieConfig));
         }
 
-        private void FindEpisode([NotNull] ShowItemMissing me, DirFilesCache dfc, ItemList newList, ItemList toRemove)
+        private void FindEpisode(ShowItemMissing me, DirFilesCache dfc, ItemList newList, ItemList toRemove)
         {
             Dictionary<FileInfo, ItemList> thisRound = new();
             if (me.Episode == null)
@@ -131,7 +129,6 @@ namespace TVRename
                 TVSettings.Instance.UseFullPathNameToMatchLibraryFolders);
         }
 
-        [NotNull]
         private List<FileInfo> GetMatchingFilesFromFolder(string? baseFolder, DirFilesCache dfc, ShowItemMissing me, Dictionary<FileInfo, ItemList> thisRound)
         {
             if (string.IsNullOrWhiteSpace(baseFolder))
@@ -154,8 +151,8 @@ namespace TVRename
             return matchedFiles;
         }
 
-        private void ProcessFolder([NotNull] ShowItemMissing me, [NotNull] string folderName, [NotNull] DirFilesCache dfc,
-            Dictionary<FileInfo, ItemList> thisRound, [NotNull] List<FileInfo> matchedFiles)
+        private void ProcessFolder(ShowItemMissing me, string folderName, DirFilesCache dfc,
+            Dictionary<FileInfo, ItemList> thisRound, List<FileInfo> matchedFiles)
         {
             LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
             FileInfo[] files = dfc.GetFiles(folderName);

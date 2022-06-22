@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,9 +30,9 @@ namespace TVRename
             ShowRating.HasValue() ||
             Genres.Any();
 
-        public bool Filter([NotNull] ShowConfiguration show)
+        public bool Filter(ShowConfiguration show)
         {
-            bool IsNetworkOk([NotNull] ShowConfiguration showItem)
+            bool IsNetworkOk(ShowConfiguration showItem)
             {
                 List<string>? seriesInfoNetwork = showItem.CachedShow?.Networks.ToList();
                 if (seriesInfoNetwork is null || !seriesInfoNetwork.HasAny())
@@ -46,7 +45,7 @@ namespace TVRename
                     : !seriesInfoNetwork.Contains(ShowNetwork);
             }
 
-            bool IsRatingOk([NotNull] ShowConfiguration showItem)
+            bool IsRatingOk(ShowConfiguration showItem)
             {
                 string? seriesInfoContentRating = showItem.CachedShow?.ContentRating;
                 if (seriesInfoContentRating is null)
@@ -59,7 +58,7 @@ namespace TVRename
                     : !seriesInfoContentRating.Equals(ShowRating);
             }
 
-            bool IsStatusOk([NotNull] ShowConfiguration showItem)
+            bool IsStatusOk(ShowConfiguration showItem)
             {
                 string? seriesInfoStatus = showItem.CachedShow?.Status;
                 if (seriesInfoStatus is null)
@@ -91,7 +90,7 @@ namespace TVRename
             return isNameOk && isStatusOk && isNetworkOk && isRatingOk && (areGenresIgnored || doAnyGenresMatch);
         }
 
-        private bool FindMatchingGenres([NotNull] ShowConfiguration show)
+        private bool FindMatchingGenres(ShowConfiguration show)
         {
             return show.Genres.Any(showGenre => Genres.Contains(showGenre));
         }

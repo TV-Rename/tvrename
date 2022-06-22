@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using NLog;
 using Polly;
 using System;
@@ -16,7 +15,7 @@ namespace TVRename
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public static string LoadErr;
 
-        private static void RotateCacheFiles([NotNull] FileInfo cacheFile)
+        private static void RotateCacheFiles(FileInfo cacheFile)
         {
             if (cacheFile.Exists)
             {
@@ -49,7 +48,7 @@ namespace TVRename
                 }
             }
         }
-        public static void SaveCache(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, [NotNull] FileInfo cacheFile, long timestamp)
+        public static void SaveCache(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp)
         {
             Policy retryPolicy = Policy
                 .Handle<Exception>()
@@ -63,7 +62,7 @@ namespace TVRename
                 SaveCacheInternal(series, movies, cacheFile, timestamp);
             });
         }
-        private static void SaveCacheInternal([NotNull] ConcurrentDictionary<int, CachedSeriesInfo> series, [NotNull] ConcurrentDictionary<int, CachedMovieInfo> movies, [NotNull] FileInfo cacheFile, long timestamp)
+        private static void SaveCacheInternal(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp)
         {
             DirectoryInfo di = cacheFile.Directory;
             if (!di.Exists)
@@ -95,7 +94,7 @@ namespace TVRename
             }
         }
 
-        private static void SaveCacheFileInternal([NotNull] ConcurrentDictionary<int, CachedSeriesInfo> series, [NotNull] ConcurrentDictionary<int, CachedMovieInfo> movies, [NotNull] FileInfo cacheFile,
+        private static void SaveCacheFileInternal(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile,
             long timestamp)
         {
             // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
@@ -144,7 +143,7 @@ namespace TVRename
             }
         }
 
-        public static bool LoadTvCache<T>([NotNull] FileInfo loadFrom, [NotNull] T cache) where T : MediaCache, iTVSource
+        public static bool LoadTvCache<T>(FileInfo loadFrom, T cache) where T : MediaCache, iTVSource
         {
             Logger.Info($"Loading Cache from: {loadFrom.FullName}" );
             if (!loadFrom.Exists)
@@ -171,7 +170,7 @@ namespace TVRename
             }
         }
 
-        public static bool LoadMovieCache<T>([NotNull] FileInfo loadFrom, T cache) where T : MediaCache, iMovieSource
+        public static bool LoadMovieCache<T>(FileInfo loadFrom, T cache) where T : MediaCache, iMovieSource
         {
             Logger.Info($"Loading Cache from: {loadFrom.FullName}" );
             if (!loadFrom.Exists)
@@ -198,7 +197,7 @@ namespace TVRename
             }
         }
 
-        private static bool ProcessMovieXml<T>([NotNull] XElement x, T cache) where T:MediaCache, iMovieSource
+        private static bool ProcessMovieXml<T>(XElement x, T cache) where T:MediaCache, iMovieSource
         {
             try
             {
@@ -236,7 +235,7 @@ namespace TVRename
             return true;
         }
 
-        private static bool ProcessSeriesXml<T>([NotNull] XElement x, [NotNull] T cache) where T:MediaCache,iTVSource
+        private static bool ProcessSeriesXml<T>(XElement x, T cache) where T:MediaCache,iTVSource
         {
             // Will have one or more cachedSeries, and episodes
             // all wrapped in <Data> </Data>
@@ -314,7 +313,7 @@ namespace TVRename
             return true;
         }
 
-        private static void ProcessXmlBannerCache([NotNull] XElement r, iTVSource localCache)
+        private static void ProcessXmlBannerCache(XElement r, iTVSource localCache)
         {
             //this is a wrapper that provides the seriesId and the Banners List as provided from the website
             //

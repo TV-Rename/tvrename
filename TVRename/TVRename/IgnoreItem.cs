@@ -8,7 +8,6 @@
 
 // An "IgnoreItem" represents a file/episode to never ask the user about again. (Right-click->Ignore Selected / Options->Ignore List)
 
-using JetBrains.Annotations;
 using System;
 
 namespace TVRename
@@ -32,7 +31,7 @@ namespace TVRename
             return FileAndPath == o.FileAndPath;
         }
 
-        public bool MatchesEpisode([NotNull] string folder, [NotNull] ProcessedEpisode episode)
+        public bool MatchesEpisode(string folder, ProcessedEpisode episode)
         {
             if (!FileAndPath.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
             {

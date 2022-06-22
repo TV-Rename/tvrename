@@ -6,8 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     using System;
@@ -23,13 +21,11 @@ namespace TVRename
 
         #region Action Members
 
-        [NotNull]
         public override string Name => "Update Timestamp";
         public override long SizeOfWork => 100;
 
         #endregion Action Members
 
-        [NotNull]
         public override string ScanListViewGroup => "lvgUpdateFileDates";
         public override int IconNumber => 7;
 

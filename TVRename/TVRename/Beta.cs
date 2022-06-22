@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +17,7 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        internal static void LogShowEpisodeSizes([NotNull] TVDoc doc)
+        internal static void LogShowEpisodeSizes(TVDoc doc)
         {
             doc.PreventAutoScan("Show File Sizes");
             StringBuilder output = new();

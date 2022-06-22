@@ -9,7 +9,6 @@ using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +26,6 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportWTWICAL;
 
         protected override string Location() => TVSettings.Instance.ExportWTWICALTo;
-        [NotNull]
         protected override string Name() => "Upcoming iCal Exporter";
         protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? episodes)
         {
@@ -57,7 +55,7 @@ namespace TVRename
             }
         }
 
-        private static CalendarEvent? CreateEvent([NotNull] ProcessedEpisode ei)
+        private static CalendarEvent? CreateEvent(ProcessedEpisode ei)
         {
             string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
             try

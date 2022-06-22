@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename.Forms.Utilities
 {
@@ -27,7 +26,6 @@ namespace TVRename.Forms.Utilities
             Helpers.OpenUrl(GetCoreUrl(provider));
         }
 
-        [NotNull]
         private static string GetCoreUrl(TVDoc.ProviderType provider)
         {
             return provider switch
@@ -44,7 +42,6 @@ namespace TVRename.Forms.Utilities
             Helpers.OpenUrl(GetIsDownUrl(provider));
         }
 
-        [NotNull]
         private static string GetIsDownUrl(TVDoc.ProviderType provider)
         {
             return provider switch

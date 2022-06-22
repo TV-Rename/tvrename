@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NodaTime;
 using System;
@@ -56,7 +55,7 @@ namespace TVRename
         public DateTime? AirTime;
 
         // ReSharper disable once FunctionComplexityOverflow
-        protected Episode([NotNull] Episode o)
+        protected Episode(Episode o)
         {
             EpisodeId = o.EpisodeId;
             SeriesId = o.SeriesId;
@@ -116,7 +115,7 @@ namespace TVRename
             return TimeZoneHelper.AdjustTzTimeToLocalTime(dt.Value, tz);
         }
 
-        public Episode(int seriesId, JObject? bestLanguageR, [NotNull] JObject jsonInDefaultLang, CachedSeriesInfo si) : this(seriesId, si)
+        public Episode(int seriesId, JObject? bestLanguageR, JObject jsonInDefaultLang, CachedSeriesInfo si) : this(seriesId, si)
         {
             if (bestLanguageR is null)
             {
@@ -145,7 +144,7 @@ namespace TVRename
             }
         }
 
-        public Episode(int seriesId, [NotNull] JObject r, CachedSeriesInfo si) : this(seriesId, si)
+        public Episode(int seriesId, JObject r, CachedSeriesInfo si) : this(seriesId, si)
         {
             // <Episode>
             //  <id>...</id>
@@ -179,7 +178,7 @@ namespace TVRename
             Dirty = false;
         }
 
-        private void LoadJson([NotNull] JObject r)
+        private void LoadJson(JObject r)
         {
             try
             {
@@ -245,9 +244,8 @@ namespace TVRename
             }
         }
 
-        private static string? GetString([NotNull] JObject jObject, [NotNull] string key) => ((string)jObject[key])?.Trim();
+        private static string? GetString(JObject jObject, string key) => ((string)jObject[key])?.Trim();
 
-        [NotNull]
         public string Name
         {
             get
@@ -270,18 +268,14 @@ namespace TVRename
 
         public int DvdSeasonNumber => ReadDvdSeasonNum;
 
-        public bool SameAs([NotNull] Episode o) => EpisodeId == o.EpisodeId;
+        public bool SameAs(Episode o) => EpisodeId == o.EpisodeId;
 
-        [NotNull]
         public IEnumerable<string> GuestStars => string.IsNullOrEmpty(EpisodeGuestStars) ? new string[] { } : EpisodeGuestStars.Split('|').Where(s => s.HasValue());
 
-        [NotNull]
         public IEnumerable<string> Writers => string.IsNullOrEmpty(Writer) ? new string[] { } : Writer.Split('|').Where(s => s.HasValue());
 
-        [NotNull]
         public IEnumerable<string> Directors => string.IsNullOrEmpty(EpisodeDirector) ? new string[] { } : EpisodeDirector.Split('|').Where(s => s.HasValue());
 
-        [NotNull]
         public CachedSeriesInfo TheCachedSeries
         {
             get
@@ -336,8 +330,7 @@ namespace TVRename
             };
         }
 
-        [NotNull]
-        public IEnumerable<Actor> AllActors([NotNull] CachedSeriesInfo si)
+        public IEnumerable<Actor> AllActors(CachedSeriesInfo si)
         {
             List<Actor> returnValue = si.GetActors().ToList();
             foreach (string star in GuestStars)
@@ -351,7 +344,7 @@ namespace TVRename
             return returnValue;
         }
 
-        public void SetWriters([NotNull] List<string> writers)
+        public void SetWriters(List<string> writers)
         {
             if (writers.HasAny())
             {
@@ -359,7 +352,7 @@ namespace TVRename
             }
         }
 
-        public void SetDirectors([NotNull] List<string> directors)
+        public void SetDirectors(List<string> directors)
         {
             if (directors.HasAny())
             {

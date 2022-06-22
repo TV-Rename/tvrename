@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -23,7 +22,6 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportWTWRSS;
 
         protected override string Location() => TVSettings.Instance.ExportWTWRSSTo;
-        [NotNull]
         protected override string Name() => "Upcoming RSS Exporter";
 
         protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? elist)

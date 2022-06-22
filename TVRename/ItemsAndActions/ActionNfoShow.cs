@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System.Globalization;
 using System.Xml.Linq;
 
@@ -8,17 +7,15 @@ namespace TVRename
     internal class ActionNfoShow : ActionNfo
     {
         // Produce a file based on specification at https://kodi.wiki/view/NFO_files/TV_shows
-        public ActionNfoShow([NotNull] FileInfo where, [NotNull] ShowConfiguration mc) : base(where, mc)
+        public ActionNfoShow(FileInfo where, ShowConfiguration mc) : base(where, mc)
         {
             Episode = null;
         }
 
-        [NotNull]
         public override string Name => "Write KODI Metadata (Show)";
 
         protected override long? UpdateTime() => SelectedShow?.CachedShow?.SrvLastUpdated;
 
-        [NotNull]
         protected override string RootName() => "tvshow";
 
         protected override ActionOutcome UpdateFile()

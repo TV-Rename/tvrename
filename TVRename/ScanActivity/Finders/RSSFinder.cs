@@ -7,7 +7,6 @@
 //
 
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -20,7 +19,6 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchRSS;
 
-        [NotNull]
         protected override string CheckName() => "Looked in the listed RSS URLs for download links for the missing files";
 
         protected override void DoCheck(SetProgressDelegate progress)

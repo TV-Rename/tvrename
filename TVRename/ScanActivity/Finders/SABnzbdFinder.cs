@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Linq;
 using System.Net;
@@ -25,7 +24,6 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.CheckSABnzbd;
 
-        [NotNull]
         protected override string CheckName() => "Looked in the listed SABnz queue to see if the episode is already being downloaded";
 
         protected override void DoCheck(SetProgressDelegate progress)
@@ -118,7 +116,7 @@ namespace TVRename
             return x;
         }
 
-        private static QueueSlotsSlot? CreateQueueSlotsSlot([NotNull] XElement slot, string simpleShowName, ShowItemMissing action)
+        private static QueueSlotsSlot? CreateQueueSlotsSlot(XElement slot, string simpleShowName, ShowItemMissing action)
         {
             string filename = slot.Attribute("filename")?.Value;
             if (string.IsNullOrWhiteSpace(filename))

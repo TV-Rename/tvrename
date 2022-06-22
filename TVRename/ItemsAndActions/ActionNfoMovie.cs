@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
@@ -8,17 +7,15 @@ namespace TVRename
 {
     internal class ActionNfoMovie : ActionNfo
     {
-        public ActionNfoMovie([NotNull] FileInfo where, [NotNull] MovieConfiguration mc) : base(where, mc)
+        public ActionNfoMovie(FileInfo where, MovieConfiguration mc) : base(where, mc)
         {
             Episode = null;
         }
 
-        [NotNull]
         public override string Name => "Write KODI Metadata (Movie)";
 
         protected override long? UpdateTime() => Movie?.CachedMovie?.SrvLastUpdated;
 
-        [NotNull]
         protected override string RootName() => "movie";
 
         protected override ActionOutcome UpdateFile()

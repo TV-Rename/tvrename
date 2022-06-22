@@ -9,7 +9,6 @@
 //
 
 using System;
-using JetBrains.Annotations;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -42,7 +41,7 @@ namespace TVRename
         public int RatingCount;
         public string? ThumbnailUrl;
 
-        protected MediaImage([NotNull] XElement r)
+        protected MediaImage(XElement r)
         {
             Id = r.ExtractInt("Id") ?? -1;
             ImageUrl = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("ImageUrl"));
@@ -60,7 +59,7 @@ namespace TVRename
         {
         }
 
-        protected void WriteCoreXml([NotNull] XmlWriter writer)
+        protected void WriteCoreXml(XmlWriter writer)
         {
             writer.WriteElement("Id", Id);
             writer.WriteElement("ImageUrl", ImageUrl, true);

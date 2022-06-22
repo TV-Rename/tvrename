@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -95,7 +94,7 @@ namespace TVRename
             return null;
         }
 
-        private static void AddFilesFromTorrent(ICollection<TorrentEntry> ret, [NotNull] JToken torrent, string savePath)
+        private static void AddFilesFromTorrent(ICollection<TorrentEntry> ret, JToken torrent, string savePath)
         {
             string torrentDetailsString = string.Empty;
             try
@@ -132,7 +131,7 @@ namespace TVRename
             }
         }
 
-        private static (string downloadedFilename, bool isOnHold, int percentComplete) ExtractTorrentFileDetails([NotNull] JToken file)
+        private static (string downloadedFilename, bool isOnHold, int percentComplete) ExtractTorrentFileDetails(JToken file)
         {
             string downloadedFilename = file["name"]?.ToString();
             string prioritystring = (string)file["priority"];
@@ -144,7 +143,7 @@ namespace TVRename
             return (downloadedFilename, isOnHold, percentComplete);
         }
 
-        private static (string hashCode, string torrentName, bool completed) ExtractTorrentDetails([NotNull] JToken torrent)
+        private static (string hashCode, string torrentName, bool completed) ExtractTorrentDetails(JToken torrent)
         {
             string hashCode = (string)torrent["hash"];
             string torrentName = (string)torrent["name"];
@@ -155,7 +154,6 @@ namespace TVRename
             return (hashCode, torrentName, completed);
         }
 
-        [NotNull]
         private static string GetApiUrl(qBitTorrentAPIPath path)
         {
             string url = $"{TVSettings.Instance.qBitTorrentProtocol}://{TVSettings.Instance.qBitTorrentHost}:{TVSettings.Instance.qBitTorrentPort}/";
@@ -208,7 +206,7 @@ namespace TVRename
             DownloadUrl(torrentUrl, GetApiUrl(qBitTorrentAPIPath.addUrl));
         }
 
-        public void StartTorrentDownload([NotNull] FileInfo torrentFile)
+        public void StartTorrentDownload(FileInfo torrentFile)
         {
             StartTorrent(torrentFile.FullName);
         }
@@ -283,7 +281,7 @@ namespace TVRename
             }
         }
 
-        public void RemoveCompletedDownload([NotNull] TorrentEntry name)
+        public void RemoveCompletedDownload(TorrentEntry name)
         {
             if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
             {
@@ -314,7 +312,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public string Name() => "qBitTorrent";
     }
 }

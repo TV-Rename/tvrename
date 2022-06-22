@@ -1,19 +1,16 @@
 using System;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     public class BEncodeLoader
     {
-        [NotNull]
-        private static BTItem ReadString([NotNull] System.IO.Stream sr, long length)
+        private static BTItem ReadString(System.IO.Stream sr, long length)
         {
             System.IO.BinaryReader br = new(sr);
             return new BTString {Data = br.ReadBytes((int)length) };
         }
 
-        [NotNull]
-        private static BTItem ReadInt([NotNull] System.IO.FileStream sr)
+        private static BTItem ReadInt(System.IO.FileStream sr)
         {
             long r = 0;
             int c;
@@ -41,8 +38,7 @@ namespace TVRename
             return bti;
         }
 
-        [NotNull]
-        private BTItem ReadDictionary([NotNull] System.IO.FileStream sr)
+        private BTItem ReadDictionary(System.IO.FileStream sr)
         {
             BTDictionary d = new();
             for (;;)
@@ -63,8 +59,7 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private BTItem ReadList([NotNull] System.IO.FileStream sr)
+        private BTItem ReadList(System.IO.FileStream sr)
         {
             BTList ll = new();
             for (;;)
@@ -79,8 +74,7 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private BTItem ReadNext([NotNull] System.IO.FileStream sr)
+        private BTItem ReadNext(System.IO.FileStream sr)
         {
             if (sr.Length == sr.Position)
             {

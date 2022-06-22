@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,8 +32,7 @@ namespace TVRename.TMDB
     {
         private const string KEY = "2dcfd2d08f80439d7ef5210f217b80b4";
         private static readonly TMDbClient Client = new(KEY);
-        [NotNull]
-        public static string EpisodeGuideUrl([NotNull] ShowConfiguration selectedShow)
+        public static string EpisodeGuideUrl(ShowConfiguration selectedShow)
             => $"https://api.themoviedb.org/3/tv/{selectedShow.TmdbId}?api_key={KEY}&language={selectedShow.LanguageToUse().Abbreviation}";
 
         private UpdateTimeTracker latestUpdateTime;
@@ -45,7 +43,6 @@ namespace TVRename.TMDB
         private static volatile LocalCache? InternalInstance;
         private static readonly object SyncRoot = new();
 
-        [NotNull]
         public static LocalCache Instance
         {
             get
@@ -82,12 +79,11 @@ namespace TVRename.TMDB
             LOGGER.Info($"Forget everything, so we assume we have TMDB updates until {latestUpdateTime}");
         }
 
-        public override int PrimaryKey([NotNull] ISeriesSpecifier ss) => ss.TmdbId;
+        public override int PrimaryKey(ISeriesSpecifier ss) => ss.TmdbId;
 
-        [NotNull]
         public override string CacheSourceName() => "TMDB";
 
-        public void Setup(FileInfo? loadFrom, [NotNull] FileInfo cache, bool showIssues)
+        public void Setup(FileInfo? loadFrom, FileInfo cache, bool showIssues)
         {
             System.Diagnostics.Debug.Assert(cache != null);
             CacheFile = cache;
@@ -121,7 +117,7 @@ namespace TVRename.TMDB
             }
         }
 
-        public override bool EnsureUpdated([NotNull] ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
+        public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
             if (s.Provider != TVDoc.ProviderType.TMDB)
             {
@@ -137,7 +133,7 @@ namespace TVRename.TMDB
                 : EnsureSeriesUpdated(s, showErrorMsgBox);
         }
 
-        private bool EnsureSeriesUpdated([NotNull] ISeriesSpecifier s, bool showErrorMsgBox)
+        private bool EnsureSeriesUpdated(ISeriesSpecifier s, bool showErrorMsgBox)
         {
             lock (SERIES_LOCK)
             {
@@ -189,7 +185,7 @@ namespace TVRename.TMDB
             return true;
         }
 
-        private bool EnsureMovieUpdated([NotNull] ISeriesSpecifier id, bool showErrorMsgBox)
+        private bool EnsureMovieUpdated(ISeriesSpecifier id, bool showErrorMsgBox)
         {
             lock (MOVIE_LOCK)
             {
@@ -232,7 +228,7 @@ namespace TVRename.TMDB
             }
         }
 
-        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, [NotNull] IEnumerable<ISeriesSpecifier> ss)
+        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<ISeriesSpecifier> ss)
         {
             Say("Validating TMDB cache");
             this.MarkPlaceHoldersDirty(ss);
@@ -357,9 +353,9 @@ namespace TVRename.TMDB
             latestUpdateTime.RecordSuccessfulUpdate();
         }
 
-        public CachedMovieInfo? GetMovie([NotNull] PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => this.GetMovie(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
+        public CachedMovieInfo? GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => this.GetMovie(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
 
-        public void AddOrUpdateEpisode([NotNull] Episode e)
+        public void AddOrUpdateEpisode(Episode e)
         {
             lock (SERIES_LOCK)
             {
@@ -383,12 +379,11 @@ namespace TVRename.TMDB
 
         public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TMDB;
 
-        public CachedMovieInfo GetMovieAndDownload([NotNull] ISeriesSpecifier id, bool showErrorMsgBox) => HasMovie(id.TmdbId)
+        public CachedMovieInfo GetMovieAndDownload(ISeriesSpecifier id, bool showErrorMsgBox) => HasMovie(id.TmdbId)
             ? CachedMovieData[id.TmdbId]
             : DownloadMovieNow(id, showErrorMsgBox);
 
-        [NotNull]
-        internal CachedMovieInfo DownloadMovieNow([NotNull] ISeriesSpecifier id, bool showErrorMsgBox,bool saveToCache = true)
+        internal CachedMovieInfo DownloadMovieNow(ISeriesSpecifier id, bool showErrorMsgBox,bool saveToCache = true)
         {
             string imageLanguage = $"{id.LanguageToUse().Abbreviation},null";
             try
@@ -429,8 +424,7 @@ namespace TVRename.TMDB
             }
         }
 
-        [NotNull]
-        private CachedMovieInfo GenerateCachedMovieInfo([NotNull] ISeriesSpecifier id, [NotNull] Movie downloadedMovie)
+        private CachedMovieInfo GenerateCachedMovieInfo(ISeriesSpecifier id, Movie downloadedMovie)
         {
             CachedMovieInfo m = new(id.TargetLocale, TVDoc.ProviderType.TMDB)
             {
@@ -493,7 +487,7 @@ namespace TVRename.TMDB
             return m;
         }
 
-        private void AddMovieImages([NotNull] Movie downloadedMovie, CachedMovieInfo m)
+        private void AddMovieImages(Movie downloadedMovie, CachedMovieInfo m)
         {
             int imageId = 1; //TODO See https://www.themoviedb.org/talk/60ba61a4cb9f4b006f30f82b for  why we need this
             if (downloadedMovie.Images.Backdrops.Any())
@@ -537,7 +531,7 @@ namespace TVRename.TMDB
             }
         }
 
-        private static DateTime? GetReleaseDateDetail([NotNull] Movie downloadedMovie, string? country)
+        private static DateTime? GetReleaseDateDetail(Movie downloadedMovie, string? country)
         {
             List<DateTime> dates = downloadedMovie.ReleaseDates?.Results
                 .Where(rel => rel.Iso_3166_1.Equals(country,StringComparison.OrdinalIgnoreCase))
@@ -553,8 +547,7 @@ namespace TVRename.TMDB
             return null;
         }
 
-        [NotNull]
-        internal CachedSeriesInfo DownloadSeriesNow([NotNull] ISeriesSpecifier ss, bool showErrorMsgBox, bool saveToCache = true)
+        internal CachedSeriesInfo DownloadSeriesNow(ISeriesSpecifier ss, bool showErrorMsgBox, bool saveToCache = true)
         {
             int id = ss.TmdbId > 0 ? ss.TmdbId : GetSeriesIdFromOtherCodes(ss) ?? 0;
 
@@ -620,12 +613,12 @@ namespace TVRename.TMDB
             return m;
         }
 
-        private static string? DecodeAverage([NotNull] IReadOnlyCollection<int> times) =>
+        private static string? DecodeAverage(IReadOnlyCollection<int> times) =>
             times.Any()
                 ? times.Average().ToString("F0",System.Globalization.CultureInfo.CurrentCulture)
                 : null;
 
-        private static void AddSeasons(ISeriesSpecifier ss, [NotNull] TvShow downloadedSeries, CachedSeriesInfo m)
+        private static void AddSeasons(ISeriesSpecifier ss, TvShow downloadedSeries, CachedSeriesInfo m)
         {
             foreach (SearchTvSeason searchSeason in downloadedSeries.Seasons)
             {
@@ -695,7 +688,7 @@ namespace TVRename.TMDB
             }
         }
 
-        private static void AddShowImages([NotNull] TvShow downloadedSeries, CachedSeriesInfo m)
+        private static void AddShowImages(TvShow downloadedSeries, CachedSeriesInfo m)
         {
             int imageId = 1; //TODO See https://www.themoviedb.org/talk/60ba61a4cb9f4b006f30f82b for  why we need this
             if (downloadedSeries.Images.Backdrops.Any())
@@ -751,7 +744,7 @@ namespace TVRename.TMDB
             return s;
         }
 
-        private int? GetSeriesIdFromOtherCodes([NotNull] ISeriesSpecifier ss)
+        private int? GetSeriesIdFromOtherCodes(ISeriesSpecifier ss)
         {
             if (ss.ImdbCode.HasValue())
             {
@@ -796,21 +789,19 @@ namespace TVRename.TMDB
             return null;
         }
 
-        [NotNull]
-        private string GetYouTubeUrl([NotNull] Movie downloadedMovie)
+        private string GetYouTubeUrl(Movie downloadedMovie)
         {
             string yid = downloadedMovie.Videos.Results.Where(video => video.Type == "Trailer" && video.Site == "YouTube").OrderByDescending(v => v.Size).Select(video => video.Key).FirstOrDefault() ?? string.Empty;
             return yid.HasValue() ? $"https://www.youtube.com/watch?v={yid}" : string.Empty;
         }
 
-        [NotNull]
-        private string GetYouTubeUrl([NotNull] TvShow downloadedMovie)
+        private string GetYouTubeUrl(TvShow downloadedMovie)
         {
             string yid = downloadedMovie.Videos.Results.Where(video => video.Type == "Trailer" && video.Site == "YouTube").OrderByDescending(v => v.Size).Select(video => video.Key).FirstOrDefault() ?? string.Empty;
             return yid.HasValue() ? $"https://www.youtube.com/watch?v={yid}" : string.Empty;
         }
 
-        private string? GetCertification([NotNull] Movie downloadedMovie, string country)
+        private string? GetCertification(Movie downloadedMovie, string country)
         {
             return downloadedMovie.ReleaseDates?.Results
                 .Where(rel => rel.Iso_3166_1 == country)
@@ -818,7 +809,7 @@ namespace TVRename.TMDB
                 .FirstOrDefault();
         }
 
-        private string? GetCertification([NotNull] TvShow downloadedShow, string country)
+        private string? GetCertification(TvShow downloadedShow, string country)
         {
             return downloadedShow.ContentRatings?.Results
                 .Where(rel => rel.Iso_3166_1 == country)
@@ -826,7 +817,7 @@ namespace TVRename.TMDB
                 .FirstOrDefault();
         }
 
-        public override void Search([NotNull] string text, bool showErrorMsgBox, MediaConfiguration.MediaType type,
+        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type,
             Locale locale)
         {
             if (text.IsNumeric())
@@ -899,8 +890,7 @@ namespace TVRename.TMDB
             }
         }
 
-        [NotNull]
-        private CachedSeriesInfo File([NotNull] SearchTv result)
+        private CachedSeriesInfo File(SearchTv result)
         {
             CachedSeriesInfo m = new(new Locale(), TVDoc.ProviderType.TMDB)
             {
@@ -925,8 +915,7 @@ namespace TVRename.TMDB
             return m;
         }
 
-        [NotNull]
-        private CachedMovieInfo File([NotNull] SearchMovie result)
+        private CachedMovieInfo File(SearchMovie result)
         {
             CachedMovieInfo m = new(new Locale(), TVDoc.ProviderType.TMDB)
             {
@@ -1005,7 +994,6 @@ namespace TVRename.TMDB
             return null;
         }
 
-        [NotNull]
         public Dictionary<int, CachedMovieInfo> GetMovieIdsFromCollection(int collectionId, string languageCode)
         {
             Dictionary<int, CachedMovieInfo> returnValue = new();
@@ -1051,7 +1039,6 @@ namespace TVRename.TMDB
             return null;
         }
 
-        [NotNull]
         internal IEnumerable<CachedSeriesInfo> ServerTvAccuracyCheck()
         {
             TmdbAccuracyCheck check = new(this);
@@ -1071,7 +1058,6 @@ namespace TVRename.TMDB
             SayNothing();
             return check.ShowsToUpdate;
         }
-        [NotNull]
         internal IEnumerable<CachedMovieInfo> ServerMovieAccuracyCheck()
         {
             TmdbAccuracyCheck check = new(this);
@@ -1092,8 +1078,7 @@ namespace TVRename.TMDB
             return check.MoviesToUpdate;
         }
 
-        [ItemNotNull]
-        public async Task<Recomendations> GetRecommendations(TVDoc mDoc, BackgroundWorker sender, [NotNull] List<ShowConfiguration> shows, string languageCode)
+        public async Task<Recomendations> GetRecommendations(TVDoc mDoc, BackgroundWorker sender, List<ShowConfiguration> shows, string languageCode)
         {
             int total = shows.Count;
             int current = 0;
@@ -1145,7 +1130,7 @@ namespace TVRename.TMDB
             return returnValue;
         }
 
-        private void AddRecommendationsFrom([NotNull] ShowConfiguration arg, Recomendations returnValue, string languageCode)
+        private void AddRecommendationsFrom(ShowConfiguration arg, Recomendations returnValue, string languageCode)
         {
             if (arg.TmdbCode == 0)
             {
@@ -1187,8 +1172,7 @@ namespace TVRename.TMDB
             }
         }
 
-        [ItemNotNull]
-        public async Task<Recomendations> GetRecommendations(TVDoc mDoc, BackgroundWorker sender, [NotNull] List<MovieConfiguration> movies, string languageCode)
+        public async Task<Recomendations> GetRecommendations(TVDoc mDoc, BackgroundWorker sender, List<MovieConfiguration> movies, string languageCode)
         {
             int total = movies.Count;
             int current = 0;

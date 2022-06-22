@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 
 namespace TVRename
@@ -14,13 +13,11 @@ namespace TVRename
         protected readonly FileInfo WhereFile;
         public override string Produces => WhereFile.FullName;
         public override string ProgressText => WhereFile.Name;
-        [NotNull]
         public override IgnoreItem Ignore => new(WhereFile.FullName);
         public override string? DestinationFolder => WhereFile.DirectoryName;
         public override string? DestinationFile => WhereFile.Name;
         public override string? TargetFolder => WhereFile.DirectoryName;
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try
@@ -39,7 +36,7 @@ namespace TVRename
             return ActionOutcome.Success();
         }
 
-        private static void ProcessFile([NotNull] FileInfo whereFile, DateTime updateTime)
+        private static void ProcessFile(FileInfo whereFile, DateTime updateTime)
         {
             bool priorFileReadonly = whereFile.IsReadOnly;
             if (priorFileReadonly)

@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 
@@ -6,14 +5,14 @@ namespace TVRename.TMDB
 {
     internal class TmdbAccuracyCheck
     {
-        [NotNull] internal readonly List<string> Issues;
-        [NotNull] internal readonly List<CachedSeriesInfo> ShowsToUpdate;
-        [NotNull] internal readonly List<CachedMovieInfo> MoviesToUpdate;
-        [NotNull] private readonly LocalCache lc;
+        internal readonly List<string> Issues;
+        internal readonly List<CachedSeriesInfo> ShowsToUpdate;
+        internal readonly List<CachedMovieInfo> MoviesToUpdate;
+        private readonly LocalCache lc;
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public TmdbAccuracyCheck([NotNull] LocalCache localCache)
+        public TmdbAccuracyCheck(LocalCache localCache)
         {
             lc = localCache;
             Issues = new List<string>();
@@ -21,7 +20,7 @@ namespace TVRename.TMDB
             MoviesToUpdate = new List<CachedMovieInfo>();
         }
 
-        public void ServerAccuracyCheck([NotNull] CachedMovieInfo si)
+        public void ServerAccuracyCheck(CachedMovieInfo si)
         {
             Logger.Info($"Accuracy Check for {si.Name} on TMDB");
             try
@@ -45,7 +44,7 @@ namespace TVRename.TMDB
             }
         }
 
-        public void ServerAccuracyCheck([NotNull] CachedSeriesInfo si)
+        public void ServerAccuracyCheck(CachedSeriesInfo si)
         {
             Logger.Info($"Accuracy Check for {si.Name} on TMDB");
             try
@@ -69,7 +68,7 @@ namespace TVRename.TMDB
             }
         }
 
-        private bool Match([NotNull] CachedMovieInfo newSi, [NotNull] CachedMovieInfo si)
+        private bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
         {
             if (newSi.CollectionName != si.CollectionName)
             {
@@ -104,7 +103,7 @@ namespace TVRename.TMDB
             return true;
         }
 
-        private bool Match([NotNull] CachedSeriesInfo newSi, [NotNull] CachedSeriesInfo si)
+        private bool Match(CachedSeriesInfo newSi, CachedSeriesInfo si)
         {
             if (newSi.Name != si.Name)
             {

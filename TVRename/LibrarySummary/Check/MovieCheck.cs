@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal abstract class MovieCheck : SettingsCheck
@@ -26,7 +24,6 @@ namespace TVRename
 
         public override string MediaName => Movie.ShowName;
 
-        [NotNull]
         public sealed override string CheckName => "[Movie] " + MovieCheckName;
 
         protected abstract string MovieCheckName { get; }

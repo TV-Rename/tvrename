@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
@@ -10,7 +8,7 @@ namespace TVRename
         {
         }
 
-        public override void Write([NotNull] System.IO.Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
             sw.WriteByte((byte)'e');
         }

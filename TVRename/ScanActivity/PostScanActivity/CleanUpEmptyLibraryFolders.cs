@@ -2,7 +2,6 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -12,7 +11,6 @@ namespace TVRename
         {
         }
 
-        [NotNull]
         public override string ActivityName() => "Clean up empty library folders";
 
         protected override bool Active() => true;
@@ -85,8 +83,7 @@ namespace TVRename
             }
         }
 
-        [CanBeNull]
-        private string RemoveIfEmpty(string folderName)
+        private string? RemoveIfEmpty(string folderName)
         {
             if (CanRemove(folderName))
             {
@@ -101,13 +98,12 @@ namespace TVRename
             return null;
         }
 
-        private static bool AlreadyDeleted([NotNull] ItemList mDocTheActionList, string folderName)
+        private static bool AlreadyDeleted(ItemList mDocTheActionList, string folderName)
         {
             return mDocTheActionList.OfType<ActionDeleteDirectory>().Any(deleteDirectory => deleteDirectory.IsFor(folderName));
         }
 
-        [CanBeNull]
-        private string RemoveIfEmpty(MovieConfiguration mi, string folderName)
+        private string? RemoveIfEmpty(MovieConfiguration mi, string folderName)
         {
             if (CanRemove(folderName))
             {
@@ -117,8 +113,7 @@ namespace TVRename
             }
 
             return null;
-        }        [CanBeNull]
-        private string RemoveIfEmpty(ShowConfiguration si, string folderName)
+        }        private string? RemoveIfEmpty(ShowConfiguration si, string folderName)
         {
             if (CanRemove(folderName))
             {

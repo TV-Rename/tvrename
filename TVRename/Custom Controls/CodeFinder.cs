@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using System;
 using System.Windows.Forms;
 
@@ -93,7 +93,7 @@ namespace TVRename
             label3.Text = GetPromptLabel(Source);
         }
 
-        private string GenerateNewHintForProvider([NotNull] MediaConfiguration mi)
+        private string GenerateNewHintForProvider(MediaConfiguration mi)
         {
             return mi.IdFor(Source) > 0 ? mi.IdFor(Source).ToString() : mi.ShowName;
         }
@@ -205,7 +205,7 @@ namespace TVRename
 
         protected abstract int FindMedia(MediaCache cache, bool numeric, int matchnum, string what);
 
-        protected bool Matches(int num, [NotNull] CachedMediaInfo kvp, bool numeric, string what, int matchnum)
+        protected bool Matches(int num, CachedMediaInfo kvp, bool numeric, string what, int matchnum)
         {
             string show = kvp.Name.CompareName();
 
@@ -294,7 +294,7 @@ namespace TVRename
             SelectionChanged?.Invoke(sender, e);
         }
 
-        private void txtFindThis_KeyDown(object sender, [NotNull] KeyEventArgs e)
+        private void txtFindThis_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode is Keys.Enter or Keys.Return)
             {
@@ -304,14 +304,13 @@ namespace TVRename
             }
         }
 
-        private void lvMatches_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
+        private void lvMatches_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             lvwCodeFinderColumnSorter.ClickedOn(e.Column);
             lvwCodeFinderColumnSorter.ListViewItemSorter = GetSorter(e.Column);
             lvMatches.Sort();
         }
 
-        [NotNull]
         private static ListViewItemSorter GetSorter(int eColumn) =>
             eColumn switch
             {

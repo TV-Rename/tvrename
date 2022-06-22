@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -33,7 +32,6 @@ namespace TVRename
             LargeFileSize = largeFileSize;
         }
 
-        [NotNull]
         public ListViewItem PresentationView
         {
             get
@@ -61,7 +59,6 @@ namespace TVRename
         public ShowConfiguration ShowConfiguration => episodeTwo.Show;
         public ProcessedEpisode Episode => episodeOne;
 
-        [NotNull]
         public ShowRule GenerateRule()
         {
             return new()

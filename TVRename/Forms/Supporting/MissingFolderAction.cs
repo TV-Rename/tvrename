@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -16,7 +15,7 @@ namespace TVRename
         public string FolderName { get; private set; }
         public FaResult Result { get; private set; }
 
-        public MissingFolderAction([CanBeNull] string showName, [CanBeNull] string season, string folderName)
+        public MissingFolderAction(string? showName, string? season, string? folderName)
         {
             InitializeComponent();
 
@@ -75,12 +74,12 @@ namespace TVRename
             }
         }
 
-        private void MissingFolderAction_DragOver(object sender, [NotNull] DragEventArgs e)
+        private void MissingFolderAction_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void MissingFolderAction_DragDrop(object sender, [NotNull] DragEventArgs e)
+        private void MissingFolderAction_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)

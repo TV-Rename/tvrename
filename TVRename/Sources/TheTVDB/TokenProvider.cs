@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -7,7 +6,6 @@ namespace TVRename.TheTVDB
 {
     internal class TokenProvider
     {
-        [NotNull]
         // ReSharper disable once InconsistentNaming
         public static string TVDB_API_URL
         {
@@ -28,7 +26,6 @@ namespace TVRename.TheTVDB
         }
 
         // ReSharper disable once InconsistentNaming
-        [NotNull]
         public static string TVDB_API_KEY
         {
             get

@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class DefaultFutureEpisodesTvCheck : DefaultTvShowCheck
     {
-        public DefaultFutureEpisodesTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        public DefaultFutureEpisodesTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
-        [NotNull]
         protected override string FieldName => "Do Future Episodes Check";
 
         protected override bool Field => Show.ForceCheckFuture;

@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +15,7 @@ namespace TVRename.Forms
         private readonly TVDoc mDoc;
         private readonly UI mainUi;
 
-        public DuplicateMovieFinder([NotNull] TVDoc doc, UI main)
+        public DuplicateMovieFinder(TVDoc doc, UI main)
         {
             InitializeComponent();
             dupMovies = new List<DuplicateMovie>();
@@ -31,7 +30,7 @@ namespace TVRename.Forms
             olvDuplicates.SetObjects(dupMovies, true);
         }
 
-        private void AddRcMenuItem([NotNull] string label, EventHandler command)
+        private void AddRcMenuItem(string label, EventHandler command)
         {
             ToolStripMenuItem tsi = new(label.ToUiVersion());
             tsi.Click += command;
@@ -59,7 +58,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void ProcessMovie([NotNull] MovieConfiguration movie)
+        private void ProcessMovie(MovieConfiguration movie)
         {
             List<FileInfo> files = movie.Locations
                                 .Select(s => new DirectoryInfo(s))
@@ -85,7 +84,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void BwScan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
+        private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
             lblStatus.Text = e.UserState.ToString().ToUiVersion();
@@ -117,7 +116,7 @@ namespace TVRename.Forms
             bwScan.RunWorkerAsync();
         }
 
-        private void olvDuplicates_CellRightClick(object sender, [NotNull] BrightIdeasSoftware.CellRightClickEventArgs e)
+        private void olvDuplicates_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
         {
             if (e.Model is null)
             {
@@ -157,7 +156,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void Update([NotNull] DuplicateMovie duplicate)
+        private void Update(DuplicateMovie duplicate)
         {
             if (dupMovies.Contains(duplicate))
             {
@@ -167,7 +166,7 @@ namespace TVRename.Forms
             UpdateUI();
         }
 
-        private void MergeItems([NotNull] DuplicateMovie mlastSelected, UI ui)
+        private void MergeItems(DuplicateMovie mlastSelected, UI ui)
         {
             foreach (FileInfo file1 in mlastSelected.Files)
             {
@@ -182,7 +181,7 @@ namespace TVRename.Forms
             Update(mlastSelected);
         }
 
-        private void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, [NotNull] FileInfo file2, UI ui)
+        private void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, FileInfo file2, UI ui)
         {
             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(file1, file2);
 
@@ -213,7 +212,7 @@ namespace TVRename.Forms
             }
         }
 
-        private static void AskUserAboutFileReplacement(FileInfo file1, FileInfo file2, [NotNull] MovieConfiguration pep, IDialogParent owner)
+        private static void AskUserAboutFileReplacement(FileInfo file1, FileInfo file2, MovieConfiguration pep, IDialogParent owner)
         {
             try
             {
@@ -246,7 +245,7 @@ namespace TVRename.Forms
             }
         }
 
-        private static void UpgradeFile(string message, [NotNull] FileInfo keepFile, MovieConfiguration movie, [NotNull] FileInfo removeFile)
+        private static void UpgradeFile(string message, FileInfo keepFile, MovieConfiguration movie, FileInfo removeFile)
         {
             Logger.Info($"{message} remove {removeFile.FullName} as it is not as good quality than {keepFile.FullName}");
             try

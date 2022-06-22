@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class DefaultDoRenameTvCheck : DefaultTvShowCheck
     {
-        public DefaultDoRenameTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        public DefaultDoRenameTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
-        [NotNull]
         protected override string FieldName => "Rename Check";
 
         protected override bool Field => Show.DoRename;

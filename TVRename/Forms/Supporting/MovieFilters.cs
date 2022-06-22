@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using System;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,7 +18,7 @@ namespace TVRename.Forms
         private const string IS_NOT = "is not";
         private const string IS = "is";
 
-        public MovieFilters([NotNull] TVDoc doc)
+        public MovieFilters(TVDoc doc)
         {
             this.doc = doc;
             InitializeComponent();
@@ -118,7 +118,7 @@ namespace TVRename.Forms
             Close();
         }
 
-        private static bool GetIncludeStatus([NotNull] ComboBox comboBox)
+        private static bool GetIncludeStatus(ComboBox comboBox)
         {
             if (!comboBox.Text.HasValue())
             {

@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
@@ -40,9 +39,9 @@ namespace TVRename
             }
         }
 
-        public void EnsureAdded([NotNull] ProcessedEpisode episode) => EnsureAdded(episode.EpisodeId);
+        public void EnsureAdded(ProcessedEpisode episode) => EnsureAdded(episode.EpisodeId);
 
-        public bool Includes([NotNull] Item item) => Includes(item.Episode);
+        public bool Includes(Item item) => Includes(item.Episode);
 
         public bool Includes(ProcessedEpisode? episode) => episode != null && episode.EpisodeId > 0 && Contains(episode.EpisodeId);
     }

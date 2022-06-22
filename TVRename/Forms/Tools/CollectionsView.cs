@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +15,7 @@ namespace TVRename.Forms
         private readonly UI mainUi;
         private readonly List<MovieConfiguration> allAdded;
 
-        public CollectionsView([NotNull] TVDoc doc, UI main)
+        public CollectionsView(TVDoc doc, UI main)
         {
             InitializeComponent();
             collectionMovies = new List<CollectionMember>();
@@ -71,7 +70,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void AddRcMenuItem([NotNull] string label, EventHandler command)
+        private void AddRcMenuItem(string label, EventHandler command)
         {
             ToolStripMenuItem tsi = new(label.ToUiVersion());
             tsi.Click += command;
@@ -109,7 +108,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void BwScan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
+        private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100); 
             lblStatus.Text = e.UserState.ToString().ToUiVersion();
@@ -141,7 +140,7 @@ namespace TVRename.Forms
             bwScan.RunWorkerAsync();
         }
 
-        private void olvDuplicates_CellRightClick(object sender, [NotNull] BrightIdeasSoftware.CellRightClickEventArgs e)
+        private void olvDuplicates_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
         {
             if (e.Model is null)
             {
@@ -170,7 +169,7 @@ namespace TVRename.Forms
             //possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
         }
 
-        private void AddToLibrary([NotNull] CachedMovieInfo si)
+        private void AddToLibrary(CachedMovieInfo si)
         {
             // need to add a new showitem
             MovieConfiguration found = new(si.TmdbCode, TVDoc.ProviderType.TMDB);

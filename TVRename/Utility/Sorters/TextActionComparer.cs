@@ -1,5 +1,4 @@
 using BrightIdeasSoftware;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -7,6 +6,6 @@ namespace TVRename
     {
         public TextActionComparer(int column) : base(column) { }
 
-        protected override string GetValue([NotNull] OLVListItem x, int columnId) => x.SubItems[columnId].Text;
+        protected override string GetValue(OLVListItem x, int columnId) => x.SubItems[columnId].Text;
     }
 }

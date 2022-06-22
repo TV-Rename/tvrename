@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,8 +11,7 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        [NotNull]
-        internal static List<PossibleMergedEpisode> FindDoubleEps([NotNull] TVDoc doc, [NotNull] BackgroundWorker worker)
+        internal static List<PossibleMergedEpisode> FindDoubleEps(TVDoc doc, BackgroundWorker worker)
         {
             int total = doc.TvLibrary.Shows.Count();
             int current = 0;
@@ -60,7 +58,7 @@ namespace TVRename
             return returnValue;
         }
 
-        private static void SearchForDuplicates([NotNull] ProcessedEpisode pep, StringBuilder output, ShowConfiguration si, int seasonId, [NotNull] IEnumerable<ProcessedEpisode> seasonEpisodes, DirFilesCache dfc, List<PossibleMergedEpisode> returnValue)
+        private static void SearchForDuplicates(ProcessedEpisode pep, StringBuilder output, ShowConfiguration si, int seasonId, IEnumerable<ProcessedEpisode> seasonEpisodes, DirFilesCache dfc, List<PossibleMergedEpisode> returnValue)
         {
             if (pep.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
             {
@@ -95,13 +93,13 @@ namespace TVRename
             }
         }
 
-        private static bool EpisodesMatch([NotNull] Episode pep, Episode comparePep)
+        private static bool EpisodesMatch(Episode pep, Episode comparePep)
         {
             return pep.FirstAired.HasValue && comparePep.FirstAired.HasValue &&
                    pep.FirstAired == comparePep.FirstAired && pep.EpisodeId < comparePep.EpisodeId;
         }
 
-        private static bool IsOneFound([NotNull] StringBuilder output, DirFilesCache dfc, [NotNull] ProcessedEpisode pep, [NotNull] ProcessedEpisode comparePep, ref bool largerFileSize)
+        private static bool IsOneFound(StringBuilder output, DirFilesCache dfc, ProcessedEpisode pep, ProcessedEpisode comparePep, ref bool largerFileSize)
         {
             output.AppendLine("####### POSSIBLE MERGED FILE DUE TO NAME##########");
 

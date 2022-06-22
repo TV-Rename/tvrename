@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
@@ -42,7 +41,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public ItemList ProcessMovie(MovieConfiguration? si, FileInfo filo)
         {
             if (si is null)
@@ -59,7 +57,6 @@ namespace TVRename
             return theActionList;
         }
 
-        [NotNull]
         public ItemList ProcessShow(ShowConfiguration? si)
         {
             ItemList theActionList = new();
@@ -75,7 +72,6 @@ namespace TVRename
             return theActionList;
         }
 
-        [NotNull]
         public ItemList ProcessSeason(ShowConfiguration? si, string folder, int snum)
         {
             ItemList theActionList = new();
@@ -114,7 +110,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public ItemList ForceUpdateMovie(DownloadIdentifier.DownloadType dt, MovieConfiguration? si, FileInfo filo)
         {
             ItemList theActionList = new();
@@ -130,7 +125,6 @@ namespace TVRename
             return theActionList;
         }
 
-        [NotNull]
         public ItemList ForceUpdateShow(DownloadIdentifier.DownloadType dt, ShowConfiguration? si)
         {
             ItemList theActionList = new();
@@ -146,7 +140,6 @@ namespace TVRename
             return theActionList;
         }
 
-        [NotNull]
         public ItemList ForceUpdateSeason(DownloadIdentifier.DownloadType dt, ShowConfiguration? si, string folder, int snum)
         {
             ItemList theActionList = new();
@@ -162,7 +155,6 @@ namespace TVRename
             return theActionList;
         }
 
-        [NotNull]
         public ItemList ForceUpdateEpisode(DownloadIdentifier.DownloadType dt, ProcessedEpisode episode, FileInfo filo)
         {
             ItemList theActionList = new();

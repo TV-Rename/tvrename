@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -19,7 +18,6 @@ namespace TVRename.TVmaze
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        [NotNull]
         public static IEnumerable<KeyValuePair<string, long>> GetUpdates()
         {
             try
@@ -46,7 +44,6 @@ namespace TVRename.TVmaze
             }
         }
 
-        [NotNull]
         public static IEnumerable<CachedSeriesInfo> ShowSearch(string searchText)
         {
             JArray response;
@@ -68,7 +65,7 @@ namespace TVRename.TVmaze
             return response.Children().Select(ConvertSearchResult);
         }
 
-        private static CachedSeriesInfo? ConvertSearchResult([NotNull] JToken token)
+        private static CachedSeriesInfo? ConvertSearchResult(JToken token)
         {
             double score = token["score"].Value<double>();
             JObject show = token["show"].Value<JObject>();
@@ -82,7 +79,7 @@ namespace TVRename.TVmaze
             return downloadedSi;
         }
 
-        private static void GetSeriesIdFromOtherCodes([NotNull] ISeriesSpecifier source)
+        private static void GetSeriesIdFromOtherCodes(ISeriesSpecifier source)
         {
             try
             {
@@ -146,7 +143,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        private static JObject GetSeriesDetailsWithMazeId([NotNull] ISeriesSpecifier tvMazeId)
+        private static JObject GetSeriesDetailsWithMazeId(ISeriesSpecifier tvMazeId)
         {
             try
             {
@@ -169,8 +166,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        [NotNull]
-        public static CachedSeriesInfo GetSeriesDetails([NotNull] ISeriesSpecifier ss)
+        public static CachedSeriesInfo GetSeriesDetails(ISeriesSpecifier ss)
         {
             if (ss.TvMazeId <= 0)
             {
@@ -222,7 +218,6 @@ namespace TVRename.TVmaze
             return downloadedSi;
         }
 
-        [NotNull]
         private static List<string> GetWriters(JToken crew)
         {
             return ((JArray)crew).Children<JToken>()
@@ -238,7 +233,6 @@ namespace TVRename.TVmaze
                 }).ToList();
         }
 
-        [NotNull]
         private static List<string> GetDirectors(JToken crew)
         {
             return ((JArray)crew).Children<JToken>()
@@ -254,8 +248,7 @@ namespace TVRename.TVmaze
                 }).ToList();
         }
 
-        [NotNull]
-        private static ShowImage GenerateImage(int seriesId, [NotNull] JToken imageJson)
+        private static ShowImage GenerateImage(int seriesId, JToken imageJson)
         {
             ShowImage newBanner = new()
             {
@@ -287,8 +280,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        [NotNull]
-        private static ShowImage GenerateImage(int seriesId, int seasonNumber, [NotNull] string url)
+        private static ShowImage GenerateImage(int seriesId, int seasonNumber, string url)
         {
             ShowImage newBanner = new()
             {
@@ -305,8 +297,7 @@ namespace TVRename.TVmaze
             return newBanner;
         }
 
-        [NotNull]
-        private static Actor GenerateActor(int seriesId, [NotNull] JToken jsonActor)
+        private static Actor GenerateActor(int seriesId, JToken jsonActor)
         {
             JToken personToken = GetChild(jsonActor, "person");
             JToken actorImageNode = GetChild(personToken, "image");
@@ -318,8 +309,7 @@ namespace TVRename.TVmaze
             return new Actor(actorId, actorImage, actorName, actorRole, seriesId, actorSortOrder);
         }
 
-        [NotNull]
-        private static Season GenerateSeason(int seriesId, [NotNull] JToken json)
+        private static Season GenerateSeason(int seriesId, JToken json)
         {
             int id = (int)json["id"];
             int number = (int)json["number"];
@@ -331,14 +321,12 @@ namespace TVRename.TVmaze
             return new Season(id, number, name, StripPTags(description ?? string.Empty), url, imageUrl, seriesId);
         }
 
-        [NotNull]
-        private static string StripPTags([NotNull] string description)
+        private static string StripPTags(string description)
         {
             return description.TrimStartString("<p>").TrimEnd("</p>");
         }
 
-        [NotNull]
-        private static CachedSeriesInfo GenerateSeriesInfo([NotNull] JObject r)
+        private static CachedSeriesInfo GenerateSeriesInfo(JObject r)
         {
             CachedSeriesInfo returnValue = GenerateCoreSeriesInfo(r);
 
@@ -370,8 +358,7 @@ namespace TVRename.TVmaze
             return returnValue;
         }
 
-        [NotNull]
-        private static CachedSeriesInfo GenerateCoreSeriesInfo([NotNull] JObject r)
+        private static CachedSeriesInfo GenerateCoreSeriesInfo(JObject r)
         {
             string nw = GetKeySubKey(r, "network", "name");
             string wc = GetKeySubKey(r, "webChannel", "name");
@@ -447,8 +434,7 @@ namespace TVRename.TVmaze
             return s;
         }
 
-        [NotNull]
-        private static Episode GenerateEpisode(int seriesId, [NotNull] List<string> writers, [NotNull] List<string> directors, [NotNull] JObject r, CachedSeriesInfo si)
+        private static Episode GenerateEpisode(int seriesId, List<string> writers, List<string> directors, JObject r, CachedSeriesInfo si)
         {
             //Something like {
             //"id":1,
@@ -492,8 +478,7 @@ namespace TVRename.TVmaze
             return newEp;
         }
 
-        [NotNull]
-        private static JToken GetChild([NotNull] JToken json, [NotNull] string key)
+        private static JToken GetChild(JToken json, string key)
         {
             JToken? token = json[key];
             if (token is null)
@@ -504,7 +489,7 @@ namespace TVRename.TVmaze
             return token;
         }
 
-        private static string? GetUrl([NotNull] JObject r, string typeKey)
+        private static string? GetUrl(JObject r, string typeKey)
         {
             JToken x = r["image"];
             if (x is null)

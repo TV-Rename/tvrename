@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -18,7 +17,6 @@ namespace TVRename
 
         private static bool LocationsMatch(string aloc, string loc) => string.Equals(aloc, loc, StringComparison.Ordinal);
 
-        [NotNull]
         public override string Explain()
         {
             IEnumerable<string> matchingLocations =
@@ -40,7 +38,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         protected override string MovieCheckName => "Manual Season Folders Mirror Automatic";
     }
 }

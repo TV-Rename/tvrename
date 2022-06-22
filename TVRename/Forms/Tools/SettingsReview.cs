@@ -1,5 +1,4 @@
 using BrightIdeasSoftware;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +13,7 @@ namespace TVRename.Forms
         private readonly TVDoc mDoc;
         private readonly UI mainUi;
 
-        public SettingsReview([NotNull] TVDoc doc, UI main)
+        public SettingsReview(TVDoc doc, UI main)
         {
             InitializeComponent();
             set = new List<SettingsCheck>();
@@ -30,7 +29,7 @@ namespace TVRename.Forms
             olvDuplicates.Sort(olvCheck);
         }
 
-        private void AddRcMenuItem([NotNull] string label, EventHandler command)
+        private void AddRcMenuItem(string label, EventHandler command)
         {
             ToolStripMenuItem tsi = new(label.ToUiVersion());
             tsi.Click += command;
@@ -106,7 +105,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void BwScan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
+        private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
             lblStatus.Text = e.UserState.ToString().ToUiVersion();
@@ -142,7 +141,7 @@ namespace TVRename.Forms
             bwScan.RunWorkerAsync();
         }
 
-        private void olvDuplicates_CellRightClick(object sender, [NotNull] CellRightClickEventArgs e)
+        private void olvDuplicates_CellRightClick(object sender, CellRightClickEventArgs e)
         {
             if (e.Model is null)
             {
@@ -193,7 +192,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void Remedy([NotNull] SettingsCheck selected)
+        private void Remedy(SettingsCheck selected)
         {
             selected.Fix();
             if (!selected.IsError)

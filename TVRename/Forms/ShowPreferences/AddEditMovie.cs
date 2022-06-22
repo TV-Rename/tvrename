@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -32,7 +31,7 @@ namespace TVRename
         internal bool HasChanged;
         private readonly TVDoc mDoc;
 
-        public AddEditMovie([NotNull] MovieConfiguration si, TVDoc doc)
+        public AddEditMovie(MovieConfiguration si, TVDoc doc)
         {
             selectedShow = si;
             mDoc = doc;
@@ -123,7 +122,7 @@ namespace TVRename
                 .FirstOrDefault(format => format.PrettyPrint().Equals(cbFolderType.Text));
         }
 
-        private void SetMovieFolderType([NotNull] MovieConfiguration si)
+        private void SetMovieFolderType(MovieConfiguration si)
         {
             if (si.UseAutomaticFolders)
             {
@@ -150,7 +149,7 @@ namespace TVRename
             txtTagList2.Text = tl.ToString();
         }
 
-        private void PopulateRootDirectories([NotNull] string chosenValue)
+        private void PopulateRootDirectories(string chosenValue)
         {
             cbDirectory.SuspendLayout();
             cbDirectory.Items.Clear();
@@ -183,7 +182,7 @@ namespace TVRename
             }
         }
 
-        private void SetupLanguages([NotNull] MovieConfiguration si)
+        private void SetupLanguages(MovieConfiguration si)
         {
             chkCustomLanguage.Checked = si.UseCustomLanguage;
             if (chkCustomLanguage.Checked)
@@ -199,7 +198,7 @@ namespace TVRename
             cbLanguage.Enabled = chkCustomLanguage.Checked;
         }
 
-        private void SetupRegions([NotNull] MovieConfiguration si)
+        private void SetupRegions(MovieConfiguration si)
         {
             chkCustomRegion.Checked = si.UseCustomRegion;
             if (chkCustomRegion.Checked)
@@ -216,7 +215,7 @@ namespace TVRename
             cbRegion.Enabled = chkCustomRegion.Checked;
         }
 
-        private void SetProvider([NotNull] MovieConfiguration si)
+        private void SetProvider(MovieConfiguration si)
         {
             switch (si.ConfigurationProvider)
             {
@@ -238,7 +237,7 @@ namespace TVRename
             }
         }
 
-        private void SetupDropDowns([NotNull] MovieConfiguration si)
+        private void SetupDropDowns(MovieConfiguration si)
         {
             string pref = string.Empty;
             cbLanguage.BeginUpdate();
@@ -443,7 +442,6 @@ namespace TVRename
             selectedShow.Format = GetFolderFormat() ?? MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
         }
 
-        [NotNull]
         private IEnumerable<string> GetFolders()
         {
             List<string> folders = new();
@@ -521,7 +519,7 @@ namespace TVRename
             }
         }
 
-        private void tbShowAlias_KeyDown(object sender, [NotNull] KeyEventArgs e)
+        private void tbShowAlias_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {

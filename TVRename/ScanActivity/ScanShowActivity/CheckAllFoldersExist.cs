@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,14 +7,13 @@ namespace TVRename
 {
     internal class CheckAllFoldersExist : ScanShowActivity
     {
-        public CheckAllFoldersExist([NotNull] TVDoc doc) : base(doc)
+        public CheckAllFoldersExist(TVDoc doc) : base(doc)
         {
         }
 
-        [NotNull]
         protected override string ActivityName() => "Checked All Folders Exist";
 
-        protected override void Check([NotNull] ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             if (!si.DoMissingCheck && !si.DoRename)
             {
@@ -75,7 +73,7 @@ namespace TVRename
             } // for each snum
         }
 
-        private static bool MightWeProcess(ProcessedEpisode episode, [NotNull] IEnumerable<string> folders)
+        private static bool MightWeProcess(ProcessedEpisode episode, IEnumerable<string> folders)
         {
             foreach (string folder in folders)
             {
@@ -101,7 +99,7 @@ namespace TVRename
             return true;
         }
 
-        private void CreateSeasonFolders(ShowConfiguration si, int snum, [NotNull] IEnumerable<string> folders,
+        private void CreateSeasonFolders(ShowConfiguration si, int snum, IEnumerable<string> folders,
             ICollection<string> ignoredLocations, IDialogParent owner)
         {
             foreach (string folderExists in folders)

@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -27,7 +26,6 @@ namespace TVRename.TheTVDB
         private static readonly TokenProvider TokenProvider = new();
 
         // ReSharper disable once InconsistentNaming
-        [NotNull]
         public static string GetImageURL(string? url)
         {
             if (string.IsNullOrWhiteSpace(url))
@@ -55,7 +53,7 @@ namespace TVRename.TheTVDB
             return url.StartsWith("banners/", StringComparison.Ordinal) ? mirr + url : mirr + "banners/" + url;
         }
 
-        public static byte[] GetTvdbDownload([NotNull] string url, bool forceReload)
+        public static byte[] GetTvdbDownload(string url, bool forceReload)
         {
             string theUrl = GetImageURL(url);
 
@@ -76,50 +74,43 @@ namespace TVRename.TheTVDB
             return r;
         }
 
-        [NotNull]
-        public static string WebsiteShowUrl([NotNull] ShowConfiguration si)
+        public static string WebsiteShowUrl(ShowConfiguration si)
         {
             string? value = si.CachedShow?.Slug;
             return string.IsNullOrWhiteSpace(value) ? WebsiteShowUrl(si.TvdbCode) : WebsiteShowUrl(value);
         }
 
-        [NotNull]
-        public static string WebsiteShowUrl([NotNull] CachedSeriesInfo si)
+        public static string WebsiteShowUrl(CachedSeriesInfo si)
         {
             string? value = si.Slug;
             return string.IsNullOrWhiteSpace(value) ? WebsiteShowUrl(si.TvdbCode) : WebsiteShowUrl(value);
         }
 
-        [NotNull]
         public static string WebsiteShowUrl(int seriesId)
         {
             //return $"{WebsiteRoot}/series/{seriesId}";
             return $"{WebsiteRoot}/?tab=series&id={seriesId}";
         }
 
-        [NotNull]
         public static string WebsiteMovieUrl(int id)
         {
             return $"{WebsiteRoot}/?tab=movie&id={id}";
         }
 
-        [NotNull]
         // ReSharper disable once MemberCanBePrivate.Global
         public static string WebsiteShowUrl(string slug)
         {
             return $"{WebsiteRoot}/series/{slug}";
         }
 
-        [NotNull]
-        public static string WebsiteEpisodeUrl([NotNull] Episode ep)
+        public static string WebsiteEpisodeUrl(Episode ep)
         {
             return string.IsNullOrWhiteSpace(ep.TheCachedSeries.Slug)
                 ? WebsiteEpisodeUrl(ep.TheCachedSeries.TvdbCode, ep.EpisodeId)
                 : WebsiteEpisodeUrl(ep.TheCachedSeries.Slug, ep.EpisodeId);
         }
 
-        [NotNull]
-        public static string WebsiteSeasonUrl([NotNull] ProcessedSeason s)
+        public static string WebsiteSeasonUrl(ProcessedSeason s)
         {
             string? value = s.Show.CachedShow?.Slug;
             return string.IsNullOrWhiteSpace(value)
@@ -127,7 +118,6 @@ namespace TVRename.TheTVDB
                 : WebsiteSeasonUrl(value, s.Show.Order, s.SeasonNumber);
         }
 
-        [NotNull]
         // ReSharper disable once MemberCanBePrivate.Global
         public static string WebsiteSeasonUrl(int seriesId, ProcessedSeason.SeasonType type, int seasonNumber)
         {
@@ -141,7 +131,6 @@ namespace TVRename.TheTVDB
             };
         }
 
-        [NotNull]
         // ReSharper disable once MemberCanBePrivate.Global
         public static string WebsiteSeasonUrl(string slug, ProcessedSeason.SeasonType type, int seasonNumber)
         {
@@ -155,7 +144,6 @@ namespace TVRename.TheTVDB
             };
         }
 
-        [NotNull]
         // ReSharper disable once MemberCanBePrivate.Global
         public static string WebsiteEpisodeUrl(int seriesId, int episodeId)
         {
@@ -166,7 +154,6 @@ namespace TVRename.TheTVDB
             return episodeId > 0 ? $"{WebsiteRoot}/series/{seriesId}/episodes/{episodeId}" : string.Empty;
         }
 
-        [NotNull]
         // ReSharper disable once MemberCanBePrivate.Global
         public static string WebsiteEpisodeUrl(string slug, int episodeId)
         {
@@ -224,8 +211,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        [NotNull]
-        private static string HttpRequest([NotNull] string method, [NotNull] string url, string? json, string contentType,
+        private static string HttpRequest(string method, string url, string? json, string contentType,
             TokenProvider? authToken, string lang = "")
             => HttpHelper.HttpRequest(method, url, json, contentType, authToken?.GetToken(), lang);
 
@@ -259,7 +245,6 @@ namespace TVRename.TheTVDB
                 null, TokenProvider, false);
         }
 
-        [NotNull]
         internal static string BuildUrl(int apiKey, string lang)
         //would rather make this private to hide api key from outside world
         //https://forum.kodi.tv/showthread.php?tid=323588
@@ -271,7 +256,6 @@ namespace TVRename.TheTVDB
                    + "|Content-Type=application/json";
         }
 
-        [NotNull]
         public static IEnumerable<string> GetImageTypes(int code, string requestedLanguageCode)
         {
             string uriImages = $"{TokenProvider.TVDB_API_URL}/series/{code}/images";
@@ -363,8 +347,7 @@ namespace TVRename.TheTVDB
             return jsonResponse?.HasValues ?? false;
         }
 
-        [NotNull]
-        public static List<JObject> GetImages(int code, string languageCode, [NotNull] IEnumerable<string> imageTypes)
+        public static List<JObject> GetImages(int code, string languageCode, IEnumerable<string> imageTypes)
         {
             string uriImagesQuery = TokenProvider.TVDB_API_URL + "/series/" + code + "/images/query";
             List<JObject> returnList = new();
@@ -398,14 +381,13 @@ namespace TVRename.TheTVDB
             return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
         }
 
-        [NotNull]
-        public static JObject GetSeriesV4([NotNull] ISeriesSpecifier code, string requestedLanguageCode)
+        public static JObject GetSeriesV4(ISeriesSpecifier code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/extended";
             return GetUrl(code, uri, requestedLanguageCode,MediaConfiguration.MediaType.tv);
         }
 
-        public static JObject? GetSeasonV4([NotNull] ISeriesSpecifier code, int seasonId, string requestLangCode)
+        public static JObject GetSeasonV4(ISeriesSpecifier code, int seasonId, string requestLangCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/series/{seasonId}/extended";
             return GetUrl(code,uri, requestLangCode,MediaConfiguration.MediaType.tv);
@@ -431,42 +413,36 @@ namespace TVRename.TheTVDB
             return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
         }
 
-        [NotNull]
-        public static JObject GetMovieV4([NotNull] ISeriesSpecifier code, string requestedLanguageCode)
+        public static JObject GetMovieV4(ISeriesSpecifier code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/extended";
             return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.movie);
         }
 
-        [NotNull]
         public static JObject GetSeasonEpisodesV4(ISeriesSpecifier id, int seasonId, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
             return GetUrl(id, uri, requestedLanguageCode, MediaConfiguration.MediaType.tv);
         }
 
-        [NotNull]
-        public static JObject GetSeriesTranslationsV4([NotNull] ISeriesSpecifier code, string requestedLanguageCode)
+        public static JObject GetSeriesTranslationsV4(ISeriesSpecifier code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/translations/{requestedLanguageCode}";
             return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.tv);
         }
 
-        [NotNull]
         public static JObject GetEpisodeTranslationsV4(ISeriesSpecifier id, int episodeId, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}/translations/{requestedLanguageCode}";
             return GetUrl(id, uri, requestedLanguageCode,MediaConfiguration.MediaType.tv);
         }
 
-        [NotNull]
-        public static JObject GetMovieTranslationsV4([NotNull] ISeriesSpecifier code, string requestedLanguageCode)
+        public static JObject GetMovieTranslationsV4(ISeriesSpecifier code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/translations/{requestedLanguageCode}";
             return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.movie);
         }
 
-        [NotNull]
         private static JObject GetUrl(ISeriesSpecifier code, string uri, string requestedLanguageCode, MediaConfiguration.MediaType type)
         {
             try
@@ -499,13 +475,11 @@ namespace TVRename.TheTVDB
             }
         }
 
-        [NotNull]
         public static JObject ImageTypesV4()
         {
             return GetUrl(null,"https://api4.thetvdb.com/v4/artwork/types", "en",MediaConfiguration.MediaType.both);
         }
 
-        [NotNull]
         public static string WebsiteMovieUrl(string? serSlug)
         {
             return $"https://www.thetvdb.com/movies/{serSlug}";

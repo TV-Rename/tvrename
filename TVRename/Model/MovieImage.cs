@@ -1,6 +1,5 @@
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -14,14 +13,14 @@ namespace TVRename
             Subject = ImageSubject.movie;
         }
 
-        public MovieImage(int movieId, TVDoc.ProviderType source, [NotNull] XElement r) : base(r)
+        public MovieImage(int movieId, TVDoc.ProviderType source, XElement r) : base(r)
         {
             MovieId = r.ExtractInt("MovieId") ?? movieId; // thetvdb cachedSeries id
             MovieSource = source;
             Subject = ImageSubject.movie;
         }
 
-        public void WriteXml([NotNull] XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("MovieImage");
             WriteCoreXml(writer);

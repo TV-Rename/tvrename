@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -19,10 +18,9 @@ namespace TVRename
         {
         }
 
-        [NotNull]
         protected override string CheckName() => "Looked in the library for any new shows to be added (bulk add)";
 
-        protected override void DoCheck([NotNull] SetProgressDelegate progress)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
             BulkAddSeriesManager bam = new(MDoc);
             bam.CheckFolders(Settings.Token, progress, false, !Settings.Unattended);
@@ -48,7 +46,7 @@ namespace TVRename
             MDoc.TvAddedOrEdited(true, Settings.Unattended, Settings.Hidden, Settings.Owner, addedShows);
         }
 
-        private void AskUserAboutShows([NotNull] BulkAddSeriesManager bam)
+        private void AskUserAboutShows(BulkAddSeriesManager bam)
         {
             foreach (PossibleNewTvShow folder in bam.AddItems)
             {
@@ -61,7 +59,7 @@ namespace TVRename
             }
         }
 
-        private void AskUserAboutShow([NotNull] PossibleNewTvShow folder, IDialogParent owner)
+        private void AskUserAboutShow(PossibleNewTvShow folder, IDialogParent owner)
         {
             if (folder.CodeKnown)
             {

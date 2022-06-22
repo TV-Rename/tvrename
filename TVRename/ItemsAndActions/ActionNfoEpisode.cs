@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -10,20 +9,17 @@ namespace TVRename
 {
     internal class ActionNfoEpisode : ActionNfo
     {
-        public ActionNfoEpisode([NotNull] FileInfo nfo, [NotNull] ProcessedEpisode pe) : base(nfo, pe.Show)
+        public ActionNfoEpisode(FileInfo nfo, ProcessedEpisode pe) : base(nfo, pe.Show)
         {
             Episode = pe;
         }
 
-        [NotNull]
         public override string Name => "Write KODI Metadata (Episode)";
 
         protected override long? UpdateTime() => Episode?.SrvLastUpdated;
 
-        [NotNull]
         protected override string RootName() => "episodedetails";
 
-        [NotNull]
         private ActionOutcome ReplaceMultipartFile()
         {
             ShowConfiguration si = Episode?.Show ?? SelectedShow;
@@ -60,7 +56,7 @@ namespace TVRename
             return ActionOutcome.Success();
         }
 
-        private static void UpdateEpisodeFields([NotNull] Episode episode, ShowConfiguration? show, [NotNull] XElement root, bool isMultiPart)
+        private static void UpdateEpisodeFields(Episode episode, ShowConfiguration? show, XElement root, bool isMultiPart)
         {
             root.UpdateElement("title", episode.Name, true);
             root.UpdateElement("id", episode.EpisodeId, true);

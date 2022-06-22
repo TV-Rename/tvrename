@@ -6,8 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     using Alphaleonis.Win32.Filesystem;
@@ -20,7 +18,6 @@ namespace TVRename
         protected string Folder;
 
         public override string DestinationFile => Filename;
-        [NotNull]
         public override string ScanListViewGroup => "lvgActionMissing";
         public override string DestinationFolder => Folder;
         public override string TargetFolder

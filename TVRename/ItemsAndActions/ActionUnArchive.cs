@@ -15,7 +15,6 @@ using SharpCompress.Archives.Tar;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using System;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -61,13 +60,11 @@ namespace TVRename
 
         public override string TargetFolder => archiveFile.DirectoryName;
 
-        [NotNull]
         public override string ScanListViewGroup => "lvgActionUnpack";
 
         public override int IconNumber => 11;
         public override IgnoreItem? Ignore => null;
 
-        [NotNull]
         public override string Name => "Unpack";
 
         public override string DestinationFolder => TargetFolder;
@@ -86,14 +83,8 @@ namespace TVRename
             return string.Compare(archiveFile.FullName, nfo.archiveFile.FullName, StringComparison.Ordinal);
         }
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
-            if (archiveFile is null)
-            {
-                return ActionOutcome.CompleteFail();
-            }
-
             try
             {
                 Directory.CreateDirectory(archiveFile.FileFullNameNoExt());
@@ -134,7 +125,7 @@ namespace TVRename
                 return new ActionOutcome(e);
             }
         }
-        private static IArchive GetArchive([NotNull] FileInfo archive)
+        private static IArchive GetArchive(FileInfo archive)
         {
             if (archive.Name.EndsWith(".rar", StringComparison.OrdinalIgnoreCase))
             {

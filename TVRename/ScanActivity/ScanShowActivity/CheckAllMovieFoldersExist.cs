@@ -2,20 +2,18 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     internal class CheckAllMovieFoldersExist : ScanMovieActivity
     {
-        public CheckAllMovieFoldersExist([NotNull] TVDoc doc) : base(doc)
+        public CheckAllMovieFoldersExist(TVDoc doc) : base(doc)
         {
         }
 
-        [NotNull]
         protected override string ActivityName() => "Checked All movie Folders Exist";
 
-        protected override void Check([NotNull] MovieConfiguration movie, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        protected override void Check(MovieConfiguration movie, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             if (!movie.DoMissingCheck && !movie.DoRename)
             {

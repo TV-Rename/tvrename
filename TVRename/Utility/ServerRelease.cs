@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Text;
 
@@ -12,7 +11,7 @@ namespace TVRename
         public bool IsBeta { get; }
         public DateTime ReleaseDate { get; }
 
-        public ServerRelease([NotNull] string version, VersionType type, string downloadUrl, string releaseNotesText,
+        public ServerRelease(string version, VersionType type, string downloadUrl, string releaseNotesText,
             string releaseNotesUrl, bool isBeta, DateTime releaseDate) : base(version, type)
         {
             DownloadUrl = downloadUrl;
@@ -22,7 +21,6 @@ namespace TVRename
             ReleaseDate = releaseDate;
         }
 
-        [NotNull]
         public string LogMessage()
         {
             StringBuilder sb = new();

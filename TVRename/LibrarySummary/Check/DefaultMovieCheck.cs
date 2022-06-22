@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal abstract class DefaultMovieCheck : MovieCheck
     {
-        protected DefaultMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        protected DefaultMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 
-        [NotNull]
         protected override string MovieCheckName => FieldName;
         protected abstract string FieldName { get; }
         protected abstract bool Field { get; }
@@ -16,7 +13,6 @@ namespace TVRename
 
         public override bool Check() => Field != Default;
 
-        [NotNull]
         public override string Explain() => $"Default value for '{FieldName}' is {Default}. For this Movie it is {Field}.";
     }
 }

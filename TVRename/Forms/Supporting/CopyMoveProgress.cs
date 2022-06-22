@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Windows.Forms;
@@ -28,7 +28,7 @@ namespace TVRename
         private readonly ItemList mToDo;
         private readonly System.Action mDoOnClose;
 
-        public CopyMoveProgress([NotNull] TVDoc engine, [NotNull] TVDoc.ActionSettings settings, System.Action doOnClose)
+        public CopyMoveProgress(TVDoc engine, TVDoc.ActionSettings settings, System.Action doOnClose)
         {
             mDoc = engine.ActionManager;
             mToDo =settings.DoAll ? engine.TheActionList: settings.Lvr;

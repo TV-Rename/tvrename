@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using Alphaleonis.Win32.Filesystem;
 
@@ -54,13 +53,11 @@ namespace TVRename
 
         public override string ProgressText => toRemove.Name;
         public override string Produces => toRemove.FullName;
-        [NotNull]
         public override IgnoreItem Ignore => new(toRemove.FullName);
         public override string TargetFolder => toRemove.Parent.FullName;
 
         public override string SeriesName => Episode?.Show.ShowName ?? SelectedShow?.ShowName ?? Movie?.ShowName ?? toRemove.Name;
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             //if the directory is the root download folder do not delete
@@ -109,7 +106,7 @@ namespace TVRename
             return string.Compare(toRemove.FullName, cmr.toRemove.FullName, StringComparison.Ordinal);
         }
 
-        public bool SameSource([NotNull] ActionDeleteDirectory o) => FileHelper.Same(toRemove, o.toRemove);
+        public bool SameSource(ActionDeleteDirectory o) => FileHelper.Same(toRemove, o.toRemove);
 
         public bool IsFor(string folderName) => string.Equals(folderName, toRemove.FullName, StringComparison.OrdinalIgnoreCase);
     }

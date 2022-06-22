@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -22,7 +21,7 @@ namespace TVRename
 
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
-        public override ItemList? ProcessShow([NotNull] ShowConfiguration si, bool forceRefresh)
+        public override ItemList? ProcessShow(ShowConfiguration si, bool forceRefresh)
         {
             DateTime? updateTime = si.LastAiredDate;
             if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue)
@@ -49,7 +48,7 @@ namespace TVRename
             return null;
         }
 
-        public override ItemList? ProcessMovie([NotNull] MovieConfiguration movie, FileInfo file, bool forceRefresh)
+        public override ItemList? ProcessMovie(MovieConfiguration movie, FileInfo file, bool forceRefresh)
         {
             DateTime? updateTime = movie.CachedMovie?.FirstAired;
             if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue)
@@ -93,7 +92,7 @@ namespace TVRename
             return returnItems;
         }
 
-        public override ItemList? ProcessSeason([NotNull] ShowConfiguration si, string folder, int snum, bool forceRefresh)
+        public override ItemList? ProcessSeason(ShowConfiguration si, string folder, int snum, bool forceRefresh)
         {
             ProcessedSeason processedSeason = si.GetSeason(snum) ?? throw new ArgumentException($"ProcessSeason called for {si.ShowName} invalid season ({snum}), show has ({si.AppropriateSeasons().Keys.Select(i => i.ToString()).ToCsv()})");
             DateTime? updateTime = processedSeason.LastAiredDate();

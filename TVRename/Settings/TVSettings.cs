@@ -32,7 +32,6 @@ namespace TVRename
         private static volatile TVSettings? instance;
         private static readonly object syncRoot = new();
 
-        [NotNull]
         public static TVSettings Instance
         {
             get
@@ -240,10 +239,9 @@ namespace TVRename
 
         public string AutoAddMovieTerms = "dvdrip;camrip;screener;dvdscr;r5;bluray";
 
-        [NotNull]
         public IEnumerable<string> AutoAddMovieTermsArray => Convert(AutoAddMovieTerms);
 
-        internal string FilenameFriendly([NotNull] ShowConfiguration show, [NotNull] Episode sourceEp)
+        internal string FilenameFriendly(ShowConfiguration show, Episode sourceEp)
         {
             // ReSharper disable once ArrangeMethodOrOperatorBody
             return FilenameFriendly(NamingStyle.GetTargetEpisodeName(show, sourceEp));
@@ -251,44 +249,35 @@ namespace TVRename
 
         public string PriorityReplaceTerms = "PROPER;REPACK;RERIP";
 
-        [NotNull]
         public IEnumerable<string> PriorityReplaceTermsArray => Convert(PriorityReplaceTerms);
 
         public string AutoAddIgnoreSuffixes = "1080p;720p";
 
-        [NotNull]
         public IEnumerable<string> AutoAddIgnoreSuffixesArray => Convert(AutoAddIgnoreSuffixes);
 
         public string keepTogetherExtensionsString;
 
-        [NotNull]
         private IEnumerable<string> keepTogetherExtensionsArray => Convert(keepTogetherExtensionsString);
 
         public string subtitleExtensionsString;
 
-        [NotNull]
         public IEnumerable<string> subtitleExtensionsArray => Convert(subtitleExtensionsString);
 
         public string searchSeasonWordsString = "Season;Series;Saison;Temporada;Seizoen";
 
-        [NotNull]
         public IEnumerable<string> searchSeasonWordsArray => Convert(searchSeasonWordsString);
 
         public string preferredRSSSearchTermsString = "720p;1080p";
 
         public string unwantedRSSSearchTermsString = "hdcam;tscam;CAMRip;HDCAM;HDTS";
 
-        [NotNull]
         public string[] PreferredRSSSearchTerms() => Convert(preferredRSSSearchTermsString);
-        [NotNull]
         public string[] UnwantedRSSSearchTerms() => Convert(unwantedRSSSearchTermsString);
 
         public string OtherExtensionsString;
 
-        [NotNull]
         private IEnumerable<string> OtherExtensionsArray => Convert(OtherExtensionsString);
 
-        [NotNull]
         private static string[] Convert(string? propertyString)
         {
             return string.IsNullOrWhiteSpace(propertyString) ? Array.Empty<string>() : propertyString.Split(';');
@@ -336,16 +325,13 @@ namespace TVRename
         public string SearchJSONFileSizeToken = "size_bytes";
         public string SearchJSONSeedersToken = "seeds";
 
-        [NotNull]
         public string[] VideoExtensionsArray => Convert(VideoExtensionsString);
 
-        [NotNull]
         public static string USER_AGENT =>
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36";
 
         public static TheTVDB.LocalCache.PagingMethod TVDBPagingMethod => TheTVDB.LocalCache.PagingMethod.proper;
 
-        [NotNull]
         public static string SpecialsListViewName => "Special";
 
         public MovieConfiguration.MovieFolderFormat DefMovieFolderFormat =
@@ -363,10 +349,8 @@ namespace TVRename
 
         public bool DeleteMovieFromDisk = false;
 
-        [NotNull]
         public IEnumerable<string> SubsFolderNames => Convert(SubsFolderNamesString);
 
-        [NotNull]
         public string qBitTorrentProtocol => qBitTorrentUseHTTPS ? "https" : "http";
 
         public int FolderMonitorDelaySeconds = 1;
@@ -508,7 +492,7 @@ namespace TVRename
         }
 
         // ReSharper disable once FunctionComplexityOverflow
-        public void WriteXML([NotNull] XmlWriter writer)
+        public void WriteXML(XmlWriter writer)
         {
             writer.WriteStartElement("Settings");
             writer.WriteElement("UseColoursOnWtw", UseColoursOnWtw);
@@ -758,7 +742,7 @@ namespace TVRename
             writer.WriteEndElement(); // settings
         }
 
-        private void WriteAppUpdateElement([NotNull] XmlWriter writer)
+        private void WriteAppUpdateElement(XmlWriter writer)
         {
             writer.WriteStartElement("AppUpdate");
             writer.WriteElement("Mode", (int)UpdateCheckType);
@@ -767,7 +751,7 @@ namespace TVRename
             writer.WriteEndElement();
         }
 
-        private void WriteReplacements([NotNull] XmlWriter writer)
+        private void WriteReplacements(XmlWriter writer)
         {
             writer.WriteStartElement("Replacements");
             foreach (Replacement R in Replacements)
@@ -782,7 +766,7 @@ namespace TVRename
             writer.WriteEndElement(); //Replacements
         }
 
-        private void WriteRegExs([NotNull] XmlWriter writer)
+        private void WriteRegExs(XmlWriter writer)
         {
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in FNPRegexs)
@@ -798,7 +782,7 @@ namespace TVRename
             writer.WriteEndElement(); // FNPRegexs
         }
 
-        private void WriteFilters([NotNull] XmlWriter writer)
+        private void WriteFilters(XmlWriter writer)
         {
             writer.WriteStartElement("ShowFilters");
 
@@ -846,7 +830,7 @@ namespace TVRename
             writer.WriteEndElement(); //SeasonFilters
         }
 
-        private void WriteShowStatusColours([NotNull] XmlWriter writer)
+        private void WriteShowStatusColours(XmlWriter writer)
         {
             writer.WriteStartElement("ShowStatusTVWColors");
             foreach (KeyValuePair<ColouringRule, System.Drawing.Color> e in ShowStatusColors)
@@ -970,10 +954,8 @@ namespace TVRename
             return s.IsValidDirectory();
         }
 
-        [NotNull]
         public static string CompulsoryReplacements() => "*?<>:/\\|\""; // invalid filename characters, must be in the list!
 
-        [NotNull]
         public static List<FilenameProcessorRE> DefaultFNPList()
         {
             // Default list of filename processors
@@ -1028,7 +1010,6 @@ namespace TVRename
             return l;
         }
 
-        [NotNull]
         private static SafeList<Replacement> DefaultListRE() =>
             new()
             {
@@ -1043,14 +1024,12 @@ namespace TVRename
                 new Replacement("\"", "'", false)
             };
 
-        [NotNull]
         private static List<string> DefaultRSSURLList()
         {
             List<string> sl = new();
             return sl;
         }
 
-        [NotNull]
         private static string[] TabNames() => new[] { "MyMovies", "MyShows", "Scan", "WTW" };
 
         private static string TabNameForNumber(int n)
@@ -1074,7 +1053,7 @@ namespace TVRename
             return r < 0 ? 0 : r;
         }
 
-        public bool FileHasUsefulExtension([NotNull] FileInfo file, bool otherExtensionsToo) =>
+        public bool FileHasUsefulExtension(FileInfo file, bool otherExtensionsToo) =>
             FileHasUsefulExtension(file.Name, otherExtensionsToo);
 
         public bool FileHasUsefulExtension(string filename, bool otherExtensionsToo)
@@ -1091,7 +1070,6 @@ namespace TVRename
                        .Any(s => filename.EndsWith(s, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        [NotNull]
         public string FileHasUsefulExtensionDetails(FileInfo file, bool otherExtensionsToo)
         {
             foreach (string s in VideoExtensionsArray
@@ -1116,7 +1094,6 @@ namespace TVRename
             return string.Empty;
         }
 
-        [NotNull]
         public string BTSearchURL(ProcessedEpisode? epi)
         {
             CachedSeriesInfo s = epi?.TheCachedSeries;
@@ -1132,7 +1109,6 @@ namespace TVRename
             return !url.HasValue() ? string.Empty : CustomEpisodeName.NameForNoExt(epi, url, true);
         }
 
-        [NotNull]
         public string BTMovieSearchURL(MovieConfiguration? mov)
         {
             if (mov is null)
@@ -1231,13 +1207,11 @@ namespace TVRename
             // ReSharper disable once InconsistentNaming
             public int EmptyMaxSizeMB = 100;
 
-            [NotNull]
             public IEnumerable<string> EmptyIgnoreExtensionsArray => Convert(EmptyIgnoreExtensionList);
 
-            [NotNull]
             public IEnumerable<string> EmptyIgnoreWordsArray => Convert(EmptyIgnoreWordList);
 
-            public void load([NotNull] XElement xmlSettings)
+            public void load(XElement xmlSettings)
             {
                 DeleteEmpty = xmlSettings.ExtractBool("DeleteEmpty", false);
                 DeleteEmptyIsRecycle = xmlSettings.ExtractBool("DeleteEmptyIsRecycle", true);
@@ -1265,8 +1239,7 @@ namespace TVRename
                 CaseInsensitive = insens;
             }
 
-            [NotNull]
-            public string DoReplace([NotNull] string fn)
+            public string DoReplace(string fn)
             {
                 return CaseInsensitive ? Regex.Replace(fn, Regex.Escape(This), Regex.Escape(That), RegexOptions.IgnoreCase) : fn.Replace(This, That);
             }
@@ -1353,12 +1326,11 @@ namespace TVRename
             }
 
             public readonly string status;
-            [NotNull]
             public override string Text => "Show Status: " + status;
 
             public override bool appliesTo(ProcessedSeason s) => false;
 
-            public override bool appliesTo([NotNull] ShowConfiguration s) => status == s.ShowStatus;
+            public override bool appliesTo(ShowConfiguration s) => status == s.ShowStatus;
         }
 
         public class ShowAirStatusColouringRule : ColouringRule
@@ -1383,12 +1355,11 @@ namespace TVRename
                 };
             }
 
-            [NotNull]
             public override string Text => ToString();
 
             public override bool appliesTo(ProcessedSeason s) => false;
 
-            public override bool appliesTo([NotNull] ShowConfiguration s) => status == s.SeasonsAirStatus;
+            public override bool appliesTo(ShowConfiguration s) => status == s.SeasonsAirStatus;
         }
 
         public class SeasonStatusColouringRule : ColouringRule
@@ -1400,7 +1371,6 @@ namespace TVRename
 
             public readonly ProcessedSeason.SeasonStatus status;
 
-            [NotNull]
             public override string Text => ToString();
 
             public override string ToString()
@@ -1424,13 +1394,13 @@ namespace TVRename
                 }
             }
 
-            public override bool appliesTo([NotNull] ProcessedSeason s) => status == s.Status(s.Show.GetTimeZone());
+            public override bool appliesTo(ProcessedSeason s) => status == s.Status(s.Show.GetTimeZone());
 
             public override bool appliesTo(ShowConfiguration s) => false;
         }
 
         // ReSharper disable once FunctionComplexityOverflow
-        public void load([NotNull] XElement xmlSettings)
+        public void load(XElement xmlSettings)
         {
             FolderMonitorDelaySeconds = xmlSettings.ExtractInt("FolderMonitorDelaySeconds", 1);
             UseColoursOnWtw = xmlSettings.ExtractBool("UseColoursOnWtw", false);
@@ -1675,7 +1645,7 @@ namespace TVRename
             UpdateFiters(xmlSettings);
         }
 
-        private void UpdateAppUpdateSettings([NotNull] XElement xmlSettings)
+        private void UpdateAppUpdateSettings(XElement xmlSettings)
         {
             XElement? subElement = xmlSettings.Element("AppUpdate");
             if (subElement != null)
@@ -1686,7 +1656,7 @@ namespace TVRename
             }
         }
 
-        private void UpdateFiters([NotNull] XElement xmlSettings)
+        private void UpdateFiters(XElement xmlSettings)
         {
             SeasonFilter = new SeasonFilter
             {
@@ -1761,7 +1731,7 @@ namespace TVRename
             }
         }
 
-        private void UpdateShowStatus([NotNull] XElement xmlSettings)
+        private void UpdateShowStatus(XElement xmlSettings)
         {
             ShowStatusColors = new ShowStatusColoringTypeList();
             foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").FirstOrDefault()
@@ -1783,7 +1753,7 @@ namespace TVRename
             }
         }
 
-        private static ColouringRule? ExtractColouringRule([NotNull] XElement rep)
+        private static ColouringRule? ExtractColouringRule(XElement rep)
         {
             string showStatus = rep.Attribute("ShowStatus")?.Value;
             if (showStatus is null)
@@ -1831,7 +1801,7 @@ namespace TVRename
 
         [NotNull]
         // ReSharper disable once AnnotateNotNullParameter
-        private static T ExtractEnum<T>([NotNull] string value)
+        private static T ExtractEnum<T>(string value)
         {
             if (!typeof(T).IsEnum)
             {
@@ -1853,7 +1823,7 @@ namespace TVRename
             throw new ArgumentException();
         }
 
-        private static ShowConfiguration.ShowAirStatus ConvertToShowAirStatus([NotNull] string value)
+        private static ShowConfiguration.ShowAirStatus ConvertToShowAirStatus(string value)
         {
             switch (value)
             {
@@ -1882,7 +1852,7 @@ namespace TVRename
             }
         }
 
-        private static ProcessedSeason.SeasonStatus ConvertToSeasonStatus([NotNull] string value)
+        private static ProcessedSeason.SeasonStatus ConvertToSeasonStatus(string value)
         {
             switch (value)
             {
@@ -1909,7 +1879,7 @@ namespace TVRename
             throw new ArgumentOutOfRangeException();
         }
 
-        private void UpdateRegExs([NotNull] XElement xmlSettings)
+        private void UpdateRegExs(XElement xmlSettings)
         {
             FNPRegexs.Clear();
             foreach (XElement rep in xmlSettings.Descendants("FNPRegexs").FirstOrDefault()?.Descendants("Regex") ??
@@ -1930,7 +1900,7 @@ namespace TVRename
             }
         }
 
-        private void UpdateReplacements([NotNull] XElement xmlSettings)
+        private void UpdateReplacements(XElement xmlSettings)
         {
             Replacements.Clear();
             foreach (XElement rep in xmlSettings.Descendants("Replacements").FirstOrDefault()?.Descendants("Replace") ??
@@ -1948,7 +1918,7 @@ namespace TVRename
             }
         }
 
-        public string DefaultTVShowFolder([NotNull] ShowConfiguration showConfiguration)
+        public string DefaultTVShowFolder(ShowConfiguration showConfiguration)
         {
             string style = DefaultTvShowFolderFormat;
             string folderName = CustomTvShowName.DirectoryNameFor(showConfiguration,style);
@@ -1959,7 +1929,7 @@ namespace TVRename
             return FilenameFriendly(FileHelper.MakeValidPath(baseHint));
         }
 
-        public string DefaultTVShowFolder([CanBeNull] CachedSeriesInfo showConfiguration)
+        public string DefaultTVShowFolder(CachedSeriesInfo? showConfiguration)
         {
             string style = DefaultTvShowFolderFormat;
             string folderName = CustomTvShowName.DirectoryNameFor(showConfiguration,style);

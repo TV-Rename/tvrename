@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -40,7 +39,6 @@ namespace TVRename
         public string? Network;
         public string? FanartUrl;
 
-        [NotNull]
         public IEnumerable<string> Networks => Network!.FromPsv();
 
         public string? Status { get; set; }
@@ -105,7 +103,6 @@ namespace TVRename
             };
         }
 
-        [NotNull]
         private static Locale GetLocale(int? languageId, string? regionCode)
         {
             bool validLanguage = languageId.HasValue && Languages.Instance.GetLanguageFromId(languageId.Value) != null;
@@ -133,7 +130,6 @@ namespace TVRename
 
         public IEnumerable<Actor> GetActors() => Actors;
 
-        [NotNull]
         public IEnumerable<string> GetActorNames() => GetActors().Select(x => x.ActorName);
 
         public void ClearActors()
@@ -148,7 +144,6 @@ namespace TVRename
 
         public IEnumerable<Crew> GetCrew() => Crew;
 
-        [NotNull]
         public IEnumerable<string> GetCrewNames() => GetCrew().Select(x => x.Name);
 
         public void ClearCrew()
@@ -161,7 +156,7 @@ namespace TVRename
             Crew.Add(crew);
         }
 
-        private static float GetSiteRating([NotNull] XElement seriesXml)
+        private static float GetSiteRating(XElement seriesXml)
         {
             string siteRatingString = seriesXml.ExtractStringOrNull("siteRating") ?? seriesXml.ExtractString("SiteRating");
             float.TryParse(siteRatingString,
@@ -171,10 +166,9 @@ namespace TVRename
             return x;
         }
 
-        [NotNull]
         protected string GenerateErrorMessage() => "Error processing data for a show. " + this + "\r\nLanguage: \"" + ActualLocale?.PreferredLanguage?.EnglishName + "\"";
 
-        private void LoadActors([NotNull] XElement seriesXml)
+        private void LoadActors(XElement seriesXml)
         {
             ClearActors();
             foreach (Actor a in seriesXml.Descendants("Actors").Descendants("Actor").Select(actorXml => new Actor(actorXml)))
@@ -183,7 +177,7 @@ namespace TVRename
             }
         }
 
-        private void LoadCrew([NotNull] XElement seriesXml)
+        private void LoadCrew(XElement seriesXml)
         {
             ClearCrew();
             foreach (Crew c in seriesXml.Descendants("Crew").Descendants("CrewMember").Select(crewXml => new Crew(crewXml)))
@@ -192,7 +186,7 @@ namespace TVRename
             }
         }
 
-        private void LoadAliases([NotNull] XElement seriesXml)
+        private void LoadAliases(XElement seriesXml)
         {
             Aliases = new SafeList<string>();
             foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
@@ -201,7 +195,7 @@ namespace TVRename
             }
         }
 
-        private void LoadGenres([NotNull] XElement seriesXml)
+        private void LoadGenres(XElement seriesXml)
         {
             Genres = seriesXml
                 .Descendants("Genres")
@@ -210,7 +204,6 @@ namespace TVRename
                 .ToSafeList();
         }
 
-        [NotNull]
         public string GetImdbNumber() =>
             Imdb is null ? string.Empty
             : Imdb.StartsWith("tt", StringComparison.Ordinal) ? Imdb.RemoveFirst(2)
@@ -235,7 +228,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         protected static string ChooseBetter(string? encumbant, bool betterLanguage, string? newValue)
         {
             if (string.IsNullOrEmpty(encumbant))
@@ -251,7 +243,6 @@ namespace TVRename
             return betterLanguage ? newValue.Trim() : encumbant.Trim();
         }
 
-        [NotNull]
         private static string ChooseBetterStatus(string? encumbant, bool betterLanguage, string? newValue)
         {
             if (string.IsNullOrEmpty(encumbant) || encumbant.Equals("Unknown"))
@@ -305,7 +296,7 @@ namespace TVRename
             }
         }
 
-        protected void WriteCommonFields([NotNull] XmlWriter writer)
+        protected void WriteCommonFields(XmlWriter writer)
         {
             writer.WriteElement("id", TvdbCode);
             writer.WriteElement("mazeid", TvMazeCode);
@@ -371,7 +362,7 @@ namespace TVRename
             writer.WriteEndElement(); //Genres
         }
 
-        protected void LoadCommonXml([NotNull] XElement seriesXml)
+        protected void LoadCommonXml(XElement seriesXml)
         {
             //<Data>
             // <Series>
@@ -437,7 +428,7 @@ namespace TVRename
             }
         }
 
-        protected void MergeCommon([NotNull] CachedMediaInfo o, bool useNewDataOverOld)
+        protected void MergeCommon(CachedMediaInfo o, bool useNewDataOverOld)
         {
             // take the best bits of "o"
             // "o" is always newer/better than us, if there is a choice

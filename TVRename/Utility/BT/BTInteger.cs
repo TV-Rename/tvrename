@@ -1,5 +1,4 @@
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -22,7 +21,7 @@ namespace TVRename
             tn.Add(n);
         }
 
-        public override void Write([NotNull] System.IO.Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
             sw.WriteByte((byte)'i');
             byte[] b = System.Text.Encoding.ASCII.GetBytes(Value.ToString());

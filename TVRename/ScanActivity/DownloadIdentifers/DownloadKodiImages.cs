@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
@@ -23,7 +23,7 @@ namespace TVRename
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
-        public override void NotifyComplete([NotNull] FileInfo file)
+        public override void NotifyComplete(FileInfo file)
         {
             doneThumbnails.Add(file.FullName);
             base.NotifyComplete(file);
@@ -189,7 +189,6 @@ namespace TVRename
             return child.Parent.FullName;
         }
 
-        [NotNull]
         private static string SeasonLabel(int snum)
         {
             return snum switch
@@ -221,7 +220,7 @@ namespace TVRename
             return base.ProcessEpisode(episode, file, forceRefresh);
         }
 
-        private ActionDownloadImage? DoEpisode(ShowConfiguration si, [NotNull] Episode ep, FileInfo filo, string extension, bool forceRefresh)
+        private ActionDownloadImage? DoEpisode(ShowConfiguration si, Episode ep, FileInfo filo, string extension, bool forceRefresh)
         {
             string ban = ep.Filename;
             if (string.IsNullOrEmpty(ban))

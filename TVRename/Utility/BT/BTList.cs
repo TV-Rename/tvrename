@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -31,7 +30,7 @@ namespace TVRename
             }
         }
 
-        public override void Write([NotNull] System.IO.Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
             sw.WriteByte((byte)'l');
             foreach (BTItem i in Items)

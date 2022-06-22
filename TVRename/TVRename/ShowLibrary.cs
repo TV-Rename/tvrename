@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +13,10 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        [NotNull]
         public IEnumerable<ShowConfiguration> Shows => this;
 
-        [NotNull]
         public IEnumerable<string> ShowStatuses => Shows.Select(item => item.ShowStatus).Distinct().OrderBy(s => s);
 
-        [NotNull]
         public IEnumerable<string> SeasonWords()
         {
             //See https://github.com/TV-Rename/tvrename/issues/241 for background
@@ -80,7 +76,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public IEnumerable<string> GetSeasonPatterns()
         {
             List<string> results = new() { TVSettings.Instance.SeasonFolderFormat };
@@ -92,7 +87,6 @@ namespace TVRename
             return results;
         }
 
-        [NotNull]
         public IEnumerable<string> GetGenres()
         {
             List<string> allGenres = new();
@@ -106,7 +100,6 @@ namespace TVRename
             return distinctGenres;
         }
 
-        [NotNull]
         public IEnumerable<string> GetStatuses()
         {
             return Shows
@@ -116,7 +109,6 @@ namespace TVRename
                 .OrderBy(s => s);
         }
 
-        [NotNull]
         public IEnumerable<string> GetTypes()
         {
             return Shows
@@ -126,7 +118,6 @@ namespace TVRename
                 .OrderBy(s => s);
         }
 
-        [NotNull]
         public IEnumerable<string> GetNetworks()
         {
             return Shows
@@ -137,7 +128,6 @@ namespace TVRename
                 .OrderBy(s => s);
         }
 
-        [NotNull]
         public IEnumerable<string> GetContentRatings()
         {
             return Shows.Select(si => si.CachedShow)
@@ -147,7 +137,6 @@ namespace TVRename
                 .OrderBy(s => s);
         }
 
-        [NotNull]
         public List<ShowConfiguration> GetSortedShowItems()
         {
             List<ShowConfiguration> returnList;
@@ -192,7 +181,7 @@ namespace TVRename
             }
         }
 
-        public static bool GenerateEpisodeDict([NotNull] ShowConfiguration si)
+        public static bool GenerateEpisodeDict(ShowConfiguration si)
         {
             // copy data from tvdb
             // process as per rules
@@ -233,7 +222,7 @@ namespace TVRename
             return r;
         }
 
-        private static void AddOverallCount([NotNull] ShowConfiguration si)
+        private static void AddOverallCount(ShowConfiguration si)
         {
             // now, go through and number them all sequentially
             List<int> theKeys = si.AppropriateSeasons().Keys.ToList();
@@ -255,7 +244,7 @@ namespace TVRename
             }
         }
 
-        public static List<ProcessedEpisode>? GenerateEpisodes([NotNull] ShowConfiguration si, int snum, bool applyRules)
+        public static List<ProcessedEpisode>? GenerateEpisodes(ShowConfiguration si, int snum, bool applyRules)
         {
             if (!si.AppropriateSeasons().ContainsKey(snum))
             {
@@ -311,7 +300,7 @@ namespace TVRename
             return eis;
         }
 
-        private static void AutoMerge([NotNull] List<ProcessedEpisode> eis, ShowConfiguration si)
+        private static void AutoMerge(List<ProcessedEpisode> eis, ShowConfiguration si)
         {
             for (int i = 1; i < eis.Count; i++)
             {
@@ -323,7 +312,7 @@ namespace TVRename
             }
         }
 
-        private static void MergeSpecialsIn([NotNull] ShowConfiguration si, int snum, [NotNull] List<ProcessedEpisode> eis)
+        private static void MergeSpecialsIn(ShowConfiguration si, int snum, List<ProcessedEpisode> eis)
         {
             foreach (Episode ep in si.AppropriateSeasons()[0].Episodes.Values)
             {
@@ -339,7 +328,7 @@ namespace TVRename
             }
         }
 
-        private static void MergeEpisode(ShowConfiguration si, int snum, [NotNull] Episode ep, IList<ProcessedEpisode> eis)
+        private static void MergeEpisode(ShowConfiguration si, int snum, Episode ep, IList<ProcessedEpisode> eis)
         {
             if (!ep.AirsBeforeSeason.HasValue)
             {
@@ -375,7 +364,7 @@ namespace TVRename
             }
         }
 
-        public static void ApplyRules([NotNull] List<ProcessedEpisode> eis, [NotNull] IEnumerable<ShowRule> rules, ShowConfiguration show)
+        public static void ApplyRules(List<ProcessedEpisode> eis, IEnumerable<ShowRule> rules, ShowConfiguration show)
         {
             foreach (ShowRule sr in rules)
             {
@@ -385,7 +374,7 @@ namespace TVRename
             RemoveIgnoredEpisodes(eis);
         }
 
-        private static void ApplyRule([NotNull] List<ProcessedEpisode> episodes, ShowConfiguration show, [NotNull] ShowRule sr)
+        private static void ApplyRule(List<ProcessedEpisode> episodes, ShowConfiguration show, ShowRule sr)
         {
             try
             {
@@ -440,7 +429,7 @@ namespace TVRename
             }
         }
 
-        private static void RemoveIgnoredEpisodes([NotNull] IList<ProcessedEpisode> eis)
+        private static void RemoveIgnoredEpisodes(IList<ProcessedEpisode> eis)
         {
             // now, go through and remove the ignored ones (but don't renumber!!)
             for (int i = eis.Count - 1; i >= 0; i--)
@@ -452,7 +441,7 @@ namespace TVRename
             }
         }
 
-        private static int FindIndex([NotNull] IReadOnlyList<ProcessedEpisode> eis, int episodeNumber)
+        private static int FindIndex(IReadOnlyList<ProcessedEpisode> eis, int episodeNumber)
         {
             for (int i = 0; i < eis.Count; i++)
             {
@@ -464,7 +453,7 @@ namespace TVRename
             return -1;
         }
 
-        private static void IgnoreEpisodes([NotNull] IReadOnlyList<ProcessedEpisode> eis, int fromIndex, int toIndex)
+        private static void IgnoreEpisodes(IReadOnlyList<ProcessedEpisode> eis, int fromIndex, int toIndex)
         {
             int ec = eis.Count;
 
@@ -487,7 +476,7 @@ namespace TVRename
             }
         }
 
-        private static void RemoveEpisode([NotNull] List<ProcessedEpisode> eis, int fromIndex, int toIndex)
+        private static void RemoveEpisode(List<ProcessedEpisode> eis, int fromIndex, int toIndex)
         {
             int ec = eis.Count;
             if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec))
@@ -507,7 +496,7 @@ namespace TVRename
 
         private static bool ValidIndex(int index, int maxIndex) => index < maxIndex && index >= 0;
 
-        private static void RenameEpisode([NotNull] IReadOnlyList<ProcessedEpisode> eis, int index, string txt)
+        private static void RenameEpisode(IReadOnlyList<ProcessedEpisode> eis, int index, string txt)
         {
             int ec = eis.Count;
             if (ValidIndex(index, ec))
@@ -516,7 +505,7 @@ namespace TVRename
             }
         }
 
-        private static void SplitEpisode([NotNull] IList<ProcessedEpisode> eis, ShowConfiguration si, int numberOfNewParts, int index)
+        private static void SplitEpisode(IList<ProcessedEpisode> eis, ShowConfiguration si, int numberOfNewParts, int index)
         {
             int ec = eis.Count;
             // split one episode into a multi-parter
@@ -543,7 +532,7 @@ namespace TVRename
             }
         }
 
-        private static void MergeEpisodes([NotNull] List<ProcessedEpisode> eis, ShowConfiguration si, RuleAction action, int fromIndex, int toIndex, string? newName)
+        private static void MergeEpisodes(List<ProcessedEpisode> eis, ShowConfiguration si, RuleAction action, int fromIndex, int toIndex, string? newName)
         {
             int ec = eis.Count;
             if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec) && fromIndex < toIndex)
@@ -585,7 +574,7 @@ namespace TVRename
             }
         }
 
-        private static void InsertEpisode([NotNull] IList<ProcessedEpisode> eis, ShowConfiguration si, int index, string txt, [NotNull] ShowRule sr)
+        private static void InsertEpisode(IList<ProcessedEpisode> eis, ShowConfiguration si, int index, string txt, ShowRule sr)
         {
             // this only applies for inserting an episode, at the end of the list
             if (sr.First == eis[eis.Count - 1].AppropriateEpNum + 1) // after the last episode
@@ -613,7 +602,7 @@ namespace TVRename
             }
         }
 
-        private static void SwapEpisode([NotNull] List<ProcessedEpisode> eis, int n1, int n2)
+        private static void SwapEpisode(List<ProcessedEpisode> eis, int n1, int n2)
         {
             int ec = eis.Count;
             if (ValidIndex(n1, ec) && ValidIndex(n2, ec))
@@ -624,7 +613,7 @@ namespace TVRename
             }
         }
 
-        public static string GetBestNameFor([NotNull] List<string> episodeNames, string defaultName)
+        public static string GetBestNameFor(List<string> episodeNames, string defaultName)
         {
             string root = StringExtensions.GetCommonStartString(episodeNames);
             int shortestEpisodeName = episodeNames.Min(x => x.Length);
@@ -644,7 +633,7 @@ namespace TVRename
             return root.Trim().TrimEnd(wordsToTrim).Trim().TrimEnd(charsToTrim).Trim();
         }
 
-        private static void Renumber([NotNull] IReadOnlyList<ProcessedEpisode> eis)
+        private static void Renumber(IReadOnlyList<ProcessedEpisode> eis)
         {
             if (eis.Count == 0)
             {
@@ -671,17 +660,15 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         internal IEnumerable<ShowConfiguration> GetRecentShows() => GetSortedShowItems().Where(IsRecent);
 
-        private static bool IsRecent([NotNull] ShowConfiguration si)
+        private static bool IsRecent(ShowConfiguration si)
         {
             // only scan "recent" shows
             int days = TVSettings.Instance.WTWRecentDays;
             return si.ActiveSeasons.Clone().Select(pair => pair.Value).SelectMany(eis => eis).Any(ei => ei.WithinDays(days));
         }
 
-        [NotNull]
         public List<ProcessedEpisode> NextNShows(int nShows, int nDaysPast, int nDaysFuture)
         {
             DateTime notBefore = DateTime.Now.AddDays(-nDaysPast);
@@ -779,7 +766,6 @@ namespace TVRename
             return nextAfterThat;
         }
 
-        [NotNull]
         public IEnumerable<ProcessedEpisode> GetRecentAndFutureEps(int days)
         {
             List<ProcessedEpisode> returnList = new();
@@ -823,7 +809,7 @@ namespace TVRename
             return returnList;
         }
 
-        public void LoadFromXml([NotNull] XElement xmlSettings)
+        public void LoadFromXml(XElement xmlSettings)
         {
             foreach (ShowConfiguration si in xmlSettings.Descendants("ShowItem").Select(showSettings => new ShowConfiguration(showSettings)))
             {
@@ -842,7 +828,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public IEnumerable<ProcessedEpisode> RecentEpisodes(int days)
         {
             List<ProcessedEpisode> episodes = new();
@@ -865,6 +850,6 @@ namespace TVRename
             return episodes;
         }
 
-        public ShowConfiguration? GetShowItem([NotNull] ISeriesSpecifier ai) => GetShowItem(ai.Id(), ai.Provider);
+        public ShowConfiguration? GetShowItem(ISeriesSpecifier ai) => GetShowItem(ai.Id(), ai.Provider);
     }
 }

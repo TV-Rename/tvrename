@@ -3,19 +3,16 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     internal static class LinqHelper
     {
-        [NotNull]
-        public static List<T> AsList<T>([CanBeNull] this T item) => new() { item };
+        public static List<T> AsList<T>(this T? item) => new() { item };
 
-        [NotNull]
-        public static Task ParallelForEachAsync<T>([NotNull] this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP = 4)
+        public static Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP = 4)
         {
-            async Task AwaitPartition([NotNull] IEnumerator<T> partition)
+            async Task AwaitPartition(IEnumerator<T> partition)
             {
                 using (partition)
                 {
@@ -35,7 +32,7 @@ namespace TVRename
                     .Select(AwaitPartition));
         }
 
-        public static bool HasAny<T>([CanBeNull] this IEnumerable<T> source)
+        public static bool HasAny<T>(this IEnumerable<T>? source)
             => source is not null && source.Any();
     }
 }

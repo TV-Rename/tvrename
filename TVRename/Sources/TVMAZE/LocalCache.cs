@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -28,7 +27,6 @@ namespace TVRename.TVmaze
         private static volatile LocalCache? InternalInstance;
         private static readonly object SyncRoot = new();
 
-        [NotNull]
         public static LocalCache Instance
         {
             get
@@ -48,11 +46,10 @@ namespace TVRename.TVmaze
             }
         }
 
-        public override int PrimaryKey([NotNull] ISeriesSpecifier ss) => ss.TvMazeId;
+        public override int PrimaryKey(ISeriesSpecifier ss) => ss.TvMazeId;
 
-        [NotNull]
         public override string CacheSourceName() => "TVMaze";
-        public void Setup(FileInfo? loadFrom, [NotNull] FileInfo cache, bool showIssues)
+        public void Setup(FileInfo? loadFrom, FileInfo cache, bool showIssues)
         {
             System.Diagnostics.Debug.Assert(cache != null);
             CacheFile = cache;
@@ -72,7 +69,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public override bool EnsureUpdated([NotNull] ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
+        public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
             if (s.Provider != TVDoc.ProviderType.TVmaze)
             {
@@ -119,7 +116,7 @@ namespace TVRename.TVmaze
             return true;
         }
 
-        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, [NotNull] IEnumerable<ISeriesSpecifier> ss)
+        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<ISeriesSpecifier> ss)
         {
             Say("Validating TVmaze cache");
             foreach (ISeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvMazeId)))
@@ -238,7 +235,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public void AddOrUpdateEpisode([NotNull] Episode e)
+        public void AddOrUpdateEpisode(Episode e)
         {
             lock (SERIES_LOCK)
             {
@@ -266,7 +263,7 @@ namespace TVRename.TVmaze
             LOGGER.Info("Forgot all TVMaze shows");
         }
 
-        public void AddOrUpdateEpisode([NotNull] Episode e, CachedSeriesInfo si)
+        public void AddOrUpdateEpisode(Episode e, CachedSeriesInfo si)
         {
             lock (SERIES_LOCK)
             {

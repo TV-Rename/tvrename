@@ -9,7 +9,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -20,7 +19,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     public class ActionMede8erXML : ActionWriteMetadata
     {
-        public ActionMede8erXML(FileInfo nfo, [NotNull] ProcessedEpisode pe) : base(nfo, pe.Show)
+        public ActionMede8erXML(FileInfo nfo, ProcessedEpisode pe) : base(nfo, pe.Show)
         {
             Episode = pe;
         }
@@ -32,10 +31,8 @@ namespace TVRename
 
         #region Action Members
 
-        [NotNull]
         public override string Name => "Write Mede8er Metadata";
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try
@@ -159,7 +156,7 @@ namespace TVRename
             }
         }
 
-        private static int GetSiteRating([NotNull] Episode ep)
+        private static int GetSiteRating(Episode ep)
         {
             if (!ep.EpisodeRating.HasValue())
             {

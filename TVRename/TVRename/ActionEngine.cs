@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using JetBrains.Annotations;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -269,7 +269,7 @@ namespace TVRename
             return allDone;
         }
 
-        private void StartThread([NotNull] ProcessActionInfo pai)
+        private void StartThread(ProcessActionInfo pai)
         {
             try
             {
@@ -327,8 +327,7 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private static ActionQueue[] ActionProcessorMakeQueues([NotNull] ItemList theList)
+        private static ActionQueue[] ActionProcessorMakeQueues(ItemList theList)
         {
             // Take a single list
             // Return an array of "ActionQueue" items.
@@ -359,7 +358,7 @@ namespace TVRename
             return queues;
         }
 
-        private static int GetQueueId([NotNull] Action action)
+        private static int GetQueueId(Action action)
         {
             switch (action)
             {

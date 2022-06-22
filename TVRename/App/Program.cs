@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -30,7 +29,7 @@ namespace TVRename.App
         /// </summary>
         /// <param name="args">The command line arguments.</param>
         [STAThread]
-        private static void Main([NotNull] string[] args)
+        private static void Main(string[] args)
         {
             Logger.Info($"TV Rename {Helpers.DisplayVersion} started with args: {string.Join(" ", args)}");
             Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
@@ -133,7 +132,7 @@ namespace TVRename.App
             Logger.Info("Application exiting");
         }
 
-        private static Assembly? OnAssemblyResolve(object sender, [NotNull] ResolveEventArgs args)
+        private static Assembly? OnAssemblyResolve(object sender, ResolveEventArgs args)
         {
             if (args.Name.StartsWith("CefSharp", StringComparison.Ordinal))
             {

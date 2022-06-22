@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 
@@ -21,11 +20,11 @@ namespace TVRename
         private readonly Dictionary<string, FileInfo[]> cache = new();
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public IEnumerable<FileInfo> GetFilesIncludeSubDirs([NotNull] string folder) => Get(folder, true);
+        public IEnumerable<FileInfo> GetFilesIncludeSubDirs(string folder) => Get(folder, true);
 
-        public FileInfo[] GetFiles([NotNull] string folder) => Get(folder, false);
+        public FileInfo[] GetFiles(string folder) => Get(folder, false);
 
-        private FileInfo[] Get([NotNull] string folder, bool includeSubs)
+        private FileInfo[] Get(string folder, bool includeSubs)
         {
             if (cache.ContainsKey(folder))
             {

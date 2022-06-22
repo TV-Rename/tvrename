@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using SourceGrid;
 using System;
 using System.Collections.Generic;
@@ -150,7 +149,7 @@ namespace TVRename
             }
         }
 
-        private void FillGrid([NotNull] IReadOnlyCollection<TVSettings.FilenameProcessorRE> list)
+        private void FillGrid(IReadOnlyCollection<TVSettings.FilenameProcessorRE> list)
         {
             while (Grid1.Rows.Count > 1) // leave header row
             {
@@ -322,7 +321,7 @@ namespace TVRename
             UpdatePreview(rel);
         }
 
-        private void UpdatePreview([NotNull] List<TVSettings.FilenameProcessorRE> rel)
+        private void UpdatePreview(List<TVSettings.FilenameProcessorRE> rel)
         {
             lvPreview.BeginUpdate();
 
@@ -389,7 +388,6 @@ namespace TVRename
             lvPreview.Items.Add(lvi);
         }
 
-        [NotNull]
         private IEnumerable<TorrentEntry> GetTorrentDownloads()
         {
             if (torrentCache is null)

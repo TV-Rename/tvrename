@@ -1,11 +1,10 @@
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     public class MovieImages : SafeList<MovieImage>
     {
-        public void MergeImages([NotNull] MovieImages images)
+        public void MergeImages(MovieImages images)
         {
             if (!this.Any())
             {

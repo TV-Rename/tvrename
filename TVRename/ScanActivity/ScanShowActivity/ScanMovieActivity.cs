@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     public abstract class ScanMovieActivity : ScanMediaActivity
@@ -15,7 +13,7 @@ namespace TVRename
             }
         }
 
-        protected ScanMovieActivity([NotNull] TVDoc doc) : base(doc)
+        protected ScanMovieActivity(TVDoc doc) : base(doc)
         {
         }
     }

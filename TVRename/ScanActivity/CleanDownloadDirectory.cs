@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +27,6 @@ namespace TVRename
                                          TVSettings.Instance.ReplaceMoviesWithBetterQuality ||
                                          TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders;
 
-        [NotNull]
         protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
         protected override void DoCheck(SetProgressDelegate progress)
@@ -156,9 +154,8 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private static Action SetupDirectoryRemoval([NotNull] DirectoryInfo di,
-            [NotNull] IReadOnlyList<ShowConfiguration> matchingShows)
+        private static Action SetupDirectoryRemoval(DirectoryInfo di,
+            IReadOnlyList<ShowConfiguration> matchingShows)
         {
             ShowConfiguration si = matchingShows[0]; //Choose the first cachedSeries
             FinderHelper.FindSeasEp(di, out int seasF, out int epF, si, out TVSettings.FilenameProcessorRE _);
@@ -175,9 +172,8 @@ namespace TVRename
             return new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup);
         }
 
-        [NotNull]
-        private static Action SetupDirectoryRemoval([NotNull] DirectoryInfo di,
-            [NotNull] IReadOnlyList<MovieConfiguration> matchingMovies)
+        private static Action SetupDirectoryRemoval(DirectoryInfo di,
+            IReadOnlyList<MovieConfiguration> matchingMovies)
         {
             MovieConfiguration si = matchingMovies[0]; //Choose the first cachedSeries
             LOGGER.Info($"Removing {di.FullName} as it matches {si.ShowName} and no files are needed");
@@ -292,7 +288,7 @@ namespace TVRename
             }
         }
 
-        private (bool?, ProcessedEpisode?) CanFileBeDeletedForShow(bool unattended, FileInfo fi, IDialogParent owner, [NotNull] ShowConfiguration si,
+        private (bool?, ProcessedEpisode?) CanFileBeDeletedForShow(bool unattended, FileInfo fi, IDialogParent owner, ShowConfiguration si,
             List<ShowConfiguration> matchingShows)
         {
             FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE re);
@@ -341,7 +337,7 @@ namespace TVRename
             }
         }
 
-        private bool? ReviewFileAgainstExistingMovies(bool unattended, FileInfo fi, IDialogParent owner, [NotNull] List<MovieConfiguration> matchingMovies)
+        private bool? ReviewFileAgainstExistingMovies(bool unattended, FileInfo fi, IDialogParent owner, List<MovieConfiguration> matchingMovies)
         {
             bool? fileCanBeDeleted = null;
 
@@ -369,7 +365,7 @@ namespace TVRename
             return fileCanBeDeleted;
         }
 
-        private void RemoveFileAndReport(FileInfo fi, [NotNull] List<MovieConfiguration> matchingMovies, [NotNull] List<ShowConfiguration> matchingShows,
+        private void RemoveFileAndReport(FileInfo fi, List<MovieConfiguration> matchingMovies, List<ShowConfiguration> matchingShows,
             ProcessedEpisode? firstMatchingPep)
         {
             if (matchingMovies.Any())
@@ -392,7 +388,7 @@ namespace TVRename
             }
         }
 
-        private static void LogError([NotNull] FileInfo fi, int seasF, int epF, TVSettings.FilenameProcessorRE? re, [NotNull] ShowConfiguration si, string typeMissing)
+        private static void LogError(FileInfo fi, int seasF, int epF, TVSettings.FilenameProcessorRE? re, ShowConfiguration si, string typeMissing)
         {
             if (seasF == -1)
             {
@@ -406,7 +402,7 @@ namespace TVRename
             }
         }
 
-        private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] IReadOnlyCollection<ShowConfiguration> matchingShows, [NotNull] FileInfo existingFile, [NotNull] ProcessedEpisode pep, IDialogParent owner)
+        private bool? ReviewFile(bool unattended, FileInfo newFile, IReadOnlyCollection<ShowConfiguration> matchingShows, FileInfo existingFile, ProcessedEpisode pep, IDialogParent owner)
         {
             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
 
@@ -475,7 +471,7 @@ namespace TVRename
             return null;
         }
 
-        private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] IReadOnlyCollection<MovieConfiguration> matchingShows, [NotNull] FileInfo existingFile, [NotNull] MovieConfiguration pep, IDialogParent owner)
+        private bool? ReviewFile(bool unattended, FileInfo newFile, IReadOnlyCollection<MovieConfiguration> matchingShows, FileInfo existingFile, MovieConfiguration pep, IDialogParent owner)
         {
             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
 
@@ -557,7 +553,7 @@ namespace TVRename
             };
         }
 
-        private void CopyFutureDatedFile(FileInfo fi, [NotNull] ProcessedEpisode pep, TVDoc d)
+        private void CopyFutureDatedFile(FileInfo fi, ProcessedEpisode pep, TVDoc d)
         {
             ShowConfiguration si = pep.Show;
             int seasF = pep.AppropriateSeasonNumber;

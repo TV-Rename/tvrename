@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 
 namespace TVRename
@@ -35,12 +34,10 @@ namespace TVRename
         public override string ProgressText => toRemove.Name;
         public override string Produces => toRemove.FullName;
 
-        [NotNull]
         public override IgnoreItem Ignore => new(toRemove.FullName);
 
         public override string TargetFolder => toRemove.DirectoryName;
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try
@@ -77,6 +74,6 @@ namespace TVRename
             return string.Compare(toRemove.FullName, cmr.toRemove.FullName, StringComparison.Ordinal);
         }
 
-        public bool SameSource([NotNull] ActionDeleteFile o) => FileHelper.Same(toRemove, o.toRemove);
+        public bool SameSource(ActionDeleteFile o) => FileHelper.Same(toRemove, o.toRemove);
     }
 }

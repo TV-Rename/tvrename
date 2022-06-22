@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,7 +27,7 @@ namespace TVRename
             mDoc = doc;
         }
 
-        private DirectoryInfo[]? GetValidDirectories([NotNull] DirectoryInfo di)
+        private DirectoryInfo[]? GetValidDirectories(DirectoryInfo di)
         {
             try
             {
@@ -51,7 +50,7 @@ namespace TVRename
             return null;
         }
 
-        public (bool finished, DirectoryInfo[]? subDirs) CheckFolderForMovies([NotNull] DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
+        public (bool finished, DirectoryInfo[]? subDirs) CheckFolderForMovies(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
         {
             CurrentPhaseDirectory++;
             try
@@ -118,7 +117,7 @@ namespace TVRename
             }
         }
 
-        private static bool RejectFolderIfIncludedInShow(bool fullLogging, [NotNull] MovieConfiguration si, string theFolder)
+        private static bool RejectFolderIfIncludedInShow(bool fullLogging, MovieConfiguration si, string theFolder)
         {
             foreach (string dir in si.Locations)
             {
@@ -137,13 +136,12 @@ namespace TVRename
             return false;
         }
 
-        [NotNull]
-        private static List<FileInfo> FilmFiles([NotNull] DirectoryInfo directory)
+        private static List<FileInfo> FilmFiles(DirectoryInfo directory)
         {
             return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Where(file => file.IsMovieFile()).ToList();
         }
 
-        private void CheckFolderForShows([NotNull] DirectoryInfo di, CancellationToken token, [NotNull] BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox)
+        private void CheckFolderForShows(DirectoryInfo di, CancellationToken token, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox)
         {
             int percentComplete = (int)(100.0 / CurrentPhaseTotal * (1.0 * CurrentPhase + 1.0 * CurrentPhaseDirectory / CurrentPhaseTotalDirectory));
             if (percentComplete > 100)
@@ -201,8 +199,7 @@ namespace TVRename
             AddItems.Clear();
         }
 
-        [NotNull]
-        private List<MovieConfiguration> AddToLibrary([NotNull] IEnumerable<PossibleNewMovie> ais)
+        private List<MovieConfiguration> AddToLibrary(IEnumerable<PossibleNewMovie> ais)
         {
             List<MovieConfiguration> movies = new();
             foreach (PossibleNewMovie ai in ais)
@@ -260,8 +257,7 @@ namespace TVRename
             return movies;
         }
 
-        [NotNull]
-        private MovieConfiguration AddNewMovieToLibrary([NotNull] PossibleNewMovie ai, bool isInLibraryFolderFileFinder, string? matchingRoot)
+        private MovieConfiguration AddNewMovieToLibrary(PossibleNewMovie ai, bool isInLibraryFolderFileFinder, string? matchingRoot)
         {
             // need to add a new showitem
             MovieConfiguration found = new(ai);

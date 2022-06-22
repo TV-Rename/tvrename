@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,8 +35,7 @@ namespace TVRename
 
         public bool IsReadOnly => false;
 
-        [CanBeNull]
-        public T this[int index]
+        public T? this[int index]
         {
             get
             {
@@ -80,7 +78,7 @@ namespace TVRename
             }
         }
 
-        public void RemoveAll([NotNull] Predicate<T> item)
+        public void RemoveAll(Predicate<T> item)
         {
             lock (@lock)
             {
@@ -96,7 +94,7 @@ namespace TVRename
             }
         }
 
-        public void AddRange([NotNull] IEnumerable<T> item)
+        public void AddRange(IEnumerable<T> item)
         {
             lock (@lock)
             {
@@ -176,7 +174,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public ReadOnlyCollection<T> AsReadOnly()
         {
             lock (@lock)
@@ -185,7 +182,7 @@ namespace TVRename
             }
         }
 
-        public void ForEach([NotNull] Action<T> action)
+        public void ForEach(Action<T> action)
         {
             lock (@lock)
             {
@@ -196,7 +193,7 @@ namespace TVRename
             }
         }
 
-        public bool Exists([NotNull] Predicate<T> match)
+        public bool Exists(Predicate<T> match)
         {
             lock (@lock)
             {

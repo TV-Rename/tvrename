@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     public interface ISeriesSpecifier
@@ -12,7 +10,6 @@ namespace TVRename
         int TmdbId { get; }
         string? ImdbCode { get; }
 
-        [NotNull]
         Locale TargetLocale { get; }
         ProcessedSeason.SeasonType SeasonOrder { get; }
 

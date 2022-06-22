@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,9 +33,9 @@ namespace TVRename
             ShowYear.HasValue() ||
             Genres.Any();
 
-        public bool Filter([NotNull] MovieConfiguration show)
+        public bool Filter(MovieConfiguration show)
         {
-            bool IsNetworkOk([NotNull] MovieConfiguration showItem)
+            bool IsNetworkOk(MovieConfiguration showItem)
             {
                 List<string>? seriesInfoNetwork = showItem.CachedMovie?.Networks.ToList();
                 if (seriesInfoNetwork is null || !seriesInfoNetwork.Any())
@@ -49,7 +48,7 @@ namespace TVRename
                     : !seriesInfoNetwork.Contains(ShowNetwork);
             }
 
-            bool IsRatingOk([NotNull] MovieConfiguration showItem)
+            bool IsRatingOk(MovieConfiguration showItem)
             {
                 string? seriesInfoContentRating = showItem.CachedMovie?.ContentRating;
                 if (seriesInfoContentRating is null)
@@ -62,13 +61,13 @@ namespace TVRename
                     : !seriesInfoContentRating.Equals(ShowRating);
             }
 
-            bool IsStatusOk([NotNull] MovieConfiguration showItem)
+            bool IsStatusOk(MovieConfiguration showItem)
             {
                 return ShowStatusInclude
                     ? showItem.CachedMovie?.Status?.Equals(ShowStatus) ?? true
                     : !showItem.CachedMovie?.Status?.Equals(ShowStatus) ?? true;
             }
-            bool IsYearOk([NotNull] MovieConfiguration showItem)
+            bool IsYearOk(MovieConfiguration showItem)
             {
                 return ShowYearInclude
                     ? showItem.CachedMovie?.Year?.ToString().Equals(ShowYear) ?? true
@@ -97,7 +96,7 @@ namespace TVRename
             return isNameOk && isStatusOk && isNetworkOk && isRatingOk && isYearOk && (areGenresIgnored || doAnyGenresMatch);
         }
 
-        private bool FindMatchingGenres([NotNull] MovieConfiguration show)
+        private bool FindMatchingGenres(MovieConfiguration show)
         {
             return show.Genres.Any(showGenre => Genres.Contains(showGenre));
         }

@@ -1,13 +1,12 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     public static class UiExtensions
     {
-        public static void ScaleListViewColumns([NotNull] this ListView listview, SizeF factor)
+        public static void ScaleListViewColumns(this ListView listview, SizeF factor)
         {
             foreach (ColumnHeader column in listview.Columns)
             {
@@ -15,8 +14,7 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        public static string ToUiVersion([NotNull] this string source)
+        public static string ToUiVersion(this string source)
             => source.Replace("&", "&&");
     }
 }

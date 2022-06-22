@@ -1,6 +1,5 @@
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -34,7 +33,6 @@ namespace TVRename
                    && Directory.EnumerateFileSystemEntries(path).Any();
         }
 
-        [NotNull]
         public override string Explain() => $"{Movie.Name} has manual folders set, these folders are missing or empty: {Movie.ManualLocations.Where(DirectoryIsMissingEmpty).ToCsv()}";
 
         protected override void FixInternal()
@@ -68,7 +66,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         protected override string MovieCheckName => "Movie has missing or empty manual folder";
     }
 }

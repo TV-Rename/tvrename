@@ -8,7 +8,6 @@
 
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -109,7 +108,7 @@ namespace TVRename
             DeleteSelectedFolder(lstFMMonitorFolders, TVSettings.Instance.LibraryFolders);
         }
 
-        private void DeleteSelectedFolder([NotNull] ListBox lb, SafeList<string> folders)
+        private void DeleteSelectedFolder(ListBox lb, SafeList<string> folders)
         {
             for (int i = lb.SelectedIndices.Count - 1; i >= 0; i--)
             {
@@ -238,22 +237,22 @@ namespace TVRename
             FmpPercent = percent;
         }
 
-        private void lstFMMonitorFolders_DragOver(object _, [NotNull] DragEventArgs e)
+        private void lstFMMonitorFolders_DragOver(object _, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lstFMIgnoreFolders_DragOver(object _, [NotNull] DragEventArgs e)
+        private void lstFMIgnoreFolders_DragOver(object _, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lstFMMonitorFolders_DragDrop(object _, [NotNull] DragEventArgs e)
+        private void lstFMMonitorFolders_DragDrop(object _, DragEventArgs e)
         {
             AddDraggedFiles(e, TVSettings.Instance.LibraryFolders);
         }
 
-        private void lvFMNewShows_DragDrop(object _, [NotNull] DragEventArgs e)
+        private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
@@ -274,12 +273,12 @@ namespace TVRename
             }
         }
 
-        private void lstFMIgnoreFolders_DragDrop(object _, [NotNull] DragEventArgs e)
+        private void lstFMIgnoreFolders_DragDrop(object _, DragEventArgs e)
         {
             AddDraggedFiles(e, TVSettings.Instance.IgnoreFolders);
         }
 
-        private void AddDraggedFiles([NotNull] DragEventArgs e, SafeList<string> strings)
+        private void AddDraggedFiles(DragEventArgs e, SafeList<string> strings)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
@@ -301,7 +300,7 @@ namespace TVRename
             FillFolderStringLists();
         }
 
-        private void lstFMMonitorFolders_KeyDown(object _, [NotNull] KeyEventArgs e)
+        private void lstFMMonitorFolders_KeyDown(object _, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -309,7 +308,7 @@ namespace TVRename
             }
         }
 
-        private void lstFMIgnoreFolders_KeyDown(object _, [NotNull] KeyEventArgs e)
+        private void lstFMIgnoreFolders_KeyDown(object _, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -410,12 +409,12 @@ namespace TVRename
             FillFolderStringLists();
         }
 
-        private void lvFMNewShows_DragOver(object _, [NotNull] DragEventArgs e)
+        private void lvFMNewShows_DragOver(object _, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lvFMNewShows_KeyDown(object sender, [NotNull] KeyEventArgs e)
+        private void lvFMNewShows_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -473,7 +472,7 @@ namespace TVRename
             lvFMNewShows.Update();
         }
 
-        private static void UpdateResultEntry([NotNull] PossibleNewTvShow ai, [NotNull] ListViewItem lvi)
+        private static void UpdateResultEntry(PossibleNewTvShow ai, ListViewItem lvi)
         {
             lvi.SubItems.Clear();
             lvi.Text = ai.Folder.FullName;
@@ -587,7 +586,7 @@ namespace TVRename
             }
         }
 
-        private void EditEntry([NotNull] PossibleNewTvShow fme)
+        private void EditEntry(PossibleNewTvShow fme)
         {
             BulkAddEditShow ed = new(fme);
             if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)

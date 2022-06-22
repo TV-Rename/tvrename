@@ -7,7 +7,6 @@
 //
 
 using System;
-using JetBrains.Annotations;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -40,7 +39,7 @@ namespace TVRename
             }
         }
 
-        public Actor([NotNull] XElement r)
+        public Actor(XElement r)
         {
             ActorId = r.ExtractInt("Id") ?? throw new Exception("Error Extracting Id for Actor");
             ActorImage = r.ExtractString("Image");
@@ -55,7 +54,7 @@ namespace TVRename
             ActorName = name;
         }
 
-        public void WriteXml([NotNull] XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("Actor");
             writer.WriteElement("Id", ActorId);

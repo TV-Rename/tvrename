@@ -7,7 +7,6 @@
 //
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -136,7 +135,7 @@ namespace TVRename
             }
         }
 
-        private void ValidateFilePath([NotNull] TextBox validationField, TabPage errorPage, bool emptyOk)
+        private void ValidateFilePath(TextBox validationField, TabPage errorPage, bool emptyOk)
         {
             if (TVSettings.OKPath(validationField.Text, emptyOk))
             {
@@ -189,7 +188,7 @@ namespace TVRename
             ValidateExporterLocation(cbWPL, txtWPL);
         }
 
-        private void ValidateExporterLocation([NotNull] CheckBox controlCheckbox, TextBox validationField)
+        private void ValidateExporterLocation(CheckBox controlCheckbox, TextBox validationField)
         {
             if (!controlCheckbox.Checked)
             {
@@ -210,7 +209,7 @@ namespace TVRename
             throw new FailedValidationException();
         }
 
-        private void ValidateExtensions([NotNull] Control validateField, TabPage focusTabPage)
+        private void ValidateExtensions(Control validateField, TabPage focusTabPage)
         {
             if (TVSettings.OKExtensionsString(validateField.Text))
             {
@@ -226,7 +225,7 @@ namespace TVRename
             throw new FailedValidationException();
         }
 
-        private void ValidateExtensionsWithoutDot([NotNull] Control validateField, TabPage focusTabPage)
+        private void ValidateExtensionsWithoutDot(Control validateField, TabPage focusTabPage)
         {
             if (TVSettings.OKExtensionsStringNoDotCheck(validateField.Text))
             {
@@ -501,7 +500,7 @@ namespace TVRename
             UpdateAppUpdateSettings(s);
         }
 
-        private void UpdateAppUpdateSettings([NotNull] TVSettings s)
+        private void UpdateAppUpdateSettings(TVSettings s)
         {
             s.UpdateCheckType = GetUpdateCheckTypeFromUi();
             if (cboUpdateCheckInterval.SelectedValue != null)
@@ -523,7 +522,7 @@ namespace TVRename
             return TVSettings.UpdateCheckMode.Off;
         }
 
-        private static TVSettings.DuplicateActionOutcome ConvertToDupActEnum([NotNull] ComboBox p0)
+        private static TVSettings.DuplicateActionOutcome ConvertToDupActEnum(ComboBox p0)
         {
             return p0.Text switch
             {
@@ -537,7 +536,7 @@ namespace TVRename
             };
         }
 
-        private static MovieConfiguration.MovieFolderFormat ConvertToMovieFormat([NotNull] ComboBox p0)
+        private static MovieConfiguration.MovieFolderFormat ConvertToMovieFormat(ComboBox p0)
         {
             return p0.Text switch
             {
@@ -621,7 +620,6 @@ namespace TVRename
             return TVSettings.FolderJpgIsType.Poster;
         }
 
-        [NotNull]
         private TVSettings.ShowStatusColoringTypeList GetShowStatusColouring()
         {
             TVSettings.ShowStatusColoringTypeList returnValue = new();
@@ -768,7 +766,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        private void UpdateRSSURLs([NotNull] TVSettings s)
+        private void UpdateRSSURLs(TVSettings s)
         {
             // RSS URLs
             s.RSSURLs.Clear();
@@ -782,7 +780,7 @@ namespace TVRename
             }
         }
 
-        private void UpdateReplacement([NotNull] TVSettings s)
+        private void UpdateReplacement(TVSettings s)
         {
             s.Replacements.Clear();
             for (int i = 1; i < ReplacementsGrid.RowsCount; i++)
@@ -1067,7 +1065,7 @@ namespace TVRename
             EnableDisable();
         }
 
-        private void SetupAppUpdateTabPageContent([NotNull] TVSettings settings)
+        private void SetupAppUpdateTabPageContent(TVSettings settings)
         {
             FillUpdateIntervals();
             TriggerControlEventsForInitialState();
@@ -1130,7 +1128,7 @@ namespace TVRename
             public TimeSpan Interval { get; set; }
         }
 
-        private void PopulateFromEnums([NotNull] TVSettings s)
+        private void PopulateFromEnums(TVSettings s)
         {
             cbKeepTogetherMode.Text = ConvertEnum(s.keepTogetherMode);
             cbMode.Text = ConvertEnum(s.mode);
@@ -1214,7 +1212,6 @@ namespace TVRename
             };
         }
 
-        [NotNull]
         private static string ConvertEnum(TVSettings.BetaMode mode)
         {
             return mode switch
@@ -1225,7 +1222,6 @@ namespace TVRename
             };
         }
 
-        [NotNull]
         private static string ConvertEnum(TheTVDB.ApiVersion mode)
         {
             return mode switch
@@ -1237,7 +1233,6 @@ namespace TVRename
             };
         }
 
-        [NotNull]
         private static string ConvertEnum(TVSettings.KeepTogetherModes sKeepTogetherMode)
         {
             return sKeepTogetherMode switch
@@ -1249,7 +1244,6 @@ namespace TVRename
             };
         }
 
-        [NotNull]
         private static string ConvertEnum(TVSettings.DuplicateActionOutcome outcome)
         {
             return outcome switch
@@ -1264,7 +1258,6 @@ namespace TVRename
             };
         }
 
-        [NotNull]
         private static string ConvertEnum(MovieConfiguration.MovieFolderFormat outcome) => outcome.PrettyPrint();
 
         private void FillSearchFolderList()
@@ -1377,7 +1370,7 @@ namespace TVRename
             cmbDefShowLocation.EndUpdate();
         }
 
-        private void PopulateReplacements([NotNull] TVSettings s)
+        private void PopulateReplacements(TVSettings s)
         {
             foreach (TVSettings.Replacement rep in s.Replacements)
             {
@@ -1385,7 +1378,7 @@ namespace TVRename
             }
         }
 
-        private void PopulateShowStatusColours([NotNull] TVSettings s)
+        private void PopulateShowStatusColours(TVSettings s)
         {
             foreach (
                 KeyValuePair<TVSettings.ColouringRule, Color> showStatusColor in
@@ -1403,7 +1396,7 @@ namespace TVRename
             }
         }
 
-        private static void SetDropdownValue([NotNull] DomainUpDown control, int sPeriodCheckHours)
+        private static void SetDropdownValue(DomainUpDown control, int sPeriodCheckHours)
         {
             foreach (object item in control.Items.Cast<object>().Where(item => item.ToString() == sPeriodCheckHours.ToString()))
             {
@@ -1413,7 +1406,6 @@ namespace TVRename
 
         private static class EnumUtil
         {
-            [NotNull]
             public static IEnumerable<T> GetValues<T>() => Enum.GetValues(typeof(T)).Cast<T>();
         }
 
@@ -1441,7 +1433,7 @@ namespace TVRename
 
         #endregion Update Form
 
-        private void TxtNumberOnlyKeyPress(object sender, [NotNull] KeyPressEventArgs e)
+        private void TxtNumberOnlyKeyPress(object sender, KeyPressEventArgs e)
         {
             // digits only
             if (e.KeyChar >= 32 && !char.IsDigit(e.KeyChar))
@@ -1545,7 +1537,7 @@ namespace TVRename
             SetEnabled(cbMissingMoviesCSV, txtMissingMoviesCSV, bnBrowseMissingMoviesCSV);
         }
 
-        private static void SetEnabled([NotNull] CheckBox checkBox, [NotNull] TextBox txtMissingCsv, [NotNull] Button bnBrowseMissingCsv)
+        private static void SetEnabled(CheckBox checkBox, TextBox txtMissingCsv, Button bnBrowseMissingCsv)
         {
             bool status = checkBox.Checked;
             txtMissingCsv.Enabled = status;
@@ -1696,7 +1688,7 @@ namespace TVRename
             lvwDefinedColors.ScaleListViewColumns(factor);
         }
 
-        private void cmDefaults_ItemClicked(object sender, [NotNull] ToolStripItemClickedEventArgs e)
+        private void cmDefaults_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             if (e.ClickedItem?.Tag is not string tag || !int.TryParse(tag, out int v))
             {
@@ -1782,7 +1774,7 @@ namespace TVRename
             cmDefaults.Show(pt);
         }
 
-        private void SuppressKeyPress(object _, [NotNull] KeyEventArgs e)
+        private void SuppressKeyPress(object _, KeyEventArgs e)
         {
             e.SuppressKeyPress = true;
         }
@@ -1794,7 +1786,7 @@ namespace TVRename
             Focus();
         }
 
-        private void tpSearch_DrawItem(object sender, [NotNull] DrawItemEventArgs e)
+        private void tpSearch_DrawItem(object sender, DrawItemEventArgs e)
         {
             //Follow this advice https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/how-to-display-side-aligned-tabs-with-tabcontrol
 
@@ -1886,7 +1878,7 @@ namespace TVRename
             Helpers.OpenFolder(TVSettings.Instance.DownloadFolders[n]?.Trim());
         }
 
-        private void lbSearchFolders_KeyDown(object sender, [NotNull] KeyEventArgs e)
+        private void lbSearchFolders_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -1894,12 +1886,12 @@ namespace TVRename
             }
         }
 
-        private void lbSearchFolders_DragOver(object sender, [NotNull] DragEventArgs e)
+        private void lbSearchFolders_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lbSearchFolders_DragDrop(object sender, [NotNull] DragEventArgs e)
+        private void lbSearchFolders_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
@@ -1994,7 +1986,7 @@ namespace TVRename
             }
         }
 
-        private void lstFMMonitorFolders_KeyDown(object sender, [NotNull] KeyEventArgs e)
+        private void lstFMMonitorFolders_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -2002,7 +1994,7 @@ namespace TVRename
             }
         }
 
-        private void lstMovieMonitorFolders_KeyDown(object sender, [NotNull] KeyEventArgs e)
+        private void lstMovieMonitorFolders_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -2010,12 +2002,12 @@ namespace TVRename
             }
         }
 
-        private void FileIcon_DragOver(object sender, [NotNull] DragEventArgs e)
+        private void FileIcon_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lstMovieMonitorFolders_DragDrop(object sender, [NotNull] DragEventArgs e)
+        private void lstMovieMonitorFolders_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
@@ -2038,7 +2030,7 @@ namespace TVRename
             FillMovieFolderStringLists();
         }
 
-        private void lstFMMonitorFolders_DragDrop(object sender, [NotNull] DragEventArgs e)
+        private void lstFMMonitorFolders_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
@@ -2195,7 +2187,7 @@ namespace TVRename
 
         private void bnBrowseWTWTXT_Click(object sender, EventArgs e) => Browse(txtWTWTXT, "txt", 4);
 
-        private void Browse([NotNull] Control txt, string defaultExt, int filterIndex)
+        private void Browse(Control txt, string defaultExt, int filterIndex)
         {
             //rss =1, XML = 2, CSV = 3, TXT=4, HTML = 5
             saveFile.FileName = txt.Text;
@@ -2217,7 +2209,7 @@ namespace TVRename
             Browse(txtUTResumeDatPath, "resume.dat|resume.dat|All Files (*.*)|*.*");
         }
 
-        private void Browse([NotNull] TextBox txt, string filter)
+        private void Browse(TextBox txt, string filter)
         {
             openFile.FileName = txt.Text;
             openFile.Filter = filter;

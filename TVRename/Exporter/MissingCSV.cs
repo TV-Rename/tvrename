@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -13,7 +12,6 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportMissingCSV;
 
         protected override string Location() => TVSettings.Instance.ExportMissingCSVTo;
-        [NotNull]
         protected override string Name() => "Missing CSV Exporter";
 
         public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full;

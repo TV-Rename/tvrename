@@ -1,14 +1,11 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class DefaultSpecialsAsEpisodesTvCheck : DefaultTvShowCheck
     {
-        public DefaultSpecialsAsEpisodesTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        public DefaultSpecialsAsEpisodesTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
-        [NotNull]
         protected override string FieldName => "Count Specials As Episodes Check";
 
         protected override bool Field => Show.CountSpecials;

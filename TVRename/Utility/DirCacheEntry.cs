@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -16,7 +15,7 @@ namespace TVRename
         public readonly long Length;
         public readonly FileInfo TheFile;
 
-        public DirCacheEntry([NotNull] FileInfo f)
+        public DirCacheEntry(FileInfo f)
         {
             TheFile = f;
             Length = f.Length;

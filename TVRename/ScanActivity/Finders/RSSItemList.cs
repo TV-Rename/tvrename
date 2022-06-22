@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -23,7 +22,7 @@ namespace TVRename
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         // ReSharper disable once InconsistentNaming
-        public bool DownloadRSS([NotNull] string url, bool useCloudflareProtection, string sourcePrefix)
+        public bool DownloadRSS(string url, bool useCloudflareProtection, string sourcePrefix)
         {
             string response = null;
 
@@ -81,9 +80,9 @@ namespace TVRename
             return true;
         }
 
-        private bool ReadChannel([NotNull] XContainer x, string sourceUrl, string sourcePrefix) => x.Descendants("item").All(element => ReadItem(element, sourceUrl, sourcePrefix));
+        private bool ReadChannel(XContainer x, string sourceUrl, string sourcePrefix) => x.Descendants("item").All(element => ReadItem(element, sourceUrl, sourcePrefix));
 
-        private bool ReadItem([NotNull] XElement itemElement, string sourceUrl, string sourcePrefix)
+        private bool ReadItem(XElement itemElement, string sourceUrl, string sourcePrefix)
         {
             string title = itemElement.ExtractString("title");
             string link = itemElement.ExtractString("link");
@@ -164,7 +163,7 @@ namespace TVRename
             return true;
         }
 
-        private static int GetSeeders([NotNull] XContainer itemElement)
+        private static int GetSeeders(XContainer itemElement)
         {
             return itemElement
                 .Descendants()
@@ -174,7 +173,7 @@ namespace TVRename
                 .FirstOrDefault();
         }
 
-        private static int GetSeederValue([NotNull] XElement element)
+        private static int GetSeederValue(XElement element)
         {
             foreach (string seedersAsString in from att in element.Attributes() where att.Name == "value" select att.Value)
             {
@@ -188,7 +187,7 @@ namespace TVRename
             return 0;
         }
 
-        private static bool IsSeederElement([NotNull] XElement element)
+        private static bool IsSeederElement(XElement element)
         {
             return element.Attributes().Any(att => att.Name == "name" && att.Value == "seeders");
         }

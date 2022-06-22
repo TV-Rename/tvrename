@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using SourceGrid;
 using SourceGrid.Cells.Controllers;
 using SourceGrid.Cells.Views;
@@ -219,13 +218,12 @@ namespace TVRename
             grid1.AutoSizeCells();
         }
 
-        private static int GetMaxSeason([NotNull] IEnumerable<ShowSummaryData> shows)
+        private static int GetMaxSeason(IEnumerable<ShowSummaryData> shows)
         {
             return shows.Select(x => x.MaxSeason).DefaultIfEmpty(0).Max();
         }
 
-        [NotNull]
-        private static ShowSummaryData AddShowDetails([NotNull] ShowConfiguration si)
+        private static ShowSummaryData AddShowDetails(ShowConfiguration si)
         {
             ShowSummaryData showSummary = new()
             {
@@ -247,7 +245,7 @@ namespace TVRename
             return showSummary;
         }
 
-        private static ShowSummaryData.ShowSummarySeasonData? GetSeasonDetails([NotNull] ShowConfiguration si, int snum)
+        private static ShowSummaryData.ShowSummarySeasonData? GetSeasonDetails(ShowConfiguration si, int snum)
         {
             int epCount = 0;
             int epGotCount = 0;
@@ -285,7 +283,7 @@ namespace TVRename
             return null;
         }
 
-        private void showRightClickMenu_ItemClicked(object sender, [NotNull] ToolStripItemClickedEventArgs e)
+        private void showRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             showRightClickMenu.Close();
         }
@@ -349,7 +347,7 @@ namespace TVRename
                 this.mDoc = doc;
             }
 
-            public override void OnMouseDown(CellContext sender, [NotNull] MouseEventArgs e)
+            public override void OnMouseDown(CellContext sender, MouseEventArgs e)
             {
                 if (e.Button != MouseButtons.Right)
                 {
@@ -443,7 +441,7 @@ namespace TVRename
                 gridSummary.showRightClickMenu.Show(sender.Grid.PointToScreen(pt));
             }
 
-            private void GenerateOpenMenu([NotNull] ProcessedSeason seas, ICollection<string> added)
+            private void GenerateOpenMenu(ProcessedSeason seas, ICollection<string> added)
             {
                 Dictionary<int, SafeList<string>> afl = show.AllExistngFolderLocations();
 
@@ -498,7 +496,7 @@ namespace TVRename
                 }
             }
 
-            private void GenerateRightClickWatchMenu([NotNull] ProcessedSeason seas)
+            private void GenerateRightClickWatchMenu(ProcessedSeason seas)
             {
                 // for each episode in season, find it on disk
                 bool first = true;
@@ -524,14 +522,14 @@ namespace TVRename
                 }
             }
 
-            private void AddRcMenuItem([NotNull] ContextMenuStrip showRightClickMenu, [NotNull] string name, EventHandler command)
+            private void AddRcMenuItem(ContextMenuStrip showRightClickMenu, string name, EventHandler command)
             {
                 ToolStripMenuItem tsi = new(name.ToUiVersion());
                 tsi.Click += command;
                 showRightClickMenu.Items.Add(tsi);
             }
 
-            private static void GenerateSeparator([NotNull] ContextMenuStrip showRightClickMenu)
+            private static void GenerateSeparator(ContextMenuStrip showRightClickMenu)
             {
                 ToolStripSeparator tss = new();
                 showRightClickMenu.Items.Add(tss);
@@ -549,7 +547,7 @@ namespace TVRename
             public ShowConfiguration ShowConfiguration;
             public string ShowName;
 
-            public void AddSeason([NotNull] ShowSummarySeasonData seasonData)
+            public void AddSeason(ShowSummarySeasonData seasonData)
             {
                 SeasonDataList.Add(seasonData);
 
@@ -582,7 +580,6 @@ namespace TVRename
                 public bool IsSpecial => SeasonNumber == 0;
                 public bool Ignored => ProcessedSeason.Show.IgnoreSeasons.Contains(SeasonNumber);
 
-                [NotNull]
                 public SummaryOutput GetOuput()
                 {
                     SummaryOutput output = new()
@@ -756,7 +753,7 @@ namespace TVRename
             GenerateData((BackgroundWorker)sender);
         }
 
-        private void BwRescan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
+        private void BwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage.Between(0, 100);
             lblStatus.Text = e.UserState.ToString().ToUiVersion();

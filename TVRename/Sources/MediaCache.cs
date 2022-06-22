@@ -3,7 +3,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -27,7 +26,6 @@ namespace TVRename
 
         protected readonly ConcurrentDictionary<int, CachedMovieInfo> Movies = new();
 
-        [NotNull]
         protected List<CachedMovieInfo> FullMovies()
         {
             lock (MOVIE_LOCK)
@@ -41,7 +39,6 @@ namespace TVRename
 
         protected readonly ConcurrentDictionary<int, CachedSeriesInfo> Series = new();
 
-        [NotNull]
         protected List<CachedSeriesInfo> FullShows()
         {
             lock (SERIES_LOCK)

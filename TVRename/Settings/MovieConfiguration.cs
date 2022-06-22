@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,7 +61,6 @@ namespace TVRename
             AutomaticFolderRoot = TVSettings.Instance.DefMovieUseDefaultLocation ? TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty : string.Empty;
         }
 
-        [NotNull]
         public string ShowNameWithYear => $"{ShowName} ({CachedMovie?.Year})";
 
         public MovieConfiguration(int code, TVDoc.ProviderType type) : this()
@@ -71,7 +69,7 @@ namespace TVRename
             SetId(type, code);
         }
 
-        public MovieConfiguration([NotNull] XElement xmlSettings) : this()
+        public MovieConfiguration(XElement xmlSettings) : this()
         {
             UseCustomShowName = xmlSettings.ExtractBool("UseCustomShowName", false);
             UseCustomLanguage = xmlSettings.ExtractBool("UseCustomLanguage", false);
@@ -107,7 +105,7 @@ namespace TVRename
             return value is null ? TVSettings.Instance.DefMovieFolderFormat : (MovieFolderFormat)value;
         }
 
-        public MovieConfiguration([NotNull] PossibleNewMovie movie) : this()
+        public MovieConfiguration(PossibleNewMovie movie) : this()
         {
             if (movie.CodeUnknown)
             {
@@ -136,7 +134,6 @@ namespace TVRename
 
         protected override MediaType GetMediaType() => MediaType.movie;
 
-        [NotNull]
         protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
         {
             Dictionary<int, SafeList<string>> fld = new()
@@ -167,7 +164,6 @@ namespace TVRename
             return fld;
         }
 
-        [NotNull]
         private string AutoFolderNameForMovie()
         {
             if (string.IsNullOrEmpty(AutomaticFolderRoot))
@@ -199,7 +195,6 @@ namespace TVRename
             return (AutoFolderNameForMovie(), AutoFolderNameForMovie(year.Value - 1), AutoFolderNameForMovie(year.Value + 1));
         }
 
-        [NotNull]
         private string AutoFolderNameForMovie(int year)
         {
             if (string.IsNullOrEmpty(AutomaticFolderRoot))
@@ -220,7 +215,7 @@ namespace TVRename
             return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, TVSettings.Instance.MovieFolderFormat, year);
         }
 
-        private void SetupLocations([NotNull] XElement xmlSettings)
+        private void SetupLocations(XElement xmlSettings)
         {
             foreach (string alias in xmlSettings.Descendants("Locations").Descendants("Location").Select(alias => alias.Value).Where(s => s.HasValue()).Distinct())
             {
@@ -228,7 +223,6 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         protected override MediaCache LocalCache()
         {
             return Provider switch
@@ -240,15 +234,12 @@ namespace TVRename
 
         protected override TVDoc.ProviderType DefaultProvider() => TVSettings.Instance.DefaultMovieProvider;
 
-        [NotNull]
         private static MediaCache LocalCache(TVDoc.ProviderType provider) => TVDoc.GetMediaCache(provider);
 
         public CachedMovieInfo? CachedMovie => (CachedMovieInfo)CachedData;
 
-        [NotNull]
         public IEnumerable<string> Locations => AllFolderLocations(true, false).Values.SelectMany(x => x);
 
-        [NotNull]
         public string ProposedFilename
         {//https://kodi.wiki/view/Naming_video_files/Movies
             get
@@ -272,7 +263,7 @@ namespace TVRename
 
         public int? CollectionOrder;
 
-        public void WriteXmlSettings([NotNull] XmlWriter writer)
+        public void WriteXmlSettings(XmlWriter writer)
         {
             writer.WriteStartElement("MovieItem");
 
@@ -322,7 +313,6 @@ namespace TVRename
             writer.WriteEndElement(); // ShowItem
         }
 
-        [NotNull]
         public IEnumerable<string> AutomaticLocations() => AllFolderLocations(false, false).Values.SelectMany(x => x);
 
         public bool IsDvdBluRay()

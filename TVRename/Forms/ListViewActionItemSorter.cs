@@ -30,7 +30,7 @@ namespace TVRename
         /// <param name="x">row1</param>
         /// <param name="y">row2</param>
         /// <returns>An ordering indication: -1, 0, 1</returns>
-        public int Compare(OLVListItem x, OLVListItem y)
+        public int Compare(OLVListItem? x, OLVListItem? y)
         {
             Item x1 = x?.RowObject as Item;
             Item y1 = y?.RowObject as Item;

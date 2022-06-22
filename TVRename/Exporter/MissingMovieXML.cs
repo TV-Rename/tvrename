@@ -1,6 +1,5 @@
 using System.Text;
 using System.Xml;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -11,7 +10,6 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportMissingMoviesXML;
-        [NotNull]
         protected override string Name() => "Missing Movie XML Exporter";
 
         protected override string Location() => TVSettings.Instance.ExportMissingMoviesXMLTo;

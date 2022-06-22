@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -12,7 +11,6 @@ namespace TVRename
         private static volatile Regions? InternalInstance;
         private static readonly object SyncRoot = new();
 
-        [NotNull]
         public static Regions Instance
         {
             get
@@ -33,10 +31,8 @@ namespace TVRename
             }
         }
 
-        [NotNull]
         public IEnumerable<string> EnglishNames => this.Select(r => r.EnglishName);
 
-        [NotNull]
         public Region FallbackRegion => RegionFromCode("US")!;
 
         private Regions()

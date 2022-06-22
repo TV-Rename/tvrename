@@ -7,7 +7,6 @@
 //
 
 using System.Drawing;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -21,7 +20,7 @@ namespace TVRename
 
         private readonly CodeFinder codeFinderControl;
 
-        public BulkAddEditMovie([NotNull] PossibleNewMovie hint)
+        public BulkAddEditMovie(PossibleNewMovie hint)
         {
             codeFinderControl = new MovieCodeFinder("", TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
             InitializeComponent();

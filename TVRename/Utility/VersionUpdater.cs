@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
@@ -19,7 +18,6 @@ namespace TVRename
         private const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        [ItemCanBeNull]
         public static async Task<ServerRelease?> CheckForUpdatesAsync()
         {
             Release currentVersion;
@@ -126,7 +124,7 @@ namespace TVRename
             return (latestVersion, latestBetaVersion);
         }
 
-        private static (ServerRelease? latestBetaVersion, ServerRelease? latestVersion) UpdateLatest([NotNull] ServerRelease testVersion,
+        private static (ServerRelease? latestBetaVersion, ServerRelease? latestVersion) UpdateLatest(ServerRelease testVersion,
             ServerRelease? latestBetaVersion, ServerRelease? latestVersion)
         {
             //all versions want to be considered if you are in the beta stream
@@ -147,7 +145,7 @@ namespace TVRename
             return (latestBetaVersion, latestVersion);
         }
 
-        private static ServerRelease? ParseFromJson([NotNull] JObject gitHubReleaseJson)
+        private static ServerRelease? ParseFromJson(JObject gitHubReleaseJson)
         {
             DateTime.TryParse(gitHubReleaseJson["published_at"]?.ToString(), out DateTime releaseDate);
 
@@ -171,7 +169,6 @@ namespace TVRename
                 releaseDate);
         }
 
-        [NotNull]
         private static Release ObtainCurrentVersion()
         {
             string currentVersionString = Helpers.DisplayVersion;

@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     internal class MovieFolderTypeCheck : MovieCheck
@@ -10,7 +8,6 @@ namespace TVRename
 
         public override bool Check() => Movie.Format != TVSettings.Instance.DefMovieFolderFormat;
 
-        [NotNull]
         public override string Explain() => $"The default format for movies is {TVSettings.Instance.DefMovieFolderFormat.PrettyPrint()}, this movie uses {Movie.Format.PrettyPrint()}.";
 
         protected override void FixInternal()
@@ -18,7 +15,6 @@ namespace TVRename
             Movie.Format = TVSettings.Instance.DefMovieFolderFormat;
         }
 
-        [NotNull]
         protected override string MovieCheckName => "Movie Folder Format";
     }
 }

@@ -7,7 +7,6 @@
 //
 
 using System;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -15,7 +14,7 @@ namespace TVRename
     {
         #region IComparer<Item> Members
 
-        public int Compare(Item x, Item y)
+        public int Compare(Item? x, Item? y)
         {
             if (x is null)
             {
@@ -32,7 +31,7 @@ namespace TVRename
 
         #endregion IComparer<Item> Members
 
-        private static int TypeNumber([NotNull] Item a)
+        private static int TypeNumber(Item a)
         {
             return a switch
             {
