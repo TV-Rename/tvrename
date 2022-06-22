@@ -305,7 +305,7 @@ namespace TVRename
         public bool RenameCheck = true;
         public bool PreventMove = false;
         public bool RenameTxtToSub = false;
-        public readonly List<Replacement> Replacements = DefaultListRE();
+        public readonly SafeList<Replacement> Replacements = DefaultListRE();
         public string ResumeDatPath;
         public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
@@ -1029,9 +1029,8 @@ namespace TVRename
         }
 
         [NotNull]
-        private static List<Replacement> DefaultListRE()
-        {
-            return new()
+        private static SafeList<Replacement> DefaultListRE() =>
+            new()
             {
                 new Replacement("*", "#", false),
                 new Replacement("?", "", false),
@@ -1043,7 +1042,6 @@ namespace TVRename
                 new Replacement("|", "-", false),
                 new Replacement("\"", "'", false)
             };
-        }
 
         [NotNull]
         private static List<string> DefaultRSSURLList()
