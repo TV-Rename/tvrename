@@ -10,66 +10,65 @@ using System;
 using System.Text;
 using System.Xml;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+internal class MissingXML : ActionListExporter
 {
-    // ReSharper disable once InconsistentNaming
-    internal class MissingXML : ActionListExporter
+    public MissingXML(ItemList theActionList) : base(theActionList)
     {
-        public MissingXML(ItemList theActionList) : base(theActionList)
+    }
+
+    public override bool Active() => TVSettings.Instance.ExportMissingXML;
+    protected override string Name() => "Missing XML Exporter";
+
+    protected override string Location() => TVSettings.Instance.ExportMissingXMLTo;
+
+    public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full;
+
+    protected override void Do()
+    {
+        XmlWriterSettings settings = new()
         {
-        }
+            Indent = true,
+            NewLineOnAttributes = true,
+            Encoding = Encoding.ASCII
+        };
 
-        public override bool Active() => TVSettings.Instance.ExportMissingXML;
-        protected override string Name() => "Missing XML Exporter";
-
-        protected override string Location() => TVSettings.Instance.ExportMissingXMLTo;
-
-        public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full;
-
-        protected override void Do()
+        using (XmlWriter writer = XmlWriter.Create(Location(), settings))
         {
-            XmlWriterSettings settings = new()
+            writer.WriteStartDocument();
+
+            writer.WriteStartElement("TVRename");
+            writer.WriteAttributeToXml("Version", "2.1");
+            writer.WriteStartElement("MissingItems");
+
+            foreach (ShowItemMissing? missing in TheActionList.MissingEpisodes)
             {
-                Indent = true,
-                NewLineOnAttributes = true,
-                Encoding = Encoding.ASCII
-            };
+                writer.WriteStartElement("MissingItem");
 
-            using (XmlWriter writer = XmlWriter.Create(Location(), settings))
-            {
-                writer.WriteStartDocument();
+                writer.WriteElement("id", missing.MissingEpisode.Show.TvdbCode);
+                writer.WriteElement("title", missing.MissingEpisode.TheCachedSeries.Name);
+                writer.WriteElement("season", missing.MissingEpisode.AppropriateSeasonNumber.Pad());
+                writer.WriteElement("episode", missing.MissingEpisode.AppropriateEpNum.Pad());
+                writer.WriteElement("episodeName", missing.MissingEpisode.Name);
+                writer.WriteElement("description", missing.MissingEpisode.Overview);
 
-                writer.WriteStartElement("TVRename");
-                writer.WriteAttributeToXml("Version", "2.1");
-                writer.WriteStartElement("MissingItems");
-
-                foreach (ShowItemMissing? missing in TheActionList.MissingEpisodes)
+                writer.WriteStartElement("pubDate");
+                DateTime? dt = missing.MissingEpisode.GetAirDateDt(true);
+                if (dt != null)
                 {
-                    writer.WriteStartElement("MissingItem");
-
-                    writer.WriteElement("id", missing.MissingEpisode.Show.TvdbCode);
-                    writer.WriteElement("title", missing.MissingEpisode.TheCachedSeries.Name);
-                    writer.WriteElement("season", missing.MissingEpisode.AppropriateSeasonNumber.Pad());
-                    writer.WriteElement("episode", missing.MissingEpisode.AppropriateEpNum.Pad());
-                    writer.WriteElement("episodeName", missing.MissingEpisode.Name);
-                    writer.WriteElement("description", missing.MissingEpisode.Overview);
-
-                    writer.WriteStartElement("pubDate");
-                    DateTime? dt = missing.MissingEpisode.GetAirDateDt(true);
-                    if (dt != null)
-                    {
-                        writer.WriteValue(dt.Value.ToString("F"));
-                    }
-
-                    writer.WriteEndElement();
-
-                    writer.WriteEndElement(); // MissingItem
+                    writer.WriteValue(dt.Value.ToString("F"));
                 }
 
-                writer.WriteEndElement(); // MissingItems
-                writer.WriteEndElement(); // tvrename
-                writer.WriteEndDocument();
+                writer.WriteEndElement();
+
+                writer.WriteEndElement(); // MissingItem
             }
+
+            writer.WriteEndElement(); // MissingItems
+            writer.WriteEndElement(); // tvrename
+            writer.WriteEndDocument();
         }
     }
 }

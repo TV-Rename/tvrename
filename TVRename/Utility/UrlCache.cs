@@ -8,22 +8,21 @@
 
 using System.Collections.Concurrent;
 
-namespace TVRename
+namespace TVRename;
+
+internal class UrlCache
 {
-    internal class UrlCache
+    private readonly ConcurrentDictionary<string, string> internalCache = new();
+
+    public string GetUrl(string s, bool instanceSearchJsonUseCloudflare)
     {
-        private readonly ConcurrentDictionary<string, string> internalCache = new();
-
-        public string GetUrl(string s, bool instanceSearchJsonUseCloudflare)
+        if (internalCache.TryGetValue(s, out string value))
         {
-            if (internalCache.TryGetValue(s, out string value))
-            {
-                return value;
-            }
-
-            string newValue = HttpHelper.GetUrl(s, instanceSearchJsonUseCloudflare);
-            internalCache.TryAdd(s, newValue);
-            return newValue;
+            return value;
         }
+
+        string newValue = HttpHelper.GetUrl(s, instanceSearchJsonUseCloudflare);
+        internalCache.TryAdd(s, newValue);
+        return newValue;
     }
 }

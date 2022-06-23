@@ -3,73 +3,72 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+public class BTDictionary : BTItem
 {
-    // ReSharper disable once InconsistentNaming
-    public class BTDictionary : BTItem
+    public readonly List<BTDictionaryItem> Items;
+
+    public BTDictionary()
+        : base(BTChunk.kDictionary)
     {
-        public readonly List<BTDictionaryItem> Items;
+        Items = new List<BTDictionaryItem>();
+    }
 
-        public BTDictionary()
-            : base(BTChunk.kDictionary)
+    public override string AsText()
+    {
+        return "Dictionary=[" + Items.Select(x => x.AsText()).ToCsv() + "]";
+    }
+
+    public override void Tree(TreeNodeCollection tn)
+    {
+        TreeNode n = new("Dictionary");
+        tn.Add(n);
+        foreach (BTDictionaryItem t in Items)
         {
-            Items = new List<BTDictionaryItem>();
+            t.Tree(n.Nodes);
         }
+    }
 
-        public override string AsText()
+    // ReSharper disable once UnusedMethodReturnValue.Global
+    public bool RemoveItem(string key)
+    {
+        for (int i = 0; i < Items.Count; i++)
         {
-            return "Dictionary=[" + Items.Select(x => x.AsText()).ToCsv() + "]";
-        }
-
-        public override void Tree(TreeNodeCollection tn)
-        {
-            TreeNode n = new("Dictionary");
-            tn.Add(n);
-            foreach (BTDictionaryItem t in Items)
+            if (Items[i].Key == key)
             {
-                t.Tree(n.Nodes);
+                Items.RemoveAt(i);
+                return true;
             }
         }
 
-        // ReSharper disable once UnusedMethodReturnValue.Global
-        public bool RemoveItem(string key)
-        {
-            for (int i = 0; i < Items.Count; i++)
-            {
-                if (Items[i].Key == key)
-                {
-                    Items.RemoveAt(i);
-                    return true;
-                }
-            }
+        return false;
+    }
 
-            return false;
+    public BTItem? GetItem(string key) => GetItem(key, false);
+
+    public BTItem? GetItem(string key, bool ignoreCase)
+    {
+        foreach (BTDictionaryItem t in Items)
+        {
+            if (string.Equals(t.Key, key, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture))
+            {
+                return t.Data;
+            }
         }
 
-        public BTItem? GetItem(string key) => GetItem(key, false);
+        return null;
+    }
 
-        public BTItem? GetItem(string key, bool ignoreCase)
+    public override void Write(System.IO.Stream sw)
+    {
+        sw.WriteByte((byte)'d');
+        foreach (BTDictionaryItem i in Items)
         {
-            foreach (BTDictionaryItem t in Items)
-            {
-                if (string.Equals(t.Key, key, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture))
-                {
-                    return t.Data;
-                }
-            }
-
-            return null;
+            i.Write(sw);
         }
 
-        public override void Write(System.IO.Stream sw)
-        {
-            sw.WriteByte((byte)'d');
-            foreach (BTDictionaryItem i in Items)
-            {
-                i.Write(sw);
-            }
-
-            sw.WriteByte((byte)'e');
-        }
+        sw.WriteByte((byte)'e');
     }
 }

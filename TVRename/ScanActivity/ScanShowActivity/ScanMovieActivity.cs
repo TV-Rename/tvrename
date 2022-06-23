@@ -1,20 +1,19 @@
-namespace TVRename
+namespace TVRename;
+
+public abstract class ScanMovieActivity : ScanMediaActivity
 {
-    public abstract class ScanMovieActivity : ScanMediaActivity
+    protected abstract void Check(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings);
+
+    public void CheckIfActive(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
-        protected abstract void Check(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings);
-
-        public void CheckIfActive(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        if (Active())
         {
-            if (Active())
-            {
-                Check(si, dfc, settings);
-                LogActionListSummary();
-            }
+            Check(si, dfc, settings);
+            LogActionListSummary();
         }
+    }
 
-        protected ScanMovieActivity(TVDoc doc) : base(doc)
-        {
-        }
+    protected ScanMovieActivity(TVDoc doc) : base(doc)
+    {
     }
 }

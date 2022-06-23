@@ -10,62 +10,61 @@ using System;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace TVRename
+namespace TVRename;
+
+public class Actor
 {
-    public class Actor
+    public int ActorId { get; }
+    public string? ActorImage { get; }
+    public string ActorName { get; }
+    public string? ActorRole { get; }
+    public int ActorSeriesId { get; }
+    public int ActorSortOrder { get; }
+
+    public Actor(int actorId, string? actorImage, string actorName, string? actorRole, int actorSeriesId, int? actorSortOrder)
     {
-        public int ActorId { get; }
-        public string? ActorImage { get; }
-        public string ActorName { get; }
-        public string? ActorRole { get; }
-        public int ActorSeriesId { get; }
-        public int ActorSortOrder { get; }
+        ActorId = actorId;
+        ActorImage = actorImage;
+        ActorName = actorName;
+        ActorRole = actorRole;
+        ActorSeriesId = actorSeriesId;
 
-        public Actor(int actorId, string? actorImage, string actorName, string? actorRole, int actorSeriesId, int? actorSortOrder)
+        if (actorSortOrder.HasValue)
         {
-            ActorId = actorId;
-            ActorImage = actorImage;
-            ActorName = actorName;
-            ActorRole = actorRole;
-            ActorSeriesId = actorSeriesId;
-
-            if (actorSortOrder.HasValue)
-            {
-                ActorSortOrder = actorSortOrder.Value;
-            }
-            else
-            {
-                ActorSortOrder = -1;
-            }
+            ActorSortOrder = actorSortOrder.Value;
         }
-
-        public Actor(XElement r)
+        else
         {
-            ActorId = r.ExtractInt("Id") ?? throw new Exception("Error Extracting Id for Actor");
-            ActorImage = r.ExtractString("Image");
-            ActorName = r.ExtractString("Name");
-            ActorRole = r.ExtractString("Role");
-            ActorSeriesId = r.ExtractInt("SeriesId", -1);
-            ActorSortOrder = r.ExtractInt("SortOrder", -1);
+            ActorSortOrder = -1;
         }
-
-        public Actor(string name)
-        {
-            ActorName = name;
-        }
-
-        public void WriteXml(XmlWriter writer)
-        {
-            writer.WriteStartElement("Actor");
-            writer.WriteElement("Id", ActorId);
-            writer.WriteElement("Image", ActorImage, true);
-            writer.WriteElement("Name", ActorName, true);
-            writer.WriteElement("Role", ActorRole, true);
-            writer.WriteElement("SeriesId", ActorSeriesId, true);
-            writer.WriteElement("SortOrder", ActorSortOrder);
-            writer.WriteEndElement();
-        }
-
-        public bool AsSelf() => ActorName == ActorRole;
     }
+
+    public Actor(XElement r)
+    {
+        ActorId = r.ExtractInt("Id") ?? throw new Exception("Error Extracting Id for Actor");
+        ActorImage = r.ExtractString("Image");
+        ActorName = r.ExtractString("Name");
+        ActorRole = r.ExtractString("Role");
+        ActorSeriesId = r.ExtractInt("SeriesId", -1);
+        ActorSortOrder = r.ExtractInt("SortOrder", -1);
+    }
+
+    public Actor(string name)
+    {
+        ActorName = name;
+    }
+
+    public void WriteXml(XmlWriter writer)
+    {
+        writer.WriteStartElement("Actor");
+        writer.WriteElement("Id", ActorId);
+        writer.WriteElement("Image", ActorImage, true);
+        writer.WriteElement("Name", ActorName, true);
+        writer.WriteElement("Role", ActorRole, true);
+        writer.WriteElement("SeriesId", ActorSeriesId, true);
+        writer.WriteElement("SortOrder", ActorSortOrder);
+        writer.WriteEndElement();
+    }
+
+    public bool AsSelf() => ActorName == ActorRole;
 }

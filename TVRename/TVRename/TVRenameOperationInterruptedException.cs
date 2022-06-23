@@ -1,9 +1,8 @@
 using System;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+public class TVRenameOperationInterruptedException : Exception
 {
-    // ReSharper disable once InconsistentNaming
-    public class TVRenameOperationInterruptedException : Exception
-    {
-    }
 }

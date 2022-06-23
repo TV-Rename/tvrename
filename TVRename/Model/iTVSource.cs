@@ -8,30 +8,29 @@
 
 using Alphaleonis.Win32.Filesystem;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+public interface iTVSource
 {
-    // ReSharper disable once InconsistentNaming
-    public interface iTVSource
-    {
-        void Setup(FileInfo loadFrom, FileInfo cacheFile, bool showConnectionIssues);
+    void Setup(FileInfo loadFrom, FileInfo cacheFile, bool showConnectionIssues);
 
-        bool Connect(bool showErrorMsgBox);
+    bool Connect(bool showErrorMsgBox);
 
-        void SaveCache();
+    void SaveCache();
 
-        bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
+    bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
 
-        void UpdatesDoneOk();
+    void UpdatesDoneOk();
 
-        CachedSeriesInfo? GetSeries(int? id);
+    CachedSeriesInfo? GetSeries(int? id);
 
-        bool HasSeries(int id);
+    bool HasSeries(int id);
 
-        void ForgetEverything();
+    void ForgetEverything();
 
-        void AddOrUpdateEpisode(Episode episode);
+    void AddOrUpdateEpisode(Episode episode);
 
-       void LatestUpdateTimeIs(string time);
-       TVDoc.ProviderType SourceProvider();
-    }
+    void LatestUpdateTimeIs(string time);
+    TVDoc.ProviderType SourceProvider();
 }

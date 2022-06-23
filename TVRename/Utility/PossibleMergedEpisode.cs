@@ -9,64 +9,63 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+public class PossibleMergedEpisode
 {
-    public class PossibleMergedEpisode
+    private readonly ProcessedEpisode episodeOne;
+    private readonly ProcessedEpisode episodeTwo;
+    public readonly int SeasonNumber;
+    public readonly bool AirDatesMatch;
+    public readonly bool SimilarNames;
+    public readonly bool OneFound;
+    public readonly bool LargeFileSize;
+
+    public PossibleMergedEpisode(ProcessedEpisode episodeOne, ProcessedEpisode episodeTwo, int season, bool airDatesMatch, bool similarNames, bool oneFound, bool largeFileSize)
     {
-        private readonly ProcessedEpisode episodeOne;
-        private readonly ProcessedEpisode episodeTwo;
-        public readonly int SeasonNumber;
-        public readonly bool AirDatesMatch;
-        public readonly bool SimilarNames;
-        public readonly bool OneFound;
-        public readonly bool LargeFileSize;
+        this.episodeTwo = episodeTwo;
+        this.episodeOne = episodeOne;
+        SeasonNumber = season;
+        AirDatesMatch = airDatesMatch;
+        SimilarNames = similarNames;
+        OneFound = oneFound;
+        LargeFileSize = largeFileSize;
+    }
 
-        public PossibleMergedEpisode(ProcessedEpisode episodeOne, ProcessedEpisode episodeTwo, int season, bool airDatesMatch, bool similarNames, bool oneFound, bool largeFileSize)
+    public ListViewItem PresentationView
+    {
+        get
         {
-            this.episodeTwo = episodeTwo;
-            this.episodeOne = episodeOne;
-            SeasonNumber = season;
-            AirDatesMatch = airDatesMatch;
-            SimilarNames = similarNames;
-            OneFound = oneFound;
-            LargeFileSize = largeFileSize;
-        }
-
-        public ListViewItem PresentationView
-        {
-            get
+            ListViewItem lvi = new()
             {
-                ListViewItem lvi = new()
-                {
-                    Text = episodeOne.Show.ShowName
-                };
-
-                lvi.SubItems.Add(episodeOne.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(episodeOne.EpNumsAsString() + " & " + episodeTwo.EpNumsAsString());
-                lvi.SubItems.Add(episodeOne.GetAirDateDt(true).PrettyPrint());
-                lvi.SubItems.Add(episodeOne.Name + " & " + episodeTwo.Name);
-
-                List<string> names = new() { episodeOne.Name, episodeTwo.Name };
-                string combinedName = ShowLibrary.GetBestNameFor(names, "");
-                lvi.SubItems.Add(combinedName);
-
-                lvi.Tag = this;
-
-                return lvi;
-            }
-        }
-
-        public ShowConfiguration ShowConfiguration => episodeTwo.Show;
-        public ProcessedEpisode Episode => episodeOne;
-
-        public ShowRule GenerateRule()
-        {
-            return new()
-            {
-                DoWhatNow = RuleAction.kMerge,
-                First = episodeOne.AppropriateEpNum,
-                Second = episodeTwo.AppropriateEpNum
+                Text = episodeOne.Show.ShowName
             };
+
+            lvi.SubItems.Add(episodeOne.AppropriateSeasonNumber.ToString());
+            lvi.SubItems.Add(episodeOne.EpNumsAsString() + " & " + episodeTwo.EpNumsAsString());
+            lvi.SubItems.Add(episodeOne.GetAirDateDt(true).PrettyPrint());
+            lvi.SubItems.Add(episodeOne.Name + " & " + episodeTwo.Name);
+
+            List<string> names = new() { episodeOne.Name, episodeTwo.Name };
+            string combinedName = ShowLibrary.GetBestNameFor(names, "");
+            lvi.SubItems.Add(combinedName);
+
+            lvi.Tag = this;
+
+            return lvi;
         }
+    }
+
+    public ShowConfiguration ShowConfiguration => episodeTwo.Show;
+    public ProcessedEpisode Episode => episodeOne;
+
+    public ShowRule GenerateRule()
+    {
+        return new()
+        {
+            DoWhatNow = RuleAction.kMerge,
+            First = episodeOne.AppropriateEpNum,
+            Second = episodeTwo.AppropriateEpNum
+        };
     }
 }

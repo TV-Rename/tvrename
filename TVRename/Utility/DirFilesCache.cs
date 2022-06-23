@@ -13,56 +13,55 @@ using System.Collections.Generic;
 // Will cache the file lists of contents of single directories.  Will return the cached
 // data, or read cache and return it.
 
-namespace TVRename
+namespace TVRename;
+
+public class DirFilesCache
 {
-    public class DirFilesCache
+    private readonly Dictionary<string, FileInfo[]> cache = new();
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+    public IEnumerable<FileInfo> GetFilesIncludeSubDirs(string folder) => Get(folder, true);
+
+    public FileInfo[] GetFiles(string folder) => Get(folder, false);
+
+    private FileInfo[] Get(string folder, bool includeSubs)
     {
-        private readonly Dictionary<string, FileInfo[]> cache = new();
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
-        public IEnumerable<FileInfo> GetFilesIncludeSubDirs(string folder) => Get(folder, true);
-
-        public FileInfo[] GetFiles(string folder) => Get(folder, false);
-
-        private FileInfo[] Get(string folder, bool includeSubs)
+        if (cache.ContainsKey(folder))
         {
-            if (cache.ContainsKey(folder))
-            {
-                return cache[folder] ?? new FileInfo[] { };
-            }
+            return cache[folder] ?? new FileInfo[] { };
+        }
 
-            DirectoryInfo di;
-            try
-            {
-                di = new DirectoryInfo(folder);
-            }
-            catch
-            {
-                cache[folder] = new FileInfo[] { };
-                return new FileInfo[] { };
-            }
-            if (!di.Exists)
-            {
-                cache[folder] = new FileInfo[] { };
-                return new FileInfo[] { };
-            }
+        DirectoryInfo di;
+        try
+        {
+            di = new DirectoryInfo(folder);
+        }
+        catch
+        {
+            cache[folder] = new FileInfo[] { };
+            return new FileInfo[] { };
+        }
+        if (!di.Exists)
+        {
+            cache[folder] = new FileInfo[] { };
+            return new FileInfo[] { };
+        }
 
-            try
-            {
-                FileInfo[] files = includeSubs ? di.GetFiles("*", System.IO.SearchOption.AllDirectories) : di.GetFiles();
-                cache[folder] = files;
-                return files;
-            }
-            catch (System.IO.IOException)
-            {
-                Logger.Warn("IOException occurred trying to access " + folder);
-                return new FileInfo[] { };
-            }
-            catch (UnauthorizedAccessException)
-            {
-                Logger.Warn("UnauthorizedAccessException occurred trying to access " + folder);
-                return new FileInfo[] { };
-            }
+        try
+        {
+            FileInfo[] files = includeSubs ? di.GetFiles("*", System.IO.SearchOption.AllDirectories) : di.GetFiles();
+            cache[folder] = files;
+            return files;
+        }
+        catch (System.IO.IOException)
+        {
+            Logger.Warn("IOException occurred trying to access " + folder);
+            return new FileInfo[] { };
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Logger.Warn("UnauthorizedAccessException occurred trying to access " + folder);
+            return new FileInfo[] { };
         }
     }
 }

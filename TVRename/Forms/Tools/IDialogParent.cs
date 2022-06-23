@@ -8,10 +8,9 @@
 
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+public interface IDialogParent : IWin32Window
 {
-    public interface IDialogParent : IWin32Window
-    {
-        void ShowChildDialog(Form childForm);
-    }
+    void ShowChildDialog(Form childForm);
 }

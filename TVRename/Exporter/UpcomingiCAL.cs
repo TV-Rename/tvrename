@@ -14,80 +14,79 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+internal class UpcomingiCAL : UpcomingExporter
 {
-    // ReSharper disable once InconsistentNaming
-    internal class UpcomingiCAL : UpcomingExporter
+    public UpcomingiCAL(TVDoc i) : base(i)
     {
-        public UpcomingiCAL(TVDoc i) : base(i)
+    }
+
+    public override bool Active() => TVSettings.Instance.ExportWTWICAL;
+
+    protected override string Location() => TVSettings.Instance.ExportWTWICALTo;
+    protected override string Name() => "Upcoming iCal Exporter";
+    protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? episodes)
+    {
+        if (episodes is null)
         {
+            return false;
         }
 
-        public override bool Active() => TVSettings.Instance.ExportWTWICAL;
-
-        protected override string Location() => TVSettings.Instance.ExportWTWICALTo;
-        protected override string Name() => "Upcoming iCal Exporter";
-        protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? episodes)
+        try
         {
-            if (episodes is null)
+            Calendar calendar = new() { ProductId = "Upcoming Shows Exported by TV Rename http://www.tvrename.com" };
+
+            foreach (CalendarEvent? ev in episodes.Select(CreateEvent).Where(ev => ev is not null))
             {
-                return false;
+                calendar.Events.Add(ev);
             }
 
-            try
-            {
-                Calendar calendar = new() { ProductId = "Upcoming Shows Exported by TV Rename http://www.tvrename.com" };
+            CalendarSerializer serializer = new();
+            serializer.Serialize(calendar, str, Encoding.ASCII);
 
-                foreach (CalendarEvent ev in episodes.Select(CreateEvent).Where(ev => ev is not null))
-                {
-                    calendar.Events.Add(ev);
-                }
-
-                CalendarSerializer serializer = new();
-                serializer.Serialize(calendar, str, Encoding.ASCII);
-
-                return true;
-            } // try
-            catch (Exception e)
-            {
-                LOGGER.Error(e);
-                return false;
-            }
+            return true;
+        } // try
+        catch (Exception e)
+        {
+            LOGGER.Error(e);
+            return false;
         }
+    }
 
-        private static CalendarEvent? CreateEvent(ProcessedEpisode ei)
+    private static CalendarEvent? CreateEvent(ProcessedEpisode ei)
+    {
+        string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
+        try
         {
-            string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
-            try
+            DateTime? stTime = ei.GetAirDateDt(true);
+
+            if (!stTime.HasValue)
             {
-                DateTime? stTime = ei.GetAirDateDt(true);
-
-                if (!stTime.HasValue)
-                {
-                    return null;
-                }
-
-                DateTime startTime = stTime.Value;
-                string s = ei.Show.CachedShow?.Runtime;
-                DateTime endTime = stTime.Value.AddMinutes(string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s!));
-
-                return new CalendarEvent
-                {
-                    Start = new CalDateTime(startTime),
-                    End = new CalDateTime(endTime),
-                    Description = ei.Overview,
-                    Comments = new List<string> { ei.Overview },
-                    Summary = niceName,
-                    Location = ei.TheCachedSeries.Networks.ToCsv(),
-                    Url = new Uri(ei.ProviderWebUrl()),
-                    Uid = ei.EpisodeId.ToString()
-                };
-            }
-            catch (Exception e)
-            {
-                LOGGER.Error(e, $"Failed to create ics record for {niceName}");
                 return null;
             }
+
+            DateTime startTime = stTime.Value;
+            string s = ei.Show.CachedShow?.Runtime;
+            DateTime endTime = stTime.Value.AddMinutes(string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s!));
+
+            return new CalendarEvent
+            {
+                Start = new CalDateTime(startTime),
+                End = new CalDateTime(endTime),
+                Description = ei.Overview,
+                Comments = new List<string> { ei.Overview??string.Empty },
+                Summary = niceName,
+                Location = ei.TheCachedSeries.Networks.ToCsv(),
+                Url = new Uri(ei.ProviderWebUrl()),
+                Uid = ei.EpisodeId.ToString()
+            };
+        }
+        catch (Exception e)
+        {
+            LOGGER.Error(e, $"Failed to create ics record for {niceName}");
+            return null;
         }
     }
 }

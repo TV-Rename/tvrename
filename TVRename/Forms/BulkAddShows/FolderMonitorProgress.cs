@@ -7,51 +7,50 @@
 //
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+public partial class FolderMonitorProgress : Form
 {
-    public partial class FolderMonitorProgress : Form
+    public bool Ready;
+    private readonly BulkAddShow mainForm;
+
+    public FolderMonitorProgress(BulkAddShow thefm)
     {
-        public bool Ready;
-        private readonly BulkAddShow mainForm;
+        mainForm = thefm;
+        InitializeComponent();
+        Tick(); // force immediate initial update
+    }
 
-        public FolderMonitorProgress(BulkAddShow thefm)
+    private void bnCancel_Click(object sender, System.EventArgs e)
+    {
+        DialogResult = DialogResult.Abort;
+        mainForm.TokenSource.Cancel();
+    }
+
+    private void timer1_Tick(object sender, System.EventArgs e)
+    {
+        Tick();
+    }
+
+    private void Tick()
+    {
+        timer1.Stop();
+
+        BringToFront();
+
+        pbProgress.Value = mainForm.FmpPercent;
+        lbMessage.Text = mainForm.FmpUpto.ToUiVersion();
+
+        if (mainForm.TokenSource.IsCancellationRequested)
         {
-            mainForm = thefm;
-            InitializeComponent();
-            Tick(); // force immediate initial update
+            Close();
         }
 
-        private void bnCancel_Click(object sender, System.EventArgs e)
-        {
-            DialogResult = DialogResult.Abort;
-            mainForm.TokenSource.Cancel();
-        }
+        timer1.Start();
+    }
 
-        private void timer1_Tick(object sender, System.EventArgs e)
-        {
-            Tick();
-        }
-
-        private void Tick()
-        {
-            timer1.Stop();
-
-            BringToFront();
-
-            pbProgress.Value = mainForm.FmpPercent;
-            lbMessage.Text = mainForm.FmpUpto.ToUiVersion();
-
-            if (mainForm.TokenSource.IsCancellationRequested)
-            {
-                Close();
-            }
-
-            timer1.Start();
-        }
-
-        private void FolderMonitorProgress_Load(object sender, System.EventArgs e)
-        {
-            Ready = true;
-        }
+    private void FolderMonitorProgress_Load(object sender, System.EventArgs e)
+    {
+        Ready = true;
     }
 }

@@ -8,37 +8,36 @@
 using System;
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+/// <summary>
+/// Summary for ShowException
+///
+/// WARNING: If you change the name of this class, you will need to change the
+///          'Resource File Name' property for the managed resource compiler tool
+///          associated with all .resx files this class depends on.  Otherwise,
+///          the designers will not be able to interact properly with localized
+///          resources associated with this form.
+/// </summary>
+public partial class ShowException : Form
 {
-    /// <summary>
-    /// Summary for ShowException
-    ///
-    /// WARNING: If you change the name of this class, you will need to change the
-    ///          'Resource File Name' property for the managed resource compiler tool
-    ///          associated with all .resx files this class depends on.  Otherwise,
-    ///          the designers will not be able to interact properly with localized
-    ///          resources associated with this form.
-    /// </summary>
-    public partial class ShowException : Form
+    private readonly Exception mException;
+
+    public ShowException(Exception e)
     {
-        private readonly Exception mException;
+        InitializeComponent();
 
-        public ShowException(Exception e)
-        {
-            InitializeComponent();
+        mException = e;
+    }
 
-            mException = e;
-        }
+    private void ShowException_Load(object sender, EventArgs e)
+    {
+        string t = mException.Message + "\r\n\r\n" + mException.StackTrace;
+        txtText.Text = t.ToUiVersion();
+    }
 
-        private void ShowException_Load(object sender, EventArgs e)
-        {
-            string t = mException.Message + "\r\n\r\n" + mException.StackTrace;
-            txtText.Text = t.ToUiVersion();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+    private void button1_Click(object sender, EventArgs e)
+    {
+        Close();
     }
 }

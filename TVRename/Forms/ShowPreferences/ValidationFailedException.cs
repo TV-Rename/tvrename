@@ -1,11 +1,10 @@
 using System;
 
-namespace TVRename
+namespace TVRename;
+
+public class ValidationFailedException : Exception
 {
-    public class ValidationFailedException : Exception
+    public ValidationFailedException(string message) : base(message)
     {
-        public ValidationFailedException(string message) : base(message)
-        {
-        }
     }
 }

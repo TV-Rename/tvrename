@@ -8,27 +8,26 @@
 
 using Alphaleonis.Win32.Filesystem;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+internal class RecentM3UExporter : RecentExporter
 {
-    // ReSharper disable once InconsistentNaming
-    internal class RecentM3UExporter : RecentExporter
+    public RecentM3UExporter(TVDoc doc) : base(doc)
     {
-        public RecentM3UExporter(TVDoc doc) : base(doc)
-        {
-        }
-
-        public override bool Active() => TVSettings.Instance.ExportRecentM3U;
-
-        protected override string Location() => TVSettings.Instance.ExportRecentM3UTo;
-        protected override string Name() => "Recent M3U Exporter";
-
-        protected override string GenerateHeader() => "#EXTM3U";
-
-        protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length)
-        {
-            return $"#EXTINF:{length},{file.Name}\r\n{file.UrlPathFullName()}";
-        }
-
-        protected override string GenerateFooter() => string.Empty;
     }
+
+    public override bool Active() => TVSettings.Instance.ExportRecentM3U;
+
+    protected override string Location() => TVSettings.Instance.ExportRecentM3UTo;
+    protected override string Name() => "Recent M3U Exporter";
+
+    protected override string GenerateHeader() => "#EXTM3U";
+
+    protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length)
+    {
+        return $"#EXTINF:{length},{file.Name}\r\n{file.UrlPathFullName()}";
+    }
+
+    protected override string GenerateFooter() => string.Empty;
 }

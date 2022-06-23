@@ -2,42 +2,41 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TVRename
+namespace TVRename;
+
+internal class MovieManualFoldersMirrorAutomaticCheck : MovieCheck
 {
-    internal class MovieManualFoldersMirrorAutomaticCheck : MovieCheck
+    public MovieManualFoldersMirrorAutomaticCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
     {
-        public MovieManualFoldersMirrorAutomaticCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-        {
-        }
-
-        public override bool Check()
-        {
-            return Movie.UseManualLocations && Movie.ManualLocations.Any(loc => Movie.AutomaticLocations().Any(aloc=>LocationsMatch(aloc,loc)));
-        }
-
-        private static bool LocationsMatch(string aloc, string loc) => string.Equals(aloc, loc, StringComparison.Ordinal);
-
-        public override string Explain()
-        {
-            IEnumerable<string> matchingLocations =
-                Movie.ManualLocations.Where(loc => Movie.AutomaticLocations().Any(aloc => LocationsMatch(aloc, loc)));
-
-            return $"{Movie.Name} has manual locations that match automatic ones {matchingLocations.ToCsv()}";
-        }
-
-        protected override void FixInternal()
-        {
-            IEnumerable<string> matchingLocations =
-                Movie.ManualLocations.Where(loc => Movie.AutomaticLocations().Any(aloc => LocationsMatch(aloc, loc))).ToList();
-
-            Movie.ManualLocations.RemoveNullableRange(matchingLocations);
-
-            if (!Movie.ManualLocations.Any())
-            {
-                Movie.UseManualLocations = false;
-            }
-        }
-
-        protected override string MovieCheckName => "Manual Season Folders Mirror Automatic";
     }
+
+    public override bool Check()
+    {
+        return Movie.UseManualLocations && Movie.ManualLocations.Any(loc => Movie.AutomaticLocations().Any(aloc=>LocationsMatch(aloc,loc)));
+    }
+
+    private static bool LocationsMatch(string aloc, string loc) => string.Equals(aloc, loc, StringComparison.Ordinal);
+
+    public override string Explain()
+    {
+        IEnumerable<string> matchingLocations =
+            Movie.ManualLocations.Where(loc => Movie.AutomaticLocations().Any(aloc => LocationsMatch(aloc, loc)));
+
+        return $"{Movie.Name} has manual locations that match automatic ones {matchingLocations.ToCsv()}";
+    }
+
+    protected override void FixInternal()
+    {
+        IEnumerable<string> matchingLocations =
+            Movie.ManualLocations.Where(loc => Movie.AutomaticLocations().Any(aloc => LocationsMatch(aloc, loc))).ToList();
+
+        Movie.ManualLocations.RemoveNullableRange(matchingLocations);
+
+        if (!Movie.ManualLocations.Any())
+        {
+            Movie.UseManualLocations = false;
+        }
+    }
+
+    protected override string MovieCheckName => "Manual Season Folders Mirror Automatic";
 }

@@ -1,38 +1,37 @@
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+public partial class TVRenameSplash : Form
 {
-    // ReSharper disable once InconsistentNaming
-    public partial class TVRenameSplash : Form
+    public TVRenameSplash()
     {
-        public TVRenameSplash()
-        {
-            InitializeComponent();
-            lblVersion.Text = Helpers.DisplayVersion.ToUiVersion();
-        }
+        InitializeComponent();
+        lblVersion.Text = Helpers.DisplayVersion.ToUiVersion();
+    }
 
-        public void UpdateStatus(string status)
+    public void UpdateStatus(string status)
+    {
+        if (IsHandleCreated)
         {
-            if (IsHandleCreated)
-            {
-                Invoke((MethodInvoker)delegate { lblStatus.Text = status.ToUiVersion(); });
-            }
+            Invoke((MethodInvoker)delegate { lblStatus.Text = status.ToUiVersion(); });
         }
+    }
 
-        public void UpdateProgress(int progress)
+    public void UpdateProgress(int progress)
+    {
+        if (IsHandleCreated)
         {
-            if (IsHandleCreated)
-            {
-                Invoke((MethodInvoker)delegate { prgComplete.Value = progress; });
-            }
+            Invoke((MethodInvoker)delegate { prgComplete.Value = progress; });
         }
+    }
 
-        public void UpdateInfo(string info)
+    public void UpdateInfo(string info)
+    {
+        if (IsHandleCreated)
         {
-            if (IsHandleCreated)
-            {
-                Invoke((MethodInvoker)delegate { lblInfo.Text = info.ToUiVersion(); });
-            }
+            Invoke((MethodInvoker)delegate { lblInfo.Text = info.ToUiVersion(); });
         }
     }
 }

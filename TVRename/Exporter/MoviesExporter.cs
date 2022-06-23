@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -8,15 +8,14 @@
 
 using System.Collections.Generic;
 
-namespace TVRename
-{
-    internal abstract class MoviesExporter : Exporter
-    {
-        protected readonly List<MovieConfiguration> Shows;
+namespace TVRename;
 
-        protected MoviesExporter(List<MovieConfiguration> shows)
-        {
-            Shows = shows;
-        }
+internal abstract class MoviesExporter : Exporter
+{
+    protected readonly List<MovieConfiguration> Shows;
+
+    protected MoviesExporter(List<MovieConfiguration> shows)
+    {
+        Shows = shows;
     }
 }

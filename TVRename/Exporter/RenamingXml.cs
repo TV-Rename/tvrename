@@ -6,23 +6,22 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-namespace TVRename
+namespace TVRename;
+
+internal class RenamingXml : ActionListXml
 {
-    internal class RenamingXml : ActionListXml
+    public RenamingXml(ItemList theActionList) : base(theActionList)
     {
-        public RenamingXml(ItemList theActionList) : base(theActionList)
-        {
-        }
-
-        protected override bool IsOutput(Item a) => a is ActionCopyMoveRename { Operation: ActionCopyMoveRename.Op.rename, Episode: { } };
-
-        public override bool ApplicableFor(TVSettings.ScanType st) => true;
-
-        public override bool Active() => TVSettings.Instance.ExportRenamingXML;
-
-        protected override string Location() => TVSettings.Instance.ExportRenamingXMLTo;
-
-        protected override string MainXmlElementName() => "Renaming";
-        protected override string Name() => "Renaming XML Exporter";
     }
+
+    protected override bool IsOutput(Item a) => a is ActionCopyMoveRename { Operation: ActionCopyMoveRename.Op.rename, Episode: { } };
+
+    public override bool ApplicableFor(TVSettings.ScanType st) => true;
+
+    public override bool Active() => TVSettings.Instance.ExportRenamingXML;
+
+    protected override string Location() => TVSettings.Instance.ExportRenamingXMLTo;
+
+    protected override string MainXmlElementName() => "Renaming";
+    protected override string Name() => "Renaming XML Exporter";
 }

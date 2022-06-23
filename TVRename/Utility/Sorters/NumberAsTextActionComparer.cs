@@ -1,36 +1,35 @@
 using System;
 using BrightIdeasSoftware;
 
-namespace TVRename
+namespace TVRename;
+
+public class NumberAsTextActionComparer : ObjectListViewComparer<int>
 {
-    public class NumberAsTextActionComparer : ObjectListViewComparer<int>
+    public NumberAsTextActionComparer(int column) : base(column)
     {
-        public NumberAsTextActionComparer(int column) : base(column)
+    }
+
+    protected override int GetValue(OLVListItem x, int columnId)
+    {
+        string value = x.SubItems[columnId].Text;
+
+        if (!value.HasValue())
         {
+            return -1;
         }
 
-        protected override int GetValue(OLVListItem x, int columnId)
+        if (value == TVSettings.SpecialsListViewName)
         {
-            string value = x.SubItems[columnId].Text;
+            return 0;
+        }
 
-            if (!value.HasValue())
-            {
-                return -1;
-            }
-
-            if (value == TVSettings.SpecialsListViewName)
-            {
-                return 0;
-            }
-
-            try
-            {
-                return Convert.ToInt32(value);
-            }
-            catch
-            {
-                return 0;
-            }
+        try
+        {
+            return Convert.ToInt32(value);
+        }
+        catch
+        {
+            return 0;
         }
     }
 }

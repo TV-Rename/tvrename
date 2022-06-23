@@ -10,146 +10,145 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+/// <summary>
+/// Summary for CustomNameDesigner
+///
+/// WARNING: If you change the name of this class, you will need to change the
+///          'Resource File Name' property for the managed resource compiler tool
+///          associated with all .resx files this class depends on.  Otherwise,
+///          the designers will not be able to interact properly with localized
+///          resources associated with this form.
+/// </summary>
+public partial class CustomNameDesigner : Form
 {
-    /// <summary>
-    /// Summary for CustomNameDesigner
-    ///
-    /// WARNING: If you change the name of this class, you will need to change the
-    ///          'Resource File Name' property for the managed resource compiler tool
-    ///          associated with all .resx files this class depends on.  Otherwise,
-    ///          the designers will not be able to interact properly with localized
-    ///          resources associated with this form.
-    /// </summary>
-    public partial class CustomNameDesigner : Form
+    private readonly CustomEpisodeName cn;
+    private readonly List<ProcessedEpisode>? eps;
+
+    public CustomNameDesigner(List<ProcessedEpisode>? pel, CustomEpisodeName cn)
     {
-        private readonly CustomEpisodeName cn;
-        private readonly List<ProcessedEpisode>? eps;
+        eps = pel;
+        this.cn = cn;
 
-        public CustomNameDesigner(List<ProcessedEpisode>? pel, CustomEpisodeName cn)
+        InitializeComponent();
+
+        if (eps is null)
         {
-            eps = pel;
-            this.cn = cn;
-
-            InitializeComponent();
-
-            if (eps is null)
-            {
-                lvTest.Enabled = false;
-            }
-
-            txtTemplate.Text = this.cn.StyleString;
-
-            FillExamples();
-            FillCombos();
+            lvTest.Enabled = false;
         }
 
-        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        txtTemplate.Text = this.cn.StyleString;
+
+        FillExamples();
+        FillCombos();
+    }
+
+    protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+    {
+        base.ScaleControl(factor, specified);
+        lvTest.ScaleListViewColumns(factor);
+    }
+    private void FillCombos()
+    {
+        cbTags.Items.Clear();
+        cbPresets.Items.Clear();
+        ProcessedEpisode? pe;
+        if (lvTest.SelectedItems.Count == 0)
         {
-            base.ScaleControl(factor, specified);
-            lvTest.ScaleListViewColumns(factor);
+            pe = eps is { Count: > 0 } ? eps[0] : null;
         }
-        private void FillCombos()
+        else
         {
-            cbTags.Items.Clear();
-            cbPresets.Items.Clear();
-            ProcessedEpisode pe;
-            if (lvTest.SelectedItems.Count == 0)
-            {
-                pe = eps is { Count: > 0 } ? eps[0] : null;
-            }
-            else
-            {
-                pe = (ProcessedEpisode)lvTest.SelectedItems[0].Tag;
-            }
-
-            foreach (string s in CustomEpisodeName.TAGS)
-            {
-                string txt = s;
-                if (pe != null)
-                {
-                    txt += " - " + CustomEpisodeName.NameForNoExt(pe, s);
-                }
-
-                cbTags.Items.Add(txt);
-            }
-
-            foreach (string s in CustomEpisodeName.PRESETS)
-            {
-                cbPresets.Items.Add(pe != null ? CustomEpisodeName.NameForNoExt(pe, s) : s);
-            }
+            pe = (ProcessedEpisode)lvTest.SelectedItems[0].Tag;
         }
 
-        private void FillExamples()
+        foreach (string s in CustomEpisodeName.TAGS)
         {
-            if (eps is null)
+            string txt = s;
+            if (pe != null)
             {
-                return;
+                txt += " - " + CustomEpisodeName.NameForNoExt(pe, s);
             }
 
-            lvTest.Items.Clear();
-            foreach (ProcessedEpisode pe in eps)
-            {
-                ListViewItem lvi = new();
-                string fn = TVSettings.Instance.FilenameFriendly(cn.NameFor(pe));
-                lvi.Text = fn;
-
-                bool ok = FinderHelper.FindSeasEp(fn, out int seas, out int ep, out int maxEp, pe.Show);
-                bool ok1 = ok && seas == pe.AppropriateSeasonNumber;
-                bool ok2 = ok && ep == pe.AppropriateEpNum;
-                string pre1 = ok1 ? "" : "* ";
-                string pre2 = ok2 ? "" : "* ";
-
-                lvi.SubItems.Add(pre1 + (seas != -1 ? seas.ToString() : ""));
-                lvi.SubItems.Add(pre2 + (ep != -1 ? ep.ToString() : "") + (maxEp != -1 ? "-" + maxEp : ""));
-
-                lvi.Tag = pe;
-
-                if (!ok || !ok1 || !ok2)
-                {
-                    lvi.BackColor = Helpers.WarningColor();
-                }
-
-                lvTest.Items.Add(lvi);
-            }
+            cbTags.Items.Add(txt);
         }
 
-        private void cbPresets_SelectedIndexChanged(object sender, System.EventArgs e)
+        foreach (string s in CustomEpisodeName.PRESETS)
         {
-            int n = cbPresets.SelectedIndex;
-            if (n == -1)
-            {
-                return;
-            }
+            cbPresets.Items.Add(pe != null ? CustomEpisodeName.NameForNoExt(pe, s) : s);
+        }
+    }
 
-            txtTemplate.Text = CustomEpisodeName.PRESETS[n];
-            cbPresets.SelectedIndex = -1;
+    private void FillExamples()
+    {
+        if (eps is null)
+        {
+            return;
         }
 
-        private void txtTemplate_TextChanged(object sender, System.EventArgs e)
+        lvTest.Items.Clear();
+        foreach (ProcessedEpisode pe in eps)
         {
-            cn.StyleString = txtTemplate.Text;
-            FillExamples();
-        }
+            ListViewItem lvi = new();
+            string fn = TVSettings.Instance.FilenameFriendly(cn.NameFor(pe));
+            lvi.Text = fn;
 
-        private void cbTags_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            int n = cbTags.SelectedIndex;
-            if (n == -1)
+            bool ok = FinderHelper.FindSeasEp(fn, out int seas, out int ep, out int maxEp, pe.Show);
+            bool ok1 = ok && seas == pe.AppropriateSeasonNumber;
+            bool ok2 = ok && ep == pe.AppropriateEpNum;
+            string pre1 = ok1 ? "" : "* ";
+            string pre2 = ok2 ? "" : "* ";
+
+            lvi.SubItems.Add(pre1 + (seas != -1 ? seas.ToString() : ""));
+            lvi.SubItems.Add(pre2 + (ep != -1 ? ep.ToString() : "") + (maxEp != -1 ? "-" + maxEp : ""));
+
+            lvi.Tag = pe;
+
+            if (!ok || !ok1 || !ok2)
             {
-                return;
+                lvi.BackColor = Helpers.WarningColor();
             }
 
-            int p = txtTemplate.SelectionStart;
-            string s = txtTemplate.Text;
-            txtTemplate.Text = s.Substring(0, p) + CustomEpisodeName.TAGS[cbTags.SelectedIndex] + s.Substring(p);
-
-            cbTags.SelectedIndex = -1;
+            lvTest.Items.Add(lvi);
         }
+    }
 
-        private void lvTest_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void cbPresets_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+        int n = cbPresets.SelectedIndex;
+        if (n == -1)
         {
-            FillCombos();
+            return;
         }
+
+        txtTemplate.Text = CustomEpisodeName.PRESETS[n];
+        cbPresets.SelectedIndex = -1;
+    }
+
+    private void txtTemplate_TextChanged(object sender, System.EventArgs e)
+    {
+        cn.StyleString = txtTemplate.Text;
+        FillExamples();
+    }
+
+    private void cbTags_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+        int n = cbTags.SelectedIndex;
+        if (n == -1)
+        {
+            return;
+        }
+
+        int p = txtTemplate.SelectionStart;
+        string s = txtTemplate.Text;
+        txtTemplate.Text = s.Substring(0, p) + CustomEpisodeName.TAGS[cbTags.SelectedIndex] + s.Substring(p);
+
+        cbTags.SelectedIndex = -1;
+    }
+
+    private void lvTest_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+        FillCombos();
     }
 }

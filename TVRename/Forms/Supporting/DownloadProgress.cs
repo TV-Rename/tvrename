@@ -10,76 +10,75 @@ using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+/// <summary>
+/// Summary for DownloadProgress
+///
+/// WARNING: If you change the name of this class, you will need to change the
+///          'Resource File Name' property for the managed resource compiler tool
+///          associated with all .resx files this class depends on.  Otherwise,
+///          the designers will not be able to interact properly with localized
+///          resources associated with this form.
+/// </summary>
+public partial class DownloadProgress : Form
 {
-    /// <summary>
-    /// Summary for DownloadProgress
-    ///
-    /// WARNING: If you change the name of this class, you will need to change the
-    ///          'Resource File Name' property for the managed resource compiler tool
-    ///          associated with all .resx files this class depends on.  Otherwise,
-    ///          the designers will not be able to interact properly with localized
-    ///          resources associated with this form.
-    /// </summary>
-    public partial class DownloadProgress : Form
+    private readonly CacheUpdater mDoc;
+    private readonly System.Timers.Timer newTimer;
+    private readonly CancellationTokenSource token;
+
+    public DownloadProgress(CacheUpdater doc, CancellationTokenSource cts)
     {
-        private readonly CacheUpdater mDoc;
-        private readonly System.Timers.Timer newTimer;
-        private readonly CancellationTokenSource token;
+        InitializeComponent();
+        mDoc = doc;
+        token = cts;
+        tmrUpdate.Start();
+        newTimer = new System.Timers.Timer(100);
+        newTimer.Elapsed += NewTimerOnElapsed;
+        newTimer.SynchronizingObject = this;
+        newTimer.AutoReset = true;
+    }
 
-        public DownloadProgress(CacheUpdater doc, CancellationTokenSource cts)
-        {
-            InitializeComponent();
-            mDoc = doc;
-            token = cts;
-            tmrUpdate.Start();
-            newTimer = new System.Timers.Timer(100);
-            newTimer.Elapsed += NewTimerOnElapsed;
-            newTimer.SynchronizingObject = this;
-            newTimer.AutoReset = true;
-        }
+    private void NewTimerOnElapsed(object sender, ElapsedEventArgs e)
+    {
+        Tick();
+    }
 
-        private void NewTimerOnElapsed(object sender, ElapsedEventArgs e)
+    private void Tick()
+    {
+        if (mDoc.DownloadDone)
         {
-            Tick();
-        }
-
-        private void Tick()
-        {
-            if (mDoc.DownloadDone)
-            {
-                Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.NoProgress, ParentForm?.Handle ?? Handle);
-                Close();
-            }
-            else
-            {
-                UpdateStuff();
-            }
-        }
-
-        private void bnCancel_Click(object sender, System.EventArgs e)
-        {
-            tmrUpdate.Stop();
-            newTimer.Stop();
-            DialogResult = DialogResult.Abort;
-            token.Cancel();
             Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.NoProgress, ParentForm?.Handle ?? Handle);
             Close();
         }
-
-        private void tmrUpdate_Tick(object sender, System.EventArgs e)
+        else
         {
-            Tick();
+            UpdateStuff();
         }
+    }
 
-        private void UpdateStuff()
-        {
-            txtCurrent.Text =
-                TheTVDB.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ??
-                TVmaze.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ??
-                TMDB.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ?? string.Empty;
-            pbProgressBar.Value = mDoc.DownloadPct;
-            Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressValue(mDoc.DownloadPct,100,ParentForm?.Handle??Handle);
-        }
+    private void bnCancel_Click(object sender, System.EventArgs e)
+    {
+        tmrUpdate.Stop();
+        newTimer.Stop();
+        DialogResult = DialogResult.Abort;
+        token.Cancel();
+        Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.NoProgress, ParentForm?.Handle ?? Handle);
+        Close();
+    }
+
+    private void tmrUpdate_Tick(object sender, System.EventArgs e)
+    {
+        Tick();
+    }
+
+    private void UpdateStuff()
+    {
+        txtCurrent.Text =
+            TheTVDB.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ??
+            TVmaze.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ??
+            TMDB.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ?? string.Empty;
+        pbProgressBar.Value = mDoc.DownloadPct;
+        Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressValue(mDoc.DownloadPct,100,ParentForm?.Handle??Handle);
     }
 }

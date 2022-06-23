@@ -1,20 +1,19 @@
-namespace TVRename
+namespace TVRename;
+
+internal class DefaultDoMissingTvCheck : DefaultTvShowCheck
 {
-    internal class DefaultDoMissingTvCheck : DefaultTvShowCheck
+    public DefaultDoMissingTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
     {
-        public DefaultDoMissingTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-        {
-        }
+    }
 
-        protected override string FieldName => "Do Missing Check";
+    protected override string FieldName => "Do Missing Check";
 
-        protected override bool Field => Show.DoMissingCheck;
+    protected override bool Field => Show.DoMissingCheck;
 
-        protected override bool Default => TVSettings.Instance.DefShowDoMissingCheck;
+    protected override bool Default => TVSettings.Instance.DefShowDoMissingCheck;
 
-        protected override void FixInternal()
-        {
-            Show.DoMissingCheck = Default;
-        }
+    protected override void FixInternal()
+    {
+        Show.DoMissingCheck = Default;
     }
 }

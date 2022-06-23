@@ -6,24 +6,23 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-namespace TVRename
+namespace TVRename;
+
+internal class CopyMoveXml : ActionListXml
 {
-    internal class CopyMoveXml : ActionListXml
+    public CopyMoveXml(ItemList theActionList) : base(theActionList)
     {
-        public CopyMoveXml(ItemList theActionList) : base(theActionList)
-        {
-        }
-
-        public override bool ApplicableFor(TVSettings.ScanType st) => true;
-
-        protected override bool IsOutput(Item a) => a is ActionCopyMoveRename cmr && cmr.Operation != ActionCopyMoveRename.Op.rename && cmr.Episode != null;
-
-        public override bool Active() => TVSettings.Instance.ExportFOXML;
-
-        protected override string Location() => TVSettings.Instance.ExportFOXMLTo;
-
-        protected override string MainXmlElementName() => "FindingAndOrganising";
-
-        protected override string Name() => "CopyMove XML Exporter";
     }
+
+    public override bool ApplicableFor(TVSettings.ScanType st) => true;
+
+    protected override bool IsOutput(Item a) => a is ActionCopyMoveRename cmr && cmr.Operation != ActionCopyMoveRename.Op.rename && cmr.Episode != null;
+
+    public override bool Active() => TVSettings.Instance.ExportFOXML;
+
+    protected override string Location() => TVSettings.Instance.ExportFOXMLTo;
+
+    protected override string MainXmlElementName() => "FindingAndOrganising";
+
+    protected override string Name() => "CopyMove XML Exporter";
 }

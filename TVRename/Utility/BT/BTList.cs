@@ -2,43 +2,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+public class BTList : BTItem
 {
-    // ReSharper disable once InconsistentNaming
-    public class BTList : BTItem
+    public readonly List<BTItem> Items;
+
+    public BTList()
+        : base(BTChunk.kList)
     {
-        public readonly List<BTItem> Items;
+        Items = new List<BTItem>();
+    }
 
-        public BTList()
-            : base(BTChunk.kList)
+    public override string AsText()
+    {
+        return "List={" + Items.Select(x => x.AsText()).ToCsv() + "}";
+    }
+
+    public override void Tree(TreeNodeCollection tn)
+    {
+        TreeNode n = new("List");
+        tn.Add(n);
+        foreach (BTItem t in Items)
         {
-            Items = new List<BTItem>();
+            t.Tree(n.Nodes);
+        }
+    }
+
+    public override void Write(System.IO.Stream sw)
+    {
+        sw.WriteByte((byte)'l');
+        foreach (BTItem i in Items)
+        {
+            i.Write(sw);
         }
 
-        public override string AsText()
-        {
-            return "List={" + Items.Select(x => x.AsText()).ToCsv() + "}";
-        }
-
-        public override void Tree(TreeNodeCollection tn)
-        {
-            TreeNode n = new("List");
-            tn.Add(n);
-            foreach (BTItem t in Items)
-            {
-                t.Tree(n.Nodes);
-            }
-        }
-
-        public override void Write(System.IO.Stream sw)
-        {
-            sw.WriteByte((byte)'l');
-            foreach (BTItem i in Items)
-            {
-                i.Write(sw);
-            }
-
-            sw.WriteByte((byte)'e');
-        }
+        sw.WriteByte((byte)'e');
     }
 }

@@ -1,65 +1,64 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace TVRename.Forms.Supporting
+namespace TVRename.Forms.Supporting;
+
+public partial class ChooseDownload : Form
 {
-    public partial class ChooseDownload : Form
+    public ChooseDownload(ItemMissing im, IEnumerable<ActionTDownload> options)
     {
-        public ChooseDownload(ItemMissing im, IEnumerable<ActionTDownload> options)
+        InitializeComponent();
+        lblEpisodeName.Text = $"{im.Show.ShowName.ToUiVersion()} - {im}";
+        if (im is MovieItemMissing mim)
         {
-            InitializeComponent();
-            lblEpisodeName.Text = $"{im.Show.ShowName.ToUiVersion()} - {im}";
-            if (im is MovieItemMissing mim)
-            {
-                lblEpisodeName.Text = $"{mim.MovieConfig.ShowNameWithYear.ToUiVersion()}";
-            }
-            olvSize.AspectToStringConverter = delegate (object x)
-            {
-                long sizeBytes = (long)x;
-
-                return $"{(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}";
-            };
-            olvChooseDownload.SetObjects(options);
-            SetButtonVisibility();
-            olvChooseDownload.Sort(olvSeeders, SortOrder.Descending);
+            lblEpisodeName.Text = $"{mim.MovieConfig.ShowNameWithYear.ToUiVersion()}";
         }
-
-        public ActionTDownload? UserChosenAction
+        olvSize.AspectToStringConverter = delegate (object x)
         {
-            get;
-            private set;
-        }
+            long sizeBytes = (long)x;
 
-        private void OlvChooseDownload_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            SetButtonVisibility();
-        }
+            return $"{(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}";
+        };
+        olvChooseDownload.SetObjects(options);
+        SetButtonVisibility();
+        olvChooseDownload.Sort(olvSeeders, SortOrder.Descending);
+    }
 
-        private void SetButtonVisibility()
-        {
-            btnOK.Enabled = olvChooseDownload.SelectedObject != null;
-        }
+    public ActionTDownload? UserChosenAction
+    {
+        get;
+        private set;
+    }
 
-        private void BtnOK_Click(object sender, System.EventArgs e)
-        {
-            Ok();
-        }
+    private void OlvChooseDownload_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+        SetButtonVisibility();
+    }
 
-        private void Ok()
-        {
-            UserChosenAction = (ActionTDownload)olvChooseDownload.SelectedObject;
-            DialogResult = olvChooseDownload.SelectedObject != null ? DialogResult.OK : DialogResult.Cancel;
-        }
+    private void SetButtonVisibility()
+    {
+        btnOK.Enabled = olvChooseDownload.SelectedObject != null;
+    }
 
-        private void bnCancelAll_Click(object sender, System.EventArgs e)
-        {
-            DialogResult = DialogResult.Abort;
-            Close();
-        }
+    private void BtnOK_Click(object sender, System.EventArgs e)
+    {
+        Ok();
+    }
 
-        private void olvChooseDownload_DoubleClick(object sender, System.EventArgs e)
-        {
-            Ok();
-        }
+    private void Ok()
+    {
+        UserChosenAction = (ActionTDownload)olvChooseDownload.SelectedObject;
+        DialogResult = olvChooseDownload.SelectedObject != null ? DialogResult.OK : DialogResult.Cancel;
+    }
+
+    private void bnCancelAll_Click(object sender, System.EventArgs e)
+    {
+        DialogResult = DialogResult.Abort;
+        Close();
+    }
+
+    private void olvChooseDownload_DoubleClick(object sender, System.EventArgs e)
+    {
+        Ok();
     }
 }

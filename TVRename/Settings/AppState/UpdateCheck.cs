@@ -1,15 +1,14 @@
 using System;
 using System.Xml.Serialization;
 
-namespace TVRename.Settings.AppState
+namespace TVRename.Settings.AppState;
+
+public class UpdateCheck
 {
-    public class UpdateCheck
-    {
-        public DateTime? LastUpdateCheckUtc { get; set; }
+    public DateTime? LastUpdateCheckUtc { get; set; }
 
-        // This state can be extended when we want to provide a "skip this version" feature etc.
+    // This state can be extended when we want to provide a "skip this version" feature etc.
 
-        [XmlIgnore]
-        public TimeSpan LastUpdate => DateTime.UtcNow - LastUpdateCheckUtc.GetValueOrDefault(DateTime.MinValue);
-    }
+    [XmlIgnore]
+    public TimeSpan LastUpdate => DateTime.UtcNow - LastUpdateCheckUtc.GetValueOrDefault(DateTime.MinValue);
 }

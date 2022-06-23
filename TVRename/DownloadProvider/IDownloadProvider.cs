@@ -1,18 +1,17 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 
-namespace TVRename
+namespace TVRename;
+
+public interface IDownloadProvider
 {
-    public interface IDownloadProvider
-    {
-        void RemoveCompletedDownload(TorrentEntry torrent);
+    void RemoveCompletedDownload(TorrentEntry torrent);
 
-        string Name();
+    string Name();
 
-        List<TorrentEntry>? GetTorrentDownloads();
+    List<TorrentEntry>? GetTorrentDownloads();
 
-        void StartUrlDownload(string torrentUrl);
+    void StartUrlDownload(string torrentUrl);
 
-        void StartTorrentDownload(FileInfo torrentFile);
-    }
+    void StartTorrentDownload(FileInfo torrentFile);
 }

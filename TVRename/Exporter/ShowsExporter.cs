@@ -8,15 +8,14 @@
 
 using System.Collections.Generic;
 
-namespace TVRename
-{
-    internal abstract class ShowsExporter : Exporter
-    {
-        protected readonly List<ShowConfiguration> Shows;
+namespace TVRename;
 
-        protected ShowsExporter(List<ShowConfiguration> shows)
-        {
-            Shows = shows;
-        }
+internal abstract class ShowsExporter : Exporter
+{
+    protected readonly List<ShowConfiguration> Shows;
+
+    protected ShowsExporter(List<ShowConfiguration> shows)
+    {
+        Shows = shows;
     }
 }

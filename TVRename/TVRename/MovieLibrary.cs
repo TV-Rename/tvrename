@@ -3,183 +3,182 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace TVRename
+namespace TVRename;
+
+public class MovieLibrary : SafeList<MovieConfiguration>
 {
-    public class MovieLibrary : SafeList<MovieConfiguration>
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+    public IEnumerable<MovieConfiguration> Movies => this;
+
+    public List<(int, string)> Collections => Movies
+        .Where(a => a.InCollection)
+        .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
+        .Where(a => a.CollectionId.HasValue && a.CollectionName.HasValue())
+        .Select(a => (a.CollectionId.Value, a.CollectionName))
+        .Distinct()
+        .ToList();
+
+    public IEnumerable<string> GetGenres()
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
-        public IEnumerable<MovieConfiguration> Movies => this;
-
-        public List<(int, string)> Collections => Movies
-            .Where(a => a.InCollection)
-            .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
-            .Where(a => a.CollectionId.HasValue && a.CollectionName.HasValue())
-            .Select(a => (a.CollectionId.Value, a.CollectionName))
-            .Distinct()
-            .ToList();
-
-        public IEnumerable<string> GetGenres()
+        List<string> allGenres = new();
+        foreach (MovieConfiguration si in Movies)
         {
-            List<string> allGenres = new();
-            foreach (MovieConfiguration si in Movies)
-            {
-                allGenres.AddRange(si.Genres);
-            }
-
-            List<string> distinctGenres = allGenres.Distinct().ToList();
-            distinctGenres.Sort();
-            return distinctGenres;
+            allGenres.AddRange(si.Genres);
         }
 
-        public MovieConfiguration? GetMovie(int id, TVDoc.ProviderType provider)
-        {
-            if (id == 0 || id == -1)
-            {
-                return null;
-            }
-            List<MovieConfiguration> matching = Movies.Where(configuration => configuration.IdFor(provider) == id).ToList();
+        List<string> distinctGenres = allGenres.Distinct().ToList();
+        distinctGenres.Sort();
+        return distinctGenres;
+    }
 
-            if (!matching.Any())
-            {
-                return null;
-            }
-            if (matching.Count == 1)
-            {
-                return matching.First();
-            }
-            throw new InvalidOperationException(
-                $"Searched for {id} on {provider.PrettyPrint()} Movie Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
+    public MovieConfiguration? GetMovie(int id, TVDoc.ProviderType provider)
+    {
+        if (id == 0 || id == -1)
+        {
+            return null;
+        }
+        List<MovieConfiguration> matching = Movies.Where(configuration => configuration.IdFor(provider) == id).ToList();
+
+        if (!matching.Any())
+        {
+            return null;
+        }
+        if (matching.Count == 1)
+        {
+            return matching.First();
+        }
+        throw new InvalidOperationException(
+            $"Searched for {id} on {provider.PrettyPrint()} Movie Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
     }
 
     public new void AddMovie(MovieConfiguration newShow,bool showErrors)
+    {
+        if (Contains(newShow))
         {
-            if (Contains(newShow))
-            {
-                return;
-            }
+            return;
+        }
 
-            List<MovieConfiguration> matchingShows = Movies.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
-            if (matchingShows.Any())
+        List<MovieConfiguration> matchingShows = Movies.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
+        if (matchingShows.Any())
+        {
+            foreach (MovieConfiguration existingshow in matchingShows)
             {
-                foreach (MovieConfiguration existingshow in matchingShows)
+                //TODO Merge them in
+                existingshow.AutomaticFolderRoot = newShow.AutomaticFolderRoot;
+
+                if (showErrors)
                 {
-                    //TODO Merge them in
-                    existingshow.AutomaticFolderRoot = newShow.AutomaticFolderRoot;
-
-                    if (showErrors)
-                    {
-                        Logger.Error($"Trying to add {newShow}, but we already have {existingshow}");
-                        Logger.Error(Environment.StackTrace);
-                    }
-                    else
-                    {
-                        Logger.Warn($"Trying to add {newShow}, but we already have {existingshow}");
-                    }
+                    Logger.Error($"Trying to add {newShow}, but we already have {existingshow}");
+                    Logger.Error(Environment.StackTrace);
                 }
-                return;
-            }
-
-            Add(newShow);
-        }
-        public void AddMovies(List<MovieConfiguration>? newMovie, bool showErrors)
-        {
-            if (newMovie is null)
-            {
-                return;
-            }
-
-            foreach (MovieConfiguration toAdd in newMovie)
-            {
-                AddMovie(toAdd,showErrors);
-            }
-        }
-
-        public void LoadFromXml(XElement? xmlSettings)
-        {
-            if (xmlSettings != null)
-            {
-                foreach (MovieConfiguration si in xmlSettings.Descendants("MovieItem").Select(showSettings => new MovieConfiguration(showSettings)))
+                else
                 {
-                    if (si.UseCustomShowName) // see if custom show name is actually the real show name
-                    {
-                        CachedMovieInfo? ser = si.CachedMovie;
-                        if (ser != null && si.CustomShowName == ser.Name)
-                        {
-                            // then, turn it off
-                            si.CustomShowName = string.Empty;
-                            si.UseCustomShowName = false;
-                        }
-                    }
-
-                    AddMovie(si,false);
+                    Logger.Warn($"Trying to add {newShow}, but we already have {existingshow}");
                 }
             }
+            return;
         }
 
-        public List<MovieConfiguration> GetSortedMovies()
+        Add(newShow);
+    }
+    public void AddMovies(List<MovieConfiguration>? newMovie, bool showErrors)
+    {
+        if (newMovie is null)
         {
-            List<MovieConfiguration> returnList = Movies.ToList();
-            returnList.Sort(MediaConfiguration.CompareNames);
-            return returnList;
+            return;
         }
 
-        public IEnumerable<string> GetNetworks()
+        foreach (MovieConfiguration toAdd in newMovie)
         {
-            return Movies
-                .Select(si => si.CachedMovie)
-                .Where(seriesInfo => !string.IsNullOrWhiteSpace(seriesInfo?.Network))
-                .SelectMany(seriesInfo => seriesInfo.Networks)
-                .Distinct()
-                .OrderBy(s => s);
+            AddMovie(toAdd,showErrors);
         }
+    }
 
-        public IEnumerable<string> GetContentRatings()
+    public void LoadFromXml(XElement? xmlSettings)
+    {
+        if (xmlSettings != null)
         {
-            return Movies.Select(si => si.CachedMovie)
-                .Where(s => !string.IsNullOrWhiteSpace(s?.ContentRating))
-                .Select(s => s.ContentRating)
-                .Distinct()
-                .OrderBy(s => s);
-        }
-
-        public IEnumerable<string> GetYears()
-        {
-            return Movies.Select(si => si.CachedMovie?.Year)
-                .Where(s => s.HasValue)
-                .Select(s => s!.ToString())
-                .Distinct()
-                .OrderBy(s => s);
-        }
-
-        public IEnumerable<string> GetStatuses()
-        {
-            return Movies
-                .Select(s => s.CachedMovie)
-                .Where(s => !string.IsNullOrWhiteSpace(s?.Status))
-                .Select(s => s.Status)
-                .Distinct()
-                .OrderBy(s => s);
-        }
-
-        public MovieConfiguration? GetMovie(ISeriesSpecifier ai) => GetMovie(ai.Id(), ai.Provider);
-
-        public void UpdateCollectionInformation()
-        {
-            foreach (MovieConfiguration mov in Movies.Where(mov => mov.InCollection))
+            foreach (MovieConfiguration si in xmlSettings.Descendants("MovieItem").Select(showSettings => new MovieConfiguration(showSettings)))
             {
-                mov.CollectionOrder = GetCollectionPosition(mov);
+                if (si.UseCustomShowName) // see if custom show name is actually the real show name
+                {
+                    CachedMovieInfo? ser = si.CachedMovie;
+                    if (ser != null && si.CustomShowName == ser.Name)
+                    {
+                        // then, turn it off
+                        si.CustomShowName = string.Empty;
+                        si.UseCustomShowName = false;
+                    }
+                }
+
+                AddMovie(si,false);
             }
         }
+    }
 
-        private int? GetCollectionPosition(MovieConfiguration movieConfiguration)
+    public List<MovieConfiguration> GetSortedMovies()
+    {
+        List<MovieConfiguration> returnList = Movies.ToList();
+        returnList.Sort(MediaConfiguration.CompareNames);
+        return returnList;
+    }
+
+    public IEnumerable<string> GetNetworks()
+    {
+        return Movies
+            .Select(si => si.CachedMovie)
+            .Where(seriesInfo => !string.IsNullOrWhiteSpace(seriesInfo?.Network))
+            .SelectMany(seriesInfo => seriesInfo.Networks)
+            .Distinct()
+            .OrderBy(s => s);
+    }
+
+    public IEnumerable<string> GetContentRatings()
+    {
+        return Movies.Select(si => si.CachedMovie)
+            .Where(s => !string.IsNullOrWhiteSpace(s?.ContentRating))
+            .Select(s => s.ContentRating)
+            .Distinct()
+            .OrderBy(s => s);
+    }
+
+    public IEnumerable<string> GetYears()
+    {
+        return Movies.Select(si => si.CachedMovie?.Year)
+            .Where(s => s.HasValue)
+            .Select(s => s!.ToString())
+            .Distinct()
+            .OrderBy(s => s);
+    }
+
+    public IEnumerable<string> GetStatuses()
+    {
+        return Movies
+            .Select(s => s.CachedMovie)
+            .Where(s => !string.IsNullOrWhiteSpace(s?.Status))
+            .Select(s => s.Status)
+            .Distinct()
+            .OrderBy(s => s);
+    }
+
+    public MovieConfiguration? GetMovie(ISeriesSpecifier ai) => GetMovie(ai.Id(), ai.Provider);
+
+    public void UpdateCollectionInformation()
+    {
+        foreach (MovieConfiguration mov in Movies.Where(mov => mov.InCollection))
         {
-            return Movies
-                .Where(m => m.InCollection)
-                .Select(m => m.CachedMovie)
-                .Where(c => c is not null)
-                .Where(c => c.CollectionName == movieConfiguration.CachedMovie?.CollectionName)
-                .Count(c => c.FirstAired <= movieConfiguration.CachedMovie?.FirstAired);
+            mov.CollectionOrder = GetCollectionPosition(mov);
         }
+    }
+
+    private int? GetCollectionPosition(MovieConfiguration movieConfiguration)
+    {
+        return Movies
+            .Where(m => m.InCollection)
+            .Select(m => m.CachedMovie)
+            .Where(c => c is not null)
+            .Where(c => c.CollectionName == movieConfiguration.CachedMovie?.CollectionName)
+            .Count(c => c.FirstAired <= movieConfiguration.CachedMovie?.FirstAired);
     }
 }

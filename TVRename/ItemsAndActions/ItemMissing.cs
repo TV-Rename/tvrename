@@ -6,45 +6,44 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-namespace TVRename
+namespace TVRename;
+
+using Alphaleonis.Win32.Filesystem;
+using System;
+
+public abstract class ItemMissing : Item
 {
-    using Alphaleonis.Win32.Filesystem;
-    using System;
+    public string TheFileNoExt;
+    public string Filename;
+    protected string Folder;
 
-    public abstract class ItemMissing : Item
+    public override string DestinationFile => Filename;
+    public override string ScanListViewGroup => "lvgActionMissing";
+    public override string DestinationFolder => Folder;
+    public override string TargetFolder
     {
-        public string TheFileNoExt;
-        public string Filename;
-        protected string Folder;
-
-        public override string DestinationFile => Filename;
-        public override string ScanListViewGroup => "lvgActionMissing";
-        public override string DestinationFolder => Folder;
-        public override string TargetFolder
+        get
         {
-            get
+            try
             {
-                try
-                {
-                    return new FileInfo(TheFileNoExt).DirectoryName;
-                }
-                catch (NotSupportedException)
-                {
-                    return string.Empty;
-                }
+                return new FileInfo(TheFileNoExt).DirectoryName;
+            }
+            catch (NotSupportedException)
+            {
+                return string.Empty;
             }
         }
+    }
         
-        public override bool CheckedItem { get => false; set { } }
-        public override int IconNumber => 1;
-        public abstract bool DoRename { get; }
-        public abstract MediaConfiguration Show { get; }
-        public override IgnoreItem? Ignore => GenerateIgnore(TheFileNoExt);
+    public override bool CheckedItem { get => false; set { } }
+    public override int IconNumber => 1;
+    public abstract bool DoRename { get; }
+    public abstract MediaConfiguration Show { get; }
+    public override IgnoreItem? Ignore => GenerateIgnore(TheFileNoExt);
 
-        public void AddComment(string p0)
-        {
-            ErrorText += p0;
-            NotifyPropertyChanged();
-        }
+    public void AddComment(string p0)
+    {
+        ErrorText += p0;
+        NotifyPropertyChanged();
     }
 }

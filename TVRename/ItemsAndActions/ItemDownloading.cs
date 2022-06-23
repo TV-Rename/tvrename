@@ -9,66 +9,65 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 
-namespace TVRename
+namespace TVRename;
+
+public class ItemDownloading : Item
 {
-    public class ItemDownloading : Item
+    private readonly IDownloadInformation entry;
+    private readonly string desiredLocationNoExt;
+
+    public override IgnoreItem? Ignore => GenerateIgnore(desiredLocationNoExt);
+    public override string ScanListViewGroup => "lvgDownloading";
+
+    public override string? DestinationFolder => TargetFolder;
+    public override string DestinationFile => entry.FileIdentifier;
+    public override string SourceDetails => entry.RemainingText;
+
+    public override int IconNumber { get; }
+    public override string? TargetFolder => string.IsNullOrEmpty(entry.Destination) ? null : new FileInfo(entry.Destination).DirectoryName;
+
+    private ItemDownloading(IDownloadInformation dl, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing undoItem)
     {
-        private readonly IDownloadInformation entry;
-        private readonly string desiredLocationNoExt;
-
-        public override IgnoreItem? Ignore => GenerateIgnore(desiredLocationNoExt);
-        public override string ScanListViewGroup => "lvgDownloading";
-
-        public override string? DestinationFolder => TargetFolder;
-        public override string DestinationFile => entry.FileIdentifier;
-        public override string SourceDetails => entry.RemainingText;
-
-        public override int IconNumber { get; }
-        public override string? TargetFolder => string.IsNullOrEmpty(entry.Destination) ? null : new FileInfo(entry.Destination).DirectoryName;
-
-        private ItemDownloading(IDownloadInformation dl, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing undoItem)
+        this.desiredLocationNoExt = desiredLocationNoExt;
+        entry = dl;
+        UndoItemMissing = undoItem;
+        IconNumber = tApp switch
         {
-            this.desiredLocationNoExt = desiredLocationNoExt;
-            entry = dl;
-            UndoItemMissing = undoItem;
-            IconNumber = tApp switch
-            {
-                DownloadingFinder.DownloadApp.uTorrent => 2,
-                DownloadingFinder.DownloadApp.SABnzbd => 8,
-                DownloadingFinder.DownloadApp.qBitTorrent => 10,
-                _ => 0
-            };
-        }
-
-        public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing me) : this(dl, desiredLocationNoExt, tApp, me)
-        {
-            Episode = pe;
-        }
-
-        public ItemDownloading(IDownloadInformation dl, MovieConfiguration mc, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing me) : this(dl, desiredLocationNoExt, tApp, me)
-        {
-            Episode = null;
-            Movie = mc;
-        }
-
-        #region Item Members
-
-        public override bool SameAs(Item o) => o is ItemDownloading torrent && entry == torrent.entry;
-
-        public override string Name => "Already Downloading";
-
-        public override bool CheckedItem { get => false; set { }  }
-
-        public override int CompareTo(Item o)
-        {
-            if (o is not ItemDownloading ut)
-            {
-                return -1;
-            }
-
-            return string.Compare(DestinationFile, ut.DestinationFile, StringComparison.Ordinal);
-        }
-
-        #endregion Item Members
+            DownloadingFinder.DownloadApp.uTorrent => 2,
+            DownloadingFinder.DownloadApp.SABnzbd => 8,
+            DownloadingFinder.DownloadApp.qBitTorrent => 10,
+            _ => 0
+        };
     }
+
+    public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing me) : this(dl, desiredLocationNoExt, tApp, me)
+    {
+        Episode = pe;
+    }
+
+    public ItemDownloading(IDownloadInformation dl, MovieConfiguration mc, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing me) : this(dl, desiredLocationNoExt, tApp, me)
+    {
+        Episode = null;
+        Movie = mc;
+    }
+
+    #region Item Members
+
+    public override bool SameAs(Item o) => o is ItemDownloading torrent && entry == torrent.entry;
+
+    public override string Name => "Already Downloading";
+
+    public override bool CheckedItem { get => false; set { }  }
+
+    public override int CompareTo(Item o)
+    {
+        if (o is not ItemDownloading ut)
+        {
+            return -1;
+        }
+
+        return string.Compare(DestinationFile, ut.DestinationFile, StringComparison.Ordinal);
+    }
+
+    #endregion Item Members
 }

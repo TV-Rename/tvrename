@@ -8,30 +8,29 @@
 
 using System.Collections.Generic;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+internal class ShowsTXT : ShowsExporter
 {
-    // ReSharper disable once InconsistentNaming
-    internal class ShowsTXT : ShowsExporter
+    public ShowsTXT(List<ShowConfiguration> shows) : base(shows)
     {
-        public ShowsTXT(List<ShowConfiguration> shows) : base(shows)
+    }
+
+    public override bool Active() => TVSettings.Instance.ExportShowsTXT;
+
+    protected override string Location() => TVSettings.Instance.ExportShowsTXTTo;
+
+    protected override void Do()
+    {
+        using (System.IO.StreamWriter file = new(Location()))
         {
-        }
-
-        public override bool Active() => TVSettings.Instance.ExportShowsTXT;
-
-        protected override string Location() => TVSettings.Instance.ExportShowsTXTTo;
-
-        protected override void Do()
-        {
-            using (System.IO.StreamWriter file = new(Location()))
+            foreach (ShowConfiguration si in Shows)
             {
-                foreach (ShowConfiguration si in Shows)
-                {
-                    file.WriteLine(si.ShowName);
-                }
+                file.WriteLine(si.ShowName);
             }
         }
-
-        protected override string Name() => "Show TXT Exporter";
     }
+
+    protected override string Name() => "Show TXT Exporter";
 }

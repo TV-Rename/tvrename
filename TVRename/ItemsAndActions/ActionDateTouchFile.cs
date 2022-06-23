@@ -1,54 +1,53 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 
-namespace TVRename
+namespace TVRename;
+
+internal abstract class ActionDateTouchFile : ActionDateTouch
 {
-    internal abstract class ActionDateTouchFile : ActionDateTouch
+    protected ActionDateTouchFile(FileInfo f, DateTime date) : base(date)
     {
-        protected ActionDateTouchFile(FileInfo f, DateTime date) : base(date)
+        WhereFile = f;
+    }
+
+    protected readonly FileInfo WhereFile;
+    public override string Produces => WhereFile.FullName;
+    public override string ProgressText => WhereFile.Name;
+    public override IgnoreItem Ignore => new(WhereFile.FullName);
+    public override string? DestinationFolder => WhereFile.DirectoryName;
+    public override string? DestinationFile => WhereFile.Name;
+    public override string? TargetFolder => WhereFile.DirectoryName;
+
+    public override ActionOutcome Go(TVRenameStats stats)
+    {
+        try
         {
-            WhereFile = f;
+            ProcessFile(WhereFile, UpdateTime);
+        }
+        catch (UnauthorizedAccessException uae)
+        {
+            return new ActionOutcome(uae);
+        }
+        catch (Exception e)
+        {
+            return new ActionOutcome(e);
         }
 
-        protected readonly FileInfo WhereFile;
-        public override string Produces => WhereFile.FullName;
-        public override string ProgressText => WhereFile.Name;
-        public override IgnoreItem Ignore => new(WhereFile.FullName);
-        public override string? DestinationFolder => WhereFile.DirectoryName;
-        public override string? DestinationFile => WhereFile.Name;
-        public override string? TargetFolder => WhereFile.DirectoryName;
+        return ActionOutcome.Success();
+    }
 
-        public override ActionOutcome Go(TVRenameStats stats)
+    private static void ProcessFile(FileInfo whereFile, DateTime updateTime)
+    {
+        bool priorFileReadonly = whereFile.IsReadOnly;
+        if (priorFileReadonly)
         {
-            try
-            {
-                ProcessFile(WhereFile, UpdateTime);
-            }
-            catch (UnauthorizedAccessException uae)
-            {
-                return new ActionOutcome(uae);
-            }
-            catch (Exception e)
-            {
-                return new ActionOutcome(e);
-            }
-
-            return ActionOutcome.Success();
+            whereFile.IsReadOnly = false;
         }
 
-        private static void ProcessFile(FileInfo whereFile, DateTime updateTime)
+        File.SetLastWriteTimeUtc(whereFile.FullName, updateTime);
+        if (priorFileReadonly)
         {
-            bool priorFileReadonly = whereFile.IsReadOnly;
-            if (priorFileReadonly)
-            {
-                whereFile.IsReadOnly = false;
-            }
-
-            File.SetLastWriteTimeUtc(whereFile.FullName, updateTime);
-            if (priorFileReadonly)
-            {
-                whereFile.IsReadOnly = true;
-            }
+            whereFile.IsReadOnly = true;
         }
     }
 }

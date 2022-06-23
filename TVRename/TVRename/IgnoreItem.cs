@@ -10,42 +10,41 @@
 
 using System;
 
-namespace TVRename
+namespace TVRename;
+
+public class IgnoreItem
 {
-    public class IgnoreItem
+    public readonly string FileAndPath;
+
+    public IgnoreItem(string fileAndPath)
     {
-        public readonly string FileAndPath;
+        FileAndPath = fileAndPath;
+    }
 
-        public IgnoreItem(string fileAndPath)
+    public bool SameFileAs(IgnoreItem? o)
+    {
+        if (string.IsNullOrEmpty(FileAndPath) || string.IsNullOrEmpty(o?.FileAndPath))
         {
-            FileAndPath = fileAndPath;
+            return false;
         }
 
-        public bool SameFileAs(IgnoreItem? o)
-        {
-            if (string.IsNullOrEmpty(FileAndPath) || string.IsNullOrEmpty(o?.FileAndPath))
-            {
-                return false;
-            }
+        return FileAndPath == o!.FileAndPath;
+    }
 
-            return FileAndPath == o.FileAndPath;
+    public bool MatchesEpisode(string folder, ProcessedEpisode episode)
+    {
+        if (!FileAndPath.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
         }
 
-        public bool MatchesEpisode(string folder, ProcessedEpisode episode)
+        if (!folder.HasValue())
         {
-            if (!FileAndPath.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            if (!folder.HasValue())
-            {
-                return false;
-            }
-
-            string plannedFilename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(episode));
-
-            return FileAndPath.EndsWith(plannedFilename, StringComparison.OrdinalIgnoreCase);
+            return false;
         }
+
+        string plannedFilename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(episode));
+
+        return FileAndPath.EndsWith(plannedFilename, StringComparison.OrdinalIgnoreCase);
     }
 }

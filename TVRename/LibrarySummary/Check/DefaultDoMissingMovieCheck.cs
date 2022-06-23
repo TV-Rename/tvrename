@@ -1,20 +1,19 @@
-namespace TVRename
+namespace TVRename;
+
+internal class DefaultDoMissingMovieCheck : DefaultMovieCheck
 {
-    internal class DefaultDoMissingMovieCheck : DefaultMovieCheck
+    public DefaultDoMissingMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
     {
-        public DefaultDoMissingMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-        {
-        }
+    }
 
-        protected override string FieldName => "Do Missing Check";
+    protected override string FieldName => "Do Missing Check";
 
-        protected override bool Field => Movie.DoMissingCheck;
+    protected override bool Field => Movie.DoMissingCheck;
 
-        protected override bool Default => TVSettings.Instance.DefMovieDoMissingCheck;
+    protected override bool Default => TVSettings.Instance.DefMovieDoMissingCheck;
 
-        protected override void FixInternal()
-        {
-            Movie.DoMissingCheck = Default;
-        }
+    protected override void FixInternal()
+    {
+        Movie.DoMissingCheck = Default;
     }
 }

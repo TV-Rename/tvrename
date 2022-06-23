@@ -28,8 +28,9 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <LangVersion>Latest</LangVersion>
-	<Nullable>enable</Nullable>
-	<NullableContextOptions>enable</NullableContextOptions>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <NullableContextOptions>enable</NullableContextOptions>
     <Deterministic>true</Deterministic>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -53,11 +54,12 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>0</WarningLevel>
+    <WarningLevel>5</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>AnyCPU</PlatformTarget>
-	<LangVersion>Latest</LangVersion>
-	<Nullable>enable</Nullable>
+    <LangVersion>Latest</LangVersion>
+    <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <Nullable>enable</Nullable>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -66,11 +68,12 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>AnyCPU</PlatformTarget>
-	<LangVersion>Latest</LangVersion>
-	<Nullable>enable</Nullable>
+    <LangVersion>Latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>Nullable</WarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
@@ -407,6 +410,9 @@
     </Compile>
     <Compile Include="ItemsAndActions\ActionDateTouchFile.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouchMovie.cs" />
+    <Compile Include="ItemsAndActions\ActionDownloadMovieImage.cs" />
+    <Compile Include="ItemsAndActions\ActionDownloadSeasonImage.cs" />
+    <Compile Include="ItemsAndActions\ActionDownloadTvShowImage.cs" />
     <Compile Include="ItemsAndActions\ActionMoveRenameDirectory.cs" />
     <Compile Include="ItemsAndActions\ActionNfoEpisode.cs" />
     <Compile Include="ItemsAndActions\ActionNfoMovie.cs" />

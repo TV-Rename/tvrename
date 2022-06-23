@@ -11,15 +11,14 @@ using System.Windows.Forms;
 
 // Sorting IComparer classes used by the ListViews in UI.cs
 
-namespace TVRename
-{
-    public sealed class TextSorter : ListViewItemSorter
-    {
-        public TextSorter(int column) : base(column)
-        {
-        }
+namespace TVRename;
 
-        protected override int CompareListViewItem(ListViewItem x, ListViewItem y) =>
-            string.Compare(x.SubItems[Col].Text, y.SubItems[Col].Text, StringComparison.OrdinalIgnoreCase);
+public sealed class TextSorter : ListViewItemSorter
+{
+    public TextSorter(int column) : base(column)
+    {
     }
+
+    protected override int CompareListViewItem(ListViewItem x, ListViewItem y) =>
+        string.Compare(x.SubItems[Col].Text, y.SubItems[Col].Text, StringComparison.OrdinalIgnoreCase);
 }

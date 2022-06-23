@@ -1,38 +1,37 @@
 using System;
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+public sealed class DoubleAsTextSorter : ListViewItemSorter
 {
-    public sealed class DoubleAsTextSorter : ListViewItemSorter
+    public DoubleAsTextSorter(int column) : base(column)
     {
-        public DoubleAsTextSorter(int column) : base(column)
+    }
+
+    protected override int CompareListViewItem(ListViewItem x, ListViewItem y) => (int)(1000 * (ParseAsDouble(x) - ParseAsDouble(y)));
+
+    private double ParseAsDouble(ListViewItem cellItem)
+    {
+        string value = cellItem.SubItems[Col].Text;
+
+        if (!value.HasValue())
         {
+            return -1;
         }
 
-        protected override int CompareListViewItem(ListViewItem x, ListViewItem y) => (int)(1000 * (ParseAsDouble(x) - ParseAsDouble(y)));
-
-        private double ParseAsDouble(ListViewItem cellItem)
+        if (value == TVSettings.SpecialsListViewName)
         {
-            string value = cellItem.SubItems[Col].Text;
+            return 0;
+        }
 
-            if (!value.HasValue())
-            {
-                return -1;
-            }
-
-            if (value == TVSettings.SpecialsListViewName)
-            {
-                return 0;
-            }
-
-            try
-            {
-                return Convert.ToDouble(value);
-            }
-            catch
-            {
-                return 0;
-            }
+        try
+        {
+            return Convert.ToDouble(value);
+        }
+        catch
+        {
+            return 0;
         }
     }
 }

@@ -10,44 +10,45 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Windows.Forms;
 
-namespace TVRename.Forms.ShowPreferences
+namespace TVRename.Forms.ShowPreferences;
+
+public partial class QuickLocateForm : Form
 {
-    public partial class QuickLocateForm : Form
+    public string DirectoryFullPath;
+    public string RootDirectory;
+    private readonly string initialFolder;
+
+    public QuickLocateForm(string? hint, MediaConfiguration.MediaType t)
     {
-        public string? DirectoryFullPath;
-        public string? RootDirectory;
-        private readonly string initialFolder;
+        InitializeComponent();
 
-        public QuickLocateForm(string? hint, MediaConfiguration.MediaType t)
+        cbDirectory.SuspendLayout();
+        cbDirectory.Items.Clear();
+        SafeList<string> folders = t == MediaConfiguration.MediaType.tv ? TVSettings.Instance.LibraryFolders : TVSettings.Instance.MovieLibraryFolders;
+        foreach (string folder in folders)
         {
-            InitializeComponent();
-
-            cbDirectory.SuspendLayout();
-            cbDirectory.Items.Clear();
-            SafeList<string> folders = t == MediaConfiguration.MediaType.tv ? TVSettings.Instance.LibraryFolders : TVSettings.Instance.MovieLibraryFolders;
-            foreach (string folder in folders)
-            {
-                cbDirectory.Items.Add(folder.TrimEnd(Path.DirectorySeparatorChar.ToString()));
-            }
-            if (folders.Count>0)
-            {
-                cbDirectory.SelectedIndex = 0;
-            }
-            cbDirectory.ResumeLayout();
-
-            initialFolder = Path.DirectorySeparatorChar + hint;
-            txtShowFolder.Text = initialFolder.ToUiVersion();
+            cbDirectory.Items.Add(folder.TrimEnd(Path.DirectorySeparatorChar.ToString()));
         }
-
-        public bool FolderNameChanged => txtShowFolder.Text != initialFolder;
-
-        private void buttonOK_Click(object sender, EventArgs e)
+        if (folders.Count>0)
         {
-            DirectoryFullPath = cbDirectory.Text + txtShowFolder.Text;
-            RootDirectory = cbDirectory.Text;
-
-            DialogResult = DialogResult.OK;
-            Close();
+            cbDirectory.SelectedIndex = 0;
         }
+        cbDirectory.ResumeLayout();
+
+        initialFolder = Path.DirectorySeparatorChar + hint;
+        txtShowFolder.Text = initialFolder.ToUiVersion();
+        DirectoryFullPath = string.Empty;
+        RootDirectory = string.Empty;
+    }
+
+    public bool FolderNameChanged => txtShowFolder.Text != initialFolder;
+
+    private void buttonOK_Click(object sender, EventArgs e)
+    {
+        DirectoryFullPath = cbDirectory.Text + txtShowFolder.Text;
+        RootDirectory = cbDirectory.Text;
+
+        DialogResult = DialogResult.OK;
+        Close();
     }
 }

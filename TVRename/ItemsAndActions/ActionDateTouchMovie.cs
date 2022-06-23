@@ -1,38 +1,37 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 
-namespace TVRename
+namespace TVRename;
+
+internal class ActionDateTouchMovie : ActionDateTouchFile
 {
-    internal class ActionDateTouchMovie : ActionDateTouchFile
+    public ActionDateTouchMovie(FileInfo f, MovieConfiguration mov, DateTime date) : base(f, date)
     {
-        public ActionDateTouchMovie(FileInfo f, MovieConfiguration mov, DateTime date) : base(f, date)
+        Movie = mov;
+    }
+
+    public override bool SameAs(Item o)
+    {
+        return o is ActionDateTouchMovie touch && touch.WhereFile == WhereFile;
+    }
+
+    public override int CompareTo(Item? o)
+    {
+        if (o is not ActionDateTouchMovie nfo)
         {
-            Movie = mov;
+            return -1;
         }
 
-        public override bool SameAs(Item o)
+        if (Movie is null)
         {
-            return o is ActionDateTouchMovie touch && touch.WhereFile == WhereFile;
+            return 1;
         }
 
-        public override int CompareTo(Item? o)
+        if (nfo.Movie is null)
         {
-            if (o is not ActionDateTouchMovie nfo)
-            {
-                return -1;
-            }
-
-            if (Movie is null)
-            {
-                return 1;
-            }
-
-            if (nfo.Movie is null)
-            {
-                return -1;
-            }
-
-            return string.Compare(WhereFile.FullName + Movie.ShowName, nfo.WhereFile.FullName + nfo.Movie.ShowName, StringComparison.Ordinal);
+            return -1;
         }
+
+        return string.Compare(WhereFile.FullName + Movie.ShowName, nfo.WhereFile.FullName + nfo.Movie.ShowName, StringComparison.Ordinal);
     }
 }

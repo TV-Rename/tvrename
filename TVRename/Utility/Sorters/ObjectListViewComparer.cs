@@ -10,11 +10,11 @@ using System;
 using System.Collections.Generic;
 using BrightIdeasSoftware;
 
-namespace TVRename
+namespace TVRename;
+
+public abstract class ObjectListViewComparer<T> : IComparer<OLVListItem> where T : IComparable<T>
 {
-    public abstract class ObjectListViewComparer<T> : IComparer<OLVListItem> where T : IComparable<T>
-    {
-        private readonly int col;
+    private readonly int col;
 
     protected ObjectListViewComparer(int column)
     {
@@ -49,10 +49,9 @@ namespace TVRename
         return primary == 0 ?
             string.Compare(GetDefault(x), GetDefault(y), StringComparison.Ordinal)
             : primary;
-        }
+    }
 
     private string GetDefault(OLVListItem p) => ((Item)p.RowObject).OrderKey;
 
     protected abstract T? GetValue(OLVListItem x,int columnId);
-    }
 }

@@ -1,13 +1,12 @@
 using System;
 
-namespace TVRename
+namespace TVRename;
+
+public class CacheLoadException : Exception
 {
-    public class CacheLoadException : Exception
+    // Thrown if an error occurs in the XML when reading TheTVDB.xml
+    public CacheLoadException(string message)
+        : base(message)
     {
-        // Thrown if an error occurs in the XML when reading TheTVDB.xml
-        public CacheLoadException(string message)
-            : base(message)
-        {
-        }
     }
 }

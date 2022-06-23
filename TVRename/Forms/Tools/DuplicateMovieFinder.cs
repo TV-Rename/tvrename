@@ -6,281 +6,280 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace TVRename.Forms
+namespace TVRename.Forms;
+
+public partial class DuplicateMovieFinder : Form
 {
-    public partial class DuplicateMovieFinder : Form
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+    private readonly List<DuplicateMovie> dupMovies;
+    private readonly TVDoc mDoc;
+    private readonly UI mainUi;
+
+    public DuplicateMovieFinder(TVDoc doc, UI main)
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private readonly List<DuplicateMovie> dupMovies;
-        private readonly TVDoc mDoc;
-        private readonly UI mainUi;
+        InitializeComponent();
+        dupMovies = new List<DuplicateMovie>();
+        mDoc = doc;
+        mainUi = main;
+        Scan();
+    }
 
-        public DuplicateMovieFinder(TVDoc doc, UI main)
+    // ReSharper disable once InconsistentNaming
+    private void UpdateUI()
+    {
+        olvDuplicates.SetObjects(dupMovies, true);
+    }
+
+    private void AddRcMenuItem(string label, EventHandler command)
+    {
+        ToolStripMenuItem tsi = new(label.ToUiVersion());
+        tsi.Click += command;
+        possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
+    }
+
+    private void PossibleMergedEpisodeRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+    {
+        possibleMergedEpisodeRightClickMenu.Close();
+    }
+
+    private void BwScan_DoWork(object sender, DoWorkEventArgs e)
+    {
+        Thread.CurrentThread.Name ??= "DuplicateMovie Scan Thread"; // Can only set it once
+        BackgroundWorker bw = (BackgroundWorker)sender;
+        int total = mDoc.FilmLibrary.Movies.Count();
+        int current = 0;
+
+        dupMovies.Clear();
+        foreach (MovieConfiguration? movie in mDoc.FilmLibrary.Movies)
         {
-            InitializeComponent();
-            dupMovies = new List<DuplicateMovie>();
-            mDoc = doc;
-            mainUi = main;
-            Scan();
+            ProcessMovie(movie);
+
+            bw.ReportProgress(100 * current++ / total, movie.ShowName);
         }
+    }
 
-        // ReSharper disable once InconsistentNaming
-        private void UpdateUI()
+    private void ProcessMovie(MovieConfiguration movie)
+    {
+        List<FileInfo> files = movie.Locations
+            .Select(s => new DirectoryInfo(s))
+            .Where(info => info.Exists)
+            .SelectMany(d => d.GetFiles())
+            .Where(f => f.IsMovieFile())
+            .Where(fiTemp => movie.NameMatch(fiTemp, false))
+            .Distinct()
+            .ToList();
+
+        if (files.Count > 1)
         {
-            olvDuplicates.SetObjects(dupMovies, true);
-        }
+            DuplicateMovie duplicateMovie = new(movie, files);
+            dupMovies.Add(duplicateMovie);
 
-        private void AddRcMenuItem(string label, EventHandler command)
-        {
-            ToolStripMenuItem tsi = new(label.ToUiVersion());
-            tsi.Click += command;
-            possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
-        }
+            duplicateMovie.IsSample = files.Any(f => f.IsSampleFile());
+            duplicateMovie.IsDeleted = files.Any(f => f.IsDeletedStubFile());
 
-        private void PossibleMergedEpisodeRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            possibleMergedEpisodeRightClickMenu.Close();
-        }
-
-        private void BwScan_DoWork(object sender, DoWorkEventArgs e)
-        {
-            Thread.CurrentThread.Name ??= "DuplicateMovie Scan Thread"; // Can only set it once
-            BackgroundWorker bw = (BackgroundWorker)sender;
-            int total = mDoc.FilmLibrary.Movies.Count();
-            int current = 0;
-
-            dupMovies.Clear();
-            foreach (MovieConfiguration? movie in mDoc.FilmLibrary.Movies)
+            if (files.Count == 2)
             {
-                ProcessMovie(movie);
-
-                bw.ReportProgress(100 * current++ / total, movie.ShowName);
+                duplicateMovie.IsDoublePart = FileHelper.IsDoublePartMovie(files[0], files[1]);
             }
         }
+    }
 
-        private void ProcessMovie(MovieConfiguration movie)
+    private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+    {
+        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        lblStatus.Text = e.UserState.ToString().ToUiVersion();
+    }
+
+    private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+        btnRefresh.Visible = true;
+        pbProgress.Visible = false;
+        lblStatus.Visible = false;
+        if (olvDuplicates.IsDisposed)
         {
-            List<FileInfo> files = movie.Locations
-                                .Select(s => new DirectoryInfo(s))
-                                .Where(info => info.Exists)
-                                .SelectMany(d => d.GetFiles())
-                                .Where(f => f.IsMovieFile())
-                                .Where(fiTemp => movie.NameMatch(fiTemp, false))
-                                .Distinct()
-                                .ToList();
-
-            if (files.Count > 1)
-            {
-                DuplicateMovie duplicateMovie = new() { Movie = movie, Files = files };
-                dupMovies.Add(duplicateMovie);
-
-                duplicateMovie.IsSample = files.Any(f => f.IsSampleFile());
-                duplicateMovie.IsDeleted = files.Any(f => f.IsDeletedStubFile());
-
-                if (files.Count == 2)
-                {
-                    duplicateMovie.IsDoublePart = FileHelper.IsDoublePartMovie(files[0], files[1]);
-                }
-            }
+            return;
         }
 
-        private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        UpdateUI();
+    }
+
+    private void BtnRefresh_Click_1(object sender, EventArgs e)
+    {
+        Scan();
+    }
+
+    private void Scan()
+    {
+        btnRefresh.Visible = false;
+        pbProgress.Visible = true;
+        lblStatus.Visible = true;
+        bwScan.RunWorkerAsync();
+    }
+
+    private void olvDuplicates_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+    {
+        if (e.Model is null)
         {
-            pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-            lblStatus.Text = e.UserState.ToString().ToUiVersion();
+            return;
         }
 
-        private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        DuplicateMovie mlastSelected = (DuplicateMovie)e.Model;
+        MovieConfiguration si = mlastSelected.Movie;
+
+        possibleMergedEpisodeRightClickMenu.Items.Clear();
+
+        AddRcMenuItem("Force Refresh", (_, _) =>
         {
-            btnRefresh.Visible = true;
-            pbProgress.Visible = false;
-            lblStatus.Visible = false;
-            if (olvDuplicates.IsDisposed)
-            {
-                return;
-            }
-
-            UpdateUI();
-        }
-
-        private void BtnRefresh_Click_1(object sender, EventArgs e)
-        {
-            Scan();
-        }
-
-        private void Scan()
-        {
-            btnRefresh.Visible = false;
-            pbProgress.Visible = true;
-            lblStatus.Visible = true;
-            bwScan.RunWorkerAsync();
-        }
-
-        private void olvDuplicates_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
-        {
-            if (e.Model is null)
-            {
-                return;
-            }
-
-            DuplicateMovie mlastSelected = (DuplicateMovie)e.Model;
-            MovieConfiguration si = mlastSelected.Movie;
-
-            possibleMergedEpisodeRightClickMenu.Items.Clear();
-
-            AddRcMenuItem("Force Refresh", (_, _) =>
-            {
-                mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false);
-                Update(mlastSelected);
-            });
-            AddRcMenuItem("Update", (_, _) =>
-            {
-                Update(mlastSelected);
-            });
-            AddRcMenuItem("Edit Movie", (_, _) =>
-            {
-                mainUi.EditMovie(si);
-                Update(mlastSelected);
-            });
-            AddRcMenuItem("Choose Best", (_, _) => MergeItems(mlastSelected, mainUi));
-
-            possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
-
-            foreach (FileInfo? f in mlastSelected.Files)
-            {
-                AddRcMenuItem("Visit " + f.FullName, (_, _) =>
-                {
-                    Helpers.OpenFolderSelectFile(f.FullName);
-                    Update(mlastSelected);
-                });
-            }
-        }
-
-        private void Update(DuplicateMovie duplicate)
-        {
-            if (dupMovies.Contains(duplicate))
-            {
-                dupMovies.Remove(duplicate);
-            }
-            ProcessMovie(duplicate.Movie);
-            UpdateUI();
-        }
-
-        private void MergeItems(DuplicateMovie mlastSelected, UI ui)
-        {
-            foreach (FileInfo file1 in mlastSelected.Files)
-            {
-                foreach (FileInfo file2 in mlastSelected.Files)
-                {
-                    if (string.CompareOrdinal(file1.FullName, file2.FullName) > 0)
-                    {
-                        MergeConfigurationAndFiles(mlastSelected.Movie, file1, file2, ui);
-                    }
-                }
-            }
+            mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false);
             Update(mlastSelected);
-        }
-
-        private void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, FileInfo file2, UI ui)
+        });
+        AddRcMenuItem("Update", (_, _) =>
         {
-            FileHelper.VideoComparison result = FileHelper.BetterQualityFile(file1, file2);
+            Update(mlastSelected);
+        });
+        AddRcMenuItem("Edit Movie", (_, _) =>
+        {
+            mainUi.EditMovie(si);
+            Update(mlastSelected);
+        });
+        AddRcMenuItem("Choose Best", (_, _) => MergeItems(mlastSelected, mainUi));
 
-            FileHelper.VideoComparison newResult = result;
+        possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
 
-            switch (newResult)
+        foreach (FileInfo? f in mlastSelected.Files)
+        {
+            AddRcMenuItem("Visit " + f.FullName, (_, _) =>
             {
-                case FileHelper.VideoComparison.secondFileBetter:
-                    //remove first file and combine locations
-                    UpgradeFile("System had identified to", file2, mlastSelectedMovie, file1);
-                    break;
+                Helpers.OpenFolderSelectFile(f.FullName);
+                Update(mlastSelected);
+            });
+        }
+    }
 
-                case FileHelper.VideoComparison.cantTell:
-                case FileHelper.VideoComparison.similar:
-                    {
-                        AskUserAboutFileReplacement(file1, file2, mlastSelectedMovie, ui);
-                        return;
-                    }
-                //the other cases of the files being the same or the existing file being better are not enough to save the file
-                case FileHelper.VideoComparison.firstFileBetter:
-                case FileHelper.VideoComparison.same:
-                    //remove second file and combine locations
-                    UpgradeFile("System had identified to", file1, mlastSelectedMovie, file2);
+    private void Update(DuplicateMovie duplicate)
+    {
+        if (dupMovies.Contains(duplicate))
+        {
+            dupMovies.Remove(duplicate);
+        }
+        ProcessMovie(duplicate.Movie);
+        UpdateUI();
+    }
+
+    private void MergeItems(DuplicateMovie mlastSelected, UI ui)
+    {
+        foreach (FileInfo file1 in mlastSelected.Files)
+        {
+            foreach (FileInfo file2 in mlastSelected.Files)
+            {
+                if (string.CompareOrdinal(file1.FullName, file2.FullName) > 0)
+                {
+                    MergeConfigurationAndFiles(mlastSelected.Movie, file1, file2, ui);
+                }
+            }
+        }
+        Update(mlastSelected);
+    }
+
+    private void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, FileInfo file2, UI ui)
+    {
+        FileHelper.VideoComparison result = FileHelper.BetterQualityFile(file1, file2);
+
+        FileHelper.VideoComparison newResult = result;
+
+        switch (newResult)
+        {
+            case FileHelper.VideoComparison.secondFileBetter:
+                //remove first file and combine locations
+                UpgradeFile("System had identified to", file2, mlastSelectedMovie, file1);
+                break;
+
+            case FileHelper.VideoComparison.cantTell:
+            case FileHelper.VideoComparison.similar:
+            {
+                AskUserAboutFileReplacement(file1, file2, mlastSelectedMovie, ui);
+                return;
+            }
+            //the other cases of the files being the same or the existing file being better are not enough to save the file
+            case FileHelper.VideoComparison.firstFileBetter:
+            case FileHelper.VideoComparison.same:
+                //remove second file and combine locations
+                UpgradeFile("System had identified to", file1, mlastSelectedMovie, file2);
+                return;
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private static void AskUserAboutFileReplacement(FileInfo file1, FileInfo file2, MovieConfiguration pep, IDialogParent owner)
+    {
+        try
+        {
+            ChooseFile question = new(file1, file2);
+
+            owner.ShowChildDialog(question);
+            ChooseFile.ChooseFileDialogResult result = question.Answer;
+            question.Dispose();
+
+            switch (result)
+            {
+                case ChooseFile.ChooseFileDialogResult.ignore:
+                    Logger.Info($" User has selected keeping {file1.FullName} and {file2.FullName} and they will not be merged");
+                    return;
+
+                case ChooseFile.ChooseFileDialogResult.left:
+                    UpgradeFile("User selected to", file1, pep, file2);
+                    return;
+
+                case ChooseFile.ChooseFileDialogResult.right:
+                    UpgradeFile("User selected to", file2, pep, file1);
                     return;
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
-
-        private static void AskUserAboutFileReplacement(FileInfo file1, FileInfo file2, MovieConfiguration pep, IDialogParent owner)
+        catch (System.IO.FileNotFoundException)
         {
-            try
-            {
-                ChooseFile question = new(file1, file2);
-
-                owner.ShowChildDialog(question);
-                ChooseFile.ChooseFileDialogResult result = question.Answer;
-                question.Dispose();
-
-                switch (result)
-                {
-                    case ChooseFile.ChooseFileDialogResult.ignore:
-                        Logger.Info($" User has selected keeping {file1.FullName} and {file2.FullName} and they will not be merged");
-                        return;
-
-                    case ChooseFile.ChooseFileDialogResult.left:
-                        UpgradeFile("User selected to", file1, pep, file2);
-                        return;
-
-                    case ChooseFile.ChooseFileDialogResult.right:
-                        UpgradeFile("User selected to", file2, pep, file1);
-                        return;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-            }
         }
+    }
 
-        private static void UpgradeFile(string message, FileInfo keepFile, MovieConfiguration movie, FileInfo removeFile)
+    private static void UpgradeFile(string message, FileInfo keepFile, MovieConfiguration movie, FileInfo removeFile)
+    {
+        Logger.Info($"{message} remove {removeFile.FullName} as it is not as good quality than {keepFile.FullName}");
+        try
         {
-            Logger.Info($"{message} remove {removeFile.FullName} as it is not as good quality than {keepFile.FullName}");
-            try
+            if (movie.ManualLocations.Contains(removeFile.DirectoryName))
             {
-                if (movie.ManualLocations.Contains(removeFile.DirectoryName))
-                {
-                    movie.ManualLocations.Remove(removeFile.DirectoryName);
-                }
+                movie.ManualLocations.Remove(removeFile.DirectoryName);
+            }
 
-                removeFile.Delete();
+            removeFile.Delete();
 
-                if (removeFile.Directory.GetDirectories().Length > 0)
-                {
-                    return;
-                }
+            if (removeFile.Directory.GetDirectories().Length > 0)
+            {
+                return;
+            }
 
-                if (removeFile.Directory.GetFiles().Any(f => f.IsMovieFile()))
-                {
-                    return;
-                }
+            if (removeFile.Directory.GetFiles().Any(f => f.IsMovieFile()))
+            {
+                return;
+            }
 
-                FileHelper.DoTidyUp(removeFile.Directory, TVSettings.Instance.Tidyup);
-            }
-            catch (System.IO.FileNotFoundException)
-            { //ignored}
-            }
-            catch (System.IO.DirectoryNotFoundException)
-            { //ignored}
-            }
-            catch (UnauthorizedAccessException)
-            { //ignored}
-            }
-            catch (System.IO.IOException)
-            { //ignored}
-            }
+            FileHelper.DoTidyUp(removeFile.Directory, TVSettings.Instance.Tidyup);
+        }
+        catch (System.IO.FileNotFoundException)
+        { //ignored}
+        }
+        catch (System.IO.DirectoryNotFoundException)
+        { //ignored}
+        }
+        catch (UnauthorizedAccessException)
+        { //ignored}
+        }
+        catch (System.IO.IOException)
+        { //ignored}
         }
     }
 }

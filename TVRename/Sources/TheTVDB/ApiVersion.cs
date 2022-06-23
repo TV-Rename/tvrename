@@ -1,9 +1,8 @@
-namespace TVRename.TheTVDB
+namespace TVRename.TheTVDB;
+
+public enum ApiVersion
 {
-    public enum ApiVersion
-    {
-        v2,
-        v3,
-        v4
-    }
+    v2,
+    v3,
+    v4
 }

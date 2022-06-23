@@ -2,36 +2,35 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace TVRename.Forms.ShowPreferences
+namespace TVRename.Forms.ShowPreferences;
+
+public partial class NewSeenEpisode : Form
 {
-    public partial class NewSeenEpisode : Form
+    public ProcessedEpisode? ChosenEpisode;
+
+    public NewSeenEpisode(IEnumerable<ProcessedEpisode> eps)
     {
-        public ProcessedEpisode? ChosenEpisode;
+        InitializeComponent();
 
-        public NewSeenEpisode(IEnumerable<ProcessedEpisode> eps)
+        comboBox1.BeginUpdate();
+        comboBox1.Items.Clear();
+        foreach (ProcessedEpisode ep in eps)
         {
-            InitializeComponent();
-
-            comboBox1.BeginUpdate();
-            comboBox1.Items.Clear();
-            foreach (ProcessedEpisode ep in eps)
-            {
-                comboBox1.Items.Add(ep);
-            }
-
-            comboBox1.EndUpdate();
+            comboBox1.Items.Add(ep);
         }
 
-        private void BnOK_Click(object sender, EventArgs e)
-        {
-            ChosenEpisode = (ProcessedEpisode)comboBox1.SelectedItem;
-            DialogResult = DialogResult.OK;
-            Close();
-        }
+        comboBox1.EndUpdate();
+    }
 
-        private void BnCancel_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+    private void BnOK_Click(object sender, EventArgs e)
+    {
+        ChosenEpisode = (ProcessedEpisode)comboBox1.SelectedItem;
+        DialogResult = DialogResult.OK;
+        Close();
+    }
+
+    private void BnCancel_Click(object sender, EventArgs e)
+    {
+        Close();
     }
 }

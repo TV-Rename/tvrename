@@ -8,75 +8,74 @@
 
 using System.Drawing;
 
-namespace TVRename
+namespace TVRename;
+
+using System;
+using System.Windows.Forms;
+
+public partial class BulkAddEditMovie : Form
 {
-    using System;
-    using System.Windows.Forms;
+    public int Code;
+    public TVDoc.ProviderType Provider;
 
-    public partial class BulkAddEditMovie : Form
+    private readonly CodeFinder codeFinderControl;
+
+    public BulkAddEditMovie(PossibleNewMovie hint)
     {
-        public int Code;
-        public TVDoc.ProviderType Provider;
+        codeFinderControl = new MovieCodeFinder("", TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
+        InitializeComponent();
 
-        private readonly CodeFinder codeFinderControl;
+        codeFinderControl.SelectionChanged += CodeChanged;
+        codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;
 
-        public BulkAddEditMovie(PossibleNewMovie hint)
+        label1.Text = $"Search for {TVSettings.Instance.DefaultMovieProvider} entry, by partial name or ID:";
+
+        pnlCF.SuspendLayout();
+        pnlCF.Controls.Add(codeFinderControl);
+        pnlCF.ResumeLayout();
+
+        if (hint.CodeKnown)
         {
-            codeFinderControl = new MovieCodeFinder("", TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
-            InitializeComponent();
-
-            codeFinderControl.SelectionChanged += CodeChanged;
-            codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;
-
-            label1.Text = $"Search for {TVSettings.Instance.DefaultMovieProvider} entry, by partial name or ID:";
-
-            pnlCF.SuspendLayout();
-            pnlCF.Controls.Add(codeFinderControl);
-            pnlCF.ResumeLayout();
-
-            if (hint.CodeKnown)
-            {
-                codeFinderControl.SetHint(hint.ProviderCode.ToString(), hint.SourceProvider);
-            }
-            else
-            {
-                codeFinderControl.SetHint(string.IsNullOrWhiteSpace(hint.RefinedHint)
-                    ? hint.Directory.Name
-                    : hint.RefinedHint, TVSettings.Instance.DefaultMovieProvider);
-            }
-            Code = -1;
-            Provider = TVDoc.ProviderType.libraryDefault;
+            codeFinderControl.SetHint(hint.ProviderCode.ToString(), hint.SourceProvider);
         }
-        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        else
         {
-            base.ScaleControl(factor, specified);
-            codeFinderControl.lvMatches.ScaleListViewColumns(factor);
+            codeFinderControl.SetHint(string.IsNullOrWhiteSpace(hint.RefinedHint)
+                ? hint.Directory.Name
+                : hint.RefinedHint, TVSettings.Instance.DefaultMovieProvider);
         }
-        private void MatchDoubleClick(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-            Code = codeFinderControl.SelectedCode();
-            Provider = codeFinderControl.Source;
-            Close();
-        }
+        Code = -1;
+        Provider = TVDoc.ProviderType.libraryDefault;
+    }
+    protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+    {
+        base.ScaleControl(factor, specified);
+        codeFinderControl.lvMatches.ScaleListViewColumns(factor);
+    }
+    private void MatchDoubleClick(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.OK;
+        Code = codeFinderControl.SelectedCode();
+        Provider = codeFinderControl.Source;
+        Close();
+    }
 
-        private static void CodeChanged(object sender, EventArgs e)
-        {
-            //Nothing to do
-        }
+    private static void CodeChanged(object sender, EventArgs e)
+    {
+        //Nothing to do
+    }
 
-        private void bnCancel_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Cancel;
-            Close();
-        }
+    private void bnCancel_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.Cancel;
+        Close();
+    }
 
-        private void bnOK_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-            Code = codeFinderControl.SelectedCode();
-            Provider = codeFinderControl.Source;
-            Close();
-        }
+    private void bnOK_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.OK;
+        Code = codeFinderControl.SelectedCode();
+        Provider = codeFinderControl.Source;
+        Close();
     }
 }

@@ -1,14 +1,13 @@
-namespace TVRename
+namespace TVRename;
+
+public enum RuleAction
 {
-    public enum RuleAction
-    {
-        kRemove,
-        kSwap,
-        kMerge,
-        kInsert,
-        kIgnoreEp,
-        kRename,
-        kSplit,
-        kCollapse
-    }
+    kRemove,
+    kSwap,
+    kMerge,
+    kInsert,
+    kIgnoreEp,
+    kRename,
+    kSplit,
+    kCollapse
 }

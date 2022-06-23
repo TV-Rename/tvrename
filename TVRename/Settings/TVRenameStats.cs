@@ -15,92 +15,91 @@ using System.Xml.Serialization;
 
 // Keeps count of some statistics.
 
-namespace TVRename
+namespace TVRename;
+
+[Serializable]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[XmlRoot("Statistics", Namespace = "")]
+// ReSharper disable once InconsistentNaming
+public class TVRenameStats
 {
-    [Serializable]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [XmlRoot("Statistics", Namespace = "")]
-    // ReSharper disable once InconsistentNaming
-    public class TVRenameStats
+    public int AutoAddedShows = 0;
+    public int AutoAddedMovies = 0;
+    public int FilesCopied = 0;
+    public int FilesMoved = 0;
+    public int FilesRenamed = 0;
+    public int FindAndOrganisesDone = 0;
+    public int MissingChecksDone = 0;
+    public int RenameChecksDone = 0;
+    public int TorrentsMatched = 0;
+
+    // The following aren't saved, but are calculated when we do a scan
+    [XmlIgnore] public int NsNumberOfEpisodes = -1; // -1 = unknown
+
+    [XmlIgnore] public int NsNumberOfEpisodesExpected = 0;
+    [XmlIgnore] public int NsNumberOfSeasons = 0;
+    [XmlIgnore] public int NsNumberOfShows = 0;
+    [XmlIgnore] public int NsNumberOfMovies = 0;
+    [XmlIgnore] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+    public static TVRenameStats? Load()
     {
-        public int AutoAddedShows = 0;
-        public int AutoAddedMovies = 0;
-        public int FilesCopied = 0;
-        public int FilesMoved = 0;
-        public int FilesRenamed = 0;
-        public int FindAndOrganisesDone = 0;
-        public int MissingChecksDone = 0;
-        public int RenameChecksDone = 0;
-        public int TorrentsMatched = 0;
+        string fn = PathManager.StatisticsFile.FullName;
+        return !File.Exists(fn) ? new TVRenameStats() : LoadFrom(fn);
+    }
 
-        // The following aren't saved, but are calculated when we do a scan
-        [XmlIgnore] public int NsNumberOfEpisodes = -1; // -1 = unknown
+    public void Save()
+    {
+        SaveToFile(PathManager.StatisticsFile.FullName);
+    }
 
-        [XmlIgnore] public int NsNumberOfEpisodesExpected = 0;
-        [XmlIgnore] public int NsNumberOfSeasons = 0;
-        [XmlIgnore] public int NsNumberOfShows = 0;
-        [XmlIgnore] public int NsNumberOfMovies = 0;
-        [XmlIgnore] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
-        public static TVRenameStats? Load()
+    private static TVRenameStats? LoadFrom(string filename)
+    {
+        if (!File.Exists(filename))
         {
-            string fn = PathManager.StatisticsFile.FullName;
-            return !File.Exists(fn) ? new TVRenameStats() : LoadFrom(fn);
+            return null;
         }
 
-        public void Save()
+        XmlReaderSettings settings = new() { IgnoreComments = true, IgnoreWhitespace = true };
+        TVRenameStats sc;
+
+        try
         {
-            SaveToFile(PathManager.StatisticsFile.FullName);
-        }
-
-        private static TVRenameStats? LoadFrom(string filename)
-        {
-            if (!File.Exists(filename))
-            {
-                return null;
-            }
-
-            XmlReaderSettings settings = new() { IgnoreComments = true, IgnoreWhitespace = true };
-            TVRenameStats sc;
-
-            try
-            {
-                using (XmlReader reader = XmlReader.Create(filename, settings))
-                {
-                    XmlSerializer xs = new(typeof(TVRenameStats));
-                    sc = (TVRenameStats)xs.Deserialize(reader);
-                }
-
-                System.Diagnostics.Debug.Assert(sc != null);
-            }
-            catch (Exception e)
-            {
-                Logger.Fatal(e);
-                return new TVRenameStats();
-            }
-
-            return sc;
-        }
-
-        private void SaveToFile(string toFile)
-        {
-            System.IO.DirectoryInfo? di = new System.IO.FileInfo(toFile).Directory;
-            if (di is null)
-            {
-                Logger.Error($"Failed to save Statistics XML to {toFile}");
-                return;
-            }
-            if (!di.Exists)
-            {
-                di.Create();
-            }
-
-            XmlWriterSettings settings = new() { Indent = true, NewLineOnAttributes = true };
-            using (XmlWriter writer = XmlWriter.Create(toFile, settings))
+            using (XmlReader reader = XmlReader.Create(filename, settings))
             {
                 XmlSerializer xs = new(typeof(TVRenameStats));
-                xs.Serialize(writer, this);
+                sc = (TVRenameStats)xs.Deserialize(reader);
             }
+
+            System.Diagnostics.Debug.Assert(sc != null);
+        }
+        catch (Exception e)
+        {
+            Logger.Fatal(e);
+            return new TVRenameStats();
+        }
+
+        return sc;
+    }
+
+    private void SaveToFile(string toFile)
+    {
+        System.IO.DirectoryInfo? di = new System.IO.FileInfo(toFile).Directory;
+        if (di is null)
+        {
+            Logger.Error($"Failed to save Statistics XML to {toFile}");
+            return;
+        }
+        if (!di.Exists)
+        {
+            di.Create();
+        }
+
+        XmlWriterSettings settings = new() { Indent = true, NewLineOnAttributes = true };
+        using (XmlWriter writer = XmlWriter.Create(toFile, settings))
+        {
+            XmlSerializer xs = new(typeof(TVRenameStats));
+            xs.Serialize(writer, this);
         }
     }
 }

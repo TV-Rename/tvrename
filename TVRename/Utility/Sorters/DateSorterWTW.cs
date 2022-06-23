@@ -9,24 +9,23 @@
 using System;
 using System.Windows.Forms;
 
-namespace TVRename
-{
-    public class DateSorterWtw : ListViewItemDateSorter
-    {
-        public DateSorterWtw(int column) : base(column)
-        {
-        }
+namespace TVRename;
 
-        protected override DateTime? GetDate(ListViewItem lvi)
+public class DateSorterWtw : ListViewItemDateSorter
+{
+    public DateSorterWtw(int column) : base(column)
+    {
+    }
+
+    protected override DateTime? GetDate(ListViewItem lvi)
+    {
+        try
         {
-            try
-            {
-                return ((ProcessedEpisode)lvi.Tag).GetAirDateDt(true);
-            }
-            catch
-            {
-                return DateTime.Now;
-            }
+            return ((ProcessedEpisode)lvi.Tag).GetAirDateDt(true);
+        }
+        catch
+        {
+            return DateTime.Now;
         }
     }
 }

@@ -12,368 +12,367 @@ using System.Linq;
 using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
 
-namespace TVRename
+namespace TVRename;
+
+/// <summary>
+/// Summary for EditRules
+///
+/// WARNING: If you change the name of this class, you will need to change the
+///          'Resource File Name' property for the managed resource compiler tool
+///          associated with all .resx files this class depends on.  Otherwise,
+///          the designers will not be able to interact properly with localized
+///          resources associated with this form.
+/// </summary>
+public partial class EditSeason : Form
 {
-    /// <summary>
-    /// Summary for EditRules
-    ///
-    /// WARNING: If you change the name of this class, you will need to change the
-    ///          'Resource File Name' property for the managed resource compiler tool
-    ///          associated with all .resx files this class depends on.  Otherwise,
-    ///          the designers will not be able to interact properly with localized
-    ///          resources associated with this form.
-    /// </summary>
-    public partial class EditSeason : Form
+    private readonly CustomEpisodeName nameStyle;
+    private readonly List<ShowRule> workingRuleSet;
+    private readonly List<ProcessedEpisode>? mOriginalEps;
+    private readonly ShowConfiguration show;
+    private readonly int mSeasonNumber;
+    private readonly List<ProcessedEpisode> episodesToAddToSeen;
+    private readonly List<ProcessedEpisode> episodesToRemoveFromSeen;
+
+    public EditSeason(ShowConfiguration si, int seasonNumber, CustomEpisodeName style)
     {
-        private readonly CustomEpisodeName nameStyle;
-        private readonly List<ShowRule> workingRuleSet;
-        private readonly List<ProcessedEpisode>? mOriginalEps;
-        private readonly ShowConfiguration show;
-        private readonly int mSeasonNumber;
-        private readonly List<ProcessedEpisode> episodesToAddToSeen;
-        private readonly List<ProcessedEpisode> episodesToRemoveFromSeen;
+        mOriginalEps = ShowLibrary.GenerateEpisodes(si, seasonNumber, false);
 
-        public EditSeason(ShowConfiguration si, int seasonNumber, CustomEpisodeName style)
+        nameStyle = style;
+        InitializeComponent();
+
+        episodesToAddToSeen = new List<ProcessedEpisode>();
+        episodesToRemoveFromSeen = new List<ProcessedEpisode>();
+
+        show = si;
+        mSeasonNumber = seasonNumber;
+
+        workingRuleSet = si.SeasonRules.ContainsKey(seasonNumber)
+            ? new List<ShowRule>(si.SeasonRules[seasonNumber])
+            : new List<ShowRule>();
+
+        txtShowName.Text = si.ShowName.ToUiVersion();
+        txtSeasonNumber.Text = seasonNumber.ToString();
+
+        FillRuleList(false, 0);
+        FillSeenEpisodes(false);
+        lvSeenEpisodes.ListViewItemSorter = new NumberAsTextSorter(0);
+        lvSeenEpisodes.Sort();
+
+        UpdatePreviouslySeenButtons();
+        UpdateRuleButtons();
+    }
+    protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+    {
+        base.ScaleControl(factor, specified);
+        lvRuleList.ScaleListViewColumns(factor);
+        lvSeenEpisodes.ScaleListViewColumns(factor);
+    }
+    private void FillSeenEpisodes(bool keepSel)
+    {
+        List<int> sel = new();
+        if (keepSel)
         {
-            mOriginalEps = ShowLibrary.GenerateEpisodes(si, seasonNumber, false);
-
-            nameStyle = style;
-            InitializeComponent();
-
-            episodesToAddToSeen = new List<ProcessedEpisode>();
-            episodesToRemoveFromSeen = new List<ProcessedEpisode>();
-
-            show = si;
-            mSeasonNumber = seasonNumber;
-
-            workingRuleSet = si.SeasonRules.ContainsKey(seasonNumber)
-                ? new List<ShowRule>(si.SeasonRules[seasonNumber])
-                : new List<ShowRule>();
-
-            txtShowName.Text = si.ShowName.ToUiVersion();
-            txtSeasonNumber.Text = seasonNumber.ToString();
-
-            FillRuleList(false, 0);
-            FillSeenEpisodes(false);
-            lvSeenEpisodes.ListViewItemSorter = new NumberAsTextSorter(0);
-            lvSeenEpisodes.Sort();
-
-            UpdatePreviouslySeenButtons();
-            UpdateRuleButtons();
-        }
-        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-        {
-            base.ScaleControl(factor, specified);
-            lvRuleList.ScaleListViewColumns(factor);
-            lvSeenEpisodes.ScaleListViewColumns(factor);
-        }
-        private void FillSeenEpisodes(bool keepSel)
-        {
-            List<int> sel = new();
-            if (keepSel)
+            foreach (int i in lvSeenEpisodes.SelectedIndices)
             {
-                foreach (int i in lvSeenEpisodes.SelectedIndices)
-                {
-                    sel.Add(i);
-                }
+                sel.Add(i);
             }
+        }
 
-            lvSeenEpisodes.Items.Clear();
-            if (mOriginalEps != null)
+        lvSeenEpisodes.Items.Clear();
+        if (mOriginalEps != null)
+        {
+            foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => ep.PreviouslySeen))
             {
-                foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => ep.PreviouslySeen))
-                {
-                    ListViewItem lvi = new() { Text = ep.EpNumsAsString() };
-                    lvi.SubItems.Add(ep.Name);
-                    lvi.Tag = ep;
-                    lvSeenEpisodes.Items.Add(lvi);
-                }
+                ListViewItem lvi = new() { Text = ep.EpNumsAsString() };
+                lvi.SubItems.Add(ep.Name);
+                lvi.Tag = ep;
+                lvSeenEpisodes.Items.Add(lvi);
             }
+        }
 
-            if (keepSel)
+        if (keepSel)
+        {
+            foreach (int i in sel)
             {
-                foreach (int i in sel)
+                if (i < lvSeenEpisodes.Items.Count)
                 {
-                    if (i < lvSeenEpisodes.Items.Count)
+                    if (i >= 0 && i < lvSeenEpisodes.Items.Count)
                     {
-                        if (i >= 0 && i < lvSeenEpisodes.Items.Count)
-                        {
-                            lvSeenEpisodes.Items[i].Selected = true;
-                        }
+                        lvSeenEpisodes.Items[i].Selected = true;
+                    }
+                }
+            }
+        }
+    }
+
+    private void bnAddRule_Click(object sender, System.EventArgs e)
+    {
+        ShowRule sr = new();
+        AddModifyRule ar = new(sr, show, ProcessedEpisodes());
+
+        bool res = ar.ShowDialog(this) == DialogResult.OK;
+        if (res)
+        {
+            workingRuleSet.Add(sr);
+        }
+
+        FillRuleList(false, 0);
+    }
+
+    private void FillRuleList(bool keepSel, int adj)
+    {
+        List<int> sel = new();
+        if (keepSel)
+        {
+            foreach (int i in lvRuleList.SelectedIndices)
+            {
+                sel.Add(i);
+            }
+        }
+
+        lvRuleList.Items.Clear();
+        foreach (ShowRule sr in workingRuleSet)
+        {
+            ListViewItem lvi = new() { Text = sr.ActionInWords() };
+
+            lvi.SubItems.Add(sr.First == -1 ? string.Empty : sr.First.ToString());
+            lvi.SubItems.Add(sr.Second == -1 ? string.Empty : sr.Second.ToString());
+            lvi.SubItems.Add(sr.UserSuppliedText);
+            lvi.SubItems.Add(sr.RenumberAfter ? "Yes" : "No");
+            lvi.Tag = sr;
+            lvRuleList.Items.Add(lvi);
+        }
+
+        if (keepSel)
+        {
+            foreach (int i in sel)
+            {
+                if (i < lvRuleList.Items.Count)
+                {
+                    int n = i + adj;
+                    if (n >= 0 && n < lvRuleList.Items.Count)
+                    {
+                        lvRuleList.Items[n].Selected = true;
                     }
                 }
             }
         }
 
-        private void bnAddRule_Click(object sender, System.EventArgs e)
+        FillPreview();
+    }
+
+    private void bnEdit_Click(object sender, System.EventArgs e)
+    {
+        EditSelectedRule();
+    }
+
+    private void EditSelectedRule()
+    {
+        if (lvRuleList.SelectedItems.Count == 0)
         {
-            ShowRule sr = new();
-            AddModifyRule ar = new(sr, show, ProcessedEpisodes());
-
-            bool res = ar.ShowDialog(this) == DialogResult.OK;
-            if (res)
-            {
-                workingRuleSet.Add(sr);
-            }
-
-            FillRuleList(false, 0);
+            return;
         }
 
-        private void FillRuleList(bool keepSel, int adj)
+        ShowRule sr = (ShowRule)lvRuleList.SelectedItems[0].Tag;
+        AddModifyRule ar = new(sr, show, ProcessedEpisodes());
+        ar.ShowDialog(this); // modifies rule in-place if OK'd
+        FillRuleList(false, 0);
+    }
+
+    private void bnDelRule_Click(object sender, System.EventArgs e)
+    {
+        if (lvRuleList.SelectedItems.Count == 0)
         {
-            List<int> sel = new();
-            if (keepSel)
-            {
-                foreach (int i in lvRuleList.SelectedIndices)
-                {
-                    sel.Add(i);
-                }
-            }
-
-            lvRuleList.Items.Clear();
-            foreach (ShowRule sr in workingRuleSet)
-            {
-                ListViewItem lvi = new() { Text = sr.ActionInWords() };
-
-                lvi.SubItems.Add(sr.First == -1 ? string.Empty : sr.First.ToString());
-                lvi.SubItems.Add(sr.Second == -1 ? string.Empty : sr.Second.ToString());
-                lvi.SubItems.Add(sr.UserSuppliedText);
-                lvi.SubItems.Add(sr.RenumberAfter ? "Yes" : "No");
-                lvi.Tag = sr;
-                lvRuleList.Items.Add(lvi);
-            }
-
-            if (keepSel)
-            {
-                foreach (int i in sel)
-                {
-                    if (i < lvRuleList.Items.Count)
-                    {
-                        int n = i + adj;
-                        if (n >= 0 && n < lvRuleList.Items.Count)
-                        {
-                            lvRuleList.Items[n].Selected = true;
-                        }
-                    }
-                }
-            }
-
-            FillPreview();
+            return;
         }
 
-        private void bnEdit_Click(object sender, System.EventArgs e)
+        ShowRule sr = (ShowRule)lvRuleList.SelectedItems[0].Tag;
+
+        workingRuleSet.Remove(sr);
+        FillRuleList(false, 0);
+    }
+
+    private void bnRuleUp_Click(object sender, System.EventArgs e)
+    {
+        if (lvRuleList.SelectedIndices.Count != 1)
         {
-            EditSelectedRule();
+            return;
         }
 
-        private void EditSelectedRule()
+        int p = lvRuleList.SelectedIndices[0];
+        if (p <= 0)
         {
-            if (lvRuleList.SelectedItems.Count == 0)
+            return;
+        }
+
+        ShowRule sr = workingRuleSet[p];
+        workingRuleSet.RemoveAt(p);
+        workingRuleSet.Insert(p - 1, sr);
+
+        FillRuleList(true, -1);
+    }
+
+    private void bnRuleDown_Click(object sender, System.EventArgs e)
+    {
+        if (lvRuleList.SelectedIndices.Count != 1)
+        {
+            return;
+        }
+
+        int p = lvRuleList.SelectedIndices[0];
+        if (p >= lvRuleList.Items.Count - 1)
+        {
+            return;
+        }
+
+        ShowRule sr = workingRuleSet[p];
+        workingRuleSet.RemoveAt(p);
+        workingRuleSet.Insert(p + 1, sr);
+        FillRuleList(true, +1);
+    }
+
+    private void lvRuleList_DoubleClick(object sender, System.EventArgs e)
+    {
+        EditSelectedRule();
+    }
+
+    private void bnOK_Click(object sender, System.EventArgs e)
+    {
+        show.SeasonRules[mSeasonNumber] = workingRuleSet;
+        ApplyChangesToSeenEpisodes();
+        Close();
+    }
+
+    private void ApplyChangesToSeenEpisodes()
+    {
+        foreach (ProcessedEpisode epIdToRemove in episodesToRemoveFromSeen)
+        {
+            TVSettings.Instance.PreviouslySeenEpisodes.Remove(epIdToRemove.EpisodeId);
+        }
+
+        foreach (ProcessedEpisode epIdToAdd in episodesToAddToSeen)
+        {
+            TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(epIdToAdd);
+        }
+    }
+
+    private void bnCancel_Click(object sender, System.EventArgs e)
+    {
+        Close();
+    }
+
+    private void FillPreview()
+    {
+        IEnumerable<ProcessedEpisode> pel = ProcessedEpisodes();
+
+        lbEpsPreview.BeginUpdate();
+        lbEpsPreview.Items.Clear();
+        foreach (ProcessedEpisode pe in pel)
+        {
+            lbEpsPreview.Items.Add(nameStyle.NameFor(pe));
+        }
+
+        lbEpsPreview.EndUpdate();
+    }
+
+    private IEnumerable<ProcessedEpisode> ProcessedEpisodes()
+    {
+        List<ProcessedEpisode> pel = new();
+
+        if (mOriginalEps != null)
+        {
+            foreach (ProcessedEpisode pe in mOriginalEps)
             {
-                return;
+                pel.Add(new ProcessedEpisode(pe));
             }
 
-            ShowRule sr = (ShowRule)lvRuleList.SelectedItems[0].Tag;
-            AddModifyRule ar = new(sr, show, ProcessedEpisodes());
-            ar.ShowDialog(this); // modifies rule in-place if OK'd
-            FillRuleList(false, 0);
+            ShowLibrary.ApplyRules(pel, workingRuleSet, show);
         }
 
-        private void bnDelRule_Click(object sender, System.EventArgs e)
+        return pel;
+    }
+
+    private void Button2_Click(object sender, System.EventArgs e)
+    {
+        List<ProcessedEpisode> possibleEpisodes = new();
+        if (mOriginalEps != null)
         {
-            if (lvRuleList.SelectedItems.Count == 0)
-            {
-                return;
-            }
-
-            ShowRule sr = (ShowRule)lvRuleList.SelectedItems[0].Tag;
-
-            workingRuleSet.Remove(sr);
-            FillRuleList(false, 0);
+            possibleEpisodes.AddRange(mOriginalEps.Where(testEp => !testEp.PreviouslySeen).Where(testEp => !episodesToAddToSeen.Contains(testEp)));
         }
 
-        private void bnRuleUp_Click(object sender, System.EventArgs e)
+        possibleEpisodes.AddRange(episodesToRemoveFromSeen);
+
+        NewSeenEpisode nse = new(possibleEpisodes);
+        DialogResult dialogResult = nse.ShowDialog(this);
+
+        if (dialogResult != DialogResult.OK)
         {
-            if (lvRuleList.SelectedIndices.Count != 1)
-            {
-                return;
-            }
-
-            int p = lvRuleList.SelectedIndices[0];
-            if (p <= 0)
-            {
-                return;
-            }
-
-            ShowRule sr = workingRuleSet[p];
-            workingRuleSet.RemoveAt(p);
-            workingRuleSet.Insert(p - 1, sr);
-
-            FillRuleList(true, -1);
+            return;
         }
-
-        private void bnRuleDown_Click(object sender, System.EventArgs e)
+        if (nse.ChosenEpisode is null)
         {
-            if (lvRuleList.SelectedIndices.Count != 1)
-            {
-                return;
-            }
-
-            int p = lvRuleList.SelectedIndices[0];
-            if (p >= lvRuleList.Items.Count - 1)
-            {
-                return;
-            }
-
-            ShowRule sr = workingRuleSet[p];
-            workingRuleSet.RemoveAt(p);
-            workingRuleSet.Insert(p + 1, sr);
-            FillRuleList(true, +1);
+            return;
         }
 
-        private void lvRuleList_DoubleClick(object sender, System.EventArgs e)
+        episodesToAddToSeen.Add(nse.ChosenEpisode);
+
+        ListViewItem lvi = new() { Text = nse.ChosenEpisode.AppropriateEpNum.ToString() };
+        lvi.SubItems.Add(nse.ChosenEpisode.Name);
+        lvi.Tag = nse.ChosenEpisode;
+        lvSeenEpisodes.Items.Add(lvi);
+    }
+
+    private void Button1_Click(object sender, System.EventArgs e)
+    {
+        if (lvSeenEpisodes.SelectedItems.Count == 0)
         {
-            EditSelectedRule();
+            return;
         }
 
-        private void bnOK_Click(object sender, System.EventArgs e)
+        for (int index = lvSeenEpisodes.SelectedItems.Count-1; index >=0; index--)
         {
-            show.SeasonRules[mSeasonNumber] = workingRuleSet;
-            ApplyChangesToSeenEpisodes();
-            Close();
+            ProcessedEpisode pe = (ProcessedEpisode)lvSeenEpisodes.SelectedItems[index].Tag;
+            episodesToRemoveFromSeen.Add(pe);
+            lvSeenEpisodes.Items.Remove(lvSeenEpisodes.SelectedItems[index]);
         }
+    }
 
-        private void ApplyChangesToSeenEpisodes()
+    private void UpdatePreviouslySeenButtons()
+    {
+        bnRemoveSeen.Enabled = lvSeenEpisodes.SelectedItems.Count > 0;
+    }
+
+    private void UpdateRuleButtons()
+    {
+        bool anythingSelected = lvRuleList.SelectedItems.Count > 0;
+
+        bnDelRule.Enabled = anythingSelected;
+        bnEdit.Enabled = anythingSelected;
+        bnRuleUp.Enabled = anythingSelected;
+        bnRuleDown.Enabled = anythingSelected;
+    }
+
+    private void LvSeenEpisodes_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+        if (e.Column == 0)
         {
-            foreach (ProcessedEpisode epIdToRemove in episodesToRemoveFromSeen)
-            {
-                TVSettings.Instance.PreviouslySeenEpisodes.Remove(epIdToRemove.EpisodeId);
-            }
-
-            foreach (ProcessedEpisode epIdToAdd in episodesToAddToSeen)
-            {
-                TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(epIdToAdd);
-            }
+            lvSeenEpisodes.ListViewItemSorter = new NumberAsTextSorter(e.Column);
         }
-
-        private void bnCancel_Click(object sender, System.EventArgs e)
+        else
         {
-            Close();
+            lvSeenEpisodes.ListViewItemSorter = new TextSorter(e.Column);
         }
 
-        private void FillPreview()
-        {
-            IEnumerable<ProcessedEpisode> pel = ProcessedEpisodes();
+        lvSeenEpisodes.Sort();
+    }
 
-            lbEpsPreview.BeginUpdate();
-            lbEpsPreview.Items.Clear();
-            foreach (ProcessedEpisode pe in pel)
-            {
-                lbEpsPreview.Items.Add(nameStyle.NameFor(pe));
-            }
+    private void LvRuleList_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+        UpdateRuleButtons();
+    }
 
-            lbEpsPreview.EndUpdate();
-        }
-
-        private IEnumerable<ProcessedEpisode> ProcessedEpisodes()
-        {
-            List<ProcessedEpisode> pel = new();
-
-            if (mOriginalEps != null)
-            {
-                foreach (ProcessedEpisode pe in mOriginalEps)
-                {
-                    pel.Add(new ProcessedEpisode(pe));
-                }
-
-                ShowLibrary.ApplyRules(pel, workingRuleSet, show);
-            }
-
-            return pel;
-        }
-
-        private void Button2_Click(object sender, System.EventArgs e)
-        {
-            List<ProcessedEpisode> possibleEpisodes = new();
-            if (mOriginalEps != null)
-            {
-                possibleEpisodes.AddRange(mOriginalEps.Where(testEp => !testEp.PreviouslySeen).Where(testEp => !episodesToAddToSeen.Contains(testEp)));
-            }
-
-            possibleEpisodes.AddRange(episodesToRemoveFromSeen);
-
-            NewSeenEpisode nse = new(possibleEpisodes);
-            DialogResult dialogResult = nse.ShowDialog(this);
-
-            if (dialogResult != DialogResult.OK)
-            {
-                return;
-            }
-            if (nse.ChosenEpisode is null)
-            {
-                return;
-            }
-
-            episodesToAddToSeen.Add(nse.ChosenEpisode);
-
-            ListViewItem lvi = new() { Text = nse.ChosenEpisode.AppropriateEpNum.ToString() };
-            lvi.SubItems.Add(nse.ChosenEpisode.Name);
-            lvi.Tag = nse.ChosenEpisode;
-            lvSeenEpisodes.Items.Add(lvi);
-        }
-
-        private void Button1_Click(object sender, System.EventArgs e)
-        {
-            if (lvSeenEpisodes.SelectedItems.Count == 0)
-            {
-                return;
-            }
-
-            for (int index = lvSeenEpisodes.SelectedItems.Count-1; index >=0; index--)
-            {
-                ProcessedEpisode pe = (ProcessedEpisode)lvSeenEpisodes.SelectedItems[index].Tag;
-                episodesToRemoveFromSeen.Add(pe);
-                lvSeenEpisodes.Items.Remove(lvSeenEpisodes.SelectedItems[index]);
-            }
-        }
-
-        private void UpdatePreviouslySeenButtons()
-        {
-            bnRemoveSeen.Enabled = lvSeenEpisodes.SelectedItems.Count > 0;
-        }
-
-        private void UpdateRuleButtons()
-        {
-            bool anythingSelected = lvRuleList.SelectedItems.Count > 0;
-
-            bnDelRule.Enabled = anythingSelected;
-            bnEdit.Enabled = anythingSelected;
-            bnRuleUp.Enabled = anythingSelected;
-            bnRuleDown.Enabled = anythingSelected;
-        }
-
-        private void LvSeenEpisodes_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            if (e.Column == 0)
-            {
-                lvSeenEpisodes.ListViewItemSorter = new NumberAsTextSorter(e.Column);
-            }
-            else
-            {
-                lvSeenEpisodes.ListViewItemSorter = new TextSorter(e.Column);
-            }
-
-            lvSeenEpisodes.Sort();
-        }
-
-        private void LvRuleList_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            UpdateRuleButtons();
-        }
-
-        private void LvSeenEpisodes_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            UpdatePreviouslySeenButtons();
-        }
+    private void LvSeenEpisodes_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+        UpdatePreviouslySeenButtons();
     }
 }

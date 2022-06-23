@@ -1,27 +1,26 @@
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+public class BTError : BTItem
 {
-    // ReSharper disable once InconsistentNaming
-    public class BTError : BTItem
+    public string Message;
+
+    public BTError() : base(BTChunk.kError)
     {
-        public string Message;
+        Message = string.Empty;
+    }
 
-        public BTError() : base(BTChunk.kError)
-        {
-            Message = string.Empty;
-        }
+    public override string AsText() => $"Error:{Message}";
 
-        public override string AsText() => $"Error:{Message}";
+    public override void Tree(TreeNodeCollection tn)
+    {
+        TreeNode n = new("BTError:" + Message);
+        tn.Add(n);
+    }
 
-        public override void Tree(TreeNodeCollection tn)
-        {
-            TreeNode n = new("BTError:" + Message);
-            tn.Add(n);
-        }
-
-        public override void Write(System.IO.Stream sw)
-        {
-        }
+    public override void Write(System.IO.Stream sw)
+    {
     }
 }

@@ -11,50 +11,49 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 
-namespace TVRename
+namespace TVRename;
+
+public partial class LinkMovie : Form
 {
-    public partial class LinkMovie : Form
+    private readonly FileInfo chosenFile;
+    public MovieConfiguration? ChosenShow;
+
+    public LinkMovie(List<MovieConfiguration> matchingShows, FileInfo file)
     {
-        private readonly FileInfo chosenFile;
-        public MovieConfiguration? ChosenShow;
-
-        public LinkMovie(List<MovieConfiguration> matchingShows, FileInfo file)
+        InitializeComponent();
+        lblSourceFileName.Text = file.FullName.ToUiVersion();
+        chosenFile = file;
+        DialogResult = DialogResult.Abort;
+        foreach (MovieConfiguration movie in matchingShows)
         {
-            InitializeComponent();
-            lblSourceFileName.Text = file.FullName.ToUiVersion();
-            chosenFile = file;
-            DialogResult = DialogResult.Abort;
-            foreach (MovieConfiguration movie in matchingShows)
-            {
-                cbShows.Items.Add(movie);
-            }
-
-            cbShows.SelectedIndex = 0;
-            cbShows.DisplayMember = "ShowNameWithYear";
+            cbShows.Items.Add(movie);
         }
 
-        private void lnkOpenLeftFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Helpers.OpenFolderSelectFile(chosenFile.FullName);
-        }
+        cbShows.SelectedIndex = 0;
+        cbShows.DisplayMember = "ShowNameWithYear";
+    }
 
-        private void btnUseSelectedMovie_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-            ChosenShow = (MovieConfiguration)cbShows.SelectedItem;
-            Close();
-        }
+    private void lnkOpenLeftFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+        Helpers.OpenFolderSelectFile(chosenFile.FullName);
+    }
 
-        private void Ignore_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Abort;
-            Close();
-        }
+    private void btnUseSelectedMovie_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.OK;
+        ChosenShow = (MovieConfiguration)cbShows.SelectedItem;
+        Close();
+    }
 
-        private void btnNewMovie_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-            Close();
-        }
+    private void Ignore_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.Abort;
+        Close();
+    }
+
+    private void btnNewMovie_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.OK;
+        Close();
     }
 }

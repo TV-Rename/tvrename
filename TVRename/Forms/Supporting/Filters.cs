@@ -10,148 +10,147 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace TVRename.Forms
+namespace TVRename.Forms;
+
+public partial class Filters : Form
 {
-    public partial class Filters : Form
+    private readonly TVDoc doc;
+    private const string IS_NOT = "is not";
+    private const string IS = "is";
+
+    public Filters(TVDoc doc)
     {
-        private readonly TVDoc doc;
-        private const string IS_NOT = "is not";
-        private const string IS = "is";
+        this.doc = doc;
+        InitializeComponent();
 
-        public Filters(TVDoc doc)
+        clbGenre.Items.AddRange(doc.TvLibrary.GetGenres().Cast<object>().ToArray());
+
+        cmbNetwork.Items.Add(string.Empty);
+        cmbNetwork.Items.AddRange(doc.TvLibrary.GetNetworks().Cast<object>().ToArray());
+
+        cmbShowStatus.Items.Add(string.Empty);
+        cmbShowStatus.Items.AddRange(doc.TvLibrary.GetStatuses().Cast<object>().ToArray());
+
+        cmbRating.Items.Add(string.Empty);
+        cmbRating.Items.AddRange(doc.TvLibrary.GetContentRatings().Cast<object>().ToArray());
+
+        SetButtonStates();
+    }
+
+    private void SetButtonStates()
+    {
+        ShowFilter filter = TVSettings.Instance.Filter;
         {
-            this.doc = doc;
-            InitializeComponent();
+            //Filter By Show Names
+            bool filterByShowNames = filter.ShowName != null;
+            tbShowName.Text = filterByShowNames ? filter.ShowName : string.Empty;
 
-            clbGenre.Items.AddRange(doc.TvLibrary.GetGenres().Cast<object>().ToArray());
+            //Filter By Show Status
+            bool filterByShowStatus = filter.ShowStatus != null;
+            cmbShowStatus.SelectedItem = filterByShowStatus ? filter.ShowStatus : string.Empty;
 
-            cmbNetwork.Items.Add(string.Empty);
-            cmbNetwork.Items.AddRange(doc.TvLibrary.GetNetworks().Cast<object>().ToArray());
+            //Filter By Show Rating
+            bool filterByShowRating = filter.ShowRating != null;
+            cmbRating.SelectedItem = filterByShowRating ? filter.ShowRating : string.Empty;
 
-            cmbShowStatus.Items.Add(string.Empty);
-            cmbShowStatus.Items.AddRange(doc.TvLibrary.GetStatuses().Cast<object>().ToArray());
+            //Filter By Show Network
+            bool filterByShowNetwork = filter.ShowNetwork != null;
+            cmbNetwork.SelectedItem = filterByShowNetwork ? filter.ShowNetwork : string.Empty;
 
-            cmbRating.Items.Add(string.Empty);
-            cmbRating.Items.AddRange(doc.TvLibrary.GetContentRatings().Cast<object>().ToArray());
+            //Filter By Show Status
+            cmbShowStatusType.SelectedItem = filter.ShowStatusInclude ? IS : IS_NOT;
 
-            SetButtonStates();
-        }
+            //Filter By Show Rating
+            cmbRatingType.SelectedItem = filter.ShowRatingInclude ? IS : IS_NOT;
 
-        private void SetButtonStates()
-        {
-            ShowFilter filter = TVSettings.Instance.Filter;
+            //Filter By Show Network
+            cmbNetworkType.SelectedItem = filter.ShowNetworkInclude ? IS : IS_NOT;
+
+            //Filter By Genre
+            foreach (string genre in filter.Genres)
             {
-                //Filter By Show Names
-                bool filterByShowNames = filter.ShowName != null;
-                tbShowName.Text = filterByShowNames ? filter.ShowName : string.Empty;
-
-                //Filter By Show Status
-                bool filterByShowStatus = filter.ShowStatus != null;
-                cmbShowStatus.SelectedItem = filterByShowStatus ? filter.ShowStatus : string.Empty;
-
-                //Filter By Show Rating
-                bool filterByShowRating = filter.ShowRating != null;
-                cmbRating.SelectedItem = filterByShowRating ? filter.ShowRating : string.Empty;
-
-                //Filter By Show Network
-                bool filterByShowNetwork = filter.ShowNetwork != null;
-                cmbNetwork.SelectedItem = filterByShowNetwork ? filter.ShowNetwork : string.Empty;
-
-                //Filter By Show Status
-                cmbShowStatusType.SelectedItem = filter.ShowStatusInclude ? IS : IS_NOT;
-
-                //Filter By Show Rating
-                cmbRatingType.SelectedItem = filter.ShowRatingInclude ? IS : IS_NOT;
-
-                //Filter By Show Network
-                cmbNetworkType.SelectedItem = filter.ShowNetworkInclude ? IS : IS_NOT;
-
-                //Filter By Genre
-                foreach (string genre in filter.Genres)
+                int genreIndex = clbGenre.Items.IndexOf(genre);
+                if (genreIndex > 0)
                 {
-                    int genreIndex = clbGenre.Items.IndexOf(genre);
-                    if (genreIndex > 0)
-                    {
-                        clbGenre.SetItemChecked(genreIndex, true);
-                    }
+                    clbGenre.SetItemChecked(genreIndex, true);
                 }
-
-                chkIncludeBlanks.Checked = filter.IncludeBlankFields;
             }
 
-            SeasonFilter sFilter = TVSettings.Instance.SeasonFilter;
-            chkHideIgnoredSeasons.Checked = sFilter.HideIgnoredSeasons;
+            chkIncludeBlanks.Checked = filter.IncludeBlankFields;
         }
 
-        private void btnOk_Click(object sender, EventArgs e)
+        SeasonFilter sFilter = TVSettings.Instance.SeasonFilter;
+        chkHideIgnoredSeasons.Checked = sFilter.HideIgnoredSeasons;
+    }
+
+    private void btnOk_Click(object sender, EventArgs e)
+    {
+        ShowFilter filter = TVSettings.Instance.Filter;
+
+        filter.ShowName = string.IsNullOrEmpty(tbShowName.Text) ? null : tbShowName.Text;
+        filter.ShowStatus = string.IsNullOrEmpty(cmbShowStatus.Text) ? null : cmbShowStatus.SelectedItem.ToString();
+        filter.ShowNetwork = string.IsNullOrEmpty(cmbNetwork.Text) ? null : cmbNetwork.SelectedItem.ToString();
+        filter.ShowRating = string.IsNullOrEmpty(cmbRating.Text) ? null : cmbRating.SelectedItem.ToString();
+
+        filter.ShowStatusInclude = GetIncludeStatus(cmbShowStatusType);
+        filter.ShowNetworkInclude = GetIncludeStatus(cmbNetworkType);
+        filter.ShowRatingInclude = GetIncludeStatus(cmbRatingType);
+
+        filter.IncludeBlankFields = chkIncludeBlanks.Checked;
+
+        filter.Genres.Clear();
+        foreach (string genre in clbGenre.CheckedItems)
         {
-            ShowFilter filter = TVSettings.Instance.Filter;
-
-            filter.ShowName = string.IsNullOrEmpty(tbShowName.Text) ? null : tbShowName.Text;
-            filter.ShowStatus = string.IsNullOrEmpty(cmbShowStatus.Text) ? null : cmbShowStatus.SelectedItem.ToString();
-            filter.ShowNetwork = string.IsNullOrEmpty(cmbNetwork.Text) ? null : cmbNetwork.SelectedItem.ToString();
-            filter.ShowRating = string.IsNullOrEmpty(cmbRating.Text) ? null : cmbRating.SelectedItem.ToString();
-
-            filter.ShowStatusInclude = GetIncludeStatus(cmbShowStatusType);
-            filter.ShowNetworkInclude = GetIncludeStatus(cmbNetworkType);
-            filter.ShowRatingInclude = GetIncludeStatus(cmbRatingType);
-
-            filter.IncludeBlankFields = chkIncludeBlanks.Checked;
-
-            filter.Genres.Clear();
-            foreach (string genre in clbGenre.CheckedItems)
-            {
-                filter.Genres.Add(genre);
-            }
-
-            SeasonFilter sFilter = TVSettings.Instance.SeasonFilter;
-            sFilter.HideIgnoredSeasons = chkHideIgnoredSeasons.Checked;
-
-            doc.SetDirty();
-            DialogResult = DialogResult.OK;
-            Close();
+            filter.Genres.Add(genre);
         }
 
-        private static bool GetIncludeStatus(ComboBox comboBox)
+        SeasonFilter sFilter = TVSettings.Instance.SeasonFilter;
+        sFilter.HideIgnoredSeasons = chkHideIgnoredSeasons.Checked;
+
+        doc.SetDirty();
+        DialogResult = DialogResult.OK;
+        Close();
+    }
+
+    private static bool GetIncludeStatus(ComboBox comboBox)
+    {
+        if (!comboBox.Text.HasValue())
         {
-            if (!comboBox.Text.HasValue())
-            {
-                return true;
-            }
-
-            if (comboBox.SelectedItem.ToString().Equals(IS_NOT))
-            {
-                return false;
-            }
-
             return true;
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        if (comboBox.SelectedItem.ToString().Equals(IS_NOT))
         {
-            DialogResult = DialogResult.Cancel;
-            Close();
+            return false;
         }
 
-        private void bnReset_Click(object sender, EventArgs e)
+        return true;
+    }
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.Cancel;
+        Close();
+    }
+
+    private void bnReset_Click(object sender, EventArgs e)
+    {
+        tbShowName.Text = string.Empty;
+        cmbShowStatus.SelectedItem = string.Empty;
+        cmbNetwork.SelectedItem = string.Empty;
+        cmbRating.SelectedItem = string.Empty;
+
+        cmbShowStatusType.SelectedItem = IS;
+        cmbNetworkType.SelectedItem = IS;
+        cmbRatingType.SelectedItem = IS;
+
+        clbGenre.ClearSelected();
+
+        for (int i = 0; i < clbGenre.Items.Count; i++)
         {
-            tbShowName.Text = string.Empty;
-            cmbShowStatus.SelectedItem = string.Empty;
-            cmbNetwork.SelectedItem = string.Empty;
-            cmbRating.SelectedItem = string.Empty;
-
-            cmbShowStatusType.SelectedItem = IS;
-            cmbNetworkType.SelectedItem = IS;
-            cmbRatingType.SelectedItem = IS;
-
-            clbGenre.ClearSelected();
-
-            for (int i = 0; i < clbGenre.Items.Count; i++)
-            {
-                clbGenre.SetItemChecked(i, false);
-            }
-
-            chkHideIgnoredSeasons.Checked = false;
+            clbGenre.SetItemChecked(i, false);
         }
+
+        chkHideIgnoredSeasons.Checked = false;
     }
 }

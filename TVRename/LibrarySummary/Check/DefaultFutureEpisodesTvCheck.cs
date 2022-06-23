@@ -1,20 +1,19 @@
-namespace TVRename
+namespace TVRename;
+
+internal class DefaultFutureEpisodesTvCheck : DefaultTvShowCheck
 {
-    internal class DefaultFutureEpisodesTvCheck : DefaultTvShowCheck
+    public DefaultFutureEpisodesTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
     {
-        public DefaultFutureEpisodesTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-        {
-        }
+    }
 
-        protected override string FieldName => "Do Future Episodes Check";
+    protected override string FieldName => "Do Future Episodes Check";
 
-        protected override bool Field => Show.ForceCheckFuture;
+    protected override bool Field => Show.ForceCheckFuture;
 
-        protected override bool Default => TVSettings.Instance.DefShowIncludeFuture;
+    protected override bool Default => TVSettings.Instance.DefShowIncludeFuture;
 
-        protected override void FixInternal()
-        {
-            Show.ForceCheckFuture = Default;
-        }
+    protected override void FixInternal()
+    {
+        Show.ForceCheckFuture = Default;
     }
 }

@@ -1,23 +1,22 @@
 using System.Linq;
 
-namespace TVRename
+namespace TVRename;
+
+public class MovieImages : SafeList<MovieImage>
 {
-    public class MovieImages : SafeList<MovieImage>
+    public void MergeImages(MovieImages images)
     {
-        public void MergeImages(MovieImages images)
+        if (!this.Any())
         {
-            if (!this.Any())
+            Clear();
+            AddRange(images);
+            return;
+        }
+        foreach (MovieImage i in images)
+        {
+            if (this.All(si => si.Id != i.Id))
             {
-                Clear();
-                AddRange(images);
-                return;
-            }
-            foreach (MovieImage i in images)
-            {
-                if (this.All(si => si.Id != i.Id))
-                {
-                    Add(i);
-                }
+                Add(i);
             }
         }
     }

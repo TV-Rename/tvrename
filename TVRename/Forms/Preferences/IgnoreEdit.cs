@@ -9,93 +9,92 @@
 using System;
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+/// <summary>
+/// Summary for IgnoreEdit
+///
+/// WARNING: If you change the name of this class, you will need to change the
+///          'Resource File Name' property for the managed resource compiler tool
+///          associated with all .resx files this class depends on.  Otherwise,
+///          the designers will not be able to interact properly with localized
+///          resources associated with this form.
+/// </summary>
+public partial class IgnoreEdit : Form
 {
-    /// <summary>
-    /// Summary for IgnoreEdit
-    ///
-    /// WARNING: If you change the name of this class, you will need to change the
-    ///          'Resource File Name' property for the managed resource compiler tool
-    ///          associated with all .resx files this class depends on.  Otherwise,
-    ///          the designers will not be able to interact properly with localized
-    ///          resources associated with this form.
-    /// </summary>
-    public partial class IgnoreEdit : Form
+    private readonly SafeList<IgnoreItem> ignore;
+    private readonly TVDoc mDoc;
+
+    public IgnoreEdit(TVDoc doc, string defaultFilter)
     {
-        private readonly SafeList<IgnoreItem> ignore;
-        private readonly TVDoc mDoc;
+        mDoc = doc;
+        ignore = new SafeList<IgnoreItem>();
 
-        public IgnoreEdit(TVDoc doc, string defaultFilter)
+        foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
         {
-            mDoc = doc;
-            ignore = new SafeList<IgnoreItem>();
+            ignore.Add(ii);
+        }
 
-            foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
+        InitializeComponent();
+
+        if (defaultFilter.HasValue())
+        {
+            txtFilter.Text = defaultFilter;
+        }
+
+        FillList();
+    }
+
+    private void bnOK_Click(object sender, EventArgs e)
+    {
+        TVSettings.Instance.Ignore = ignore;
+        mDoc.SetDirty();
+        Close();
+    }
+
+    private void bnRemove_Click(object sender, EventArgs e)
+    {
+        foreach (int i in lbItems.SelectedIndices)
+        foreach (IgnoreItem iitest in ignore)
+        {
+            if (lbItems.Items[i].ToString().Equals(iitest.FileAndPath))
             {
-                ignore.Add(ii);
+                ignore.Remove(iitest);
+                break;
             }
+        }
 
-            InitializeComponent();
+        FillList();
+    }
 
-            if (defaultFilter.HasValue())
+    private void FillList()
+    {
+        lbItems.BeginUpdate();
+        lbItems.Items.Clear();
+
+        string f = txtFilter.Text.ToLower();
+        bool all = string.IsNullOrEmpty(f);
+
+        foreach (IgnoreItem ii in ignore)
+        {
+            string s = ii.FileAndPath;
+            if (all || s.Contains(f, StringComparison.CurrentCultureIgnoreCase))
             {
-                txtFilter.Text = defaultFilter;
+                lbItems.Items.Add(s);
             }
-
-            FillList();
         }
 
-        private void bnOK_Click(object sender, EventArgs e)
-        {
-            TVSettings.Instance.Ignore = ignore;
-            mDoc.SetDirty();
-            Close();
-        }
+        lbItems.EndUpdate();
+    }
 
-        private void bnRemove_Click(object sender, EventArgs e)
-        {
-            foreach (int i in lbItems.SelectedIndices)
-                foreach (IgnoreItem iitest in ignore)
-                {
-                    if (lbItems.Items[i].ToString().Equals(iitest.FileAndPath))
-                    {
-                        ignore.Remove(iitest);
-                        break;
-                    }
-                }
+    private void txtFilter_TextChanged(object sender, EventArgs e)
+    {
+        timer1.Start();
+    }
 
-            FillList();
-        }
-
-        private void FillList()
-        {
-            lbItems.BeginUpdate();
-            lbItems.Items.Clear();
-
-            string f = txtFilter.Text.ToLower();
-            bool all = string.IsNullOrEmpty(f);
-
-            foreach (IgnoreItem ii in ignore)
-            {
-                string s = ii.FileAndPath;
-                if (all || s.Contains(f, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    lbItems.Items.Add(s);
-                }
-            }
-
-            lbItems.EndUpdate();
-        }
-
-        private void txtFilter_TextChanged(object sender, EventArgs e)
-        {
-            timer1.Start();
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            timer1.Stop();
-            FillList();
-        }
+    private void timer1_Tick(object sender, EventArgs e)
+    {
+        timer1.Stop();
+        FillList();
     }
 }

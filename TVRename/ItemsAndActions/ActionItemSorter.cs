@@ -8,55 +8,54 @@
 
 using System;
 
-namespace TVRename
+namespace TVRename;
+
+public class ActionItemSorter : System.Collections.Generic.IComparer<Item>
 {
-    public class ActionItemSorter : System.Collections.Generic.IComparer<Item>
+    #region IComparer<Item> Members
+
+    public int Compare(Item? x, Item? y)
     {
-        #region IComparer<Item> Members
-
-        public int Compare(Item? x, Item? y)
+        if (x is null)
         {
-            if (x is null)
-            {
-                return -1;
-            }
-
-            if (y is null)
-            {
-                return 1;
-            }
-
-            return TypeNumber(x) == TypeNumber(y) ? x.CompareTo(y) : TypeNumber(x) - TypeNumber(y);
+            return -1;
         }
 
-        #endregion IComparer<Item> Members
-
-        private static int TypeNumber(Item a)
+        if (y is null)
         {
-            return a switch
-            {
-                ShowItemMissing => 1,
-                MovieItemMissing => 2,
-                ActionCopyMoveRename => 3,
-                ActionMoveRenameDirectory => 4,
-                ActionTDownload => 5,
-                ActionDownloadImage => 6,
-                ActionMede8erViewXML => 7,
-                ActionMede8erXML => 8,
-                ActionNfo => 9,
-                ActionPyTivoMeta => 10,
-                ActionWdtvMeta => 11,
-                ItemDownloading => 12,
-                ActionDeleteFile => 13,
-                ActionDeleteDirectory => 14,
-                ActionDateTouchEpisode => 15,
-                ActionDateTouchSeason => 16,
-                ActionDateTouchMedia => 17,
-                ActionDateTouchMovie => 18,
-                ActionTRemove => 19,
-                ActionUnArchive =>20,
-                _ => throw new NotSupportedException()
-            };
+            return 1;
         }
+
+        return TypeNumber(x) == TypeNumber(y) ? x.CompareTo(y) : TypeNumber(x) - TypeNumber(y);
+    }
+
+    #endregion IComparer<Item> Members
+
+    private static int TypeNumber(Item a)
+    {
+        return a switch
+        {
+            ShowItemMissing => 1,
+            MovieItemMissing => 2,
+            ActionCopyMoveRename => 3,
+            ActionMoveRenameDirectory => 4,
+            ActionTDownload => 5,
+            ActionDownloadImage => 6,
+            ActionMede8erViewXML => 7,
+            ActionMede8erXML => 8,
+            ActionNfo => 9,
+            ActionPyTivoMeta => 10,
+            ActionWdtvMeta => 11,
+            ItemDownloading => 12,
+            ActionDeleteFile => 13,
+            ActionDeleteDirectory => 14,
+            ActionDateTouchEpisode => 15,
+            ActionDateTouchSeason => 16,
+            ActionDateTouchMedia => 17,
+            ActionDateTouchMovie => 18,
+            ActionTRemove => 19,
+            ActionUnArchive =>20,
+            _ => throw new NotSupportedException()
+        };
     }
 }

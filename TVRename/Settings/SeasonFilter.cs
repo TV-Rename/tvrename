@@ -6,20 +6,19 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-namespace TVRename
+namespace TVRename;
+
+public class SeasonFilter
 {
-    public class SeasonFilter
+    public bool HideIgnoredSeasons { get; set; }
+
+    public bool Filter(ShowConfiguration si, ProcessedSeason sea)
     {
-        public bool HideIgnoredSeasons { get; set; }
-
-        public bool Filter(ShowConfiguration si, ProcessedSeason sea)
+        if (sea.SeasonNumber == 0 && TVSettings.Instance.IgnoreAllSpecials)
         {
-            if (sea.SeasonNumber == 0 && TVSettings.Instance.IgnoreAllSpecials)
-            {
-                return true;
-            }
-
-            return !HideIgnoredSeasons || !si.IgnoreSeasons.Contains(sea.SeasonNumber);
+            return true;
         }
+
+        return !HideIgnoredSeasons || !si.IgnoreSeasons.Contains(sea.SeasonNumber);
     }
 }

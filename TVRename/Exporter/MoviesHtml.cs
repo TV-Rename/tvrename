@@ -3,57 +3,57 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace TVRename
+namespace TVRename;
+
+internal class MoviesHtml : MoviesExporter
 {
-    internal class MoviesHtml : MoviesExporter
+    public MoviesHtml(List<MovieConfiguration> shows) : base(shows)
     {
-        public MoviesHtml(List<MovieConfiguration> shows) : base(shows)
-        {
-        }
+    }
 
-        public override bool Active() => TVSettings.Instance.ExportMoviesHTML;
+    public override bool Active() => TVSettings.Instance.ExportMoviesHTML;
 
-        protected override string Location() => TVSettings.Instance.ExportMoviesHTMLTo;
-        protected override string Name() => "Movies HTML Exporter";
-        protected override void Do()
+    protected override string Location() => TVSettings.Instance.ExportMoviesHTMLTo;
+    protected override string Name() => "Movies HTML Exporter";
+    protected override void Do()
+    {
+        using (System.IO.StreamWriter file = new(Location()))
         {
-            using (System.IO.StreamWriter file = new(Location()))
+            file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
+            foreach (MovieConfiguration si in Shows)
             {
-                file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
-                foreach (MovieConfiguration si in Shows)
+                try
                 {
-                    try
-                    {
-                        file.WriteLine(CreateHtml(si));
-                    }
-                    catch (NullReferenceException ex)
-                    {
-                        LOGGER.Error(ex,
-                            $"Skipped adding {si.ShowName} to the output HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
-                    }
+                    file.WriteLine(CreateHtml(si));
                 }
-
-                file.WriteLine(ShowHtmlHelper.HTMLFooter());
+                catch (NullReferenceException ex)
+                {
+                    LOGGER.Error(ex,
+                        $"Skipped adding {si.ShowName} to the output HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
+                }
             }
+
+            file.WriteLine(ShowHtmlHelper.HTMLFooter());
+        }
+    }
+
+    private static string CreateHtml(MovieConfiguration si)
+    {
+        CachedMovieInfo? cachedSeries = si.CachedMovie;
+        if (cachedSeries is null)
+        {
+            return string.Empty;
         }
 
-        private static string CreateHtml(MovieConfiguration si)
-        {
-            CachedMovieInfo cachedSeries = si.CachedMovie;
-            if (cachedSeries is null)
-            {
-                return string.Empty;
-            }
+        string yearRange = cachedSeries.Year?.ToString() ?? "";
+        string stars = ShowHtmlHelper.StarRating(cachedSeries.SiteRating / 2);
+        string genreIcons = string.Join("&nbsp;", cachedSeries.Genres.Select(ShowHtmlHelper.GenreIconHtml));
+        string siteRating = cachedSeries.SiteRating > 0 ? cachedSeries.SiteRating + "/10" : "";
 
-            string yearRange = cachedSeries.Year?.ToString() ?? "";
-            string stars = ShowHtmlHelper.StarRating(cachedSeries.SiteRating / 2);
-            string genreIcons = string.Join("&nbsp;", cachedSeries.Genres.Select(ShowHtmlHelper.GenreIconHtml));
-            string siteRating = cachedSeries.SiteRating > 0 ? cachedSeries.SiteRating + "/10" : "";
+        string poster = ShowHtmlHelper.CreatePosterHtml(cachedSeries);
+        string runTimeHtml = string.IsNullOrWhiteSpace(cachedSeries.Runtime) ? string.Empty : $"<br/> {cachedSeries.Runtime} min";
 
-            string poster = ShowHtmlHelper.CreatePosterHtml(cachedSeries);
-            string runTimeHtml = string.IsNullOrWhiteSpace(cachedSeries.Runtime) ? string.Empty : $"<br/> {cachedSeries.Runtime} min";
-
-            return $@"<div class=""card card-body"">
+        return $@"<div class=""card card-body"">
             <div class=""row"">
             <div class=""col-md-4"">
                 {poster}
@@ -74,6 +74,5 @@ namespace TVRename
                 <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{cachedSeries.Genres.ToCsv()}</div>
             </div>
             </div></div></div>";
-        }
     }
 }

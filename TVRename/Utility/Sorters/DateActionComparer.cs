@@ -1,24 +1,23 @@
 using System;
 using BrightIdeasSoftware;
 
-namespace TVRename
-{
-    public class DateActionComparer : ObjectListViewComparer<DateTime>
-    {
-        public DateActionComparer(int column) : base(column)
-        {
-        }
+namespace TVRename;
 
-        protected override DateTime GetValue(OLVListItem x, int columnId)
+public class DateActionComparer : ObjectListViewComparer<DateTime>
+{
+    public DateActionComparer(int column) : base(column)
+    {
+    }
+
+    protected override DateTime GetValue(OLVListItem x, int columnId)
+    {
+        try
         {
-            try
-            {
-                return ((Item)x.RowObject).AirDate ?? DateTime.Now;
-            }
-            catch
-            {
-                return DateTime.Now;
-            }
+            return ((Item)x.RowObject).AirDate ?? DateTime.Now;
+        }
+        catch
+        {
+            return DateTime.Now;
         }
     }
 }

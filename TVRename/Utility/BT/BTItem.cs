@@ -1,25 +1,24 @@
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+public abstract class BTItem
 {
-    // ReSharper disable once InconsistentNaming
-    public abstract class BTItem
+    public readonly BTChunk Type; // from enum
+
+    protected BTItem(BTChunk type)
     {
-        public readonly BTChunk Type; // from enum
-
-        protected BTItem(BTChunk type)
-        {
-            Type = type;
-        }
-
-        public virtual string AsText() => $"Type ={Type}";
-
-        public virtual void Tree(TreeNodeCollection tn)
-        {
-            TreeNode n = new("BTItem:" + Type);
-            tn.Add(n);
-        }
-
-        public abstract void Write(System.IO.Stream sw);
+        Type = type;
     }
+
+    public virtual string AsText() => $"Type ={Type}";
+
+    public virtual void Tree(TreeNodeCollection tn)
+    {
+        TreeNode n = new("BTItem:" + Type);
+        tn.Add(n);
+    }
+
+    public abstract void Write(System.IO.Stream sw);
 }

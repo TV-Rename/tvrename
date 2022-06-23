@@ -14,171 +14,170 @@ using System.Linq;
 // Recursively reads and caches files and folders, and info about them, as this is way faster
 // than repeatedly hitting the filesystem.
 
-namespace TVRename
+namespace TVRename;
+
+public class DirCache : List<DirCacheEntry>
 {
-    public class DirCache : List<DirCacheEntry>
+    public DirCache()
     {
-        public DirCache()
+    }
+
+    public DirCache(SetProgressDelegate? progress, string folder, bool subFolders)
+    {
+        BuildDirCache(progress, 0, 0, folder, subFolders);
+    }
+
+    public static int CountFiles(string folder, bool subFolders)
+    {
+        int n = 0;
+        if (!Directory.Exists(folder))
         {
-        }
-
-        public DirCache(SetProgressDelegate? progress, string folder, bool subFolders)
-        {
-            BuildDirCache(progress, 0, 0, folder, subFolders);
-        }
-
-        public static int CountFiles(string folder, bool subFolders)
-        {
-            int n = 0;
-            if (!Directory.Exists(folder))
-            {
-                return n;
-            }
-
-            DirectoryInfo di = new(folder);
-            try
-            {
-                n = di.GetFiles().Length;
-            }
-            catch (NotSupportedException)
-            {
-            }
-            catch (UnauthorizedAccessException)
-            {
-            }
-            catch (System.IO.DirectoryNotFoundException)
-            {
-            }
-            catch (System.IO.IOException)
-            {
-            }
-
-            if (!subFolders)
-            {
-                return n;
-            }
-
-            DirectoryInfo[] dirs = Array.Empty<DirectoryInfo>();
-            try
-            {
-                dirs = di.GetDirectories();
-            }
-            catch (NotSupportedException)
-            {
-            }
-            catch (UnauthorizedAccessException)
-            {
-            }
-            catch (System.IO.DirectoryNotFoundException)
-            {
-            }
-            catch (System.IO.IOException)
-            {
-            }
-
-            n += dirs.Sum(di2 => CountFiles(di2.FullName, true));
-
             return n;
         }
 
-        public void AddFolder(SetProgressDelegate? prog, int initialCount, int totalFiles, string folder,
-            bool subFolders)
+        DirectoryInfo di = new(folder);
+        try
         {
-            BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
+            n = di.GetFiles()?.Length??0;
+        }
+        catch (NotSupportedException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+        catch (System.IO.DirectoryNotFoundException)
+        {
+        }
+        catch (System.IO.IOException)
+        {
         }
 
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
-        private void BuildDirCache(SetProgressDelegate? prog, int count, int totalFiles, string folder, bool subFolders)
+        if (!subFolders)
         {
-            if (!Directory.Exists(folder))
+            return n;
+        }
+
+        DirectoryInfo[] dirs = Array.Empty<DirectoryInfo>();
+        try
+        {
+            dirs = di.GetDirectories()!;
+        }
+        catch (NotSupportedException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+        catch (System.IO.DirectoryNotFoundException)
+        {
+        }
+        catch (System.IO.IOException)
+        {
+        }
+
+        n += dirs.Sum(di2 => CountFiles(di2.FullName!, true));
+
+        return n;
+    }
+
+    public void AddFolder(SetProgressDelegate? prog, int initialCount, int totalFiles, string folder,
+        bool subFolders)
+    {
+        BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
+    }
+
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+    private void BuildDirCache(SetProgressDelegate? prog, int count, int totalFiles, string folder, bool subFolders)
+    {
+        if (!Directory.Exists(folder))
+        {
+            Logger.Warn("The search folder \"" + folder + " does not exist.");
+            return;
+        }
+
+        try
+        {
+            DirectoryInfo di = new(folder);
+            if (!di.Exists)
             {
-                Logger.Warn("The search folder \"" + folder + " does not exist.");
                 return;
             }
 
-            try
+            foreach (FileInfo ff in GetFiles(di))
             {
-                DirectoryInfo di = new(folder);
-                if (!di.Exists)
+                Add(new DirCacheEntry(ff));
+                if (prog != null && totalFiles != 0)
                 {
-                    return;
-                }
-
-                foreach (FileInfo ff in GetFiles(di))
-                {
-                    Add(new DirCacheEntry(ff));
-                    if (prog != null && totalFiles != 0)
-                    {
-                        prog.Invoke(100 * count / totalFiles, string.Empty, string.Empty);
-                    }
-                }
-
-                if (subFolders)
-                {
-                    foreach (DirectoryInfo di2 in GetDirectoryInfo(di))
-                    {
-                        BuildDirCache(prog, count, totalFiles, di2.FullName, true);
-                    }
+                    prog.Invoke(100 * count / totalFiles, string.Empty, string.Empty);
                 }
             }
-            catch (Exception exception)
+
+            if (subFolders)
             {
-                Logger.Error(exception);
+                foreach (DirectoryInfo di2 in GetDirectoryInfo(di))
+                {
+                    BuildDirCache(prog, count, totalFiles, di2.FullName, true);
+                }
             }
         }
-
-        private static IEnumerable<DirectoryInfo> GetDirectoryInfo(DirectoryInfo di)
+        catch (Exception exception)
         {
-            try
-            {
-                return di.GetDirectories();
-            }
-            catch (NotSupportedException e)
-            {
-                Logger.Info(e);
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                Logger.Info(e);
-            }
-            catch (System.IO.DirectoryNotFoundException e)
-            {
-                Logger.Info(e);
-            }
-            catch (System.IO.IOException e)
-            {
-                Logger.Info(e);
-            }
-
-            return Array.Empty<DirectoryInfo>();
+            Logger.Error(exception);
         }
+    }
 
-        private static IEnumerable<FileInfo> GetFiles(DirectoryInfo di)
+    private static IEnumerable<DirectoryInfo> GetDirectoryInfo(DirectoryInfo di)
+    {
+        try
         {
-            FileInfo[] f2 = Array.Empty<FileInfo>();
-            try
-            {
-                f2 = di.GetFiles();
-            }
-            catch (NotSupportedException e)
-            {
-                Logger.Info(e);
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                Logger.Info(e);
-            }
-            catch (System.IO.DirectoryNotFoundException e)
-            {
-                Logger.Info(e);
-            }
-            catch (System.IO.IOException e)
-            {
-                Logger.Info(e);
-            }
-
-            return f2;
+            return di.GetDirectories();
         }
+        catch (NotSupportedException e)
+        {
+            Logger.Info(e);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            Logger.Info(e);
+        }
+        catch (System.IO.DirectoryNotFoundException e)
+        {
+            Logger.Info(e);
+        }
+        catch (System.IO.IOException e)
+        {
+            Logger.Info(e);
+        }
+
+        return Array.Empty<DirectoryInfo>();
+    }
+
+    private static IEnumerable<FileInfo> GetFiles(DirectoryInfo di)
+    {
+        FileInfo[] f2 = Array.Empty<FileInfo>();
+        try
+        {
+            f2 = di.GetFiles();
+        }
+        catch (NotSupportedException e)
+        {
+            Logger.Info(e);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            Logger.Info(e);
+        }
+        catch (System.IO.DirectoryNotFoundException e)
+        {
+            Logger.Info(e);
+        }
+        catch (System.IO.IOException e)
+        {
+            Logger.Info(e);
+        }
+
+        return f2;
     }
 }

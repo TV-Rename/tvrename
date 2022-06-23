@@ -1,31 +1,30 @@
 using System.Xml;
 using System.Xml.Linq;
 
-namespace TVRename
+namespace TVRename;
+
+public class MovieImage : MediaImage
 {
-    public class MovieImage : MediaImage
+    public int MovieId;
+    public TVDoc.ProviderType MovieSource;
+
+    public MovieImage()
     {
-        public int MovieId;
-        public TVDoc.ProviderType MovieSource;
+        Subject = ImageSubject.movie;
+    }
 
-        public MovieImage()
-        {
-            Subject = ImageSubject.movie;
-        }
+    public MovieImage(int movieId, TVDoc.ProviderType source, XElement r) : base(r)
+    {
+        MovieId = r.ExtractInt("MovieId") ?? movieId; // thetvdb cachedSeries id
+        MovieSource = source;
+        Subject = ImageSubject.movie;
+    }
 
-        public MovieImage(int movieId, TVDoc.ProviderType source, XElement r) : base(r)
-        {
-            MovieId = r.ExtractInt("MovieId") ?? movieId; // thetvdb cachedSeries id
-            MovieSource = source;
-            Subject = ImageSubject.movie;
-        }
-
-        public void WriteXml(XmlWriter writer)
-        {
-            writer.WriteStartElement("MovieImage");
-            WriteCoreXml(writer);
-            writer.WriteElement("MovieId", MovieId);
-            writer.WriteEndElement(); //MovieImage
-        }
+    public void WriteXml(XmlWriter writer)
+    {
+        writer.WriteStartElement("MovieImage");
+        WriteCoreXml(writer);
+        writer.WriteElement("MovieId", MovieId);
+        writer.WriteEndElement(); //MovieImage
     }
 }

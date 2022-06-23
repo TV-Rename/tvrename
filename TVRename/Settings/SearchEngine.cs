@@ -1,8 +1,7 @@
-namespace TVRename
+namespace TVRename;
+
+public struct SearchEngine
 {
-    public struct SearchEngine
-    {
-        public string Name;
-        public string Url;
-    }
+    public string Name;
+    public string Url;
 }

@@ -8,27 +8,26 @@
 
 using System.Collections.Generic;
 
-namespace TVRename
+namespace TVRename;
+
+internal class MoviesTxt : MoviesExporter
 {
-    internal class MoviesTxt : MoviesExporter
+    public MoviesTxt(List<MovieConfiguration> shows) : base(shows)
     {
-        public MoviesTxt(List<MovieConfiguration> shows) : base(shows)
+    }
+
+    public override bool Active() => TVSettings.Instance.ExportMoviesTXT;
+    protected override string Name() => "Movies TXT Exporter";
+
+    protected override string Location() => TVSettings.Instance.ExportMoviesTXTTo;
+
+    protected override void Do()
+    {
+        using (System.IO.StreamWriter file = new(Location()))
         {
-        }
-
-        public override bool Active() => TVSettings.Instance.ExportMoviesTXT;
-        protected override string Name() => "Movies TXT Exporter";
-
-        protected override string Location() => TVSettings.Instance.ExportMoviesTXTTo;
-
-        protected override void Do()
-        {
-            using (System.IO.StreamWriter file = new(Location()))
+            foreach (MovieConfiguration si in Shows)
             {
-                foreach (MovieConfiguration si in Shows)
-                {
-                    file.WriteLine(si.ShowName);
-                }
+                file.WriteLine(si.ShowName);
             }
         }
     }

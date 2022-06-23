@@ -13,171 +13,170 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Security;
 
-namespace TVRename
+namespace TVRename;
+
+public static class RegistryHelper
 {
-    public static class RegistryHelper
+    //From https://www.cyotek.com/blog/configuring-the-emulation-mode-of-an-internet-explorer-webbrowser-control THANKS
+    //Needed to ensure webBrowser renders HTML 5 content
+
+    private const string INTERNET_EXPLORER_ROOT_KEY = @"Software\Microsoft\Internet Explorer";
+    private const string BROWSER_EMULATION_KEY = INTERNET_EXPLORER_ROOT_KEY + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
+
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    private enum BrowserEmulationVersion
     {
-        //From https://www.cyotek.com/blog/configuring-the-emulation-mode-of-an-internet-explorer-webbrowser-control THANKS
-        //Needed to ensure webBrowser renders HTML 5 content
+        Default = 0,
+        Version7 = 7000,
+        Version8 = 8000,
+        Version9 = 9000,
+        Version10 = 10000,
+        Version11 = 11000
+    }
 
-        private const string INTERNET_EXPLORER_ROOT_KEY = @"Software\Microsoft\Internet Explorer";
-        private const string BROWSER_EMULATION_KEY = INTERNET_EXPLORER_ROOT_KEY + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        private enum BrowserEmulationVersion
+    private static int GetInternetExplorerMajorVersion()
+    {
+        try
         {
-            Default = 0,
-            Version7 = 7000,
-            Version8 = 8000,
-            Version9 = 9000,
-            Version10 = 10000,
-            Version11 = 11000
-        }
+            RegistryKey? key = Registry.LocalMachine.OpenSubKey(INTERNET_EXPLORER_ROOT_KEY);
 
-        private static int GetInternetExplorerMajorVersion()
-        {
-            try
+            if (key != null)
             {
-                RegistryKey? key = Registry.LocalMachine.OpenSubKey(INTERNET_EXPLORER_ROOT_KEY);
+                object value = key.GetValue("svcVersion", null) ?? key.GetValue("Version", null);
 
-                if (key != null)
+                if (value != null)
                 {
-                    object value = key.GetValue("svcVersion", null) ?? key.GetValue("Version", null);
-
-                    if (value != null)
+                    string version = value.ToString();
+                    int separator = version.IndexOf('.');
+                    if (separator != -1)
                     {
-                        string version = value.ToString();
-                        int separator = version.IndexOf('.');
-                        if (separator != -1)
-                        {
-                            int.TryParse(version.Substring(0, separator), out int result);
-                            return result;
-                        }
+                        int.TryParse(version.Substring(0, separator), out int result);
+                        return result;
                     }
                 }
             }
-            catch (SecurityException se)
-            {
-                // The user does not have the permissions required to read from the registry key.
-                Logger.Error(se);
-            }
-            catch (UnauthorizedAccessException uae)
-            {
-                // The user does not have the necessary registry rights.
-                Logger.Error(uae);
-            }
-
-            return 0;
+        }
+        catch (SecurityException se)
+        {
+            // The user does not have the permissions required to read from the registry key.
+            Logger.Error(se);
+        }
+        catch (UnauthorizedAccessException uae)
+        {
+            // The user does not have the necessary registry rights.
+            Logger.Error(uae);
         }
 
-        private static BrowserEmulationVersion GetBrowserEmulationVersion()
-        {
-            try
-            {
-                RegistryKey? key = Registry.CurrentUser.OpenSubKey(BROWSER_EMULATION_KEY, true);
-                if (key != null)
-                {
-                    string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
-                    object value = key.GetValue(programName, null);
+        return 0;
+    }
 
-                    if (value != null)
-                    {
-                        return (BrowserEmulationVersion)Convert.ToInt32(value);
-                    }
+    private static BrowserEmulationVersion GetBrowserEmulationVersion()
+    {
+        try
+        {
+            RegistryKey? key = Registry.CurrentUser.OpenSubKey(BROWSER_EMULATION_KEY, true);
+            if (key != null)
+            {
+                string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
+                object value = key.GetValue(programName, null);
+
+                if (value != null)
+                {
+                    return (BrowserEmulationVersion)Convert.ToInt32(value);
                 }
             }
-            catch (SecurityException se)
-            {
-                // The user does not have the permissions required to read from the registry key.
-                Logger.Error(se);
-            }
-            catch (UnauthorizedAccessException uae)
-            {
-                // The user does not have the necessary registry rights.
-                Logger.Error(uae);
-            }
-
-            return BrowserEmulationVersion.Default;
+        }
+        catch (SecurityException se)
+        {
+            // The user does not have the permissions required to read from the registry key.
+            Logger.Error(se);
+        }
+        catch (UnauthorizedAccessException uae)
+        {
+            // The user does not have the necessary registry rights.
+            Logger.Error(uae);
         }
 
-        private static bool IsBrowserEmulationSet() => GetBrowserEmulationVersion() != BrowserEmulationVersion.Default;
+        return BrowserEmulationVersion.Default;
+    }
 
-        private static bool UpgradeBrowserEmulationRequired() => GetBrowserEmulationVersion() != GetInternetExplorerVersion();
+    private static bool IsBrowserEmulationSet() => GetBrowserEmulationVersion() != BrowserEmulationVersion.Default;
 
-        private static bool SetBrowserEmulationVersion(BrowserEmulationVersion browserEmulationVersion)
+    private static bool UpgradeBrowserEmulationRequired() => GetBrowserEmulationVersion() != GetInternetExplorerVersion();
+
+    private static bool SetBrowserEmulationVersion(BrowserEmulationVersion browserEmulationVersion)
+    {
+        try
         {
-            try
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(BROWSER_EMULATION_KEY, true);
+
+            if (key != null)
             {
-                RegistryKey key = Registry.CurrentUser.CreateSubKey(BROWSER_EMULATION_KEY, true);
+                string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
 
-                if (key != null)
+                if (browserEmulationVersion != BrowserEmulationVersion.Default)
                 {
-                    string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
-
-                    if (browserEmulationVersion != BrowserEmulationVersion.Default)
-                    {
-                        // if it's a valid value, update or create the value
-                        key.SetValue(programName, (int)browserEmulationVersion, RegistryValueKind.DWord);
-                        Logger.Warn($"SETTING REGISTRY:{key.Name}-{programName}-{(int)browserEmulationVersion}-{RegistryValueKind.DWord}");
-                    }
-                    else
-                    {
-                        // otherwise, remove the existing value
-                        key.DeleteValue(programName, false);
-                        Logger.Warn($"DELETING REGISTRY KEY:{key.Name}-{programName}");
-                    }
-
-                    return true;
+                    // if it's a valid value, update or create the value
+                    key.SetValue(programName, (int)browserEmulationVersion, RegistryValueKind.DWord);
+                    Logger.Warn($"SETTING REGISTRY:{key.Name}-{programName}-{(int)browserEmulationVersion}-{RegistryValueKind.DWord}");
+                }
+                else
+                {
+                    // otherwise, remove the existing value
+                    key.DeleteValue(programName, false);
+                    Logger.Warn($"DELETING REGISTRY KEY:{key.Name}-{programName}");
                 }
 
-                Logger.Warn($"Could not access {BROWSER_EMULATION_KEY}");
-            }
-            catch (SecurityException se)
-            {
-                // The user does not have the permissions required to read from the registry key.
-                Logger.Error(se);
-            }
-            catch (UnauthorizedAccessException uae)
-            {
-                // The user does not have the necessary registry rights.
-                Logger.Error(uae);
+                return true;
             }
 
-            return false;
+            Logger.Warn($"Could not access {BROWSER_EMULATION_KEY}");
+        }
+        catch (SecurityException se)
+        {
+            // The user does not have the permissions required to read from the registry key.
+            Logger.Error(se);
+        }
+        catch (UnauthorizedAccessException uae)
+        {
+            // The user does not have the necessary registry rights.
+            Logger.Error(uae);
         }
 
-        private static bool SetBrowserEmulationVersion() => SetBrowserEmulationVersion(GetInternetExplorerVersion());
+        return false;
+    }
 
-        private static BrowserEmulationVersion GetInternetExplorerVersion()
+    private static bool SetBrowserEmulationVersion() => SetBrowserEmulationVersion(GetInternetExplorerVersion());
+
+    private static BrowserEmulationVersion GetInternetExplorerVersion()
+    {
+        int ieVersion = GetInternetExplorerMajorVersion();
+        Logger.Info($"IE Version {ieVersion} is identified");
+
+        if (ieVersion >= 11)
         {
-            int ieVersion = GetInternetExplorerMajorVersion();
-            Logger.Info($"IE Version {ieVersion} is identified");
-
-            if (ieVersion >= 11)
-            {
-                return BrowserEmulationVersion.Version11;
-            }
-
-            return ieVersion switch
-            {
-                10 => BrowserEmulationVersion.Version10,
-                9 => BrowserEmulationVersion.Version9,
-                8 => BrowserEmulationVersion.Version8,
-                _ => BrowserEmulationVersion.Version7
-            };
+            return BrowserEmulationVersion.Version11;
         }
 
-        public static void UpdateBrowserEmulationVersion()
+        return ieVersion switch
         {
-            if (!IsBrowserEmulationSet() || UpgradeBrowserEmulationRequired())
+            10 => BrowserEmulationVersion.Version10,
+            9 => BrowserEmulationVersion.Version9,
+            8 => BrowserEmulationVersion.Version8,
+            _ => BrowserEmulationVersion.Version7
+        };
+    }
+
+    public static void UpdateBrowserEmulationVersion()
+    {
+        if (!IsBrowserEmulationSet() || UpgradeBrowserEmulationRequired())
+        {
+            Logger.Warn("Updating the registry to ensure that the latest browser version is used");
+            if (!SetBrowserEmulationVersion())
             {
-                Logger.Warn("Updating the registry to ensure that the latest browser version is used");
-                if (!SetBrowserEmulationVersion())
-                {
-                    Logger.Error("Failed to update the browser emulation version");
-                }
+                Logger.Error("Failed to update the browser emulation version");
             }
         }
     }

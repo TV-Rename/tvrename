@@ -11,51 +11,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TVRename
+namespace TVRename;
+
+internal static class Beta
 {
-    internal static class Beta
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+    internal static void LogShowEpisodeSizes(TVDoc doc)
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        doc.PreventAutoScan("Show File Sizes");
+        StringBuilder output = new();
 
-        internal static void LogShowEpisodeSizes(TVDoc doc)
+        output.AppendLine("");
+        output.AppendLine("##################################################");
+        output.AppendLine("File Quality FINDER - Start");
+        output.AppendLine("##################################################");
+        output.AppendLine($"Width,   Height,   Length,    ShowName,   FileName");
+        output.AppendLine("##################################################");
+        Logger.Info(output.ToString());
+
+        DirFilesCache dfc = new();
+        foreach (ShowConfiguration si in doc.TvLibrary.Shows)
         {
-            doc.PreventAutoScan("Show File Sizes");
-            StringBuilder output = new();
-
-            output.AppendLine("");
-            output.AppendLine("##################################################");
-            output.AppendLine("File Quality FINDER - Start");
-            output.AppendLine("##################################################");
-            output.AppendLine($"Width,   Height,   Length,    ShowName,   FileName");
-            output.AppendLine("##################################################");
-            Logger.Info(output.ToString());
-
-            DirFilesCache dfc = new();
-            foreach (ShowConfiguration si in doc.TvLibrary.Shows)
+            foreach (List<ProcessedEpisode> episodes in si.SeasonEpisodes.Values.ToList())
             {
-                foreach (List<ProcessedEpisode> episodes in si.SeasonEpisodes.Values.ToList())
+                foreach (ProcessedEpisode pep in episodes)
                 {
-                    foreach (ProcessedEpisode pep in episodes)
+                    List<FileInfo> files = dfc.FindEpOnDisk(pep);
+                    foreach (FileInfo file in files)
                     {
-                        List<FileInfo> files = dfc.FindEpOnDisk(pep);
-                        foreach (FileInfo file in files)
-                        {
-                            int width = file.GetFrameWidth();
-                            int height = file.GetFrameHeight();
-                            int length = file.GetFilmLength();
-                            Logger.Info($"{width,-10}   {height,-10}   {length,-10}    {pep.Show.ShowName,-50}  {file.Name}");
-                        }
+                        int width = file.GetFrameWidth();
+                        int height = file.GetFrameHeight();
+                        int length = file.GetFilmLength();
+                        Logger.Info($"{width,-10}   {height,-10}   {length,-10}    {pep.Show.ShowName,-50}  {file.Name}");
                     }
                 }
             }
-
-            output.Clear();
-            output.AppendLine("##################################################");
-            output.AppendLine("File Quailty FINDER - End");
-            output.AppendLine("##################################################");
-
-            Logger.Info(output.ToString());
-            doc.AllowAutoScan();
         }
+
+        output.Clear();
+        output.AppendLine("##################################################");
+        output.AppendLine("File Quailty FINDER - End");
+        output.AppendLine("##################################################");
+
+        Logger.Info(output.ToString());
+        doc.AllowAutoScan();
     }
 }

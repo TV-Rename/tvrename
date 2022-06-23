@@ -3,271 +3,270 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TVRename
+namespace TVRename;
+
+internal class CheckAllFoldersExist : ScanShowActivity
 {
-    internal class CheckAllFoldersExist : ScanShowActivity
+    public CheckAllFoldersExist(TVDoc doc) : base(doc)
     {
-        public CheckAllFoldersExist(TVDoc doc) : base(doc)
+    }
+
+    protected override string ActivityName() => "Checked All Folders Exist";
+
+    protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+    {
+        if (!si.DoMissingCheck && !si.DoRename)
         {
+            return; // skip
         }
 
-        protected override string ActivityName() => "Checked All Folders Exist";
+        Dictionary<int, SafeList<string>> flocs = si.AllProposedFolderLocations();
 
-        protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        List<string> ignoredLocations = new();
+
+        foreach (int snum in si.GetSeasonKeys())
         {
-            if (!si.DoMissingCheck && !si.DoRename)
+            // show MissingFolderAction for any folders that are missing
+            // throw Exception if user cancels
+
+            if (si.IgnoreSeasons.Contains(snum))
             {
-                return; // skip
+                continue; // ignore this season
             }
 
-            Dictionary<int, SafeList<string>> flocs = si.AllProposedFolderLocations();
-
-            List<string> ignoredLocations = new();
-
-            foreach (int snum in si.GetSeasonKeys())
+            if (snum == 0 && si.CountSpecials)
             {
-                // show MissingFolderAction for any folders that are missing
-                // throw Exception if user cancels
+                continue; // no specials season, they're merged into the seasons themselves
+            }
 
-                if (si.IgnoreSeasons.Contains(snum))
-                {
-                    continue; // ignore this season
-                }
+            if (snum == 0 && TVSettings.Instance.IgnoreAllSpecials)
+            {
+                continue;
+            }
 
-                if (snum == 0 && si.CountSpecials)
-                {
-                    continue; // no specials season, they're merged into the seasons themselves
-                }
+            SafeList<string> folders = new();
 
-                if (snum == 0 && TVSettings.Instance.IgnoreAllSpecials)
-                {
-                    continue;
-                }
+            if (flocs.ContainsKey(snum))
+            {
+                folders = flocs[snum];
+            }
 
-                SafeList<string> folders = new();
+            if (si.SeasonEpisodes[snum].All(episode => !MightWeProcess(episode, folders)))
+            {
+                //All episodes in this season are ignored
+                continue;
+            }
 
-                if (flocs.ContainsKey(snum))
-                {
-                    folders = flocs[snum];
-                }
+            if (folders.Count == 0 && si.AutoAddNewSeasons())
+            {
+                // no folders defined for this season, and autoadd didn't find any, so suggest the autoadd folder name instead
+                folders.Add(si.AutoFolderNameForSeason(snum));
+            }
 
-                if (si.SeasonEpisodes[snum].All(episode => !MightWeProcess(episode, folders)))
-                {
-                    //All episodes in this season are ignored
-                    continue;
-                }
+            if (folders.Count == 0 && !si.AutoAddNewSeasons())
+            {
+                // no folders defined for this season, and autoadd didn't find any, so suggest the autoadd folder name instead
+                folders.Add(string.Empty);
+            }
 
-                if (folders.Count == 0 && si.AutoAddNewSeasons())
-                {
-                    // no folders defined for this season, and autoadd didn't find any, so suggest the autoadd folder name instead
-                    folders.Add(si.AutoFolderNameForSeason(snum));
-                }
+            CreateSeasonFolders(si, snum, folders, ignoredLocations, settings.Owner);
+        } // for each snum
+    }
 
-                if (folders.Count == 0 && !si.AutoAddNewSeasons())
-                {
-                    // no folders defined for this season, and autoadd didn't find any, so suggest the autoadd folder name instead
-                    folders.Add(string.Empty);
-                }
-
-                CreateSeasonFolders(si, snum, folders, ignoredLocations, settings.Owner);
-            } // for each snum
-        }
-
-        private static bool MightWeProcess(ProcessedEpisode episode, IEnumerable<string> folders)
+    private static bool MightWeProcess(ProcessedEpisode episode, IEnumerable<string> folders)
+    {
+        foreach (string folder in folders)
         {
-            foreach (string folder in folders)
-            {
-                if (TVSettings.Instance.Ignore.Any(ii => ii.MatchesEpisode(folder, episode)))
-                {
-                    return false;
-                }
-            }
-
-            if (TVSettings.Instance.IgnorePreviouslySeen)
-            {
-                if (TVSettings.Instance.PreviouslySeenEpisodes.Includes(episode))
-                {
-                    return false;
-                }
-            }
-
-            if (!episode.Show.ForceCheckNoAirdate && episode.GetAirDateDt(true) == null)
+            if (TVSettings.Instance.Ignore.Any(ii => ii.MatchesEpisode(folder, episode)))
             {
                 return false;
             }
-
-            return true;
         }
 
-        private void CreateSeasonFolders(ShowConfiguration si, int snum, IEnumerable<string> folders,
-            ICollection<string> ignoredLocations, IDialogParent owner)
+        if (TVSettings.Instance.IgnorePreviouslySeen)
         {
-            foreach (string folderExists in folders)
+            if (TVSettings.Instance.PreviouslySeenEpisodes.Includes(episode))
             {
-                CreateSeasonFolder(si, snum, ignoredLocations, folderExists, owner);
-            } // for each folder
-        }
-
-        private void CreateSeasonFolder(ShowConfiguration si, int snum, ICollection<string> ignoredLocations, string proposedFolderName, IDialogParent owner)
-        {
-            string folder = proposedFolderName;
-
-            // generate new filename info
-            // ReSharper disable once RedundantAssignment
-            bool goAgain = false;
-            DirectoryInfo di = null;
-            bool firstAttempt = true;
-            do
-            {
-                goAgain = false;
-                if (!string.IsNullOrEmpty(folder))
-                {
-                    try
-                    {
-                        di = new DirectoryInfo(folder);
-                    }
-                    catch (Exception e)
-                    {
-                        LOGGER.Warn($"Could not create Season Folder {folder} as {e.Message}.");
-                        break;
-                    }
-                }
-
-                if (ignoredLocations.Contains(folder))
-                {
-                    break;
-                }
-
-                if (di != null && di.Exists)
-                {
-                    continue;
-                }
-
-                string? otherFolder = null;
-
-                FaResult whatToDo = GetDefaultAction();
-
-                if (TVSettings.Instance.AutoCreateFolders && firstAttempt)
-                {
-                    whatToDo = FaResult.kfaCreate;
-                    firstAttempt = false;
-                }
-
-                if (whatToDo == FaResult.kfaNotSet)
-                {
-                    // no command line guidance, so ask the user
-                    MissingFolderAction mfa = new(si.ShowName, snum + " of " + si.MaxSeason(), folder);
-
-                    owner.ShowChildDialog(mfa);
-                    whatToDo = mfa.Result;
-                    otherFolder = mfa.FolderName;
-                    mfa.Dispose();
-                }
-
-                switch (whatToDo)
-                {
-                    case FaResult.kfaRetry:
-                        goAgain = true;
-                        break;
-
-                    case FaResult.kfaDifferentFolder:
-                        if (otherFolder != null)
-                        {
-                            folder = otherFolder;
-                        }
-                        goAgain = UpdateDirectory(si, snum, folder);
-                        break;
-
-                    case FaResult.kfaNotSet:
-                        break;
-
-                    case FaResult.kfaCancel:
-                        throw new TVRenameOperationInterruptedException();
-
-                    case FaResult.kfaCreate:
-                        TryCreateDirectory(folder, si.ShowName, snum + " of " + si.MaxSeason());
-                        goAgain = true;
-                        break;
-
-                    case FaResult.kfaIgnoreOnce:
-                        ignoredLocations.Add(folder);
-                        break;
-
-                    case FaResult.kfaIgnoreAlways:
-                        si.IgnoreSeasons.Add(snum);
-                        Doc.SetDirty();
-                        break;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            } while (goAgain);
-        }
-
-        private bool UpdateDirectory(ShowConfiguration si, int snum, string folder)
-        {
-            DirectoryInfo di = new(folder);
-            bool goAgain = !di.Exists;
-            if (di.Exists &&
-                !string.Equals(si.AutoFolderNameForSeason(snum), folder, StringComparison.CurrentCultureIgnoreCase))
-            {
-                if (!si.ManualFolderLocations.ContainsKey(snum))
-                {
-                    si.ManualFolderLocations[snum] = new List<string>();
-                }
-
-                si.ManualFolderLocations[snum].Add(folder);
-                Doc.SetDirty();
+                return false;
             }
-
-            return goAgain;
         }
 
-        private static void TryCreateDirectory(string? folder, string sn, string text)
+        if (!episode.Show.ForceCheckNoAirdate && episode.GetAirDateDt(true) == null)
         {
-            if (string.IsNullOrWhiteSpace(folder))
-            {
-                LOGGER.Warn($"Folder is not specified for {sn} {text}");
-            }
-            else
+            return false;
+        }
+
+        return true;
+    }
+
+    private void CreateSeasonFolders(ShowConfiguration si, int snum, IEnumerable<string> folders,
+        ICollection<string> ignoredLocations, IDialogParent owner)
+    {
+        foreach (string folderExists in folders)
+        {
+            CreateSeasonFolder(si, snum, ignoredLocations, folderExists, owner);
+        } // for each folder
+    }
+
+    private void CreateSeasonFolder(ShowConfiguration si, int snum, ICollection<string> ignoredLocations, string proposedFolderName, IDialogParent owner)
+    {
+        string folder = proposedFolderName;
+
+        // generate new filename info
+        // ReSharper disable once RedundantAssignment
+        bool goAgain = false;
+        DirectoryInfo di = null;
+        bool firstAttempt = true;
+        do
+        {
+            goAgain = false;
+            if (!string.IsNullOrEmpty(folder))
             {
                 try
                 {
-                    LOGGER.Info($"Creating directory as it is missing: {folder}");
-                    Directory.CreateDirectory(folder);
+                    di = new DirectoryInfo(folder);
                 }
-                catch (Exception ioe)
+                catch (Exception e)
                 {
-                    LOGGER.Warn($"Could not create directory: {folder} Error Message: {ioe.Message}");
+                    LOGGER.Warn($"Could not create Season Folder {folder} as {e.Message}.");
+                    break;
                 }
             }
-        }
 
-        private FaResult GetDefaultAction()
-        {
-            switch (Doc.Args.MissingFolder)
+            if (ignoredLocations.Contains(folder))
             {
-                case CommandLineArgs.MissingFolderBehavior.create:
-                    return FaResult.kfaCreate;
+                break;
+            }
 
-                case CommandLineArgs.MissingFolderBehavior.ignore:
-                    return FaResult.kfaIgnoreOnce;
+            if (di != null && di.Exists)
+            {
+                continue;
+            }
 
-                case CommandLineArgs.MissingFolderBehavior.ask:
+            string? otherFolder = null;
+
+            FaResult whatToDo = GetDefaultAction();
+
+            if (TVSettings.Instance.AutoCreateFolders && firstAttempt)
+            {
+                whatToDo = FaResult.kfaCreate;
+                firstAttempt = false;
+            }
+
+            if (whatToDo == FaResult.kfaNotSet)
+            {
+                // no command line guidance, so ask the user
+                MissingFolderAction mfa = new(si.ShowName, snum + " of " + si.MaxSeason(), folder);
+
+                owner.ShowChildDialog(mfa);
+                whatToDo = mfa.Result;
+                otherFolder = mfa.FolderName;
+                mfa.Dispose();
+            }
+
+            switch (whatToDo)
+            {
+                case FaResult.kfaRetry:
+                    goAgain = true;
+                    break;
+
+                case FaResult.kfaDifferentFolder:
+                    if (otherFolder != null)
+                    {
+                        folder = otherFolder;
+                    }
+                    goAgain = UpdateDirectory(si, snum, folder);
+                    break;
+
+                case FaResult.kfaNotSet:
+                    break;
+
+                case FaResult.kfaCancel:
+                    throw new TVRenameOperationInterruptedException();
+
+                case FaResult.kfaCreate:
+                    TryCreateDirectory(folder, si.ShowName, snum + " of " + si.MaxSeason());
+                    goAgain = true;
+                    break;
+
+                case FaResult.kfaIgnoreOnce:
+                    ignoredLocations.Add(folder);
+                    break;
+
+                case FaResult.kfaIgnoreAlways:
+                    si.IgnoreSeasons.Add(snum);
+                    Doc.SetDirty();
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        } while (goAgain);
+    }
 
-            if (Doc.Args.Hide || !Environment.UserInteractive)
+    private bool UpdateDirectory(ShowConfiguration si, int snum, string folder)
+    {
+        DirectoryInfo di = new(folder);
+        bool goAgain = !di.Exists;
+        if (di.Exists &&
+            !string.Equals(si.AutoFolderNameForSeason(snum), folder, StringComparison.CurrentCultureIgnoreCase))
+        {
+            if (!si.ManualFolderLocations.ContainsKey(snum))
             {
-                return FaResult.kfaIgnoreOnce; // default in /hide mode is to ignore
+                si.ManualFolderLocations[snum] = new List<string>();
             }
 
-            return FaResult.kfaNotSet;
+            si.ManualFolderLocations[snum].Add(folder);
+            Doc.SetDirty();
         }
 
-        protected override bool Active() => TVSettings.Instance.MissingCheck;
+        return goAgain;
     }
+
+    private static void TryCreateDirectory(string? folder, string sn, string text)
+    {
+        if (string.IsNullOrWhiteSpace(folder))
+        {
+            LOGGER.Warn($"Folder is not specified for {sn} {text}");
+        }
+        else
+        {
+            try
+            {
+                LOGGER.Info($"Creating directory as it is missing: {folder}");
+                Directory.CreateDirectory(folder);
+            }
+            catch (Exception ioe)
+            {
+                LOGGER.Warn($"Could not create directory: {folder} Error Message: {ioe.Message}");
+            }
+        }
+    }
+
+    private FaResult GetDefaultAction()
+    {
+        switch (Doc.Args.MissingFolder)
+        {
+            case CommandLineArgs.MissingFolderBehavior.create:
+                return FaResult.kfaCreate;
+
+            case CommandLineArgs.MissingFolderBehavior.ignore:
+                return FaResult.kfaIgnoreOnce;
+
+            case CommandLineArgs.MissingFolderBehavior.ask:
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        if (Doc.Args.Hide || !Environment.UserInteractive)
+        {
+            return FaResult.kfaIgnoreOnce; // default in /hide mode is to ignore
+        }
+
+        return FaResult.kfaNotSet;
+    }
+
+    protected override bool Active() => TVSettings.Instance.MissingCheck;
 }

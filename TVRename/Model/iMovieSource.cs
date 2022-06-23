@@ -1,30 +1,29 @@
 using Alphaleonis.Win32.Filesystem;
 
-namespace TVRename
+namespace TVRename;
+
+// ReSharper disable once InconsistentNaming
+public interface iMovieSource
 {
-    // ReSharper disable once InconsistentNaming
-    public interface iMovieSource
-    {
-        void Setup(FileInfo loadFrom, FileInfo cacheFile, bool showIssues);
+    void Setup(FileInfo loadFrom, FileInfo cacheFile, bool showIssues);
 
-        bool Connect(bool showErrorMsgBox);
+    bool Connect(bool showErrorMsgBox);
 
-        void SaveCache();
+    void SaveCache();
 
-        bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
+    bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
 
-        void UpdatesDoneOk();
+    void UpdatesDoneOk();
 
-        CachedMovieInfo? GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox);
+    CachedMovieInfo? GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox);
 
-        CachedMovieInfo? GetMovie(int? id);
+    CachedMovieInfo? GetMovie(int? id);
 
-        bool HasMovie(int id);
+    bool HasMovie(int id);
 
-        void ForgetEverything();
+    void ForgetEverything();
 
-        void LatestUpdateTimeIs(string time);
+    void LatestUpdateTimeIs(string time);
 
-        TVDoc.ProviderType SourceProvider();
-    }
+    TVDoc.ProviderType SourceProvider();
 }

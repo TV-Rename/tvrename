@@ -9,32 +9,31 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 
-namespace TVRename
+namespace TVRename;
+
+public abstract class ListViewItemSorter : IComparer
 {
-    public abstract class ListViewItemSorter : IComparer
+    protected readonly int Col;
+
+    protected ListViewItemSorter(int column)
     {
-        protected readonly int Col;
-
-        protected ListViewItemSorter(int column)
-        {
-            Col = column;
-        }
-
-        public int Compare(object x, object y)
-        {
-            if (x is not ListViewItem lvix)
-            {
-                throw new InvalidOperationException();
-            }
-
-            if (y is not ListViewItem lviy)
-            {
-                throw new InvalidOperationException();
-            }
-
-            return CompareListViewItem(lvix, lviy);
-        }
-
-        protected abstract int CompareListViewItem(ListViewItem x, ListViewItem y);
+        Col = column;
     }
+
+    public int Compare(object x, object y)
+    {
+        if (x is not ListViewItem lvix)
+        {
+            throw new InvalidOperationException();
+        }
+
+        if (y is not ListViewItem lviy)
+        {
+            throw new InvalidOperationException();
+        }
+
+        return CompareListViewItem(lvix, lviy);
+    }
+
+    protected abstract int CompareListViewItem(ListViewItem x, ListViewItem y);
 }
