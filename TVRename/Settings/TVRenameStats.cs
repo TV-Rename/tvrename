@@ -61,14 +61,14 @@ public class TVRenameStats
         }
 
         XmlReaderSettings settings = new() { IgnoreComments = true, IgnoreWhitespace = true };
-        TVRenameStats sc;
+        TVRenameStats? sc;
 
         try
         {
             using (XmlReader reader = XmlReader.Create(filename, settings))
             {
                 XmlSerializer xs = new(typeof(TVRenameStats));
-                sc = (TVRenameStats)xs.Deserialize(reader);
+                sc = xs.Deserialize(reader) as TVRenameStats;
             }
 
             System.Diagnostics.Debug.Assert(sc != null);

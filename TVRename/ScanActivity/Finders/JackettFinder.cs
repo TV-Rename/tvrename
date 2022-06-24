@@ -66,15 +66,15 @@ internal class JackettFinder : DownloadFinder
         }
         catch (WebException e)
         {
-            LOGGER.LogWebException($"Failed to access: {e.Response.ResponseUri} got the following message:", e);
+            LOGGER.LogWebException($"Failed to access: {e.Response?.ResponseUri} got the following message:", e);
         }
         catch (AggregateException aex) when (aex.InnerException is WebException ex)
         {
-            LOGGER.LogWebException($"Failed to access: {ex.Response.ResponseUri} got the following message:", ex);
+            LOGGER.LogWebException($"Failed to access: {ex.Response?.ResponseUri} got the following message:", ex);
         }
         catch (HttpRequestException hre) when (hre.InnerException is WebException ex)
         {
-            LOGGER.LogWebException($"Failed to access: {ex.Response.ResponseUri} got the following message:", ex);
+            LOGGER.LogWebException($"Failed to access: {ex.Response?.ResponseUri} got the following message:", ex);
         }
 
         ActionList.Replace(toRemove, newItems);
@@ -150,7 +150,7 @@ internal class JackettFinder : DownloadFinder
     {
         string apikey = TVSettings.Instance.JackettAPIKey;
         const string FORMAT = "{ShowName}";
-        string? text = WebUtility.UrlEncode(CustomMovieName.NameFor(actionMovieConfig, FORMAT));
+        string text = WebUtility.UrlEncode(CustomMovieName.NameFor(actionMovieConfig, FORMAT));
         return
             $"{IndexerUrl()}api?t=movie&q={text}&apikey={apikey}";
     }
@@ -165,7 +165,7 @@ internal class JackettFinder : DownloadFinder
     private static string NormalJackettUrl(ProcessedEpisode processedEpisode)
     {
         string apikey = TVSettings.Instance.JackettAPIKey;
-        string? simpleShowName = WebUtility.UrlEncode(processedEpisode.Show.ShowName.CompareName());
+        string simpleShowName = WebUtility.UrlEncode(processedEpisode.Show.ShowName.CompareName());
 
         return
             $"{IndexerUrl()}api?t=tvsearch&q={simpleShowName}&tvdbid={processedEpisode.Show.TvdbCode}&season={processedEpisode.AppropriateSeasonNumber}&ep={processedEpisode.AppropriateEpNum}&apikey={apikey}";
@@ -175,7 +175,7 @@ internal class JackettFinder : DownloadFinder
     {
         string apikey = TVSettings.Instance.JackettAPIKey;
         const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
-        string? text = WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false));
+        string text = WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false));
         return
             $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
     }

@@ -82,7 +82,7 @@ public partial class AutoAddMedia : Form
 
             if (useDefaultValue && defaultValue.HasValue())
             {
-                comboBox.Text = defaultValue!.TrimEnd(Path.DirectorySeparatorChar.ToString());
+                comboBox.Text = defaultValue.TrimEnd(Path.DirectorySeparatorChar.ToString());
             }
             else
             {
@@ -93,12 +93,16 @@ public partial class AutoAddMedia : Form
         comboBox.ResumeLayout();
     }
 
-    private void MTCCF_SelectionChanged(object sender, EventArgs e)
+    private void MTCCF_SelectionChanged(object? sender, EventArgs e)
     {
         if (tabControl1.SelectedTab == tpTV)
         {
-            string filenameFriendly = TVSettings.Instance.DefaultTVShowFolder(tvCodeFinder.SelectedShow());
-            lblDirectoryName.Text = System.IO.Path.DirectorySeparatorChar + filenameFriendly;
+            CachedSeriesInfo? cachedSeriesInfo = tvCodeFinder.SelectedShow();
+            if (cachedSeriesInfo is not null)
+            {
+                string filenameFriendly = TVSettings.Instance.DefaultTVShowFolder(cachedSeriesInfo);
+                lblDirectoryName.Text = System.IO.Path.DirectorySeparatorChar + filenameFriendly;
+            }
         }
     }
 

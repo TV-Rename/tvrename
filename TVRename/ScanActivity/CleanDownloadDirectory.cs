@@ -158,8 +158,8 @@ internal class CleanDownloadDirectory : ScanActivity
         IReadOnlyList<ShowConfiguration> matchingShows)
     {
         ShowConfiguration si = matchingShows[0]; //Choose the first cachedSeries
-        FinderHelper.FindSeasEp(di, out int seasF, out int epF, si, out TVSettings.FilenameProcessorRE _);
-        CachedSeriesInfo s = si.CachedShow;
+        FinderHelper.FindSeasEp(di, out int seasF, out int epF, si, out TVSettings.FilenameProcessorRE? _);
+        CachedSeriesInfo? s = si.CachedShow;
         if (s is null)
         {
             throw new ArgumentNullException(nameof(s));
@@ -291,7 +291,7 @@ internal class CleanDownloadDirectory : ScanActivity
     private (bool?, ProcessedEpisode?) CanFileBeDeletedForShow(bool unattended, FileInfo fi, IDialogParent owner, ShowConfiguration si,
         List<ShowConfiguration> matchingShows)
     {
-        FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE re);
+        FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE? re);
 
         if (!si.SeasonEpisodes.ContainsKey(seasF))
         {

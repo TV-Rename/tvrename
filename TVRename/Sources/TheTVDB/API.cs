@@ -1,3 +1,4 @@
+#nullable enable
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -160,15 +161,15 @@ internal static class API
         return episodeId > 0 ? $"{WebsiteRoot}/series/{slug}/episodes/{episodeId}" : string.Empty;
     }
 
-    private static JObject? JsonHttpGetRequest(string url, Dictionary<string, string>? parameters, TokenProvider? authToken, bool retry) =>
+    private static JObject? JsonHttpGetRequest(string url, Dictionary<string, string?>? parameters, TokenProvider? authToken, bool retry) =>
         JsonHttpGetRequest(url, parameters, authToken, string.Empty, retry);
 
-    private static JObject? JsonHttpGetRequest(string url, Dictionary<string, string>? parameters, TokenProvider? authToken, string lang, bool retry)
+    private static JObject? JsonHttpGetRequest(string url, Dictionary<string, string?>? parameters, TokenProvider? authToken, string lang, bool retry)
     {
         TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
         string fullUrl = url + HttpHelper.GetHttpParameters(parameters);
-
-        string response = null;
+        
+        string? response = null;
 
         if (retry)
         {
@@ -194,16 +195,12 @@ internal static class API
 
         try
         {
-            if (!response.HasValue())
-            {
-                return null;
-            }
-            return JObject.Parse(response);
+            return response.HasValue() ? JObject.Parse(response) : null;
         }
         catch (JsonReaderException)
         {
             const string ERROR_ON_END = @"{""Error"":""Not authorized""}";
-            if (response.EndsWith(ERROR_ON_END, StringComparison.Ordinal) && response.Length > ERROR_ON_END.Length)
+            if (response.HasValue() && response.EndsWith(ERROR_ON_END, StringComparison.Ordinal) && response.Length > ERROR_ON_END.Length)
             {
                 return JObject.Parse(response.TrimEnd(ERROR_ON_END));
             }
@@ -220,13 +217,13 @@ internal static class API
         if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
         {
             return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/updates",
-                new Dictionary<string, string> { { "since", time.ToString() }, { "page", page.ToString() } },
+                new Dictionary<string, string?> { { "since", time.ToString() }, { "page", page.ToString() } },
                 TokenProvider, lang, true);
         }
         else
         {
             return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/updated/query",
-                new Dictionary<string, string> { { "fromTime", time.ToString() } },
+                new Dictionary<string, string?> { { "fromTime", time.ToString() } },
                 TokenProvider, lang, true);
         }
     }
@@ -235,7 +232,7 @@ internal static class API
     {
         string episodeUri = $"{TokenProvider.TVDB_API_URL}/series/{seriesId}/episodes";
         return JsonHttpGetRequest(episodeUri,
-            new Dictionary<string, string> { { "page", pageNumber.ToString() } },
+            new Dictionary<string, string?> { { "page", pageNumber.ToString() } },
             TokenProvider, languageCode, true);
     }
 
@@ -266,14 +263,12 @@ internal static class API
                 uriImages, null, TokenProvider,
                 requestedLanguageCode, false);
 
-            JObject? a = (JObject)jsonEpisodeSearchResponse?["data"];
-
-            if (a != null)
+            if (jsonEpisodeSearchResponse?["data"] is JObject a)
             {
                 List<string> imageTypes = new();
-                foreach (KeyValuePair<string, JToken> imageType in a)
+                foreach (KeyValuePair<string, JToken?> imageType in a)
                 {
-                    if ((int)imageType.Value > 0)
+                    if ((int?)imageType.Value > 0)
                     {
                         imageTypes.Add(imageType.Key);
                     }
@@ -297,7 +292,7 @@ internal static class API
     public static JObject? SearchTvShow(string text, string defaultLanguageCode)
     {
         string uri = TokenProvider.TVDB_API_URL + "/search/series";
-        return JsonHttpGetRequest(uri, new Dictionary<string, string> { { "name", text } }, TokenProvider, defaultLanguageCode, false);
+        return JsonHttpGetRequest(uri, new Dictionary<string, string?> { { "name", text } }, TokenProvider, defaultLanguageCode, false);
     }
 
     public static JObject? SearchV4(string text, string defaultLanguageCode, MediaConfiguration.MediaType media)
@@ -306,13 +301,13 @@ internal static class API
         return media switch
         {
             MediaConfiguration.MediaType.tv => JsonHttpGetRequest(uri,
-                new Dictionary<string, string> { { "q", text }, { "type", "series" } }, TokenProvider,
+                new Dictionary<string, string?> { { "q", text }, { "type", "series" } }, TokenProvider,
                 defaultLanguageCode, false),
             MediaConfiguration.MediaType.movie => JsonHttpGetRequest(uri,
-                new Dictionary<string, string> { { "q", text }, { "type", "movie" } }, TokenProvider, defaultLanguageCode,
+                new Dictionary<string, string?> { { "q", text }, { "type", "movie" } }, TokenProvider, defaultLanguageCode,
                 false),
             MediaConfiguration.MediaType.both => JsonHttpGetRequest(uri,
-                new Dictionary<string, string> { { "q", text } }, TokenProvider, defaultLanguageCode, false),
+                new Dictionary<string, string?> { { "q", text } }, TokenProvider, defaultLanguageCode, false),
             _ => throw new ArgumentOutOfRangeException(nameof(media), media, null)
         };
     }
@@ -355,12 +350,15 @@ internal static class API
         {
             try
             {
-                JObject jsonImageResponse = JsonHttpGetRequest(
+                JObject? jsonImageResponse = JsonHttpGetRequest(
                     uriImagesQuery,
-                    new Dictionary<string, string> { { "keyType", imageType } }, TokenProvider,
+                    new Dictionary<string, string?> { { "keyType", imageType } }, TokenProvider,
                     languageCode, false);
 
-                returnList.Add(jsonImageResponse);
+                if (jsonImageResponse != null)
+                {
+                    returnList.Add(jsonImageResponse);
+                }
             }
             catch (WebException webEx)
             {
@@ -443,7 +441,7 @@ internal static class API
         return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.movie);
     }
 
-    private static JObject GetUrl(ISeriesSpecifier code, string uri, string requestedLanguageCode, MediaConfiguration.MediaType type)
+    private static JObject GetUrl(ISeriesSpecifier? code, string uri, string requestedLanguageCode, MediaConfiguration.MediaType type)
     {
         try
         {
@@ -455,9 +453,9 @@ internal static class API
             if (webEx.Status == WebExceptionStatus.ProtocolError && webEx.Response is HttpWebResponse
                     { StatusCode: HttpStatusCode.NotFound })
             {
-                Logger.Warn($"Show with Id {code.TvdbId} is no longer available from TVDB (got a 404).");
+                Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404).");
 
-                if (TvdbIsUp())
+                if (TvdbIsUp() && code!=null)
                 {
                     string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. Please Update";
                     throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
@@ -466,12 +464,12 @@ internal static class API
             }
 
             Logger.LogWebException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", webEx);
-            throw new SourceConnectivityException($"Id={code.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {webEx.Message}");
+            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {webEx.Message}");
         }
         catch (System.IO.IOException ioe)
         {
             Logger.LogIoException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got: {ioe.LoggableDetails()}",ioe);
-            throw new SourceConnectivityException($"Id={code.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {ioe.Message}");
+            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {ioe.Message}");
         }
     }
 

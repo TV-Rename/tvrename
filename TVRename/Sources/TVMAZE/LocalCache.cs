@@ -65,7 +65,7 @@ public class LocalCache : MediaCache, iTVSource
     {
         lock (SERIES_LOCK)
         {
-            CachePersistor.SaveCache(Series, Movies, CacheFile, 0);
+            CachePersistor.SaveCache(Series, Movies, CacheFile!, 0);
         }
     }
 
@@ -138,7 +138,7 @@ public class LocalCache : MediaCache, iTVSource
 
                     if (showId > 0 && HasSeries(showId))
                     {
-                        CachedSeriesInfo x = GetSeries(showId);
+                        CachedSeriesInfo? x = GetSeries(showId);
                         if (x is not null)
                         {
                             if (x.SrvLastUpdated < showUpdateTime.Value)

@@ -61,7 +61,7 @@ internal class CheckAllMovieFoldersExist : ScanMovieActivity
         // generate new filename info
         // ReSharper disable once RedundantAssignment
         bool goAgain = false;
-        DirectoryInfo di = null;
+        DirectoryInfo? di = null;
         bool firstAttempt = true;
         do
         {

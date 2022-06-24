@@ -109,7 +109,7 @@ public class ProcessedSeason
         return Episodes.Values
             .Select(e => e.GetAirDateDt())
             .Where(adt => adt.HasValue)
-            .Select(adt => adt.Value)
+            .Select(adt => adt!.Value)
             .MinOrDefault(airDateTime => airDateTime.Year, 9999);
     }
 
@@ -118,7 +118,7 @@ public class ProcessedSeason
         return Episodes.Values
             .Select(e => e.GetAirDateDt())
             .Where(adt => adt.HasValue)
-            .Select(adt => adt.Value)
+            .Select(adt => adt!.Value)
             .MaxOrDefault(airDateTime => airDateTime.Year, 0);
     }
 

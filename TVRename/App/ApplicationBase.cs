@@ -7,10 +7,10 @@ using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
 using System;
 using System.Reflection;
-using System.Runtime.Remoting;
+//using System.Runtime.Remoting;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using TVRename.Ipc;
+//using TVRename.Ipc;
 
 namespace TVRename.App;
 
@@ -71,6 +71,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         ui.Text = ui.Text + " " + Helpers.DisplayVersion;
 
         // Bind IPC actions to the form, this allows another instance to trigger form actions
+        /*
         try
         {
             RemoteClient.Bind(ui);
@@ -80,7 +81,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             Logger.Warn(
                 $"Could not create IPC Port: {ex.Message} : TV Rename will not be able to accept incoming commands");
         }
-
+*/
         MainForm = ui;
     }
 
@@ -100,7 +101,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
     /* Notifies you when the thread that is distributing the events from the SystemEvents class is
      * shutting down so that we can unregister events on the SystemEvents class
      */
-    private void OnEventsThreadShutdown(object sender, EventArgs e)
+    private void OnEventsThreadShutdown(object? sender, EventArgs e)
     {
         //Unregister all our events as the notification thread is going away
         UnregisterFromSystemEvents();
@@ -132,10 +133,10 @@ internal class ApplicationBase : WindowsFormsApplicationBase
 
         SetupCustomSettings(commandLineArgs);
 
-        FileInfo tvdbFile = PathManager.TVDBFile;
-        FileInfo tvMazeFile = PathManager.TVmazeFile;
-        FileInfo tmdbFile = PathManager.TmdbFile;
-        FileInfo settingsFile = PathManager.TVDocSettingsFile;
+        FileInfo? tvdbFile = PathManager.TVDBFile;
+        FileInfo? tvMazeFile = PathManager.TVmazeFile;
+        FileInfo? tmdbFile = PathManager.TmdbFile;
+        FileInfo? settingsFile = PathManager.TVDocSettingsFile;
         TVDoc doc;
 
         do // Loop until files correctly load

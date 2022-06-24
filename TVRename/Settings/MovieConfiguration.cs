@@ -236,7 +236,7 @@ public class MovieConfiguration : MediaConfiguration
 
     private static MediaCache LocalCache(TVDoc.ProviderType provider) => TVDoc.GetMediaCache(provider);
 
-    public CachedMovieInfo? CachedMovie => (CachedMovieInfo)CachedData;
+    public CachedMovieInfo? CachedMovie => CachedData as CachedMovieInfo;
 
     public IEnumerable<string> Locations => AllFolderLocations(true, false).Values.SelectMany(x => x);
 

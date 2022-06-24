@@ -27,7 +27,7 @@ internal class TvdbAccuracyCheck
         Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
         try
         {
-            CachedMovieInfo newSi = lc.DownloadMovieNow(si,si.TargetLocale, false);
+            CachedMovieInfo? newSi = lc.DownloadMovieNow(si,si.TargetLocale, false);
 
             if (newSi is null)
             {
@@ -70,14 +70,14 @@ internal class TvdbAccuracyCheck
                 EnsureUpdated(si);
             }
 
-            List<JObject> eps = lc.GetEpisodes(si.TvdbId, new Locale());
+            List<JObject>? eps = lc.GetEpisodes(si.TvdbId, new Locale());
             List<int> serverEpIds = new();
 
             if (eps != null)
             {
                 foreach (JObject epJson in eps)
                 {
-                    JToken episodeToUse = epJson["data"];
+                    JToken? episodeToUse = epJson["data"];
                     if (episodeToUse != null)
                     {
                         foreach (JToken t in episodeToUse.Children())
@@ -164,8 +164,8 @@ internal class TvdbAccuracyCheck
 
     private int EpisodeAccuracyCheck(CachedSeriesInfo si, JToken t)
     {
-        long serverUpdateTime = (long)t["lastUpdated"];
-        int epId = (int)t["id"];
+        long serverUpdateTime = t.GetMandatoryLong("lastUpdated",TVDoc.ProviderType.TheTVDB);
+        int epId = t.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
 
         try
         {

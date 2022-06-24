@@ -15,7 +15,7 @@ internal class CustomNameMovieCheck : CustomMovieCheck
 
     protected override bool Field => Movie.UseCustomShowName;
 
-    protected override string CustomFieldValue => Movie.CustomShowName;
+    protected override string? CustomFieldValue => Movie.CustomShowName;
 
-    protected override string DefaultFieldValue => Movie.CachedMovie?.Name??string.Empty;
+    protected override string? DefaultFieldValue => Movie.CachedMovie?.Name;
 }

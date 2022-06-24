@@ -49,11 +49,6 @@ public static class StringExtensions
         return returnValue;
     }
 
-    public static bool Contains(this string source, string toCheck, StringComparison comp)
-    {
-        return source.IndexOf(toCheck, comp) >= 0;
-    }
-
     public static bool IsNumeric(this string text) => int.TryParse(text, out int _);
 
     public static bool HasValue([NotNullWhen(true)] this string? s) => !string.IsNullOrWhiteSpace(s);
@@ -338,8 +333,8 @@ public static class StringExtensions
                 .Where(s => s.HasValue())
                 .Select(s => s.Trim());
     }
-       
-    public static int? ToInt(this string value)
+
+    public static int? ToInt(this string? value)
     {
         if (value.HasValue())
         {

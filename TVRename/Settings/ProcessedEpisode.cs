@@ -235,7 +235,7 @@ public class ProcessedEpisode : Episode
         return dt != null ? dt.Value.ToString("t") : "-";
     }
 
-    public bool HasAired()
+    public new bool HasAired()
     {
         DateTime? airsdt = GetAirDateDt(true);
         if (airsdt is null)

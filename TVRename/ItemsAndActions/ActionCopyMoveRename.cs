@@ -212,7 +212,7 @@ public class ActionCopyMoveRename : ActionFileOperation
                && FileHelper.Same(To, cmr.To);
     }
 
-    public override int CompareTo(Item o)
+    public override int CompareTo(Item? o)
     {
         if (o is not ActionCopyMoveRename cmr)
         {

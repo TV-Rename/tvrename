@@ -108,7 +108,7 @@ public partial class SettingsReview : Form
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        lblStatus.Text = e.UserState.ToString().ToUiVersion();
+        lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
 
         Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressValue(e.ProgressPercentage.Between(0, 100), 100, mainUi.Handle);
     }

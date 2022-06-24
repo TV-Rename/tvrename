@@ -239,12 +239,12 @@ public partial class BulkAddShow : Form
 
     private void lstFMMonitorFolders_DragOver(object _, DragEventArgs e)
     {
-        e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
+        e.Effect = e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
     }
 
     private void lstFMIgnoreFolders_DragOver(object _, DragEventArgs e)
     {
-        e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
+        e.Effect = e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
     }
 
     private void lstFMMonitorFolders_DragDrop(object _, DragEventArgs e)
@@ -254,21 +254,24 @@ public partial class BulkAddShow : Form
 
     private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
     {
-        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-        foreach (string path in files)
+        if (e.Data is not null)
         {
-            try
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string path in files)
             {
-                DirectoryInfo di = new(path);
-                if (di.Exists)
+                try
                 {
-                    engine.CheckFolderForShows(di, true, true, true);
-                    FillNewShowList(true);
+                    DirectoryInfo di = new(path);
+                    if (di.Exists)
+                    {
+                        engine.CheckFolderForShows(di, true, true, true);
+                        FillNewShowList(true);
+                    }
                 }
-            }
-            catch
-            {
-                // ignored
+                catch
+                {
+                    // ignored
+                }
             }
         }
     }
@@ -280,22 +283,26 @@ public partial class BulkAddShow : Form
 
     private void AddDraggedFiles(DragEventArgs e, SafeList<string> strings)
     {
-        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-        foreach (string path in files)
+        if (e.Data is not null)
         {
-            try
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string path in files)
             {
-                DirectoryInfo di = new(path);
-                if (di.Exists)
+                try
                 {
-                    strings.Add(path.ToLower());
+                    DirectoryInfo di = new(path);
+                    if (di.Exists)
+                    {
+                        strings.Add(path.ToLower());
+                    }
+                }
+                catch
+                {
+                    // ignored
                 }
             }
-            catch
-            {
-                // ignored
-            }
         }
+
         mDoc.SetDirty();
         FillFolderStringLists();
     }
@@ -411,7 +418,7 @@ public partial class BulkAddShow : Form
 
     private void lvFMNewShows_DragOver(object _, DragEventArgs e)
     {
-        e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
+        e.Effect = e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
     }
 
     private void lvFMNewShows_KeyDown(object sender, KeyEventArgs e)

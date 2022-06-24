@@ -125,7 +125,7 @@ public partial class MovieFilters : Form
             return true;
         }
 
-        if (comboBox.SelectedItem.ToString().Equals(IS_NOT))
+        if (IS_NOT.Equals(comboBox.SelectedItem.ToString()))
         {
             return false;
         }

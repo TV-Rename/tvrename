@@ -5,11 +5,11 @@ namespace TVRename;
 public class MovieItemMissing : ItemMissing
 {
     public MovieItemMissing(MovieConfiguration movie, string whereItShouldBeFolder)
+        :base (string.Empty,string.Empty,whereItShouldBeFolder)
     {
         Episode = null;
         Filename = TVSettings.Instance.FilenameFriendly(movie.ProposedFilename);
         TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + Filename;
-        Folder = whereItShouldBeFolder;
         Movie = movie;
     }
 
@@ -22,7 +22,7 @@ public class MovieItemMissing : ItemMissing
 
     public override string Name => "Missing Movie";
 
-    public override int CompareTo(Item o)
+    public override int CompareTo(Item? o)
     {
         if (o is not MovieItemMissing miss)
         {

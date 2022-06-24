@@ -319,9 +319,9 @@ internal abstract class FileFinder : Finder
             try
             {
                 IEnumerable<DirectoryInfo> suitableSubFolders = action.SourceDirectory.GetDirectories().Where(IsSubsFolder);
-                foreach (DirectoryInfo subtitleFolder in suitableSubFolders)
+                foreach (Item copySubFolderForAction in suitableSubFolders.Select(subtitleFolder => CopySubFolderForAction(d, action, subtitleFolder)).OfType<Item>())
                 {
-                    extras.Add(CopySubFolderForAction(d, action, subtitleFolder));
+                    extras.Add(copySubFolderForAction);
                 }
             }
             catch (System.IO.DirectoryNotFoundException)
@@ -519,32 +519,27 @@ internal abstract class FileFinder : Finder
         // then set the last of each source file to be a move
         for (int i = 0; i < newList.Count; i++)
         {
-            ActionCopyMoveRename cmr1 = newList[i] as ActionCopyMoveRename;
-            bool ok1 = cmr1 != null;
-
-            if (!ok1)
+            ActionCopyMoveRename? cmr1 = newList[i] as ActionCopyMoveRename;
+            
+            if (cmr1 == null)
             {
                 continue;
             }
 
             bool last = i == newList.Count - 1;
-            ActionCopyMoveRename cmr2 = !last ? newList[i + 1] as ActionCopyMoveRename : null;
-            bool ok2 = cmr2 != null;
+            ActionCopyMoveRename? cmr2 = !last ? newList[i + 1] as ActionCopyMoveRename : null;
 
-            if (ok2)
+            if (cmr2 != null)
             {
-                ActionCopyMoveRename a1 = cmr1;
-                ActionCopyMoveRename a2 = cmr2;
-                if (!FileHelper.Same(a1.From, a2.From))
+                if (!FileHelper.Same(cmr1.From, cmr2.From))
                 {
-                    a1.Operation = ActionCopyMoveRename.Op.move;
+                    cmr1.Operation = ActionCopyMoveRename.Op.move;
                 }
             }
             else
             {
                 // last item, or last copymoverename item in the list
-                ActionCopyMoveRename a1 = cmr1;
-                a1.Operation = ActionCopyMoveRename.Op.move;
+                cmr1.Operation = ActionCopyMoveRename.Op.move;
             }
         }
     }

@@ -473,7 +473,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             // Only do the adjustments if InitData was supplied
             if (lpData == IntPtr.Zero)
                 return;
-            object obj = Marshal.PtrToStructure(lpData, typeof(InitData));
+            object? obj = Marshal.PtrToStructure(lpData, typeof(InitData));
             if (obj is null)
                 return;
             InitData initdata = (InitData)obj;
@@ -523,8 +523,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             }
 
             // make the dialog larger
-            Win32.RECT rcDlg;
-            Win32.GetWindowRect(hDlg, out rcDlg);
+            Win32.GetWindowRect(hDlg, out Win32.RECT rcDlg);
             rcDlg.Right += 40;
             rcDlg.Bottom += 30;
             if (hEdit != IntPtr.Zero)

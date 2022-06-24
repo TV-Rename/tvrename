@@ -22,7 +22,7 @@ public class ListViewActionItemSorter : IComparer, IComparer<OLVListItem>
     /// <param name="x">row1</param>
     /// <param name="y">row2</param>
     /// <returns>An ordering indication: -1, 0, 1</returns>
-    public int Compare(object x, object y) => Compare((OLVListItem)x, (OLVListItem)y);
+    public int Compare(object? x, object? y) => Compare(x as OLVListItem, y as OLVListItem);
 
     /// <summary>
     /// Compare two rows

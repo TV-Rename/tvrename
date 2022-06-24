@@ -115,6 +115,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             .Select(s => s.CachedShow?.SeriesType)
             .Distinct()
             .Where(s => s.HasValue())
+            .OfType<string>()
             .OrderBy(s => s);
     }
 
@@ -123,6 +124,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         return Shows
             .Select(si => si.CachedShow)
             .Where(seriesInfo => !string.IsNullOrWhiteSpace(seriesInfo?.Network))
+            .OfType<CachedSeriesInfo>()
             .SelectMany(seriesInfo => seriesInfo.Networks)
             .Distinct()
             .OrderBy(s => s);
@@ -132,7 +134,9 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     {
         return Shows.Select(si => si.CachedShow)
             .Where(s => !string.IsNullOrWhiteSpace(s?.ContentRating))
+            .OfType<CachedSeriesInfo>()
             .Select(s => s.ContentRating)
+            .OfType<string>()
             .Distinct()
             .OrderBy(s => s);
     }
@@ -193,7 +197,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         {
             si.ClearEpisodes();
 
-            CachedSeriesInfo ser = TVDoc.GetMediaCache(si.Provider).GetSeries(si.Code);
+            CachedSeriesInfo? ser = TVDoc.GetMediaCache(si.Provider).GetSeries(si.Code);
 
             if (ser is null)
             {
@@ -208,8 +212,8 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
             foreach (int snum in si.AppropriateSeasons().Keys.ToList())
             {
-                List<ProcessedEpisode> pel = GenerateEpisodes(si, snum, true);
-                si.SeasonEpisodes[snum] = pel;
+                List<ProcessedEpisode>? pel = GenerateEpisodes(si, snum, true);
+                si.SeasonEpisodes[snum] = pel ?? new List<ProcessedEpisode>();
                 if (pel is null)
                 {
                     r = false;
@@ -290,7 +294,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
         if (applyRules)
         {
-            List<ShowRule> rules = si.RulesForSeason(snum);
+            List<ShowRule>? rules = si.RulesForSeason(snum);
             if (rules != null)
             {
                 ApplyRules(eis, rules, si);
@@ -676,7 +680,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
         for (int i = 0; i < nShows; i++)
         {
-            ProcessedEpisode nextAfterThat = GetNextMostRecentProcessedEpisode(nDaysFuture, found, notBefore);
+            ProcessedEpisode? nextAfterThat = GetNextMostRecentProcessedEpisode(nDaysFuture, found, notBefore);
 
             if (nextAfterThat is null)
             {
@@ -696,7 +700,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
     private ProcessedEpisode? GetNextMostRecentProcessedEpisode(int nDaysFuture, ICollection<ProcessedEpisode> found, DateTime notBefore)
     {
-        ProcessedEpisode nextAfterThat = null;
+        ProcessedEpisode? nextAfterThat = null;
         TimeSpan howClose = TimeSpan.MaxValue;
         foreach (ShowConfiguration si in GetSortedShowItems())
         {
@@ -815,7 +819,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         {
             if (si.UseCustomShowName) // see if custom show name is actually the real show name
             {
-                CachedSeriesInfo ser = si.CachedShow;
+                CachedSeriesInfo? ser = si.CachedShow;
                 if (ser != null && si.CustomShowName == ser.Name)
                 {
                     // then, turn it off

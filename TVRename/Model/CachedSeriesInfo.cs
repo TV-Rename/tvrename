@@ -37,7 +37,7 @@ public class CachedSeriesInfo : CachedMediaInfo
             .Where(e=>!e.IsSpecial(SeasonOrderType))
             .Select(e => e.GetAirDateDt())
             .Where(adt => adt.HasValue)
-            .Select(adt => adt.Value)
+            .Select(adt => adt!.Value)
             .Min(airDateTime => (int?)airDateTime.Year);
 
     public int? MaxYear =>
@@ -45,7 +45,7 @@ public class CachedSeriesInfo : CachedMediaInfo
             .Where(e => !e.IsSpecial(SeasonOrderType))
             .Select(e => e.GetAirDateDt())
             .Where(adt => adt.HasValue)
-            .Select(adt => adt.Value)
+            .Select(adt => adt!.Value)
             .Max(airDateTime => (int?)airDateTime.Year);
 
     public string Year => FirstAired?.Year.ToString() ?? $"{MinYear}";
@@ -237,45 +237,45 @@ public class CachedSeriesInfo : CachedMediaInfo
 
     private void LoadJson(JObject r)
     {
-        AirsDay = ((string)r["airsDayOfWeek"])?.Trim();
-        string airsTimeString = (string)r["airsTime"];
+        AirsDay = ((string?)r["airsDayOfWeek"])?.Trim();
+        string? airsTimeString = (string?)r["airsTime"];
         AirsTime = JsonHelper.ParseAirTime(airsTimeString);
-        Aliases = (r["aliases"] ?? throw new SourceConsistencyException($"Can't find aliases in Series JSON: {r}", TVDoc.ProviderType.TheTVDB)).Select(x => x.Value<string>()).ToSafeList();
-        BannerString = (string)r["banner"];
-        FirstAired = JsonHelper.ParseFirstAired((string)r["firstAired"]);
+        Aliases = (r["aliases"] ?? throw new SourceConsistencyException($"Can't find aliases in Series JSON: {r}", TVDoc.ProviderType.TheTVDB)).Select(x => x.Value<string>()).OfType<string>().ToSafeList();
+        BannerString = (string?)r["banner"];
+        FirstAired = JsonHelper.ParseFirstAired((string?)r["firstAired"]);
 
         if (r.ContainsKey("genre"))
         {
-            Genres = r["genre"]?.Select(x => x.Value<string>()?.Trim()).Distinct().ToSafeList() ?? new SafeList<string>();
+            Genres = r["genre"]?.Select(x => x.Value<string>()?.Trim()).OfType<string>().Distinct().ToSafeList() ?? new SafeList<string>();
         }
 
-        TvdbCode = (int)r["id"];
-        Imdb = ((string)r["imdbId"])?.Trim();
-        Network = ((string)r["network"])?.Trim();
-        Slug = ((string)r["slug"])?.Trim();
-        Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"])?.Trim();
-        ContentRating = ((string)r["rating"])?.Trim();
-        Runtime = ((string)r["runtime"])?.Trim();
-        SeriesId = (string)r["seriesId"];
-        string s = (string)r["seriesName"];
+        TvdbCode = r.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB);
+        Imdb = ((string?)r["imdbId"])?.Trim();
+        Network = ((string?)r["network"])?.Trim();
+        Slug = ((string?)r["slug"])?.Trim();
+        Overview = System.Web.HttpUtility.HtmlDecode((string?)r["overview"])?.Trim();
+        ContentRating = ((string?)r["rating"])?.Trim();
+        Runtime = ((string?)r["runtime"])?.Trim();
+        SeriesId = (string?)r["seriesId"];
+        string? s = (string?)r["seriesName"];
         if (s != null)
         {
             Name = System.Web.HttpUtility.HtmlDecode(s).Trim();
         }
-        Status = (string)r["status"];
+        Status = (string?)r["status"];
 
-        SrvLastUpdated = long.TryParse((string)r["lastUpdated"], out long updateTime) ? updateTime : 0;
+        SrvLastUpdated = long.TryParse((string?)r["lastUpdated"], out long updateTime) ? updateTime : 0;
 
-        string siteRatingString = (string)r["siteRating"];
+        string? siteRatingString = (string?)r["siteRating"];
         float.TryParse(siteRatingString, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRating);
 
-        string siteRatingVotesString = (string)r["siteRatingCount"];
+        string? siteRatingVotesString = (string?)r["siteRatingCount"];
         int.TryParse(siteRatingVotesString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRatingVotes);
     }
 
     internal Episode GetEpisode(int epId)
     {
-        if (sourceEpisodes.TryGetValue(epId, out Episode returnValue))
+        if (sourceEpisodes.TryGetValue(epId, out Episode? returnValue))
         {
             return returnValue;
         }
@@ -291,13 +291,13 @@ public class CachedSeriesInfo : CachedMediaInfo
         //backupLanguageR should be a cachedSeries of name/value pairs (ie a JArray of JPropertes)
         //TVDB asserts that name and overview are the fields that are localised
 
-        string s = (string)backupLanguageR["seriesName"];
+        string? s = (string?)backupLanguageR["seriesName"];
         if (string.IsNullOrWhiteSpace(Name) && s != null)
         {
             Name = System.Web.HttpUtility.HtmlDecode(s);
         }
 
-        string o = (string)backupLanguageR["overview"];
+        string? o = (string?)backupLanguageR["overview"];
         if (string.IsNullOrWhiteSpace(Overview) && o != null)
         {
             Overview = System.Web.HttpUtility.HtmlDecode(o);
@@ -312,17 +312,17 @@ public class CachedSeriesInfo : CachedMediaInfo
             {
                 throw new SourceConsistencyException($"Can not find aliases in {backupLanguageR}", TVDoc.ProviderType.TheTVDB);
             }
-            Aliases = aliasesToken.Select(x => x.Value<string>()).ToSafeList();
+            Aliases = aliasesToken.Select(x => x.Value<string>()).OfType<string>().ToSafeList();
         }
 
         if (string.IsNullOrWhiteSpace(Runtime))
         {
-            Runtime = (string)backupLanguageR["runtime"];
+            Runtime = (string?)backupLanguageR["runtime"];
         }
 
         if (string.IsNullOrWhiteSpace(BannerString))
         {
-            BannerString = (string)backupLanguageR["banner"];
+            BannerString = (string?)backupLanguageR["banner"];
         }
     }
 
@@ -399,7 +399,7 @@ public class CachedSeriesInfo : CachedMediaInfo
 
     public void RemoveEpisode(int episodeId)
     {
-        sourceEpisodes.TryRemove(episodeId, out Episode _);
+        sourceEpisodes.TryRemove(episodeId, out Episode? _);
     }
 
     protected override MediaConfiguration.MediaType MediaType() => MediaConfiguration.MediaType.tv;

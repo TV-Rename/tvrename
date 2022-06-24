@@ -67,7 +67,7 @@ public static class CustomTvShowName
         return NameFor(m?.ShowName, m?.CachedShow, styleString, urlEncode, isfilename);
     }
 
-    public static string NameFor(string? showName,CachedSeriesInfo si, string styleString, bool urlEncode, bool isfilename)
+    public static string NameFor(string? showName,CachedSeriesInfo? si, string styleString, bool urlEncode, bool isfilename)
     {
         string name = styleString;
 
@@ -86,9 +86,9 @@ public static class CustomTvShowName
         name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
         name = name.ReplaceInsensitive("{ShowNameLower}", showname.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
         name = name.ReplaceYear(showName);
-        name = name.ReplaceInsensitive("{ContentRating}", si.ContentRating);
-        name = name.ReplaceInsensitive("{Year}", si.Year);
-        name = name.ReplaceInsensitive("{Imdb}", si.Imdb);
+        name = name.ReplaceInsensitive("{ContentRating}", si?.ContentRating);
+        name = name.ReplaceInsensitive("{Year}", si?.Year);
+        name = name.ReplaceInsensitive("{Imdb}", si?.Imdb);
 
         if (urlEncode)
         {

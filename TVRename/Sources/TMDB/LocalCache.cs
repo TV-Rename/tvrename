@@ -35,7 +35,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     public static string EpisodeGuideUrl(ShowConfiguration selectedShow)
         => $"https://api.themoviedb.org/3/tv/{selectedShow.TmdbId}?api_key={KEY}&language={selectedShow.LanguageToUse().Abbreviation}";
 
-    private UpdateTimeTracker latestUpdateTime;
+    private UpdateTimeTracker latestUpdateTime = new();
 
     //We are using the singleton design pattern
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
@@ -112,7 +112,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         {
             lock (SERIES_LOCK)
             {
-                CachePersistor.SaveCache(Series, Movies, CacheFile, latestUpdateTime.LastSuccessfulServerUpdateTimecode());
+                CachePersistor.SaveCache(Series, Movies, CacheFile!, latestUpdateTime.LastSuccessfulServerUpdateTimecode());
             }
         }
     }
@@ -533,7 +533,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     private static DateTime? GetReleaseDateDetail(Movie downloadedMovie, string? country)
     {
-        List<DateTime> dates = downloadedMovie.ReleaseDates?.Results
+        List<DateTime>? dates = downloadedMovie.ReleaseDates?.Results
             .Where(rel => rel.Iso_3166_1.Equals(country,StringComparison.OrdinalIgnoreCase))
             .SelectMany(rel => rel.ReleaseDates)
             .Select(d => d.ReleaseDate)

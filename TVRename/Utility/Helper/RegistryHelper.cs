@@ -44,11 +44,11 @@ public static class RegistryHelper
 
             if (key != null)
             {
-                object value = key.GetValue("svcVersion", null) ?? key.GetValue("Version", null);
+                object? value = key.GetValue("svcVersion", null) ?? key.GetValue("Version", null);
+                string? version = value?.ToString();
 
-                if (value != null)
+                if (version != null)
                 {
-                    string version = value.ToString();
                     int separator = version.IndexOf('.');
                     if (separator != -1)
                     {
@@ -80,7 +80,7 @@ public static class RegistryHelper
             if (key != null)
             {
                 string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
-                object value = key.GetValue(programName, null);
+                object? value = key.GetValue(programName, null);
 
                 if (value != null)
                 {

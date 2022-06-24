@@ -22,7 +22,7 @@ internal class DownloadEpisodeJpg : DownloadIdentifier
             return null;
         }
 
-        string ban = episode.Filename;
+        string? ban = episode.Filename;
         if (string.IsNullOrEmpty(ban))
         {
             return null;

@@ -68,8 +68,15 @@ public sealed class ItemList : SafeList<Item>
         }
     }
 
-    public void Replace(IEnumerable<Item> toRemove, Item newItem)
+    public void Replace(IEnumerable<Item> toRemove, Item? newItem)
     {
-        Replace(toRemove, new List<Item> { newItem });
+        if (newItem is not null)
+        {
+            Replace(toRemove, new List<Item> { newItem });
+        }
+        else
+        {
+            Remove(toRemove);
+        }
     }
 }

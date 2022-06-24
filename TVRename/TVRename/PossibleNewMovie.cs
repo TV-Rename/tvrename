@@ -81,7 +81,7 @@ public class PossibleNewMovie : ISeriesSpecifier
 
         if (imdbToTest.HasValue())
         {
-            CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest!, preferredLocale, showErrorMsgBox);
+            CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest, preferredLocale, showErrorMsgBox);
             if (s != null)
             {
                 SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -198,7 +198,7 @@ public class PossibleNewMovie : ISeriesSpecifier
                 if (files.Any())
                 {
                     foreach (string x in files.Select(info => FindShowCode(info, simpleIdCode, uniqueIdCode))
-                                 .Where(x => x.HasValue()))
+                                 .Where(x => x.HasValue()).OfType<string>())
                     {
                         return x;
                     }

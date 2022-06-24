@@ -30,7 +30,7 @@ internal class ActionTRemove : Action
 
     public override bool SameAs(Item o) => o is ActionTRemove other && other.client == client && other.name == name;
 
-    public override int CompareTo(Item o)
+    public override int CompareTo(Item? o)
     {
         return o is not ActionTRemove rss ? -1 : string.Compare(name.TorrentFile, rss.name.TorrentFile, StringComparison.Ordinal);
     }
@@ -39,9 +39,9 @@ internal class ActionTRemove : Action
 
     public override string DestinationFolder => name.DownloadingTo;
 
-    public override string DestinationFile => name.TorrentFile;
+    public override string? DestinationFile => name.TorrentFile;
 
-    public override string ProgressText => name.TorrentFile;
+    public override string ProgressText => name.TorrentFile ?? string.Empty;
 
     public override long SizeOfWork => 1000000;
 
@@ -59,5 +59,5 @@ internal class ActionTRemove : Action
         }
     }
 
-    public override string Produces => name.TorrentFile;
+    public override string Produces => name.TorrentFile??string.Empty;
 }

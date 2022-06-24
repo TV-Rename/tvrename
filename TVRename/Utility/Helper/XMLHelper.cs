@@ -432,7 +432,7 @@ public static class XmlHelper
 
         if (typeof(T).IsEnumDefined(val))
         {
-            return (T)Enum.Parse(typeof(T), val.ToString(), true);
+            return (T)Enum.Parse(typeof(T), val.Value.ToString(), true);
         }
         return defaultVal;
     }

@@ -353,7 +353,7 @@ public class TVDoc : IDisposable
 
             ActionManager.DoActions(theList, token);
             List<Action> doneActions = TheActionList.Actions.Where(a => a.Outcome.Done && !a.Outcome.Error).ToList();
-            List<Item> subsequentItems = doneActions.Where(a => a.Becomes() != null).Select(a => a.Becomes()).ToList();
+            List<Item> subsequentItems = doneActions.Select(a => a.Becomes()).OfType<Item>().ToList();
 
             TheActionList.AddNullableRange(subsequentItems);
 
@@ -944,6 +944,14 @@ public class TVDoc : IDisposable
         public bool DoAll;
         public ItemList Lvr;
         public CancellationTokenSource Token;
+
+        public ActionSettings(bool unattended, bool doAll, ItemList lvr, CancellationTokenSource token)
+        {
+            Unattended = unattended;
+            DoAll = doAll;
+            Lvr = lvr;
+            Token = token;
+        }
     }
     public class ScanSettings : IEquatable<ScanSettings>
     {
@@ -1177,7 +1185,7 @@ public class TVDoc : IDisposable
     private void RemoveDuplicateDownloads(bool unattended, UI owner)
     {
         bool cancelAllFuture = false;
-        foreach (IGrouping<ItemMissing, ActionTDownload> epGroup in TheActionList.DownloadTorrents
+        foreach (IGrouping<ItemMissing?, ActionTDownload> epGroup in TheActionList.DownloadTorrents
                      .GroupBy(item => item.UndoItemMissing)
                      .Where(items => items.Count() > 1)
                      .Where(items => items.Key != null)
@@ -1202,23 +1210,24 @@ public class TVDoc : IDisposable
 
                 case TVSettings.DuplicateActionOutcome.Ask:
 
-                    (DialogResult dr, ActionTDownload? userChosenAction) = owner.AskAbout(epGroup.Key, actions);
-
-                    if (dr == DialogResult.OK)
+                    if (epGroup.Key is not null)
                     {
-                        TheActionList.Replace(actions, userChosenAction);
+                        (DialogResult dr, ActionTDownload? userChosenAction) = owner.AskAbout(epGroup.Key, actions);
+                        if (dr == DialogResult.OK)
+                        {
+                            TheActionList.Replace(actions, userChosenAction);
+                        }
+                        else if (dr == DialogResult.Abort)
+                        {
+                            //Cancel all future
+                            cancelAllFuture = true;
+                            TheActionList.Replace(actions, actions.First().UndoItemMissing);
+                        }
+                        else
+                        {
+                            TheActionList.Replace(actions, actions.First().UndoItemMissing);
+                        }
                     }
-                    else if (dr == DialogResult.Abort)
-                    {
-                        //Cancel all future
-                        cancelAllFuture = true;
-                        TheActionList.Replace(actions, actions.First().UndoItemMissing);
-                    }
-                    else
-                    {
-                        TheActionList.Replace(actions, actions.First().UndoItemMissing);
-                    }
-
                     break;
 
                 case TVSettings.DuplicateActionOutcome.DoAll:
@@ -1582,11 +1591,11 @@ public class TVDoc : IDisposable
     {
         PreventAutoScan("TVDB Accuracy Check");
         IEnumerable<CachedSeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerTvAccuracyCheck();
-        IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode, ProviderType.TheTVDB));
+        IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode, ProviderType.TheTVDB)).OfType<ShowConfiguration>();
         ForceRefreshShows(showsToUpdate, unattended, hidden, owner);
 
         IEnumerable<CachedMovieInfo> moviesToUpdate = TheTVDB.LocalCache.Instance.ServerMovieAccuracyCheck();
-        IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TvdbCode, ProviderType.TheTVDB));
+        IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TvdbCode, ProviderType.TheTVDB)).OfType<MovieConfiguration>();
         ForceRefreshMovies(filmsToUpdate, unattended, hidden, owner);
 
         DoDownloadsBG();
@@ -1606,7 +1615,7 @@ public class TVDoc : IDisposable
 
         foreach (MovieConfiguration? mov in FilmLibrary.Movies)
         {
-            IEnumerable<string> enumerable = mov.CachedMovie?.GetAliases();
+            IEnumerable<string>? enumerable = mov.CachedMovie?.GetAliases();
             if (enumerable is null)
             {
                 continue;
@@ -1625,11 +1634,11 @@ public class TVDoc : IDisposable
         PreventAutoScan("TMDB Accuracy Check");
 
         IEnumerable<CachedMovieInfo> moviesToUpdate = TMDB.LocalCache.Instance.ServerMovieAccuracyCheck();
-        IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TmdbCode, ProviderType.TMDB));
+        IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TmdbCode, ProviderType.TMDB)).OfType<MovieConfiguration>();
         ForceRefreshMovies(filmsToUpdate, unattended, hidden, owner);
 
         IEnumerable<CachedSeriesInfo> seriesToUpdate = TMDB.LocalCache.Instance.ServerTvAccuracyCheck();
-        IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(mov => TvLibrary.GetShowItem(mov.TmdbCode, ProviderType.TMDB));
+        IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(mov => TvLibrary.GetShowItem(mov.TmdbCode, ProviderType.TMDB)).OfType<ShowConfiguration>();
         ForceRefreshShows(showsToUpdate, unattended, hidden, owner);
 
         DoDownloadsBG();

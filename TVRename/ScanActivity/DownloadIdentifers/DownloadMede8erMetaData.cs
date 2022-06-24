@@ -20,7 +20,7 @@ internal class DownloadMede8erMetaData : DownloadIdentifier
 
             FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
 
-            CachedSeriesInfo cachedSeriesInfo = si.CachedShow;
+            CachedSeriesInfo? cachedSeriesInfo = si.CachedShow;
             bool needUpdate = !tvshowxml.Exists ||
                               cachedSeriesInfo is null ||
                               cachedSeriesInfo.SrvLastUpdated > TimeZoneHelper.Epoch(tvshowxml.LastWriteTime);

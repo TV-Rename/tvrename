@@ -115,7 +115,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
         // generate new filename info
         // ReSharper disable once RedundantAssignment
         bool goAgain = false;
-        DirectoryInfo di = null;
+        DirectoryInfo? di = null;
         bool firstAttempt = true;
         do
         {

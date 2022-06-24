@@ -54,7 +54,7 @@ public class BulkAddSeriesManager
             try
             {
                 ai.UpdateId(tvdbId, TVDoc.ProviderType.TheTVDB);
-                CachedSeriesInfo cachedSeries = TheTVDB.LocalCache.Instance.GetSeriesAndDownload(ai, showErrorMsgBox);
+                CachedSeriesInfo? cachedSeries = TheTVDB.LocalCache.Instance.GetSeriesAndDownload(ai, showErrorMsgBox);
                 if (cachedSeries != null)
                 {
                     return;
@@ -66,7 +66,7 @@ public class BulkAddSeriesManager
             }
         }
 
-        CachedSeriesInfo ser = TheTVDB.LocalCache.Instance.GetSeries(showName, showErrorMsgBox, localeToUse);
+        CachedSeriesInfo? ser = TheTVDB.LocalCache.Instance.GetSeries(showName, showErrorMsgBox, localeToUse);
         if (ser != null)
         {
             ai.UpdateId(ser.TvdbId, TVDoc.ProviderType.TheTVDB);
@@ -281,7 +281,7 @@ public class BulkAddSeriesManager
             } // for each showitem
 
             //We don't have it already
-            bool hasSeasonFolders = HasSeasonFolders(di2, out DirectoryInfo[] subDirectories, out string folderFormat);
+            bool hasSeasonFolders = HasSeasonFolders(di2, out DirectoryInfo[]? subDirectories, out string folderFormat);
 
             //This is an indication that something is wrong
             if (subDirectories is null)
@@ -424,7 +424,7 @@ public class BulkAddSeriesManager
         foreach (PossibleNewTvShow ai in ais)
         {
             // see if there is a matching show item
-            ShowConfiguration found = mDoc.TvLibrary.GetShowItem(ai.ProviderCode, ai.Provider);
+            ShowConfiguration? found = mDoc.TvLibrary.GetShowItem(ai.ProviderCode, ai.Provider);
             if (found is null)
             {
                 // need to add a new showitem

@@ -15,6 +15,6 @@ public abstract class ActionDelete : ActionFileOperation
     public override int IconNumber => 9;
     public override string ScanListViewGroup => "lvgActionDelete";
 
-    public override string DestinationFolder => TargetFolder;
+    public override string? DestinationFolder => TargetFolder;
     public override string DestinationFile => ProgressText;
 }

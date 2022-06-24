@@ -35,7 +35,7 @@ internal class SABnzbdFinder : DownloadingFinder
         }
 
         // get list of files being downloaded by SABnzbd
-        XElement x = GetSabDownload(TVSettings.Instance.SABHostPort, TVSettings.Instance.SABAPIKey);
+        XElement? x = GetSabDownload(TVSettings.Instance.SABHostPort, TVSettings.Instance.SABAPIKey);
 
         if (x is null)
         {
@@ -68,7 +68,11 @@ internal class SABnzbdFinder : DownloadingFinder
                 continue;
             }
 
-            foreach (QueueSlotsSlot te in x.Descendants("slots").Select(slot => CreateQueueSlotsSlot(slot, simpleShowName, action)).Where(te => te is not null))
+            foreach (QueueSlotsSlot te in x
+                         .Descendants("slots")
+                         .Select(slot => CreateQueueSlotsSlot(slot, simpleShowName, action))
+                         .OfType<QueueSlotsSlot>()
+                     )
             {
                 toRemove.Add(action);
                 newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, DownloadApp.SABnzbd, action));
@@ -118,7 +122,7 @@ internal class SABnzbdFinder : DownloadingFinder
 
     private static QueueSlotsSlot? CreateQueueSlotsSlot(XElement slot, string simpleShowName, ShowItemMissing action)
     {
-        string filename = slot.Attribute("filename")?.Value;
+        string? filename = slot.Attribute("filename")?.Value;
         if (string.IsNullOrWhiteSpace(filename))
         {
             return null;

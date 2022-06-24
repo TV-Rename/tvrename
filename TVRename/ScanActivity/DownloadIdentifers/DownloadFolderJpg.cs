@@ -40,7 +40,7 @@ internal class DownloadFolderJpg : DownloadIdentifier
         ItemList theActionList = new();
 
         //default to poster
-        string downloadPath = cachedMovie.PosterUrl;
+        string? downloadPath = cachedMovie.PosterUrl;
 
         if (!string.IsNullOrEmpty(downloadPath))
         {
@@ -65,7 +65,7 @@ internal class DownloadFolderJpg : DownloadIdentifier
 
         if (forceRefresh || fileDoesntExist)
         {
-            CachedSeriesInfo cachedSeries = si.CachedShow;
+            CachedSeriesInfo? cachedSeries = si.CachedShow;
 
             if (cachedSeries is null)
             {
@@ -73,7 +73,7 @@ internal class DownloadFolderJpg : DownloadIdentifier
             }
 
             //default to poster when we want season posters for the season specific folders
-            string downloadPath = TVSettings.Instance.SeasonSpecificFolderJPG()
+            string? downloadPath = TVSettings.Instance.SeasonSpecificFolderJPG()
                 ? cachedSeries.GetSeriesPosterPath()
                 : cachedSeries.GetImage(TVSettings.Instance.ItemForFolderJpg());
 
@@ -101,7 +101,7 @@ internal class DownloadFolderJpg : DownloadIdentifier
         if (!doneFolderJpg.Contains(fi.FullName) && (!fi.Exists || forceRefresh))
             // some folders may come up multiple times
         {
-            string bannerPath = TVSettings.Instance.SeasonSpecificFolderJPG()
+            string? bannerPath = TVSettings.Instance.SeasonSpecificFolderJPG()
                 ? si.CachedShow?.GetSeasonBannerPath(snum)
                 : si.CachedShow?.GetImage(TVSettings.Instance.ItemForFolderJpg());
 

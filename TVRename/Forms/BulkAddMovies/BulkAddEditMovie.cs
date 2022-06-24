@@ -52,7 +52,7 @@ public partial class BulkAddEditMovie : Form
         base.ScaleControl(factor, specified);
         codeFinderControl.lvMatches.ScaleListViewColumns(factor);
     }
-    private void MatchDoubleClick(object sender, EventArgs e)
+    private void MatchDoubleClick(object? sender, EventArgs e)
     {
         DialogResult = DialogResult.OK;
         Code = codeFinderControl.SelectedCode();
@@ -60,7 +60,7 @@ public partial class BulkAddEditMovie : Form
         Close();
     }
 
-    private static void CodeChanged(object sender, EventArgs e)
+    private static void CodeChanged(object? sender, EventArgs e)
     {
         //Nothing to do
     }

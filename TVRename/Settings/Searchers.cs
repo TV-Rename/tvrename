@@ -66,7 +66,7 @@ public class Searchers : List<SearchEngine>
         Clear();
         string currentSearchString = settings.ExtractString("Current");
 
-        foreach (SearchEngine engine in settings.Descendants("Choice").Select(GenerateSearchEngine).Where(x => x.HasValue).Select(x => x.Value))
+        foreach (SearchEngine engine in settings.Descendants("Choice").Select(GenerateSearchEngine).OfType<SearchEngine>())
         {
             Add(engine);
             if (engine.Name == currentSearchString)

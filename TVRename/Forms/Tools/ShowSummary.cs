@@ -225,11 +225,7 @@ public partial class ShowSummary : Form, IDialogParent
 
     private static ShowSummaryData AddShowDetails(ShowConfiguration si)
     {
-        ShowSummaryData showSummary = new()
-        {
-            ShowName = si.ShowName,
-            ShowConfiguration = si
-        };
+        ShowSummaryData showSummary = new(showName: si.ShowName, showConfiguration: si);
 
         if (si.CachedShow != null)
         {
@@ -544,8 +540,14 @@ public partial class ShowSummary : Form, IDialogParent
     {
         public int MaxSeason;
         public readonly List<ShowSummarySeasonData> SeasonDataList = new();
-        public ShowConfiguration ShowConfiguration;
-        public string ShowName;
+        public readonly ShowConfiguration ShowConfiguration;
+        public readonly string ShowName;
+
+        public ShowSummaryData(string showName, ShowConfiguration showConfiguration)
+        {
+            ShowName = showName;
+            ShowConfiguration = showConfiguration;
+        }
 
         public void AddSeason(ShowSummarySeasonData seasonData)
         {
@@ -582,11 +584,7 @@ public partial class ShowSummary : Form, IDialogParent
 
             public SummaryOutput GetOuput()
             {
-                SummaryOutput output = new()
-                {
-                    Ignored = Ignored,
-                    Special = IsSpecial
-                };
+                SummaryOutput output = new(ignored: Ignored, special: IsSpecial);
 
                 if (IsSpecial)
                 {
@@ -648,9 +646,15 @@ public partial class ShowSummary : Form, IDialogParent
         public class SummaryOutput
         {
             public Color Color;
-            public string Details;
-            public bool Ignored;
-            public bool Special;
+            public string? Details;
+            public readonly bool Ignored;
+            public readonly bool Special;
+
+            public SummaryOutput(bool ignored, bool special)
+            {
+                Ignored = ignored;
+                Special = special;
+            }
         }
 
         #endregion Nested type: SummaryOutput
@@ -756,7 +760,10 @@ public partial class ShowSummary : Form, IDialogParent
     private void BwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        lblStatus.Text = e.UserState.ToString().ToUiVersion();
+        if (e.UserState is not null)
+        {
+            lblStatus.Text = e.UserState.ToString()?.ToUiVersion();
+        }
     }
 
     private void BwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

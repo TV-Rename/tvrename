@@ -163,7 +163,7 @@ public class CacheUpdater : IDisposable
         mDownloaderThread = null;
     }
 
-    private void GetThread(object codeIn)
+    private void GetThread(object? codeIn)
     {
         System.Diagnostics.Debug.Assert(workerSemaphore != null);
 
@@ -239,13 +239,13 @@ public class CacheUpdater : IDisposable
         workerSemaphore = null;
     }
 
-    private void Downloader(object token)
+    private void Downloader(object? token)
     {
         // do background downloads of webpages
         Logger.Info("*******************************");
         Logger.Info("Starting Background Download...");
 
-        CancellationToken cts = (CancellationToken)token;
+        CancellationToken cts = (CancellationToken)(token ?? throw new ArgumentNullException(nameof(token)));
         try
         {
             if (downloadIds.Count == 0)
@@ -255,7 +255,7 @@ public class CacheUpdater : IDisposable
                 return;
             }
 
-            if (downloadIds.Any(s => s?.Provider == TVDoc.ProviderType.TVmaze))
+            if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TVmaze))
             {
                 if (!TVmaze.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
                         downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TVmaze)))
@@ -266,7 +266,7 @@ public class CacheUpdater : IDisposable
                 }
             }
 
-            if (downloadIds.Any(s => s?.Provider == TVDoc.ProviderType.TheTVDB))
+            if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
             {
                 if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
                         downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB)))
@@ -277,7 +277,7 @@ public class CacheUpdater : IDisposable
                 }
             }
 
-            if (downloadIds.Any(s => s?.Provider == TVDoc.ProviderType.TMDB))
+            if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TMDB))
             {
                 if (!TMDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
                         downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TMDB)))

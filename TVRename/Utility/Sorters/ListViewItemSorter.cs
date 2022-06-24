@@ -20,7 +20,7 @@ public abstract class ListViewItemSorter : IComparer
         Col = column;
     }
 
-    public int Compare(object x, object y)
+    public int Compare(object? x, object? y)
     {
         if (x is not ListViewItem lvix)
         {

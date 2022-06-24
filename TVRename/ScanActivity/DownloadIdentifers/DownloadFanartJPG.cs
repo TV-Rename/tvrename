@@ -5,7 +5,7 @@ namespace TVRename;
 
 internal class DownloadFanartJpg : DownloadIdentifier
 {
-    private static List<string> DoneFanartJpg;
+    private static List<string> DoneFanartJpg = null!;
     private const string DEFAULT_FILE_NAME = "fanart.jpg";
 
     public DownloadFanartJpg() => Reset();
@@ -23,7 +23,7 @@ internal class DownloadFanartJpg : DownloadIdentifier
             bool doesntExist = !fi.Exists;
             if ((forceRefresh || doesntExist) && !DoneFanartJpg.Contains(fi.FullName))
             {
-                string bannerPath = si.CachedShow?.GetSeriesFanartPath();
+                string? bannerPath = si.CachedShow?.GetSeriesFanartPath();
 
                 if (!string.IsNullOrEmpty(bannerPath))
                 {
@@ -50,7 +50,7 @@ internal class DownloadFanartJpg : DownloadIdentifier
                 bool doesntExist = !fi.Exists;
                 if ((forceRefresh || doesntExist) && !DoneFanartJpg.Contains(fi.FullName))
                 {
-                    string bannerPath = si.CachedMovie?.FanartUrl;
+                    string? bannerPath = si.CachedMovie?.FanartUrl;
 
                     if (!string.IsNullOrEmpty(bannerPath))
                     {

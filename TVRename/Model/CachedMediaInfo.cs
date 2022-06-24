@@ -106,11 +106,11 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
     private static Locale GetLocale(int? languageId, string? regionCode)
     {
         bool validLanguage = languageId.HasValue && Languages.Instance.GetLanguageFromId(languageId.Value) != null;
-        bool validRegion = regionCode.HasValue() && Regions.Instance.RegionFromCode(regionCode!) != null;
+        bool validRegion = regionCode.HasValue() && Regions.Instance.RegionFromCode(regionCode) != null;
 
         if (validLanguage && validRegion)
         {
-            return new Locale(Regions.Instance.RegionFromCode(regionCode)!, Languages.Instance.GetLanguageFromId(languageId.Value)!);
+            return new Locale(Regions.Instance.RegionFromCode(regionCode)!, Languages.Instance.GetLanguageFromId(languageId!.Value)!);
         }
 
         if (validLanguage)
@@ -213,7 +213,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
     {
         if (s.HasValue())
         {
-            Aliases.Add(s!);
+            Aliases.Add(s);
         }
     }
 

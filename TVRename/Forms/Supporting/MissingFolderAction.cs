@@ -23,7 +23,7 @@ public partial class MissingFolderAction : Form
         FolderName = folderName;
         txtShow.Text = showName?.ToUiVersion();
         txtSeason.Text = season?.ToUiVersion();
-        txtFolder.Text = FolderName?.ToUiVersion();
+        txtFolder.Text = FolderName.ToUiVersion();
 
         if (string.IsNullOrEmpty(FolderName))
         {
@@ -76,28 +76,31 @@ public partial class MissingFolderAction : Form
 
     private void MissingFolderAction_DragOver(object sender, DragEventArgs e)
     {
-        e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
+        e.Effect = e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
     }
 
     private void MissingFolderAction_DragDrop(object sender, DragEventArgs e)
     {
-        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-        foreach (string path in files)
+        if (e.Data is not null)
         {
-            try
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string path in files)
             {
-                DirectoryInfo di = new(path);
-                if (di.Exists)
+                try
                 {
-                    FolderName = path;
-                    Result = FaResult.kfaDifferentFolder;
-                    Close();
-                    return;
+                    DirectoryInfo di = new(path);
+                    if (di.Exists)
+                    {
+                        FolderName = path;
+                        Result = FaResult.kfaDifferentFolder;
+                        Close();
+                        return;
+                    }
                 }
-            }
-            catch
-            {
-                // ignored
+                catch
+                {
+                    // ignored
+                }
             }
         }
     }

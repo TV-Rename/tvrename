@@ -15,7 +15,7 @@ internal class CustomLanguageMovieCheck : CustomMovieCheck
 
     protected override bool Field => Movie.UseCustomLanguage;
 
-    protected override string CustomFieldValue => Movie.CustomLanguageCode;
+    protected override string? CustomFieldValue => Movie.CustomLanguageCode;
 
-    protected override string DefaultFieldValue => Movie.Provider==TVDoc.ProviderType.TMDB ? TVSettings.Instance.TMDBLanguage.ThreeAbbreviation : TVSettings.Instance.PreferredTVDBLanguage.ThreeAbbreviation;
+    protected override string? DefaultFieldValue => Movie.Provider==TVDoc.ProviderType.TMDB ? TVSettings.Instance.TMDBLanguage.ThreeAbbreviation : TVSettings.Instance.PreferredTVDBLanguage.ThreeAbbreviation;
 }

@@ -61,6 +61,7 @@ public partial class RecommendationView : Form
         Scan();
     }
 
+    // ReSharper disable once UnusedMember.Global
     public RecommendationView(TVDoc doc, UI main, IEnumerable<MovieConfiguration> m) : this(doc, main)
     {
         media = MediaConfiguration.MediaType.movie;
@@ -68,6 +69,7 @@ public partial class RecommendationView : Form
         Scan();
     }
 
+    // ReSharper disable once UnusedMember.Global
     public RecommendationView(TVDoc doc, UI main, IEnumerable<ShowConfiguration> s) : this(doc, main)
     {
         media = MediaConfiguration.MediaType.tv;
@@ -108,7 +110,7 @@ public partial class RecommendationView : Form
         UpdateUI();
     }
 
-    private void AddTvToLibrary(int id, CachedSeriesInfo? cache)
+    private void AddTvToLibrary(int id, CachedSeriesInfo cache)
     {
         string name = TVSettings.Instance.DefaultTVShowFolder(cache);
 
@@ -133,7 +135,7 @@ public partial class RecommendationView : Form
             return;
         }
 
-        newShow.AutoAddFolderBase = f.DirectoryFullPath!;
+        newShow.AutoAddFolderBase = f.DirectoryFullPath;
 
         mDoc.Add(newShow.AsList(), true);
         addedShows.Add(newShow);
@@ -171,7 +173,7 @@ public partial class RecommendationView : Form
         }
         else if (f.RootDirectory.HasValue())
         {
-            found.AutomaticFolderRoot = f.RootDirectory!;
+            found.AutomaticFolderRoot = f.RootDirectory;
             found.UseAutomaticFolders = true;
         }
 
@@ -221,7 +223,7 @@ public partial class RecommendationView : Form
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        lblStatus.Text = e.UserState?.ToString().ToUiVersion();
+        lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 
     private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -267,7 +269,11 @@ public partial class RecommendationView : Form
                 AddRcMenuItem("Add Movie to Library", (_, _) => AddMovieToLibrary(lastSelected.Key, lastSelected.Name));
                 break;
             case MediaConfiguration.MediaType.tv:
-                AddRcMenuItem("Add TV show to Library", (_, _) => AddTvToLibrary(lastSelected.Key, lastSelected.Series));
+                if (lastSelected.Series != null)
+                {
+                    AddRcMenuItem("Add TV show to Library",
+                        (_, _) => AddTvToLibrary(lastSelected.Key, lastSelected.Series));
+                }
                 break;
         }
     }

@@ -96,7 +96,7 @@ public class ActionDeleteDirectory : ActionDelete
         return o is ActionDeleteDirectory cmr && FileHelper.Same(toRemove, cmr.toRemove);
     }
 
-    public override int CompareTo(Item o)
+    public override int CompareTo(Item? o)
     {
         if (o is not ActionDeleteDirectory cmr || toRemove.Parent.FullName is null || cmr.toRemove.Parent.FullName is null)
         {

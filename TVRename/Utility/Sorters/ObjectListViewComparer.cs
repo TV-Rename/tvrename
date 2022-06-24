@@ -27,8 +27,8 @@ public abstract class ObjectListViewComparer<T> : IComparer<OLVListItem> where T
         {
             return 0;
         }
-        T? d1 = GetValue(x,col);
-        T? d2 = GetValue(y,col);
+        T? d1 = x!= null? GetValue(x,col) : default;
+        T? d2 = y!= null? GetValue(y,col) : default;
 
         if (d1 is null && d2 is null)
         {
@@ -47,7 +47,7 @@ public abstract class ObjectListViewComparer<T> : IComparer<OLVListItem> where T
 
         int primary = d1.CompareTo(d2);
         return primary == 0 ?
-            string.Compare(GetDefault(x), GetDefault(y), StringComparison.Ordinal)
+            string.Compare(GetDefault(x!), GetDefault(y!), StringComparison.Ordinal)
             : primary;
     }
 

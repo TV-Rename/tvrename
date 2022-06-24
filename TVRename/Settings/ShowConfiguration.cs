@@ -428,6 +428,7 @@ public class ShowConfiguration : MediaConfiguration
             foreach (string ff in seasonFolder.Descendants("Folder")
                          .Select(folderData => folderData.Attribute("Location")?.Value)
                          .Distinct()
+                         .OfType<string>()
                          .Where(ff => !string.IsNullOrWhiteSpace(ff) && AutoFolderNameForSeason(snum) != ff))
             {
                 ManualFolderLocations[snum].Add(ff);
@@ -490,7 +491,7 @@ public class ShowConfiguration : MediaConfiguration
         get
         {
             //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
-            CachedSeriesInfo? cachedSeriesInfo = (CachedSeriesInfo)CachedData;
+            CachedSeriesInfo? cachedSeriesInfo = CachedData as CachedSeriesInfo;
             if (cachedSeriesInfo?.Episodes is null || cachedSeriesInfo.Episodes.Count <= 0)
             {
                 return false;
@@ -923,5 +924,5 @@ public class ShowConfiguration : MediaConfiguration
         return returnValue;
     }
 
-    public CachedSeriesInfo? CachedShow => (CachedSeriesInfo)CachedData;
+    public CachedSeriesInfo? CachedShow => CachedData as CachedSeriesInfo;
 }

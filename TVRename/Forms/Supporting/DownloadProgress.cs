@@ -39,7 +39,7 @@ public partial class DownloadProgress : Form
         newTimer.AutoReset = true;
     }
 
-    private void NewTimerOnElapsed(object sender, ElapsedEventArgs e)
+    private void NewTimerOnElapsed(object? sender, ElapsedEventArgs e)
     {
         Tick();
     }

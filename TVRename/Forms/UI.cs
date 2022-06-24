@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+#nullable enable
 using BrightIdeasSoftware;
 using CefSharp.WinForms;
 using Humanizer;
@@ -320,23 +321,30 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private static object GroupFolderTitleDelegate(object rowObject)
     {
-        Item ep = (Item)rowObject;
+        Item? ep = (Item?)rowObject;
+        string? destFolder = ep?.DestinationFolder;
+
+        if (destFolder is null)
+        {
+            return string.Empty;
+        }
+        
         foreach (string folder in TVSettings.Instance.LibraryFolders)
         {
-            if (ep.DestinationFolder.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
+            if (destFolder.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
             {
                 return folder;
             }
         }
         foreach (string folder in TVSettings.Instance.MovieLibraryFolders)
         {
-            if (ep.DestinationFolder.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
+            if (destFolder.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
             {
                 return folder;
             }
         }
 
-        return ep.DestinationFolder;
+        return destFolder;
     }
 
     private static object GroupSeasonKeyDelegate(object rowObject)
@@ -854,9 +862,9 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     }
 
     // MAH: Added in support of the Filter TextBox Button
-    private void filterButton_Click(object sender, EventArgs e) => filterTextBox.Clear();
+    private void filterButton_Click(object? sender, EventArgs e) => filterTextBox.Clear();
 
-    private void filterMovieButton_Click(object sender, EventArgs e) => filterMoviesTextbox.Clear();
+    private void filterMovieButton_Click(object? sender, EventArgs e) => filterMoviesTextbox.Clear();
 
     private ListView ListViewByName(string name)
     {
@@ -911,7 +919,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private bool LoadWidths(XElement xml)
     {
-        string forwho = xml.Attribute("For")?.Value;
+        string? forwho = xml.Attribute("For")?.Value;
 
         if (forwho is null)
         {
@@ -968,13 +976,10 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         SetWindowSize(x.Descendants("Layout").Descendants("Window").First());
 
-        string actionLayout = x.Descendants("Layout").Descendants("ActionLayout").First().Attribute("State")?.Value;
-        if (actionLayout != null)
+        string? actionLayout = x.Descendants("Layout").Descendants("ActionLayout").First().Attribute("State")?.Value;
+        if (actionLayout.HasValue())
         {
-            if (actionLayout.HasValue())
-            {
-                olvAction.RestoreState(Convert.FromBase64String(actionLayout));
-            }
+            olvAction.RestoreState(Convert.FromBase64String(actionLayout));
         }
 
         foreach (XElement widthXmlElement in x.Descendants("Layout").Descendants("ColumnWidths"))
@@ -1202,17 +1207,13 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void FillMyShows(bool updateSelectedNode)
     {
-        ProcessedSeason currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
-        ShowConfiguration currentSi = TreeNodeToShowItem(MyShowTree.SelectedNode);
+        ProcessedSeason? currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
+        ShowConfiguration? currentSi = TreeNodeToShowItem(MyShowTree.SelectedNode);
 
-        List<ShowConfiguration> expanded = new();
-        foreach (TreeNode n in MyShowTree.Nodes)
-        {
-            if (n.IsExpanded)
-            {
-                expanded.Add(TreeNodeToShowItem(n));
-            }
-        }
+        List<ShowConfiguration?> expanded = MyShowTree.Nodes.Cast<TreeNode>()
+            .Where(n => n.IsExpanded)
+            .Select(n => TreeNodeToShowItem(n)).ToList();
+
         Logger.Info("UI: Updating MyShows");
         MyShowTree.BeginUpdate();
 
@@ -1376,11 +1377,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         };
     }
 
-    private static ProcessedSeason? TreeNodeToSeason(TreeNode? n)
-    {
-        ProcessedSeason seas = n?.Tag as ProcessedSeason;
-        return seas;
-    }
+    private static ProcessedSeason? TreeNodeToSeason(TreeNode? n) => n?.Tag as ProcessedSeason;
 
     private void FillEpGuideHtml(TreeNode? n)
     {
@@ -1396,7 +1393,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        ProcessedSeason seas = TreeNodeToSeason(n);
+        ProcessedSeason? seas = TreeNodeToSeason(n);
         if (seas != null)
         {
             // we have a TVDB season, but need to find the equivalent one in our local processed episode collection
@@ -1495,7 +1492,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (si?.CachedShow?.TrailerUrl?.HasValue() ?? false)
         {
             // ReSharper disable once AssignNullToNotNullAttribute
-            SetHtmlEmbed(chrTvTrailer, ShowHtmlHelper.YoutubeTrailer(si.CachedShow));
+            SetHtmlEmbed(chrTvTrailer, ShowHtmlHelper.YoutubeTrailer(si.CachedShow!));
         }
         else
         {
@@ -1545,12 +1542,12 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             });
     }
 
-    private static void SetHtmlEmbed(ChromiumWebBrowser web, string link)
+    private static void SetHtmlEmbed(ChromiumWebBrowser web, string? link)
     {
         SetWeb(web,
             () =>
             {
-                web.Load(link);
+                web.Load(link??string.Empty);
             });
     }
 
@@ -1958,14 +1955,14 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        ProcessedEpisode ep = eps.Count == 1 ? eps[0] : null;
+        ProcessedEpisode? ep = eps.Count == 1 ? eps[0] : null;
 
         List<ShowConfiguration> sis = eps.Select(e => e.Show).ToList();
 
         BuildRightClickMenu(pt, ep, sis, ep?.AppropriateProcessedSeason);
     }
 
-    private void MenuGuideAndTvdb(bool addSep, ProcessedEpisode? ep, List<ShowConfiguration?>? sis, ProcessedSeason? seas)
+    private void MenuGuideAndTvdb(bool addSep, ProcessedEpisode? ep, List<ShowConfiguration> sis, ProcessedSeason? seas)
     {
         if (sis is null || sis.Count != 1 || sis[0] == null)
         {
@@ -2002,7 +1999,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void MenuShowAndEpisodes(List<ShowConfiguration> sil, ProcessedSeason? seas, ProcessedEpisode? ep)
     {
-        ShowConfiguration si = sil.Count >= 1 ? sil[0] : null;
+        ShowConfiguration? si = sil.Count >= 1 ? sil[0] : null;
 
         if (si != null)
         {
@@ -2110,11 +2107,11 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 AddFolders(afl[ep.AppropriateSeasonNumber], added);
             }
         }
-        else if (seas != null && si != null)
+        else if (seas != null)
         {
-            Dictionary<int, SafeList<string>> folders = si.AllExistngFolderLocations();
+            Dictionary<int, SafeList<string>>? folders = si?.AllExistngFolderLocations();
 
-            if (folders.ContainsKey(seas.SeasonNumber))
+            if (folders?.ContainsKey(seas.SeasonNumber) == true)
             {
                 AddFolders(folders[seas.SeasonNumber], added);
             }
@@ -2135,7 +2132,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
 
         {
-            AddFoldersSubMenu(lvr.Select(sli => sli.TargetFolder), added);
+            AddFoldersSubMenu(lvr.Select(sli => sli.TargetFolder).OfType<string>(), added);
         }
     }
 
@@ -2263,7 +2260,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     }
 
     private void IgnoreSeason(ShowConfiguration si, int seasonNumber)
-    { 
+    {
         si.IgnoreSeasons.Add(seasonNumber);
         ShowAddedOrEdited(false, false, si, true);
     }
@@ -2358,11 +2355,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
 
         Point pt = lvWhenToWatch.PointToScreen(new Point(e.X, e.Y));
-        List<ProcessedEpisode> eis = new();
-        foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
-        {
-            eis.Add(lvi.Tag as ProcessedEpisode);
-        }
+        List<ProcessedEpisode> eis = lvWhenToWatch.SelectedItems.Cast<ListViewItem>().Select(lvi => lvi.Tag).OfType<ProcessedEpisode>().ToList();
 
         WtwRightClickOnShow(eis, pt);
     }
@@ -2511,8 +2504,8 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
 
-        Task<ServerRelease> tuv = VersionUpdater.CheckForUpdatesAsync();
-        ServerRelease result = await tuv.ConfigureAwait(false);
+        Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
+        ServerRelease? result = await tuv.ConfigureAwait(false);
 
         mDoc.CurrentAppState.UpdateCheck.LastUpdateCheckUtc = DateTime.UtcNow;
         try
@@ -2643,7 +2636,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private TreeNode AddShowItemToTree(ShowConfiguration si)
     {
-        CachedSeriesInfo ser = si.CachedShow;
+        CachedSeriesInfo? ser = si.CachedShow;
 
         TreeNode n = new(GenerateShowUIName(ser, si)) { Tag = si };
 
@@ -2710,7 +2703,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     // ReSharper disable once InconsistentNaming
     private static string GenerateShowUIName(ShowConfiguration si)
     {
-        CachedSeriesInfo s = si.CachedShow;
+        CachedSeriesInfo? s = si.CachedShow;
         return GenerateShowUIName(s, si);
     }
 
@@ -2734,7 +2727,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private static string GenerateBestName(CachedSeriesInfo? ser, ShowConfiguration? si)
     {
-        string name = si?.ShowName;
+        string? name = si?.ShowName;
 
         if (!string.IsNullOrEmpty(name))
         {
@@ -2937,7 +2930,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void bnMyShowsDelete_Click(object sender, EventArgs e)
     {
         TreeNode n = MyShowTree.SelectedNode;
-        ShowConfiguration si = TreeNodeToShowItem(n);
+        ShowConfiguration? si = TreeNodeToShowItem(n);
         if (si is null)
         {
             return;
@@ -3022,14 +3015,14 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             if (showsthatmatchanyfiles.Any())
             {
                 DialogResult res1 = MessageBox.Show(
-                    $"Do you want to remove {folderName}?  It is matches other shows {showsthatmatchanyfiles.Select(m => m.Name).ToCsv()}",
+                    $"Do you want to remove {folderName}?  It is matches other shows {showsthatmatchanyfiles.Select(m => m.ShowName).ToCsv()}",
                     "Confirmation",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Hand);
 
                 if (res1 != DialogResult.Yes)
                 {
-                    Logger.Warn($"Did not remove {folderName} as it is matches other shows {showsthatmatchanyfiles.Select(m => m.Name).ToCsv()}");
+                    Logger.Warn($"Did not remove {folderName} as it is matches other shows {showsthatmatchanyfiles.Select(m => m.ShowName).ToCsv()}");
                     return;
                 }
             }
@@ -3042,14 +3035,14 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             if (moviesthatmatchanyfiles.Any())
             {
                 DialogResult res2 = MessageBox.Show(
-                    $"Do you want to remove {folderName}?  It is matches other movies {moviesthatmatchanyfiles.Select(m => m.Name).ToCsv()}",
+                    $"Do you want to remove {folderName}?  It is matches other movies {moviesthatmatchanyfiles.Select(m => m.ShowName).ToCsv()}",
                     "Confirmation",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Hand);
 
                 if (res2 != DialogResult.Yes)
                 {
-                    Logger.Warn($"Did not remove {folderName} as it is matches other movies {moviesthatmatchanyfiles.Select(m => m.Name).ToCsv()}");
+                    Logger.Warn($"Did not remove {folderName} as it is matches other movies {moviesthatmatchanyfiles.Select(m => m.ShowName).ToCsv()}");
                     return;
                 }
             }
@@ -3111,10 +3104,10 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        ProcessedSeason seas = TreeNodeToSeason(n);
+        ProcessedSeason? seas = TreeNodeToSeason(n);
         if (seas != null)
         {
-            ShowConfiguration si = TreeNodeToShowItem(n);
+            ShowConfiguration? si = TreeNodeToShowItem(n);
             if (si != null)
             {
                 EditSeason(si, seas.SeasonNumber);
@@ -3123,7 +3116,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        ShowConfiguration si2 = TreeNodeToShowItem(n);
+        ShowConfiguration? si2 = TreeNodeToShowItem(n);
         if (si2 != null)
         {
             EditShow(si2);
@@ -3337,7 +3330,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        MovieConfiguration si = TreeNodeToMovieItem(n);
+        MovieConfiguration? si = TreeNodeToMovieItem(n);
         if (si != null)
         {
             RightClickOnMyMovies(si, pt);
@@ -3369,8 +3362,8 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        ShowConfiguration si = TreeNodeToShowItem(n);
-        ProcessedSeason seas = TreeNodeToSeason(n);
+        ShowConfiguration? si = TreeNodeToShowItem(n);
+        ProcessedSeason? seas = TreeNodeToSeason(n);
 
         if (seas != null)
         {
@@ -3386,13 +3379,13 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private ProcessedSeason? CurrentlySelectedSeason()
     {
-        ProcessedSeason currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
+        ProcessedSeason? currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
         if (currentSeas != null)
         {
             return currentSeas;
         }
 
-        ShowConfiguration currentShow = TreeNodeToShowItem(MyShowTree.SelectedNode);
+        ShowConfiguration? currentShow = TreeNodeToShowItem(MyShowTree.SelectedNode);
         if (currentShow != null)
         {
             foreach (KeyValuePair<int, ProcessedSeason> s in currentShow.AppropriateSeasons())
@@ -3407,14 +3400,14 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private List<ProcessedEpisode>? CurrentlySelectedPel()
     {
-        ProcessedSeason currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
-        ShowConfiguration currentShow = TreeNodeToShowItem(MyShowTree.SelectedNode);
+        ProcessedSeason? currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
+        ShowConfiguration? currentShow = TreeNodeToShowItem(MyShowTree.SelectedNode);
 
         int snum = currentSeas?.SeasonNumber ?? 1;
 
         if (currentShow != null)
         {
-            if (currentShow.SeasonEpisodes.TryGetValue(snum, out List<ProcessedEpisode> returnValue))
+            if (currentShow.SeasonEpisodes.TryGetValue(snum, out List<ProcessedEpisode>? returnValue))
             {
                 return returnValue;
             }
@@ -3628,7 +3621,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void bwScan_DoWork(object sender, DoWorkEventArgs e)
     {
         Thread.CurrentThread.Name ??= "Main Scan Thread"; // Can only set it once
-        TVDoc.ScanSettings scanSettings = (TVDoc.ScanSettings)e.Argument;
+        TVDoc.ScanSettings scanSettings = e.Argument as TVDoc.ScanSettings ?? throw new Exception();
         mDoc.Scan(scanSettings);
         lastScanUnattended = scanSettings.Unattended;
     }
@@ -3709,10 +3702,13 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                         MessageBoxIcon.Error);
                 }
 
-                ShowConfiguration problemShow = mDoc.TvLibrary.GetShowItem(problem.Media);
-                if (problemShow != null)
+                if (problem.Media is not null)
                 {
-                    EditShow(problemShow);
+                    ShowConfiguration? problemShow = mDoc.TvLibrary.GetShowItem(problem.Media);
+                    if (problemShow != null)
+                    {
+                        EditShow(problemShow);
+                    }
                 }
             }
         }
@@ -3720,7 +3716,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (mDoc.MovieProblems.Any())
         {
             string message = mDoc.MovieProblems.Count() > 1
-                ? $"Movies with Id {string.Join(",", mDoc.MovieProblems.Select(exception => exception.Media.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
+                ? $"Movies with Id {string.Join(",", mDoc.MovieProblems.Select(exception => exception.Media?.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
                 : $"Movie with {StringFor(mDoc.MovieProblems.First().ShowIdProvider)} Id {mDoc.MovieProblems.First().Media} is not found on {StringFor(mDoc.MovieProblems.First().ErrorProvider)}. Please Update";
 
             DialogResult result = MessageBox.Show(message, "Movie No Longer Found", MessageBoxButtons.OKCancel,
@@ -3739,7 +3735,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                         MessageBoxIcon.Error);
                 }
 
-                MovieConfiguration problemMovie = mDoc.FilmLibrary.GetMovie(problem.Media);
+                MovieConfiguration? problemMovie = mDoc.FilmLibrary.GetMovie(problem.Media);
                 if (problemMovie != null)
                 {
                     EditMovie(problemMovie);
@@ -3810,13 +3806,8 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        TVDoc.ActionSettings sett = new()
-        {
-            Unattended = unattended,
-            DoAll = doAll,
-            Lvr = checkedNotSelected ? GetCheckedItems() : GetSelectedItems(),
-            Token = actionCancellationToken
-        };
+        TVDoc.ActionSettings sett = new(unattended: unattended, doAll: doAll,
+            lvr: checkedNotSelected ? GetCheckedItems() : GetSelectedItems(), token: actionCancellationToken);
 
         bool showUi = WindowState !=FormWindowState.Minimized && !mDoc.Args.Hide && Visible && Environment.UserInteractive;
         // If not /hide, show CopyMoveProgress dialog
@@ -3834,7 +3825,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         Thread.CurrentThread.Name ??= "Main Action Thread"; // Can only set it once
 
-        TVDoc.ActionSettings set = (TVDoc.ActionSettings)e.Argument;
+        TVDoc.ActionSettings set = e.Argument as TVDoc.ActionSettings ?? throw new Exception();
         mDoc.DoActions(set);
         lastActionUnattended = set.Unattended;
     }
@@ -3915,7 +3906,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         showRightClickMenu.Items.Clear();
 
-        ProcessedSeason seas = episode?.AppropriateProcessedSeason;
+        ProcessedSeason? seas = episode?.AppropriateProcessedSeason;
 
         // Action related items
         if (lvr.Count > lvr.Missing.ToList().Count) // not just missing selected
@@ -3954,8 +3945,11 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             AddRcMenuItem("Revert to Missing", (_, _) => Revert());
         }
 
-        MenuGuideAndTvdb(true, episode, new List<ShowConfiguration> { si }, seas);
-        MenuFolders(lvr, si, episode?.AppropriateProcessedSeason, episode);
+        if (si is not null)
+        {
+            MenuGuideAndTvdb(true, episode, new List<ShowConfiguration> { si }, seas);
+            MenuFolders(lvr, si, episode?.AppropriateProcessedSeason, episode);
+        }
 
         showRightClickMenu.Show(pt);
     }
@@ -4158,7 +4152,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         bool added = false;
         foreach (Item action in GetSelectedItems())
         {
-            IgnoreItem ii = action.Ignore;
+            IgnoreItem? ii = action.Ignore;
             if (ii != null)
             {
                 TVSettings.Instance.Ignore.Add(ii);
@@ -4235,8 +4229,8 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
 
-        Task<ServerRelease> tuv = VersionUpdater.CheckForUpdatesAsync();
-        ServerRelease result = await tuv.ConfigureAwait(false);
+        Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
+        ServerRelease? result = await tuv.ConfigureAwait(false);
 
         uiDisp.Invoke(() => NotifyUpdates(result, true));
     }
@@ -4321,7 +4315,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             TimeZoneTracker results = new();
             foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShowItems())
             {
-                CachedSeriesInfo ser = si.CachedShow;
+                CachedSeriesInfo? ser = si.CachedShow;
                 if (ser != null)
                 {
                     results.Add(ser.Networks.FirstOrDefault() ?? string.Empty, si.ShowTimeZone, si.ShowName);
@@ -4561,7 +4555,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(BackColor), e.Bounds);
 
         // Get the item from the collection.
-        TabPage tabPage = tabCtrl?.TabPages[e.Index];
+        TabPage? tabPage = tabCtrl?.TabPages[e.Index];
 
         if (tabPage is null)
         {
@@ -4569,7 +4563,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
 
         // Get the real bounds for the tab rectangle.
-        Rectangle tabBounds = tabCtrl.GetTabRect(e.Index);
+        Rectangle? tabBounds = tabCtrl?.GetTabRect(e.Index);
 
         // Draw string. Center the text.
         StringFormat stringFlags = new()
@@ -4580,16 +4574,16 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         const int INDENT = 15;
 
         //GetIcon
-        if (tabCtrl.ImageList?.Images[tabPage.ImageKey]  is Bitmap bit)
+        if (tabCtrl?.ImageList?.Images[tabPage.ImageKey] is Bitmap bit && tabBounds != null)
         {
             ScaleBitmapLogicalToDevice(ref bit);
 
-            float xIndent = (tabBounds.Width - bit.Width) / 2.0f;
-            float x = tabBounds.X + xIndent;
-            float y = tabBounds.Y + INDENT;
+            float xIndent = (tabBounds.Value.Width - bit.Width) / 2.0f;
+            float x = tabBounds.Value.X + xIndent;
+            float y = tabBounds.Value.Y + INDENT;
             g.DrawImage(bit, x, y);
 
-            Rectangle textarea = new(tabBounds.X, tabBounds.Y + INDENT + bit.Height, tabBounds.Width, tabBounds.Height - (INDENT + bit.Height));
+            Rectangle textarea = new(tabBounds.Value.X, tabBounds.Value.Y + INDENT + bit.Height, tabBounds.Value.Width, tabBounds.Value.Height - (INDENT + bit.Height));
             g.DrawString(tabPage.Text, tabPage.Font, new SolidBrush(ForeColor), textarea, stringFlags);
         }
     }
@@ -4598,18 +4592,21 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         Thread.CurrentThread.Name ??= "Season HTML Creation Thread"; // Can only set it once
         ProcessedSeason? s = e.Argument as ProcessedSeason;
-        ShowConfiguration si = s?.Show;
+        ShowConfiguration? si = s?.Show;
 
         string html = string.Empty;
         try
         {
-            html = si?.GetSeasonHtmlOverview(s, true) ?? string.Empty;
+            if (s is not null)
+            {
+                html = si?.GetSeasonHtmlOverview(s, true) ?? string.Empty;
+            }
         }
         catch (Exception exception)
         {
             Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
         }
-        e.Result = new HtmlUpdateSettings{Argument =s,Html = html,  Web = chrInformation};
+        e.Result = new HtmlUpdateSettings(s, html, chrInformation);
     }
 
     private void UpdateWeb(object sender, RunWorkerCompletedEventArgs e)
@@ -4623,7 +4620,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
     }
 
-    private bool UiHasContextFor(object context)
+    private bool UiHasContextFor(object? context)
     {
         return context switch
         {
@@ -4641,7 +4638,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void BwShowHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
     {
         Thread.CurrentThread.Name ??= "Show HTML Creation Thread"; // Can only set it once
-        ShowConfiguration si = e.Argument as ShowConfiguration;
+        ShowConfiguration? si = e.Argument as ShowConfiguration;
 
         string html = string.Empty;
         try
@@ -4652,14 +4649,21 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
         }
-        e.Result = new HtmlUpdateSettings{Argument =si,Html = html,  Web = chrInformation};
+        e.Result = new HtmlUpdateSettings(si, html, chrInformation);
     }
 
     public class HtmlUpdateSettings
     {
-        public object Argument;
+        public object? Argument;
         public string Html;
         public ChromiumWebBrowser Web;
+
+        public HtmlUpdateSettings(object? argument, string html, ChromiumWebBrowser web)
+        {
+            Argument = argument;
+            Html = html;
+            Web = web;
+        }
     }
 
     private void BwUpdateSchedule_DoWork(object sender, DoWorkEventArgs e)
@@ -4690,8 +4694,8 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             selections.Add((ProcessedEpisode)lvi.Tag);
         }
 
-        ProcessedSeason currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
-        ShowConfiguration currentShowConfiguration = TreeNodeToShowItem(MyShowTree.SelectedNode);
+        ProcessedSeason? currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
+        ShowConfiguration? currentShowConfiguration = TreeNodeToShowItem(MyShowTree.SelectedNode);
 
         lvWhenToWatch.Items.Clear();
 
@@ -4843,7 +4847,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void BwShowSummaryHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
     {
         Thread.CurrentThread.Name ??= "Show Summary HTML Creation Thread"; // Can only set it once
-        ShowConfiguration si = e.Argument as ShowConfiguration;
+        ShowConfiguration? si = e.Argument as ShowConfiguration;
         string html = string.Empty;
         try
         {
@@ -4853,24 +4857,27 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
         }
-        e.Result = new HtmlUpdateSettings{Argument =si,Html = html,  Web = chrSummary};
+        e.Result = new HtmlUpdateSettings(si, html, chrSummary);
     }
 
     private void BwSeasonSummaryHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
     {
         Thread.CurrentThread.Name ??= "Season Summary Creation Thread"; // Can only set it once
-        ProcessedSeason s = e.Argument as ProcessedSeason;
-        ShowConfiguration si = s?.Show;
+        ProcessedSeason? s = e.Argument as ProcessedSeason;
+        ShowConfiguration? si = s?.Show;
         string html = string.Empty;
         try
         {
-            html = si?.GetSeasonSummaryHtmlOverview(s, true) ?? string.Empty;
+            if (s is not null)
+            {
+                html = si?.GetSeasonSummaryHtmlOverview(s, true) ?? string.Empty;
+            }
         }
         catch (Exception exception)
         {
             Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
         }
-        e.Result = new HtmlUpdateSettings{Argument =s,Html = html,  Web = chrSummary};
+        e.Result = new HtmlUpdateSettings(s,html,chrSummary);
     }
 
     private void ToolStripButton1_Click(object sender, EventArgs e)
@@ -4883,12 +4890,12 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         ToolStripButton button = (ToolStripButton)sender;
 
         Point pt = button.Owner.PointToScreen(button.Bounds.Location);
-        List<ProcessedEpisode> eis = new();
-
-        foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
-        {
-            eis.Add(lvi.Tag as ProcessedEpisode);
-        }
+        List<ProcessedEpisode> eis = lvWhenToWatch
+            .SelectedItems
+            .Cast<ListViewItem>()
+            .Select(lvi => lvi.Tag as ProcessedEpisode)
+            .OfType<ProcessedEpisode>()
+            .ToList();
 
         WtwRightClickOnShow(eis, pt);
     }
@@ -4905,8 +4912,8 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        ShowConfiguration si = TreeNodeToShowItem(n);
-        ProcessedSeason seas = TreeNodeToSeason(n);
+        ShowConfiguration? si = TreeNodeToShowItem(n);
+        ProcessedSeason? seas = TreeNodeToSeason(n);
 
         if (seas != null)
         {
@@ -5027,7 +5034,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void toolStripButton2_Click(object sender, EventArgs e)
     {
-        MovieConfiguration si2 = TreeNodeToMovieItem(movieTree?.SelectedNode);
+        MovieConfiguration? si2 = TreeNodeToMovieItem(movieTree?.SelectedNode);
         if (si2 != null)
         {
             EditMovie(si2);
@@ -5037,7 +5044,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void btnMovieDelete_Click(object sender, EventArgs e)
     {
         TreeNode n = movieTree.SelectedNode;
-        MovieConfiguration si = TreeNodeToMovieItem(n);
+        MovieConfiguration? si = TreeNodeToMovieItem(n);
         if (si is null)
         {
             return;
@@ -5048,7 +5055,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void bwMovieHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
     {
-        MovieConfiguration si = e.Argument as MovieConfiguration;
+        MovieConfiguration? si = e.Argument as MovieConfiguration;
         Thread.CurrentThread.Name ??= $"Movie '{si?.Name}' HTML Creation Thread"; // Can only set it once
 
         string html = string.Empty;
@@ -5060,7 +5067,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             Logger.Error(exception, $"Error Occurred Creating Movie Summary for {si?.ShowName}");
         }
-        e.Result = new HtmlUpdateSettings(){Argument = si,Html = html,Web=chrMovieInformation};
+        e.Result = new HtmlUpdateSettings(si,html,chrMovieInformation);
     }
 
     private void movieCollectionSummaryLogToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5124,7 +5131,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        MovieConfiguration si = TreeNodeToMovieItem(n);
+        MovieConfiguration? si = TreeNodeToMovieItem(n);
         if (si != null)
         {
             RightClickOnMyMovies(si, pt);
@@ -5147,8 +5154,11 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             // nuke currently selected show to force getting it fresh
             TreeNode n = movieTree.SelectedNode;
-            MovieConfiguration si = TreeNodeToMovieItem(n);
-            ForceMovieRefresh(si, false);
+            MovieConfiguration? si = TreeNodeToMovieItem(n);
+            if (si is not null)
+            {
+                ForceMovieRefresh(si, false);
+            }
         }
         else
         {
@@ -5158,10 +5168,10 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void ForceMovieRefresh(bool unattended)
     {
-        ForceMovieRefresh((List<MovieConfiguration>)null, unattended);
+        ForceMovieRefresh((List<MovieConfiguration>?)null, unattended);
     }
 
-    internal void ForceMovieRefresh(MovieConfiguration? sis, bool unattended)
+    internal void ForceMovieRefresh(MovieConfiguration sis, bool unattended)
     {
         ForceMovieRefresh(new List<MovieConfiguration> { sis }, unattended);
     }
@@ -5208,7 +5218,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void ForceRefresh(bool unattended)
     {
-        ForceRefresh((List<ShowConfiguration>)null, unattended);
+        ForceRefresh((List<ShowConfiguration>?)null, unattended);
     }
 
     private void settingsCheckToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5287,7 +5297,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     public (DialogResult, ActionTDownload?) AskAbout(ItemMissing epGroupKey, List<ActionTDownload> actions)
     {
         DialogResult dr = DialogResult.OK;
-        ActionTDownload userChosenAction = null;
+        ActionTDownload? userChosenAction = null;
 
         Invoke((MethodInvoker)delegate
         {

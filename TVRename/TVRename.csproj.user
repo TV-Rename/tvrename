@@ -14,4 +14,165 @@
     <StartArguments>
     </StartArguments>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Custom Controls\FastObjectListViewFlickerFree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Custom Controls\ObjectListViewFlickerFree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Forms\BulkAddMovies\BulkAddEditMovie.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\BulkAddMovies\BulkAddMovie.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\BulkAddShows\BulkAddEditShow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\BulkAddShows\BulkAddShow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\BulkAddShows\FolderMonitorProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Preferences\AddEditSearchEngine.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Preferences\AddEditSeasEpFinders.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Preferences\CustomNameDesigner.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Preferences\CustomNameTagsFloatingWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Preferences\IgnoreEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Preferences\Preferences.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\ShowPreferences\AddEditMovie.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\ShowPreferences\AddEditShow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\ShowPreferences\AddModifyRule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\ShowPreferences\AutoAddMedia.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\ShowPreferences\EditSeason.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\ShowPreferences\NewSeenEpisode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\ShowPreferences\QuickLocateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\ChooseDownload.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\ChooseFile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\CopyMoveProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\DownloadProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\Filters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\LinkMovie.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\MissingFolderAction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\MovieFilters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\ScanProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\TVRenameSplash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\UpcomingPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Supporting\UpdateNotification.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\ActorsGrid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\CollectionsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\DoScanPartNotifier.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\DuplicateMovieFinder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\MergedEpisodeFinder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\OrphanFiles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\QuickRename.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\RecommendationView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\RecommendationViewPreferences.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\SettingsReview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\ShowSummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\UI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Utilities\BugReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Utilities\BuyMeADrink.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Utilities\CannotConnectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Utilities\LicenceInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Utilities\LogViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Utilities\RecoverXML.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Utilities\ShowException.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Utilities\StatsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Utilities\ThanksForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

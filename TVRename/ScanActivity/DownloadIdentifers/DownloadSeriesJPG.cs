@@ -22,7 +22,7 @@ internal sealed class DownloadSeriesJpg : DownloadIdentifier
         bool fileWorthDownloading = !doneJpg.Contains(fi.FullName) && !fi.Exists;
         if (forceRefresh || fileWorthDownloading)
         {
-            string bannerPath = si.CachedShow?.GetSeasonBannerPath(snum);
+            string? bannerPath = si.CachedShow?.GetSeasonBannerPath(snum);
             if (!string.IsNullOrEmpty(bannerPath))
             {
                 theActionList.Add(new ActionDownloadImage(si, null, fi, bannerPath, TVSettings.Instance.ShrinkLargeMede8erImages));

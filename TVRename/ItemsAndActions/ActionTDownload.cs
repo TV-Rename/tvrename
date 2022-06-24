@@ -19,14 +19,14 @@ public class ActionTDownload : ActionDownload
     public readonly string SourceName;
     private readonly string url;
     public readonly long sizeBytes;
-    public readonly int Seeders;
+    public readonly int? Seeders;
 
     // ReSharper disable once NotAccessedField.Global - Used as a property in the Choose Download Grid
     public readonly string UpstreamSource;
 
     private readonly ItemDownloading becomes;
 
-    public ActionTDownload(string name, long sizeBytes, int seeders, string url, string toWhereNoExt, ProcessedEpisode? pe, ItemMissing me, string upstreamSource, ItemDownloading becomes)
+    public ActionTDownload(string name, long sizeBytes, int? seeders, string url, string toWhereNoExt, ProcessedEpisode? pe, ItemMissing me, string upstreamSource, ItemDownloading becomes)
     {
         Episode = pe;
         SourceName = name;
@@ -146,7 +146,7 @@ public class ActionTDownload : ActionDownload
 
     public override bool SameAs(Item o) => o is ActionTDownload rss && rss.url == url;
 
-    public override int CompareTo(Item o)
+    public override int CompareTo(Item? o)
     {
         return o is not ActionTDownload rss ? -1 : string.Compare(url, rss.url, StringComparison.Ordinal);
     }

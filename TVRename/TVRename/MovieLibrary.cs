@@ -15,7 +15,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
         .Where(a => a.InCollection)
         .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
         .Where(a => a.CollectionId.HasValue && a.CollectionName.HasValue())
-        .Select(a => (a.CollectionId.Value, a.CollectionName))
+        .Select(a => (a.CollectionId!.Value, a.CollectionName!))
         .Distinct()
         .ToList();
 
@@ -34,7 +34,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
 
     public MovieConfiguration? GetMovie(int id, TVDoc.ProviderType provider)
     {
-        if (id == 0 || id == -1)
+        if (id is 0 or -1)
         {
             return null;
         }
@@ -52,7 +52,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
             $"Searched for {id} on {provider.PrettyPrint()} Movie Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
     }
 
-    public new void AddMovie(MovieConfiguration newShow,bool showErrors)
+    public void AddMovie(MovieConfiguration newShow,bool showErrors)
     {
         if (Contains(newShow))
         {
@@ -129,6 +129,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
         return Movies
             .Select(si => si.CachedMovie)
             .Where(seriesInfo => !string.IsNullOrWhiteSpace(seriesInfo?.Network))
+            .OfType<CachedMovieInfo>()
             .SelectMany(seriesInfo => seriesInfo.Networks)
             .Distinct()
             .OrderBy(s => s);
@@ -138,8 +139,9 @@ public class MovieLibrary : SafeList<MovieConfiguration>
     {
         return Movies.Select(si => si.CachedMovie)
             .Where(s => !string.IsNullOrWhiteSpace(s?.ContentRating))
-            .Select(s => s.ContentRating)
+            .Select(s => s?.ContentRating)
             .Distinct()
+            .OfType<string>()
             .OrderBy(s => s);
     }
 
@@ -148,6 +150,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
         return Movies.Select(si => si.CachedMovie?.Year)
             .Where(s => s.HasValue)
             .Select(s => s!.ToString())
+            .OfType<string>()
             .Distinct()
             .OrderBy(s => s);
     }
@@ -157,7 +160,9 @@ public class MovieLibrary : SafeList<MovieConfiguration>
         return Movies
             .Select(s => s.CachedMovie)
             .Where(s => !string.IsNullOrWhiteSpace(s?.Status))
+            .OfType<CachedMovieInfo>()
             .Select(s => s.Status)
+            .OfType<string>()
             .Distinct()
             .OrderBy(s => s);
     }
@@ -177,7 +182,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
         return Movies
             .Where(m => m.InCollection)
             .Select(m => m.CachedMovie)
-            .Where(c => c is not null)
+            .OfType<CachedMovieInfo>()
             .Where(c => c.CollectionName == movieConfiguration.CachedMovie?.CollectionName)
             .Count(c => c.FirstAired <= movieConfiguration.CachedMovie?.FirstAired);
     }

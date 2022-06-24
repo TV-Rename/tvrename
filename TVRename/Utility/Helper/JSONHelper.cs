@@ -59,12 +59,7 @@ public static class JsonHelper
 
     public static string Flatten(this JToken? ja, string delimiter)
     {
-        if (ja is null)
-        {
-            return string.Empty;
-        }
-
-        if (ja.Type != JTokenType.Array)
+        if (ja?.Type != JTokenType.Array)
         {
             return string.Empty;
         }
@@ -80,7 +75,7 @@ public static class JsonHelper
 
         try
         {
-            string[] values = ja2.ToObject<string[]>();
+            string[]? values = ja2.ToObject<string[]>();
             if (values is null)
             {
                 return string.Empty;
@@ -97,7 +92,7 @@ public static class JsonHelper
 
     public static int ExtractStringToInt(this JObject r, string key)
     {
-        string valueAsString = (string)r[key];
+        string? valueAsString = (string?)r[key];
 
         if (!valueAsString.HasValue())
         {
@@ -120,5 +115,14 @@ public static class JsonHelper
         }
 
         return null;
+    }
+
+    public static int GetMandatoryInt(this JToken r, string key, TVDoc.ProviderType type)
+    {
+        return (int?)r[key] ?? throw new SourceConsistencyException($"Could not get data element '{key}' from {r}", type);
+    }
+    public static long GetMandatoryLong(this JToken r, string key, TVDoc.ProviderType type)
+    {
+        return (long?)r[key] ?? throw new SourceConsistencyException($"Could not get data element '{key}' from {r}", type);
     }
 }

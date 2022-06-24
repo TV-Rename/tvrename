@@ -52,11 +52,14 @@ public partial class QuickRename : Form, IDialogParent
     {
         Logger.Info("Starting quick rename.");
         // Get a list of filenames being dragged
-        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-
-        foreach (FileInfo droppedFile in files.Select(droppedFileName => new FileInfo(droppedFileName)))
+        if (e.Data is not null)
         {
-            ProcessUnknown(droppedFile, this);
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+            foreach (FileInfo droppedFile in files.Select(droppedFileName => new FileInfo(droppedFileName)))
+            {
+                ProcessUnknown(droppedFile, this);
+            }
         }
 
         parent.FillActionList();

@@ -44,8 +44,8 @@ public class qBitTorrent : IDownloadProvider
             return null;
         }
 
-        string settingsString = null;
-        string downloadsString = null;
+        string? settingsString = null;
+        string? downloadsString = null;
 
         try
         {
@@ -67,7 +67,7 @@ public class qBitTorrent : IDownloadProvider
                 return null;
             }
 
-            string savePath = (string)settings["save_path"] ?? string.Empty;
+            string savePath = (string?)settings["save_path"] ?? string.Empty;
 
             List<TorrentEntry> ret = new();
             foreach (JToken torrent in currentDownloads.Children())
@@ -99,7 +99,7 @@ public class qBitTorrent : IDownloadProvider
         string torrentDetailsString = string.Empty;
         try
         {
-            (string hashCode, string torrentName, bool completed) = ExtractTorrentDetails(torrent);
+            (string? hashCode, string? torrentName, bool completed) = ExtractTorrentDetails(torrent);
 
             string url = GetApiUrl(qBitTorrentAPIPath.torrentDetails) + hashCode;
             torrentDetailsString = HttpHelper.Obtain(url);
@@ -116,9 +116,9 @@ public class qBitTorrent : IDownloadProvider
 
             foreach (JToken file in torrentDetails.Children())
             {
-                (string downloadedFilename, bool isOnHold, int percentComplete) = ExtractTorrentFileDetails(file);
+                (string? downloadedFilename, bool isOnHold, int percentComplete) = ExtractTorrentFileDetails(file);
 
-                if (!downloadedFilename.Contains(".!qB\\.unwanted\\") && !isOnHold)
+                if (acceptable(downloadedFilename) && !isOnHold)
                 {
                     ret.Add(new TorrentEntry(torrentName, savePath + downloadedFilename, percentComplete, completed, hashCode));
                 }
@@ -131,10 +131,23 @@ public class qBitTorrent : IDownloadProvider
         }
     }
 
-    private static (string downloadedFilename, bool isOnHold, int percentComplete) ExtractTorrentFileDetails(JToken file)
+    private static bool acceptable(string? downloadedFilename)
     {
-        string downloadedFilename = file["name"]?.ToString();
-        string prioritystring = (string)file["priority"];
+        if (downloadedFilename is null)
+        {
+            return true;
+        }
+        if (downloadedFilename.Contains(".!qB\\.unwanted\\"))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private static (string? downloadedFilename, bool isOnHold, int percentComplete) ExtractTorrentFileDetails(JToken file)
+    {
+        string? downloadedFilename = file["name"]?.ToString();
+        string? prioritystring = (string?)file["priority"];
         bool b = int.TryParse(prioritystring, out int priority);
         bool isOnHold = !b || priority == 0;
         float? progress = (float?)file["progress"];
@@ -143,11 +156,11 @@ public class qBitTorrent : IDownloadProvider
         return (downloadedFilename, isOnHold, percentComplete);
     }
 
-    private static (string hashCode, string torrentName, bool completed) ExtractTorrentDetails(JToken torrent)
+    private static (string? hashCode, string? torrentName, bool completed) ExtractTorrentDetails(JToken torrent)
     {
-        string hashCode = (string)torrent["hash"];
-        string torrentName = (string)torrent["name"];
-        string state = (string)torrent["state"];
+        string? hashCode = (string?)torrent["hash"];
+        string? torrentName = (string?)torrent["name"];
+        string? state = (string?)torrent["state"];
 
         bool completed = state.In("uploading", "pausedUP", "queuedUP", "stalledUP", "checkingUP", "forcedUP");
 
@@ -246,7 +259,7 @@ public class qBitTorrent : IDownloadProvider
         catch (WebException wex)
         {
             Logger.Warn(
-                $"Could not connect to {wex.Response.ResponseUri} to download {torrentName}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.Message}");
+                $"Could not connect to {wex.Response?.ResponseUri} to download {torrentName}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.Message}");
         }
     }
 
@@ -276,7 +289,7 @@ public class qBitTorrent : IDownloadProvider
         catch (WebException wex)
         {
             Logger.Warn(
-                $"Could not connect to {wex.Response.ResponseUri} to download {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
+                $"Could not connect to {wex.Response?.ResponseUri} to download {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
             throw;
         }
     }
@@ -294,19 +307,19 @@ public class qBitTorrent : IDownloadProvider
         //Annoyingly V1 uses POST, but V2 is a GET...
         if (TVSettings.Instance.qBitTorrentAPIVersion == qBitTorrentAPIVersion.v1)
         {
-            string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string> { { "hashes", name.Key } });
+            string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string?> { { "hashes", name.Key } });
             HttpHelper.HttpRequest("POST", url, parametersString.RemoveCharactersFrom("?"), "application/x-www-form-urlencoded", null, null);
         }
         else
         {
             try
             {
-                string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string> { { "hashes", name.Key }, { "deleteFiles", "false" } });
+                string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string?> { { "hashes", name.Key }, { "deleteFiles", "false" } });
                 HttpHelper.HttpRequest("GET", url + parametersString, null, null, null, string.Empty);
             }
             catch (WebException wex)
             {
-                Logger.Warn($"Could not connect to {wex.Response.ResponseUri} to remove {name.TorrentFile}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
+                Logger.Warn($"Could not connect to {wex.Response?.ResponseUri} to remove {name.TorrentFile}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
                 throw;
             }
         }

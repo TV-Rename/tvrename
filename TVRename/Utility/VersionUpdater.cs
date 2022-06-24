@@ -149,7 +149,7 @@ public static class VersionUpdater
     {
         DateTime.TryParse(gitHubReleaseJson["published_at"]?.ToString(), out DateTime releaseDate);
 
-        string? url = (string)gitHubReleaseJson["assets"]?[0]?["browser_download_url"];
+        string? url = (string?)gitHubReleaseJson["assets"]?[0]?["browser_download_url"];
         string? releaseNotesText = gitHubReleaseJson["body"]?.ToString();
         string? releaseNotesUrl = gitHubReleaseJson["html_url"]?.ToString();
         string? version = gitHubReleaseJson["tag_name"]?.ToString();

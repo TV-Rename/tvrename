@@ -127,7 +127,7 @@ public partial class BulkAddMovie : Form
         if (lstFMMonitorFolders.SelectedIndex != -1)
         {
             int n = lstFMMonitorFolders.SelectedIndex;
-            searchFolderBrowser.SelectedPath = TVSettings.Instance.MovieLibraryFolders[n]??string.Empty;
+            searchFolderBrowser.SelectedPath = TVSettings.Instance.MovieLibraryFolders[n];
         }
 
         if (searchFolderBrowser.ShowDialog(this) == DialogResult.OK)
@@ -211,12 +211,17 @@ public partial class BulkAddMovie : Form
 
     private void lstFMMonitorFolders_DragOver(object _, DragEventArgs e)
     {
-        e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
+        e.Effect = GetDragEffect(e);
+    }
+
+    private DragDropEffects GetDragEffect(DragEventArgs e)
+    {
+        return e.Data?.GetDataPresent(DataFormats.FileDrop) ?? false ? DragDropEffects.Copy : DragDropEffects.None;
     }
 
     private void lstFMIgnoreFolders_DragOver(object _, DragEventArgs e)
     {
-        e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
+        e.Effect = GetDragEffect(e);
     }
 
     private void lstFMMonitorFolders_DragDrop(object _, DragEventArgs e)
@@ -226,21 +231,24 @@ public partial class BulkAddMovie : Form
 
     private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
     {
-        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-        foreach (string path in files)
+        if (e.Data is not null)
         {
-            try
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string path in files)
             {
-                DirectoryInfo di = new(path);
-                if (di.Exists)
+                try
                 {
-                    engine.CheckFolderForMovies(di, true, true, true);
-                    FillNewShowList(true);
+                    DirectoryInfo di = new(path);
+                    if (di.Exists)
+                    {
+                        engine.CheckFolderForMovies(di, true, true, true);
+                        FillNewShowList(true);
+                    }
                 }
-            }
-            catch
-            {
-                // ignored
+                catch
+                {
+                    // ignored
+                }
             }
         }
     }
@@ -252,22 +260,26 @@ public partial class BulkAddMovie : Form
 
     private void AddDraggedFiles(DragEventArgs e, ICollection<string> strings)
     {
-        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-        foreach (string path in files)
+        if (e.Data is not null)
         {
-            try
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string path in files)
             {
-                DirectoryInfo di = new(path);
-                if (di.Exists)
+                try
                 {
-                    strings.Add(path.ToLower());
+                    DirectoryInfo di = new(path);
+                    if (di.Exists)
+                    {
+                        strings.Add(path.ToLower());
+                    }
+                }
+                catch
+                {
+                    // ignored
                 }
             }
-            catch
-            {
-                // ignored
-            }
         }
+
         mDoc.SetDirty();
         FillFolderStringLists();
     }
@@ -365,7 +377,7 @@ public partial class BulkAddMovie : Form
 
     private void lvFMNewShows_DragOver(object _, DragEventArgs e)
     {
-        e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
+        e.Effect = GetDragEffect(e);
     }
 
     private void lvFMNewShows_KeyDown(object sender, KeyEventArgs e)
@@ -426,15 +438,20 @@ public partial class BulkAddMovie : Form
         lvFMNewShows.Update();
     }
 
-    private static void UpdateResultEntry(PossibleNewMovie ai, ListViewItem lvi)
+    private static void UpdateResultEntry(PossibleNewMovie? ai, ListViewItem lvi)
     {
+        if (ai is null)
+        {
+            return;
+        }
+
         lvi.SubItems.Clear();
         lvi.Text = ai.Directory.FullName.ToUiVersion();
         if (ai.CodeKnown)
         {
             CachedMovieInfo? x = ai.CachedMovie;
             lvi.SubItems.Add(x?.Name);
-            string val = x?.FirstAired?.Year.ToString();
+            string? val = x?.FirstAired?.Year.ToString();
             lvi.SubItems.Add(val ?? string.Empty);
             lvi.SubItems.Add(ai.CodeString);
         }
@@ -448,7 +465,7 @@ public partial class BulkAddMovie : Form
         lvi.ImageIndex = ai.CodeKnown && ai.HasStub ? 1 : 0;
     }
 
-    private void UpdateListItem(PossibleNewMovie ai, bool makevis)
+    private void UpdateListItem(PossibleNewMovie? ai, bool makevis)
     {
         foreach (ListViewItem lvi in lvFMNewShows.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag == ai))
         {
@@ -604,8 +621,8 @@ public partial class BulkAddMovie : Form
         lvFMNewShows.Update();
 
         pbProgress.Value = e.ProgressPercentage.Between(0,100);
-        lblStatusLabel.Text = ((PossibleNewMovie)e.UserState).RefinedHint.ToUiVersion();
-        UpdateListItem((PossibleNewMovie)e.UserState, false);
+        lblStatusLabel.Text = (e.UserState as PossibleNewMovie)?.RefinedHint.ToUiVersion();
+        UpdateListItem(e.UserState as PossibleNewMovie, false);
     }
 
     private void bwIdentify_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -618,7 +635,7 @@ public partial class BulkAddMovie : Form
     private void bwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        lblStatusLabel.Text = e.UserState.ToString().ToUiVersion();
+        lblStatusLabel.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 
     private void bwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

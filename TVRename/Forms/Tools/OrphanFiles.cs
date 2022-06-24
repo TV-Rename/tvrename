@@ -160,7 +160,7 @@ public partial class OrphanFiles : Form
     private void BwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        lblStatus.Text = e.UserState.ToString().ToUiVersion();
+        lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 
     private void BwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

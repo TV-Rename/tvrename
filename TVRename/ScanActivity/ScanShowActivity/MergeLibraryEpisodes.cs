@@ -97,7 +97,7 @@ internal class MergeLibraryEpisodes : ScanShowActivity
                 }
 
                 if (!FinderHelper.FindSeasEp(fi, out int seasNum, out int epNum, out int maxEp, si,
-                        out TVSettings.FilenameProcessorRE _))
+                        out TVSettings.FilenameProcessorRE? _))
                 {
                     continue; // can't find season & episode, so this file is of no interest to us
                 }

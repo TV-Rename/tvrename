@@ -201,7 +201,7 @@ public class ActionMede8erXML : ActionWriteMetadata
             writer.WriteElement("mpaa", SelectedShow.CachedShow?.ContentRating);
             writer.WriteInfo("moviedb", "imdb", "id", SelectedShow.CachedShow?.Imdb);
             writer.WriteElement("tvdbid", SelectedShow.CachedShow?.TvdbCode);
-            string rt = SelectedShow.CachedShow?.Runtime;
+            string? rt = SelectedShow.CachedShow?.Runtime;
             if (!string.IsNullOrEmpty(rt))
             {
                 writer.WriteElement("runtime", rt + " min");
@@ -233,7 +233,7 @@ public class ActionMede8erXML : ActionWriteMetadata
         return o is ActionMede8erXML xml && xml.Where == Where;
     }
 
-    public override int CompareTo(Item o)
+    public override int CompareTo(Item? o)
     {
         if (o is not ActionMede8erXML nfo)
         {

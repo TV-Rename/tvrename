@@ -15,7 +15,7 @@ internal class CustomLanguageTvShowCheck : CustomTvShowCheck
 
     protected override bool Field => Show.UseCustomLanguage;
 
-    protected override string CustomFieldValue => Show.CustomLanguageCode;
+    protected override string? CustomFieldValue => Show.CustomLanguageCode;
 
     protected override string DefaultFieldValue => Show.Provider == TVDoc.ProviderType.TMDB
         ? TVSettings.Instance.TMDBLanguage.ThreeAbbreviation

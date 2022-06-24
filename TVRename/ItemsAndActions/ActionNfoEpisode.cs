@@ -22,7 +22,7 @@ internal class ActionNfoEpisode : ActionNfo
 
     private ActionOutcome ReplaceMultipartFile()
     {
-        ShowConfiguration si = Episode?.Show ?? SelectedShow;
+        ShowConfiguration? si = Episode?.Show ?? SelectedShow;
 
         //We will replace the file as too difficult to update multiparts
         //We can't use XDocument as it's not fully valid XML
@@ -82,7 +82,7 @@ internal class ActionNfoEpisode : ActionNfo
             root.UpdateElement("mpaa", show.CachedShow?.ContentRating, true);
 
             //actor(s) and guest actor(s)
-            CachedSeriesInfo s = show.CachedShow;
+            CachedSeriesInfo? s = show.CachedShow;
             if (s != null)
             {
                 ReplaceActors(root, episode.AllActors(s));

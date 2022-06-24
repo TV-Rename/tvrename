@@ -17,6 +17,13 @@ public abstract class ItemMissing : Item
     public string Filename;
     protected string Folder;
 
+    protected ItemMissing(string theFileNoExt, string filename, string folder)
+    {
+        TheFileNoExt = theFileNoExt;
+        Filename = filename;
+        Folder = folder;
+    }
+
     public override string DestinationFile => Filename;
     public override string ScanListViewGroup => "lvgActionMissing";
     public override string DestinationFolder => Folder;

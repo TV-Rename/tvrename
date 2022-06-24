@@ -81,7 +81,7 @@ public class BTResume : BTCore
 
             BTDictionary d2 = (BTDictionary)dictitem.Data;
 
-            BTItem p = d2.GetItem("prio");
+            BTItem? p = d2.GetItem("prio");
             if (p is null || p.Type != BTChunk.kString)
             {
                 continue;
@@ -101,9 +101,9 @@ public class BTResume : BTCore
                 continue; // can't find it.  give up!
             }
 
-            BTFile tor = bel.Load(torrentFile);
+            BTFile? tor = bel.Load(torrentFile);
 
-            List<string> a = tor?.AllFilesInTorrent();
+            List<string>? a = tor?.AllFilesInTorrent();
             if (a is null)
             {
                 continue;
@@ -117,17 +117,17 @@ public class BTResume : BTCore
 
             string defaultFolder = ((BTString)p).AsString();
 
-            BTItem targets = d2.GetItem("targets");
+            BTItem? targets = d2.GetItem("targets");
             bool hasTargets = targets is { Type: BTChunk.kList };
-            BTList targetList = (BTList)targets;
+            BTList? targetList = (BTList?)targets;
 
-            ProcessFiles(r, d2, prioString, torrentFile, a, defaultFolder, hasTargets, targetList!);
+            ProcessFiles(r, d2, prioString, torrentFile, a, defaultFolder, hasTargets, targetList);
         }
 
         return r;
     }
 
-    private static void ProcessFiles(List<TorrentEntry> r, BTDictionary d2, BTString prioString, string torrentFile, List<string> a, string defaultFolder, bool hasTargets, BTList targetList)
+    private static void ProcessFiles(List<TorrentEntry> r, BTDictionary d2, BTString prioString, string torrentFile, List<string> a, string defaultFolder, bool hasTargets, BTList? targetList)
     {
         int c = 0;
         foreach (string s in a)
@@ -142,20 +142,20 @@ public class BTResume : BTCore
     }
 
     private static void Process(List<TorrentEntry> r, BTDictionary d2, string torrentFile, string defaultFolder, bool hasTargets,
-        BTList targetList, string s, int c)
+        BTList? targetList, string s, int c)
     {
         try
         {
             string saveTo = FileHelper
                 .FileInFolder(defaultFolder, TVSettings.Instance.FilenameFriendly(s)).Name;
 
-            if (hasTargets)
+            if (hasTargets && targetList != null)
             {
                 saveTo = GetTargetSaveLocation(targetList, c) ?? saveTo;
             }
 
-            bool completed = ((BTInteger)d2.GetItem("order"))?.Value == -1;
-            int percent = completed ? 100 : PercentBitsOn((BTString)d2.GetItem("have"));
+            bool completed = ((BTInteger?)d2.GetItem("order"))?.Value == -1;
+            int percent = completed ? 100 : PercentBitsOn((BTString?)d2.GetItem("have"));
             TorrentEntry te = new(torrentFile, saveTo, percent, completed, torrentFile);
             r.Add(te);
         }

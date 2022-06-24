@@ -43,7 +43,7 @@ internal class DownloadWdtvMetaData : DownloadIdentifier
             ItemList theActionList = new();
             FileInfo tvShowXml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
 
-            CachedSeriesInfo cachedSeriesInfo = si.CachedShow;
+            CachedSeriesInfo? cachedSeriesInfo = si.CachedShow;
             bool needUpdate = !tvShowXml.Exists ||
                               cachedSeriesInfo is null ||
                               cachedSeriesInfo.SrvLastUpdated > TimeZoneHelper.Epoch(tvShowXml.LastWriteTime);

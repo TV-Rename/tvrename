@@ -264,7 +264,7 @@ public abstract class ActionNfo : ActionWriteMetadata
         return o is ActionNfo nfo && nfo.Where == Where;
     }
 
-    public override int CompareTo(Item o)
+    public override int CompareTo(Item? o)
     {
         if (o is not ActionNfo nfo)
         {

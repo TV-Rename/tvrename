@@ -185,7 +185,7 @@ public partial class MergedEpisodeFinder : Form
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        lblStatus.Text = e.UserState.ToString().ToUiVersion();
+        lblStatus.Text = e.UserState?.ToString().ToUiVersion();
     }
 
     private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

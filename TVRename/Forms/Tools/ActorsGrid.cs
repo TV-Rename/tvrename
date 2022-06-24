@@ -274,10 +274,18 @@ public partial class ActorsGrid : Form
             {
                 if (theData.Data[r][c].HasValue)
                 {
-                    grid1[r + 1, c + 1] = new Cell("Y")
+                    grid1[r + 1, c + 1] = new Cell("Y");
                     {
-                        View = theData.Data[r][c].Value ? isActorModel : isGuestModel
-                    };
+                        bool? x = theData.Data[r][c];
+                        if (x.HasValue)
+                        {
+                            grid1[r + 1, c + 1].View = x.Value ? isActorModel : isGuestModel;
+                        }
+                        else
+                        {
+                            grid1[r + 1, c + 1].View = isActorModel;
+                        }
+                    }
                     grid1[r + 1, c + 1].AddController(new CellClickEvent(theData.Cols[c]));
                 }
                 else
@@ -322,15 +330,15 @@ public partial class ActorsGrid : Form
             return;
         }
 
-        SourceGrid.Exporter.Image image = new();
-        Bitmap b = image.Export(grid1, grid1.CompleteRange);
         try
         {
+            SourceGrid.Exporter.Image image = new();
+            Bitmap b = image.Export(grid1, grid1.CompleteRange);
             b.Save(saveFile.FileName, System.Drawing.Imaging.ImageFormat.Png);
         }
-        catch (System.Runtime.InteropServices.ExternalException ex)
+        catch (Exception ex)
         {
-            Logger.Warn($"Failed to save {saveFile.FileName}.");
+            Logger.Warn(ex,$"Failed to save {saveFile.FileName}.");
         }
     }
 

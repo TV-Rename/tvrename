@@ -1,3 +1,5 @@
+#nullable disable
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -46,7 +48,7 @@ internal static class API
 
     public static IEnumerable<CachedSeriesInfo> ShowSearch(string searchText)
     {
-        JArray response;
+        JArray? response;
         try
         {
             string fullUrl = $"{APIRoot}/search/shows?q={searchText}";
@@ -62,13 +64,13 @@ internal static class API
             Logger.LogIoException($"Could not search for show '{searchText}' from TV Maze due to", wex);
             throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
         }
-        return response.Children().Select(ConvertSearchResult);
+        return response.Children().Select(ConvertSearchResult).OfType<CachedSeriesInfo>();
     }
 
     private static CachedSeriesInfo? ConvertSearchResult(JToken token)
     {
         double score = token["score"].Value<double>();
-        JObject show = token["show"].Value<JObject>();
+        JObject? show = token["show"]?.Value<JObject?>();
         if (show is null)
         {
             return null;
@@ -96,12 +98,12 @@ internal static class API
         {
             if (wex.Is404())
             {
-                string tvdBimbd = TheTVDB.LocalCache.Instance.GetSeries(source.TvdbId)?.Imdb;
+                string? tvdBimbd = TheTVDB.LocalCache.Instance.GetSeries(source.TvdbId)?.Imdb;
                 if (!source.ImdbCode.HasValue() && !tvdBimbd.HasValue())
                 {
                     throw new MediaNotFoundException(source, $"Cant find a show with TVDB Id {source.TvdbId} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
                 }
-                string imdbCode = source.ImdbCode ?? tvdBimbd;
+                string? imdbCode = source.ImdbCode ?? tvdBimbd;
                 try
                 {
                     JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?imdb=" + imdbCode, 3, 2);
@@ -196,7 +198,7 @@ internal static class API
             JToken imageNode = GetChild(jsonSeason, "image");
             if (imageNode.HasValues)
             {
-                string child = (string)GetChild(imageNode, "original");
+                string? child = (string)GetChild(imageNode, "original");
                 if (child != null)
                 {
                     downloadedSi.AddOrUpdateImage(GenerateImage(ss.TvMazeId, (int)jsonSeason["number"], child));
@@ -362,7 +364,7 @@ internal static class API
     {
         string nw = GetKeySubKey(r, "network", "name");
         string wc = GetKeySubKey(r, "webChannel", "name");
-        string days = GetChild(r, "schedule")["days"]?.Select(x => x.Value<string>()).ToCsv();
+        string days = GetChild(r, "schedule")["days"]?.Select(x => x.Value<string>()).OfType<string>().ToCsv();
         JToken externalsToken = GetChild(r, "externals");
         int tvdb = GetChild(externalsToken, "thetvdb").Type == JTokenType.Null ? -1 : (int)externalsToken["thetvdb"];
         int rage = GetChild(externalsToken, "tvrage").Type == JTokenType.Null ? -1 : (int)externalsToken["tvrage"];

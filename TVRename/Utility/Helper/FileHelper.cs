@@ -291,7 +291,7 @@ public static class FileHelper
         return true;
     }
 
-    public static bool IsSampleFile(this FileInfo fi) => Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) &&
+    public static bool IsSampleFile(this FileInfo fi) => fi.FullName.Contains("sample", StringComparison.OrdinalIgnoreCase) &&
                                                          fi.Length / (1024 * 1024) < TVSettings.Instance.SampleFileMaxSizeMB;
 
     public static bool IsDeletedStubFile(this FileInfo fi) =>

@@ -28,13 +28,13 @@ internal class ActionNfoMovie : ActionNfo
             return new ActionOutcome($"Could not load {Where.FullName}");
         }
 
-        CachedMovieInfo cachedSeries = Movie!.CachedMovie;
+        CachedMovieInfo? cachedSeries = Movie!.CachedMovie;
         root.UpdateElement("title", Movie.ShowName);
 
         float? showRating = cachedSeries?.SiteRating;
         if (showRating.HasValue)
         {
-            UpdateRatings(root, showRating.Value.ToString(CultureInfo.InvariantCulture), cachedSeries.SiteRatingVotes);
+            UpdateRatings(root, showRating.Value.ToString(CultureInfo.InvariantCulture), cachedSeries!.SiteRatingVotes);
         }
 
         //https://forum.kodi.tv/showthread.php?tid=323588

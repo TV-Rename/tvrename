@@ -20,8 +20,8 @@ public class ItemDownloading : Item
     public override string ScanListViewGroup => "lvgDownloading";
 
     public override string? DestinationFolder => TargetFolder;
-    public override string DestinationFile => entry.FileIdentifier;
-    public override string SourceDetails => entry.RemainingText;
+    public override string? DestinationFile => entry.FileIdentifier;
+    public override string SourceDetails => entry.RemainingText ??string.Empty;
 
     public override int IconNumber { get; }
     public override string? TargetFolder => string.IsNullOrEmpty(entry.Destination) ? null : new FileInfo(entry.Destination).DirectoryName;
@@ -59,7 +59,7 @@ public class ItemDownloading : Item
 
     public override bool CheckedItem { get => false; set { }  }
 
-    public override int CompareTo(Item o)
+    public override int CompareTo(Item? o)
     {
         if (o is not ItemDownloading ut)
         {

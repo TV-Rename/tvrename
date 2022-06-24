@@ -130,13 +130,13 @@ public class Episode
             //backupLanguageR should be a cachedSeries of name/value pairs (ie a JArray of JProperties)
             //TVDB asserts that name and overview are the fields that are localised
 
-            string? epName = (string)jsonInDefaultLang["episodeName"];
+            string? epName = (string?)jsonInDefaultLang["episodeName"];
             if (string.IsNullOrWhiteSpace(MName) && epName != null)
             {
                 MName = System.Web.HttpUtility.HtmlDecode(epName).Trim();
             }
 
-            string overviewFromJson = (string)jsonInDefaultLang["overview"];
+            string? overviewFromJson = (string?)jsonInDefaultLang["overview"];
             if (string.IsNullOrWhiteSpace(Overview) && overviewFromJson != null)
             {
                 Overview = System.Web.HttpUtility.HtmlDecode(overviewFromJson).Trim();
@@ -182,16 +182,16 @@ public class Episode
     {
         try
         {
-            EpisodeId = (int)r["id"];
+            EpisodeId = r.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
 
             if (EpisodeId == 0)
             {
                 return;
             }
 
-            if ((string)r["airedSeasonID"] != null)
+            if ((string?)r["airedSeasonID"] != null)
             {
-                SeasonId = (int)r["airedSeasonID"];
+                SeasonId = r.GetMandatoryInt("airedSeasonID",TVDoc.ProviderType.TheTVDB);
             }
             else
             {
@@ -199,12 +199,12 @@ public class Episode
                 Logger.Error(r.ToString());
             }
 
-            AiredEpNum = (int)r["airedEpisodeNumber"];
+            AiredEpNum = r.GetMandatoryInt("airedEpisodeNumber",TVDoc.ProviderType.TheTVDB);
 
-            SrvLastUpdated = (long)r["lastUpdated"];
-            Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"])?.Trim();
+            SrvLastUpdated = r.GetMandatoryLong("lastUpdated",TVDoc.ProviderType.TheTVDB);
+            Overview = System.Web.HttpUtility.HtmlDecode((string?)r["overview"])?.Trim();
             EpisodeRating = GetString(r, "siteRating");
-            MName = System.Web.HttpUtility.HtmlDecode((string)r["episodeName"]);
+            MName = System.Web.HttpUtility.HtmlDecode((string?)r["episodeName"]);
 
             AirsBeforeEpisode = (int?)r["airsBeforeEpisode"];
             AirsBeforeSeason = (int?)r["airsBeforeSeason"];
@@ -218,7 +218,7 @@ public class Episode
             DvdChapter = (int?)r["dvdChapter"];
             DvdDiscId = GetString(r, "dvdDiscid");
 
-            string sn = (string)r["airedSeason"];
+            string? sn = (string?)r["airedSeason"];
             if (sn is null)
             {
                 Logger.Error("Issue with episode " + EpisodeId + " airedSeason = null");
@@ -236,7 +236,7 @@ public class Episode
             EpisodeDirector = r["directors"].Flatten("|");
             Writer = r["writers"].Flatten("|");
 
-            FirstAired = JsonHelper.ParseFirstAired((string)r["firstAired"]);
+            FirstAired = JsonHelper.ParseFirstAired((string?)r["firstAired"]);
         }
         catch (Exception e)
         {
@@ -244,7 +244,7 @@ public class Episode
         }
     }
 
-    private static string? GetString(JObject jObject, string key) => ((string)jObject[key])?.Trim();
+    private static string? GetString(JObject jObject, string key) => ((string?)jObject[key])?.Trim();
 
     public string Name
     {

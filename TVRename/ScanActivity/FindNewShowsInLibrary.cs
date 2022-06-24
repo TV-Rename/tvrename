@@ -34,7 +34,7 @@ internal class FindNewShowsInLibrary : ScanActivity
         var idsToAdd = bam.AddItems.Where(s => s.CodeKnown).Select(folder => new { Code = folder.ProviderCode, folder.Provider }).ToList();
 
         bam.AddAllToMyShows(Settings.Owner);
-        List<ShowConfiguration> addedShows = idsToAdd.Select(s => MDoc.TvLibrary.GetShowItem(s.Code, s.Provider)).ToList();
+        List<ShowConfiguration> addedShows = idsToAdd.Select(s => MDoc.TvLibrary.GetShowItem(s.Code, s.Provider)).OfType<ShowConfiguration>().ToList();
 
         //add each new show into the shows being scanned
         foreach (ShowConfiguration si in addedShows)

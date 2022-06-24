@@ -8,7 +8,7 @@ namespace TVRename;
 
 internal static class LinqHelper
 {
-    public static List<T> AsList<T>(this T? item) => new() { item };
+    public static List<T> AsList<T>(this T? item) => item is null ? new List<T>() :new List<T> { item };
 
     public static Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP = 4)
     {

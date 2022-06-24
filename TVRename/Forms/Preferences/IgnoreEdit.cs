@@ -57,7 +57,8 @@ public partial class IgnoreEdit : Form
         foreach (int i in lbItems.SelectedIndices)
         foreach (IgnoreItem iitest in ignore)
         {
-            if (lbItems.Items[i].ToString().Equals(iitest.FileAndPath))
+            string? s = lbItems.Items[i].ToString();
+            if (s is not null && s.Equals(iitest.FileAndPath))
             {
                 ignore.Remove(iitest);
                 break;

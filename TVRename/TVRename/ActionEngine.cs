@@ -54,7 +54,7 @@ public class ActionEngine
     /// Processes an Action by running it.
     /// </summary>
     /// <param name="infoIn">A ProcessActionInfo to be processed. It will contain the Action to be processed</param>
-    private void ProcessSingleAction(object infoIn)
+    private void ProcessSingleAction(object? infoIn)
     {
         if (infoIn is not ProcessActionInfo info)
         {
@@ -129,7 +129,7 @@ public class ActionEngine
 
         actionPause = false;
 
-        ActionProcessorThreadArgs args = new() {TheList = theList, Token = token};
+        ActionProcessorThreadArgs args = new(theList: theList, token: token);
 
         Thread actionProcessorThread = new(ActionProcessor)
         {
@@ -144,16 +144,22 @@ public class ActionEngine
     {
         public ItemList TheList;
         public CancellationToken Token;
+
+        public ActionProcessorThreadArgs(ItemList theList, CancellationToken token)
+        {
+            TheList = theList;
+            Token = token;
+        }
     }
 
-    private void ActionProcessor(object argsIn)
+    private void ActionProcessor(object? argsIn)
     {
         try
         {
             if (argsIn is not ActionProcessorThreadArgs args)
             {
                 string message =
-                    $"Action Processor called with object that is not a ActionProcessorThreadArgs, instead called with a {argsIn.GetType().FullName}";
+                    $"Action Processor called with object that is not a ActionProcessorThreadArgs, instead called with a {argsIn?.GetType().FullName}";
 
                 Logger.Fatal(message);
                 throw new ArgumentException(message);

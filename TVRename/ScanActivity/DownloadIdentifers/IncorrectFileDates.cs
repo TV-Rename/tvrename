@@ -14,7 +14,7 @@ namespace TVRename;
 
 internal sealed class IncorrectFileDates : DownloadIdentifier
 {
-    private List<string> doneFilesAndFolders;
+    private List<string> doneFilesAndFolders = null!;
 
     // ReSharper disable once NotNullMemberIsNotInitialized
     public IncorrectFileDates() => Reset();

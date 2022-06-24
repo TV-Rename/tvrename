@@ -12,16 +12,16 @@ using System.Runtime.CompilerServices;
 
 namespace TVRename;
 
-public abstract class Item : IComparable, INotifyPropertyChanged // something shown in the list on the Scan tab (not always an Action)
+public abstract class Item : IComparable<Item>, INotifyPropertyChanged // something shown in the list on the Scan tab (not always an Action)
 {
-    public abstract string TargetFolder { get; } // return a list of folders for right-click menu
+    public abstract string? TargetFolder { get; } // return a list of folders for right-click menu
     public abstract string ScanListViewGroup { get; } // which group name for the listview
     public abstract int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none
     public abstract IgnoreItem? Ignore { get; } // what to add to the ignore list / compare against the ignore list
     public ProcessedEpisode? Episode { get; protected set; } // associated episode
     public MovieConfiguration? Movie { get; protected set; } // associated movie
 
-    public abstract int CompareTo(Item obj); // for sorting items in scan list (ActionItemSorter)
+    public abstract int CompareTo(Item? obj); // for sorting items in scan list (ActionItemSorter)
 
     public abstract bool SameAs(Item o); // are we the same thing as that other one?
 
@@ -60,22 +60,22 @@ public abstract class Item : IComparable, INotifyPropertyChanged // something sh
     public virtual string AirDateString => Episode?.GetAirDateDt(true).PrettyPrint() ?? Movie?.CachedMovie?.FirstAired.PrettyPrint() ?? string.Empty;
 
     public virtual DateTime? AirDate => Episode?.GetAirDateDt(true) ?? Movie?.CachedMovie?.FirstAired;
-    public abstract string DestinationFolder { get; }
-    public abstract string DestinationFile { get; }
+    public abstract string? DestinationFolder { get; }
+    public abstract string? DestinationFile { get; }
 
     public virtual string SourceDetails => string.Empty;
 
-    private string errorTextValue;
-    public string ErrorText {
+    private string? errorTextValue;
+    public string? ErrorText {
         get => errorTextValue;
         protected internal set {
             errorTextValue = value;
             NotifyPropertyChanged();
         } } // Human-readable error message, for when Error is true
 
-    public int CompareTo(object obj) => CompareTo((Item)obj);
+    public int CompareTo(object obj) => CompareTo(obj as Item);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is not Item other)
         {
@@ -89,6 +89,11 @@ public abstract class Item : IComparable, INotifyPropertyChanged // something sh
         if (left is null)
         {
             return right is null;
+        }
+
+        if (right is null)
+        {
+            return false;
         }
         return left.Equals(right);
     }
@@ -107,6 +112,10 @@ public abstract class Item : IComparable, INotifyPropertyChanged // something sh
         if (left is null)
         {
             return -1;
+        }
+        if (right is null)
+        {
+            return 1;
         }
         return left.CompareTo(right);
     }

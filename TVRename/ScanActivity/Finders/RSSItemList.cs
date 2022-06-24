@@ -87,7 +87,7 @@ internal class RssItemList : List<RSSItem>
         string title = itemElement.ExtractString("title");
         string link = itemElement.ExtractString("link");
         string description = itemElement.ExtractString("description");
-        string enclosureLink = itemElement.Descendants("enclosure").FirstOrDefault(enclosure => enclosure.Attribute("type")?.Value == "application/x-bittorrent")?.Attribute("url")?.Value;
+        string? enclosureLink = itemElement.Descendants("enclosure").FirstOrDefault(enclosure => enclosure.Attribute("type")?.Value == "application/x-bittorrent")?.Attribute("url")?.Value;
         int seeders = GetSeeders(itemElement);
         long size = itemElement.ExtractLong("size", 0);
         string source = itemElement.ExtractString("jackettindexer", sourceUrl);

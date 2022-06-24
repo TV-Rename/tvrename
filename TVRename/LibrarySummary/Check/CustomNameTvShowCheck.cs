@@ -13,7 +13,7 @@ internal class CustomNameTvShowCheck : CustomTvShowCheck
 
     protected override string FieldName => "Use Custom TV Show Name";
     protected override bool Field => Show.UseCustomShowName;
-    protected override string CustomFieldValue => Show.CustomShowName;
+    protected override string? CustomFieldValue => Show.CustomShowName;
 
-    protected override string DefaultFieldValue => Show.CachedShow?.Name ?? string.Empty;
+    protected override string? DefaultFieldValue => Show.CachedShow?.Name;
 }

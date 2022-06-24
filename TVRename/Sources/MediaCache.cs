@@ -8,12 +8,12 @@ namespace TVRename;
 
 public abstract class MediaCache
 {
-    protected FileInfo CacheFile;
+    protected FileInfo? CacheFile;
 
     // ReSharper disable once InconsistentNaming
     public string? CurrentDLTask;
 
-    public string LastErrorMessage { get; set; }
+    public string? LastErrorMessage { get; set; }
 
     public bool LoadOk;
 

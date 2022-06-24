@@ -5,11 +5,11 @@ namespace TVRename;
 public class ShowItemMissing : ItemMissing
 {
     public ShowItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder)
+        : base(string.Empty,string.Empty,whereItShouldBeFolder)
     {
         Episode = pe;
         Filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe, null, whereItShouldBeFolder.Length));
         TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + Filename;
-        Folder = whereItShouldBeFolder;
     }
 
     #region Item Members
@@ -23,7 +23,7 @@ public class ShowItemMissing : ItemMissing
 
     public override string Name => "Missing Episode";
 
-    public override int CompareTo(Item o)
+    public override int CompareTo(Item? o)
     {
         if (o is not ShowItemMissing miss)
         {

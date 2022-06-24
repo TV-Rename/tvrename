@@ -31,7 +31,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
 
             foreach (string folderName in si.AllProposedFolderLocations().SelectMany(folderLocation => folderLocation.Value))
             {
-                string action = RemoveIfEmpty(si, folderName);
+                string? action = RemoveIfEmpty(si, folderName);
                 if (action.HasValue())
                 {
                     lastUpdate = action;
@@ -50,7 +50,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
 
             foreach (string folderName in mi.Locations)
             {
-                string action = RemoveIfEmpty(mi, folderName);
+                string? action = RemoveIfEmpty(mi, folderName);
                 if (action.HasValue())
                 {
                     lastUpdate = action;
@@ -69,7 +69,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
             DirectoryInfo directory = new(folder);
             foreach (DirectoryInfo testDirectory in  directory.EnumerateDirectories(DirectoryEnumerationOptions.Recursive | DirectoryEnumerationOptions.ContinueOnException).ToList())
             {
-                string action = RemoveIfEmpty(testDirectory.FullName);
+                string? action = RemoveIfEmpty(testDirectory.FullName);
                 if (action.HasValue())
                 {
                     lastUpdate = action;

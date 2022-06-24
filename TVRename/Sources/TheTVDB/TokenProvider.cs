@@ -88,7 +88,7 @@ internal class TokenProvider
         JObject request = new(new JProperty("apikey", TVDB_API_KEY), new JProperty("pin", "TVDB_API_KEY"));
         JObject jsonResponse = HttpHelper.JsonHttpPostRequest($"{TVDB_API_URL}/login", request, true);
 
-        string newToken = TVSettings.Instance.TvdbVersion == ApiVersion.v4 ? (string)jsonResponse["data"]?["token"] : (string)jsonResponse["token"];
+        string? newToken = TVSettings.Instance.TvdbVersion == ApiVersion.v4 ? (string?)jsonResponse["data"]?["token"] : (string?)jsonResponse["token"];
         if (newToken == null)
         {
             Logger.Error("Could not refresh Token");
@@ -105,7 +105,7 @@ internal class TokenProvider
         Logger.Info("Refreshing TheTVDB token... ");
         JObject jsonResponse = HttpHelper.JsonHttpGetRequest($"{TVDB_API_URL}/refresh_token", lastKnownToken);
 
-        string newToken = (string)jsonResponse["token"];
+        string? newToken = (string?)jsonResponse["token"];
         if (newToken == null)
         {
             Logger.Error("Could not refresh Token");

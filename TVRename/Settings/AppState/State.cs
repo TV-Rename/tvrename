@@ -22,7 +22,8 @@ public class State
                 XmlSerializer serializer = new(typeof(State));
                 using (XmlReader reader = XmlReader.Create(path))
                 {
-                    return (State)serializer.Deserialize(reader);
+                    State? s = serializer.Deserialize(reader) as State;
+                    return s ?? new State();
                 }
             }
             catch (Exception ex)

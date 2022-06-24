@@ -317,7 +317,7 @@ public static class HttpHelper
     {
         TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
 
-        string response = null;
+        string? response = null;
         if (retry)
         {
             RetryOnException(3, pauseBetweenFailures, url, _ => true,
@@ -329,10 +329,10 @@ public static class HttpHelper
             response = HttpRequest("POST", url, request.ToString(), "application/json", string.Empty);
         }
 
-        return JObject.Parse(response);
+        return JObject.Parse(response??string.Empty);
     }
 
-    public static string GetHttpParameters(Dictionary<string, string>? parameters)
+    public static string GetHttpParameters(Dictionary<string, string?>? parameters)
     {
         if (parameters is null)
         {
@@ -342,7 +342,7 @@ public static class HttpHelper
         StringBuilder sb = new();
         sb.Append("?");
 
-        foreach (KeyValuePair<string, string> item in parameters)
+        foreach (KeyValuePair<string, string?> item in parameters)
         {
             sb.Append($"{item.Key}={WebUtility.UrlEncode(item.Value)}&");
         }
@@ -426,25 +426,25 @@ public static class HttpHelper
 
     public static JObject HttpGetRequestWithRetry(string fullUrl, int times, int secondsGap)
     {
-        JObject response = null;
+        JObject? response = null;
         TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
         RetryOnException(times, gap, fullUrl,
             exception => (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
             , () => { response = JsonHttpGetRequest(fullUrl, null); }
             , null);
 
-        return response;
+        return response!;
     }
 
     public static JArray HttpGetArrayRequestWithRetry(string fullUrl, int times, int secondsGap)
     {
-        JArray response = null;
+        JArray? response = null;
         TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
         RetryOnException(times, gap, fullUrl,
             exception => (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
             , () => { response = JsonListHttpGetRequest(fullUrl, null); }
             , null);
 
-        return response;
+        return response!;
     }
 }

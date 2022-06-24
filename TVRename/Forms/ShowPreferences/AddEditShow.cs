@@ -157,7 +157,7 @@ public partial class AddEditShow : Form
         chkCustomLanguage.Checked = si.UseCustomLanguage;
         if (chkCustomLanguage.Checked)
         {
-            Language languageFromCode = Languages.Instance.GetLanguageFromCode(si.CustomLanguageCode);
+            Language? languageFromCode = Languages.Instance.GetLanguageFromCode(si.CustomLanguageCode);
 
             if (languageFromCode != null)
             {
@@ -173,7 +173,7 @@ public partial class AddEditShow : Form
         chkCustomRegion.Checked = si.UseCustomRegion;
         if (chkCustomLanguage.Checked && si.CustomRegionCode.HasValue())
         {
-            Region r = Regions.Instance.RegionFromCode(si.CustomRegionCode!);
+            Region? r = Regions.Instance.RegionFromCode(si.CustomRegionCode!);
 
             if (r != null)
             {
@@ -786,9 +786,10 @@ public partial class AddEditShow : Form
             return;
         }
 
-        string showName = codeFinderForm.SelectedShow() is null
+        CachedSeriesInfo? cachedSeriesInfo = codeFinderForm.SelectedShow();
+        string showName = cachedSeriesInfo is null
             ? txtCustomShowName.Text ?? "New Folder"
-            : TVSettings.Instance.DefaultTVShowFolder(codeFinderForm.SelectedShow());
+            : TVSettings.Instance.DefaultTVShowFolder(cachedSeriesInfo);
 
         QuickLocateForm f = new(showName, MediaConfiguration.MediaType.tv);
 
@@ -811,14 +812,16 @@ public partial class AddEditShow : Form
         Helpers.OpenUrl(llCustomSearchPreview.Text);
     }
 
-    private void MTCCF_SelectionChanged(object sender, EventArgs e)
+    private void MTCCF_SelectionChanged(object? sender, EventArgs e)
     {
         HasChanged = true;
-        if (addingNewShow && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation)
+        CachedSeriesInfo? cachedSeriesInfo = codeFinderForm.SelectedShow();
+
+        if (addingNewShow && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation && cachedSeriesInfo!=null)
         {
             txtBaseFolder.Text =
                 TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator()
-                + TVSettings.Instance.DefaultTVShowFolder(codeFinderForm.SelectedShow());
+                + TVSettings.Instance.DefaultTVShowFolder(cachedSeriesInfo);
         }
     }
 

@@ -16,7 +16,7 @@ internal class UrlCache
 
     public string GetUrl(string s, bool instanceSearchJsonUseCloudflare)
     {
-        if (internalCache.TryGetValue(s, out string value))
+        if (internalCache.TryGetValue(s, out string? value))
         {
             return value;
         }

@@ -6,7 +6,7 @@ public class Recomendations : ConcurrentDictionary<int, RecommendationResult>
 {
     private RecommendationResult Enrich(int key)
     {
-        if (TryGetValue(key, out RecommendationResult movieRec))
+        if (TryGetValue(key, out RecommendationResult? movieRec))
         {
             return movieRec;
         }

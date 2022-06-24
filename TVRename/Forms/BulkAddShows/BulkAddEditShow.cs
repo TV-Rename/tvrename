@@ -53,14 +53,14 @@ public partial class BulkAddEditShow : Form
         codeFinderControl.lvMatches.ScaleListViewColumns(factor);
     }
 
-    private void MatchDoubleClick(object sender, EventArgs e)
+    private void MatchDoubleClick(object? sender, EventArgs e)
     {
         DialogResult = DialogResult.OK;
         Code = codeFinderControl.SelectedCode();
         Close();
     }
 
-    private static void CodeChanged(object sender, EventArgs e)
+    private static void CodeChanged(object? sender, EventArgs e)
     {
         //Nothing to do
     }

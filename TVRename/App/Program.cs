@@ -36,6 +36,7 @@ public static class Program
         Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
 
         Application.EnableVisualStyles();
+        Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
         Application.SetCompatibleTextRenderingDefault(false);
 
         try
@@ -81,20 +82,20 @@ public static class Program
             Logger.Warn("An instance is already running");
 
             // Create an IPC channel to the existing instance
-            RemoteClient.Proxy();
+            //RemoteClient.Proxy();
 
             // Transparent proxy to the existing instance
-            RemoteClient ipc = new();
+            //RemoteClient ipc = new();
 
             // If already running and no command line arguments then bring instance to the foreground and quit
-            if (args.Length == 0)
+            //if (args.Length == 0)
             {
-                ipc.FocusWindow();
+                //ipc.FocusWindow();
             }
-            else
+            //else
             {
-                Logger.Warn($"Sending {args.ToCsv()} to the running instance.");
-                ipc.SendArgs(args);
+                //Logger.Warn($"Sending {args.ToCsv()} to the running instance.");
+                //ipc.SendArgs(args);
             }
 
             return;
@@ -132,7 +133,7 @@ public static class Program
         Logger.Info("Application exiting");
     }
 
-    private static Assembly? OnAssemblyResolve(object sender, ResolveEventArgs args)
+    private static Assembly? OnAssemblyResolve(object? sender, ResolveEventArgs args)
     {
         if (args.Name.StartsWith("CefSharp", StringComparison.Ordinal))
         {

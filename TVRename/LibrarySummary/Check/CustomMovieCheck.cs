@@ -9,8 +9,8 @@ internal abstract class CustomMovieCheck : MovieCheck
     protected override string MovieCheckName => FieldName;
     protected abstract string FieldName { get; }
     protected abstract bool Field { get; }
-    protected abstract string CustomFieldValue { get; }
-    protected abstract string DefaultFieldValue { get; }
+    protected abstract string? CustomFieldValue { get; }
+    protected abstract string? DefaultFieldValue { get; }
 
     public override bool Check() => Field;
 

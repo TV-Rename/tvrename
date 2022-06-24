@@ -720,7 +720,7 @@ public partial class Preferences : Form
         ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, typeof(string));
         ReplacementsGrid[r, 2] = new SourceGrid.Cells.CheckBox(null, ins);
         if (!string.IsNullOrEmpty(from) &&
-            TVSettings.CompulsoryReplacements().IndexOf(from!, StringComparison.Ordinal) != -1)
+            TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) != -1)
         {
             ReplacementsGrid[r, 0].Editor.EnableEdit = false;
             ReplacementsGrid[r, 0].View = roModel;
@@ -1111,18 +1111,24 @@ public partial class Preferences : Form
         cboUpdateCheckInterval.ValueMember = nameof(UpdateCheckInterval.Interval);
         cboUpdateCheckInterval.DataSource = new[]
         {
-            new UpdateCheckInterval { Text = "1 Hour", Interval = TimeSpan.FromHours(1) },
-            new UpdateCheckInterval { Text = "12 Hours", Interval = TimeSpan.FromHours(12) },
-            new UpdateCheckInterval { Text = "1 Day", Interval = TimeSpan.FromHours(24) },
-            new UpdateCheckInterval { Text = "1 Week", Interval = TimeSpan.FromDays(7) },
-            new UpdateCheckInterval { Text = "2 Week", Interval = TimeSpan.FromDays(7 * 2) },
-            new UpdateCheckInterval { Text = "30 Days", Interval = TimeSpan.FromDays(30) },
-            new UpdateCheckInterval { Text = "90 Days", Interval = TimeSpan.FromDays(90) },
+            new UpdateCheckInterval( "1 Hour",  TimeSpan.FromHours(1)),
+            new UpdateCheckInterval( "12 Hours",  TimeSpan.FromHours(12)),
+            new UpdateCheckInterval( "1 Day",  TimeSpan.FromHours(24)),
+            new UpdateCheckInterval( "1 Week", TimeSpan.FromDays(7)),
+            new UpdateCheckInterval( "2 Week",  TimeSpan.FromDays(7 * 2)),
+            new UpdateCheckInterval( "30 Days",  TimeSpan.FromDays(30)),
+            new UpdateCheckInterval( "90 Days",  TimeSpan.FromDays(90)),
         };
     }
 
     private class UpdateCheckInterval
     {
+        public UpdateCheckInterval(string text, TimeSpan interval)
+        {
+            Text = text;
+            Interval = interval;
+        }
+
         public string Text { get; set; }
 
         public TimeSpan Interval { get; set; }
@@ -1597,7 +1603,7 @@ public partial class Preferences : Form
         {
             try
             {
-                TVSettings.ColouringRule ssct =
+                TVSettings.ColouringRule? ssct =
                     cboShowStatus.SelectedItem as TVSettings.ColouringRule;
 
                 if (!ColorTranslator.FromHtml(txtShowStatusColor.Text).IsEmpty && ssct != null)
@@ -1888,25 +1894,28 @@ public partial class Preferences : Form
 
     private void lbSearchFolders_DragOver(object sender, DragEventArgs e)
     {
-        e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
+        e.Effect = e.Data is not null && !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
     }
 
     private void lbSearchFolders_DragDrop(object sender, DragEventArgs e)
     {
-        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-        foreach (string path in files)
+        if (e.Data is not null)
         {
-            try
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string path in files)
             {
-                DirectoryInfo di = new(path);
-                if (di.Exists)
+                try
                 {
-                    TVSettings.Instance.DownloadFolders.Add(path.ToLower().Trim());
+                    DirectoryInfo di = new(path);
+                    if (di.Exists)
+                    {
+                        TVSettings.Instance.DownloadFolders.Add(path.ToLower().Trim());
+                    }
                 }
-            }
-            catch
-            {
-                // ignored
+                catch
+                {
+                    // ignored
+                }
             }
         }
 
@@ -2004,25 +2013,28 @@ public partial class Preferences : Form
 
     private void FileIcon_DragOver(object sender, DragEventArgs e)
     {
-        e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
+        e.Effect = e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) ?  DragDropEffects.Copy: DragDropEffects.None ;
     }
 
     private void lstMovieMonitorFolders_DragDrop(object sender, DragEventArgs e)
     {
-        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-        foreach (string path in files)
+        if (e.Data is not null)
         {
-            try
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string path in files)
             {
-                DirectoryInfo di = new(path);
-                if (di.Exists)
+                try
                 {
-                    TVSettings.Instance.MovieLibraryFolders.Add(path.ToLower());
+                    DirectoryInfo di = new(path);
+                    if (di.Exists)
+                    {
+                        TVSettings.Instance.MovieLibraryFolders.Add(path.ToLower());
+                    }
                 }
-            }
-            catch
-            {
-                // ignored
+                catch
+                {
+                    // ignored
+                }
             }
         }
 
@@ -2032,20 +2044,23 @@ public partial class Preferences : Form
 
     private void lstFMMonitorFolders_DragDrop(object sender, DragEventArgs e)
     {
-        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-        foreach (string path in files)
+        if (e.Data is not null)
         {
-            try
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string path in files)
             {
-                DirectoryInfo di = new(path);
-                if (di.Exists)
+                try
                 {
-                    TVSettings.Instance.LibraryFolders.Add(path.ToLower());
+                    DirectoryInfo di = new(path);
+                    if (di.Exists)
+                    {
+                        TVSettings.Instance.LibraryFolders.Add(path.ToLower());
+                    }
                 }
-            }
-            catch
-            {
-                // ignored
+                catch
+                {
+                    // ignored
+                }
             }
         }
 
@@ -2101,7 +2116,7 @@ public partial class Preferences : Form
 
     private void button1_Click(object sender, EventArgs e)
     {
-        ProcessedSeason t = null;
+        ProcessedSeason? t = null;
         // ReSharper disable once ExpressionIsAlwaysNull
         cntfw = new CustomNameTagsFloatingWindow(t);
         cntfw.Show(this);
@@ -2253,7 +2268,7 @@ public partial class Preferences : Form
 
     private void button2_Click(object sender, EventArgs e)
     {
-        MovieConfiguration t = null;
+        MovieConfiguration? t = null;
         // ReSharper disable once ExpressionIsAlwaysNull
         cntfw = new CustomNameTagsFloatingWindow(t);
         cntfw.Show(this);
@@ -2262,7 +2277,7 @@ public partial class Preferences : Form
 
     private void button3_Click(object sender, EventArgs e)
     {
-        MovieConfiguration t = null;
+        MovieConfiguration? t = null;
         // ReSharper disable once ExpressionIsAlwaysNull
         cntfw = new CustomNameTagsFloatingWindow(t);
         cntfw.Show(this);
@@ -2302,7 +2317,7 @@ public partial class Preferences : Form
 
     private void button4_Click(object sender, EventArgs e)
     {
-        ShowConfiguration t = null;
+        ShowConfiguration? t = null;
         // ReSharper disable once ExpressionIsAlwaysNull
         cntfw = new CustomNameTagsFloatingWindow(t);
         cntfw.Show(this);

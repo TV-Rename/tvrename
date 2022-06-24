@@ -187,7 +187,7 @@ public partial class AddEditMovie : Form
         chkCustomLanguage.Checked = si.UseCustomLanguage;
         if (chkCustomLanguage.Checked)
         {
-            Language languageFromCode = Languages.Instance.GetLanguageFromCode(si.CustomLanguageCode);
+            Language? languageFromCode = Languages.Instance.GetLanguageFromCode(si.CustomLanguageCode);
 
             if (languageFromCode != null)
             {
@@ -550,7 +550,7 @@ public partial class AddEditMovie : Form
         cbLanguage.Enabled = chkCustomLanguage.Checked;
     }
 
-    private void MTCCF_SelectionChanged(object sender, EventArgs e)
+    private void MTCCF_SelectionChanged(object? sender, EventArgs e)
     {
         HasChanged = true;
     }

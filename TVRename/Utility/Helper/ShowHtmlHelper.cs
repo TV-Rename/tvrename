@@ -1,3 +1,4 @@
+#nullable enable
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
@@ -122,7 +123,7 @@ internal static class ShowHtmlHelper
 
     private static void AppendShowSummary(this StringBuilder sb, ShowConfiguration? si, DirFilesCache dfc, Color backgroundColour, bool includeDirectoryLinks)
     {
-        CachedSeriesInfo ser = si?.CachedShow;
+        CachedSeriesInfo? ser = si?.CachedShow;
         if (ser is null)
         {
             return;
@@ -132,14 +133,14 @@ internal static class ShowHtmlHelper
         string yearRange = YearRange(ser);
         string episodeSummary = ser.Episodes.Count.ToString();
         string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"https://www.imdb.com/title/{ser.Imdb}";
-        string table = CreateEpisodeTableHeader(CreateTableRows(si, dfc, includeDirectoryLinks));
+        string table = CreateEpisodeTableHeader(CreateTableRows(si!, dfc, includeDirectoryLinks));
 
         sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                 <div class=""text-center"">
 	             {horizontalBanner}
                 </div>
                     <div class=""row"">
-                     <div class=""col-md-8""><h1>{si.ShowName}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.SeriesType}</small></div>
+                     <div class=""col-md-8""><h1>{si!.ShowName}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.SeriesType}</small></div>
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes</small></div>
                     </div>
 		            <div class=""row"">
@@ -159,7 +160,7 @@ internal static class ShowHtmlHelper
 
         foreach (ProcessedSeason season in si.AppropriateSeasons().OrderBy(pair => pair.Key).Select(pair => pair.Value))
         {
-            if (si.SeasonEpisodes.TryGetValue(season.SeasonNumber, out List<ProcessedEpisode> seasonEpisodes))
+            if (si.SeasonEpisodes.TryGetValue(season.SeasonNumber, out List<ProcessedEpisode>? seasonEpisodes))
             {
                 tableRows.AppendSeasonShowSummary(dfc, si, season, includeDirectoryLinks, seasonEpisodes);
             }
@@ -224,7 +225,7 @@ internal static class ShowHtmlHelper
     private static void AppendShow(this StringBuilder sb, ShowConfiguration si, Color backgroundColour,
         bool includeDirectoryLinks)
     {
-        CachedSeriesInfo ser = si.CachedShow;
+        CachedSeriesInfo? ser = si.CachedShow;
 
         if (ser is null)
         {
@@ -235,7 +236,7 @@ internal static class ShowHtmlHelper
 
     private static void AppendShowImages(this StringBuilder sb, ShowConfiguration? si, Color backgroundColour)
     {
-        CachedSeriesInfo ser = si?.CachedShow;
+        CachedSeriesInfo? ser = si?.CachedShow;
 
         if (ser is null)
         {
@@ -329,7 +330,7 @@ internal static class ShowHtmlHelper
 
     private static void AppendMovieImages(this StringBuilder sb, MovieConfiguration? si, Color backgroundColour)
     {
-        CachedMovieInfo ser = si?.CachedMovie;
+        CachedMovieInfo? ser = si?.CachedMovie;
 
         if (ser is null)
         {
@@ -466,7 +467,7 @@ internal static class ShowHtmlHelper
         string dayTime = $"{ser.AirsDay} {ParseAirsTime(ser)}";
 
         string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"https://www.imdb.com/title/{ser.Imdb}";
-        string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
+        string? mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
         string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteShowUrl(ser) : string.Empty;
         string tvdbLink = ser.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser) : string.Empty;
 
@@ -550,7 +551,7 @@ internal static class ShowHtmlHelper
                  </div>");
     }
 
-    private static string PrettyPrint(float? rating) => (rating ?? 0) > 0 ? rating.Value + "/10" : string.Empty;
+    private static string PrettyPrint(float? rating) => rating is > 0 ? rating.Value + "/10" : string.Empty;
     private static void AppendRecommendation(this StringBuilder sb, RecommendationRow recommendationRow, Color backgroundColour)
     {
         string top = recommendationRow.TopRated ? "TOP RATED" : string.Empty;
@@ -600,7 +601,7 @@ internal static class ShowHtmlHelper
         string tvdbLink = ser.Slug.HasValue() ? TheTVDB.API.WebsiteMovieUrl(ser.Slug) : string.Empty;
         string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"https://www.imdb.com/title/{ser.Imdb}";
         string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(ser.TmdbCode) : string.Empty;
-        string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
+        string? mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
 
         string urlFilename = includeDirectoryLinks && (si !=null) ? Uri.EscapeDataString(dfc.FindMovieOnDisk(si).FirstOrDefault()?.FullName ?? string.Empty) : string.Empty;
         string explorerButton = includeDirectoryLinks ? CreateExploreButton(urlFilename) : string.Empty;
@@ -799,12 +800,8 @@ internal static class ShowHtmlHelper
 
     public static string YearRange(CachedSeriesInfo? ser)
     {
-        if (ser is null)
-        {
-            return string.Empty;
-        }
-        int? minYear = ser.MinYear;
-        int? maxYear = ser.MaxYear;
+        int? minYear = ser?.MinYear;
+        int? maxYear = ser?.MaxYear;
 
         if (minYear.HasValue && maxYear.HasValue)
         {
@@ -836,14 +833,11 @@ internal static class ShowHtmlHelper
             return si.AutoAddFolderBase;
         }
 
-        foreach (string folder in si.AllExistngFolderLocations().Values.SelectMany(a => a))
-        {
-            if (folder.HasValue() && Directory.Exists(folder))
-            {
-                return folder;
-            }
-        }
-        return string.Empty;
+        return si.AllExistngFolderLocations()
+            .Values
+            .SelectMany(a => a)
+            .Where(folder => folder.HasValue())
+            .FirstOrDefault(Directory.Exists) ?? string.Empty;
     }
 
     private static string CreateHorizontalBannerHtml(ShowConfiguration? series)
@@ -872,7 +866,7 @@ internal static class ShowHtmlHelper
     {
         string? url = series.CachedShow?.GetSeriesPosterPath();
 
-        if (url.HasValue() && !url!.IsWebLink() && series.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
+        if (url.HasValue() && !url.IsWebLink() && series.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
         {
             return TheTVDB.API.GetImageURL(url);
         }
@@ -883,11 +877,11 @@ internal static class ShowHtmlHelper
     {
         string? url = episode.Filename;
 
-        if (url.HasValue() && !url!.IsWebLink() && episode.Show.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
+        if (url.HasValue() && !url.IsWebLink() && episode.Show.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
         {
             return TheTVDB.API.GetImageURL(url);
         }
-        if (url.HasValue() && url!.IsWebLink())
+        if (url.HasValue() && url.IsWebLink())
         {
             return url;
         }
@@ -896,12 +890,12 @@ internal static class ShowHtmlHelper
 
     public static string CreatePosterHtml(CachedMovieInfo ser)
     {
-        string url = ser.PosterUrl;
-        if (url.HasValue() && !url!.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
+        string? url = ser.PosterUrl;
+        if (url.HasValue() && !url.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
         {
             url = TheTVDB.API.GetImageURL(url);
         }
-        if (url.HasValue() && url!.IsWebLink())
+        if (url.HasValue() && url.IsWebLink())
         {
             return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{ser.Name} Movie Poster\">";
         }
@@ -911,12 +905,12 @@ internal static class ShowHtmlHelper
 
     private static string CreatePosterHtml(CachedSeriesInfo ser)
     {
-        string url = ser.GetSeriesPosterPath();
-        if (url.HasValue() && !url!.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
+        string? url = ser.GetSeriesPosterPath();
+        if (url.HasValue() && !url.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
         {
             url = TheTVDB.API.GetImageURL(url);
         }
-        if (url.HasValue() && url!.IsWebLink())
+        if (url.HasValue() && url.IsWebLink())
         {
             return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{ser.Name} Show Poster\">";
         }
@@ -941,7 +935,7 @@ internal static class ShowHtmlHelper
             return string.Empty;
         }
 
-        string url = ei.ThumbnailUrl();
+        string? url = ei.ThumbnailUrl();
 
         if (url.HasValue())
         {
@@ -958,11 +952,11 @@ internal static class ShowHtmlHelper
         sb.AppendLine(HTMLHeader(10, col));
         sb.AppendSeason(s, si, col, includeDirectoryLinks);
 
-        if (si.SeasonEpisodes.TryGetValue(s.SeasonNumber, out List<ProcessedEpisode> siSeasonEpisode))
+        if (si.SeasonEpisodes.TryGetValue(s.SeasonNumber, out List<ProcessedEpisode>? siSeasonEpisode))
         {
             foreach (ProcessedEpisode ep in siSeasonEpisode)
             {
-                List<FileInfo> fl = includeDirectoryLinks ? dfc.FindEpOnDisk(ep) : null;
+                List<FileInfo>? fl = includeDirectoryLinks ? dfc.FindEpOnDisk(ep) : null;
                 sb.AppendEpisode(ep, fl, col);
             }
         }
@@ -1089,7 +1083,7 @@ internal static class ShowHtmlHelper
             explorerButton = CreateExploreButton(urlFilename);
         }
 
-        string tvdbSLug = si.CachedShow?.Slug;
+        string? tvdbSLug = si.CachedShow?.Slug;
         string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
         string tvdbButton = CreateButton(tvdbLink, "TVDB.com", "View on TVDB");
         string tvMazeButton = CreateButton(s.Show.Provider != TVDoc.ProviderType.TVmaze ? string.Empty : s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
@@ -1293,7 +1287,7 @@ internal static class ShowHtmlHelper
         string body =
             $"<h1><A HREF=\"{si.ProviderShowUrl()}\">{si.ShowName}</A> </h1>";
 
-        CachedSeriesInfo ser = si.CachedShow;
+        CachedSeriesInfo? ser = si.CachedShow;
         if (ser is null)
         {
             return body;
@@ -1431,7 +1425,7 @@ internal static class ShowHtmlHelper
             {
                 return StarRating(0);
             }
-            float f = float.Parse(rating!, CultureInfo.CreateSpecificCulture("en-US"));
+            float f = float.Parse(rating, CultureInfo.CreateSpecificCulture("en-US"));
 
             return StarRating(f / 2);
         }
@@ -1499,7 +1493,7 @@ internal static class ShowHtmlHelper
     public static string GetShowHtmlOverviewOffline(this ShowConfiguration si)
     {
         string body = string.Empty;
-        CachedSeriesInfo ser = si.CachedShow;
+        CachedSeriesInfo? ser = si.CachedShow;
 
         string bannerUrl = si.WideBannerUrl();
         if (bannerUrl.HasValue())
@@ -1520,12 +1514,12 @@ internal static class ShowHtmlHelper
             first = false;
         }
 
-        string airsTime = ser?.AirsTime.PrettyPrint();
+        string? airsTime = ser?.AirsTime.PrettyPrint();
         string? airsDay = ser?.AirsDay;
-        if (!string.IsNullOrEmpty(airsTime) && !string.IsNullOrEmpty(airsDay))
+        if (ser != null && !string.IsNullOrEmpty(airsTime) && !string.IsNullOrEmpty(airsDay))
         {
             body += "<h2>Airs</h2> " + airsTime + " " + airsDay;
-            string net = ser.Network;
+            string? net = ser.Network;
             if (!string.IsNullOrEmpty(net))
             {
                 body += ", " + ser.Networks.ToCsv();
@@ -1561,7 +1555,7 @@ internal static class ShowHtmlHelper
     {
         string? url = series.CachedShow?.GetSeriesWideBannerPath();
 
-        if (url.HasValue() && !url!.IsWebLink() && series.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
+        if (url.HasValue() && !url.IsWebLink() && series.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
         {
             return TheTVDB.API.GetImageURL(url);
         }
@@ -1572,7 +1566,7 @@ internal static class ShowHtmlHelper
     {
         string? url = season.GetWideBannerPath();
 
-        if (url.HasValue() && !url!.IsWebLink() && season.Show.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
+        if (url.HasValue() && !url.IsWebLink() && season.Show.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
         {
             return TheTVDB.API.GetImageURL(url);
         }
@@ -1593,7 +1587,7 @@ internal static class ShowHtmlHelper
         List<ProcessedEpisode> eis = si.SeasonEpisodes[snum];
 
         string seasText = SeasonName(si, snum);
-        string seasonUrl = s.WebsiteUrl;
+        string? seasonUrl = s.WebsiteUrl;
         if (eis.Count > 0 && eis[0].SeasonId > 0 && seasonUrl.HasValue())
         {
             seasText = $" - <A HREF=\"{seasonUrl}\">{seasText}</a>";
@@ -1713,7 +1707,7 @@ internal static class ShowHtmlHelper
         string siteRating = PrettyPrint(ser?.SiteRating);
         string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si.TvdbCode) : string.Empty;
         string tmdbLink = si.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(si.TmdbCode)   : string.Empty;
-        string mazeLink = ser?.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
+        string? mazeLink = ser?.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
         string facebookButton = ser?.FacebookId.HasValue() ?? false ? $"https://facebook.com/{ser.FacebookId}" : string.Empty;
         string instagramButton = ser?.InstagramId.HasValue() ?? false ? $"https://instagram.com/{ser.InstagramId}" : string.Empty;
         string twitterButton = ser?.TwitterId.HasValue() ?? false ? $"https://twitter.com/{ser.TwitterId}" : string.Empty;

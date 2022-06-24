@@ -71,7 +71,7 @@ public class ActionUnArchive : ActionFileOperation
 
     public override string DestinationFile => archiveFile.Name;
 
-    public override int CompareTo(Item o)
+    public override int CompareTo(Item? o)
     {
         ActionUnArchive? nfo = o as ActionUnArchive;
 

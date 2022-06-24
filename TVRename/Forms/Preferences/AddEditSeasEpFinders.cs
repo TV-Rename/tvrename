@@ -199,7 +199,7 @@ public partial class AddEditSeasEpFinders : Form
         OutputRegularExpressions.Clear();
         for (int i = 1; i < Grid1.RowsCount; i++) // skip header row
         {
-            TVSettings.FilenameProcessorRE re = RegExForRow(i);
+            TVSettings.FilenameProcessorRE? re = RegExForRow(i);
             if (re != null)
             {
                 OutputRegularExpressions.Add(re);
@@ -292,7 +292,7 @@ public partial class AddEditSeasEpFinders : Form
         {
             for (int i = 1; i < Grid1.RowsCount; i++)
             {
-                TVSettings.FilenameProcessorRE re = RegExForRow(i);
+                TVSettings.FilenameProcessorRE? re = RegExForRow(i);
                 if (re != null)
                 {
                     rel.Add(re);
@@ -307,7 +307,7 @@ public partial class AddEditSeasEpFinders : Form
                 return;
             }
 
-            TVSettings.FilenameProcessorRE re2 = RegExForRow(rowsIndex[0]);
+            TVSettings.FilenameProcessorRE? re2 = RegExForRow(rowsIndex[0]);
             if (re2 != null)
             {
                 rel.Add(re2);
@@ -334,8 +334,8 @@ public partial class AddEditSeasEpFinders : Form
                     continue; // move on
                 }
 
-                ShowConfiguration si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-                bool r = FinderHelper.FindSeasEp(file, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE matchRex);
+                ShowConfiguration? si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
+                bool r = FinderHelper.FindSeasEp(file, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
 
                 AddItemToListView(file.Name, seas, ep, maxEp, matchRex, r);
             }
@@ -349,8 +349,8 @@ public partial class AddEditSeasEpFinders : Form
                     continue; // move on
                 }
 
-                ShowConfiguration si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-                bool r = FinderHelper.FindSeasEp(filename, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE matchRex);
+                ShowConfiguration? si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
+                bool r = FinderHelper.FindSeasEp(filename, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
 
                 AddItemToListView(filename, seas, ep, maxEp, matchRex, r);
             }
@@ -358,8 +358,8 @@ public partial class AddEditSeasEpFinders : Form
         else
         {
             string testValue = txtTestString.Text;
-            ShowConfiguration si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-            bool r = FinderHelper.FindSeasEp(testValue, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE matchRex);
+            ShowConfiguration? si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
+            bool r = FinderHelper.FindSeasEp(testValue, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
 
             AddItemToListView(testValue, seas, ep, maxEp, matchRex, r);
         }
@@ -370,10 +370,10 @@ public partial class AddEditSeasEpFinders : Form
     private void AddItemToListView(string filename, int seas, int ep, int maxEp, TVSettings.FilenameProcessorRE? matchRex, bool r)
     {
         IEnumerable<ShowConfiguration> matchingShows = FinderHelper.FindMatchingShows(filename, shows);
-        string bestShowName = FinderHelper.FindBestMatchingShow(filename, shows)?.ShowName;
+        string? bestShowName = FinderHelper.FindBestMatchingShow(filename, shows)?.ShowName;
 
         string otherShowNames = matchingShows.Select(item => item.ShowName).Where(s => s != bestShowName).ToCsv();
-        string showDisplayString = otherShowNames.HasAny() ? bestShowName + " - (" + otherShowNames + ")" : bestShowName;
+        string? showDisplayString = otherShowNames.HasAny() ? bestShowName + " - (" + otherShowNames + ")" : bestShowName;
 
         ListViewItem lvi = new() { Text = filename };
         lvi.SubItems.Add(showDisplayString);

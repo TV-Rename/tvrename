@@ -1096,17 +1096,17 @@ public sealed class TVSettings
 
     public string BTSearchURL(ProcessedEpisode? epi)
     {
-        CachedSeriesInfo s = epi?.TheCachedSeries;
+        CachedSeriesInfo? s = epi?.TheCachedSeries;
         if (s is null)
         {
             return string.Empty;
         }
 
-        string url = epi.Show.UseCustomSearchUrl && epi.Show.CustomSearchUrl.HasValue()
+        string url = epi!.Show.UseCustomSearchUrl && epi.Show.CustomSearchUrl.HasValue()
             ? epi.Show.CustomSearchUrl
             : TheSearchers.CurrentSearch.Url;
 
-        return !url.HasValue() ? string.Empty : CustomEpisodeName.NameForNoExt(epi, url, true);
+        return url.HasValue() ? CustomEpisodeName.NameForNoExt(epi, url, true) : string.Empty;
     }
 
     public string BTMovieSearchURL(MovieConfiguration? mov)
@@ -1737,12 +1737,12 @@ public sealed class TVSettings
         foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").FirstOrDefault()
                      ?.Descendants("ShowStatusTVWColor") ?? new List<XElement>())
         {
-            ColouringRule newRule = ExtractColouringRule(rep);
+            ColouringRule? newRule = ExtractColouringRule(rep);
             if (newRule is null)
             {
                 continue;
             }
-            string color = rep.Attribute("Color")?.Value;
+            string? color = rep.Attribute("Color")?.Value;
             if (string.IsNullOrEmpty(color))
             {
                 continue;
@@ -1755,18 +1755,18 @@ public sealed class TVSettings
 
     private static ColouringRule? ExtractColouringRule(XElement rep)
     {
-        string showStatus = rep.Attribute("ShowStatus")?.Value;
+        string? showStatus = rep.Attribute("ShowStatus")?.Value;
         if (showStatus is null)
         {
             return null;
         }
 
-        string type = rep.Attribute("Type")?.Value;
+        string? type = rep.Attribute("Type")?.Value;
         if (type is null)
         {
             //Old Style Rule; lets convert
-            string isMetaString = rep.Attribute("IsMeta")?.Value;
-            string isShowLevelString = rep.Attribute("IsShowLevel")?.Value;
+            string? isMetaString = rep.Attribute("IsMeta")?.Value;
+            string? isShowLevelString = rep.Attribute("IsShowLevel")?.Value;
             bool isMeta = bool.Parse(isMetaString ?? "false");
             bool isShowLevel = bool.Parse(isShowLevelString ?? "true");
 
@@ -1783,20 +1783,13 @@ public sealed class TVSettings
             return new ShowStatusColouringRule(showStatus);
         }
 
-        switch (type)
+        return type switch
         {
-            case "SeasonStatusColouringRule":
-                return new SeasonStatusColouringRule(ExtractEnum<ProcessedSeason.SeasonStatus>(showStatus));
-
-            case "ShowStatusColouringRule":
-                return new ShowStatusColouringRule(showStatus);
-
-            case "ShowAirStatusColouringRule":
-                return new ShowAirStatusColouringRule(ExtractEnum<ShowConfiguration.ShowAirStatus>(showStatus));
-
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            "SeasonStatusColouringRule" => new SeasonStatusColouringRule(ExtractEnum<ProcessedSeason.SeasonStatus>(showStatus)),
+            "ShowStatusColouringRule" => new ShowStatusColouringRule(showStatus),
+            "ShowAirStatusColouringRule" => new ShowAirStatusColouringRule(ExtractEnum<ShowConfiguration.ShowAirStatus>(showStatus)),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     [NotNull]
@@ -1929,7 +1922,7 @@ public sealed class TVSettings
         return FilenameFriendly(FileHelper.MakeValidPath(baseHint));
     }
 
-    public string DefaultTVShowFolder(CachedSeriesInfo? showConfiguration)
+    public string DefaultTVShowFolder(CachedSeriesInfo showConfiguration)
     {
         string style = DefaultTvShowFolderFormat;
         string folderName = CustomTvShowName.DirectoryNameFor(showConfiguration,style);

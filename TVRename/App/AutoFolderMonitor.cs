@@ -92,7 +92,7 @@ public sealed class AutoFolderMonitor : IDisposable
         }
     }
 
-    private void mScanDelayTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private void mScanDelayTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
         mScanDelayTimer.Stop();
         Stop();

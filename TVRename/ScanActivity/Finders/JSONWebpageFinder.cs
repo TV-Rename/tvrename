@@ -126,9 +126,9 @@ internal class JSONWebpageFinder : DownloadFinder
                 if (episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONFilenameToken) &&
                     episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONURLToken))
                 {
-                    string itemName = (string)item[TVSettings.Instance.SearchJSONFilenameToken];
-                    string itemUrl = (string)item[TVSettings.Instance.SearchJSONURLToken];
-                    int seeders = (int)item[TVSettings.Instance.SearchJSONSeedersToken];
+                    string? itemName = (string?)item[TVSettings.Instance.SearchJSONFilenameToken];
+                    string? itemUrl = (string?)item[TVSettings.Instance.SearchJSONURLToken];
+                    int? seeders = (int?)item[TVSettings.Instance.SearchJSONSeedersToken];
                     long itemSizeBytes = CalculateItemSizeBytes(item);
 
                     if (TVSettings.Instance.DetailedRSSJSONLogging)
@@ -214,7 +214,7 @@ internal class JSONWebpageFinder : DownloadFinder
     {
         try
         {
-            return (long)item[TVSettings.Instance.SearchJSONFileSizeToken];
+            return (long?)item[TVSettings.Instance.SearchJSONFileSizeToken] ?? -1;
         }
         catch
         {

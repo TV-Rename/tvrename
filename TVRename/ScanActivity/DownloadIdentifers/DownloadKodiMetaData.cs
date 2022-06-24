@@ -14,7 +14,7 @@ namespace TVRename;
 
 internal class DownloadKodiMetaData : DownloadIdentifier
 {
-    private static List<string> DoneNfo;
+    private static List<string> DoneNfo = null!;
 
     public DownloadKodiMetaData() => Reset();
 
@@ -37,7 +37,7 @@ internal class DownloadKodiMetaData : DownloadIdentifier
             ItemList theActionList = new();
             FileInfo tvshownfo = FileHelper.FileInFolder(si.AutoAddFolderBase, "tvshow.nfo");
 
-            CachedSeriesInfo cachedSeriesInfo = si.CachedShow;
+            CachedSeriesInfo? cachedSeriesInfo = si.CachedShow;
             bool needUpdate = !tvshownfo.Exists ||
                               cachedSeriesInfo is null ||
                               System.Math.Abs(cachedSeriesInfo.SrvLastUpdated - TimeZoneHelper.Epoch(tvshownfo.LastWriteTime)) > 1;

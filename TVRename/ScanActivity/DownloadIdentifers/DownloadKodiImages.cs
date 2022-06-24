@@ -55,7 +55,7 @@ internal class DownloadKodiImages : DownloadIdentifier
 
             if ((forceRefresh || !posterJpg.Exists) && !donePosterJpg.Contains(file.Directory.FullName))
             {
-                string path = movie.CachedMovie?.PosterUrl;
+                string? path = movie.CachedMovie?.PosterUrl;
                 if (!string.IsNullOrEmpty(path))
                 {
                     theActionList.Add(new ActionDownloadMovieImage(movie, posterJpg, path, false));
@@ -65,8 +65,7 @@ internal class DownloadKodiImages : DownloadIdentifier
 
             if ((forceRefresh || !bannerJpg.Exists) && !doneBannerJpg.Contains(file.Directory.FullName))
             {
-                string path = movie.CachedMovie?.Images(MediaImage.ImageType.wideBanner).FirstOrDefault()?.ImageUrl
-                              ?? string.Empty;
+                string? path = movie.CachedMovie?.Images(MediaImage.ImageType.wideBanner).FirstOrDefault()?.ImageUrl;
                 if (!string.IsNullOrEmpty(path))
                 {
                     theActionList.Add(new ActionDownloadMovieImage(movie, bannerJpg, path, false));
@@ -76,7 +75,7 @@ internal class DownloadKodiImages : DownloadIdentifier
 
             if ((forceRefresh || !fanartJpg.Exists) && !doneFanartJpg.Contains(file.Directory.FullName))
             {
-                string path = movie.CachedMovie?.FanartUrl;
+                string? path = movie.CachedMovie?.FanartUrl;
                 if (!string.IsNullOrEmpty(path))
                 {
                     theActionList.Add(new ActionDownloadMovieImage(movie, fanartJpg, path));
@@ -110,7 +109,7 @@ internal class DownloadKodiImages : DownloadIdentifier
 
                 if ((forceRefresh || !posterJpg.Exists) && !donePosterJpg.Contains(si.AutoAddFolderBase))
                 {
-                    string path = si.CachedShow?.GetSeriesPosterPath();
+                    string? path = si.CachedShow?.GetSeriesPosterPath();
                     if (!string.IsNullOrEmpty(path))
                     {
                         theActionList.Add(new ActionDownloadTvShowImage(si,  posterJpg, path, false));
@@ -120,7 +119,7 @@ internal class DownloadKodiImages : DownloadIdentifier
 
                 if ((forceRefresh || !bannerJpg.Exists) && !doneBannerJpg.Contains(si.AutoAddFolderBase))
                 {
-                    string path = si.CachedShow?.GetSeriesWideBannerPath();
+                    string? path = si.CachedShow?.GetSeriesWideBannerPath();
                     if (!string.IsNullOrEmpty(path))
                     {
                         theActionList.Add(new ActionDownloadTvShowImage(si, bannerJpg, path, false));
@@ -130,7 +129,7 @@ internal class DownloadKodiImages : DownloadIdentifier
 
                 if ((forceRefresh || !fanartJpg.Exists) && !doneFanartJpg.Contains(si.AutoAddFolderBase))
                 {
-                    string path = si.CachedShow?.GetSeriesFanartPath();
+                    string? path = si.CachedShow?.GetSeriesFanartPath();
                     if (!string.IsNullOrEmpty(path))
                     {
                         theActionList.Add(new ActionDownloadTvShowImage(si, fanartJpg, path));
@@ -162,7 +161,7 @@ internal class DownloadKodiImages : DownloadIdentifier
             FileInfo posterJpg = FileHelper.FileInFolder(folderToUse, filenamePrefix + "poster.jpg");
             if (forceRefresh || !posterJpg.Exists)
             {
-                string path = si.CachedShow?.GetSeasonBannerPath(snum);
+                string? path = si.CachedShow?.GetSeasonBannerPath(snum);
                 if (!string.IsNullOrEmpty(path))
                 {
                     theActionList.Add(new ActionDownloadSeasonImage(si, snum, posterJpg, path));
@@ -172,7 +171,7 @@ internal class DownloadKodiImages : DownloadIdentifier
             FileInfo bannerJpg = FileHelper.FileInFolder(folderToUse, filenamePrefix + "banner.jpg");
             if (forceRefresh || !bannerJpg.Exists)
             {
-                string path = si.CachedShow?.GetSeasonWideBannerPath(snum);
+                string? path = si.CachedShow?.GetSeasonWideBannerPath(snum);
                 if (!string.IsNullOrEmpty(path))
                 {
                     theActionList.Add(new ActionDownloadSeasonImage(si, snum, bannerJpg, path));
@@ -211,10 +210,20 @@ internal class DownloadKodiImages : DownloadIdentifier
                 {
                     string foldername = file.DirectoryName;
                     string filename = TVSettings.Instance.FilenameFriendly(episode.Show, sourceEp);
-                    theActionList.Add(DoEpisode(episode.Show, sourceEp, new FileInfo(foldername + "/" + filename + ".jpg"), "-thumb.jpg", forceRefresh));
+                    ActionDownloadImage? downloadImage = DoEpisode(episode.Show, sourceEp, new FileInfo(foldername + "/" + filename + ".jpg"), "-thumb.jpg", forceRefresh);
+                    if (downloadImage is not null)
+                    {
+                        theActionList.Add(downloadImage);
+                    }
                 }
             }
-            theActionList.Add(DoEpisode(episode.Show, episode, file, "-thumb.jpg", forceRefresh));
+
+            ActionDownloadImage? actionDownloadImage = DoEpisode(episode.Show, episode, file, "-thumb.jpg", forceRefresh);
+            if (actionDownloadImage is not null)
+            {
+                theActionList.Add(actionDownloadImage);
+            }
+
             return theActionList;
         }
         return base.ProcessEpisode(episode, file, forceRefresh);
@@ -222,7 +231,7 @@ internal class DownloadKodiImages : DownloadIdentifier
 
     private ActionDownloadImage? DoEpisode(ShowConfiguration si, Episode ep, FileInfo filo, string extension, bool forceRefresh)
     {
-        string ban = ep.Filename;
+        string? ban = ep.Filename;
         if (string.IsNullOrEmpty(ban))
         {
             return null;

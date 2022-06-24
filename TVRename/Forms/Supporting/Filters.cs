@@ -119,7 +119,7 @@ public partial class Filters : Form
             return true;
         }
 
-        if (comboBox.SelectedItem.ToString().Equals(IS_NOT))
+        if (comboBox.SelectedItem.ToString()!.Equals(IS_NOT))
         {
             return false;
         }

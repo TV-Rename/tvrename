@@ -137,7 +137,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
             }
 
             if (!FinderHelper.FindSeasEp(fi, out int seasNum, out int epNum, out int _, si,
-                    out TVSettings.FilenameProcessorRE _))
+                    out TVSettings.FilenameProcessorRE? _))
             {
                 continue; // can't find season & episode, so this file is of no interest to us
             }
@@ -147,7 +147,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
                 seasNum = snum;
             }
 
-            ProcessedEpisode ep = eps.Find(x => x.AppropriateEpNum == epNum && x.AppropriateSeasonNumber == seasNum);
+            ProcessedEpisode? ep = eps.Find(x => x.AppropriateEpNum == epNum && x.AppropriateSeasonNumber == seasNum);
 
             if (ep is null)
             {
@@ -165,7 +165,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
                 string newName = TVSettings.Instance.FilenameFriendly(
                     TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
-                FileInfo fileWorthAdding = CheckFile(folder, fi, actualFile, newName, ep, files,settings);
+                FileInfo? fileWorthAdding = CheckFile(folder, fi, actualFile, newName, ep, files,settings);
 
                 if (fileWorthAdding != null)
                 {
@@ -291,7 +291,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
             bool dtOk = dt != null;
 
             bool notFuture =
-                dtOk && dt.Value.CompareTo(today) < 0; // isn't an episode yet to be aired
+                dtOk && dt!.Value.CompareTo(today) < 0; // isn't an episode yet to be aired
 
             // only add to the missing list if, either:
             // - force check is on

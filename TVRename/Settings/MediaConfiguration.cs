@@ -65,7 +65,7 @@ public abstract class MediaConfiguration : ISeriesSpecifier
     }
 
     public bool UseCustomShowName;
-    public string CustomShowName;
+    public string? CustomShowName;
     public string? LastName;
 
     public bool UseCustomRegion;
@@ -189,7 +189,7 @@ public abstract class MediaConfiguration : ISeriesSpecifier
 
     public bool UseCustomLanguage { get; set; }
 
-    public string CustomLanguageCode { get; set; }
+    public string? CustomLanguageCode { get; set; }
 
     protected abstract TVDoc.ProviderType DefaultProvider();
 
@@ -205,7 +205,7 @@ public abstract class MediaConfiguration : ISeriesSpecifier
         if (simplifiedShowName != "") { possibles.Add(simplifiedShowName); }
 
         //Check the custom show name too
-        if (UseCustomShowName)
+        if (UseCustomShowName && CustomShowName.HasValue())
         {
             string simplifiedCustomShowName = CustomShowName.CompareName();
             if (simplifiedCustomShowName != "") { possibles.Add(simplifiedCustomShowName); }
@@ -224,12 +224,12 @@ public abstract class MediaConfiguration : ISeriesSpecifier
     {
         get
         {
-            if (UseCustomShowName)
+            if (UseCustomShowName && CustomShowName.HasValue())
             {
                 return CustomShowName;
             }
 
-            CachedMediaInfo ser = CachedData;
+            CachedMediaInfo? ser = CachedData;
             if (ser?.Name.HasValue() ?? false)
             {
                 return ser.Name;

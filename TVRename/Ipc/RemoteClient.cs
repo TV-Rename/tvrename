@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
+//using System.Runtime.Remoting;
+//using System.Runtime.Remoting.Channels;
+//using System.Runtime.Remoting.Channels.Ipc;
 using System.Windows.Forms;
 using System.Diagnostics.CodeAnalysis;
 
@@ -26,28 +26,28 @@ internal class RemoteClient : MarshalByRefObject, IRemoteActions
     /// Registers an IPC channel to an existing remote service.
     /// This allows future instances of <see cref="RemoteClient"/> to be created as transparent proxies.
     /// </summary>
-    public static void Proxy()
-    {
-        ChannelServices.RegisterChannel(new IpcClientChannel(), true);
-        RemotingConfiguration.RegisterWellKnownClientType(typeof(RemoteClient), $"ipc://{IPC_CHANNEL}/{IPC_SERVICE}");
-    }
+    // public static void Proxy()
+    // {
+    //     ChannelServices.RegisterChannel(new IpcClientChannel(), true);
+    //     RemotingConfiguration.RegisterWellKnownClientType(typeof(RemoteClient), $"ipc://{IPC_CHANNEL}/{IPC_SERVICE}");
+    // }
 
     /// <summary>
     /// Binds the specified form and settings to the IPC actions allowing remote invocation.
     /// </summary>
     /// <param name="form">The form to bind actions to.</param>
     /// <param name="settings">The global application settings.</param>
-    public static void Bind(UI form)
-    {
-        MainUi = form;
-
-        Hashtable channelProperties = new() { { "exclusiveAddressUse", false }, { "portName", IPC_CHANNEL } };
-
-        IpcServerChannel serverChannel = new(channelProperties, null);
-        ChannelServices.RegisterChannel(serverChannel, true);
-
-        RemotingConfiguration.RegisterWellKnownServiceType(typeof(RemoteClient), IPC_SERVICE, WellKnownObjectMode.Singleton);
-    }
+    // public static void Bind(UI form)
+    // {
+    //     MainUi = form;
+    //
+    //     Hashtable channelProperties = new() { { "exclusiveAddressUse", false }, { "portName", IPC_CHANNEL } };
+    //
+    //     IpcServerChannel serverChannel = new(channelProperties, null);
+    //     ChannelServices.RegisterChannel(serverChannel, true);
+    //
+    //     RemotingConfiguration.RegisterWellKnownServiceType(typeof(RemoteClient), IPC_SERVICE, WellKnownObjectMode.Singleton);
+    // }
 
     /// <summary>
     /// Focuses the window and bring to foreground.

@@ -115,7 +115,7 @@ internal static class FinderHelper
         // look for a valid airdate in the filename
         // check for YMD, DMY, and MDY
         // only check against airdates we expect for the given show
-        CachedSeriesInfo ser = si.CachedShow;
+        CachedSeriesInfo? ser = si.CachedShow;
 
         if (ser is null)
         {
@@ -180,12 +180,12 @@ internal static class FinderHelper
 
     public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowConfiguration? show)
     {
-        return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, show, TVSettings.Instance.FNPRegexs, out TVSettings.FilenameProcessorRE _);
+        return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, show, TVSettings.Instance.FNPRegexs, out TVSettings.FilenameProcessorRE? _);
     }
 
     public static bool FindSeasEp(FileInfo theFile, out int seasF, out int epF, out int maxEp, ShowConfiguration? sI)
     {
-        return FindSeasEp(theFile, out seasF, out epF, out maxEp, sI, out TVSettings.FilenameProcessorRE _);
+        return FindSeasEp(theFile, out seasF, out epF, out maxEp, sI, out TVSettings.FilenameProcessorRE? _);
     }
 
     public static bool FileNeeded(FileInfo fi, ShowConfiguration si, DirFilesCache dfc)
@@ -351,7 +351,7 @@ internal static class FinderHelper
 
         try
         {
-            CachedSeriesInfo s = si.CachedShow;
+            CachedSeriesInfo? s = si.CachedShow;
             if (s is null)
             {
                 //We have not downloaded the cachedSeries, so have to assume that we need the episode/file
@@ -615,7 +615,7 @@ internal static class FinderHelper
                     }
 
                     int p = Math.Min(m.Groups["s"].Index, m.Groups["e"].Index);
-                    int p2 = Math.Min(p, hint.IndexOf(m.Groups.SyncRoot!.ToString(), StringComparison.Ordinal));
+                    int p2 = Math.Min(p, hint.IndexOf(m.Groups.SyncRoot.ToString()??string.Empty, StringComparison.Ordinal));
 
                     if (seas != -1 && ep != -1)
                     {
@@ -730,7 +730,7 @@ internal static class FinderHelper
 
             return addedShows;
         }
-        catch (AutoAddCancelledException ex)
+        catch (AutoAddCancelledException)
         {
             return addedShows;
         }
@@ -819,7 +819,7 @@ internal static class FinderHelper
             TVSettings.Instance.DefMovieUseDefaultLocation && TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
         {
             //TODO - Make generic, currently uses TMDB only
-            CachedMovieInfo foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null, new Locale(), true, true);
+            CachedMovieInfo? foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null, new Locale(), true, true);
             if (foundMovie != null)
             {
                 // no need to popup dialog

@@ -120,9 +120,7 @@ public static class Helpers
         {
             return;
         }
-        T temp = list[firstIndex];
-        list[firstIndex] = list[secondIndex];
-        list[secondIndex] = temp;
+        (list[firstIndex], list[secondIndex]) = (list[secondIndex], list[firstIndex]);
     }
 
     public static void SafeInvoke(this Control uiElement, System.Action updater, bool forceSynchronous)
@@ -242,7 +240,14 @@ public static class Helpers
 
         try
         {
-            Process.Start(what, arguments);
+            if (arguments.HasValue())
+            {
+                Process.Start(what, arguments);
+            }
+            else
+            {
+                Process.Start(what);
+            }
             return true;
         }
         catch (Win32Exception e)
@@ -270,8 +275,6 @@ public static class Helpers
         int longestName = mediaConfigurations.Select(configuration => configuration.ShowName.Length).Max();
         return mediaConfigurations.First(config => config.ShowName.Length == longestName);
     }
-
-    public static bool Contains(string source, string toCheck, StringComparison comp) => source.IndexOf(toCheck, comp) >= 0;
 
     public static string TranslateColorToHtml(Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
 

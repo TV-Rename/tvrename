@@ -20,7 +20,7 @@ public static class PathManager
     private const string STATISTICS_FILE_NAME = "Statistics.xml";
     private const string STATE_FILE_NAME = "State.xml";
 
-    private static string UserDefinedBasePath;
+    private static string? UserDefinedBasePath;
 
     public static FileInfo[] GetPossibleSettingsHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(SETTINGS_FILE_NAME + "*");
 

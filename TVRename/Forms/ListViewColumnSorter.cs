@@ -29,11 +29,11 @@ public class ListViewColumnSorter : IComparer
     /// <param name="x">First object to be compared</param>
     /// <param name="y">Second object to be compared</param>
     /// <returns>The result of the comparison. "0" if equal, negative if 'x' is less than 'y' and positive if 'x' is greater than 'y'</returns>
-    public int Compare(object x, object y)
+    public int Compare(object? x, object? y)
     {
         // Cast the objects to be compared to ListViewItem objects
-        ListViewItem listviewX = (ListViewItem)x;
-        ListViewItem listviewY = (ListViewItem)y;
+        ListViewItem? listviewX = x as ListViewItem;
+        ListViewItem? listviewY = y as ListViewItem;
 
         // Compare the two items
         int compareResult = ListViewItemSorter.Compare(listviewX, listviewY);
