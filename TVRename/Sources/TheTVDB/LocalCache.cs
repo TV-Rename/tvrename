@@ -30,8 +30,6 @@ namespace TVRename.TheTVDB;
 // ReSharper disable once InconsistentNaming
 public class LocalCache : MediaCache, iTVSource, iMovieSource
 {
-#nullable enable
-
     private readonly ConcurrentDictionary<int, ExtraEp>
         extraEpisodes; // IDs of extra episodes to grab and merge in on next update
 
@@ -668,7 +666,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 }
             }
 
-            Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
+            Dictionary<int, Tuple<JToken?, JToken?>> episodesResponses =
                 MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
 
             ProcessEpisodes(selectedCachedSeriesInfo, episodesResponses);
@@ -797,18 +795,22 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LOGGER.Info($"Updating {selectedCachedSeriesInfo.Name} {message}");
     }
 
-    private void ProcessEpisodes(CachedSeriesInfo si, Dictionary<int, Tuple<JToken, JToken>> episodesResponses)
+    private void ProcessEpisodes(CachedSeriesInfo si, Dictionary<int, Tuple<JToken?, JToken?>> episodesResponses)
     {
         int numberOfNewEpisodes = 0;
         int numberOfUpdatedEpisodes = 0;
 
         ICollection<int> oldEpisodeIds = GetOldEpisodeIds(si.TvdbCode);
 
-        foreach (KeyValuePair<int, Tuple<JToken, JToken>> episodeData in episodesResponses)
+        foreach (KeyValuePair<int, Tuple<JToken?, JToken?>> episodeData in episodesResponses)
         {
             try
             {
-                JToken episodeToUse = episodeData.Value.Item1 ?? episodeData.Value.Item2;
+                JToken? episodeToUse = episodeData.Value.Item1 ?? episodeData.Value.Item2;
+                if (episodeToUse is null)
+                {
+                    return;
+                }
                 long serverUpdateTime = episodeToUse.GetMandatoryLong("lastUpdated", TVDoc.ProviderType.TheTVDB);
                 (int newEps, int updatedEps) = ProcessEpisode(serverUpdateTime, episodeData, si, oldEpisodeIds);
                 numberOfNewEpisodes += newEps;
@@ -818,13 +820,13 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             {
                 LOGGER.Error(ex, "Did not recieve the expected format of episode json:");
                 LOGGER.Error(episodeData.Value.Item1?.ToString());
-                LOGGER.Error(episodeData.Value.Item2.ToString());
+                LOGGER.Error(episodeData.Value.Item2?.ToString());
             }
             catch (OverflowException ex)
             {
                 LOGGER.Error(ex, "Did not recieve the expected format of episode json:");
                 LOGGER.Error(episodeData.Value.Item1?.ToString());
-                LOGGER.Error(episodeData.Value.Item2.ToString());
+                LOGGER.Error(episodeData.Value.Item2?.ToString());
             }
         }
 
@@ -844,7 +846,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     }
 
     private (int newEps, int updatedEps) ProcessEpisode(long serverUpdateTime,
-        KeyValuePair<int, Tuple<JToken, JToken>> episodeData, CachedSeriesInfo si,
+        KeyValuePair<int, Tuple<JToken?, JToken?>> episodeData, CachedSeriesInfo si,
         ICollection<int> oldEpisodeIds)
     {
         int newEpisodeCount = 0;
@@ -892,7 +894,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         try
         {
             string keyName = TVSettings.Instance.TvdbVersion == ApiVersion.v4 ? "timeStamp" : "lastUpdated";
-            IEnumerable<long>? updateTimes = jsonUpdateResponse["data"]?.Select(a => (long)a.GetMandatoryLong(keyName,TVDoc.ProviderType.TheTVDB));
+            IEnumerable<long>? updateTimes = jsonUpdateResponse["data"]?.Select(a => a.GetMandatoryLong(keyName,TVDoc.ProviderType.TheTVDB));
             long maxUpdateTime = updateTimes?.DefaultIfEmpty(0).Max() ?? 0;
 
             //Add a day to take into account any timezone issues
@@ -1315,7 +1317,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             TagLine = GetTranslation(locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), "tagline", r),
             Overview = GetTranslation(locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), "overview", r),
             TrailerUrl = r["trailers"]?.FirstOrDefault()?["url"]?.ToString(),
-            Genres = r["genres"]?.Select(x => x["name"].ToString()).ToSafeList() ?? new SafeList<string>(),
+            Genres = r["genres"]?.Select(x => x["name"]?.ToString()).OfType<string>().ToSafeList() ?? new SafeList<string>(),
             IsSearchResultOnly = false,
             Dirty = false,
             PosterUrl = API.GetImageURL(GetArtwork(r, "Poster")),
@@ -1333,9 +1335,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private void AddMovieImagesV4(JObject r, CachedMovieInfo si)
     {
-        if (r["data"]?["artworks"] is not null)
+        JToken? jToken = r["data"]?["artworks"];
+        if (jToken is not null)
         {
-            foreach (MovieImage mi in r["data"]?["artworks"]!
+            foreach (MovieImage mi in jToken
                          .Where(imageJson => !IgnoreableImageJson(imageJson))
                          .Select(imageJson => GenerateMovieImage(si, imageJson)))
             {
@@ -1351,9 +1354,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             ImageUrl = API.GetImageURL((string?)imageJson["image"]),
             ThumbnailUrl = API.GetImageURL((string?)imageJson["thumbnail"]),
             LanguageCode = (string?)imageJson["language"],
-            Rating = (int)imageJson["score"],
+            Rating = imageJson.GetMandatoryInt("score",TVDoc.ProviderType.TheTVDB),
             MovieId = si.TvdbCode,
-            ImageStyle = MapBannerTvdbV4APICode((int) imageJson["type"]),
+            ImageStyle = MapBannerTvdbV4APICode(imageJson.GetMandatoryInt("type",TVDoc.ProviderType.TheTVDB)),
             MovieSource = TVDoc.ProviderType.TheTVDB,
             RatingCount = 1
         };
@@ -1368,7 +1371,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return;
         }
 
-        foreach (ShowImage mi in r["data"]?["artworks"]!.Select(imageJson => ConvertJsonToImage(imageJson, si)))
+        foreach (ShowImage mi in r["data"]?["artworks"]!.Select(imageJson => ConvertJsonToImage(imageJson, si))!)
         {
             si.AddOrUpdateImage(mi);
         }
@@ -1445,7 +1448,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         if (r["people"]?["actors"] is not null)
         {
-            foreach (JToken? actorJson in r?["people"]?["actors"])
+            foreach (JToken? actorJson in r?["people"]?["actors"]!)
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string name = actorJson["name"]?.ToString() ?? string.Empty;
@@ -1458,7 +1461,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         si.ClearCrew();
         if (r["people"]?["directors"] is not null)
         {
-            foreach (JToken? actorJson in r["people"]?["directors"])
+            foreach (JToken? actorJson in r["people"]?["directors"]!)
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string name = actorJson["name"]?.ToString() ?? string.Empty;
@@ -1471,7 +1474,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         if (r["people"]?["producers"] is not null)
         {
-            foreach (JToken? actorJson in r["people"]?["producers"])
+            foreach (JToken? actorJson in r["people"]?["producers"]!)
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string name = actorJson["name"]?.ToString() ?? string.Empty;
@@ -1484,7 +1487,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         if (r["people"]?["writers"] is not null)
         {
-            foreach (JToken? actorJson in r["people"]["writers"])
+            foreach (JToken? actorJson in r["people"]?["writers"]!)
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string name = actorJson["name"]?.ToString() ?? string.Empty;
@@ -1598,12 +1601,17 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private CachedMovieInfo GenerateCoreMovieInfoV4(JObject r, Locale locale)
     {
         JToken? dataNode = r["data"];
+        if (dataNode is null)
+        {
+            throw new SourceConsistencyException($"Data element not found in {r}", TVDoc.ProviderType.TheTVDB);
+        }
+
         JToken? collectionNode = GetCollectionNodeV4(dataNode);
 
         return new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
         {
             FirstAired = GetReleaseDateV4(r, locale),
-            TvdbCode = (int) dataNode["id"],
+            TvdbCode = dataNode.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB),
             Slug = ((string?) dataNode["slug"])?.Trim(),
             Imdb = GetExternalIdV4(r, "IMDB"),
             Runtime = ((string?) dataNode["runtime"])?.Trim(),
@@ -1617,22 +1625,27 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             InstagramId = GetExternalIdV4(r, "Instagram"),
             TwitterId = GetExternalIdV4(r, "Twitter"),
             Dirty = false,
-            Network = dataNode["studios"]?.Select(x=>x["name"].ToString()).ToPsv(),
+            Network = dataNode["studios"]?.Select(x=>x["name"]?.ToString()).OfType<string>().ToPsv(),
             ShowLanguage = dataNode["audioLanguages"]?.ToString(),
             Country = dataNode["originalCountry"]?.ToString(),
             ContentRating = GetContentRatingV4(r, locale),
             Status = dataNode["status"]?["name"]?.ToString(),
-            SrvLastUpdated = ((DateTime) dataNode["lastUpdated"]).ToUnixTime(),
+            SrvLastUpdated = GetUnixTime(dataNode, "lastUpdated"),
             Genres = GetGenresV4(r),
 
             CollectionId = collectionNode?["id"]?.ToString().ToInt(),
             CollectionName = collectionNode?["name"]?.ToString(),
         };
     }
+    private long GetUnixTime(JToken dataNode, string key)
+    {
+        JToken updated = dataNode[key] ?? throw new SourceConsistencyException($"Data element {key} not found in {dataNode}", TVDoc.ProviderType.TheTVDB);
+        return ((DateTime)updated).ToUnixTime();
+    }
 
     private static JToken? GetCollectionNodeV4(JToken? r)
     {
-        return r["lists"]?.FirstOrDefault(x => x["isOfficial"].ToObject<bool>());
+        return r?["lists"]?.FirstOrDefault(x => (bool?)x["isOfficial"] is true);
     }
 
     private DateTime? GetReleaseDateV4(JObject r, Locale locale)
@@ -1700,24 +1713,25 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private static void AddCastAndCrew(JObject r, CachedMovieInfo si)
     {
-        if (r["data"]?["characters"] is not null)
+        JToken? chactersToken = r["data"]?["characters"];
+        if (chactersToken is not null)
         {
-            foreach (JToken? actorJson in r["data"]?["characters"]?.Where(x => x["peopleType"]?.ToString() == "Actor"))
+            foreach (JToken? actorJson in chactersToken.Where(x => x["peopleType"]?.ToString() == "Actor"))
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string name = actorJson["personName"]?.ToString() ?? string.Empty;
                 string image = API.GetImageURL(actorJson["image"]?.ToObject<string?>());
-                string role = actorJson["name"]?.ToString();
+                string? role = actorJson["name"]?.ToString();
                 int? sort = actorJson["sort"]?.ToString().ToInt();
                 si.AddActor(new Actor(id, image, name, role, 0, sort));
             }
 
-            foreach (JToken? actorJson in r["data"]?["characters"]?.Where(x => x["peopleType"]?.ToString() != "Actor"))
+            foreach (JToken? actorJson in chactersToken.Where(x => x["peopleType"]?.ToString() != "Actor"))
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string name = actorJson["personName"]?.ToString() ?? string.Empty;
-                string role = actorJson["peopleType"]?.ToString();
-                string sort = actorJson["sort"]?.ToString();
+                string? role = actorJson["peopleType"]?.ToString();
+                string? sort = actorJson["sort"]?.ToString();
                 si.AddCrew(new Crew(id, string.Empty, name, role, string.Empty, sort));
             }
         }
@@ -1750,14 +1764,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             TvdbCode = jToken.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB),
             IsSearchResultOnly = false,
             Dirty = false,
-            Slug = ((string?) jToken?["slug"])?.Trim(),
+            Slug = ((string?) jToken["slug"])?.Trim(),
             Genres = GetGenresV4(r),
-            ShowLanguage = jToken?["originalLanguage"]?.ToString(),
-            Country = jToken?["originalCountry"]?.ToString(),
+            ShowLanguage = jToken["originalLanguage"]?.ToString(),
+            Country = jToken["originalCountry"]?.ToString(),
             TrailerUrl = GetTrailerUrl(r, locale),
-            SrvLastUpdated = ((DateTime) jToken?["lastUpdated"]).ToUnixTime(),
-            Status = (string?) jToken?["status"]?["name"],
-            FirstAired = JsonHelper.ParseFirstAired((string?) jToken?["firstAired"]),
+            SrvLastUpdated = GetUnixTime(jToken, "lastUpdated"),
+            Status = (string?) jToken["status"]?["name"],
+            FirstAired = JsonHelper.ParseFirstAired((string?) jToken["firstAired"]),
             AirsDay = GetAirsDayV4(r),
             Network = GetNetworks(r),
             Imdb = GetExternalIdV4(r, "IMDB"),
@@ -1796,9 +1810,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private static void AddCastAndCrewV4(JObject r, CachedSeriesInfo si)
     {
-        if (r["data"]?["characters"] is not null)
+        JToken? characterNode = r["data"]?["characters"];
+        if (characterNode is not null)
         {
-            foreach (JToken? actorJson in r["data"]?["characters"]?.Where(x => x?["peopleType"]?.ToString() == "Actor"))
+            foreach (JToken? actorJson in characterNode.Where(x => x?["peopleType"]?.ToString() == "Actor"))
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string name = actorJson["personName"]?.ToString() ?? string.Empty;
@@ -1808,7 +1823,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 si.AddActor(new Actor(id, image, name, role, 0, sort));
             }
 
-            foreach (JToken? actorJson in r["data"]?["characters"]?.Where(x => x["peopleType"]?.ToString() != "Actor"))
+            foreach (JToken? actorJson in characterNode.Where(x => x["peopleType"]?.ToString() != "Actor"))
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string? name = actorJson["personName"]?.ToString() ?? string.Empty;
@@ -1900,14 +1915,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private DateTime? GetAirsTimeV4(JObject r)
     {
-        string airsTimeString = (string?)r["data"]?["airsTime"];
+        string? airsTimeString = (string?)r["data"]?["airsTime"];
         return JsonHelper.ParseAirTime(airsTimeString);
     }
 
     private string? GetAirsDayV4(JObject r)
     {
         JToken? jTokens = r["data"]?["airsDays"];
-        IEnumerable<JToken> days = jTokens?.Children().Where(token => (bool)token.Values().First());
+        IEnumerable<JToken>? days = jTokens?.Children().Where(token => (bool)token.Values().First());
         return days?.Select(ConvertDayName).ToCsv();
     }
 
@@ -1930,7 +1945,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             throw new ArgumentNullException(nameof(locale));
         }
 
-        JObject seriesData = (JObject)jsonResponse["data"];
+        JObject? seriesData = (JObject?)jsonResponse["data"];
         if (seriesData is null)
         {
             throw new SourceConsistencyException($"Data element not found in {jsonResponse}",
@@ -1941,7 +1956,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
         {
             JObject seriesDataDefaultLang =
-                (JObject)jsonDefaultLangResponse["data"] ?? throw new InvalidOperationException();
+                (JObject?)jsonDefaultLangResponse["data"] ?? throw new InvalidOperationException();
 
             si = new CachedSeriesInfo(seriesData, seriesDataDefaultLang, locale, TVDoc.ProviderType.TheTVDB);
         }
@@ -2128,14 +2143,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             foreach (JToken jsonActor in jsonActors)
             {
-                int actorId = (int)jsonActor["id"];
+                int actorId = jsonActor.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
                 string actorImage = API.GetImageURL((string?)jsonActor["image"]);
                 string actorName = (string?)jsonActor["name"] ??
                                    throw new SourceConsistencyException("No Actor", TVDoc.ProviderType.TheTVDB);
 
                 string? actorRole = (string?)jsonActor["role"];
-                int actorSeriesId = (int)jsonActor["seriesId"];
-                int actorSortOrder = (int)jsonActor["sortOrder"];
+                int actorSeriesId = jsonActor.GetMandatoryInt("seriesId",TVDoc.ProviderType.TheTVDB);
+                int? actorSortOrder = (int?)jsonActor["sortOrder"];
 
                 si.AddActor(new Actor(actorId, actorImage, actorName, actorRole, actorSeriesId,
                     actorSortOrder));
@@ -2235,12 +2250,12 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             SeriesSource = TVDoc.ProviderType.TheTVDB,
             SeriesId = tvdbId,
             ImageUrl = API.GetImageURL((string?)bannerData["fileName"]),
-            Id = (int)bannerData["id"],
+            Id = bannerData.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB),
             ImageStyle = MapBannerType((string?)bannerData["keyType"]),
             Subject = MapTypeToSubject((string?)bannerData["keyType"]),
             LanguageCode = Languages.Instance.GetLanguageFromCode((string?)bannerData["language"])?.Abbreviation,
             SeasonNumber = seasonId,
-            RatingCount = (int)bannerData["ratingsInfo"]?["count"],
+            RatingCount = (int?)bannerData["ratingsInfo"]?["count"] ??0,
             Rating = rating,
             Resolution = (string?)bannerData["resolution"],
             ThumbnailUrl = API.GetImageURL((string?)bannerData["thumbnail"])
@@ -2337,7 +2352,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 JObject seasonInfo = API.GetSeasonEpisodesV4(si, s.SeasonId,
                     locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
 
-                JToken episodeData = seasonInfo["data"]?["episodes"];
+                JToken? episodeData = seasonInfo["data"]?["episodes"];
 
                 if (episodeData != null)
                 {
@@ -2351,7 +2366,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                     });
                 }
 
-                JToken imageData = seasonInfo["data"]?["artwork"];
+                JToken? imageData = seasonInfo["data"]?["artwork"];
                 if (imageData != null)
                 {
                     foreach (ShowImage newImage in imageData.Select(im => ConvertJsonToImage(im, si)))
@@ -2379,15 +2394,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private ShowImage ConvertJsonToImage(JToken imageJson,CachedSeriesInfo si)
     {
-        int imageCodeType = (int)imageJson["type"];
+        int imageCodeType = imageJson.GetMandatoryInt("type",TVDoc.ProviderType.TheTVDB);
 
         return new ShowImage
         {
-            Id = (int)imageJson["id"],
+            Id = imageJson.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB),
             ImageUrl = API.GetImageURL((string?)imageJson["image"]),
             ThumbnailUrl = API.GetImageURL((string?)imageJson["thumbnail"]),
             LanguageCode = (string?)imageJson["language"],
-            Rating = (int)imageJson["score"],
+            Rating = imageJson.GetMandatoryInt("score",TVDoc.ProviderType.TheTVDB),
             SeriesId = si.TvdbCode,
             ImageStyle = MapBannerTvdbV4APICode(imageCodeType),
             Subject = MapSubjectTVDBV4APICode(imageCodeType),
@@ -2426,9 +2441,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private void AddTranslations(Episode newEp, JObject downloadSeriesTranslationsJsonV4)
     {
-        string? transName = downloadSeriesTranslationsJsonV4["data"]["name"]?.ToString();
+        string? transName = downloadSeriesTranslationsJsonV4["data"]?["name"]?.ToString();
         newEp.Name = Translate(newEp.Name,transName);
-        string? transOverview = downloadSeriesTranslationsJsonV4["data"]["overview"]?.ToString();
+        string? transOverview = downloadSeriesTranslationsJsonV4["data"]?["overview"]?.ToString();
         newEp.Overview = Translate(newEp.Overview,transOverview);
         //Set a language code on the SI?? si.lan ==downloadSeriesTranslationsJsonV4["data"]["language"].ToString();
     }
@@ -2439,7 +2454,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         if (transName.HasValue() && !transName.IsPlaceholderName())
         {
-            return transName!;
+            return transName;
         }
 
         if (transName.HasValue() && transName.IsPlaceholderName() && originalName.HasValue() && !originalName.IsPlaceholderName())
@@ -2459,24 +2474,24 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         Episode x = new(code, si)
         {
-            EpisodeId = episodeJson["id"].ToObject<int>(),
-            SeriesId = episodeJson["seriesId"].ToObject<int?>() ?? -1,
-            Name = episodeJson["name"].ToObject<string>() ?? string.Empty,
+            EpisodeId = episodeJson.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB),
+            SeriesId = (int?)episodeJson["seriesId"] ?? -1,
+            Name = (string?)episodeJson["name"] ?? string.Empty,
             FirstAired = GetEpisodeAiredDate(episodeJson),
-            Runtime = episodeJson["runtime"].ToObject<string>(),
-            Filename = episodeJson["image"].ToObject<string>(),
-            SrvLastUpdated = GetUpdateTicks(episodeJson["lastUpdated"].ToObject<string>())
+            Runtime = (string?)episodeJson["runtime"],
+            Filename = (string?)episodeJson["image"],
+            SrvLastUpdated = GetUpdateTicks((string?)episodeJson["lastUpdated"])
         };
 
         if (order == ProcessedSeason.SeasonType.dvd)
         {
-            x.ReadDvdSeasonNum = episodeJson["seasonNumber"].ToObject<int?>()??0;
-            x.DvdEpNum = episodeJson["number"].ToObject<int?>()??0;
+            x.ReadDvdSeasonNum = episodeJson["seasonNumber"]?.ToObject<int?>()??0;
+            x.DvdEpNum = episodeJson["number"]?.ToObject<int?>()??0;
         }
         else
         {
-            x.AiredSeasonNumber = episodeJson["seasonNumber"].ToObject<int?>()??0;
-            x.AiredEpNum = episodeJson["number"].ToObject<int?>()??0;
+            x.AiredSeasonNumber = episodeJson["seasonNumber"]?.ToObject<int?>()??0;
+            x.AiredEpNum = episodeJson["number"]?.ToObject<int?>()??0;
         }
 
         return (x, GetAppropriateLanguage(episodeJson["nameTranslations"], locale));
@@ -2504,7 +2519,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private DateTime? GetEpisodeAiredDate(JToken episodeJson)
     {
-        string date = episodeJson["aired"]?.ToString();
+        string? date = episodeJson["aired"]?.ToString();
         try
         {
             if (!date.HasValue())
@@ -2528,22 +2543,22 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return;
         }
 
-        List<JObject> episodePrefLangResponses = GetEpisodes(code.TvdbId, locale);
-        List<JObject> episodeDefaultLangResponses = null;
+        List<JObject>? episodePrefLangResponses = GetEpisodes(code.TvdbId, locale);
+        List<JObject>? episodeDefaultLangResponses = null;
         if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
         {
             episodeDefaultLangResponses = GetEpisodes(code.TvdbId, new Locale(TVSettings.Instance.PreferredTVDBLanguage));
         }
 
-        Dictionary<int, Tuple<JToken, JToken>> episodeResponses =
+        Dictionary<int, Tuple<JToken?, JToken?>> episodeResponses =
             MergeEpisodeResponses(episodePrefLangResponses, episodeDefaultLangResponses);
 
         Parallel.ForEach(episodeResponses, episodeData =>
         {
             int episodeId = episodeData.Key;
             Thread.CurrentThread.Name ??= $"Episode {episodeId} for {si.Name}"; // Can only set it once
-            JToken prefLangEpisode = episodeData.Value.Item1;
-            JToken defltLangEpisode = episodeData.Value.Item2;
+            JToken? prefLangEpisode = episodeData.Value.Item1;
+            JToken? defltLangEpisode = episodeData.Value.Item2;
             try
             {
                 UpdateEpisodeNowv3(code.TvdbId, prefLangEpisode, defltLangEpisode, si);
@@ -2561,10 +2576,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         });
     }
 
-    private static Dictionary<int, Tuple<JToken, JToken>> MergeEpisodeResponses(
+    private static Dictionary<int, Tuple<JToken?, JToken?>> MergeEpisodeResponses(
         List<JObject>? episodeResponses, List<JObject>? episodeDefaultLangResponses)
     {
-        Dictionary<int, Tuple<JToken, JToken?>> episodeIds = new();
+        Dictionary<int, Tuple<JToken?, JToken?>> episodeIds = new();
 
         if (episodeResponses != null)
         {
@@ -2579,7 +2594,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
                 foreach (JToken episodeData in episodeDatas)
                 {
-                    int x = (int)episodeData["id"];
+                    int x = episodeData.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
                     if (x > 0)
                     {
                         if (episodeIds.ContainsKey(x))
@@ -2588,7 +2603,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                         }
                         else
                         {
-                            episodeIds.Add(x, new Tuple<JToken, JToken?>(episodeData, null));
+                            episodeIds.Add(x, new Tuple<JToken?, JToken?>(episodeData, null));
                         }
                     }
                 }
@@ -2608,17 +2623,17 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
                 foreach (JToken episodeData in episodeDatas)
                 {
-                    int x = (int)episodeData["id"];
+                    int x = episodeData.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
                     if (x > 0)
                     {
                         if (episodeIds.ContainsKey(x))
                         {
-                            JToken old = episodeIds[x].Item1;
-                            episodeIds[x] = new Tuple<JToken, JToken>(old, episodeData);
+                            JToken? old = episodeIds[x].Item1;
+                            episodeIds[x] = new Tuple<JToken?, JToken?>(old, episodeData);
                         }
                         else
                         {
-                            episodeIds.Add(x, new Tuple<JToken, JToken>(null, episodeData));
+                            episodeIds.Add(x, new Tuple<JToken?, JToken?>(null, episodeData));
                         }
                     }
                 }
@@ -2642,7 +2657,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return false; // shouldn't happen
         }
 
-        Episode ep = FindEpisodeById(episodeId);
+        Episode? ep = FindEpisodeById(episodeId);
         string eptxt = EpisodeDescription(order, episodeId, ep);
 
         CachedSeriesInfo cachedSeriesInfo = Series[seriesId];
@@ -2681,7 +2696,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             SayNothing();
         }
 
-        JObject jsonResponseData = (JObject)jsonEpisodeResponse["data"] ??
+        JObject jsonResponseData = (JObject?)jsonEpisodeResponse["data"] ??
                                    throw new SourceConsistencyException("No Data in Ep Response",
                                        TVDoc.ProviderType.TheTVDB);
         if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
@@ -2691,7 +2706,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
         {
-            JObject seriesDataDefaultLang = (JObject)jsonEpisodeDefaultLangResponse["data"];
+            JObject? seriesDataDefaultLang = (JObject?)jsonEpisodeDefaultLangResponse["data"];
             return UpdateEpisodeNowv3(seriesId, jsonResponseData, seriesDataDefaultLang, cachedSeriesInfo);
         }
         else
@@ -2700,7 +2715,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private bool UpdateEpisodeNowv3(int seriesId, JToken jsonResponseData, JToken? seriesDataDefaultLang,
+    private bool UpdateEpisodeNowv3(int seriesId, JToken? jsonResponseData, JToken? seriesDataDefaultLang,
         CachedSeriesInfo si)
     {
         if (!Series.ContainsKey(seriesId))
@@ -2711,9 +2726,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         try
         {
             Episode e =
-                seriesDataDefaultLang != null
-                    ? new Episode(seriesId, (JObject)jsonResponseData, (JObject)seriesDataDefaultLang, si)
-                    : new Episode(seriesId, (JObject)jsonResponseData, si);
+                seriesDataDefaultLang != null 
+                    ? new Episode(seriesId, (JObject?)jsonResponseData, (JObject?)seriesDataDefaultLang, si)
+                    : new Episode(seriesId, (JObject)jsonResponseData!, si);
 
             if (e.Ok())
             {
@@ -2784,7 +2799,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         Say($"Movie: {id.Name} from The TVDB");
         try
         {
-            CachedMovieInfo downloadedSi = DownloadMovieNow(id, id.TargetLocale, showErrorMsgBox);
+            CachedMovieInfo? downloadedSi = DownloadMovieNow(id, id.TargetLocale, showErrorMsgBox);
 
             if (downloadedSi is null)
             {
@@ -2844,7 +2859,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             ok = DownloadSeriesNow(seriesd, false, bannersToo, showErrorMsgBox) != null;
         }
 
-        ICollection<Episode> collection = Series[code]?.Episodes;
+        ICollection<Episode>? collection = Series[code]?.Episodes;
         if (collection != null)
         {
             foreach (Episode e in collection.Where(e => e.Dirty && e.EpisodeId > 0))
@@ -2922,8 +2937,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         // but, the number could also be a name, so continue searching as usual
         //text = text.Replace(".", " ");
 
-        JObject jsonSearchResponse = null;
-        JObject jsonSearchDefaultLangResponse = null;
+        JObject? jsonSearchResponse = null;
+        JObject? jsonSearchDefaultLangResponse = null;
         try
         {
             jsonSearchResponse = TVSettings.Instance.TvdbVersion == ApiVersion.v4
@@ -3161,8 +3176,12 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private int ParseIdFromObjectID(JToken jToken)
+    private int ParseIdFromObjectID(JToken? jToken)
     {
+        if (jToken is null)
+        {
+            return 0;
+        }
         string baseValue = jToken.ToString();
         string[] splitString = baseValue.Split('-');
         if (splitString.Length == 2)
@@ -3211,7 +3230,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private static string? FindTranslation(JObject r, Locale locale, string tag)
     {
-        JToken languagesArray = r[tag];
+        JToken? languagesArray = r[tag];
         if (languagesArray == null ||!languagesArray.HasValues || languagesArray is not JObject)
         {
             return null;
@@ -3229,7 +3248,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private static string? Decode(JObject r, string tag)
     {
-        string s = (string?)r[tag];
+        string? s = (string?)r[tag];
         return s.HasValue() ? System.Web.HttpUtility.HtmlDecode(s)?.Trim() : null;
     }
 
@@ -3257,7 +3276,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             lock (SERIES_LOCK)
             {
-                CachePersistor.SaveCache(Series, Movies, CacheFile,
+                CachePersistor.SaveCache(Series, Movies, CacheFile!,
                     LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
             }
         }
@@ -3297,7 +3316,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         lock (MOVIE_LOCK)
         {
-            Movies.TryGetValue(tvdbId.TvdbId, out CachedMovieInfo returnValue);
+            Movies.TryGetValue(tvdbId.TvdbId, out CachedMovieInfo? returnValue);
             SayNothing();
             return returnValue;
         }

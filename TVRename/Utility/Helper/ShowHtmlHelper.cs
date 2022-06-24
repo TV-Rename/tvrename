@@ -1,4 +1,3 @@
-#nullable enable
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
@@ -6,7 +5,6 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Web;
 using TVRename.Forms;
 using TVRename.Properties;
 
@@ -1620,7 +1618,7 @@ internal static class ShowHtmlHelper
             {
                 foreach (FileInfo fi in fl)
                 {
-                    string urlFilename = HttpUtility.UrlEncode(fi.FullName);
+                    string urlFilename = System.Web.HttpUtility.UrlEncode(fi.FullName);
                     body += $" <A HREF=\"watch://{urlFilename}\" class=\"search\">Watch</A>";
                     body += $" <A HREF=\"explore://{urlFilename}\" class=\"search\">Show in Explorer</A>";
                 }
@@ -1768,7 +1766,7 @@ internal static class ShowHtmlHelper
         {
             return ei.Name;
         }
-        return HttpUtility.HtmlEncode(CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(6)));
+        return System.Web.HttpUtility.HtmlEncode(CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(6)));
     }
 
     private static string GetOverview(ProcessedEpisode ei)

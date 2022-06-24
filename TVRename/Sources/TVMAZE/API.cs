@@ -1,5 +1,3 @@
-#nullable disable
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -69,7 +67,7 @@ internal static class API
 
     private static CachedSeriesInfo? ConvertSearchResult(JToken token)
     {
-        double score = token["score"].Value<double>();
+        double? score = token["score"]?.Value<double?>();
         JObject? show = token["show"]?.Value<JObject?>();
         if (show is null)
         {
@@ -86,7 +84,7 @@ internal static class API
         try
         {
             JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?thetvdb=" + source.TvdbId, 3, 2);
-            int tvMazeId = (int)r["id"];
+            int tvMazeId = r.GetMandatoryInt("id",TVDoc.ProviderType.TVmaze);
 
             source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
         }
@@ -107,7 +105,7 @@ internal static class API
                 try
                 {
                     JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?imdb=" + imdbCode, 3, 2);
-                    int tvMazeId = (int)r["id"];
+                    int tvMazeId = r.GetMandatoryInt("id",TVDoc.ProviderType.TVmaze);
                     JToken externalsToken = GetChild(r, "externals");
                     JToken tvdbToken = GetChild(externalsToken, "thetvdb");
                     int tvdb = tvdbToken.Type == JTokenType.Null ? -1 : (int)tvdbToken;
@@ -179,7 +177,7 @@ internal static class API
         CachedSeriesInfo downloadedSi = GenerateSeriesInfo(results);
         JToken jToken = GetChild(results, "_embedded");
 
-        foreach (string name in GetChild(jToken, "akas").Select(akaJson => (string)akaJson["name"]).Where(name => name != null))
+        foreach (string name in GetChild(jToken, "akas").Select(akaJson => (string?)akaJson["name"]).OfType<string>())
         {
             downloadedSi.AddAlias(name);
         }
@@ -198,10 +196,10 @@ internal static class API
             JToken imageNode = GetChild(jsonSeason, "image");
             if (imageNode.HasValues)
             {
-                string? child = (string)GetChild(imageNode, "original");
+                string? child = (string?)GetChild(imageNode, "original");
                 if (child != null)
                 {
-                    downloadedSi.AddOrUpdateImage(GenerateImage(ss.TvMazeId, (int)jsonSeason["number"], child));
+                    downloadedSi.AddOrUpdateImage(GenerateImage(ss.TvMazeId, jsonSeason.GetMandatoryInt("number",TVDoc.ProviderType.TVmaze), child));
                 }
             }
         }
@@ -231,8 +229,10 @@ internal static class API
             .Select(token =>
             {
                 JToken personTokenToken = GetChild(token, "person");
-                return (string)personTokenToken["name"];
-            }).ToList();
+                return (string?)personTokenToken["name"];
+            })
+            .OfType<string>()
+            .ToList();
     }
 
     private static List<string> GetDirectors(JToken crew)
@@ -246,8 +246,10 @@ internal static class API
             .Select(token =>
             {
                 JToken personTokenToken = GetChild(token, "person");
-                return (string)personTokenToken["name"];
-            }).ToList();
+                return (string?)personTokenToken["name"];
+            })
+            .OfType<string>()
+            .ToList();
     }
 
     private static ShowImage GenerateImage(int seriesId, JToken imageJson)
@@ -255,10 +257,10 @@ internal static class API
         ShowImage newBanner = new()
         {
             SeriesId = seriesId,
-            ImageUrl = (string)GetChild(GetChild(GetChild(imageJson, "resolutions"), "original"), "url"),
-            Id = (int)imageJson["id"],
-            ImageStyle = MapImageType((string)imageJson["type"]),
-            Rating = (bool)imageJson["main"] ? 10 : 1,
+            ImageUrl = (string?)GetChild(GetChild(GetChild(imageJson, "resolutions"), "original"), "url"),
+            Id = imageJson.GetMandatoryInt("id",TVDoc.ProviderType.TVmaze),
+            ImageStyle = MapImageType((string?)imageJson["type"]),
+            Rating = (bool?)imageJson["main"] ?? false ? 10 : 1,
             RatingCount = 1,
             SeriesSource = TVDoc.ProviderType.TVmaze,
         };
@@ -303,23 +305,23 @@ internal static class API
     {
         JToken personToken = GetChild(jsonActor, "person");
         JToken actorImageNode = GetChild(personToken, "image");
-        int actorId = (int)personToken["id"];
-        string? actorImage = actorImageNode.HasValues ? (string)actorImageNode["medium"] : null;
-        string actorName = (string)personToken["name"] ?? throw new SourceConsistencyException("No Actor Name", TVDoc.ProviderType.TVmaze);
-        string actorRole = (string)GetChild(GetChild(jsonActor, "character"), "name");
-        int actorSortOrder = (int)personToken["id"];
+        int actorId = personToken.GetMandatoryInt("id",TVDoc.ProviderType.TVmaze);
+        string? actorImage = actorImageNode.HasValues ? (string?)actorImageNode["medium"] : null;
+        string actorName = (string?)personToken["name"] ?? throw new SourceConsistencyException("No Actor Name", TVDoc.ProviderType.TVmaze);
+        string? actorRole = (string?)GetChild(GetChild(jsonActor, "character"), "name");
+        int? actorSortOrder = (int?)personToken["id"];
         return new Actor(actorId, actorImage, actorName, actorRole, seriesId, actorSortOrder);
     }
 
     private static Season GenerateSeason(int seriesId, JToken json)
     {
-        int id = (int)json["id"];
-        int number = (int)json["number"];
-        string url = (string)json["url"];
-        string name = (string)json["name"];
-        string description = (string)json["summary"];
+        int id = json.GetMandatoryInt("id",TVDoc.ProviderType.TVmaze);
+        int number = json.GetMandatoryInt("number",TVDoc.ProviderType.TVmaze);
+        string? url = (string?)json["url"];
+        string? name = (string?)json["name"];
+        string? description = (string?)json["summary"];
         JToken imageNode = GetChild(json, "image");
-        string imageUrl = imageNode.HasValues ? (string)imageNode["original"] : null;
+        string? imageUrl = imageNode.HasValues ? (string?)imageNode["original"] : null;
         return new Season(id, number, name, StripPTags(description ?? string.Empty), url, imageUrl, seriesId);
     }
 
@@ -334,7 +336,7 @@ internal static class API
 
         if (r.ContainsKey("genres"))
         {
-            returnValue.Genres = r["genres"]?.Select(x => x.Value<string>()?.Trim()).Distinct().ToSafeList() ?? new SafeList<string>();
+            returnValue.Genres = r["genres"]?.Select(x => x.Value<string>()?.Trim()).OfType<string>().Distinct().ToSafeList() ?? new SafeList<string>();
         }
 
         List<string> typesToTransferToGenres = new() { "Animation", "Reality", "Documentary", "News", "Sports" };
@@ -343,17 +345,17 @@ internal static class API
             returnValue.Genres.Add(conversionType);
         }
 
-        string s1 = (string)r["name"];
+        string? s1 = (string?)r["name"];
         if (s1 != null)
         {
             returnValue.Name = System.Web.HttpUtility.HtmlDecode(s1).Trim();
         }
 
-        string siteRatingString = ((string)GetChild(r, "rating")["average"])?.Trim();
+        string? siteRatingString = ((string?)GetChild(r, "rating")["average"])?.Trim();
         float.TryParse(siteRatingString, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out float parsedSiteRating);
         returnValue.SiteRating = parsedSiteRating;
 
-        string siteRatingVotesString = (string)r["weight"];
+        string? siteRatingVotesString = (string?)r["weight"];
         int.TryParse(siteRatingVotesString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out int parsedSiteRatingVotes);
         returnValue.SiteRatingVotes = parsedSiteRatingVotes;
 
@@ -362,34 +364,34 @@ internal static class API
 
     private static CachedSeriesInfo GenerateCoreSeriesInfo(JObject r)
     {
-        string nw = GetKeySubKey(r, "network", "name");
-        string wc = GetKeySubKey(r, "webChannel", "name");
-        string days = GetChild(r, "schedule")["days"]?.Select(x => x.Value<string>()).OfType<string>().ToCsv();
+        string? nw = GetKeySubKey(r, "network", "name");
+        string? wc = GetKeySubKey(r, "webChannel", "name");
+        string? days = GetChild(r, "schedule")["days"]?.Select(x => x.Value<string>()).OfType<string>().ToCsv();
         JToken externalsToken = GetChild(r, "externals");
-        int tvdb = GetChild(externalsToken, "thetvdb").Type == JTokenType.Null ? -1 : (int)externalsToken["thetvdb"];
-        int rage = GetChild(externalsToken, "tvrage").Type == JTokenType.Null ? -1 : (int)externalsToken["tvrage"];
+        int tvdb = GetChild(externalsToken, "thetvdb").Type == JTokenType.Null ? -1 : (int?)externalsToken["thetvdb"] ?? -1;
+        int rage = GetChild(externalsToken, "tvrage").Type == JTokenType.Null ? -1 : (int?)externalsToken["tvrage"] ?? -1;
 
         return new CachedSeriesInfo(new Locale(), TVDoc.ProviderType.TVmaze)
         {
             IsSearchResultOnly = false,
             AirsDay = days,
-            AirsTime = JsonHelper.ParseAirTime((string)GetChild(r, "schedule")["time"]),
-            FirstAired = JsonHelper.ParseFirstAired((string)r["premiered"]),
+            AirsTime = JsonHelper.ParseAirTime((string?)GetChild(r, "schedule")["time"]),
+            FirstAired = JsonHelper.ParseFirstAired((string?)r["premiered"]),
             TvdbCode = tvdb,
             TvMazeCode = (int)(r["id"] ?? 0),
             TvRageCode = rage,
-            Imdb = (string)externalsToken["imdb"],
+            Imdb = (string?)externalsToken["imdb"],
             Network = nw ?? wc,
-            WebUrl = ((string)r["url"])?.Trim(),
+            WebUrl = ((string?)r["url"])?.Trim(),
             PosterUrl = GetUrl(r, "original"),
-            OfficialUrl = (string)r["officialSite"],
-            ShowLanguage = (string)r["language"],
-            Overview = System.Web.HttpUtility.HtmlDecode((string)r["summary"])?.Trim(),
-            Runtime = ((string)r["runtime"])?.Trim(),
-            Status = MapStatus((string)r["status"] ?? throw new SourceConsistencyException("No Status", TVDoc.ProviderType.TVmaze)),
-            SeriesType = (string)r["type"],
+            OfficialUrl = (string?)r["officialSite"],
+            ShowLanguage = (string?)r["language"],
+            Overview = System.Web.HttpUtility.HtmlDecode((string?)r["summary"])?.Trim(),
+            Runtime = ((string?)r["runtime"])?.Trim(),
+            Status = MapStatus((string?)r["status"] ?? throw new SourceConsistencyException("No Status", TVDoc.ProviderType.TVmaze)),
+            SeriesType = (string?)r["type"],
             SrvLastUpdated =
-                long.TryParse((string)r["updated"], out long updateTime)
+                long.TryParse((string?)r["updated"], out long updateTime)
                     ? updateTime
                     : 0,
             Dirty = false,
@@ -403,7 +405,7 @@ internal static class API
         {
             return null;
         }
-        JToken keyVal = r[key];
+        JToken? keyVal = r[key];
 
         switch (keyVal)
         {
@@ -413,13 +415,13 @@ internal static class API
             case JArray array:
                 if (array.First != null)
                 {
-                    return (string)array.First[firstSubKey];
+                    return (string?)array.First[firstSubKey];
                 }
 
                 return null;
 
             case JObject o:
-                return (string)o[firstSubKey];
+                return (string?)o[firstSubKey];
 
             default:
                 return null;
@@ -458,17 +460,17 @@ internal static class API
 
         Episode newEp = new(seriesId, si)
         {
-            FirstAired = ((string)r["airdate"]).HasValue() ? (DateTime?)r["airdate"] : null,
-            AirTime = JsonHelper.ParseAirTime((string)r["airtime"]),
+            FirstAired = ((string?)r["airdate"]).HasValue() ? (DateTime?)r["airdate"] : null,
+            AirTime = JsonHelper.ParseAirTime((string?)r["airtime"]),
             AirStamp = airstampToken.HasValues ? (DateTime?)airstampToken : null,
-            EpisodeId = (int)r["id"],
-            LinkUrl = ((string)r["url"])?.Trim(),
-            Overview = System.Web.HttpUtility.HtmlDecode((string)r["summary"])?.Trim(),
-            Runtime = ((string)r["runtime"])?.Trim(),
-            Name = ((string)r["name"])?.Trim() ?? string.Empty,
-            AiredEpNum = (int)r["number"],
-            SeasonId = (int)r["season"],
-            AiredSeasonNumber = (int)r["season"],
+            EpisodeId = r.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB),
+            LinkUrl = ((string?)r["url"])?.Trim(),
+            Overview = System.Web.HttpUtility.HtmlDecode((string?)r["summary"])?.Trim(),
+            Runtime = ((string?)r["runtime"])?.Trim(),
+            Name = ((string?)r["name"])?.Trim() ?? string.Empty,
+            AiredEpNum = r.GetMandatoryInt("number",TVDoc.ProviderType.TVmaze),
+            SeasonId = r.GetMandatoryInt("season",TVDoc.ProviderType.TVmaze),
+            AiredSeasonNumber = r.GetMandatoryInt("season",TVDoc.ProviderType.TVmaze),
             Filename = GetUrl(r, "medium"),
             ReadDvdSeasonNum = 0,
             DvdEpNum = 0
@@ -493,7 +495,7 @@ internal static class API
 
     private static string? GetUrl(JObject r, string typeKey)
     {
-        JToken x = r["image"];
+        JToken? x = r["image"];
         if (x is null)
         {
             throw new SourceConsistencyException($"Could not get 'image' element from {r}", TVDoc.ProviderType.TVmaze);
@@ -501,7 +503,7 @@ internal static class API
 
         if (x.HasValues)
         {
-            return (string)x[typeKey];
+            return (string?)x[typeKey];
         }
 
         return null;

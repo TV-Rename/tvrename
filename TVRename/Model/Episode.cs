@@ -115,9 +115,9 @@ public class Episode
         return TimeZoneHelper.AdjustTzTimeToLocalTime(dt.Value, tz);
     }
 
-    public Episode(int seriesId, JObject? bestLanguageR, JObject jsonInDefaultLang, CachedSeriesInfo si) : this(seriesId, si)
+    public Episode(int seriesId, JObject? bestLanguageR, JObject? jsonInDefaultLang, CachedSeriesInfo si) : this(seriesId, si)
     {
-        if (bestLanguageR is null)
+        if (bestLanguageR is null && jsonInDefaultLang != null)
         {
             LoadJson(jsonInDefaultLang);
         }
@@ -125,18 +125,18 @@ public class Episode
         {
             //Here we have two pieces of JSON. One in local language and one in the default language (English).
             //We will populate with the best language first and then fill in any gaps with the backup Language
-            LoadJson(bestLanguageR);
+            LoadJson(bestLanguageR!);
 
             //backupLanguageR should be a cachedSeries of name/value pairs (ie a JArray of JProperties)
             //TVDB asserts that name and overview are the fields that are localised
 
-            string? epName = (string?)jsonInDefaultLang["episodeName"];
+            string? epName = (string?)jsonInDefaultLang?["episodeName"];
             if (string.IsNullOrWhiteSpace(MName) && epName != null)
             {
                 MName = System.Web.HttpUtility.HtmlDecode(epName).Trim();
             }
 
-            string? overviewFromJson = (string?)jsonInDefaultLang["overview"];
+            string? overviewFromJson = (string?)jsonInDefaultLang?["overview"];
             if (string.IsNullOrWhiteSpace(Overview) && overviewFromJson != null)
             {
                 Overview = System.Web.HttpUtility.HtmlDecode(overviewFromJson).Trim();
