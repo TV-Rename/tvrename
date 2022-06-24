@@ -178,7 +178,7 @@ public class CachedSeriesInfo : CachedMediaInfo
             AirsTime = o.AirsTime;
         }
 
-        if (o.sourceEpisodes.Count != 0)
+        if (!o.sourceEpisodes.IsEmpty)
         {
             sourceEpisodes = o.sourceEpisodes;
         }

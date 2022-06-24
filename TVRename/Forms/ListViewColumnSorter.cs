@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Windows.Forms;
 
-/// <summary>
-/// This class is an implementation of the 'IComparer' interface.
-/// </summary>
+// <summary>
+// This class is an implementation of the 'IComparer' interface.
+// </summary>
 namespace TVRename;
 
 public class ListViewColumnSorter : IComparer

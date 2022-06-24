@@ -8,7 +8,7 @@
 
 using System;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Xml.Linq;
 using TVRename.SAB;
 using Alphaleonis.Win32.Filesystem;
@@ -56,12 +56,7 @@ internal class SABnzbdFinder : DownloadingFinder
 
             UpdateStatus(n++, c, action.Filename);
 
-            if (action.Episode?.Show is null)
-            {
-                continue;
-            }
-
-            string simpleShowName = action.Episode.Show.ShowName.CompareName();
+            string? simpleShowName = action.Episode?.Show.ShowName.CompareName();
 
             if (string.IsNullOrWhiteSpace(simpleShowName))
             {
@@ -75,7 +70,7 @@ internal class SABnzbdFinder : DownloadingFinder
                      )
             {
                 toRemove.Add(action);
-                newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, DownloadApp.SABnzbd, action));
+                newList.Add(new ItemDownloading(te, action.Episode!, action.TheFileNoExt, DownloadApp.SABnzbd, action));
                 break;
             }
         }
@@ -89,10 +84,18 @@ internal class SABnzbdFinder : DownloadingFinder
         // http://localhost:8080/sabnzbd/api?mode=queue&apikey=xxx&start=0&limit=8888&output=xml
         string theUrl = $"http://{hostPort}/sabnzbd/api?mode=queue&start=0&limit=8888&output=xml&apikey={key}";
 
-        string response;
+        string? responseText;
         try
         {
-            response = new WebClient().DownloadString(theUrl);
+            HttpClient client = new();
+
+            using (HttpResponseMessage response = client.GetAsync(theUrl).Result)
+            {
+                using (HttpContent content = response.Content)
+                {
+                    responseText = content.ReadAsStringAsync().Result;
+                }
+            }
         }
         catch (Exception e)
         {
@@ -100,7 +103,7 @@ internal class SABnzbdFinder : DownloadingFinder
             return null;
         }
 
-        if (string.IsNullOrWhiteSpace(response))
+        if (string.IsNullOrWhiteSpace(responseText))
         {
             LOGGER.Warn($"Did not get any response from {theUrl}, please recheck the settings");
             return null;
@@ -109,11 +112,11 @@ internal class SABnzbdFinder : DownloadingFinder
         XElement x;
         try
         {
-            x = XElement.Parse(response);
+            x = XElement.Parse(responseText);
         }
         catch (Exception e)
         {
-            LOGGER.Error(e, $"Error processing data from SABnzbd: ({theUrl}): ({response})");
+            LOGGER.Error(e, $"Error processing data from SABnzbd: ({theUrl}): ({responseText})");
             return null;
         }
 

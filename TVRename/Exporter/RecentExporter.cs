@@ -50,7 +50,7 @@ internal abstract class RecentExporter : Exporter
                 catch (Exception ex)
                 {
                     LOGGER.Error(ex,
-                        $"Had to skip saving {episode?.Show.ShowName} S{episode?.AppropriateSeasonNumber}E{episode?.AppropriateEpNum} saving to {Location()}");
+                        $"Had to skip saving {episode.Show.ShowName} S{episode.AppropriateSeasonNumber}E{episode.AppropriateEpNum} saving to {Location()}");
                 }
             }
 

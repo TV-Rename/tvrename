@@ -118,7 +118,7 @@ public class qBitTorrent : IDownloadProvider
             {
                 (string? downloadedFilename, bool isOnHold, int percentComplete) = ExtractTorrentFileDetails(file);
 
-                if (acceptable(downloadedFilename) && !isOnHold)
+                if (Acceptable(downloadedFilename) && !isOnHold)
                 {
                     ret.Add(new TorrentEntry(torrentName, savePath + downloadedFilename, percentComplete, completed, hashCode));
                 }
@@ -131,7 +131,7 @@ public class qBitTorrent : IDownloadProvider
         }
     }
 
-    private static bool acceptable(string? downloadedFilename)
+    private static bool Acceptable(string? downloadedFilename)
     {
         if (downloadedFilename is null)
         {
@@ -239,21 +239,19 @@ public class qBitTorrent : IDownloadProvider
     {
         try
         {
-            using (HttpClient client = new())
+            using HttpClient client = new();
+            MultipartFormDataContent m = new();
+            m.AddFile("torrents", torrentName, "application/x-bittorrent");
+            HttpResponseMessage response = client.PostAsync(url, m).Result;
+            if (!response.IsSuccessStatusCode)
             {
-                MultipartFormDataContent m = new();
-                m.AddFile("torrents", torrentName, "application/x-bittorrent");
-                HttpResponseMessage response = client.PostAsync(url, m).Result;
-                if (!response.IsSuccessStatusCode)
-                {
-                    Logger.Warn(
-                        $"Tried to download {torrentName} from file to qBitTorrent via {url}. Got following response {response.StatusCode}");
-                }
-                else
-                {
-                    Logger.Info(
-                        $"Started download of {torrentName} via file to qBitTorrent using {url}. Got following response {response.StatusCode}");
-                }
+                Logger.Warn(
+                    $"Tried to download {torrentName} from file to qBitTorrent via {url}. Got following response {response.StatusCode}");
+            }
+            else
+            {
+                Logger.Info(
+                    $"Started download of {torrentName} via file to qBitTorrent using {url}. Got following response {response.StatusCode}");
             }
         }
         catch (WebException wex)
@@ -267,23 +265,21 @@ public class qBitTorrent : IDownloadProvider
     {
         try
         {
-            using (HttpClient client = new())
+            using HttpClient client = new();
+            Dictionary<string, string> values = new() { { "urls", torrentUrl } };
+            FormUrlEncodedContent content = new(values);
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
+            if (!response.IsSuccessStatusCode)
             {
-                Dictionary<string, string> values = new() { { "urls", torrentUrl } };
-                FormUrlEncodedContent content = new(values);
-                HttpResponseMessage response = client.PostAsync(url, content).Result;
-                if (!response.IsSuccessStatusCode)
-                {
-                    string message =
-                        $"Tried to download {torrentUrl} from qBitTorrent via {url}. Got following response {response.StatusCode}";
-                    Logger.Warn(message);
-                    throw new WebException(message);
-                }
-                else
-                {
-                    Logger.Info(
-                        $"Started download of {torrentUrl} via qBitTorrent using {url}. Got following response {response.StatusCode}");
-                }
+                string message =
+                    $"Tried to download {torrentUrl} from qBitTorrent via {url}. Got following response {response.StatusCode}";
+                Logger.Warn(message);
+                throw new WebException(message);
+            }
+            else
+            {
+                Logger.Info(
+                    $"Started download of {torrentUrl} via qBitTorrent using {url}. Got following response {response.StatusCode}");
             }
         }
         catch (WebException wex)

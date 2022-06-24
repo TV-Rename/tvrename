@@ -1529,7 +1529,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             ?.ToString();
     }
 
-    private string? GetContentRatingV4(JObject json, string country)
+    private static string? GetContentRatingV4(JObject json, string country)
     {
         return json["data"]?["contentRatings"]?.FirstOrDefault(x => x["country"]?.ToString() == country)?["name"]
             ?.ToString();
@@ -1826,7 +1826,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             foreach (JToken? actorJson in characterNode.Where(x => x["peopleType"]?.ToString() != "Actor"))
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
-                string? name = actorJson["personName"]?.ToString() ?? string.Empty;
+                string name = actorJson["personName"]?.ToString() ?? string.Empty;
                 string? role = actorJson["peopleType"]?.ToString();
                 string? sort = actorJson["sort"]?.ToString();
                 si.AddCrew(new Crew(id, string.Empty, name, role, string.Empty, sort));

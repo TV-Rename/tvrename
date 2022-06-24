@@ -40,12 +40,10 @@ internal class ActionNfoEpisode : ActionNfo
 
         try
         {
-            using (System.IO.StreamWriter writer = File.CreateText(Where.FullName))
+            using System.IO.StreamWriter writer = File.CreateText(Where.FullName);
+            foreach (XElement ep in episodeXmLs)
             {
-                foreach (XElement ep in episodeXmLs)
-                {
-                    writer?.WriteLine(ep);
-                }
+                writer?.WriteLine(ep);
             }
         }
         catch (System.IO.IOException e)

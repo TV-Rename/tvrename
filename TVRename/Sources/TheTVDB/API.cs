@@ -4,7 +4,8 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Cache;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace TVRename.TheTVDB;
 
@@ -57,14 +58,15 @@ internal static class API
     {
         string theUrl = GetImageURL(url);
 
-        WebClient wc = new();
+        HttpClient wc = new();
 
         if (forceReload)
         {
-            wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.Reload);
+            //TODO wc. = new HttpRequestCachePolicy(HttpRequestCacheLevel.Reload);
         }
+        Task<byte[]> task = Task.Run(async () => await wc.GetByteArrayAsync(url));
 
-        byte[] r = wc.DownloadData(theUrl);
+        byte[] r = task.Result;
 
         if (!url.EndsWith(".zip", StringComparison.Ordinal))
         {

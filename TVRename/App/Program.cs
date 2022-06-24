@@ -12,7 +12,6 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
-using TVRename.Ipc;
 
 namespace TVRename.App;
 

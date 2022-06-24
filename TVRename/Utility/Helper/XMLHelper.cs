@@ -196,9 +196,9 @@ public static class XmlHelper
             writer.WriteStartElement(elemName);
             if (!string.IsNullOrEmpty(attribute) && !string.IsNullOrEmpty(attributeVal))
             {
-                writer.WriteAttributeString(attribute!, attributeVal!);
+                writer.WriteAttributeString(attribute, attributeVal);
             }
-            writer.WriteValue(value!.ValidXml());
+            writer.WriteValue(value.ValidXml());
             writer.WriteEndElement();
         }
     }
@@ -295,7 +295,7 @@ public static class XmlHelper
         writer.WriteStartElement(elemName);
         if (!string.IsNullOrEmpty(attribute))
         {
-            writer.WriteAttributeString(attribute!, attributeVal!);
+            writer.WriteAttributeString(attribute, attributeVal);
         }
         writer.WriteEndElement();
     }
@@ -305,7 +305,7 @@ public static class XmlHelper
         writer.WriteStartElement(elemName);
         if (!string.IsNullOrEmpty(attribute))
         {
-            writer.WriteAttributeString(attribute!, XmlConvert.ToString(attributeVal));
+            writer.WriteAttributeString(attribute, XmlConvert.ToString(attributeVal));
         }
         writer.WriteEndElement();
     }

@@ -502,20 +502,18 @@ public static class FileHelper
 
     public static string GetFilmDetails(this FileInfo movieFile)
     {
-        using (ShellPropertyCollection properties = new(movieFile.FullName))
+        using ShellPropertyCollection properties = new(movieFile.FullName);
+        StringBuilder sb = new();
+        foreach (IShellProperty prop in properties)
         {
-            StringBuilder sb = new();
-            foreach (IShellProperty prop in properties)
-            {
-                string value = prop.ValueAsObject is null
-                    ? ""
-                    : prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
+            string value = prop.ValueAsObject is null
+                ? ""
+                : prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
 
-                sb.AppendLine($"{prop.CanonicalName} = {value}");
-            }
-
-            return sb.ToString();
+            sb.AppendLine($"{prop.CanonicalName} = {value}");
         }
+
+        return sb.ToString();
     }
 
     public static bool IsSubfolderOf(this string thisOne, string ofThat)
@@ -532,7 +530,7 @@ public static class FileHelper
         }
 
         int l = ofThat.Length;
-        return thisOne.Length >= l && string.Equals(thisOne.Substring(0, l), ofThat, StringComparison.CurrentCultureIgnoreCase);
+        return thisOne.Length >= l && string.Equals(thisOne[..l], ofThat, StringComparison.CurrentCultureIgnoreCase);
     }
 
     public static string TrimSlash(this string s) // trim trailing slash

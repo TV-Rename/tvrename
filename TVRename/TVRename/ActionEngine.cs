@@ -182,14 +182,7 @@ public class ActionEngine
             }
             catch (ThreadAbortException)
             {
-                if (actionWorkers is not null)
-                {
-                    foreach (Thread t in actionWorkers)
-                    {
-                        t?.Abort();
-                    }
-                }
-
+                AbortAllThreads();
                 WaitForAllActionThreadsAndTidyUp();
             }
             WaitForAllActionThreadsAndTidyUp();
@@ -210,12 +203,17 @@ public class ActionEngine
         catch (Exception e)
         {
             Logger.Fatal(e, "Unhandled Exception in ActionProcessor");
-            if (actionWorkers is not null)
+            AbortAllThreads();
+        }
+    }
+
+    private void AbortAllThreads()
+    {
+        if (actionWorkers is not null)
+        {
+            foreach (Thread t in actionWorkers)
             {
-                foreach (Thread t in actionWorkers)
-                {
-                    t?.Abort();
-                }
+                t?.Abort();
             }
         }
     }

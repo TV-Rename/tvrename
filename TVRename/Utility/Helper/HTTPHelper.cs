@@ -15,6 +15,8 @@ namespace TVRename;
 public static class HttpHelper
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    // HttpClient is intended to be instantiated once per application, rather than per-use.
+    private static readonly HttpClient Client = new();
 
     internal static MultipartFormDataContent AddFile(this MultipartFormDataContent @this,
         string name,
@@ -57,9 +59,11 @@ public static class HttpHelper
         }
         else
         {
-            WebClient client = new();
-            client.Headers.Add("user-agent", TVSettings.USER_AGENT);
-            return client.DownloadString(url);
+            Client.DefaultRequestHeaders.Add("user-agent", TVSettings.USER_AGENT);
+            HttpResponseMessage response = Client.GetAsync(url).Result;
+            response.EnsureSuccessStatusCode();
+            Task<string> task = Task.Run(async () => await Client.GetStringAsync(url));
+            return task.Result;
         }
 
         return string.Empty;
@@ -72,10 +76,10 @@ public static class HttpHelper
             try
             {
                 // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
-                HttpClient client = new(new ClearanceHandler());
+                HttpClient cloudflareclient = new(new ClearanceHandler());
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
-                Task<byte[]> task = Task.Run(async () => await client.GetByteArrayAsync(url));
+                Task<byte[]> task = Task.Run(async () => await cloudflareclient.GetByteArrayAsync(url));
                 return task.Result;
             }
             catch (AggregateException ex) when (ex.InnerException is CloudFlareClearanceException)
@@ -90,17 +94,15 @@ public static class HttpHelper
         }
         else
         {
-            using (WebClient client = new())
-            {
-                client.Headers.Add("user-agent", TVSettings.USER_AGENT);
-                return client.DownloadData(url);
-            }
+            Client.DefaultRequestHeaders.Add("user-agent", TVSettings.USER_AGENT);
+            Task<byte[]> task = Task.Run(async () => await Client.GetByteArrayAsync(url));
+            return task.Result;
         }
 
-        return new byte[] { };
+        return Array.Empty<byte>();
     }
 
-    public static string HttpRequest(string method, string url, string json, string contentType, string? token)
+    private static string HttpRequest(string method, string url, string json, string contentType, string? token)
     {
         return HttpRequest(method, url, json, contentType, token, string.Empty);
     }
@@ -108,62 +110,43 @@ public static class HttpHelper
     public static string HttpRequest(string method, string url, string? postContent,
         string? contentType, string? token, string? lang)
     {
-        HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+        HttpClient newClient = new();
+        Uri newClientBaseAddress = new Uri(url);
+        newClient.BaseAddress = newClientBaseAddress;
         if (!contentType.IsNullOrWhitespace())
         {
-            httpWebRequest.ContentType = contentType;
+            newClient.DefaultRequestHeaders.Accept
+                .Add(new MediaTypeWithQualityHeaderValue(contentType!));
         }
-        httpWebRequest.Method = method;
+        
         if (!token.IsNullOrWhitespace())
         {
-            httpWebRequest.Headers.Add("Authorization", "Bearer " + token);
-            httpWebRequest.Headers.Add("x-api-key", token);
+            newClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            newClient.DefaultRequestHeaders.Add("x-api-key", token);
         }
         if (lang.HasValue())
         {
-            httpWebRequest.Headers.Add("Accept-Language", lang);
+            newClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(lang));
         }
 
         Logger.Trace($"Obtaining {url}" );
 
         if (method == "POST")
         {
-            using (System.IO.StreamWriter streamWriter =
-                   new(httpWebRequest.GetRequestStream()))
-            {
-                streamWriter.Write(postContent);
-                streamWriter.Flush();
-            }
+            FormUrlEncodedContent content = new FormUrlEncodedContent(postContent);
+
+            //POST the object to the specified URI 
+            HttpResponseMessage response = newClient.PostAsync(newClientBaseAddress, content).Result;
+
+            //Read back the answer from server
+            return response.Content.ReadAsStringAsync().Result;
         }
 
-        string result;
-        HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-        using (System.IO.StreamReader streamReader = new(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
-        {
-            result = streamReader.ReadToEnd();
-        }
-        Logger.Trace($"Returned {result}" );
-        return result;
+        Task<string> task = Task.Run(async () => await newClient.GetStringAsync(url));
+        return task.Result;
     }
 
-    public static string Obtain(string url)
-    {
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-
-        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-        using (System.IO.Stream? stream = response.GetResponseStream())
-        {
-            if (stream == null)
-            {
-                return string.Empty;
-            }
-
-            using (System.IO.StreamReader reader = new(stream))
-            {
-                return reader.ReadToEnd();
-            }
-        }
-    }
+    public static string Obtain(string url) => GetUrl(url, false);
 
     public static void LogWebException(this Logger l, string message, WebException wex)
     {
@@ -242,14 +225,14 @@ public static class HttpHelper
 
     public static byte[] Download(string url, bool forceReload)
     {
-        WebClient wc = new();
+        HttpClient wc = new();
 
         if (forceReload)
         {
-            wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.Reload);
+            //TODO wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.Reload);
         }
 
-        return wc.DownloadData(url);
+        return wc.GetByteArrayAsync(url).Result;
     }
 
     public static string LoggableDetails(this System.IO.IOException ex)
@@ -340,7 +323,7 @@ public static class HttpHelper
         }
 
         StringBuilder sb = new();
-        sb.Append("?");
+        sb.Append('?');
 
         foreach (KeyValuePair<string, string?> item in parameters)
         {

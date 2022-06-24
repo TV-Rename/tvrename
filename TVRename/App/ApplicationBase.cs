@@ -227,7 +227,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
     private void SetupLogging()
     {
         ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("NLog.Targets.Syslog"));
-        ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("Timber.io.NLog"));
+        //ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("Timber.io.NLog"));
 
         SetupPapertrailLogging();
         //SetupSemaTextLogging();

@@ -1,7 +1,6 @@
 using CefSharp;
 using System;
 using System.Security.Cryptography.X509Certificates;
-using System.Web;
 
 namespace TVRename;
 
@@ -33,7 +32,7 @@ public class BrowserRequestHandler : IRequestHandler
 
         if (url.StartsWith(UI.EXPLORE_PROXY, StringComparison.InvariantCultureIgnoreCase))
         {
-            string openlocation = HttpUtility.UrlDecode(url.Substring(UI.EXPLORE_PROXY.Length));
+            string openlocation = System.Web.HttpUtility.UrlDecode(url.Substring(UI.EXPLORE_PROXY.Length));
             if (Helpers.OpenFolder(openlocation))
             {
                 return true;
@@ -44,7 +43,7 @@ public class BrowserRequestHandler : IRequestHandler
 
         if (url.StartsWith(UI.WATCH_PROXY, StringComparison.InvariantCultureIgnoreCase))
         {
-            string fileName = HttpUtility.UrlDecode(url.Substring(UI.WATCH_PROXY.Length)).Replace('/', '\\');
+            string fileName = System.Web.HttpUtility.UrlDecode(url.Substring(UI.WATCH_PROXY.Length)).Replace('/', '\\');
             Helpers.OpenFile(fileName);
             return true;
         }

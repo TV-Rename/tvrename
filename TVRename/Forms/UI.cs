@@ -1211,7 +1211,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         List<ShowConfiguration?> expanded = MyShowTree.Nodes.Cast<TreeNode>()
             .Where(n => n.IsExpanded)
-            .Select(n => TreeNodeToShowItem(n)).ToList();
+            .Select(TreeNodeToShowItem).ToList();
 
         Logger.Info("UI: Updating MyShows");
         MyShowTree.BeginUpdate();
@@ -3701,7 +3701,6 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                         MessageBoxIcon.Error);
                 }
 
-                if (problem.Media is not null)
                 {
                     ShowConfiguration? problemShow = mDoc.TvLibrary.GetShowItem(problem.Media);
                     if (problemShow != null)
@@ -3715,7 +3714,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (mDoc.MovieProblems.Any())
         {
             string message = mDoc.MovieProblems.Count() > 1
-                ? $"Movies with Id {string.Join(",", mDoc.MovieProblems.Select(exception => exception.Media?.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
+                ? $"Movies with Id {string.Join(",", mDoc.MovieProblems.Select(exception => exception.Media.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
                 : $"Movie with {StringFor(mDoc.MovieProblems.First().ShowIdProvider)} Id {mDoc.MovieProblems.First().Media} is not found on {StringFor(mDoc.MovieProblems.First().ErrorProvider)}. Please Update";
 
             DialogResult result = MessageBox.Show(message, "Movie No Longer Found", MessageBoxButtons.OKCancel,
@@ -4543,11 +4542,6 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         //Follow this advice https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/how-to-display-side-aligned-tabs-with-tabcontrol
 
         Graphics g = e.Graphics;
-
-        if (g is null)
-        {
-            return;
-        }
 
         TabControl? tabCtrl = sender as TabControl;
 

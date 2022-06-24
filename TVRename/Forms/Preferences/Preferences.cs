@@ -1881,7 +1881,7 @@ public partial class Preferences : Form
             return;
         }
 
-        Helpers.OpenFolder(TVSettings.Instance.DownloadFolders[n]?.Trim());
+        Helpers.OpenFolder(TVSettings.Instance.DownloadFolders[n].Trim());
     }
 
     private void lbSearchFolders_KeyDown(object sender, KeyEventArgs e)

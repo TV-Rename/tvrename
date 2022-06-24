@@ -26,7 +26,7 @@ internal class RecentASXExporter : RecentExporter
 
     protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length)
     {
-        string? filen = System.Security.SecurityElement.Escape(file.UrlPathFullName());
+        string filen = System.Security.SecurityElement.Escape(file.UrlPathFullName());
         return $"<Entry>\r\n<ref href=\"{filen}\" />\r\n</Entry><title>{System.Security.SecurityElement.Escape(name)}</title>";
     }
 

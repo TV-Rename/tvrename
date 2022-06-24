@@ -43,7 +43,7 @@ internal static class API
                     {
                         throw new TaskCanceledException("Manual Cancellation");
                     }
-                    SearchContainer<ChangesListItem>? response = changeMethod(currentPage, time, null, cts).Result;
+                    SearchContainer<ChangesListItem> response = changeMethod(currentPage, time, null, cts).Result;
                     numberOfCallsMade++;
                     maxPage = response.TotalPages;
                     updatesResponses.AddRange(response.Results);

@@ -31,7 +31,7 @@ internal class RecentXSPFExporter : RecentExporter
 
     protected override string GenerateRecord(ProcessedEpisode ep, FileInfo fileLocation, string name, int length)
     {
-        string? file = System.Security.SecurityElement.Escape(fileLocation.UrlPathFullName());
+        string file = System.Security.SecurityElement.Escape(fileLocation.UrlPathFullName());
         return $"\t\t<track>\r\n\t\t\t<location>{file}</location>\r\n\t\t\t<title>{System.Security.SecurityElement.Escape(name)}</title>\r\n\t\t</track>";
     }
 

@@ -66,94 +66,92 @@ public class ActionMede8erXML : ActionWriteMetadata
         }
 
         XmlWriterSettings settings = new() { Indent = true, NewLineOnAttributes = true };
-        using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
+        using XmlWriter writer = XmlWriter.Create(Where.FullName, settings);
+        // See: http://xbmc.org/wiki/?title=Import_-_Export_Library#TV_Episodes
+        writer.WriteStartElement("details");
+        writer.WriteStartElement("movie");
+
+        writer.WriteElement("title", Episode.Name);
+        writer.WriteElement("season", Episode.AppropriateSeasonNumber);
+        writer.WriteElement("episode", Episode.AppropriateEpNum);
+        writer.WriteStartElement("year");
+        if (Episode.FirstAired != null)
         {
-            // See: http://xbmc.org/wiki/?title=Import_-_Export_Library#TV_Episodes
-            writer.WriteStartElement("details");
-            writer.WriteStartElement("movie");
-
-            writer.WriteElement("title", Episode.Name);
-            writer.WriteElement("season", Episode.AppropriateSeasonNumber);
-            writer.WriteElement("episode", Episode.AppropriateEpNum);
-            writer.WriteStartElement("year");
-            if (Episode.FirstAired != null)
-            {
-                writer.WriteValue(Episode.FirstAired.Value.ToString("yyyy"));
-            }
-
-            writer.WriteEndElement();
-
-            int intSiteRating = GetSiteRating(Episode);
-            if (intSiteRating > 0)
-            {
-                writer.WriteElement("rating", intSiteRating);
-            }
-
-            //Get the Series OverView
-            string? sov = Episode.Show.CachedShow?.Overview;
-            if (!string.IsNullOrEmpty(sov))
-            {
-                writer.WriteElement("plot", sov);
-            }
-
-            //Get the Episode overview
-            writer.WriteElement("episodeplot", Episode.Overview);
-            writer.WriteElement("mpaa", Episode.Show.CachedShow?.ContentRating);
-
-            //Runtime...taken from overall Series, not episode specific due to thetvdb
-            string? rt = Episode.Show.CachedShow?.Runtime;
-            if (!string.IsNullOrEmpty(rt))
-            {
-                writer.WriteElement("runtime", rt + " min");
-            }
-
-            //Genres...taken from overall Series, not episode specific due to thetvdb
-            writer.WriteStartElement("genres");
-            string? genre = string.Join(" / ", Episode.Show.CachedShow?.Genres ?? new SafeList<string>());
-            if (!string.IsNullOrEmpty(genre))
-            {
-                writer.WriteElement("genre", genre);
-            }
-
-            writer.WriteEndElement(); // genres
-
-            //Director(s)
-            if (!string.IsNullOrEmpty(Episode.EpisodeDirector))
-            {
-                string epDirector = Episode.EpisodeDirector;
-                if (!string.IsNullOrEmpty(epDirector))
-                {
-                    foreach (string daa in epDirector.Split('|').Where(daa => !string.IsNullOrEmpty(daa)))
-                    {
-                        writer.WriteElement("director", daa);
-                    }
-                }
-            }
-
-            //Writers(s)
-            if (!string.IsNullOrEmpty(Episode.Writer))
-            {
-                string epWriter = Episode.Writer;
-                if (!string.IsNullOrEmpty(epWriter))
-                {
-                    writer.WriteElement("credits", epWriter);
-                }
-            }
-
-            writer.WriteStartElement("cast");
-
-            // actors...
-            foreach (string aa in (Episode.Show.CachedShow?.GetActorNames() ?? new string[] { }).Where(
-                         aa =>
-                             !string.IsNullOrEmpty(aa)))
-            {
-                writer.WriteElement("actor", aa);
-            }
-
-            writer.WriteEndElement(); // cast
-            writer.WriteEndElement(); // movie
-            writer.WriteEndElement(); // details
+            writer.WriteValue(Episode.FirstAired.Value.ToString("yyyy"));
         }
+
+        writer.WriteEndElement();
+
+        int intSiteRating = GetSiteRating(Episode);
+        if (intSiteRating > 0)
+        {
+            writer.WriteElement("rating", intSiteRating);
+        }
+
+        //Get the Series OverView
+        string? sov = Episode.Show.CachedShow?.Overview;
+        if (!string.IsNullOrEmpty(sov))
+        {
+            writer.WriteElement("plot", sov);
+        }
+
+        //Get the Episode overview
+        writer.WriteElement("episodeplot", Episode.Overview);
+        writer.WriteElement("mpaa", Episode.Show.CachedShow?.ContentRating);
+
+        //Runtime...taken from overall Series, not episode specific due to thetvdb
+        string? rt = Episode.Show.CachedShow?.Runtime;
+        if (!string.IsNullOrEmpty(rt))
+        {
+            writer.WriteElement("runtime", rt + " min");
+        }
+
+        //Genres...taken from overall Series, not episode specific due to thetvdb
+        writer.WriteStartElement("genres");
+        string genre = string.Join(" / ", Episode.Show.CachedShow?.Genres ?? new SafeList<string>());
+        if (!string.IsNullOrEmpty(genre))
+        {
+            writer.WriteElement("genre", genre);
+        }
+
+        writer.WriteEndElement(); // genres
+
+        //Director(s)
+        if (!string.IsNullOrEmpty(Episode.EpisodeDirector))
+        {
+            string epDirector = Episode.EpisodeDirector;
+            if (!string.IsNullOrEmpty(epDirector))
+            {
+                foreach (string daa in epDirector.Split('|').Where(daa => !string.IsNullOrEmpty(daa)))
+                {
+                    writer.WriteElement("director", daa);
+                }
+            }
+        }
+
+        //Writers(s)
+        if (!string.IsNullOrEmpty(Episode.Writer))
+        {
+            string epWriter = Episode.Writer;
+            if (!string.IsNullOrEmpty(epWriter))
+            {
+                writer.WriteElement("credits", epWriter);
+            }
+        }
+
+        writer.WriteStartElement("cast");
+
+        // actors...
+        foreach (string aa in (Episode.Show.CachedShow?.GetActorNames() ?? Array.Empty<string>()).Where(
+                     aa =>
+                         !string.IsNullOrEmpty(aa)))
+        {
+            writer.WriteElement("actor", aa);
+        }
+
+        writer.WriteEndElement(); // cast
+        writer.WriteEndElement(); // movie
+        writer.WriteEndElement(); // details
     }
 
     private static int GetSiteRating(Episode ep)
@@ -171,57 +169,55 @@ public class ActionMede8erXML : ActionWriteMetadata
     private void WriteSeriesXml()
     {
         XmlWriterSettings settings = new() { Indent = true, NewLineOnAttributes = true };
-        using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
+        using XmlWriter writer = XmlWriter.Create(Where.FullName, settings);
+        // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
+        writer.WriteStartElement("details");
+        writer.WriteStartElement("movie");
+        writer.WriteElement("title", SelectedShow!.ShowName);
+
+        writer.WriteStartElement("genres");
+        string genre = string.Join(" / ", SelectedShow.CachedShow?.Genres ?? new SafeList<string>());
+        if (!string.IsNullOrEmpty(genre))
         {
-            // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
-            writer.WriteStartElement("details");
-            writer.WriteStartElement("movie");
-            writer.WriteElement("title", SelectedShow!.ShowName);
-
-            writer.WriteStartElement("genres");
-            string genre = string.Join(" / ", SelectedShow.CachedShow?.Genres ?? new SafeList<string>());
-            if (!string.IsNullOrEmpty(genre))
-            {
-                writer.WriteElement("genre", genre);
-            }
-
-            writer.WriteEndElement(); // genres
-            writer.WriteElement("premiered", SelectedShow.CachedShow?.FirstAired);
-            writer.WriteElement("year", SelectedShow.CachedShow?.Year);
-
-            //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
-            float siteRating = SelectedShow.CachedShow?.SiteRating ?? 0 * 10;
-            int intSiteRating = (int)siteRating;
-            if (intSiteRating > 0)
-            {
-                writer.WriteElement("rating", intSiteRating);
-            }
-
-            writer.WriteElement("status", SelectedShow.CachedShow?.Status);
-            writer.WriteElement("mpaa", SelectedShow.CachedShow?.ContentRating);
-            writer.WriteInfo("moviedb", "imdb", "id", SelectedShow.CachedShow?.Imdb);
-            writer.WriteElement("tvdbid", SelectedShow.CachedShow?.TvdbCode);
-            string? rt = SelectedShow.CachedShow?.Runtime;
-            if (!string.IsNullOrEmpty(rt))
-            {
-                writer.WriteElement("runtime", rt + " min");
-            }
-
-            writer.WriteElement("plot", SelectedShow.CachedShow?.Overview);
-            writer.WriteStartElement("cast");
-
-            // actors...
-            foreach (string aa in
-                     SelectedShow.CachedShow?.GetActorNames().Where(aa => !string.IsNullOrEmpty(aa)) ??
-                     new List<string>())
-            {
-                writer.WriteElement("actor", aa);
-            }
-
-            writer.WriteEndElement(); // cast
-            writer.WriteEndElement(); // movie
-            writer.WriteEndElement(); // tvshow
+            writer.WriteElement("genre", genre);
         }
+
+        writer.WriteEndElement(); // genres
+        writer.WriteElement("premiered", SelectedShow.CachedShow?.FirstAired);
+        writer.WriteElement("year", SelectedShow.CachedShow?.Year);
+
+        //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
+        float siteRating = SelectedShow.CachedShow?.SiteRating ?? 0 * 10;
+        int intSiteRating = (int)siteRating;
+        if (intSiteRating > 0)
+        {
+            writer.WriteElement("rating", intSiteRating);
+        }
+
+        writer.WriteElement("status", SelectedShow.CachedShow?.Status);
+        writer.WriteElement("mpaa", SelectedShow.CachedShow?.ContentRating);
+        writer.WriteInfo("moviedb", "imdb", "id", SelectedShow.CachedShow?.Imdb);
+        writer.WriteElement("tvdbid", SelectedShow.CachedShow?.TvdbCode);
+        string? rt = SelectedShow.CachedShow?.Runtime;
+        if (!string.IsNullOrEmpty(rt))
+        {
+            writer.WriteElement("runtime", rt + " min");
+        }
+
+        writer.WriteElement("plot", SelectedShow.CachedShow?.Overview);
+        writer.WriteStartElement("cast");
+
+        // actors...
+        foreach (string aa in
+                 SelectedShow.CachedShow?.GetActorNames().Where(aa => !string.IsNullOrEmpty(aa)) ??
+                 new List<string>())
+        {
+            writer.WriteElement("actor", aa);
+        }
+
+        writer.WriteEndElement(); // cast
+        writer.WriteEndElement(); // movie
+        writer.WriteEndElement(); // tvshow
     }
 
     #endregion Action Members

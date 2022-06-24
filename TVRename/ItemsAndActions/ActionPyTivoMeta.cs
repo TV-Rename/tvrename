@@ -80,7 +80,7 @@ public class ActionPyTivoMeta : ActionWriteMetadata
             return;
         }
 
-        if (!entries.Contains("|"))
+        if (!entries.Contains('|'))
         {
             writer.WriteLine($"{heading} : {entries}");
         }

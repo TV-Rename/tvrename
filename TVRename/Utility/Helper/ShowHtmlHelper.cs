@@ -1370,23 +1370,17 @@ internal static class ShowHtmlHelper
 
     public static string SeasonName(ShowConfiguration si, int snum)
     {
-        switch (si.Order)
+        return si.Order switch
         {
-            case ProcessedSeason.SeasonType.dvd:
-                return snum == 0
-                    ? "Not Available on DVD"
-                    : "DVD " + ProcessedSeason.UISeasonWord(snum);
-
-            case ProcessedSeason.SeasonType.aired:
-                return ProcessedSeason.UIFullSeasonWord(snum);
-
-            case ProcessedSeason.SeasonType.alternate:
-                return snum == 0
-                    ? "Not in alternate season"
-                    : "Alternate " + ProcessedSeason.UISeasonWord(snum);
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            ProcessedSeason.SeasonType.dvd => snum == 0
+                ? "Not Available on DVD"
+                : "DVD " + ProcessedSeason.UISeasonWord(snum),
+            ProcessedSeason.SeasonType.aired => ProcessedSeason.UIFullSeasonWord(snum),
+            ProcessedSeason.SeasonType.alternate => snum == 0
+                ? "Not in alternate season"
+                : "Alternate " + ProcessedSeason.UISeasonWord(snum),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     internal static string GenreIconHtml(string genre)

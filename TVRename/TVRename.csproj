@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
@@ -114,15 +114,13 @@
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="6.0.4" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
-    <PackageReference Include="Microsoft.WindowsAPICodePack-Core" Version="1.1.0.2" />
-    <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0.0" />
     <PackageReference Include="MscVersion" Version="1.0.0.9" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
     <PackageReference Include="NLog.OutputDebugString" Version="5.0.1" />
     <PackageReference Include="NLog.Targets.Syslog" Version="7.0.0" />
     <PackageReference Include="NLog.Windows.Forms" Version="4.6.0" />
     <PackageReference Include="NodaTime" Version="3.1.0" />
-    <PackageReference Include="ObjectListView.Official" Version="2.9.0" />
+    <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="SharpCompress" Version="0.32.1" />
     <PackageReference Include="SourceGrid" Version="4.4.0" />
@@ -151,6 +149,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
+    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Utility\HashCacheItem.cs" />

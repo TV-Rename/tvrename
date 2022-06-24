@@ -581,7 +581,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     private static void InsertEpisode(IList<ProcessedEpisode> eis, ShowConfiguration si, int index, string txt, ShowRule sr)
     {
         // this only applies for inserting an episode, at the end of the list
-        if (sr.First == eis[eis.Count - 1].AppropriateEpNum + 1) // after the last episode
+        if (sr.First == eis[^1].AppropriateEpNum + 1) // after the last episode
         {
             index = eis.Count;
         }

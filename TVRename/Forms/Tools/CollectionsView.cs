@@ -193,7 +193,7 @@ public partial class CollectionsView : Form
         }
         else if (f.RootDirectory.HasValue())
         {
-            found.AutomaticFolderRoot = f.RootDirectory!;
+            found.AutomaticFolderRoot = f.RootDirectory;
             found.UseAutomaticFolders = true;
         }
 

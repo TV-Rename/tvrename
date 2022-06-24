@@ -59,7 +59,7 @@ public static class CustomMovieName
             return r;
         }
 
-        bool needsSpacer = !extension!.StartsWith(".", StringComparison.Ordinal);
+        bool needsSpacer = !extension.StartsWith(".", StringComparison.Ordinal);
 
         if (needsSpacer)
         {

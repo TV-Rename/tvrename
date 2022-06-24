@@ -9,6 +9,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace TVRename;
@@ -56,10 +57,10 @@ public static class VersionUpdater
             await HttpHelper.RetryOnExceptionAsync<Exception>
             (3, TimeSpan.FromSeconds(2), GITHUB_RELEASES_API_URL, async () =>
             {
-                using (WebClient client = new())
+                using (HttpClient client = new())
                 {
-                    client.Headers.Add("user-agent", TVSettings.USER_AGENT);
-                    Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
+                    client.DefaultRequestHeaders.Add("user-agent", TVSettings.USER_AGENT);
+                    Task<string> response = client.GetStringAsync(GITHUB_RELEASES_API_URL);
                     gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
                 }                }).ConfigureAwait(false);
 

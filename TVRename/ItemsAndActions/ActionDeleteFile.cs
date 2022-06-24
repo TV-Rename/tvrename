@@ -45,7 +45,7 @@ public class ActionDeleteFile : ActionDelete
             if (toRemove.Exists)
             {
                 DeleteOrRecycleFile(toRemove);
-                if (Tidyup != null && Tidyup.DeleteEmpty)
+                if (Tidyup is { DeleteEmpty: true })
                 {
                     LOGGER.Info($"Testing {toRemove.Directory.FullName } to see whether it should be tidied up");
                     DoTidyUp(toRemove.Directory);

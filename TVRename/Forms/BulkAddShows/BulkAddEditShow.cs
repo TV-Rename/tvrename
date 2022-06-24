@@ -42,7 +42,7 @@ public partial class BulkAddEditShow : Form
             string s = hint.Folder.FullName;
             int p = s.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
             codeFinderControl.SetHint(string.IsNullOrWhiteSpace(hint.RefinedHint)
-                ? s.Substring(p + 1)
+                ? s[(p + 1)..]
                 : hint.RefinedHint, TVDoc.ProviderType.libraryDefault);
         }
         Code = -1;

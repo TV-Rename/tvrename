@@ -230,30 +230,26 @@ public class PossibleNewMovie : ISeriesSpecifier
     {
         try
         {
-            using (System.IO.StreamReader? streamReader = file.OpenText())
+            using System.IO.StreamReader? streamReader = file.OpenText();
+            using XmlReader reader = XmlReader.Create(streamReader);
+            while (reader.Read())
             {
-                using (XmlReader reader = XmlReader.Create(streamReader))
+                if (reader.Name == simpleIdCode && reader.IsStartElement())
                 {
-                    while (reader.Read())
+                    string s = reader.ReadElementContentAsString();
+                    if (s.HasValue())
                     {
-                        if (reader.Name == simpleIdCode && reader.IsStartElement())
-                        {
-                            string s = reader.ReadElementContentAsString();
-                            if (s.HasValue())
-                            {
-                                return s;
-                            }
-                        }
+                        return s;
+                    }
+                }
 
-                        if (reader.Name == "uniqueid" && reader.IsStartElement() &&
-                            reader.GetAttribute("type") == uniqueIdCode)
-                        {
-                            string s = reader.ReadElementContentAsString();
-                            if (s.HasValue())
-                            {
-                                return s;
-                            }
-                        }
+                if (reader.Name == "uniqueid" && reader.IsStartElement() &&
+                    reader.GetAttribute("type") == uniqueIdCode)
+                {
+                    string s = reader.ReadElementContentAsString();
+                    if (s.HasValue())
+                    {
+                        return s;
                     }
                 }
             }

@@ -7,13 +7,13 @@ namespace TVRename.Utility.Helper;
 internal static class TaskHelper
 {
     // <summary>
-    /// Blocks while condition is true or timeout occurs.
-    /// </summary>
-    /// <param name="condition">The condition that will perpetuate the block.</param>
-    /// <param name="frequency">The frequency at which the condition will be check, in milliseconds.</param>
-    /// <param name="timeout">Timeout in milliseconds.</param>
-    /// <exception cref="TimeoutException"></exception>
-    /// <returns></returns>
+    // Blocks while condition is true or timeout occurs.
+    // </summary>
+    // <param name="condition">The condition that will perpetuate the block.</param>
+    // <param name="frequency">The frequency at which the condition will be check, in milliseconds.</param>
+    // <param name="timeout">Timeout in milliseconds.</param>
+    // <exception cref="TimeoutException"></exception>
+    // <returns></returns>
     public static async Task WaitWhile(Func<bool> condition, int frequency = 25, int timeout = -1)
     {
         Task waitTask = Task.Run(async () =>

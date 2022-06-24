@@ -121,21 +121,15 @@ public abstract class MediaConfiguration : ISeriesSpecifier
 
     public bool HasIdOfType(TVDoc.ProviderType instanceDefaultProvider)
     {
-        switch (instanceDefaultProvider)
+        return instanceDefaultProvider switch
         {
-            case TVDoc.ProviderType.TVmaze:
-                return TVmazeCode > 0;
-
-            case TVDoc.ProviderType.TheTVDB:
-                return TvdbCode > 0;
-
-            case TVDoc.ProviderType.TMDB:
-                return TmdbCode > 0;
-
-            case TVDoc.ProviderType.libraryDefault:
-            default:
-                throw new ArgumentOutOfRangeException(nameof(instanceDefaultProvider), instanceDefaultProvider, null);
-        }
+            TVDoc.ProviderType.TVmaze => TVmazeCode > 0,
+            TVDoc.ProviderType.TheTVDB => TvdbCode > 0,
+            TVDoc.ProviderType.TMDB => TmdbCode > 0,
+            TVDoc.ProviderType.libraryDefault => throw new ArgumentOutOfRangeException(nameof(instanceDefaultProvider),
+                instanceDefaultProvider, null),
+            _ => throw new ArgumentOutOfRangeException(nameof(instanceDefaultProvider), instanceDefaultProvider, null)
+        };
     }
 
     public bool AnyIdsMatch(MediaConfiguration newShow) =>

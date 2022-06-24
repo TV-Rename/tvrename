@@ -81,11 +81,9 @@ public abstract class ActionNfo : ActionWriteMetadata
             NewLineOnAttributes = true
         };
 
-        using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
-        {
-            writer.WriteStartElement(RootName());
-            writer.WriteEndElement();
-        }
+        using XmlWriter writer = XmlWriter.Create(Where.FullName, settings);
+        writer.WriteStartElement(RootName());
+        writer.WriteEndElement();
     }
 
     protected abstract string RootName();

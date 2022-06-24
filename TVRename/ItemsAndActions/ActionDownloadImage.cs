@@ -131,11 +131,9 @@ public class ActionDownloadImage : ActionDownload
                 {
                     im = MaxSize(im, 156, 232);
 
-                    using (System.IO.MemoryStream m = new())
-                    {
-                        im.Save(m, ImageFormat.Jpeg);
-                        theData = m.ToArray();
-                    }
+                    using System.IO.MemoryStream m = new();
+                    im.Save(m, ImageFormat.Jpeg);
+                    theData = m.ToArray();
                 }
             }
             else
@@ -144,11 +142,9 @@ public class ActionDownloadImage : ActionDownload
                 {
                     im = MaxSize(im, 232, 156);
 
-                    using (System.IO.MemoryStream m = new())
-                    {
-                        im.Save(m, ImageFormat.Jpeg);
-                        theData = m.ToArray();
-                    }
+                    using System.IO.MemoryStream m = new();
+                    im.Save(m, ImageFormat.Jpeg);
+                    theData = m.ToArray();
                 }
             }
         }

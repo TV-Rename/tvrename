@@ -41,13 +41,11 @@ public class ActionMede8erViewXML : ActionWriteMetadata
 
         try
         {
-            using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
-            {
-                writer.WriteStartElement("FolderTag");
-                writer.WriteElement("ViewMode", "Movie");
-                writer.WriteElement("ViewType", "Video");
-                writer.WriteEndElement();
-            }
+            using XmlWriter writer = XmlWriter.Create(Where.FullName, settings);
+            writer.WriteStartElement("FolderTag");
+            writer.WriteElement("ViewMode", "Movie");
+            writer.WriteElement("ViewType", "Video");
+            writer.WriteEndElement();
         }
         catch (Exception e)
         {

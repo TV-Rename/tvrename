@@ -270,11 +270,11 @@ public class Episode
 
     public bool SameAs(Episode o) => EpisodeId == o.EpisodeId;
 
-    public IEnumerable<string> GuestStars => string.IsNullOrEmpty(EpisodeGuestStars) ? new string[] { } : EpisodeGuestStars.Split('|').Where(s => s.HasValue());
+    public IEnumerable<string> GuestStars => string.IsNullOrEmpty(EpisodeGuestStars) ? Array.Empty<string>() : EpisodeGuestStars.Split('|').Where(s => s.HasValue());
 
-    public IEnumerable<string> Writers => string.IsNullOrEmpty(Writer) ? new string[] { } : Writer.Split('|').Where(s => s.HasValue());
+    public IEnumerable<string> Writers => string.IsNullOrEmpty(Writer) ? Array.Empty<string>() : Writer.Split('|').Where(s => s.HasValue());
 
-    public IEnumerable<string> Directors => string.IsNullOrEmpty(EpisodeDirector) ? new string[] { } : EpisodeDirector.Split('|').Where(s => s.HasValue());
+    public IEnumerable<string> Directors => string.IsNullOrEmpty(EpisodeDirector) ? Array.Empty<string>() : EpisodeDirector.Split('|').Where(s => s.HasValue());
 
     public CachedSeriesInfo TheCachedSeries
     {

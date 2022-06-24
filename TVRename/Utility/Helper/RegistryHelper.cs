@@ -112,6 +112,7 @@ public static class RegistryHelper
         {
             RegistryKey key = Registry.CurrentUser.CreateSubKey(BROWSER_EMULATION_KEY, true);
 
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             if (key != null)
             {
                 string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);

@@ -43,5 +43,5 @@ public class PreviouslySeenEpisodes : List<int>
 
     public bool Includes(Item item) => Includes(item.Episode);
 
-    public bool Includes(ProcessedEpisode? episode) => episode != null && episode.EpisodeId > 0 && Contains(episode.EpisodeId);
+    public bool Includes(ProcessedEpisode? episode) => episode is { EpisodeId: > 0 } && Contains(episode.EpisodeId);
 }
