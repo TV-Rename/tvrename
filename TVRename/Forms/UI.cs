@@ -192,7 +192,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         WaitFor(() => CefSharp.Cef.IsInitialized, 10, "browser to initialise",true);
     }
 
-    private void WaitFor(Func<bool> func, int maxSeconds, string textMessage, bool doLogging)
+    private static void WaitFor(Func<bool> func, int maxSeconds, string textMessage, bool doLogging)
     {
         int numberOfWaits = 0;
         while (!func())
@@ -206,7 +206,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
     }
 
-    private void Wait(int milliseconds)
+    private static void Wait(int milliseconds)
     {
         Timer timer1 = new();
         if (milliseconds == 0 || milliseconds < 0)
@@ -713,7 +713,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         return searchers;
     }
 
-    private MediaConfiguration.MediaType GetSelectedObjectType(ObjectListView list)
+    private static MediaConfiguration.MediaType GetSelectedObjectType(ObjectListView list)
     {
         IList listSelectedObjects = list.SelectedObjects;
         if (listSelectedObjects.Count == listSelectedObjects.OfType<MovieItemMissing>().Count())
@@ -1396,7 +1396,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (seas != null)
         {
             // we have a TVDB season, but need to find the equivalent one in our local processed episode collection
-            if (seas.Episodes.Count > 0)
+            if (!seas.Episodes.IsEmpty)
             {
                 FillEpGuideHtml(seas.Show, seas.SeasonNumber);
                 return;
@@ -1472,7 +1472,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
     }
 
-    private void ResetRunBackGroundWorker(BackgroundWorker worker, object s)
+    private static void ResetRunBackGroundWorker(BackgroundWorker worker, object s)
     {
         if (worker.WorkerSupportsCancellation)
         {
@@ -4172,7 +4172,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         ie.ShowDialog(this);
     }
 
-    private async void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
+    private void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
     {
         ShowSummary f = new(mDoc, this);
         f.Show(this);
@@ -5275,11 +5275,9 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private static string AskUserForFolder()
     {
-        using (FolderBrowserDialog fbd = new())
-        {
-            fbd.ShowDialog();
-            return fbd.SelectedPath;
-        }
+        using FolderBrowserDialog fbd = new();
+        fbd.ShowDialog();
+        return fbd.SelectedPath;
 
         /*            CommonOpenFileDialog dialog = new CommonOpenFileDialog {IsFolderPicker = true};
                     ui.ShowChildDialog(dialog);
@@ -5410,7 +5408,7 @@ public class SeasonGroupComparer : IComparer<OLVGroup>
         return result;
     }
 
-    private int CompareValue(OLVGroup x) => ((Item)x.Items.First().RowObject).SeasonNumberAsInt ?? 0;
+    private static int CompareValue(OLVGroup x) => ((Item)x.Items.First().RowObject).SeasonNumberAsInt ?? 0;
 
     private readonly SortOrder sortOrder;
 }

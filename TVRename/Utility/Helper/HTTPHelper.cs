@@ -111,7 +111,7 @@ public static class HttpHelper
         string? contentType, string? token, string? lang)
     {
         HttpClient newClient = new();
-        Uri newClientBaseAddress = new Uri(url);
+        Uri newClientBaseAddress = new(url);
         newClient.BaseAddress = newClientBaseAddress;
         if (!contentType.IsNullOrWhitespace())
         {
@@ -133,7 +133,7 @@ public static class HttpHelper
 
         if (method == "POST" && postContent !=null)
         {
-            StringContent content = new(postContent);
+            StringContent content = new(postContent, Encoding.UTF8, "application/json");
 
             //POST the object to the specified URI 
             HttpResponseMessage response = newClient.PostAsync(newClientBaseAddress, content).Result;
@@ -179,24 +179,21 @@ public static class HttpHelper
 
     private static bool IsUnimportant(this WebException ex)
     {
-        switch (ex.Status)
+        return ex.Status switch
         {
-            case WebExceptionStatus.Timeout:
-            case WebExceptionStatus.NameResolutionFailure:
-            case WebExceptionStatus.ConnectFailure:
-            case WebExceptionStatus.ProtocolError:
-            case WebExceptionStatus.TrustFailure:
-            case WebExceptionStatus.RequestCanceled:
-            case WebExceptionStatus.PipelineFailure:
-            case WebExceptionStatus.ConnectionClosed:
-            case WebExceptionStatus.ReceiveFailure:
-            case WebExceptionStatus.SendFailure:
-            case WebExceptionStatus.SecureChannelFailure:
-                return true;
-
-            default:
-                return false;
-        }
+            WebExceptionStatus.Timeout => true,
+            WebExceptionStatus.NameResolutionFailure => true,
+            WebExceptionStatus.ConnectFailure => true,
+            WebExceptionStatus.ProtocolError => true,
+            WebExceptionStatus.TrustFailure => true,
+            WebExceptionStatus.RequestCanceled => true,
+            WebExceptionStatus.PipelineFailure => true,
+            WebExceptionStatus.ConnectionClosed => true,
+            WebExceptionStatus.ReceiveFailure => true,
+            WebExceptionStatus.SendFailure => true,
+            WebExceptionStatus.SecureChannelFailure => true,
+            _ => false
+        };
     }
 
     private static bool IsUnimportant(this HttpRequestException ex)
