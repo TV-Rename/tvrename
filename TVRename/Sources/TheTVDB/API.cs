@@ -178,20 +178,20 @@ internal static class API
             {
                 HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl,
                     _ => true,
-                    () => { response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang); },
+                    () => { response = HttpRequest("GET", fullUrl, "application/json", authToken, lang); },
                     authToken.EnsureValid);
             }
             else
             {
                 HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl,
                     _ => true,
-                    () => { response = HttpRequest("GET", fullUrl, null, "application/json", null, lang); },
+                    () => { response = HttpRequest("GET", fullUrl, "application/json", null, lang); },
                     () => { });
             }
         }
         else
         {
-            response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang);
+            response = HttpRequest("GET", fullUrl, "application/json", authToken, lang);
         }
 
         try
@@ -209,9 +209,9 @@ internal static class API
         }
     }
 
-    private static string HttpRequest(string method, string url, string? json, string contentType,
+    private static string HttpRequest(string method, string url, string contentType,
         TokenProvider? authToken, string lang = "")
-        => HttpHelper.HttpRequest(method, url, json, contentType, authToken?.GetToken(), lang);
+        => HttpHelper.HttpRequest(method, url, null, contentType, authToken?.GetToken(), lang);
 
     public static JObject? GetShowUpdatesSince(long time, string lang, int page)
     {

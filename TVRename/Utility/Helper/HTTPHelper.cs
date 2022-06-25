@@ -131,9 +131,9 @@ public static class HttpHelper
 
         Logger.Trace($"Obtaining {url}" );
 
-        if (method == "POST")
+        if (method == "POST" && postContent !=null)
         {
-            FormUrlEncodedContent content = new FormUrlEncodedContent(postContent);
+            StringContent content = new(postContent);
 
             //POST the object to the specified URI 
             HttpResponseMessage response = newClient.PostAsync(newClientBaseAddress, content).Result;
