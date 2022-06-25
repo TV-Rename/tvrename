@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+
 using BrightIdeasSoftware;
 using CefSharp.WinForms;
 using Humanizer;
@@ -65,7 +66,6 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     public delegate void ArgumentDelegate(string[] args);
 
     public readonly ScanTypeDelegate ScanAndDo;
-    public readonly ArgumentDelegate ReceiveArgumentDelegate;
 
     #endregion Delegates
 
@@ -115,7 +115,6 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         tabControl1.ItemSize = LogicalToDeviceUnits(tabControl1.ItemSize);
 
         ScanAndDo = ScanAndAction;
-        ReceiveArgumentDelegate = ReceiveArgs;
 
         try
         {
@@ -327,7 +326,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             return string.Empty;
         }
-        
+
         foreach (string folder in TVSettings.Instance.LibraryFolders)
         {
             if (destFolder.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
@@ -1963,12 +1962,12 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void MenuGuideAndTvdb(bool addSep, ProcessedEpisode? ep, List<ShowConfiguration> sis, ProcessedSeason? seas)
     {
-        if (sis is null || sis.Count != 1 || sis[0] == null)
+        if (sis.Count != 1)
         {
             return; // nothing or multiple selected
         }
 
-        ShowConfiguration? si = sis[0];
+        ShowConfiguration si = sis[0];
 
         if (addSep)
         {
@@ -1988,7 +1987,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             AddRcMenuItem(label, (_, _) => TvSourceFor(seas));
         }
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-        else if (si != null)
+        else
         {
             AddRcMenuItem("Episode Guide", (_, _) => GotoEpguideFor(si, true));
             string label = $"Visit {si.Provider.PrettyPrint()}...";
@@ -4648,9 +4647,9 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     public class HtmlUpdateSettings
     {
-        public object? Argument;
-        public string Html;
-        public ChromiumWebBrowser Web;
+        public readonly object? Argument;
+        public readonly string Html;
+        public readonly ChromiumWebBrowser Web;
 
         public HtmlUpdateSettings(object? argument, string html, ChromiumWebBrowser web)
         {
@@ -5306,7 +5305,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void browserTestToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        CefWrapper.Instance.CheckForBroswerDependencies(true);
+        CefWrapper.Instance.CheckForBrowserDependencies(true);
     }
 
     private void tsbScanTV_Click(object sender, EventArgs e)

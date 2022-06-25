@@ -1,3 +1,4 @@
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -169,7 +170,7 @@ internal static class API
     {
         TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
         string fullUrl = url + HttpHelper.GetHttpParameters(parameters);
-        
+
         string? response = null;
 
         if (retry)
@@ -397,9 +398,9 @@ internal static class API
         return JsonHttpGetRequest(uri, null, TokenProvider, requestLangCode, true);
     }
 
-    public static void Login(bool forceReconect)
+    public static void Login(bool forceReconnect)
     {
-        if (forceReconect)
+        if (forceReconnect)
         {
             TokenProvider.Reset();
         }

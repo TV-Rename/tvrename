@@ -116,7 +116,6 @@ internal class LibraryFolderFileFinder : FileFinder
         List<FileInfo> matchedFiles = GetMatchingFilesFromFolder(baseFolder, dfc, me, thisRound);
 
         foreach (string folderName in me.Episode.Show.AllFolderLocationsEpCheck(false)
-                     .Where(folders => folders.Value != null)
                      .Where(folders => folders.Key == me.Episode.AppropriateProcessedSeason.SeasonNumber)
                      .SelectMany(seriesFolders => seriesFolders.Value
                          .Where(f => !string.IsNullOrWhiteSpace(f)) //No point looking here

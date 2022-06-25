@@ -8,6 +8,7 @@
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading;
 
 namespace TVRename;
 
@@ -38,7 +39,7 @@ public class ActionDeleteFile : ActionDelete
 
     public override string TargetFolder => toRemove.DirectoryName;
 
-    public override ActionOutcome Go(TVRenameStats stats)
+    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {

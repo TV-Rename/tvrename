@@ -5,6 +5,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System.Threading;
+
 namespace TVRename;
 
 using Alphaleonis.Win32.Filesystem;
@@ -63,7 +65,7 @@ public class ActionTDownload : ActionDownload
 
     public override Item Becomes() => becomes;
 
-    public override ActionOutcome Go(TVRenameStats stats)
+    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         bool isDownloadable = url.IsWebLink();
         try

@@ -1841,7 +1841,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             foreach (JToken? seasonJson in seasonJsons)
             {
-                if (seasonType == getSeasonType(seasonJson) && seasonJson!= null)
+                if (seasonJson!= null && seasonType == getSeasonType(seasonJson))
                 {
                     int seasonId = seasonJson.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
                     string? seasonName = (string?)seasonJson["name"];
@@ -1907,7 +1907,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         if (code.HasValue())
         {
-            return Languages.Instance.GetLanguageFromThreeCode(code!) ?? Languages.Instance.FallbackLanguage;
+            return Languages.Instance.GetLanguageFromThreeCode(code) ?? Languages.Instance.FallbackLanguage;
         }
 
         return Languages.Instance.FallbackLanguage;
@@ -2459,12 +2459,12 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         if (transName.HasValue() && transName.IsPlaceholderName() && originalName.HasValue() && !originalName.IsPlaceholderName())
         {
-            ///issue
+            //issue
         }
 
         if (originalName.HasValue() && !originalName.IsPlaceholderName())
         {
-            return originalName!;
+            return originalName;
         }
 
         return transName ?? originalName ?? string.Empty;
@@ -2726,7 +2726,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         try
         {
             Episode e =
-                seriesDataDefaultLang != null 
+                seriesDataDefaultLang != null
                     ? new Episode(seriesId, (JObject?)jsonResponseData, (JObject?)seriesDataDefaultLang, si)
                     : new Episode(seriesId, (JObject)jsonResponseData!, si);
 
@@ -3172,7 +3172,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         string? directorName = (string?)r["director"];
         if (directorName.HasValue())
         {
-            si.AddCrew(new Crew(1, null, directorName!, "Director", "Directing", null));
+            si.AddCrew(new Crew(1, null, directorName, "Director", "Directing", null));
         }
     }
 

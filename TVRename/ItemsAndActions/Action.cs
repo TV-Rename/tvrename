@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System.Threading;
+
 namespace TVRename;
 
 public abstract class Action : Item // Something we can do
@@ -47,7 +49,7 @@ public abstract class Action : Item // Something we can do
         get;
     } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
 
-    public abstract ActionOutcome Go(TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false
+    public abstract ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false
 
     public abstract string Produces { get; } //What does this action produce? typically a filename
 

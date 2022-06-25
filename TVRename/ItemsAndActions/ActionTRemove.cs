@@ -1,4 +1,6 @@
+
 using System;
+using System.Threading;
 
 namespace TVRename;
 
@@ -45,7 +47,7 @@ internal class ActionTRemove : Action
 
     public override long SizeOfWork => 1000000;
 
-    public override ActionOutcome Go(TVRenameStats stats)
+    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {

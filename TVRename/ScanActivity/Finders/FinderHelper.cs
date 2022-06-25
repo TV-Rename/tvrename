@@ -95,7 +95,7 @@ internal static class FinderHelper
 
         if (betterMatch.Success)
         {
-            int sequenceNUm = int.Parse(betterMatch.Groups["sequencenumber"]?.Value ?? "-2");
+            int sequenceNUm = int.Parse(betterMatch.Groups["sequencenumber"].Value);
             return sequenceNUm == pe.OverallNumber;
         }
 
@@ -397,7 +397,7 @@ internal static class FinderHelper
 
         try
         {
-            if (returnFilename.StartsWith(showNameHint!, StringComparison.Ordinal))
+            if (returnFilename.StartsWith(showNameHint, StringComparison.Ordinal))
             {
                 return returnFilename.Remove(0, showNameHint.Length);
             }
@@ -412,7 +412,7 @@ internal static class FinderHelper
             Logger.Error($"Error in SimplifyFilename for {filename} and {showNameHint}, got {returnFilename} with error {ex.Message}");
         }
 
-        foreach (Match m in Regex.Matches(showNameHint!, "(?:^|[^a-z]|\\b)([0-9]{3,})")
+        foreach (Match m in Regex.Matches(showNameHint, "(?:^|[^a-z]|\\b)([0-9]{3,})")
                 ) // find >= 3 digit numbers in show name
         {
             if (m.Groups.Count > 1) // just in case
@@ -615,7 +615,7 @@ internal static class FinderHelper
                     }
 
                     int p = Math.Min(m.Groups["s"].Index, m.Groups["e"].Index);
-                    int p2 = Math.Min(p, hint.IndexOf(m.Groups.SyncRoot.ToString()??string.Empty, StringComparison.Ordinal));
+                    int p2 = Math.Min(p, hint.IndexOf(m.Groups["0"].ToString(), StringComparison.Ordinal));
 
                     if (seas != -1 && ep != -1)
                     {

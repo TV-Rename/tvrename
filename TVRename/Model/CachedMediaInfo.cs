@@ -245,12 +245,12 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
 
     private static string ChooseBetterStatus(string? encumbant, bool betterLanguage, string? newValue)
     {
-        if (string.IsNullOrEmpty(encumbant) || encumbant!.Equals("Unknown"))
+        if (string.IsNullOrEmpty(encumbant) || encumbant.Equals("Unknown"))
         {
             return newValue?.Trim() ?? string.Empty;
         }
 
-        if (string.IsNullOrEmpty(newValue) || newValue!.Equals("Unknown"))
+        if (string.IsNullOrEmpty(newValue) || newValue.Equals("Unknown"))
         {
             return encumbant.Trim();
         }

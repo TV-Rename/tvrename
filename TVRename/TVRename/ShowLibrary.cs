@@ -256,9 +256,9 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             return null;
         }
 
-        ProcessedSeason seas = si.AppropriateSeasons()[snum];
+        ProcessedSeason? seas = si.AppropriateSeasons()[snum];
 
-        if (seas is null)
+        if (seas is null || seas.Episodes is null)
         {
             Logger.Error($"Asked to update season {snum} of {si.ShowName}, whilst it exists, it has no contents");
             return null;

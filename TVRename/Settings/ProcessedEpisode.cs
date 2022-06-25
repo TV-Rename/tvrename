@@ -238,15 +238,8 @@ public class ProcessedEpisode : Episode
     public new bool HasAired()
     {
         DateTime? airsdt = GetAirDateDt(true);
-        if (airsdt is null)
-        {
-            return false;
-        }
-
-        DateTime dt = (DateTime)airsdt;
-
-        TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
-        return ts.TotalHours < 0;
+        TimeSpan? ts = airsdt?.Subtract(DateTime.Now); // how long...
+        return ts?.TotalHours < 0;
     }
 
     public bool WithinDays(int days)

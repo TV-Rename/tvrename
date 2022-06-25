@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace TVRename;
 public class ActionEngine
 {
     private bool actionPause;
-    private SafeList<Thread>? actionWorkers;
+    private SafeList<(Thread, CancellationTokenSource)>? actionWorkers;
     private bool actionStarting;
 
     private readonly TVRenameStats mStats; //reference to the main TVRenameStats, so we can update the counts
@@ -68,8 +69,14 @@ public class ActionEngine
 
             Action action = info.TheAction;
 
+            if (info.Token.IsCancellationRequested)
+            {
+                action.ErrorText = "Process Cancelled";
+                return;
+            }
+
             Logger.Trace($"Triggering Action: {action.Name} - {action.Produces} - {action}" );
-            action.Outcome = action.Go(mStats);
+            action.Outcome = action.Go(mStats,info.Token);
             if (action.Outcome.Error)
             {
                 action.ErrorText = action.Outcome.LastError?.Message ?? string.Empty;
@@ -100,9 +107,9 @@ public class ActionEngine
     private void WaitForAllActionThreadsAndTidyUp()
     {
         actionWorkers?.ForEach(t => {
-            if (t.IsAlive)
+            if (t.Item1.IsAlive)
             {
-                t.Join();
+                t.Item1.Join();
             }
         });
 
@@ -113,7 +120,7 @@ public class ActionEngine
     /// Processes a set of actions, running them in a multi-threaded way based on the application's settings.
     /// </summary>
     /// <param name="theList">An ItemList to be processed.</param>
-    /// <param name="showUi">Whether or not we should display a UI to inform the user about progress.</param>
+    /// <param name="token"></param>
     public void DoActions(ItemList? theList, CancellationToken token)
     {
         if (theList is null)
@@ -142,8 +149,8 @@ public class ActionEngine
 
     private class ActionProcessorThreadArgs
     {
-        public ItemList TheList;
-        public CancellationToken Token;
+        public readonly ItemList TheList;
+        public readonly CancellationToken Token;
 
         public ActionProcessorThreadArgs(ItemList theList, CancellationToken token)
         {
@@ -174,7 +181,7 @@ public class ActionEngine
 
             try
             {
-                actionWorkers = new SafeList<Thread>();
+                actionWorkers = new SafeList<(Thread, CancellationTokenSource)>();
 
                 ExecuteQueues(queues,args.Token);
 
@@ -196,10 +203,6 @@ public class ActionEngine
             Logger.Info("Completed Selected Actions");
             Logger.Info("**************************");
         }
-        catch (ThreadAbortException)
-        {
-            //Ignore this Exception as we can be aborting threads
-        }
         catch (Exception e)
         {
             Logger.Fatal(e, "Unhandled Exception in ActionProcessor");
@@ -211,9 +214,9 @@ public class ActionEngine
     {
         if (actionWorkers is not null)
         {
-            foreach (Thread t in actionWorkers)
+            foreach ((Thread,CancellationTokenSource) t in actionWorkers)
             {
-                t?.Abort();
+                t.Item2.Cancel();
             }
         }
     }
@@ -225,6 +228,11 @@ public class ActionEngine
             while (actionPause)
             {
                 Thread.Sleep(100);
+                if (token.IsCancellationRequested)
+                {
+                    AbortAllThreads();
+                    break; //We have been requested to finish
+                }
             }
 
             if (ReviewQueues(queues))
@@ -233,6 +241,7 @@ public class ActionEngine
             }
             if (token.IsCancellationRequested)
             {
+                AbortAllThreads();
                 break; //We have been requested to finish
             }
 
@@ -265,7 +274,8 @@ public class ActionEngine
 
                 if (!act.Outcome.Done)
                 {
-                    StartThread(new ProcessActionInfo(currentQueue, act));
+                    CancellationTokenSource cts = new();
+                    StartThread(new ProcessActionInfo(currentQueue, act,cts.Token),cts);
                 }
             }
         }
@@ -273,7 +283,7 @@ public class ActionEngine
         return allDone;
     }
 
-    private void StartThread(ProcessActionInfo pai)
+    private void StartThread(ProcessActionInfo pai, CancellationTokenSource cancellationTokenSource)
     {
         try
         {
@@ -290,7 +300,7 @@ public class ActionEngine
                 return;
             }
 
-            actionWorkers.Add(t);
+            actionWorkers.Add((t,cancellationTokenSource));
             actionStarting = true; // set to false in thread after it has the semaphore
             t.Start(pai);
         }
@@ -308,14 +318,9 @@ public class ActionEngine
             return;
         }
 
-        foreach (Thread aw in actionWorkers.ToList())
+        foreach ((Thread, CancellationTokenSource) aw in actionWorkers.ToList())
         {
-            if (aw is null)
-            {
-                continue;
-            }
-
-            if (!aw.IsAlive)
+            if (aw.Item1.IsAlive == false)
             {
                 actionWorkers.Remove(aw);
             }
@@ -324,7 +329,7 @@ public class ActionEngine
         // tidy up any finished workers
         for (int i = actionWorkers.Count - 1; i >= 0; i--)
         {
-            if (!actionWorkers[i]?.IsAlive  ?? true)
+            if (!actionWorkers[i].Item1.IsAlive)
             {
                 actionWorkers.RemoveAt(i); // remove dead worker
             }
@@ -401,11 +406,13 @@ public class ActionEngine
     {
         public readonly ActionQueue Queue;
         public readonly Action TheAction;
+        public readonly CancellationToken Token;
 
-        public ProcessActionInfo(ActionQueue q, Action a)
+        public ProcessActionInfo(ActionQueue q, Action a, CancellationToken token)
         {
             Queue = q;
             TheAction = a;
+            Token = token;
         }
     }
 

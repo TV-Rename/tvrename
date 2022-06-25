@@ -106,7 +106,7 @@ internal class RssItemList : List<RSSItem>
             Logger.Info($"Source:      {source}");
         }
 
-        link = string.IsNullOrWhiteSpace(enclosureLink) ? link : enclosureLink!;
+        link = string.IsNullOrWhiteSpace(enclosureLink) ? link : enclosureLink;
 
         if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(link))
         {

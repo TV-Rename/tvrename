@@ -8,7 +8,6 @@
 
 using Alphaleonis.Win32.Filesystem;
 using Humanizer;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1792,8 +1791,6 @@ public sealed class TVSettings
         };
     }
 
-    [NotNull]
-    // ReSharper disable once AnnotateNotNullParameter
     private static T ExtractEnum<T>(string value)
     {
         if (!typeof(T).IsEnum)

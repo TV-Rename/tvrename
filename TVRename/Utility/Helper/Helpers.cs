@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 
@@ -212,7 +213,7 @@ public static class Helpers
         }
         if (Directory.Exists(folder))
         {
-            return SysOpen(folder);
+            return SysOpen("explorer.exe",folder.EnsureEndsWithSeparator());
         }
         return false;
     }
@@ -225,13 +226,42 @@ public static class Helpers
         Process.Start(info);
     }
 
-    public static bool OpenUrl(string url) => SysOpen(url);
+    public static bool OpenUrl(string url) => OpenUrlInternal(url);
 
-    public static void OpenFile(string filename) => SysOpen(filename);
+    private static bool OpenUrlInternal(string url)
+    {
+        try
+        {
+            Process.Start(url);
+        }
+        catch (Exception e)
+        {
+            // hack because of this: https://github.com/dotnet/corefx/issues/10361
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                url = url.Replace("&", "^&");
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Process.Start("xdg-open", url);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                Process.Start("open", url);
+            }
+            else
+            {
+                Logger.Error(e, $"Could not open URL: {url}");
+                return false;
+            }
+        }
+        return true;
+    }
 
-    private static bool SysOpen(string? what) => SysOpen(what, null);
+    public static void OpenFile(string filename) => OpenUrlInternal(filename);
 
-    private static bool SysOpen(string? what, string? arguments)
+    static bool SysOpen(string? what, string? arguments)
     {
         if (string.IsNullOrWhiteSpace(what))
         {

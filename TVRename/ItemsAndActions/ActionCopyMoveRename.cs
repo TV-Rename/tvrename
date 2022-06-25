@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Security.AccessControl;
+using System.Threading;
 
 namespace TVRename;
 
@@ -65,7 +66,7 @@ public class ActionCopyMoveRename : ActionFileOperation
     // 0.0 to 100.0
     public override long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
 
-    public override ActionOutcome Go(TVRenameStats stats)
+    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         // read NTFS permissions (if any)
         FileSecurity? security = null;

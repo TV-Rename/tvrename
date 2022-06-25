@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 
 namespace TVRename;
 
@@ -33,7 +34,7 @@ public class ActionMede8erXML : ActionWriteMetadata
 
     public override string Name => "Write Mede8er Metadata";
 
-    public override ActionOutcome Go(TVRenameStats stats)
+    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {

@@ -4,7 +4,6 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Cache;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -118,7 +117,7 @@ public static class HttpHelper
             newClient.DefaultRequestHeaders.Accept
                 .Add(new MediaTypeWithQualityHeaderValue(contentType!));
         }
-        
+
         if (!token.IsNullOrWhitespace())
         {
             newClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
@@ -135,7 +134,7 @@ public static class HttpHelper
         {
             StringContent content = new(postContent, Encoding.UTF8, "application/json");
 
-            //POST the object to the specified URI 
+            //POST the object to the specified URI
             HttpResponseMessage response = newClient.PostAsync(newClientBaseAddress, content).Result;
 
             //Read back the answer from server

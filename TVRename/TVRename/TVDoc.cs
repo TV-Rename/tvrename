@@ -152,15 +152,11 @@ public class TVDoc : IDisposable
         foreach (ShowConfiguration show in TvLibrary.Shows)
         {
             CachedSeriesInfo? cachedData = show.CachedShow;
-            if (cachedData is null)
-            {
-                continue;
-            }
-            if (cachedData.Name.HasValue())
+            if (cachedData?.Name.HasValue() == true)
             {
                 show.LastName = cachedData.Name;
             }
-            if (cachedData.Imdb.HasValue())
+            if (cachedData?.Imdb.HasValue() == true)
             {
                 show.ImdbCode = cachedData.Imdb;
             }
@@ -169,15 +165,11 @@ public class TVDoc : IDisposable
         foreach (MovieConfiguration? show in FilmLibrary.Movies)
         {
             CachedMovieInfo? cachedData = show.CachedMovie;
-            if (cachedData is null)
-            {
-                continue;
-            }
-            if (cachedData.Name.HasValue())
+            if (cachedData?.Name.HasValue() == true)
             {
                 show.LastName = cachedData.Name;
             }
-            if (cachedData.Imdb.HasValue())
+            if (cachedData?.Imdb.HasValue() == true)
             {
                 show.ImdbCode = cachedData.Imdb;
             }
@@ -1762,18 +1754,12 @@ public class TVDoc : IDisposable
         ItemList remove = new();
         foreach (Item action in TheActionList)
         {
-            Item er2 = action;
-            if (er2?.Episode is null)
+            if (action?.Episode?.AppropriateSeasonNumber != snum)
             {
                 continue;
             }
 
-            if (er2.Episode.AppropriateSeasonNumber != snum)
-            {
-                continue;
-            }
-
-            if (er2.TargetFolder == er.TargetFolder) //ie if they are for the same cachedSeries
+            if (action.TargetFolder == er.TargetFolder) //ie if they are for the same cachedSeries
             {
                 remove.Add(action);
             }

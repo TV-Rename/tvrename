@@ -7,6 +7,7 @@
 //
 
 using System.Linq;
+using System.Threading;
 
 namespace TVRename;
 
@@ -24,7 +25,7 @@ public class ActionPyTivoMeta : ActionWriteMetadata
 
     public override string Name => "Write pyTivo Meta";
 
-    public override ActionOutcome Go(TVRenameStats stats)
+    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         if (Episode is null)
         {

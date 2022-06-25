@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Threading;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
@@ -58,7 +59,7 @@ public class ActionDeleteDirectory : ActionDelete
 
     public override string SeriesName => Episode?.Show.ShowName ?? SelectedShow?.ShowName ?? Movie?.ShowName ?? toRemove.Name;
 
-    public override ActionOutcome Go(TVRenameStats stats)
+    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         //if the directory is the root download folder do not delete
         if (TVSettings.Instance.MonitorFolders &&

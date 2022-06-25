@@ -1140,7 +1140,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                 return;
             }
 
-            int? tmdbCode = LookupTvdbIdByImdb(imdb!);
+            int? tmdbCode = LookupTvdbIdByImdb(imdb);
             if (!tmdbCode.HasValue)
             {
                 return;
@@ -1149,8 +1149,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             arg.TmdbCode = tmdbCode.Value;
         }
 
-        Task<SearchContainer<SearchTv>>? related = Client.GetTvShowRecommendationsAsync(arg.TmdbCode, languageCode);
-        Task<SearchContainer<SearchTv>>? similar = Client.GetTvShowSimilarAsync(arg.TmdbCode, languageCode);
+        Task<SearchContainer<SearchTv>?> related = Client.GetTvShowRecommendationsAsync(arg.TmdbCode, languageCode);
+        Task<SearchContainer<SearchTv>?> similar = Client.GetTvShowSimilarAsync(arg.TmdbCode, languageCode);
 
         Task.WaitAll(related, similar);
         if (related.Result != null)
@@ -1198,8 +1198,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         {
             try
             {
-                Task<SearchContainer<SearchMovie>>? related = Client.GetMovieRecommendationsAsync(arg.TmdbCode, languageCode);
-                Task<SearchContainer<SearchMovie>>? similar = Client.GetMovieSimilarAsync(arg.TmdbCode, languageCode);
+                Task<SearchContainer<SearchMovie>?> related = Client.GetMovieRecommendationsAsync(arg.TmdbCode, languageCode);
+                Task<SearchContainer<SearchMovie>?> similar = Client.GetMovieSimilarAsync(arg.TmdbCode, languageCode);
 
                 Task.WaitAll(related, similar);
                 if (related.Result != null)

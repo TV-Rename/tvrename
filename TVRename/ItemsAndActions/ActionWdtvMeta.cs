@@ -8,6 +8,7 @@
 
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 
 namespace TVRename;
 
@@ -31,7 +32,7 @@ public class ActionWdtvMeta : ActionWriteMetadata
 
     public override string Name => "Write WD TV Live Hub Meta";
 
-    public override ActionOutcome Go(TVRenameStats stats)
+    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         return Episode != null ? WriteEpisodeMetaDataFile() :
             SelectedShow != null ? WriteSeriesXml() :

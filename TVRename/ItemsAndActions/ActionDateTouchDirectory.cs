@@ -1,5 +1,6 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading;
 
 namespace TVRename;
 
@@ -20,7 +21,7 @@ internal abstract class ActionDateTouchDirectory : ActionDateTouch
         return o is ActionDateTouchDirectory touch && touch.whereDirectory == whereDirectory;
     }
 
-    public override ActionOutcome Go(TVRenameStats stats)
+    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {

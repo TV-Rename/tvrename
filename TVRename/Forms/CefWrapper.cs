@@ -73,7 +73,7 @@ public class CefWrapper{
             string urlToDownload = Environment.Is64BitProcess ? "vc_redist.x64.exe" : "vc_redist.x86.exe";
             Helpers.OpenUrl($"https://aka.ms/vs/16/release/{urlToDownload}");
         }
-        CheckForBroswerDependencies(false);
+        CheckForBrowserDependencies(false);
 
         Cef.EnableHighDPISupport();
     }
@@ -131,7 +131,7 @@ public class CefWrapper{
         }
     }
 
-    public void CheckForBroswerDependencies(bool showUi)
+    public void CheckForBrowserDependencies(bool showUi)
     {
         try
         {

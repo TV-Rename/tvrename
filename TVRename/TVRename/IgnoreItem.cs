@@ -28,7 +28,7 @@ public class IgnoreItem
             return false;
         }
 
-        return FileAndPath == o!.FileAndPath;
+        return FileAndPath == o.FileAndPath;
     }
 
     public bool MatchesEpisode(string folder, ProcessedEpisode episode)

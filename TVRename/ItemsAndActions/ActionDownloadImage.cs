@@ -9,6 +9,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Threading;
 
 namespace TVRename;
 
@@ -89,7 +90,7 @@ public class ActionDownloadImage : ActionDownload
         return bmPhoto;
     }
 
-    public override ActionOutcome Go(TVRenameStats stats)
+    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {

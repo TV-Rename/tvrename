@@ -5,6 +5,8 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+
+
 using Alphaleonis.Win32.Filesystem;
 using NodaTime;
 using System;
@@ -903,11 +905,6 @@ public class ShowConfiguration : MediaConfiguration
 
         foreach (KeyValuePair<int, ProcessedSeason> kvp in seasonsToUse)
         {
-            if (kvp.Value?.Episodes.Values is null)
-            {
-                continue;
-            }
-
             if (IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
             {
                 continue;

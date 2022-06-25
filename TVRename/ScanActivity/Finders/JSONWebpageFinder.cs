@@ -118,7 +118,7 @@ internal class JSONWebpageFinder : DownloadFinder
             }
             foreach (JToken item in x)
             {
-                if (item is null || item is not JObject episodeResponse)
+                if (item is not JObject episodeResponse)
                 {
                     continue;
                 }

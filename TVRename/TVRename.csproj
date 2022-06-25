@@ -33,6 +33,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>Latest</LangVersion>
     <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <NoWarn />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <WarningLevel>2</WarningLevel>

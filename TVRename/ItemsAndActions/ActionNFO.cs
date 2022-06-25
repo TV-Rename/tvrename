@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using Alphaleonis.Win32.Filesystem;
@@ -28,7 +29,7 @@ public abstract class ActionNfo : ActionWriteMetadata
     {
     }
 
-    public override ActionOutcome Go(TVRenameStats stats)
+    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {
@@ -55,7 +56,7 @@ public abstract class ActionNfo : ActionWriteMetadata
             try
             {
                 Where.Delete(true);
-                return Go(stats);
+                return Go(stats,cancellationToken);
             }
             catch (System.IO.IOException ex)
             {
