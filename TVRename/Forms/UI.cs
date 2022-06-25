@@ -3946,8 +3946,9 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (si is not null)
         {
             MenuGuideAndTvdb(true, episode, new List<ShowConfiguration> { si }, seas);
-            MenuFolders(lvr, si, episode?.AppropriateProcessedSeason, episode);
         }
+
+        MenuFolders(lvr, si, episode?.AppropriateProcessedSeason, episode);
 
         showRightClickMenu.Show(pt);
     }
