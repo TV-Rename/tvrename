@@ -97,6 +97,9 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged // someth
         }
         return left.Equals(right);
     }
+
+    public override int GetHashCode() => base.GetHashCode();
+
     public static bool operator !=(Item? left, Item? right) => !(left == right);
 
     public static bool operator <(Item left, Item right) => Compare(left, right) < 0;

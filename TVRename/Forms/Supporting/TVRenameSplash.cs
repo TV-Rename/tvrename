@@ -11,6 +11,12 @@ public partial class TVRenameSplash : Form
         lblVersion.Text = Helpers.DisplayVersion.ToUiVersion();
     }
 
+    public void update(string status, int progress, string details)
+    {
+        UpdateStatus(status);
+        UpdateInfo(details);
+        UpdateProgress(progress);
+    }
     public void UpdateStatus(string status)
     {
         if (IsHandleCreated)

@@ -119,7 +119,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         doc?.Closing();
     }
 
-    private static TVDoc LoadSettings(CommandLineArgs commandLineArgs)
+    private TVDoc LoadSettings(CommandLineArgs commandLineArgs)
     {
         bool recover = false;
         string recoverText = string.Empty;
@@ -137,7 +137,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         FileInfo? tvMazeFile = PathManager.TVmazeFile;
         FileInfo? tmdbFile = PathManager.TmdbFile;
         FileInfo? settingsFile = PathManager.TVDocSettingsFile;
-        TVDoc doc;
+        TVDoc createdDoc;
 
         do // Loop until files correctly load
         {
@@ -160,20 +160,24 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             }
 
             // Try loading settings file
-            doc = new TVDoc(settingsFile, commandLineArgs);
+            AlertUser("Settings and library",10);
+            createdDoc = new TVDoc(settingsFile, commandLineArgs);
 
             // Try loading TheTVDB cache file
             bool showIssues = !commandLineArgs.Unattended && !commandLineArgs.Hide;
+            AlertUser("Loading TVDB Cache",20);
             TheTVDB.LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, showIssues);
+            AlertUser("Loading TVMaze Cache",30);
             TVmaze.LocalCache.Instance.Setup(tvMazeFile, PathManager.TVmazeFile, showIssues);
+            AlertUser("Loading TMDB Cache",40);
             TMDB.LocalCache.Instance.Setup(tmdbFile, PathManager.TmdbFile, showIssues);
 
             if (recover)
             {
-                doc.SetDirty();
+                createdDoc.SetDirty();
             }
 
-            recover = !doc.LoadOk || !(TheTVDB.LocalCache.Instance.LoadOk && TMDB.LocalCache.Instance.LoadOk && TVmaze.LocalCache.Instance.LoadOk);
+            recover = !createdDoc.LoadOk || !(TheTVDB.LocalCache.Instance.LoadOk && TMDB.LocalCache.Instance.LoadOk && TVmaze.LocalCache.Instance.LoadOk);
 
             // Continue if correctly loaded
             if (!recover)
@@ -183,13 +187,13 @@ internal class ApplicationBase : WindowsFormsApplicationBase
 
             // Set recover message
             recoverText = string.Empty;
-            if (!doc.LoadOk && !string.IsNullOrEmpty(doc.LoadErr))
+            if (!createdDoc.LoadOk && !string.IsNullOrEmpty(createdDoc.LoadErr))
             {
-                recoverText = doc.LoadErr;
+                recoverText = createdDoc.LoadErr;
             }
 
             bool oneOfTheCacheFailedToLoad =
-                !TheTVDB.LocalCache.Instance.LoadOk || !TVmaze.LocalCache.Instance.LoadOk;
+                !TheTVDB.LocalCache.Instance.LoadOk || !TVmaze.LocalCache.Instance.LoadOk; //todo investigate TMDB??
 
             if (oneOfTheCacheFailedToLoad && !string.IsNullOrEmpty(CachePersistor.LoadErr))
             {
@@ -197,7 +201,17 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             }
         } while (recover);
 
-        return doc;
+        return createdDoc;
+    }
+
+    private void AlertUser(string message,int percent)
+    {
+        Logger.Info($"Splash Screen Updated with: {percent}/100 {message}");
+        // Update splash screen
+        SplashScreen.SafeInvoke(
+            () => ((TVRenameSplash)SplashScreen).UpdateStatus(message), true);
+        SplashScreen.SafeInvoke(
+            () => ((TVRenameSplash)SplashScreen).UpdateProgress(percent), true);
     }
 
     private static void SetupCustomSettings(CommandLineArgs commandLineArgs)

@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-
 using BrightIdeasSoftware;
 using CefSharp.WinForms;
 using Humanizer;
@@ -145,32 +144,31 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         tmrPeriodicScan.Enabled = false;
 
-        UpdateSplashStatus(splash, "Filling Shows");
+        UpdateSplashStatus(splash, "Filling Shows",55);
         mDoc.TvLibrary.GenDict();
         FillMyShows(true);
+        UpdateSplashStatus(splash, "Filling Movies",65);
         FillMyMovies();
         UpdateSearchButtons();
         SetScan(TVSettings.Instance.UIScanType);
         ClearInfoWindows();
-        UpdateSplashPercent(splash, 10);
-        UpdateSplashStatus(splash, "Updating WTW");
+        UpdateSplashStatus(splash, "Updating WTW",75);
         mDoc.UpdateDenormalisations();
-        UpdateSplashPercent(splash, 40);
+        UpdateSplashStatus(splash, "Updating WTW",80);
         FillWhenToWatchList();
         SortSchedule(3);
-        UpdateSplashPercent(splash, 60);
-        UpdateSplashStatus(splash, "Write Upcoming");
+        UpdateSplashStatus(splash, "Write Upcoming",85);
         mDoc.WriteUpcoming();
-        UpdateSplashStatus(splash, "Write Recent");
+        UpdateSplashStatus(splash, "Write Recent",88);
         mDoc.WriteRecent();
-        UpdateSplashStatus(splash, "Setting Notifications");
+        UpdateSplashStatus(splash, "Setting Notifications",90);
         ShowHideNotificationIcon();
 
-        UpdateSplashStatus(splash, "Creating Monitors");
+        UpdateSplashStatus(splash, "Creating Monitors",92);
         mAutoFolderMonitor = new AutoFolderMonitor(mDoc, this, TVSettings.Instance.FolderMonitorDelaySeconds);
         if (TVSettings.Instance.MonitorFolders)
         {
-            UpdateSplashStatus(splash, "Starting Monitor");
+            UpdateSplashStatus(splash, "Starting Monitor",95);
             mAutoFolderMonitor.Start();
         }
 
@@ -180,10 +178,11 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         SetupObjectListForScanResults();
 
         if (TVSettings.Instance.RunOnStartUp()) {
-            UpdateSplashStatus(splash, "Running Auto-scan");
+            UpdateSplashStatus(splash, "Running Auto-scan",100);
         }
 
         SetStartUpTab();
+        UpdateSplashStatus(splash, "Opening...",100);
     }
 
     private void WaitForCefInitialised()
@@ -549,25 +548,16 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         ActionAction(true, true, false);
     }
 
-    private static void UpdateSplashStatus(TVRenameSplash splashScreen, string text)
+    private static void UpdateSplashStatus(TVRenameSplash splashScreen, string text, int percent)
     {
         if (!splashScreen.IsHandleCreated)
         {
             return;
         }
 
-        Logger.Info($"Splash Screen Updated with: {text}");
+        Logger.Info($"Splash Screen Updated with: {percent}/100 {text}");
         splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateStatus(text); });
-    }
-
-    private static void UpdateSplashPercent(TVRenameSplash splashScreen, int num)
-    {
-        if (!splashScreen.IsHandleCreated)
-        {
-            return;
-        }
-
-        splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateProgress(num); });
+        splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateProgress(percent); });
     }
 
     private void ClearInfoWindows() => ClearInfoWindows(string.Empty);

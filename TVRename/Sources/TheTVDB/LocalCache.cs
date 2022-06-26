@@ -396,7 +396,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             //As a safety measure we check that no more than 52 calls are made
             const int MAX_NUMBER_OF_CALLS = 52;
-            if ( numberOfCallsMade > MAX_NUMBER_OF_CALLS && TVSettings.Instance.TvdbVersion!=ApiVersion.v4 ||(TVSettings.Instance.TvdbVersion == ApiVersion.v4 && numberOfCallsMade > 1000))
+            if ( TooManyCallsMade(numberOfCallsMade, MAX_NUMBER_OF_CALLS))
             {
                 if (cts.IsCancellationRequested)
                 {
@@ -439,6 +439,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         SayNothing();
 
         return true;
+    }
+
+    private static bool TooManyCallsMade(int numberOfCallsMade, int maxNumberOfCalls)
+    {
+        return TVSettings.Instance.TvdbVersion switch
+        {
+            ApiVersion.v4 => numberOfCallsMade > 1000,
+            _ => numberOfCallsMade > maxNumberOfCalls
+        };
     }
 
     private static bool MoreFrom(JObject jsonUpdateResponse)
@@ -3178,13 +3187,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private int ParseIdFromObjectID(JToken? jToken)
     {
-        if (jToken is null)
-        {
-            return 0;
-        }
-        string baseValue = jToken.ToString();
-        string[] splitString = baseValue.Split('-');
-        if (splitString.Length == 2)
+        string? baseValue = jToken?.ToString();
+        string[]? splitString = baseValue?.Split('-');
+        if (splitString?.Length == 2)
         {
             int? i = splitString[1].ToInt();
             if (i.HasValue)
@@ -3249,7 +3254,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private static string? Decode(JObject r, string tag)
     {
         string? s = (string?)r[tag];
-        return s.HasValue() ? System.Web.HttpUtility.HtmlDecode(s)?.Trim() : null;
+        return s.HasValue() ? System.Web.HttpUtility.HtmlDecode(s).Trim() : null;
     }
 
     private DateTime? GenerateFirstAiredDate(JObject r)
