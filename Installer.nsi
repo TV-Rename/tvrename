@@ -55,35 +55,35 @@ Section "Install"
 
     Delete "$INSTDIR\Ionic.Utils.Zip.dll" ; Remove old dependency
 
-    File "TVRename\bin\Release\TVRename.exe"
-    File "TVRename\bin\Release\*.dll"
+    File "TVRename\bin\Release\net6.0-windows\TVRename.exe"
+    File "TVRename\bin\Release\net6.0-windows\*.dll"
     
-    File "TVRename\bin\Release\NLog.config"
-    File "TVRename\bin\Release\TVRename.exe.config"
+    File "TVRename\bin\Release\net6.0-windows\NLog.config"
+    File "TVRename\bin\Release\net6.0-windows\TVRename.exe.config"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
     SetOutPath "$INSTDIR\x64"
-    File "TVRename\bin\Release\x64\*.dll"
-    File "TVRename\bin\Release\x64\*.exe"
-    File "TVRename\bin\Release\x64\*.bin"
-    File "TVRename\bin\Release\x64\*.pak"
-    File "TVRename\bin\Release\x64\*.dat"
-    File "TVRename\bin\Release\CefSharp.Core.dll"
+    File "TVRename\bin\Release\net6.0-windows\x64\*.dll"
+    File "TVRename\bin\Release\net6.0-windows\x64\*.exe"
+    File "TVRename\bin\Release\net6.0-windows\x64\*.bin"
+    File "TVRename\bin\Release\net6.0-windows\x64\*.pak"
+    File "TVRename\bin\Release\net6.0-windows\x64\*.dat"
+    File "TVRename\bin\Release\net6.0-windows\CefSharp.Core.dll"
 
     SetOutPath "$INSTDIR\x64\locales"
-    File "TVRename\bin\Release\x64\locales\*.pak"
+    File "TVRename\bin\Release\net6.0-windows\x64\locales\*.pak"
     
     SetOutPath "$INSTDIR\x86"
-    File "TVRename\bin\Release\x86\*.dll"
-    File "TVRename\bin\Release\x86\*.exe"
-    File "TVRename\bin\Release\x86\*.bin"
-    File "TVRename\bin\Release\x86\*.pak"
-    File "TVRename\bin\Release\x86\*.dat"
-    File "TVRename\bin\Release\CefSharp.Core.dll"
+    File "TVRename\bin\Release\net6.0-windows\x86\*.dll"
+    File "TVRename\bin\Release\net6.0-windows\x86\*.exe"
+    File "TVRename\bin\Release\net6.0-windows\x86\*.bin"
+    File "TVRename\bin\Release\net6.0-windows\x86\*.pak"
+    File "TVRename\bin\Release\net6.0-windows\x86\*.dat"
+    File "TVRename\bin\Release\net6.0-windows\CefSharp.Core.dll"
 
     SetOutPath "$INSTDIR\x86\locales"
-    File "TVRename\bin\Release\x86\locales\*.pak"
+    File "TVRename\bin\Release\net6.0-windows\x86\locales\*.pak"
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
