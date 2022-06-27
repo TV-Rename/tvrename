@@ -43,6 +43,7 @@ build:
   verbosity: minimal
 
 after_build:
+- ps: ls *
 - cmd: >-
     curl -fsS -o "%PROGRAMFILES(x86)%\NSIS\Plugins\x86-unicode\DotNetChecker.dll" https://raw.githubusercontent.com/ReVolly/NsisDotNetChecker/master/bin/DotNetChecker.dll
 
