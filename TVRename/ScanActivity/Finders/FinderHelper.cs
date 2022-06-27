@@ -936,7 +936,7 @@ internal static class FinderHelper
         }
 
         if (TVSettings.Instance.AutoAddMovieTermsArray.Any(term =>
-                hint.Contains(term, StringComparison.OrdinalIgnoreCase)))
+                file.Name.Contains(term, StringComparison.OrdinalIgnoreCase)))
         {
             return MediaConfiguration.MediaType.movie;
         }
