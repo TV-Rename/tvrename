@@ -37,7 +37,7 @@ assembly_info:
 test: off
 
 before_build:
-- cmd: nuget restore
+- cmd: nuget restore -verbosity detailed
 
 build:
   verbosity: minimal
