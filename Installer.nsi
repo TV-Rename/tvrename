@@ -75,6 +75,9 @@ Section "Install"
     SetOutPath "$INSTDIR\runtimes\win-x64\native"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.dll"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.exe"
+    File "packages\cef.redist.x64\*\CEF\*.dll"
+    File "packages\cef.redist.x64\*\CEF\*.pak"
+    File "packages\cef.redist.x64\*\CEF\*.bin"
 
     SetOutPath "$INSTDIR\runtimes\win-x64\native\locales"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\locales\*.pak"
@@ -85,7 +88,10 @@ Section "Install"
     SetOutPath "$INSTDIR\runtimes\win-x86\native"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.dll"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.exe"
-
+    File "packages\cef.redist.x86\*\CEF\*.dll"
+    File "packages\cef.redist.x86\*\CEF\*.pak"
+    File "packages\cef.redist.x86\*\CEF\*.bin"
+    
     SetOutPath "$INSTDIR\runtimes\win-x86\native\locales"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\locales\*.pak"
 
