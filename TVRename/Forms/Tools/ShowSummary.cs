@@ -114,7 +114,7 @@ public partial class ShowSummary : Form, IDialogParent
         // Draw season
         for (int c = chkHideSpecials.Checked ? 1 : 0; c < maxSeason + 1; c++)
         {
-            h = new ColumnHeader(c==0?"S"+c.Pad(2):c.ToString())
+            h = new ColumnHeader(c==0?ProcessedSeason.UIFullSeasonWord(c):"S"+c.Pad(2))
             {
                 AutomaticSortEnabled = false,
                 ResizeEnabled = false
