@@ -43,7 +43,6 @@ build:
   verbosity: minimal
 
 after_build:
-- ps: ls ../tvrename/TVRename/bin/* -R
 - cmd: >-
     curl -fsS -o "%PROGRAMFILES(x86)%\NSIS\Plugins\x86-unicode\DotNetChecker.dll" https://raw.githubusercontent.com/ReVolly/NsisDotNetChecker/master/bin/DotNetChecker.dll
 
@@ -51,6 +50,7 @@ after_build:
 
     "%PROGRAMFILES(x86)%\NSIS\makensis" /WX /DVERSION="%APPVEYOR_BUILD_VERSION_FRIENDLY%" /DTAG="%APPVEYOR_BUILD_VERSION%" Installer.nsi
 - sh: 7z a -r TVRename-Full-Build.zip *
+- cmd: ls ../tvrename/TVRename/bin/* -R
 
 artifacts:
 - path: 'TVRename-Full-Build.zip'
