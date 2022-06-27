@@ -250,7 +250,7 @@ public sealed class TVSettings
 
     public IEnumerable<string> PriorityReplaceTermsArray => Convert(PriorityReplaceTerms);
 
-    public string AutoAddIgnoreSuffixes = "1080p;720p";
+    public string AutoAddIgnoreSuffixes = "1080p;720p;2160p";
 
     public IEnumerable<string> AutoAddIgnoreSuffixesArray => Convert(AutoAddIgnoreSuffixes);
 
@@ -1553,7 +1553,7 @@ public sealed class TVSettings
         BulkAddIgnoreRecycleBin = xmlSettings.ExtractBool("BulkAddIgnoreRecycleBin", false);
         BulkAddCompareNoVideoFolders = xmlSettings.ExtractBool("BulkAddCompareNoVideoFolders", false);
         AutoAddMovieTerms = xmlSettings.ExtractString("AutoAddMovieTerms", "dvdrip;camrip;screener;dvdscr;r5;bluray");
-        AutoAddIgnoreSuffixes = xmlSettings.ExtractString("AutoAddIgnoreSuffixes", "1080p;720p");
+        AutoAddIgnoreSuffixes = xmlSettings.ExtractString("AutoAddIgnoreSuffixes", "1080p;720p;2160p");
         PriorityReplaceTerms = xmlSettings.ExtractString("PriorityReplaceTerms", "PROPER;REPACK;RERIP");
         mode = xmlSettings.ExtractEnum("BetaMode", BetaMode.ProductionOnly);
         TvdbVersion = xmlSettings.ExtractEnum("TvdbVersion", TheTVDB.ApiVersion.v3);

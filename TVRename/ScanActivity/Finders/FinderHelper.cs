@@ -683,8 +683,10 @@ internal static class FinderHelper
         List<string> removeCrapAfterTerms =
             new()
             {
+                "2160p",
                 "1080p",
                 "720p",
+                "480p",
                 "dvdrip",
                 "webrip",
                 "brrip",
