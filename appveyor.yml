@@ -51,6 +51,7 @@ after_build:
     "%PROGRAMFILES(x86)%\NSIS\makensis" /WX /DVERSION="%APPVEYOR_BUILD_VERSION_FRIENDLY%" /DTAG="%APPVEYOR_BUILD_VERSION%" Installer.nsi
 
 artifacts:
+- path: 'TVRename-complete-$(appveyor_build_version).zip'
 - path: 'TVRename-$(appveyor_build_version).exe'
   name: 'TVRename-$(appveyor_build_version)'
 
