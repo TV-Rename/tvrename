@@ -55,35 +55,39 @@ Section "Install"
 
     Delete "$INSTDIR\Ionic.Utils.Zip.dll" ; Remove old dependency
 
-    File "TVRename\bin\Release\TVRename.exe"
-    File "TVRename\bin\Release\*.dll"
+    File "TVRename\bin\Release\net6.0-windows\TVRename.exe"
+    File "TVRename\bin\Release\net6.0-windows\*.dll"
+    File "TVRename\bin\Release\net6.0-windows\*.json"
+    File "TVRename\bin\Release\net6.0-windows\TVRename.dll.config"
     
-    File "TVRename\bin\Release\NLog.config"
-    File "TVRename\bin\Release\TVRename.exe.config"
+    File "TVRename\bin\Release\net6.0-windows\NLog.config"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
-    SetOutPath "$INSTDIR\x64"
-    File "TVRename\bin\Release\x64\*.dll"
-    File "TVRename\bin\Release\x64\*.exe"
-    File "TVRename\bin\Release\x64\*.bin"
-    File "TVRename\bin\Release\x64\*.pak"
-    File "TVRename\bin\Release\x64\*.dat"
-    File "TVRename\bin\Release\CefSharp.Core.dll"
-
-    SetOutPath "$INSTDIR\x64\locales"
-    File "TVRename\bin\Release\x64\locales\*.pak"
+    SetOutPath "$INSTDIR\runtimes\win\lib\net6.0"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win\lib\net6.0\*.dll"
+    SetOutPath "$INSTDIR\runtimes\win\lib\netcoreapp2.1"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win\lib\netcoreapp2.1\*.dll"
     
-    SetOutPath "$INSTDIR\x86"
-    File "TVRename\bin\Release\x86\*.dll"
-    File "TVRename\bin\Release\x86\*.exe"
-    File "TVRename\bin\Release\x86\*.bin"
-    File "TVRename\bin\Release\x86\*.pak"
-    File "TVRename\bin\Release\x86\*.dat"
-    File "TVRename\bin\Release\CefSharp.Core.dll"
+    SetOutPath "$INSTDIR\runtimes\win-x64\lib\netcoreapp3.1"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\lib\netcoreapp3.1\*.dll"
+    
+    SetOutPath "$INSTDIR\runtimes\win-x64\native"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.dll"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.exe"
 
-    SetOutPath "$INSTDIR\x86\locales"
-    File "TVRename\bin\Release\x86\locales\*.pak"
+    SetOutPath "$INSTDIR\runtimes\win-x64\native\locales"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\locales\*.pak"
+    
+    SetOutPath "$INSTDIR\runtimes\win-x86\lib\netcoreapp3.1"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\lib\netcoreapp3.1\*.dll"
+
+    SetOutPath "$INSTDIR\runtimes\win-x86\native"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.dll"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.exe"
+
+    SetOutPath "$INSTDIR\runtimes\win-x86\native\locales"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\locales\*.pak"
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
