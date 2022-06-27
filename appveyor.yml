@@ -43,7 +43,7 @@ build:
   verbosity: minimal
 
 after_build:
-- ps: ls ./bin/* -R
+- ps: ls ../TVRename/bin/* -R
 - cmd: >-
     curl -fsS -o "%PROGRAMFILES(x86)%\NSIS\Plugins\x86-unicode\DotNetChecker.dll" https://raw.githubusercontent.com/ReVolly/NsisDotNetChecker/master/bin/DotNetChecker.dll
 
