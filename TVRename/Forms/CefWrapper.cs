@@ -117,7 +117,7 @@ public class CefWrapper{
 
         architectureSpecificResourcesDirPath = Path.Combine(
             AppDomain.CurrentDomain.SetupInformation.ApplicationBase,"runtimes",
-            "win-" + (Environment.Is64BitProcess ? "x64" : "x86"));
+            "win-" + (Environment.Is64BitProcess ? "x64" : "x86"),"native");
 
         if (Directory.Exists(architectureSpecificResourcesDirPath))
         {
