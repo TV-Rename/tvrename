@@ -86,8 +86,8 @@ public class CefWrapper{
     private void SetArchitecturePaths(CefSettings settings)
     {
         architectureSpecificBrowserPath = Path.Combine(
-            AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-            Environment.Is64BitProcess ? "x64" : "x86",
+            AppDomain.CurrentDomain.SetupInformation.ApplicationBase,"runtimes",
+            "win-" + (Environment.Is64BitProcess ? "x64" : "x86"),"native",
             "CefSharp.BrowserSubprocess.exe");
 
         if (File.Exists(architectureSpecificBrowserPath))
@@ -101,8 +101,8 @@ public class CefWrapper{
         }
 
         architectureSpecificLocalesDirPath = Path.Combine(
-            AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-            Environment.Is64BitProcess ? "x64" : "x86",
+            AppDomain.CurrentDomain.SetupInformation.ApplicationBase,"runtimes",
+            "win-" + (Environment.Is64BitProcess ? "x64" : "x86"),"native",
             "locales");
 
         if (Directory.Exists(architectureSpecificLocalesDirPath))
@@ -116,8 +116,8 @@ public class CefWrapper{
         }
 
         architectureSpecificResourcesDirPath = Path.Combine(
-            AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-            Environment.Is64BitProcess ? "x64" : "x86");
+            AppDomain.CurrentDomain.SetupInformation.ApplicationBase,"runtimes",
+            "win-" + (Environment.Is64BitProcess ? "x64" : "x86"));
 
         if (Directory.Exists(architectureSpecificResourcesDirPath))
         {
