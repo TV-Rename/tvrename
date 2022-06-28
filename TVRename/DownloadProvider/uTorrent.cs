@@ -56,4 +56,6 @@ internal class uTorrent : IDownloadProvider
     {
         System.Diagnostics.Process.Start(TVSettings.Instance.uTorrentPath, "\""+torrentFile.FullName+ "\"");
     }
+
+    public DownloadingFinder.DownloadApp Application => DownloadingFinder.DownloadApp.uTorrent;
 }

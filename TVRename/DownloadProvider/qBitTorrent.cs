@@ -81,6 +81,11 @@ public class qBitTorrent : IDownloadProvider
             Logger.Warn(
                 $"Could not connect to local instance {TVSettings.Instance.qBitTorrentHost}:{TVSettings.Instance.qBitTorrentPort}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections: {wex.LoggableDetails()}");
         }
+        catch (HttpRequestException wex)
+        {
+            Logger.Warn(
+                $"Could not connect to local instance {TVSettings.Instance.qBitTorrentHost}:{TVSettings.Instance.qBitTorrentPort}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections: {wex.LoggableDetails()}");
+        }
         catch (JsonReaderException ex)
         {
             Logger.Warn(ex,
@@ -224,6 +229,8 @@ public class qBitTorrent : IDownloadProvider
         StartTorrent(torrentFile.FullName);
     }
 
+    public DownloadingFinder.DownloadApp Application => DownloadingFinder.DownloadApp.qBitTorrent;
+
     public static void StartTorrent(string torrentFileName)
     {
         if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
@@ -259,7 +266,11 @@ public class qBitTorrent : IDownloadProvider
             Logger.Warn(
                 $"Could not connect to {wex.Response?.ResponseUri} to download {torrentName}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.Message}");
         }
-    }
+        catch (HttpRequestException wex)
+        {
+            Logger.Warn(
+                $"Could not connect to {wex.Source} to download {torrentName}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.Message}");
+        }    }
 
     private static void DownloadUrl(string torrentUrl, string url)
     {

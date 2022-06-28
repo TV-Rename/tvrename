@@ -21,6 +21,7 @@ internal abstract class DownloadingProviderFinder : DownloadingFinder
             LOGGER.Warn($"Failed to get current downloads from {source.Name()}");
             return;
         }
-        SearchForAppropriateDownloads(downloading, DownloadApp.qBitTorrent);
+
+        SearchForAppropriateDownloads(downloading, source.Application);
     }
 }

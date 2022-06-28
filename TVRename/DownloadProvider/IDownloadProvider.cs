@@ -14,4 +14,5 @@ public interface IDownloadProvider
     void StartUrlDownload(string torrentUrl);
 
     void StartTorrentDownload(FileInfo torrentFile);
+    DownloadingFinder.DownloadApp Application { get; }
 }
