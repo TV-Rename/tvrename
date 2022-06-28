@@ -981,7 +981,7 @@ namespace TVRename
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage2.Size = new System.Drawing.Size(537, 597);
+            this.tabPage2.Size = new System.Drawing.Size(615, 608);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Images";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -993,7 +993,7 @@ namespace TVRename
             this.chrMovieImages.Location = new System.Drawing.Point(4, 3);
             this.chrMovieImages.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.chrMovieImages.Name = "chrMovieImages";
-            this.chrMovieImages.Size = new System.Drawing.Size(529, 591);
+            this.chrMovieImages.Size = new System.Drawing.Size(607, 602);
             this.chrMovieImages.TabIndex = 1;
             this.chrMovieImages.Visible = false;
             // 
@@ -1004,7 +1004,7 @@ namespace TVRename
             this.tpMovieTrailer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tpMovieTrailer.Name = "tpMovieTrailer";
             this.tpMovieTrailer.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tpMovieTrailer.Size = new System.Drawing.Size(537, 597);
+            this.tpMovieTrailer.Size = new System.Drawing.Size(615, 608);
             this.tpMovieTrailer.TabIndex = 2;
             this.tpMovieTrailer.Text = "Trailer";
             this.tpMovieTrailer.UseVisualStyleBackColor = true;
@@ -1016,7 +1016,7 @@ namespace TVRename
             this.chrMovieTrailer.Location = new System.Drawing.Point(4, 3);
             this.chrMovieTrailer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.chrMovieTrailer.Name = "chrMovieTrailer";
-            this.chrMovieTrailer.Size = new System.Drawing.Size(529, 591);
+            this.chrMovieTrailer.Size = new System.Drawing.Size(607, 602);
             this.chrMovieTrailer.TabIndex = 2;
             this.chrMovieTrailer.Visible = false;
             // 
@@ -1124,7 +1124,7 @@ namespace TVRename
             this.tbMyShows.Location = new System.Drawing.Point(104, 4);
             this.tbMyShows.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbMyShows.Name = "tbMyShows";
-            this.tbMyShows.Size = new System.Drawing.Size(994, 679);
+            this.tbMyShows.Size = new System.Drawing.Size(994, 682);
             this.tbMyShows.TabIndex = 9;
             this.tbMyShows.Text = "TV Shows";
             this.tbMyShows.UseVisualStyleBackColor = true;
@@ -1136,12 +1136,12 @@ namespace TVRename
             // 
             this.toolStripContainer2.ContentPanel.Controls.Add(this.splitContainer1);
             this.toolStripContainer2.ContentPanel.Margin = new System.Windows.Forms.Padding(2);
-            this.toolStripContainer2.ContentPanel.Size = new System.Drawing.Size(994, 640);
+            this.toolStripContainer2.ContentPanel.Size = new System.Drawing.Size(994, 643);
             this.toolStripContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer2.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer2.Margin = new System.Windows.Forms.Padding(2);
             this.toolStripContainer2.Name = "toolStripContainer2";
-            this.toolStripContainer2.Size = new System.Drawing.Size(994, 679);
+            this.toolStripContainer2.Size = new System.Drawing.Size(994, 682);
             this.toolStripContainer2.TabIndex = 11;
             this.toolStripContainer2.Text = "toolStripContainer2";
             // 
@@ -1168,7 +1168,7 @@ namespace TVRename
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl2);
             this.splitContainer1.Panel2MinSize = 100;
-            this.splitContainer1.Size = new System.Drawing.Size(994, 640);
+            this.splitContainer1.Size = new System.Drawing.Size(994, 643);
             this.splitContainer1.SplitterDistance = 337;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 8;
@@ -1181,7 +1181,7 @@ namespace TVRename
             this.MyShowTree.Location = new System.Drawing.Point(0, 23);
             this.MyShowTree.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MyShowTree.Name = "MyShowTree";
-            this.MyShowTree.Size = new System.Drawing.Size(333, 613);
+            this.MyShowTree.Size = new System.Drawing.Size(333, 616);
             this.MyShowTree.TabIndex = 0;
             this.MyShowTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MyShowTree_AfterSelect);
             this.MyShowTree.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MyShowTree_MouseClick);
@@ -1209,7 +1209,7 @@ namespace TVRename
             this.tabControl2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(648, 636);
+            this.tabControl2.Size = new System.Drawing.Size(648, 639);
             this.tabControl2.TabIndex = 7;
             // 
             // tpInformation
@@ -1219,7 +1219,7 @@ namespace TVRename
             this.tpInformation.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tpInformation.Name = "tpInformation";
             this.tpInformation.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tpInformation.Size = new System.Drawing.Size(640, 605);
+            this.tpInformation.Size = new System.Drawing.Size(640, 608);
             this.tpInformation.TabIndex = 0;
             this.tpInformation.Text = "Information";
             this.tpInformation.UseVisualStyleBackColor = true;
@@ -1231,7 +1231,7 @@ namespace TVRename
             this.chrInformation.Location = new System.Drawing.Point(4, 3);
             this.chrInformation.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.chrInformation.Name = "chrInformation";
-            this.chrInformation.Size = new System.Drawing.Size(632, 599);
+            this.chrInformation.Size = new System.Drawing.Size(632, 602);
             this.chrInformation.TabIndex = 1;
             this.chrInformation.Visible = false;
             // 
@@ -1242,7 +1242,7 @@ namespace TVRename
             this.tpImages.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tpImages.Name = "tpImages";
             this.tpImages.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tpImages.Size = new System.Drawing.Size(566, 597);
+            this.tpImages.Size = new System.Drawing.Size(640, 605);
             this.tpImages.TabIndex = 1;
             this.tpImages.Text = "Images";
             this.tpImages.UseVisualStyleBackColor = true;
@@ -1254,7 +1254,7 @@ namespace TVRename
             this.chrImages.Location = new System.Drawing.Point(4, 3);
             this.chrImages.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.chrImages.Name = "chrImages";
-            this.chrImages.Size = new System.Drawing.Size(558, 591);
+            this.chrImages.Size = new System.Drawing.Size(632, 599);
             this.chrImages.TabIndex = 1;
             this.chrImages.Visible = false;
             // 
@@ -1265,7 +1265,7 @@ namespace TVRename
             this.tpSummary.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tpSummary.Name = "tpSummary";
             this.tpSummary.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tpSummary.Size = new System.Drawing.Size(566, 597);
+            this.tpSummary.Size = new System.Drawing.Size(640, 605);
             this.tpSummary.TabIndex = 2;
             this.tpSummary.Text = "Summary";
             this.tpSummary.UseVisualStyleBackColor = true;
@@ -1277,7 +1277,7 @@ namespace TVRename
             this.chrSummary.Location = new System.Drawing.Point(4, 3);
             this.chrSummary.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.chrSummary.Name = "chrSummary";
-            this.chrSummary.Size = new System.Drawing.Size(558, 591);
+            this.chrSummary.Size = new System.Drawing.Size(632, 599);
             this.chrSummary.TabIndex = 2;
             this.chrSummary.Visible = false;
             // 
@@ -1288,7 +1288,7 @@ namespace TVRename
             this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage3.Size = new System.Drawing.Size(566, 597);
+            this.tabPage3.Size = new System.Drawing.Size(640, 605);
             this.tabPage3.TabIndex = 3;
             this.tabPage3.Text = "Trailer";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1300,7 +1300,7 @@ namespace TVRename
             this.chrTvTrailer.Location = new System.Drawing.Point(4, 3);
             this.chrTvTrailer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.chrTvTrailer.Name = "chrTvTrailer";
-            this.chrTvTrailer.Size = new System.Drawing.Size(558, 591);
+            this.chrTvTrailer.Size = new System.Drawing.Size(632, 599);
             this.chrTvTrailer.TabIndex = 2;
             this.chrTvTrailer.Visible = false;
             // 
@@ -1432,7 +1432,7 @@ namespace TVRename
             this.tbAllInOne.Location = new System.Drawing.Point(104, 4);
             this.tbAllInOne.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbAllInOne.Name = "tbAllInOne";
-            this.tbAllInOne.Size = new System.Drawing.Size(994, 679);
+            this.tbAllInOne.Size = new System.Drawing.Size(994, 682);
             this.tbAllInOne.TabIndex = 11;
             this.tbAllInOne.Text = "Scan";
             this.tbAllInOne.UseVisualStyleBackColor = true;
@@ -1475,7 +1475,7 @@ namespace TVRename
             this.olvAction.ShowImagesOnSubItems = true;
             this.olvAction.ShowItemCountOnGroups = true;
             this.olvAction.ShowItemToolTips = true;
-            this.olvAction.Size = new System.Drawing.Size(994, 634);
+            this.olvAction.Size = new System.Drawing.Size(994, 637);
             this.olvAction.SmallImageList = this.ilIcons;
             this.olvAction.TabIndex = 0;
             this.olvAction.UseCompatibleStateImageBehavior = false;
