@@ -87,7 +87,7 @@ Section "Install"
 
     SetOutPath "$INSTDIR\runtimes\win-x86\native"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.dll"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.exe"
+    File "..\tvrename\TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.exe"
     File /nonfatal ..\..\packages\cef.redist.x86\*\CEF\*.dll
     File /nonfatal ..\..\packages\cef.redist.x86\*\CEF\*.pak
     File /nonfatal ..\..\packages\cef.redist.x86\*\CEF\*.bin
