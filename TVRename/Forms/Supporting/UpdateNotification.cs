@@ -10,6 +10,9 @@ using Newtonsoft.Json.Linq;
 using NLog;
 using System;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Windows.Forms;
 
 namespace TVRename.Forms;
@@ -33,46 +36,30 @@ public partial class UpdateNotification : Form
 
     private void UpdateWithMarkdown()
     {
+        HttpClient client = new();
         try
         {
-            if (WebRequest.Create(new Uri(GITHUB_CONVERSION_URL)) is HttpWebRequest req)
+            JObject request = new()
             {
-                req.Method = "POST";
-                req.ContentType = "application/json";
-                req.UserAgent = TVSettings.USER_AGENT;
+                {"text", newVersion.ReleaseNotesText},
+                {"mode", "gfm"},
+                {"context", "TV-Rename/tvrename"}
+            };
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(TVSettings.USER_AGENT);
+            client.DefaultRequestHeaders.Accept
+                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                JObject request = new()
-                {
-                    {"text", newVersion.ReleaseNotesText},
-                    {"mode", "gfm"},
-                    {"context", "TV-Rename/tvrename"}
-                };
+            HttpResponseMessage response = client.PostAsJsonAsync(GITHUB_CONVERSION_URL, request).Result;
+            System.IO.StreamReader reader = new(response.Content.ReadAsStream());
+            string result = reader.ReadToEnd();
 
-                using (System.IO.StreamWriter writer = new(req.GetRequestStream()))
-                {
-                    writer.Write(request.ToString());
-                }
+            const string HTML_HEAD =
+                "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style></head><body>";
 
-                string? result = null;
-                using (HttpWebResponse? resp = req.GetResponse() as HttpWebResponse)
-                {
-                    if (resp != null)
-                    {
-                        System.IO.StreamReader reader =
-                            new(resp.GetResponseStream() ??
-                                throw new InvalidOperationException());
+            const string HTML_FOOTER = "</body></html>";
 
-                        result = reader.ReadToEnd();
-                    }
-                }
+            webReleaseNotes.DocumentText = HTML_HEAD + result + HTML_FOOTER;
 
-                const string HTML_HEAD =
-                    "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style></head><body>";
-
-                const string HTML_FOOTER = "</body></html>";
-
-                webReleaseNotes.DocumentText = HTML_HEAD + result + HTML_FOOTER;
-            }
             webReleaseNotes.Visible = true;
             tbReleaseNotes.Visible = false;
         }
