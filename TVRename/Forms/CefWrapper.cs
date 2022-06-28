@@ -137,6 +137,7 @@ public class CefWrapper{
         {
             if (!Helpers.InDebug())
             {
+                Logger.Info($"Checking for CEF dependencies {architectureSpecificResourcesDirPath}");
                 DependencyChecker.AssertAllDependenciesPresent(
                     browserSubProcessPath: architectureSpecificBrowserPath,
                     localesDirPath: architectureSpecificLocalesDirPath,
