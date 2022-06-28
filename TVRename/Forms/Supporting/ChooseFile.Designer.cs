@@ -48,9 +48,11 @@ namespace TVRename
             // 
             // btnLeft
             // 
-            this.btnLeft.Location = new System.Drawing.Point(311, 50);
+            this.btnLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLeft.Location = new System.Drawing.Point(390, 58);
+            this.btnLeft.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnLeft.Name = "btnLeft";
-            this.btnLeft.Size = new System.Drawing.Size(75, 46);
+            this.btnLeft.Size = new System.Drawing.Size(88, 53);
             this.btnLeft.TabIndex = 0;
             this.btnLeft.Text = "Keep";
             this.btnLeft.UseVisualStyleBackColor = true;
@@ -58,10 +60,12 @@ namespace TVRename
             // 
             // Ignore
             // 
+            this.Ignore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Ignore.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Ignore.Location = new System.Drawing.Point(276, 275);
+            this.Ignore.Location = new System.Drawing.Point(349, 308);
+            this.Ignore.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Ignore.Name = "Ignore";
-            this.Ignore.Size = new System.Drawing.Size(110, 23);
+            this.Ignore.Size = new System.Drawing.Size(128, 27);
             this.Ignore.TabIndex = 2;
             this.Ignore.Text = "Ignore (keep both)";
             this.Ignore.UseVisualStyleBackColor = true;
@@ -69,9 +73,11 @@ namespace TVRename
             // 
             // btnKeepRight
             // 
-            this.btnKeepRight.Location = new System.Drawing.Point(311, 179);
+            this.btnKeepRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnKeepRight.Location = new System.Drawing.Point(390, 207);
+            this.btnKeepRight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnKeepRight.Name = "btnKeepRight";
-            this.btnKeepRight.Size = new System.Drawing.Size(75, 46);
+            this.btnKeepRight.Size = new System.Drawing.Size(88, 53);
             this.btnKeepRight.TabIndex = 3;
             this.btnKeepRight.Text = "Keep";
             this.btnKeepRight.UseVisualStyleBackColor = true;
@@ -79,19 +85,25 @@ namespace TVRename
             // 
             // txtLengthLeft
             // 
+            this.txtLengthLeft.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtLengthLeft.AutoSize = true;
-            this.txtLengthLeft.Location = new System.Drawing.Point(10, 66);
+            this.txtLengthLeft.Location = new System.Drawing.Point(12, 76);
+            this.txtLengthLeft.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.txtLengthLeft.Name = "txtLengthLeft";
-            this.txtLengthLeft.Size = new System.Drawing.Size(35, 13);
+            this.txtLengthLeft.Size = new System.Drawing.Size(38, 15);
             this.txtLengthLeft.TabIndex = 4;
             this.txtLengthLeft.Text = "label1";
             // 
             // lnkOpenLeftFolder
             // 
+            this.lnkOpenLeftFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lnkOpenLeftFolder.AutoSize = true;
-            this.lnkOpenLeftFolder.Location = new System.Drawing.Point(10, 113);
+            this.lnkOpenLeftFolder.Location = new System.Drawing.Point(12, 130);
+            this.lnkOpenLeftFolder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lnkOpenLeftFolder.Name = "lnkOpenLeftFolder";
-            this.lnkOpenLeftFolder.Size = new System.Drawing.Size(118, 13);
+            this.lnkOpenLeftFolder.Size = new System.Drawing.Size(134, 15);
             this.lnkOpenLeftFolder.TabIndex = 5;
             this.lnkOpenLeftFolder.TabStop = true;
             this.lnkOpenLeftFolder.Text = "Open Containing Folder";
@@ -99,46 +111,61 @@ namespace TVRename
             // 
             // txtDimensionsLeft
             // 
+            this.txtDimensionsLeft.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDimensionsLeft.AutoSize = true;
-            this.txtDimensionsLeft.Location = new System.Drawing.Point(10, 83);
+            this.txtDimensionsLeft.Location = new System.Drawing.Point(12, 96);
+            this.txtDimensionsLeft.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.txtDimensionsLeft.Name = "txtDimensionsLeft";
-            this.txtDimensionsLeft.Size = new System.Drawing.Size(35, 13);
+            this.txtDimensionsLeft.Size = new System.Drawing.Size(38, 15);
             this.txtDimensionsLeft.TabIndex = 6;
             this.txtDimensionsLeft.Text = "label2";
             // 
             // txtPathLeft
             // 
+            this.txtPathLeft.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPathLeft.AutoSize = true;
-            this.txtPathLeft.Location = new System.Drawing.Point(10, 100);
+            this.txtPathLeft.Location = new System.Drawing.Point(12, 115);
+            this.txtPathLeft.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.txtPathLeft.Name = "txtPathLeft";
-            this.txtPathLeft.Size = new System.Drawing.Size(35, 13);
+            this.txtPathLeft.Size = new System.Drawing.Size(38, 15);
             this.txtPathLeft.TabIndex = 7;
             this.txtPathLeft.Text = "label3";
             // 
             // txtPathRight
             // 
+            this.txtPathRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPathRight.AutoSize = true;
-            this.txtPathRight.Location = new System.Drawing.Point(10, 229);
+            this.txtPathRight.Location = new System.Drawing.Point(12, 264);
+            this.txtPathRight.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.txtPathRight.Name = "txtPathRight";
-            this.txtPathRight.Size = new System.Drawing.Size(35, 13);
+            this.txtPathRight.Size = new System.Drawing.Size(38, 15);
             this.txtPathRight.TabIndex = 11;
             this.txtPathRight.Text = "label4";
             // 
             // lblDimensionsRight
             // 
+            this.lblDimensionsRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDimensionsRight.AutoSize = true;
-            this.lblDimensionsRight.Location = new System.Drawing.Point(10, 212);
+            this.lblDimensionsRight.Location = new System.Drawing.Point(12, 245);
+            this.lblDimensionsRight.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDimensionsRight.Name = "lblDimensionsRight";
-            this.lblDimensionsRight.Size = new System.Drawing.Size(35, 13);
+            this.lblDimensionsRight.Size = new System.Drawing.Size(38, 15);
             this.lblDimensionsRight.TabIndex = 10;
             this.lblDimensionsRight.Text = "label5";
             // 
             // lnkOpenRightFolder
             // 
+            this.lnkOpenRightFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lnkOpenRightFolder.AutoSize = true;
-            this.lnkOpenRightFolder.Location = new System.Drawing.Point(10, 242);
+            this.lnkOpenRightFolder.Location = new System.Drawing.Point(12, 279);
+            this.lnkOpenRightFolder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lnkOpenRightFolder.Name = "lnkOpenRightFolder";
-            this.lnkOpenRightFolder.Size = new System.Drawing.Size(118, 13);
+            this.lnkOpenRightFolder.Size = new System.Drawing.Size(134, 15);
             this.lnkOpenRightFolder.TabIndex = 9;
             this.lnkOpenRightFolder.TabStop = true;
             this.lnkOpenRightFolder.Text = "Open Containing Folder";
@@ -146,45 +173,60 @@ namespace TVRename
             // 
             // lblLengthRight
             // 
+            this.lblLengthRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblLengthRight.AutoSize = true;
-            this.lblLengthRight.Location = new System.Drawing.Point(10, 195);
+            this.lblLengthRight.Location = new System.Drawing.Point(12, 225);
+            this.lblLengthRight.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblLengthRight.Name = "lblLengthRight";
-            this.lblLengthRight.Size = new System.Drawing.Size(35, 13);
+            this.lblLengthRight.Size = new System.Drawing.Size(38, 15);
             this.lblLengthRight.TabIndex = 8;
             this.lblLengthRight.Text = "label6";
             // 
             // lblSizeRight
             // 
+            this.lblSizeRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblSizeRight.AutoSize = true;
-            this.lblSizeRight.Location = new System.Drawing.Point(11, 179);
+            this.lblSizeRight.Location = new System.Drawing.Point(13, 207);
+            this.lblSizeRight.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSizeRight.Name = "lblSizeRight";
-            this.lblSizeRight.Size = new System.Drawing.Size(35, 13);
+            this.lblSizeRight.Size = new System.Drawing.Size(38, 15);
             this.lblSizeRight.TabIndex = 15;
             this.lblSizeRight.Text = "label7";
             // 
             // lblNameRight
             // 
+            this.lblNameRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblNameRight.AutoSize = true;
-            this.lblNameRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNameRight.Location = new System.Drawing.Point(11, 162);
+            this.lblNameRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.lblNameRight.Location = new System.Drawing.Point(13, 187);
+            this.lblNameRight.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblNameRight.Name = "lblNameRight";
             this.lblNameRight.Size = new System.Drawing.Size(0, 13);
             this.lblNameRight.TabIndex = 14;
             // 
             // txtSizeLeft
             // 
+            this.txtSizeLeft.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSizeLeft.AutoSize = true;
-            this.txtSizeLeft.Location = new System.Drawing.Point(11, 50);
+            this.txtSizeLeft.Location = new System.Drawing.Point(13, 58);
+            this.txtSizeLeft.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.txtSizeLeft.Name = "txtSizeLeft";
-            this.txtSizeLeft.Size = new System.Drawing.Size(35, 13);
+            this.txtSizeLeft.Size = new System.Drawing.Size(38, 15);
             this.txtSizeLeft.TabIndex = 13;
             this.txtSizeLeft.Text = "label9";
             // 
             // txtNameLeft
             // 
+            this.txtNameLeft.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtNameLeft.AutoSize = true;
-            this.txtNameLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtNameLeft.Location = new System.Drawing.Point(11, 33);
+            this.txtNameLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.txtNameLeft.Location = new System.Drawing.Point(13, 38);
+            this.txtNameLeft.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.txtNameLeft.Name = "txtNameLeft";
             this.txtNameLeft.Size = new System.Drawing.Size(0, 13);
             this.txtNameLeft.TabIndex = 12;
@@ -192,8 +234,9 @@ namespace TVRename
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(11, 9);
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label10.Location = new System.Drawing.Point(13, 10);
+            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(203, 13);
             this.label10.TabIndex = 16;
@@ -201,10 +244,10 @@ namespace TVRename
             // 
             // ChooseFile
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.Ignore;
-            this.ClientSize = new System.Drawing.Size(390, 306);
+            this.ClientSize = new System.Drawing.Size(486, 342);
             this.ControlBox = false;
             this.Controls.Add(this.label10);
             this.Controls.Add(this.lblSizeRight);
@@ -222,7 +265,7 @@ namespace TVRename
             this.Controls.Add(this.btnKeepRight);
             this.Controls.Add(this.Ignore);
             this.Controls.Add(this.btnLeft);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ChooseFile";
