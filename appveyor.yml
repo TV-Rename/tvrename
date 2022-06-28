@@ -37,7 +37,7 @@ assembly_info:
 test: off
 
 before_build:
-- cmd: nuget restore -verbosity quiet -PackagesDirectory ..\packages
+- cmd: nuget restore -verbosity quiet -PackagesDirectory TVRename\packages
 
 build:
   verbosity: minimal
