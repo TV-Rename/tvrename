@@ -106,7 +106,7 @@ public class ActionCopyMoveRename : ActionFileOperation
                 Debug.Assert(Operation == Op.copy);
 
                 // This step could be slow, so report progress
-                CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
+                CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.CopyTimestamp, CopyProgressCallback, null);
                 if (copyResult.ErrorCode != 0)
                 {
                     throw new ActionFailedException(copyResult.ErrorMessage);
