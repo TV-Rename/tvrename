@@ -80,6 +80,7 @@ Section "Install"
     File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\*.bin
     File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\*.dat
     File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\*.json
+    File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\CefSharp.BrowserSubprocess.runtimeconfig.json
 
     SetOutPath "$INSTDIR\runtimes\win-x64\native\locales"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\locales\*.pak"
@@ -95,6 +96,7 @@ Section "Install"
     File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.bin
     File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.dat
     File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.json
+    File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\CefSharp.BrowserSubprocess.runtimeconfig.json
     
     SetOutPath "$INSTDIR\runtimes\win-x86\native\locales"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\locales\*.pak"
@@ -132,6 +134,7 @@ Section "Uninstall"
 
     RmDir /r "$INSTDIR\x64"
     RmDir /r "$INSTDIR\x86"
+    RmDir /r "$INSTDIR\runtimes"
     
     RmDir "$INSTDIR"
     
