@@ -97,7 +97,6 @@ Section "Install"
     File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.bin
     File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.dat
     File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.json
-    File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\CefSharp.BrowserSubprocess.runtimeconfig.json
     
     SetOutPath "$INSTDIR\runtimes\win-x86\native\locales"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\locales\*.pak"
