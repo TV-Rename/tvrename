@@ -11,12 +11,15 @@ using NLog.Layouts;
 using NLog.Targets;
 using NLog.Windows.Forms;
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
+using Microsoft.VisualBasic.Logging;
 
 namespace TVRename;
 
 public partial class LogViewer : Form
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     public LogViewer()
     {
         InitializeComponent();
@@ -49,6 +52,13 @@ public partial class LogViewer : Form
     private void btnFullLog_Click(object sender, EventArgs e)
     {
         FileTarget target = (FileTarget)LogManager.Configuration.FindTargetByName("logfile");
-        System.Diagnostics.Process.Start(((SimpleLayout)target.FileName).FixedText);
+        try
+        {
+            System.Diagnostics.Process.Start(((SimpleLayout)target.FileName).FixedText);
+        }
+        catch (Win32Exception wex)
+        {
+            Logger.Error(wex,$"Could not open {target.FileName}");
+        }
     }
 }
