@@ -75,6 +75,7 @@ Section "Install"
     SetOutPath "$INSTDIR\runtimes\win-x64\native"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.dll"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.exe"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.json"
     File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\*.dll
     File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\*.pak
     File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\*.bin
@@ -90,6 +91,7 @@ Section "Install"
     SetOutPath "$INSTDIR\runtimes\win-x86\native"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.dll"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.exe"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.json"
     File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.dll
     File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.pak
     File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.bin
@@ -132,6 +134,7 @@ Section "Uninstall"
 
     RmDir /r "$INSTDIR\x64"
     RmDir /r "$INSTDIR\x86"
+    RmDir /r "$INSTDIR\runtimes"
     
     RmDir "$INSTDIR"
     
