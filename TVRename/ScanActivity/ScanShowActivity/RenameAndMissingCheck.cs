@@ -233,15 +233,31 @@ internal class RenameAndMissingCheck : ScanShowActivity
             //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
             if (FileHelper.FileExistsCaseSensitive(files, newFile))
             {
-                LOGGER.Warn(
-                    $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
-                if (!settings.Unattended && TVSettings.Instance.ChooseWhenMultipleEpisodesMatch)
+                if (newFile.Length == actualFile.Length && !MatchesSourceEpisode(ep,actualFile) && (newFile.IsThumb() || newFile.IsImageFile()))
                 {
-                    bool? result = ScanHelper.AskUserAboutFileReplacement(actualFile, newFile, ep, settings.Owner, Doc, Doc.TheActionList);
+                    //Thumbnail that already exists
+                    LOGGER.Info(
+                        $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists. They are the same size, so removing one.");
+                    Doc.TheActionList.Add(new ActionDeleteFile(actualFile, ep, TVSettings.Instance.Tidyup));
+                }
+                else if (MatchesSourceEpisode(ep, actualFile) && actualFile.IsThumb() && actualFile.IsImageFile())
+                {
+                    //The actual file matches a needed thumbnail
+                }
+                else
+                {
+                    LOGGER.Warn(
+                        $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
 
-                    if (result is true)
+                    if (!settings.Unattended && TVSettings.Instance.ChooseWhenMultipleEpisodesMatch)
                     {
-                        Doc.TheActionList.Add(new ActionDeleteFile(actualFile, ep, TVSettings.Instance.Tidyup));
+                        bool? result = ScanHelper.AskUserAboutFileReplacement(actualFile, newFile, ep, settings.Owner,
+                            Doc, Doc.TheActionList);
+
+                        if (result is true)
+                        {
+                            Doc.TheActionList.Add(new ActionDeleteFile(actualFile, ep, TVSettings.Instance.Tidyup));
+                        }
                     }
                 }
             }
@@ -279,6 +295,23 @@ internal class RenameAndMissingCheck : ScanShowActivity
         }
 
         return null;
+    }
+
+    private bool MatchesSourceEpisode(ProcessedEpisode episode,FileInfo actualFile)
+    {
+        foreach (Episode ep in episode.SourceEpisodes)
+        {
+            // Note that the extension of the file may not be fi.extension as users can put ".mkv.t" for example as an extension
+            string otherExtension = TVSettings.Instance.FileHasUsefulExtensionDetails(actualFile, true);
+            string filename = TVSettings.Instance.FilenameFriendly(episode.Show, ep);
+
+            if (actualFile.Name.Equals(filename + otherExtension, StringComparison.CurrentCulture))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void AddMissingIfNeeded(ShowConfiguration si, int snum, string folder, bool missCheck, ProcessedEpisode episode,

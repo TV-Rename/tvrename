@@ -302,10 +302,14 @@ public static class FileHelper
 
     public static bool IsMovieFile(this FileInfo file) => TVSettings.Instance.FileHasUsefulExtension(file, false);
 
-    public static bool IsArchiveFile(this FileInfo file)
+    public static bool IsThumb(this FileInfo file) =>
+        file.FileNameNoExt().EndsWith("-thumb", StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsArchiveFile(this FileInfo file) => file.IsFileOfType(".zip;.rar;.tar;.tar.gz;.gz;.7z");
+    public static bool IsImageFile(this FileInfo file) => file.IsFileOfType(".jpg;.jpeg;.gif;.tbn");
+    private static bool IsFileOfType(this FileInfo file,string extensions)
     {
-        const string ARCHIVE_EXTENSIONS = ".zip;.rar;.tar;.tar.gz;.gz;.7z";
-        return ARCHIVE_EXTENSIONS.Split(';')
+        return extensions.Split(';')
             .Where(s => !string.IsNullOrWhiteSpace(s))
             .Any(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase));
     }
