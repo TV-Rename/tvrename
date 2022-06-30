@@ -95,6 +95,15 @@ public class qBitTorrent : IDownloadProvider
         {
             Logger.Warn(nex, $"Could not get data from {settingsString} {downloadsString}");
         }
+        catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
+        {
+            Logger.Warn(
+                $"Could not connect to local instance {TVSettings.Instance.qBitTorrentHost}:{TVSettings.Instance.qBitTorrentPort}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections: {ex.LoggableDetails()}");
+        }
+        catch (Exception nex)
+        {
+            Logger.Error(nex, $"Could not get data from {settingsString} {downloadsString}");
+        }
 
         return null;
     }
@@ -270,7 +279,13 @@ public class qBitTorrent : IDownloadProvider
         {
             Logger.Warn(
                 $"Could not connect to {wex.Source} to download {torrentName}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.Message}");
-        }    }
+        }
+        catch (AggregateException ex) when (ex.InnerException is WebException wex)
+        {
+            Logger.Warn(
+                $"Could not connect to {wex.Response?.ResponseUri} to download {torrentName}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.Message}");
+        }
+    }
 
     private static void DownloadUrl(string torrentUrl, string url)
     {
@@ -284,6 +299,7 @@ public class qBitTorrent : IDownloadProvider
             {
                 string message =
                     $"Tried to download {torrentUrl} from qBitTorrent via {url}. Got following response {response.StatusCode}";
+
                 Logger.Warn(message);
                 throw new WebException(message);
             }
@@ -297,7 +313,15 @@ public class qBitTorrent : IDownloadProvider
         {
             Logger.Warn(
                 $"Could not connect to {wex.Response?.ResponseUri} to download {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
+
             throw;
+        }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            Logger.Warn(
+                $"Could not connect to {url} to download {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
+
+            throw wex;
         }
     }
 
@@ -328,6 +352,11 @@ public class qBitTorrent : IDownloadProvider
             {
                 Logger.Warn($"Could not connect to {wex.Response?.ResponseUri} to remove {name.TorrentFile}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
                 throw;
+            }
+            catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+            {
+                Logger.Warn($"Could not connect to {url} to remove {name.TorrentFile}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
+                throw wex;
             }
         }
     }

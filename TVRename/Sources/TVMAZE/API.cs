@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 
 namespace TVRename.TVmaze;
 
@@ -42,6 +43,11 @@ internal static class API
             Logger.Error($"Could not get updates from TV Maze due to {jre.Message}");
             throw new SourceConnectivityException(jre.Message);
         }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            Logger.LogHttpRequestException("Could not get updates from TV Maze due to", wex);
+            throw new SourceConnectivityException(ex.Message);
+        }
     }
 
     public static IEnumerable<CachedSeriesInfo> ShowSearch(string searchText)
@@ -60,6 +66,12 @@ internal static class API
         catch (System.IO.IOException wex)
         {
             Logger.LogIoException($"Could not search for show '{searchText}' from TV Maze due to", wex);
+            throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
+        }
+
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            Logger.LogHttpRequestException($"Could not search for show '{searchText}' from TV Maze due to", wex);
             throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
         }
         return response.Children().Select(ConvertSearchResult).OfType<CachedSeriesInfo>();
@@ -122,6 +134,14 @@ internal static class API
                     }
                     throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={source.TvdbId} {wex.Message}");
                 }
+                catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex2)
+                {
+                    if (wex2.Is404() && TvMazeIsUp())
+                    {
+                        throw new MediaNotFoundException(source, $"Please add show with imdb={imdbCode} and tvdb={source.TvdbId} to tvMaze, or use TVDB as the source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+                    }
+                    throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={source.TvdbId} {wex.Message}");
+                }
             }
             throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}");
         }
@@ -134,6 +154,10 @@ internal static class API
             return HttpHelper.HttpGetRequestWithRetry(APIRoot + "/singlesearch/shows?q=girls", 5, 1).HasValues;
         }
         catch (WebException)
+        {
+            return false;
+        }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException)
         {
             return false;
         }
@@ -157,6 +181,16 @@ internal static class API
             }
 
             Logger.LogWebException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", wex);
+            throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {wex.Message}");
+        }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            if (wex.Is404() && TvMazeIsUp())
+            {
+                throw new MediaNotFoundException(tvMazeId, $"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+            }
+
+            Logger.LogHttpRequestException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", wex);
             throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {wex.Message}");
         }
         catch (System.IO.IOException ioe)

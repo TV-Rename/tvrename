@@ -288,6 +288,11 @@ internal static class API
             //no images for chosen language
             Logger.LogIoException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}",iox);
         }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            //no images for chosen language
+            Logger.LogHttpRequestException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}",wex);
+        }
         return new List<string>();
     }
 
@@ -340,7 +345,19 @@ internal static class API
 
             return false;
         }
+        catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
+        {
+            //we expect an Unauthorised response - so we know the site is up
 
+            return ex.StatusCode switch
+            {
+                HttpStatusCode.Unauthorized => true,
+                HttpStatusCode.Forbidden => true,
+                HttpStatusCode.NotFound => false,
+                HttpStatusCode.OK => true,
+                _ => false
+            };
+        }
         return jsonResponse?.HasValues ?? false;
     }
 
@@ -369,6 +386,10 @@ internal static class API
             catch (System.IO.IOException ioe)
             {
                 Logger.LogIoException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {ioe.LoggableDetails()}",ioe);
+            }
+            catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+            {
+                Logger.LogHttpRequestException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}:", wex);
             }
         }
 
@@ -467,6 +488,23 @@ internal static class API
 
             Logger.LogWebException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", webEx);
             throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {webEx.Message}");
+        }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            if (wex.StatusCode is HttpStatusCode.NotFound)
+            {
+                Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404).");
+
+                if (TvdbIsUp() && code!=null)
+                {
+                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. Please Update";
+                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
+                        TVDoc.ProviderType.TheTVDB, type);
+                }
+            }
+
+            Logger.LogHttpRequestException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", wex);
+            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {wex.Message}");
         }
         catch (System.IO.IOException ioe)
         {

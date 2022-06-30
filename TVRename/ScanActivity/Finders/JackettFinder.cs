@@ -76,7 +76,10 @@ internal class JackettFinder : DownloadFinder
         {
             LOGGER.LogWebException($"Failed to access: {ex.Response?.ResponseUri} got the following message:", ex);
         }
-
+        catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
+        {
+            LOGGER.LogHttpRequestException("Failed to access: Jackett got the following message:", ex);
+        }
         ActionList.Replace(toRemove, newItems);
     }
 

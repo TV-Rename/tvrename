@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -112,6 +113,12 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return null;
         }
         catch (System.IO.IOException e)
+        {
+            LOGGER.Warn(CurrentDLTask + " : " + e.LoggableDetails() + " : " + url);
+            LastErrorMessage = CurrentDLTask + " : " + e.LoggableDetails();
+            return null;
+        }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException e)
         {
             LOGGER.Warn(CurrentDLTask + " : " + e.LoggableDetails() + " : " + url);
             LastErrorMessage = CurrentDLTask + " : " + e.LoggableDetails();
@@ -224,6 +231,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             HandleConnectionProblem(showErrorMsgBox, ex);
             return false;
         }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            HandleConnectionProblem(showErrorMsgBox, wex);
+            return false;
+        }
         catch (System.IO.IOException ex)
         {
             HandleConnectionProblem(showErrorMsgBox, ex);
@@ -248,6 +260,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             LOGGER.LogIoException("Error obtaining token from TVDB", iex);
             LastErrorMessage = iex.LoggableDetails();
+        }
+        else if (ex is AggregateException { InnerException: HttpRequestException hex })
+        {
+            LOGGER.LogHttpRequestException("Error obtaining token from TVDB", hex);
+            LastErrorMessage = hex.LoggableDetails();
         }
         else
         {
@@ -525,7 +542,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             LastErrorMessage = ex.LoggableDetails();
             return null;
         }
-        catch (AggregateException aex) when (aex.InnerException is System.Net.Http.HttpRequestException ex)
+        catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
         {
             LOGGER.LogHttpRequestException(
                 $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", ex);
@@ -1014,20 +1031,19 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             }
             catch (WebException ex)
             {
-                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse
-                        { StatusCode: HttpStatusCode.NotFound })
+                if (ex.Is404())
                 {
                     if (pageNumber > 1 && TVSettings.TVDBPagingMethod == PagingMethod.brute)
                     {
                         LOGGER.Info(
-                            $"Have got to the end of episodes for this show: Episodes were not found for {id} from TVDB (got a 404). Error obtaining page {pageNumber} in lang {languageToUse.EnglishName} using url {ex.Response.ResponseUri.AbsoluteUri}");
+                            $"Have got to the end of episodes for this show: Episodes were not found for {id} from TVDB (got a 404). Error obtaining page {pageNumber} in lang {languageToUse.EnglishName}");
 
                         morePages = false;
                     }
                     else
                     {
                         LOGGER.Warn(
-                            $"Episodes were not found for {id} from TVDB (got a 404). Error obtaining page {pageNumber} in lang {languageToUse.EnglishName} using url {ex.Response.ResponseUri.AbsoluteUri}");
+                            $"Episodes were not found for {id} from TVDB (got a 404). Error obtaining page {pageNumber} in lang {languageToUse.EnglishName}");
 
                         return null;
                     }
@@ -1035,6 +1051,31 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 else
                 {
                     LOGGER.LogWebException($"Error obtaining episode {id} in {languageToUse.EnglishName}:", ex);
+                    return null;
+                }
+            }
+            catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
+            {
+                if (ex.Is404())
+                {
+                    if (pageNumber > 1 && TVSettings.TVDBPagingMethod == PagingMethod.brute)
+                    {
+                        LOGGER.Info(
+                            $"Have got to the end of episodes for this show: Episodes were not found for {id} from TVDB (got a 404). Error obtaining page {pageNumber} in lang {languageToUse.EnglishName}");
+
+                        morePages = false;
+                    }
+                    else
+                    {
+                        LOGGER.Warn(
+                            $"Episodes were not found for {id} from TVDB (got a 404). Error obtaining page {pageNumber} in lang {languageToUse.EnglishName}");
+
+                        return null;
+                    }
+                }
+                else
+                {
+                    LOGGER.LogHttpRequestException($"Error obtaining episode {id} in {languageToUse.EnglishName}:", ex);
                     return null;
                 }
             }
@@ -2074,6 +2115,16 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             LastErrorMessage = ex.LoggableDetails();
             throw new SourceConnectivityException();
         }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            LOGGER.LogHttpRequestException(
+                $"Error obtaining translations for {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
+                wex);
+
+            SayNothing();
+            LastErrorMessage = wex.LoggableDetails();
+            throw new SourceConnectivityException();
+        }
     }
 
     private JObject DownloadSeriesTranslationsJsonV4(ISeriesSpecifier code, Locale locale)
@@ -2103,6 +2154,16 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             LastErrorMessage = ex.LoggableDetails();
             throw new SourceConnectivityException();
         }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            LOGGER.LogHttpRequestException(
+                $"Error obtaining translations for {code.TvdbId} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
+                wex);
+
+            SayNothing();
+            LastErrorMessage = wex.LoggableDetails();
+            throw new SourceConnectivityException();
+        }
     }
 
     private static bool CanFindEpisodesFor(ISeriesSpecifier code, Locale locale)
@@ -2119,6 +2180,13 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse
                     { StatusCode: HttpStatusCode.NotFound })
+            {
+                return false;
+            }
+        }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            if (wex.StatusCode is HttpStatusCode.NotFound)
             {
                 return false;
             }
@@ -2167,14 +2235,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (System.IO.IOException ex)
         {
-            LOGGER.LogIoException($"Unble to obtain actors for {Series[code].Name}", ex);
+            LOGGER.LogIoException($"Unable to obtain actors for {Series[code].Name}", ex);
             LastErrorMessage = ex.LoggableDetails();
         }
         catch (WebException ex)
         {
             if (ex.Response is null) //probably a timeout
             {
-                LOGGER.LogWebException($"Unble to obtain actors for {Series[code].Name}", ex);
+                LOGGER.LogWebException($"Unable to obtain actors for {Series[code].Name}", ex);
             }
             else if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
             {
@@ -2183,10 +2251,24 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             }
             else
             {
-                LOGGER.LogWebException($"Unble to obtain actors for {Series[code].Name}", ex);
+                LOGGER.LogWebException($"Unable to obtain actors for {Series[code].Name}", ex);
             }
 
             LastErrorMessage = ex.LoggableDetails();
+        }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+             if (wex.StatusCode is HttpStatusCode.NotFound)
+            {
+                LOGGER.Info(
+                    $"No actors found for {Series[code].Name}.");
+            }
+            else
+            {
+                LOGGER.LogHttpRequestException($"Unable to obtain actors for {Series[code].Name}", wex);
+            }
+
+            LastErrorMessage = wex.LoggableDetails();
         }
     }
 
@@ -2700,6 +2782,13 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             LastErrorMessage = ex.LoggableDetails();
             return false;
         }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            LOGGER.LogHttpRequestException($"Error obtaining episode[{episodeId}]:", wex);
+
+            LastErrorMessage = wex.LoggableDetails();
+            return false;
+        }
         finally
         {
             SayNothing();
@@ -2973,6 +3062,20 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             {
                 LOGGER.LogWebException($"Error obtaining results for search term '{text}':", ex);
                 LastErrorMessage = ex.LoggableDetails();
+                SayNothing();
+            }
+        }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            if (wex.StatusCode is HttpStatusCode.NotFound)
+            {
+                LOGGER.Info(
+                    $"Could not find any search results for {text} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
+            }
+            else
+            {
+                LOGGER.LogHttpRequestException($"Error obtaining results for search term '{text}':", wex);
+                LastErrorMessage = wex.LoggableDetails();
                 SayNothing();
             }
         }

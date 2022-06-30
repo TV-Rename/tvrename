@@ -219,6 +219,8 @@ public static class HttpHelper
         return resp.StatusCode == HttpStatusCode.NotFound;
     }
 
+    public static bool Is404(this HttpRequestException ex) => ex.StatusCode is HttpStatusCode.NotFound;
+
     public static byte[] Download(string url, bool forceReload)
     {
         HttpClient wc = new();
