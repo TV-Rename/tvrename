@@ -57,7 +57,7 @@ public partial class LogViewer : Form
         {
             System.Diagnostics.Process.Start("notepad.exe",logFileName);
         }
-        catch (Win32Exception wex)
+        catch (Win32Exception)
         {
             try
             {

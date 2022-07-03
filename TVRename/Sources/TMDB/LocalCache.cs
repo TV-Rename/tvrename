@@ -937,6 +937,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return m;
     }
 
+    // ReSharper disable once StringLiteralTypo
     private static string? PosterImageUrl(string source) => ImageUrl(source, "w600_and_h900_bestv2");
 
     private static string? OriginalImageUrl(string source) => ImageUrl(source, "original");
