@@ -52,13 +52,21 @@ public partial class LogViewer : Form
     private void btnFullLog_Click(object sender, EventArgs e)
     {
         FileTarget target = (FileTarget)LogManager.Configuration.FindTargetByName("logfile");
+        string logFileName = ((SimpleLayout)target.FileName).FixedText;
         try
         {
-            System.Diagnostics.Process.Start(((SimpleLayout)target.FileName).FixedText);
+            System.Diagnostics.Process.Start("notepad.exe",logFileName);
         }
         catch (Win32Exception wex)
         {
-            Logger.Error(wex,$"Could not open {target.FileName}");
+            try
+            {
+                System.Diagnostics.Process.Start(logFileName);
+            }
+            catch (Win32Exception wex2)
+            {
+                Logger.Error($"Could not open {logFileName}. {wex2.Message}");
+            }
         }
     }
 }
