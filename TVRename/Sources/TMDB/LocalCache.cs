@@ -656,7 +656,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     EpisodeGuestStars = downloadedEpisode.GuestStars.Select(c => c.Name).ToPsv(),
                     Writer = downloadedEpisode.Crew
                         .Where(x => x.Department == "Writing").Select(crew => crew.Name)
-                        .ToPsv()
+                        .ToPsv(),
+                    SrvLastUpdated = DateTime.Now.ToUnixTime()
                 };
 
                 m.AddEpisode(newEpisode);
