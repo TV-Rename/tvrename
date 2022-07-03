@@ -1195,12 +1195,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         CachedSeriesInfo si;
         if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
         {
-            Language? languageCodeToUse;
             ProcessedSeason.SeasonType st = code is ShowConfiguration showConfig
                 ? showConfig.Order
                 : ProcessedSeason.SeasonType.aired;
 
-            (si, languageCodeToUse) = GenerateSeriesInfoV4(DownloadSeriesJson(code, locale), locale, st);
+            (si, Language? languageCodeToUse) = GenerateSeriesInfoV4(DownloadSeriesJson(code, locale), locale, st);
             if (languageCodeToUse!=null)
             {
                 AddTranslations(si, DownloadSeriesTranslationsJsonV4(code, new Locale(languageCodeToUse)));
@@ -2258,7 +2257,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
-             if (wex.StatusCode is HttpStatusCode.NotFound)
+            if (wex.StatusCode is HttpStatusCode.NotFound)
             {
                 LOGGER.Info(
                     $"No actors found for {Series[code].Name}.");
@@ -2588,6 +2587,115 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return (x, GetAppropriateLanguage(episodeJson["nameTranslations"], locale));
     }
 
+    private Episode CreateEpisode(int seriesId, JObject? bestLanguageR, JObject? jsonInDefaultLang, CachedSeriesInfo si)
+    {
+        Episode e = new(seriesId, si);
+        if (bestLanguageR is null && jsonInDefaultLang != null)
+        {
+            LoadJson(e,jsonInDefaultLang);
+        }
+        else
+        {
+            //Here we have two pieces of JSON. One in local language and one in the default language (English).
+            //We will populate with the best language first and then fill in any gaps with the backup Language
+            LoadJson(e,bestLanguageR!);
+
+            //backupLanguageR should be a cachedSeries of name/value pairs (ie a JArray of JProperties)
+            //TVDB asserts that name and overview are the fields that are localised
+
+            string? epName = (string?)jsonInDefaultLang?["episodeName"];
+            if (string.IsNullOrWhiteSpace(e.MName) && epName != null)
+            {
+                e.MName = System.Web.HttpUtility.HtmlDecode(epName).Trim();
+            }
+
+            string? overviewFromJson = (string?)jsonInDefaultLang?["overview"];
+            if (string.IsNullOrWhiteSpace(e.Overview) && overviewFromJson != null)
+            {
+                e.Overview = System.Web.HttpUtility.HtmlDecode(overviewFromJson).Trim();
+            }
+        }
+        return e;
+    }
+
+    private Episode CreateEpisode(int seriesId, JObject r, CachedSeriesInfo si)
+    {
+        // <Episode>
+        //  <id>...</id>
+        //  blah blah
+        // </Episode>
+        Episode e = new(seriesId, si);
+        LoadJson(e,r);
+        return e;
+    }
+    private void LoadJson(Episode e, JObject r)
+    {
+        try
+        {
+            e.EpisodeId = r.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
+
+            if (e.EpisodeId == 0)
+            {
+                return;
+            }
+
+            if ((string?)r["airedSeasonID"] != null)
+            {
+                e.SeasonId = r.GetMandatoryInt("airedSeasonID",TVDoc.ProviderType.TheTVDB);
+            }
+            else
+            {
+                LOGGER.Error("Issue with episode (loadJSON) " + e.EpisodeId + " no airedSeasonID ");
+                LOGGER.Error(r.ToString());
+            }
+
+            e.AiredEpNum = r.GetMandatoryInt("airedEpisodeNumber",TVDoc.ProviderType.TheTVDB);
+
+            e.SrvLastUpdated = r.GetMandatoryLong("lastUpdated",TVDoc.ProviderType.TheTVDB);
+            e.Overview = System.Web.HttpUtility.HtmlDecode((string?)r["overview"])?.Trim();
+            e.EpisodeRating = GetString(r, "siteRating");
+            e.MName = System.Web.HttpUtility.HtmlDecode((string?)r["episodeName"]);
+
+            e.AirsBeforeEpisode = (int?)r["airsBeforeEpisode"];
+            e.AirsBeforeSeason = (int?)r["airsBeforeSeason"];
+            e.AirsAfterSeason = (int?)r["airsAfterSeason"];
+            e.SiteRatingCount = (int?)r["siteRatingCount"];
+            e.AbsoluteNumber = (int?)r["absoluteNumber"];
+            e.Filename = GetString(r, "filename");
+            e.ImdbCode = GetString(r, "imdbId");
+            e.ShowUrl = GetString(r, "showUrl");
+            e.ProductionCode = GetString(r, "productionCode");
+            e.DvdChapter = (int?)r["dvdChapter"];
+            e.DvdDiscId = GetString(r, "dvdDiscid");
+
+            string? sn = (string?)r["airedSeason"];
+            if (sn is null)
+            {
+                LOGGER.Error("Issue with episode " + e.EpisodeId + " airedSeason = null");
+                LOGGER.Error(r.ToString());
+            }
+            else
+            {
+                int.TryParse(sn, out e.ReadAiredSeasonNum);
+            }
+
+            e.DvdEpNum = r.ExtractStringToInt("dvdEpisodeNumber");
+            e.ReadDvdSeasonNum = r.ExtractStringToInt("dvdSeason");
+
+            e.EpisodeGuestStars = r["guestStars"].Flatten("|");
+            e.EpisodeDirector = r["directors"].Flatten("|");
+            e.Writer = r["writers"].Flatten("|");
+
+            e.FirstAired = JsonHelper.ParseFirstAired((string?)r["firstAired"]);
+        }
+        catch (Exception ex)
+        {
+            LOGGER.Error(ex, $"Failed to parse : {r}");
+        }
+    }
+
+    private static string? GetString(JObject jObject, string key) => ((string?)jObject[key])?.Trim();
+
     private long GetUpdateTicks(string? lastUpdateString)
     {
         const long DEFLT = 0; //equates to  1970/1/1
@@ -2825,8 +2933,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             Episode e =
                 seriesDataDefaultLang != null
-                    ? new Episode(seriesId, (JObject?)jsonResponseData, (JObject?)seriesDataDefaultLang, si)
-                    : new Episode(seriesId, (JObject)jsonResponseData!, si);
+                    ? CreateEpisode(seriesId, (JObject?)jsonResponseData, (JObject?)seriesDataDefaultLang, si)
+                    : CreateEpisode(seriesId, (JObject)jsonResponseData!, si);
 
             if (e.Ok())
             {

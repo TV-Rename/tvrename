@@ -45,9 +45,8 @@ internal static class CachePersistorMapping
 
         writer.WriteEndElement(); //Episode
     }
-    public static Episode CreateEpisode(this XElement r)
-    {
-        return new Episode
+    public static Episode CreateEpisode(this XElement r) =>
+        new Episode
         {
             // </Episode>
             //  blah blah
@@ -87,7 +86,6 @@ internal static class CachePersistorMapping
             AbsoluteNumber = r.ExtractInt("AbsoluteNumber"),
             FirstAired = JsonHelper.ParseFirstAired(r.ExtractString("FirstAired")),
         };
-    }
 
     private static int ExtractAndParse(XElement r, string key)
     {

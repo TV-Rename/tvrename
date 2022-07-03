@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using Newtonsoft.Json.Linq;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -115,45 +114,6 @@ public class Episode
         return TimeZoneHelper.AdjustTzTimeToLocalTime(dt.Value, tz);
     }
 
-    public Episode(int seriesId, JObject? bestLanguageR, JObject? jsonInDefaultLang, CachedSeriesInfo si) : this(seriesId, si)
-    {
-        if (bestLanguageR is null && jsonInDefaultLang != null)
-        {
-            LoadJson(jsonInDefaultLang);
-        }
-        else
-        {
-            //Here we have two pieces of JSON. One in local language and one in the default language (English).
-            //We will populate with the best language first and then fill in any gaps with the backup Language
-            LoadJson(bestLanguageR!);
-
-            //backupLanguageR should be a cachedSeries of name/value pairs (ie a JArray of JProperties)
-            //TVDB asserts that name and overview are the fields that are localised
-
-            string? epName = (string?)jsonInDefaultLang?["episodeName"];
-            if (string.IsNullOrWhiteSpace(MName) && epName != null)
-            {
-                MName = System.Web.HttpUtility.HtmlDecode(epName).Trim();
-            }
-
-            string? overviewFromJson = (string?)jsonInDefaultLang?["overview"];
-            if (string.IsNullOrWhiteSpace(Overview) && overviewFromJson != null)
-            {
-                Overview = System.Web.HttpUtility.HtmlDecode(overviewFromJson).Trim();
-            }
-        }
-    }
-
-    public Episode(int seriesId, JObject r, CachedSeriesInfo si) : this(seriesId, si)
-    {
-        // <Episode>
-        //  <id>...</id>
-        //  blah blah
-        // </Episode>
-
-        LoadJson(r);
-    }
-
     public Episode(int seriesId, CachedSeriesInfo si) :this()
     {
         internalSeries = si;
@@ -177,74 +137,6 @@ public class Episode
         SrvLastUpdated = -1;
         Dirty = false;
     }
-
-    private void LoadJson(JObject r)
-    {
-        try
-        {
-            EpisodeId = r.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
-
-            if (EpisodeId == 0)
-            {
-                return;
-            }
-
-            if ((string?)r["airedSeasonID"] != null)
-            {
-                SeasonId = r.GetMandatoryInt("airedSeasonID",TVDoc.ProviderType.TheTVDB);
-            }
-            else
-            {
-                Logger.Error("Issue with episode (loadJSON) " + EpisodeId + " no airedSeasonID ");
-                Logger.Error(r.ToString());
-            }
-
-            AiredEpNum = r.GetMandatoryInt("airedEpisodeNumber",TVDoc.ProviderType.TheTVDB);
-
-            SrvLastUpdated = r.GetMandatoryLong("lastUpdated",TVDoc.ProviderType.TheTVDB);
-            Overview = System.Web.HttpUtility.HtmlDecode((string?)r["overview"])?.Trim();
-            EpisodeRating = GetString(r, "siteRating");
-            MName = System.Web.HttpUtility.HtmlDecode((string?)r["episodeName"]);
-
-            AirsBeforeEpisode = (int?)r["airsBeforeEpisode"];
-            AirsBeforeSeason = (int?)r["airsBeforeSeason"];
-            AirsAfterSeason = (int?)r["airsAfterSeason"];
-            SiteRatingCount = (int?)r["siteRatingCount"];
-            AbsoluteNumber = (int?)r["absoluteNumber"];
-            Filename = GetString(r, "filename");
-            ImdbCode = GetString(r, "imdbId");
-            ShowUrl = GetString(r, "showUrl");
-            ProductionCode = GetString(r, "productionCode");
-            DvdChapter = (int?)r["dvdChapter"];
-            DvdDiscId = GetString(r, "dvdDiscid");
-
-            string? sn = (string?)r["airedSeason"];
-            if (sn is null)
-            {
-                Logger.Error("Issue with episode " + EpisodeId + " airedSeason = null");
-                Logger.Error(r.ToString());
-            }
-            else
-            {
-                int.TryParse(sn, out ReadAiredSeasonNum);
-            }
-
-            DvdEpNum = r.ExtractStringToInt("dvdEpisodeNumber");
-            ReadDvdSeasonNum = r.ExtractStringToInt("dvdSeason");
-
-            EpisodeGuestStars = r["guestStars"].Flatten("|");
-            EpisodeDirector = r["directors"].Flatten("|");
-            Writer = r["writers"].Flatten("|");
-
-            FirstAired = JsonHelper.ParseFirstAired((string?)r["firstAired"]);
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, $"Failed to parse : {r}");
-        }
-    }
-
-    private static string? GetString(JObject jObject, string key) => ((string?)jObject[key])?.Trim();
 
     public string Name
     {
