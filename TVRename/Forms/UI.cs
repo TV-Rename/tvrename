@@ -3901,13 +3901,6 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             AddRcMenuItem("Action Selected", (_, _) => ActionAction(false, false, false));
         }
 
-        AddRcMenuItem("Ignore Selected", (_, _) => IgnoreSelected());
-        if (episode != null)
-        {
-            AddRcMenuItem("Ignore Entire Season", (_, _) => IgnoreSelectedSeasons(lvr));
-        }
-        AddRcMenuItem("Remove Selected", (_, _) => ActionDeleteSelected());
-
         if (lvr.Count == lvr.Missing.ToList().Count) // only missing items selected?
         {
             if (episode != null)
@@ -3938,6 +3931,14 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
 
         MenuFolders(lvr, si, episode?.AppropriateProcessedSeason, episode);
+
+        showRightClickMenu.Items.Add(new ToolStripSeparator());
+        AddRcMenuItem("Ignore Selected", (_, _) => IgnoreSelected());
+        if (episode != null)
+        {
+            AddRcMenuItem("Ignore Entire Season", (_, _) => IgnoreSelectedSeasons(lvr));
+        }
+        AddRcMenuItem("Remove Selected", (_, _) => ActionDeleteSelected());
 
         showRightClickMenu.Show(pt);
     }
