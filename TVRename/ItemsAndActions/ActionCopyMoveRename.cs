@@ -94,7 +94,7 @@ public class ActionCopyMoveRename : ActionFileOperation
             if (IsMoveRename() || FileHelper.Same(From, To))
             {
                 // This step could be slow, so report progress
-                CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
+                CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.WriteThrough | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
                 if (moveResult.ErrorCode != 0)
                 {
                     throw new ActionFailedException(moveResult.ErrorMessage);
@@ -106,7 +106,7 @@ public class ActionCopyMoveRename : ActionFileOperation
                 Debug.Assert(Operation == Op.copy);
 
                 // This step could be slow, so report progress
-                CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.CopyTimestamp, CopyProgressCallback, null);
+                CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None ,true, CopyProgressCallback, null);
                 if (copyResult.ErrorCode != 0)
                 {
                     throw new ActionFailedException(copyResult.ErrorMessage);
@@ -168,7 +168,7 @@ public class ActionCopyMoveRename : ActionFileOperation
 
         try
         {
-            if (Operation == Op.move && Tidyup != null && Tidyup.DeleteEmpty)
+            if (Operation == Op.move && Tidyup is { DeleteEmpty: true })
             {
                 LOGGER.Info($"Testing {From.Directory.FullName} to see whether it should be tidied up");
                 DoTidyUp(From.Directory);
