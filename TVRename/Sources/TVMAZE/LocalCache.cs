@@ -116,7 +116,7 @@ public class LocalCache : MediaCache, iTVSource
         return true;
     }
 
-    public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<ISeriesSpecifier> ss)
+    public bool GetUpdates(IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TVmaze cache");
         foreach (ISeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvMazeId)))
@@ -263,22 +263,6 @@ public class LocalCache : MediaCache, iTVSource
         LOGGER.Info("Forgot all TVMaze shows");
     }
 
-    public void AddOrUpdateEpisode(Episode e, CachedSeriesInfo si)
-    {
-        lock (SERIES_LOCK)
-        {
-            if (!Series.ContainsKey(e.SeriesId))
-            {
-                throw new SourceConsistencyException(
-                    $"Can't find the cachedSeries to add the episode to. EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}",
-                    TVDoc.ProviderType.TVmaze);
-            }
-
-            CachedSeriesInfo ser = Series[e.SeriesId];
-            ser.AddEpisode(e);
-        }
-    }
-
     public void LatestUpdateTimeIs(string time)
     {
         //No Need to do anything aswe always refresh from scratch
@@ -287,7 +271,7 @@ public class LocalCache : MediaCache, iTVSource
     public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TVmaze;
     TVDoc.ProviderType iTVSource.SourceProvider() => TVDoc.ProviderType.TVmaze;
 
-    public void ReConnect(bool b)
+    public override void ReConnect(bool b)
     {
         //nothing to be done here
     }

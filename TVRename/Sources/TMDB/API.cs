@@ -15,13 +15,13 @@ internal static class API
     //As a safety measure we check that no more than 52 calls are made
     private const int MAX_NUMBER_OF_CALLS = 50;
 
-    public static IEnumerable<ChangesListItem> GetChangesMovies(this TMDbClient client, CancellationToken cts, UpdateTimeTracker latestUpdateTime)
-        => GetChanges(cts, latestUpdateTime, client.GetMoviesChangesAsync);
+    public static IEnumerable<ChangesListItem> GetChangesMovies(this TMDbClient client, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
+        => GetChanges(client.GetMoviesChangesAsync, latestUpdateTime, cts);
 
-    public static IEnumerable<ChangesListItem> GetChangesShows(this TMDbClient client, CancellationToken cts, UpdateTimeTracker latestUpdateTime)
-        => GetChanges(cts,latestUpdateTime, client.GetTvChangesAsync);
+    public static IEnumerable<ChangesListItem> GetChangesShows(this TMDbClient client, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
+        => GetChanges(client.GetTvChangesAsync, latestUpdateTime, cts);
 
-    private static IEnumerable<ChangesListItem> GetChanges(CancellationToken cts, UpdateTimeTracker latestUpdateTime, Func<int, DateTime?, DateTime?, CancellationToken, Task<SearchContainer<ChangesListItem>>> changeMethod)
+    private static IEnumerable<ChangesListItem> GetChanges(Func<int, DateTime?, DateTime?, CancellationToken, Task<SearchContainer<ChangesListItem>>> changeMethod, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
     {
         //We need to ask for updates in blocks of 14 days
         //We'll keep asking until we get to a date within 14 days of today

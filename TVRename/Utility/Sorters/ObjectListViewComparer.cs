@@ -51,7 +51,7 @@ public abstract class ObjectListViewComparer<T> : IComparer<OLVListItem> where T
             : primary;
     }
 
-    private string GetDefault(OLVListItem p) => ((Item)p.RowObject).OrderKey;
+    private static string GetDefault(OLVListItem p) => ((Item)p.RowObject).OrderKey;
 
     protected abstract T? GetValue(OLVListItem x,int columnId);
 }

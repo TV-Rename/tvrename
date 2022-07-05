@@ -150,4 +150,5 @@ public abstract class MediaCache
     public abstract void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, Locale locale);
     public abstract int PrimaryKey(ISeriesSpecifier ss);
     public abstract string CacheSourceName();
+    public abstract void ReConnect(bool b);
 }

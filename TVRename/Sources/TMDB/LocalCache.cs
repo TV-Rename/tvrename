@@ -228,7 +228,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
     }
 
-    public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<ISeriesSpecifier> ss)
+    public bool GetUpdates(IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TMDB cache");
         this.MarkPlaceHoldersDirty(ss);
@@ -247,7 +247,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
             latestUpdateTime.RegisterServerUpdate(DateTime.Now.ToUnixTime());
 
-            List<int> movieUpdates = Client.GetChangesMovies(cts, latestUpdateTime).Select(item => item.Id)
+            List<int> movieUpdates = Client.GetChangesMovies(latestUpdateTime, cts).Select(item => item.Id)
                 .Distinct().ToList();
 
             Say(
@@ -281,7 +281,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     $"Identified {Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Movies need updating");
             }
 
-            List<int> showUpdates = Client.GetChangesShows(cts, latestUpdateTime).Select(item => item.Id).Distinct()
+            List<int> showUpdates = Client.GetChangesShows(latestUpdateTime, cts).Select(item => item.Id).Distinct()
                 .ToList();
 
             Say(
@@ -424,7 +424,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
     }
 
-    private CachedMovieInfo GenerateCachedMovieInfo(ISeriesSpecifier id, Movie downloadedMovie)
+    private static CachedMovieInfo GenerateCachedMovieInfo(ISeriesSpecifier id, Movie downloadedMovie)
     {
         CachedMovieInfo m = new(id.TargetLocale, TVDoc.ProviderType.TMDB)
         {
@@ -487,7 +487,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return m;
     }
 
-    private void AddMovieImages(Movie downloadedMovie, CachedMovieInfo m)
+    private static void AddMovieImages(Movie downloadedMovie, CachedMovieInfo m)
     {
         int imageId = 1; //TODO See https://www.themoviedb.org/talk/60ba61a4cb9f4b006f30f82b for  why we need this
         if (downloadedMovie.Images.Backdrops.Any())
@@ -745,7 +745,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return s;
     }
 
-    private int? GetSeriesIdFromOtherCodes(ISeriesSpecifier ss)
+    private static int? GetSeriesIdFromOtherCodes(ISeriesSpecifier ss)
     {
         if (ss.ImdbCode.HasValue())
         {
@@ -790,19 +790,19 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return null;
     }
 
-    private string GetYouTubeUrl(Movie downloadedMovie)
+    private static string GetYouTubeUrl(Movie downloadedMovie)
     {
         string yid = downloadedMovie.Videos.Results.Where(video => video.Type == "Trailer" && video.Site == "YouTube").OrderByDescending(v => v.Size).Select(video => video.Key).FirstOrDefault() ?? string.Empty;
         return yid.HasValue() ? $"https://www.youtube.com/watch?v={yid}" : string.Empty;
     }
 
-    private string GetYouTubeUrl(TvShow downloadedMovie)
+    private static string GetYouTubeUrl(TvShow downloadedMovie)
     {
         string yid = downloadedMovie.Videos.Results.Where(video => video.Type == "Trailer" && video.Site == "YouTube").OrderByDescending(v => v.Size).Select(video => video.Key).FirstOrDefault() ?? string.Empty;
         return yid.HasValue() ? $"https://www.youtube.com/watch?v={yid}" : string.Empty;
     }
 
-    private string? GetCertification(Movie downloadedMovie, string country)
+    private static string? GetCertification(Movie downloadedMovie, string country)
     {
         return downloadedMovie.ReleaseDates?.Results
             .Where(rel => rel.Iso_3166_1 == country)
@@ -810,7 +810,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             .FirstOrDefault();
     }
 
-    private string? GetCertification(TvShow downloadedShow, string country)
+    private static string? GetCertification(TvShow downloadedShow, string country)
     {
         return downloadedShow.ContentRatings?.Results
             .Where(rel => rel.Iso_3166_1 == country)
@@ -978,7 +978,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return null;
     }
 
-    private int? LookupTvdbIdByImdb(string imdbToTest)
+    private static int? LookupTvdbIdByImdb(string imdbToTest)
     {
         FindContainer? results = Client.FindAsync(FindExternalSource.Imdb, imdbToTest).Result;
         LOGGER.Info($"Got {results.TvResults.Count:N0} results searching for {imdbToTest}");
@@ -1080,7 +1080,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return check.MoviesToUpdate;
     }
 
-    public async Task<Recomendations> GetRecommendations(TVDoc mDoc, BackgroundWorker sender, List<ShowConfiguration> shows, string languageCode)
+    public async Task<Recomendations> GetRecommendations(BackgroundWorker sender, List<ShowConfiguration> shows, string languageCode)
     {
         int total = shows.Count;
         int current = 0;
@@ -1174,7 +1174,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
     }
 
-    public async Task<Recomendations> GetRecommendations(TVDoc mDoc, BackgroundWorker sender, List<MovieConfiguration> movies, string languageCode)
+    public async Task<Recomendations> GetRecommendations(BackgroundWorker sender, List<MovieConfiguration> movies, string languageCode)
     {
         int total = movies.Count;
         int current = 0;
@@ -1246,7 +1246,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return returnValue;
     }
 
-    public void ReConnect(bool _)
+    public override void ReConnect(bool b)
     {
         //nothing to be done here
     }

@@ -81,15 +81,21 @@ namespace DaveChambers.FolderBrowserDialogEx
                 public IntPtr pidlRoot;
 
                 //public IntPtr pszDisplayName;
-                public string pszDisplayName;
+                public string? pszDisplayName;
 
                 //[MarshalAs(UnmanagedType.LPTStr)]
-                public string lpszTitle;
+                public string? lpszTitle;
 
                 public uint ulFlags;
-                public BrowseCallbackProc lpfn;
+                public BrowseCallbackProc? lpfn;
                 public IntPtr lParam;
                 public int iImage;
+
+                public BROWSEINFO(int iImage, IntPtr hwndOwner) : this()
+                {
+                    this.iImage = iImage;
+                    this.hwndOwner = hwndOwner;
+                }
             }
 
             [DllImport("shell32.dll")]
@@ -103,16 +109,16 @@ namespace DaveChambers.FolderBrowserDialogEx
             [DllImport("shell32.dll", SetLastError = true)]
             public static extern int SHGetSpecialFolderLocation(IntPtr hwndOwner, int nFolder, ref IntPtr ppidl);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
             public static extern IntPtr SendMessage(HandleRef hWnd, int msg, int wParam, string lParam);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
             public static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, string lParam);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
             public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
-            [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+            [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
             public static extern bool SetWindowText(IntPtr hwnd, string lpString);
 
             [DllImport("user32.dll")]
@@ -212,10 +218,10 @@ namespace DaveChambers.FolderBrowserDialogEx
 
             public static bool ScreenToClient(IntPtr hWnd, ref RECT rc)
             {
-                POINT pt1 = new POINT(rc.Left, rc.Top);
+                POINT pt1 = new(rc.Left, rc.Top);
                 if (!ScreenToClient(hWnd, ref pt1))
                     return false;
-                POINT pt2 = new POINT(rc.Right, rc.Bottom);
+                POINT pt2 = new(rc.Right, rc.Bottom);
                 if (!ScreenToClient(hWnd, ref pt2))
                     return false;
 
@@ -243,10 +249,10 @@ namespace DaveChambers.FolderBrowserDialogEx
             [DllImport("user32.dll", SetLastError = true)]
             public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
-            [DllImport("user32.dll", SetLastError = true)]
+            [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
             public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
 
-            [DllImport("user32.dll", SetLastError = true)]
+            [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
             public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, IntPtr windowTitle);
 
             public static readonly uint SHGFI_PIDL = 0x000000008;           // pszPath is a pidl
@@ -283,7 +289,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             [DllImport("user32.dll")]
             public static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
-            [DllImport("gdi32.dll")]
+            [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
             public static extern bool GetTextExtentPoint32(IntPtr hdc, string lpString, int cbString, out Size lpSize);
 
             [DllImport("gdi32.dll", ExactSpelling = true, PreserveSig = true, SetLastError = true)]
@@ -295,7 +301,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
             public static extern IntPtr GetParent(IntPtr hWnd);
 
-            [DllImport("user32.dll", SetLastError = true)]
+            [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
             public static extern IntPtr CreateWindowEx(
                uint dwExStyle,
                string lpClassName,
@@ -378,13 +384,9 @@ namespace DaveChambers.FolderBrowserDialogEx
 
         public DialogResult ShowDialog(IWin32Window owner)
         {
-            InitData initdata = new InitData(this, owner.Handle);
+            InitData initdata = new(this, owner.Handle);
 
-            Win32.BROWSEINFO bi = new Win32.BROWSEINFO
-            {
-                iImage = 0,
-                hwndOwner = owner.Handle
-            };
+            Win32.BROWSEINFO bi = new(iImage: 0, hwndOwner: owner.Handle);
 
             if (Win32.SHGetSpecialFolderLocation(owner.Handle, (int)RootFolder, ref bi.pidlRoot) != 0)
                 bi.pidlRoot = IntPtr.Zero;
@@ -404,7 +406,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             try
             {
                 pidlSelectedPath = Win32.SHBrowseForFolder(ref bi);
-                StringBuilder sb = new StringBuilder(256);
+                StringBuilder sb = new(256);
                 if (Win32.SHGetPathFromIDList(pidlSelectedPath, sb))
                 {
                     SelectedPath = sb.ToString();
@@ -437,7 +439,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             else if (msg == Win32.BFFM_SELCHANGED)
             {
                 bool ok = false;
-                StringBuilder sb = new StringBuilder(Win32.MAX_PATH);
+                StringBuilder sb = new(Win32.MAX_PATH);
                 if (Win32.SHGetPathFromIDList(lParam, sb))
                 {
                     ok = true;
@@ -468,7 +470,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             return 0;
         }
 
-        private void _adjustUi(IntPtr hDlg, IntPtr lpData)
+        private static void _adjustUi(IntPtr hDlg, IntPtr lpData)
         {
             // Only do the adjustments if InitData was supplied
             if (lpData == IntPtr.Zero)
@@ -507,7 +509,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             // else we do nothing
 
             // Prep the edit box
-            Win32.RECT rcEdit = new Win32.RECT();
+            Win32.RECT rcEdit = new ();
             IntPtr hEdit = Win32.GetDlgItem(hDlg, CtlIds.PATH_EDIT);
             if (hEdit != IntPtr.Zero)
             {
@@ -536,7 +538,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             int hMargin = 10; // SystemInformation.VerticalScrollBarWidth;
 
             // Move the Cancel button
-            Win32.RECT rcCancel = new Win32.RECT();
+            Win32.RECT rcCancel = new();
             IntPtr hCancel = Win32.GetDlgItem(hDlg, CtlIds.IDCANCEL);
             if (hCancel != IntPtr.Zero)
             {
@@ -552,7 +554,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             }
 
             // Move the OK button
-            Win32.RECT rcOK = new Win32.RECT();
+            Win32.RECT rcOK = new();
             IntPtr hOK = Win32.GetDlgItem(hDlg, CtlIds.IDOK);
             if (hOK != IntPtr.Zero)
             {
@@ -610,15 +612,11 @@ namespace DaveChambers.FolderBrowserDialogEx
                     IntPtr hdc = Win32.GetDC(hLabel);
                     IntPtr hFont = Win32.SendMessage(hLabel, Win32.WM_GETFONT, IntPtr.Zero, IntPtr.Zero);
                     IntPtr oldfnt = Win32.SelectObject(hdc, hFont);
-                    Size szLabel;
-                    Win32.GetTextExtentPoint32(hdc, labelText, labelText.Length, out szLabel);
+                    Win32.GetTextExtentPoint32(hdc, labelText, labelText.Length, out Size szLabel);
                     Win32.SelectObject(hdc, oldfnt);
                     Win32.ReleaseDC(hLabel, hdc);
 
-                    Win32.RECT rcLabel = new Win32.RECT(hMargin,
-                                                        vMargin + ((rcEdit.Height - szLabel.Height) / 2),
-                                                        szLabel.Width,
-                                                        szLabel.Height);
+                    Win32.RECT rcLabel = new(hMargin, vMargin + ((rcEdit.Height - szLabel.Height) / 2), szLabel.Width, szLabel.Height);
                     Win32.MoveWindow(hLabel, rcLabel, false);
 
                     xEdit += rcLabel.Width;
@@ -635,28 +633,19 @@ namespace DaveChambers.FolderBrowserDialogEx
                 treeTop = rcEdit.Bottom + 5;
             }
 
-            Win32.RECT rcTree = new Win32.RECT(hMargin,
-                treeTop,
-                rcDlg.Width - (2 * hMargin),
-                rcDlg.Bottom - (treeTop + (2 * vMargin) + rcOK.Height));
+            Win32.RECT rcTree = new(hMargin, treeTop, rcDlg.Width - (2 * hMargin), rcDlg.Bottom - (treeTop + (2 * vMargin) + rcOK.Height));
 
             Win32.MoveWindow(hTree, rcTree, false);
         }
 
-        private void _centerTo(IntPtr hDlg, IntPtr hRef)
+        private static void _centerTo(IntPtr hDlg, IntPtr hRef)
         {
-            Win32.RECT rcDlg;
-            Win32.GetWindowRect(hDlg, out rcDlg);
-
-            Win32.RECT rcRef;
-            Win32.GetWindowRect(hRef, out rcRef);
+            Win32.GetWindowRect(hDlg, out Win32.RECT rcDlg);
+            Win32.GetWindowRect(hRef, out Win32.RECT rcRef);
 
             int cx = (rcRef.Width - rcDlg.Width) / 2;
             int cy = (rcRef.Height - rcDlg.Height) / 2;
-            Win32.RECT rcNew = new Win32.RECT(rcRef.Left + cx,
-                                                rcRef.Top + cy,
-                                                rcDlg.Width,
-                                                rcDlg.Height);
+            Win32.RECT rcNew = new(rcRef.Left + cx, rcRef.Top + cy, rcDlg.Width, rcDlg.Height);
             Win32.MoveWindow(hDlg, rcNew, true);
         }
     }

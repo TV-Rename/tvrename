@@ -41,7 +41,7 @@ internal static class ShowHtmlHelper
         return sb.ToString();
     }
 
-    public static string GetSeasonImagesOverview(this ShowConfiguration si, ProcessedSeason season)
+    public static string GetSeasonImagesOverview(this ProcessedSeason season)
     {
         Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
@@ -182,7 +182,7 @@ internal static class ShowHtmlHelper
         string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
         string tvdbButton = CreateButton(tvdbLink, "TVDB.com", "View on TVDB");
         string tvMazeButton = CreateButton(s.Show.Provider != TVDoc.ProviderType.TVmaze ? string.Empty : s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
-        string episodeText = s.Episodes.Count > 0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
+        string episodeText = !s.Episodes.IsEmpty ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
 
         Season? season = si.CachedShow?.Season(s.SeasonNumber);
         string seasonOverViewHtml = HasCustomNameOrDescription(season)
@@ -1086,7 +1086,7 @@ internal static class ShowHtmlHelper
         string tvdbButton = CreateButton(tvdbLink, "TVDB.com", "View on TVDB");
         string tvMazeButton = CreateButton(s.Show.Provider != TVDoc.ProviderType.TVmaze ? string.Empty : s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
 
-        string episodeText = s.Episodes.Count > 0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
+        string episodeText = !s.Episodes.IsEmpty ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
 
         Season? season = si.CachedShow?.Season(s.SeasonNumber);
         string seasonOverViewHtml = HasCustomNameOrDescription(season)

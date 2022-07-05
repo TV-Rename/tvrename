@@ -288,7 +288,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<ISeriesSpecifier> ss)
+    public bool GetUpdates(bool showErrorMsgBox, IEnumerable<ISeriesSpecifier> ss, CancellationToken cts)
     {
         Say("Validating TheTVDB cache");
         IEnumerable<ISeriesSpecifier> seriesSpecifiers = ss.ToList();
@@ -1225,7 +1225,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return si;
     }
 
-    private void AddTranslations(CachedSeriesInfo si, JObject downloadSeriesTranslationsJsonV4)
+    private static void AddTranslations(CachedSeriesInfo si, JObject downloadSeriesTranslationsJsonV4)
     {
         si.Name = downloadSeriesTranslationsJsonV4["data"]?["name"]?.ToString() ?? si.Name;
         si.Overview = downloadSeriesTranslationsJsonV4["data"]?["overview"]?.ToString() ?? si.Overview;
@@ -1288,8 +1288,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 throw new SourceConnectivityException();
             }
 
-            JObject? seriesData = jsonResponse["data"] as JObject;
-            if (seriesData is null)
+            if (jsonResponse["data"] is not JObject seriesData)
             {
                 throw new SourceConsistencyException($"Data element not found in {jsonResponse}", TVDoc.ProviderType.TheTVDB);
             }
@@ -1353,7 +1352,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private CachedMovieInfo GenerateCachedMovieInfo(JObject r, Locale locale)
+    private static CachedMovieInfo GenerateCachedMovieInfo(JObject r, Locale locale)
     {
         CachedMovieInfo si = new(locale, TVDoc.ProviderType.TheTVDB)
         {
@@ -1382,7 +1381,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return si;
     }
 
-    private void AddMovieImagesV4(JObject r, CachedMovieInfo si)
+    private static void AddMovieImagesV4(JObject r, CachedMovieInfo si)
     {
         JToken? jToken = r["data"]?["artworks"];
         if (jToken is not null)
@@ -1396,7 +1395,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private MovieImage GenerateMovieImage(CachedMovieInfo si, JToken imageJson) =>
+    private static MovieImage GenerateMovieImage(CachedMovieInfo si, JToken imageJson) =>
         new()
         {
             Id = imageJson.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB),
@@ -1412,7 +1411,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private static bool IgnoreableImageJson(JToken imageJson) => imageJson.GetMandatoryInt("type",TVDoc.ProviderType.TheTVDB) == 13; //Person Snapshot
 
-    private void AddShowImagesV4(JObject r, CachedSeriesInfo si)
+    private static void AddShowImagesV4(JObject r, CachedSeriesInfo si)
     {
         //JObject x = API.ImageTypesV4();
         if (r["data"]?["artworks"] is null)
@@ -1426,7 +1425,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private MediaImage.ImageType MapBannerTvdbV4APICode(int v)
+    private static MediaImage.ImageType MapBannerTvdbV4APICode(int v)
     {
         // from call to API.ImageTypesV4()
         return v switch
@@ -1460,7 +1459,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         };
     }
 
-    private MediaImage.ImageSubject MapSubjectTVDBV4APICode(int v)
+    private static MediaImage.ImageSubject MapSubjectTVDBV4APICode(int v)
     {
         // from call to API.ImageTypesV4()
         return v switch
@@ -1547,12 +1546,12 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private string? GetArtwork(JObject json, string type)
+    private static string? GetArtwork(JObject json, string type)
     {
         return json["artworks"]?.FirstOrDefault(x => x["artwork_type"]?.ToString() == type)?["url"]?.ToString();
     }
 
-    private string? GetArtworkV4(JObject json, int type)
+    private static string? GetArtworkV4(JObject json, int type)
     {
         return json["data"]?["artworks"]
             ?.OrderByDescending(x=>x["score"]?.ToObject<int>())
@@ -1561,18 +1560,18 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             ?.ToString();
     }
 
-    private string? GetExternalId(JObject json, string source)
+    private static string? GetExternalId(JObject json, string source)
     {
         return json["remoteids"]?.FirstOrDefault(x => x["source_name"]?.ToString() == source)?["id"]?.ToString();
     }
 
-    private string? GetExternalIdV4(JObject json, string source)
+    private static string? GetExternalIdV4(JObject json, string source)
     {
         return json["data"]?["remoteIds"]?.FirstOrDefault(x => x["sourceName"]?.ToString() == source)?["id"]
             ?.ToString();
     }
 
-    private string? GetExternalIdSearchResultV4(JObject json, string source)
+    private static string? GetExternalIdSearchResultV4(JObject json, string source)
     {
         return json["remote_ids"]?.FirstOrDefault(x => x["sourceName"]?.ToString() == source)?["id"]
             ?.ToString();
@@ -1584,7 +1583,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             ?.ToString();
     }
 
-    private DateTime? GetReleaseDate(JObject json, string region)
+    private static DateTime? GetReleaseDate(JObject json, string region)
     {
         string? date =
             json["release_dates"]?.FirstOrDefault(x =>
@@ -1592,7 +1591,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return ParseDate(date);
     }
 
-    private DateTime? ParseDate(string? date)
+    private static DateTime? ParseDate(string? date)
     {
         try
         {
@@ -1609,7 +1608,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private DateTime? GetReleaseDateV4(JObject json, string? region)
+    private static DateTime? GetReleaseDateV4(JObject json, string? region)
     {
         string? date = region is null
             ? json["data"]?["releases"]?.FirstOrDefault()?["date"]?.ToString()
@@ -1630,14 +1629,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private string? GetTranslation(Language preferredLanguage, string field, JObject json)
+    private static string? GetTranslation(Language preferredLanguage, string field, JObject json)
     {
         return json["translations"]
             ?.FirstOrDefault(x => x["language_code"]?.ToString() == preferredLanguage.ThreeAbbreviation)?[field]
             ?.ToString();
     }
 
-    private (CachedMovieInfo, Language?) GenerateMovieInfoV4(JObject r, Locale locale)
+    private static (CachedMovieInfo, Language?) GenerateMovieInfoV4(JObject r, Locale locale)
     {
         CachedMovieInfo si = GenerateCoreMovieInfoV4(r, locale);
         AddAliasesV4(r, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), si);
@@ -1647,7 +1646,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return (si, GetAppropriateLanguage(r["data"]?["nameTranslations"], locale));
     }
 
-    private CachedMovieInfo GenerateCoreMovieInfoV4(JObject r, Locale locale)
+    private static CachedMovieInfo GenerateCoreMovieInfoV4(JObject r, Locale locale)
     {
         JToken? dataNode = r["data"];
         if (dataNode is null)
@@ -1686,7 +1685,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             CollectionName = collectionNode?["name"]?.ToString(),
         };
     }
-    private long GetUnixTime(JToken dataNode, string key)
+    private static long GetUnixTime(JToken dataNode, string key)
     {
         JToken updated = dataNode[key] ?? throw new SourceConsistencyException($"Data element {key} not found in {dataNode}", TVDoc.ProviderType.TheTVDB);
         return ((DateTime)updated).ToUnixTime();
@@ -1697,14 +1696,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return r?["lists"]?.FirstOrDefault(x => (bool?)x["isOfficial"] is true);
     }
 
-    private DateTime? GetReleaseDateV4(JObject r, Locale locale)
+    private static DateTime? GetReleaseDateV4(JObject r, Locale locale)
     {
         return GetReleaseDateV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
                ?? GetReleaseDateV4(r, "global")
                ?? GetReleaseDateV4(r, (string?)null);
     }
 
-    private string? GetContentRatingV4(JObject r, Locale locale)
+    private static string? GetContentRatingV4(JObject r, Locale locale)
     {
         return GetContentRatingV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
                ?? GetContentRatingV4(r, Regions.Instance.FallbackRegion.ThreeAbbreviation)
@@ -1786,7 +1785,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private (CachedSeriesInfo, Language?) GenerateSeriesInfoV4(JObject r, Locale locale,
+    private static (CachedSeriesInfo, Language?) GenerateSeriesInfoV4(JObject r, Locale locale,
         ProcessedSeason.SeasonType seasonType)
     {
         CachedSeriesInfo si = GenerateCoreSeriesInfoV4(r, locale,seasonType);
@@ -1799,14 +1798,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return (si, GetAppropriateLanguage(r["data"]?["nameTranslations"], locale));
     }
 
-    private CachedSeriesInfo GenerateCoreSeriesInfoV4(JObject r, Locale locale, ProcessedSeason.SeasonType st)
+    private static CachedSeriesInfo GenerateCoreSeriesInfoV4(JObject r, Locale locale, ProcessedSeason.SeasonType st)
     {
         JToken? jToken = r["data"];
         if (jToken is null)
         {
             throw new SourceConsistencyException($"Data element not found in {r}", TVDoc.ProviderType.TheTVDB);
         }
-        return new(locale, TVDoc.ProviderType.TheTVDB)
+        return new CachedSeriesInfo(locale, TVDoc.ProviderType.TheTVDB)
         {
             Name = GetName(r),
             AirsTime = GetAirsTimeV4(r),
@@ -1838,11 +1837,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private static string GetName(JObject r) => System.Web.HttpUtility.HtmlDecode((string?)r["data"]?["name"]??string.Empty).Trim();
 
-    // ReSharper disable once UnusedMember.Local
-    private static string? GetNetwork(JObject r)
-    {
-        return r["data"]?["originalNetwork"]?["name"]?.ToString();
-    }
     private static string? GetNetworks(JObject r)
     {
         JToken? jToken = r["data"]?["companies"];
@@ -1883,14 +1877,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private void AddSeasonsV4(JObject r, ProcessedSeason.SeasonType seasonType, CachedSeriesInfo si)
+    private static void AddSeasonsV4(JObject r, ProcessedSeason.SeasonType seasonType, CachedSeriesInfo si)
     {
         JToken? seasonJsons = r["data"]?["seasons"];
         if (seasonJsons is not null)
         {
             foreach (JToken? seasonJson in seasonJsons)
             {
-                if (seasonJson!= null && seasonType == getSeasonType(seasonJson))
+                if (seasonJson!= null && seasonType == GetSeasonType(seasonJson))
                 {
                     int seasonId = seasonJson.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
                     string? seasonName = (string?)seasonJson["name"];
@@ -1907,7 +1901,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private ProcessedSeason.SeasonType getSeasonType(JToken seasonJson)
+    private static ProcessedSeason.SeasonType GetSeasonType(JToken seasonJson)
     {
         return seasonJson["type"]?["type"]?.ToString() switch
         {
@@ -1919,7 +1913,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         };
     }
 
-    private Language? GetAppropriateLanguage(JToken? languageOptions, Locale preferredLocale)
+    private static Language? GetAppropriateLanguage(JToken? languageOptions, Locale preferredLocale)
     {
         if (languageOptions == null)
         {
@@ -1962,26 +1956,26 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return Languages.Instance.FallbackLanguage;
     }
 
-    private DateTime? GetAirsTimeV4(JObject r)
+    private static DateTime? GetAirsTimeV4(JObject r)
     {
         string? airsTimeString = (string?)r["data"]?["airsTime"];
         return JsonHelper.ParseAirTime(airsTimeString);
     }
 
-    private string? GetAirsDayV4(JObject r)
+    private static string? GetAirsDayV4(JObject r)
     {
         JToken? jTokens = r["data"]?["airsDays"];
         IEnumerable<JToken>? days = jTokens?.Children().Where(token => (bool)token.Values().First());
         return days?.Select(ConvertDayName).ToCsv();
     }
 
-    private string ConvertDayName(JToken t)
+    private static string ConvertDayName(JToken t)
     {
         JProperty p = (JProperty)t;
         return p.Name.UppercaseFirst();
     }
 
-    private CachedSeriesInfo GenerateSeriesInfo(JObject jsonResponse, JObject jsonDefaultLangResponse,
+    private static CachedSeriesInfo GenerateSeriesInfo(JObject jsonResponse, JObject jsonDefaultLangResponse,
         Locale locale)
     {
         if (jsonResponse is null)
@@ -2318,7 +2312,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private ShowImage CreateShowImage(int tvdbId, JObject bannerData)
+    private static ShowImage CreateShowImage(int tvdbId, JObject bannerData)
     {
         double.TryParse((string?)bannerData["ratingsInfo"]?["average"], NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out double rating);
         int.TryParse((string?)bannerData["subKey"], out int seasonId);
@@ -2352,7 +2346,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         };
     }
 
-    private MediaImage.ImageType MapBannerType(string? s)
+    private static MediaImage.ImageType MapBannerType(string? s)
     {
         return s switch
         {
@@ -2364,7 +2358,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             _ => MediaImage.ImageType.poster
         };
     }
-    private MediaImage.ImageSubject MapTypeToSubject(string? s)
+    private static MediaImage.ImageSubject MapTypeToSubject(string? s)
     {
         return s switch
         {
@@ -2432,7 +2426,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return txt;
     }
 
-    public void ReloadEpisodesV4(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
+    public static void ReloadEpisodesV4(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
     {
         Parallel.ForEach(si.Seasons, s =>
         {
@@ -2482,7 +2476,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         });
     }
 
-    private ShowImage ConvertJsonToImage(JToken imageJson,CachedSeriesInfo si)
+    private static ShowImage ConvertJsonToImage(JToken imageJson,CachedSeriesInfo si)
     {
         int imageCodeType = imageJson.GetMandatoryInt("type",TVDoc.ProviderType.TheTVDB);
 
@@ -2501,7 +2495,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         };
     }
 
-    private void GenerateAddEpisodeV4(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, JToken x, ProcessedSeason.SeasonType order)
+    private static void GenerateAddEpisodeV4(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, JToken x, ProcessedSeason.SeasonType order)
     {
         try
         {
@@ -2529,7 +2523,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private void AddTranslations(Episode newEp, JObject downloadSeriesTranslationsJsonV4)
+    private static void AddTranslations(Episode newEp, JObject downloadSeriesTranslationsJsonV4)
     {
         string? transName = downloadSeriesTranslationsJsonV4["data"]?["name"]?.ToString();
         newEp.Name = Translate(newEp.Name,transName);
@@ -2560,7 +2554,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return transName ?? originalName ?? string.Empty;
     }
 
-    private (Episode, Language?) GenerateCoreEpisodeV4(JToken episodeJson, int code, CachedSeriesInfo si, Locale locale, ProcessedSeason.SeasonType order)
+    private static (Episode, Language?) GenerateCoreEpisodeV4(JToken episodeJson, int code, CachedSeriesInfo si, Locale locale, ProcessedSeason.SeasonType order)
     {
         Episode x = new(code, si)
         {
@@ -2587,7 +2581,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return (x, GetAppropriateLanguage(episodeJson["nameTranslations"], locale));
     }
 
-    private Episode CreateEpisode(int seriesId, JObject? bestLanguageR, JObject? jsonInDefaultLang, CachedSeriesInfo si)
+    private static Episode CreateEpisode(int seriesId, JObject? bestLanguageR, JObject? jsonInDefaultLang, CachedSeriesInfo si)
     {
         Episode e = new(seriesId, si);
         if (bestLanguageR is null && jsonInDefaultLang != null)
@@ -2618,7 +2612,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return e;
     }
 
-    private Episode CreateEpisode(int seriesId, JObject r, CachedSeriesInfo si)
+    private static Episode CreateEpisode(int seriesId, JObject r, CachedSeriesInfo si)
     {
         // <Episode>
         //  <id>...</id>
@@ -2628,7 +2622,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LoadJson(e,r);
         return e;
     }
-    private void LoadJson(Episode e, JObject r)
+    private static void LoadJson(Episode e, JObject r)
     {
         try
         {
@@ -2669,16 +2663,12 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             e.DvdDiscId = GetString(r, "dvdDiscid");
 
             string? sn = (string?)r["airedSeason"];
-            if (sn is null)
+            if (!int.TryParse(sn, out e.ReadAiredSeasonNum))
             {
                 LOGGER.Error("Issue with episode " + e.EpisodeId + " airedSeason = null");
                 LOGGER.Error(r.ToString());
             }
-            else
-            {
-                int.TryParse(sn, out e.ReadAiredSeasonNum);
-            }
-
+            
             e.DvdEpNum = r.ExtractStringToInt("dvdEpisodeNumber");
             e.ReadDvdSeasonNum = r.ExtractStringToInt("dvdSeason");
 
@@ -2696,7 +2686,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private static string? GetString(JObject jObject, string key) => ((string?)jObject[key])?.Trim();
 
-    private long GetUpdateTicks(string? lastUpdateString)
+    private static long GetUpdateTicks(string? lastUpdateString)
     {
         const long DEFLT = 0; //equates to  1970/1/1
 
@@ -2716,7 +2706,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private DateTime? GetEpisodeAiredDate(JToken episodeJson)
+    private static DateTime? GetEpisodeAiredDate(JToken episodeJson)
     {
         string? date = episodeJson["aired"]?.ToString();
         try
@@ -3286,7 +3276,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private IEnumerable<CachedSeriesInfo> GetEnumSeriesV4(JToken jToken, Locale locale, bool b)
+    private static IEnumerable<CachedSeriesInfo> GetEnumSeriesV4(JToken jToken, Locale locale, bool b)
     {
         JArray ja = (JArray)jToken;
         List<CachedSeriesInfo> ses = new();
@@ -3304,7 +3294,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return ses;
     }
 
-    private IEnumerable<CachedMovieInfo> GetEnumMoviesV4(JToken jToken, Locale locale, bool b)
+    private static IEnumerable<CachedMovieInfo> GetEnumMoviesV4(JToken jToken, Locale locale, bool b)
     {
         JArray ja = (JArray)jToken;
         List<CachedMovieInfo> ses = new();
@@ -3321,7 +3311,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return ses;
     }
 
-    private CachedMovieInfo GenerateMovieV4(JObject r, Locale locale, bool searchResult)
+    private static CachedMovieInfo GenerateMovieV4(JObject r, Locale locale, bool searchResult)
     {
         CachedMovieInfo si = new(locale, TVDoc.ProviderType.TheTVDB)
         {
@@ -3396,7 +3386,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private int ParseIdFromObjectID(JToken? jToken)
+    private static int ParseIdFromObjectID(JToken? jToken)
     {
         string? baseValue = jToken?.ToString();
         string[]? splitString = baseValue?.Split('-');
@@ -3412,7 +3402,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return 0;
     }
 
-    private CachedSeriesInfo GenerateSeriesV4(JObject r, Locale locale, bool searchResult, ProcessedSeason.SeasonType st)
+    private static CachedSeriesInfo GenerateSeriesV4(JObject r, Locale locale, bool searchResult, ProcessedSeason.SeasonType st)
     {
         CachedSeriesInfo si = new(locale, TVDoc.ProviderType.TheTVDB)
         {
@@ -3468,7 +3458,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return s.HasValue() ? System.Web.HttpUtility.HtmlDecode(s).Trim() : null;
     }
 
-    private DateTime? GenerateFirstAiredDate(JObject r)
+    private static DateTime? GenerateFirstAiredDate(JObject r)
     {
         int? year = r.Value<int?>("year");
         if (year>0)
@@ -3538,7 +3528,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    public void ReConnect(bool showErrorMsgBox)
+    public override void ReConnect(bool showErrorMsgBox)
     {
         Say("TheTVDB Login");
         try

@@ -119,7 +119,7 @@ internal class TvdbAccuracyCheck
 
                 EnsureUpdated(si);
             }
-            lc.ReloadEpisodesV4(newSi, si.ActualLocale??new Locale(), newSi, si.SeasonOrder);
+            LocalCache.ReloadEpisodesV4(newSi, si.ActualLocale??new Locale(), newSi, si.SeasonOrder);
 
             foreach (Episode newEpisode in newSi.Episodes)
             {
@@ -218,7 +218,7 @@ internal class TvdbAccuracyCheck
         }
     }
 
-    private bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
+    private static bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
     {
         if (newSi.CollectionName != si.CollectionName)
         {

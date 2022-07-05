@@ -53,7 +53,7 @@ public class Locale
     }
 
     // ReSharper disable once UnusedParameter.Local
-    private Region DefaultRegion(TVDoc.ProviderType provider) => TVSettings.Instance.TMDBRegion;
+    private static Region DefaultRegion(TVDoc.ProviderType provider) => TVSettings.Instance.TMDBRegion;
 
     public bool IsDifferentLanguageToDefaultFor(TVDoc.ProviderType provider)
     {

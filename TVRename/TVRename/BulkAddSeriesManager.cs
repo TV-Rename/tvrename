@@ -134,28 +134,26 @@ public class BulkAddSeriesManager
     {
         try
         {
-            using (XmlReader reader = XmlReader.Create(file.OpenText()))
+            using XmlReader reader = XmlReader.Create(file.OpenText());
+            while (reader.Read())
             {
-                while (reader.Read())
+                if (reader.Name == "tvdbid" && reader.IsStartElement())
                 {
-                    if (reader.Name == "tvdbid" && reader.IsStartElement())
+                    string s = reader.ReadElementContentAsString();
+                    bool success = int.TryParse(s, out int x);
+                    if (success && x != -1)
                     {
-                        string s = reader.ReadElementContentAsString();
-                        bool success = int.TryParse(s, out int x);
-                        if (success && x != -1)
-                        {
-                            return x;
-                        }
+                        return x;
                     }
+                }
 
-                    if (reader.Name == "uniqueid" && reader.IsStartElement() && reader.GetAttribute("type") == "tvdb")
+                if (reader.Name == "uniqueid" && reader.IsStartElement() && reader.GetAttribute("type") == "tvdb")
+                {
+                    string s = reader.ReadElementContentAsString();
+                    bool success = int.TryParse(s, out int x);
+                    if (success && x != -1)
                     {
-                        string s = reader.ReadElementContentAsString();
-                        bool success = int.TryParse(s, out int x);
-                        if (success && x != -1)
-                        {
-                            return x;
-                        }
+                        return x;
                     }
                 }
             }
@@ -210,8 +208,8 @@ public class BulkAddSeriesManager
         }
 
         // assume last folder element is the show name
-        showName = showName.Substring(showName.LastIndexOf(Path.DirectorySeparatorChar.ToString(),
-            StringComparison.Ordinal) + 1);
+        showName = showName[(showName.LastIndexOf(Path.DirectorySeparatorChar.ToString(),
+            StringComparison.Ordinal) + 1)..];
 
         return showName;
     }
@@ -367,7 +365,7 @@ public class BulkAddSeriesManager
         return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
     }
 
-    private void CheckFolderForShows(DirectoryInfo di, CancellationToken token, bool fullLogging, bool showErrorMsgBox)
+    private void CheckFolderForShows(DirectoryInfo di, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
         if (!di.Exists)
         {
@@ -406,7 +404,7 @@ public class BulkAddSeriesManager
 
         foreach (DirectoryInfo di2 in subDirs)
         {
-            CheckFolderForShows(di2, token, fullLogging, showErrorMsgBox); // not a season folder.. recurse!
+            CheckFolderForShows(di2, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
         } // for each directory
     }
 
@@ -454,7 +452,7 @@ public class BulkAddSeriesManager
         return touchedShows;
     }
 
-    public void CheckFolders(CancellationToken token, SetProgressDelegate prog, bool detailedLogging, bool showErrorMsgBox)
+    public void CheckFolders(SetProgressDelegate prog, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
     {
         // Check the  folder list, and build up a new "AddItems" list.
         // guessing what the shows actually are isn't done here.  That is done by
@@ -477,7 +475,7 @@ public class BulkAddSeriesManager
                 continue;
             }
 
-            CheckFolderForShows(di, token, detailedLogging, showErrorMsgBox);
+            CheckFolderForShows(di, detailedLogging, showErrorMsgBox, token);
 
             if (token.IsCancellationRequested)
             {

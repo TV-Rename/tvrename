@@ -57,12 +57,12 @@ internal class CheckAllMovieFoldersExist : ScanMovieActivity
     private void CreateFolder(MovieConfiguration si, ICollection<string> ignoredLocations, string proposedFolderName, IDialogParent owner)
     {
         string folder = proposedFolderName;
+        DirectoryInfo? di = null;
+        bool firstAttempt = true;
 
         // generate new filename info
         // ReSharper disable once RedundantAssignment
-        bool goAgain = false;
-        DirectoryInfo? di = null;
-        bool firstAttempt = true;
+        bool goAgain;
         do
         {
             goAgain = false;

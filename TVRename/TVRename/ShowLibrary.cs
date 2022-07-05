@@ -611,9 +611,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         int ec = eis.Count;
         if (ValidIndex(n1, ec) && ValidIndex(n2, ec))
         {
-            ProcessedEpisode t = eis[n1];
-            eis[n1] = eis[n2];
-            eis[n2] = t;
+            (eis[n2], eis[n1]) = (eis[n1], eis[n2]);
         }
     }
 

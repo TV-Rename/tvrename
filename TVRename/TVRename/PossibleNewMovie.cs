@@ -167,7 +167,7 @@ public class PossibleNewMovie : ISeriesSpecifier
         return null;
     }
 
-    private int? ValidateOnTMDB(int? tmdbId, Locale locale, bool showErrorMsgBox)
+    private static int? ValidateOnTMDB(int? tmdbId, Locale locale, bool showErrorMsgBox)
     {
         if (tmdbId.HasValue)
         {

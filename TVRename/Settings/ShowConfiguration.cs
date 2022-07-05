@@ -437,7 +437,7 @@ public class ShowConfiguration : MediaConfiguration
         }
     }
 
-    internal bool UsesManualFolders() => ManualFolderLocations.Count > 0;
+    internal bool UsesManualFolders() => !ManualFolderLocations.IsEmpty;
 
     public override ProcessedSeason.SeasonType SeasonOrder => Order;
 

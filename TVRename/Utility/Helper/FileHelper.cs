@@ -537,7 +537,7 @@ public static class FileHelper
         }
 
         int l = ofThat.Length;
-        return thisOne.Length >= l && string.Equals(thisOne[..l], ofThat, StringComparison.CurrentCultureIgnoreCase);
+        return thisOne.Length >= l && string.Equals(thisOne.Take(l), ofThat, StringComparison.CurrentCultureIgnoreCase);
     }
 
     public static string TrimSlash(this string s) // trim trailing slash

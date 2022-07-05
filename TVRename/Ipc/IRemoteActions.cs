@@ -11,7 +11,6 @@ namespace TVRename.Ipc;
 /// <summary>
 /// Remote actions available over IPC.
 /// </summary>
-/// <see cref="RemoteClient"/>
 internal interface IRemoteActions
 {
     /// <summary>

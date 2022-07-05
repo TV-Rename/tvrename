@@ -164,13 +164,13 @@ public static class StringExtensions
 
         while (index != -1)
         {
-            sb.Append(source.Substring(previousIndex, index - previousIndex));
+            sb.Append(source.AsSpan(previousIndex, index - previousIndex));
             sb.Append(replacementValue);
 
             previousIndex = index + search.Length;
             index = source.IndexOf(search, previousIndex, comparison);
         }
-        sb.Append(source.Substring(previousIndex));
+        sb.Append(source.AsSpan(previousIndex));
 
         return sb.ToString();
     }
@@ -192,17 +192,17 @@ public static class StringExtensions
             return string.Empty;
         }
 
-        return char.ToUpper(str[0]) + str.Substring(1).ToLower();
+        return char.ToUpper(str[0]) + str.RemoveFirstCharacter().ToLower();
     }
 
     public static bool IsNullOrWhitespace(this string? text) => string.IsNullOrWhiteSpace(text);
 
     public static string RemoveLastCharacter(this string instr)
     {
-        return instr.Substring(0, instr.Length - 1);
+        return instr[..^1];
     }
 
-    public static string First(this string s, int charsToDisplay)
+    public static string First(this string? s, int charsToDisplay)
     {
         if (s.HasValue())
         {
@@ -212,21 +212,25 @@ public static class StringExtensions
         return string.Empty;
     }
 
-    public static string Initial(this string str) => str.HasValue() ? str.Substring(0, 1) : string.Empty;
+    public static string Initial(this string str) => str.HasValue() ? str[..1] : string.Empty;
 
     public static string RemoveLast(this string instr, int number)
     {
-        return instr.Substring(0, instr.Length - number);
+        return instr[..^number];
     }
 
     public static string RemoveFirstCharacter(this string instr)
     {
-        return instr.Substring(1);
+        return instr.RemoveFirst(1);
     }
 
     public static string RemoveFirst(this string instr, int number)
     {
-        return instr.Substring(number);
+        return instr[number..];
+    }
+    public static string Take(this string instr, int number)
+    {
+        return instr[..number];
     }
 
     public static string GetCommonStartString(IEnumerable<string> testValues)
@@ -280,7 +284,7 @@ public static class StringExtensions
     {
         if (root.IndexOf(ending, StringComparison.OrdinalIgnoreCase) != -1)
         {
-            return root.Substring(0, root.IndexOf(ending, StringComparison.OrdinalIgnoreCase));
+            return root[..root.IndexOf(ending, StringComparison.OrdinalIgnoreCase)];
         }
 
         return root;
@@ -328,7 +332,7 @@ public static class StringExtensions
     private static IEnumerable<string> FromSepValues(this string? aggregate, char delimiter)
     {
         return string.IsNullOrEmpty(aggregate)
-            ? new string[] { }
+            ? Array.Empty<string>()
             : aggregate.Split(delimiter)
                 .Where(s => s.HasValue())
                 .Select(s => s.Trim());

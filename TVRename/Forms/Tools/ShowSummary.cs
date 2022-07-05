@@ -518,7 +518,7 @@ public partial class ShowSummary : Form, IDialogParent
             }
         }
 
-        private void AddRcMenuItem(ContextMenuStrip showRightClickMenu, string name, EventHandler command)
+        private static void AddRcMenuItem(ContextMenuStrip showRightClickMenu, string name, EventHandler command)
         {
             ToolStripMenuItem tsi = new(name.ToUiVersion());
             tsi.Click += command;

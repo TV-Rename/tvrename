@@ -172,17 +172,11 @@ public class CacheUpdater : IDisposable
             return;
         }
 
-        ISeriesSpecifier series;
-
-        switch (codeIn)
+        ISeriesSpecifier series = codeIn switch
         {
-            case ISeriesSpecifier ss:
-                series = ss;
-                break;
-
-            default:
-                throw new ArgumentException("GetThread started with invalid parameter");
-        }
+            ISeriesSpecifier ss => ss,
+            _ => throw new ArgumentException("GetThread started with invalid parameter")
+        };
 
         try
         {
@@ -257,8 +251,8 @@ public class CacheUpdater : IDisposable
 
             if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TVmaze))
             {
-                if (!TVmaze.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
-                        downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TVmaze)))
+                if (!TVmaze.LocalCache.Instance.GetUpdates(downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TVmaze), showErrorMsgBox,
+                        cts))
                 {
                     DownloadDone = true;
                     downloadOk = false;
@@ -268,8 +262,8 @@ public class CacheUpdater : IDisposable
 
             if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
             {
-                if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
-                        downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB)))
+                if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB),
+                        cts))
                 {
                     DownloadDone = true;
                     downloadOk = false;
@@ -279,8 +273,8 @@ public class CacheUpdater : IDisposable
 
             if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TMDB))
             {
-                if (!TMDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
-                        downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TMDB)))
+                if (!TMDB.LocalCache.Instance.GetUpdates(downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TMDB), showErrorMsgBox,
+                        cts))
                 {
                     DownloadDone = true;
                     downloadOk = false;

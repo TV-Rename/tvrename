@@ -305,10 +305,10 @@ internal abstract class FileFinder : Finder
     }
     protected void CopySubsFolders(ItemList actionlist)
     {
-        CopySubsFolders(actionlist,  !MDoc.Args.Unattended && !MDoc.Args.Hide, MDoc);
+        CopySubsFolders(actionlist, MDoc);
     }
 
-    public static void CopySubsFolders(ItemList actionlist, bool showErrors, TVDoc d)
+    public static void CopySubsFolders(ItemList actionlist, TVDoc d)
     {
         // for each of the items in rcl, do the same copy/move if for other items with the same
         // base name, but different extensions
@@ -484,7 +484,7 @@ internal abstract class FileFinder : Finder
         // do case insensitive replace
         int p = filename.IndexOf(basename, StringComparison.OrdinalIgnoreCase);
 
-        string newName = filename[..p] + toname + filename[(p + basename.Length)..];
+        string newName = filename.Take(p) + toname + filename.RemoveFirst(p + basename.Length);
         if (TVSettings.Instance.RenameTxtToSub && newName.EndsWith(".txt", StringComparison.Ordinal))
         {
             return newName.RemoveLast(4) + ".sub";

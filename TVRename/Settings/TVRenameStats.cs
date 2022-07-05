@@ -96,10 +96,8 @@ public class TVRenameStats
         }
 
         XmlWriterSettings settings = new() { Indent = true, NewLineOnAttributes = true };
-        using (XmlWriter writer = XmlWriter.Create(toFile, settings))
-        {
-            XmlSerializer xs = new(typeof(TVRenameStats));
-            xs.Serialize(writer, this);
-        }
+        using XmlWriter writer = XmlWriter.Create(toFile, settings);
+        XmlSerializer xs = new(typeof(TVRenameStats));
+        xs.Serialize(writer, this);
     }
 }

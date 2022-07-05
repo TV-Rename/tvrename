@@ -1374,23 +1374,14 @@ public sealed class TVSettings
 
         public override string ToString()
         {
-            switch (status)
+            return status switch
             {
-                case ProcessedSeason.SeasonStatus.aired:
-                    return "Season Status: All aired";
-
-                case ProcessedSeason.SeasonStatus.noEpisodes:
-                    return "Season Status: No Episodes";
-
-                case ProcessedSeason.SeasonStatus.noneAired:
-                    return "Season Status: None aired";
-
-                case ProcessedSeason.SeasonStatus.partiallyAired:
-                    return "Season Status: Partially aired";
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                ProcessedSeason.SeasonStatus.aired => "Season Status: All aired",
+                ProcessedSeason.SeasonStatus.noEpisodes => "Season Status: No Episodes",
+                ProcessedSeason.SeasonStatus.noneAired => "Season Status: None aired",
+                ProcessedSeason.SeasonStatus.partiallyAired => "Season Status: Partially aired",
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         public override bool appliesTo(ProcessedSeason s) => status == s.Status(s.Show.GetTimeZone());
@@ -1815,58 +1806,42 @@ public sealed class TVSettings
 
     private static ShowConfiguration.ShowAirStatus ConvertToShowAirStatus(string value)
     {
-        switch (value)
+        return value switch
         {
-            case "All aired":
-            case "Aired":
-            case "aired":
-                return ShowConfiguration.ShowAirStatus.aired;
-
-            case "No Seasons or Episodes in Seasons":
-            case "NoEpisodesOrSeasons":
-            case "noEpisodesOrSeasons":
-                return ShowConfiguration.ShowAirStatus.noEpisodesOrSeasons;
-
-            case "None aired":
-            case "NoneAired":
-            case "noneAired":
-                return ShowConfiguration.ShowAirStatus.noneAired;
-
-            case "Partially aired":
-            case "PartiallyAired":
-            case "partiallyAired":
-                return ShowConfiguration.ShowAirStatus.partiallyAired;
-
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            "All aired" => ShowConfiguration.ShowAirStatus.aired,
+            "Aired" => ShowConfiguration.ShowAirStatus.aired,
+            "aired" => ShowConfiguration.ShowAirStatus.aired,
+            "No Seasons or Episodes in Seasons" => ShowConfiguration.ShowAirStatus.noEpisodesOrSeasons,
+            "NoEpisodesOrSeasons" => ShowConfiguration.ShowAirStatus.noEpisodesOrSeasons,
+            "noEpisodesOrSeasons" => ShowConfiguration.ShowAirStatus.noEpisodesOrSeasons,
+            "None aired" => ShowConfiguration.ShowAirStatus.noneAired,
+            "NoneAired" => ShowConfiguration.ShowAirStatus.noneAired,
+            "noneAired" => ShowConfiguration.ShowAirStatus.noneAired,
+            "Partially aired" => ShowConfiguration.ShowAirStatus.partiallyAired,
+            "PartiallyAired" => ShowConfiguration.ShowAirStatus.partiallyAired,
+            "partiallyAired" => ShowConfiguration.ShowAirStatus.partiallyAired,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     private static ProcessedSeason.SeasonStatus ConvertToSeasonStatus(string value)
     {
-        switch (value)
+        return value switch
         {
-            case "All aired":
-            case "Aired":
-            case "aired":
-                return ProcessedSeason.SeasonStatus.aired;
-
-            case "No Episodes":
-            case "NoEpisodes":
-            case "noEpisodes":
-                return ProcessedSeason.SeasonStatus.noEpisodes;
-
-            case "None aired":
-            case "NoneAired":
-            case "noneAired":
-                return ProcessedSeason.SeasonStatus.noneAired;
-
-            case "Partially aired":
-            case "PartiallyAired":
-            case "partiallyAired":
-                return ProcessedSeason.SeasonStatus.partiallyAired;
-        }
-        throw new ArgumentOutOfRangeException();
+            "All aired" => ProcessedSeason.SeasonStatus.aired,
+            "Aired" => ProcessedSeason.SeasonStatus.aired,
+            "aired" => ProcessedSeason.SeasonStatus.aired,
+            "No Episodes" => ProcessedSeason.SeasonStatus.noEpisodes,
+            "NoEpisodes" => ProcessedSeason.SeasonStatus.noEpisodes,
+            "noEpisodes" => ProcessedSeason.SeasonStatus.noEpisodes,
+            "None aired" => ProcessedSeason.SeasonStatus.noneAired,
+            "NoneAired" => ProcessedSeason.SeasonStatus.noneAired,
+            "noneAired" => ProcessedSeason.SeasonStatus.noneAired,
+            "Partially aired" => ProcessedSeason.SeasonStatus.partiallyAired,
+            "PartiallyAired" => ProcessedSeason.SeasonStatus.partiallyAired,
+            "partiallyAired" => ProcessedSeason.SeasonStatus.partiallyAired,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     private void UpdateRegExs(XElement xmlSettings)

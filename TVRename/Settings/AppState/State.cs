@@ -20,11 +20,9 @@ public class State
             try
             {
                 XmlSerializer serializer = new(typeof(State));
-                using (XmlReader reader = XmlReader.Create(path))
-                {
-                    State? s = serializer.Deserialize(reader) as State;
-                    return s ?? new State();
-                }
+                using XmlReader reader = XmlReader.Create(path);
+                State? s = serializer.Deserialize(reader) as State;
+                return s ?? new State();
             }
             catch (Exception ex)
             {
@@ -45,9 +43,7 @@ public class State
     {
         XmlSerializer serializer = new(typeof(State));
         XmlWriterSettings xmlWriterSettings = new() { Indent = true };
-        using (XmlWriter xmlWriter = XmlWriter.Create(path, xmlWriterSettings))
-        {
-            serializer.Serialize(xmlWriter, this);
-        }
+        using XmlWriter xmlWriter = XmlWriter.Create(path, xmlWriterSettings);
+        serializer.Serialize(xmlWriter, this);
     }
 }

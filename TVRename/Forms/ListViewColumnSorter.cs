@@ -38,22 +38,20 @@ public class ListViewColumnSorter : IComparer
         // Compare the two items
         int compareResult = ListViewItemSorter.Compare(listviewX, listviewY);
 
-        switch (Order)
+        return Order switch
         {
             // Calculate correct return value based on object comparison
-            case SortOrder.Ascending:
+            SortOrder.Ascending =>
                 // Ascending sort is selected, return normal result of compare operation
-                return compareResult;
-
-            case SortOrder.Descending:
+                compareResult,
+            SortOrder.Descending =>
                 // Descending sort is selected, return negative result of compare operation
-                return -compareResult;
-
-            case SortOrder.None:
-            default:
+                -compareResult,
+            SortOrder.None =>
                 // Return '0' to indicate they are equal
-                return 0;
-        }
+                0,
+            _ => 0
+        };
     }
 
     /// <summary>

@@ -25,7 +25,9 @@ public static class RegistryHelper
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("ReSharper", "InconsistentNaming")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
     private enum BrowserEmulationVersion
     {
         Default = 0,
@@ -52,7 +54,7 @@ public static class RegistryHelper
                     int separator = version.IndexOf('.');
                     if (separator != -1)
                     {
-                        int.TryParse(version.Substring(0, separator), out int result);
+                        int.TryParse(version.AsSpan(0, separator), out int result);
                         return result;
                     }
                 }

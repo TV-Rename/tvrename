@@ -13,13 +13,12 @@ using NLog.Windows.Forms;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Microsoft.VisualBasic.Logging;
 
 namespace TVRename;
 
 public partial class LogViewer : Form
 {
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     public LogViewer()
     {
         InitializeComponent();

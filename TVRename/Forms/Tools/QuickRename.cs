@@ -181,7 +181,7 @@ public partial class QuickRename : Form, IDialogParent
             }
             if (TVSettings.Instance.CopySubsFolders)
             {
-                FileFinder.CopySubsFolders(mDoc.TheActionList, true, mDoc);
+                FileFinder.CopySubsFolders(mDoc.TheActionList, mDoc);
             }
         }
         catch (ShowConfiguration.EpisodeNotFoundException)

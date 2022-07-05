@@ -214,10 +214,7 @@ public partial class BulkAddMovie : Form
         e.Effect = GetDragEffect(e);
     }
 
-    private DragDropEffects GetDragEffect(DragEventArgs e)
-    {
-        return e.Data?.GetDataPresent(DataFormats.FileDrop) ?? false ? DragDropEffects.Copy : DragDropEffects.None;
-    }
+    private static DragDropEffects GetDragEffect(DragEventArgs e) => e.Data?.GetDataPresent(DataFormats.FileDrop) ?? false ? DragDropEffects.Copy : DragDropEffects.None;
 
     private void lstFMIgnoreFolders_DragOver(object _, DragEventArgs e)
     {

@@ -250,8 +250,9 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
         Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
     }
-
+    
     // ReSharper disable once UnusedMember.Local
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
     private static void SetupSemaTextLogging()
     {
         try

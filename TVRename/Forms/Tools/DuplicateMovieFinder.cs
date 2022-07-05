@@ -181,7 +181,7 @@ public partial class DuplicateMovieFinder : Form
         Update(mlastSelected);
     }
 
-    private void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, FileInfo file2, UI ui)
+    private static void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, FileInfo file2, UI ui)
     {
         FileHelper.VideoComparison result = FileHelper.BetterQualityFile(file1, file2);
 

@@ -23,7 +23,7 @@ internal class FindNewShowsInLibrary : ScanActivity
     protected override void DoCheck(SetProgressDelegate progress)
     {
         BulkAddSeriesManager bam = new(MDoc);
-        bam.CheckFolders(Settings.Token, progress, false, !Settings.Unattended);
+        bam.CheckFolders(progress, false, !Settings.Unattended, Settings.Token);
         AskUserAboutShows(bam);
 
         if (!bam.AddItems.Any(s => s.CodeKnown))

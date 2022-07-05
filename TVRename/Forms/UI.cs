@@ -185,7 +185,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         UpdateSplashStatus(splash, "Opening...",100);
     }
 
-    private void WaitForCefInitialised()
+    private static void WaitForCefInitialised()
     {
         WaitFor(() => CefSharp.Cef.IsInitialized, 10, "browser to initialise",true);
     }
@@ -522,7 +522,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
     }
 
-    private void ReceiveArgs(string[] args)
+    /*private void ReceiveArgs(string[] args)
     {
         // Send command-line arguments to already running instance
 
@@ -540,7 +540,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         //Revert the settings
         TVSettings.Instance.RenameCheck = previousRenameBehavior;
         mDoc.Args.RevertFromTempUse();
-    }
+    }*/
 
     private void ScanAndAction(TVSettings.ScanType type)
     {
@@ -1440,7 +1440,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
         {
             ProcessedSeason s = si.AppropriateSeasons()[snum];
-            SetHtmlBody(chrImages, si.GetSeasonImagesOverview(s));
+            SetHtmlBody(chrImages, s.GetSeasonImagesOverview());
             SetHtmlBody(chrInformation, si.GetSeasonHtmlOverview(s, false));
             SetHtmlBody(chrSummary, si.GetSeasonSummaryHtmlOverview(s, false));
             UpdateTvTrailer(si);
@@ -2463,9 +2463,9 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         lastDlRemaining = n;
     }
 
-    private void SaveCaches()
+    private static void SaveCaches()
     {
-        mDoc.SaveCaches();
+        TVDoc.SaveCaches();
     }
 
     private void backgroundDownloadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3576,12 +3576,12 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         bool hidden = WindowState == FormWindowState.Minimized;
 
         TVDoc.ScanSettings initialSettings = new(shows ?? new List<ShowConfiguration>(),
-            movies ?? new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, null);
+            movies ?? new List<MovieConfiguration>(), unattended, hidden, st, media, this, null, cts.Token);
         mDoc.SetScanSettings(initialSettings);
         SetupScanUi(hidden);
 
         TVDoc.ScanSettings scanSettings = new(shows ?? new List<ShowConfiguration>(),
-            movies ?? new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, scanProgDlg);
+            movies ?? new List<MovieConfiguration>(), unattended, hidden, st, media, this, scanProgDlg, cts.Token);
         mDoc.SetScanSettings(scanSettings);
 
         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal,Handle);
@@ -4993,7 +4993,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         e.Parameters.SecondarySortOrder = SortOrder.Ascending;
     }
 
-    private IComparer<OLVListItem> GetActionComparer(OLVColumn column)
+    private static IComparer<OLVListItem> GetActionComparer(OLVColumn column)
     {
         return column.Index switch
         {

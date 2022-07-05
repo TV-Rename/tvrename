@@ -304,18 +304,14 @@ internal static class API
 
     private static MediaImage.ImageType MapImageType(string? s)
     {
-        switch (s)
+        return s switch
         {
-            case null:
-            case "background":
-                return MediaImage.ImageType.background;
-            case "poster":
-                return MediaImage.ImageType.poster;
-            case "banner":
-                return MediaImage.ImageType.wideBanner;
-            default:
-                return MediaImage.ImageType.background;
-        }
+            null => MediaImage.ImageType.background,
+            "background" => MediaImage.ImageType.background,
+            "poster" => MediaImage.ImageType.poster,
+            "banner" => MediaImage.ImageType.wideBanner,
+            _ => MediaImage.ImageType.background
+        };
     }
 
     private static ShowImage GenerateImage(int seriesId, int seasonNumber, string url)

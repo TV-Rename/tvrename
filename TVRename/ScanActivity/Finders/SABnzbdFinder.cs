@@ -89,13 +89,9 @@ internal class SABnzbdFinder : DownloadingFinder
         {
             HttpClient client = new();
 
-            using (HttpResponseMessage response = client.GetAsync(theUrl).Result)
-            {
-                using (HttpContent content = response.Content)
-                {
-                    responseText = content.ReadAsStringAsync().Result;
-                }
-            }
+            using HttpResponseMessage response = client.GetAsync(theUrl).Result;
+            using HttpContent content = response.Content;
+            responseText = content.ReadAsStringAsync().Result;
         }
         catch (Exception e)
         {

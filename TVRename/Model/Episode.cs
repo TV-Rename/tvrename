@@ -260,16 +260,13 @@ public class Episode
 
     public bool IsSpecial(ProcessedSeason.SeasonType seasonOrderType)
     {
-        switch (seasonOrderType)
+        return seasonOrderType switch
         {
-            case ProcessedSeason.SeasonType.dvd:
-                return 0 == DvdSeasonNumber;
-            case ProcessedSeason.SeasonType.aired:
-            case ProcessedSeason.SeasonType.absolute:
-            case ProcessedSeason.SeasonType.alternate:
-                return 0 == AiredSeasonNumber;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(seasonOrderType), seasonOrderType, null);
-        }
+            ProcessedSeason.SeasonType.dvd => 0 == DvdSeasonNumber,
+            ProcessedSeason.SeasonType.aired => 0 == AiredSeasonNumber,
+            ProcessedSeason.SeasonType.absolute => 0 == AiredSeasonNumber,
+            ProcessedSeason.SeasonType.alternate => 0 == AiredSeasonNumber,
+            _ => throw new ArgumentOutOfRangeException(nameof(seasonOrderType), seasonOrderType, null)
+        };
     }
 }

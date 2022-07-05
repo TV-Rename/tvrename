@@ -32,7 +32,7 @@ public class BrowserRequestHandler : IRequestHandler
 
         if (url.StartsWith(UI.EXPLORE_PROXY, StringComparison.InvariantCultureIgnoreCase))
         {
-            string openlocation = System.Web.HttpUtility.UrlDecode(url.Substring(UI.EXPLORE_PROXY.Length));
+            string openlocation = System.Web.HttpUtility.UrlDecode(url.RemoveFirst(UI.EXPLORE_PROXY.Length));
             if (Helpers.OpenFolder(openlocation))
             {
                 return true;
@@ -43,7 +43,7 @@ public class BrowserRequestHandler : IRequestHandler
 
         if (url.StartsWith(UI.WATCH_PROXY, StringComparison.InvariantCultureIgnoreCase))
         {
-            string fileName = System.Web.HttpUtility.UrlDecode(url.Substring(UI.WATCH_PROXY.Length)).Replace('/', '\\');
+            string fileName = System.Web.HttpUtility.UrlDecode(url.RemoveFirst(UI.WATCH_PROXY.Length)).Replace('/', '\\');
             Helpers.OpenFile(fileName);
             return true;
         }
@@ -86,17 +86,6 @@ public class BrowserRequestHandler : IRequestHandler
     public bool OnSelectClientCertificate(IWebBrowser chromiumWebBrowser, IBrowser browser, bool isProxy, string host, int port,
         X509Certificate2Collection certificates, ISelectClientCertificateCallback callback) =>
         false;
-
-    public void OnPluginCrashed(IWebBrowser browserControl, IBrowser browser, string pluginPath)
-    {
-        throw new Exception("Plugin crashed!");
-    }
-
-    public CefReturnValue OnBeforeResourceLoad(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
-        IRequestCallback callback)
-    {
-        return CefReturnValue.Continue;
-    }
 
     public void OnRenderProcessTerminated(IWebBrowser browserControl, IBrowser browser, CefTerminationStatus status)
     {

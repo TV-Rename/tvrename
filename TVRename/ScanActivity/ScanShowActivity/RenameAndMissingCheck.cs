@@ -297,7 +297,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
         return null;
     }
 
-    private bool MatchesSourceEpisode(ProcessedEpisode episode,FileInfo actualFile)
+    private static bool MatchesSourceEpisode(ProcessedEpisode episode,FileInfo actualFile)
     {
         foreach (Episode ep in episode.SourceEpisodes)
         {

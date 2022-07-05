@@ -205,7 +205,7 @@ public abstract partial class CodeFinder : UserControl
 
     protected abstract int FindMedia(MediaCache cache, bool numeric, int matchnum, string what);
 
-    protected bool Matches(int num, CachedMediaInfo kvp, bool numeric, string what, int matchnum)
+    protected static bool Matches(int num, CachedMediaInfo kvp, bool numeric, string what, int matchnum)
     {
         string show = kvp.Name.CompareName();
 

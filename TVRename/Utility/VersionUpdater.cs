@@ -57,12 +57,11 @@ public static class VersionUpdater
             await HttpHelper.RetryOnExceptionAsync<Exception>
             (3, TimeSpan.FromSeconds(2), GITHUB_RELEASES_API_URL, async () =>
             {
-                using (HttpClient client = new())
-                {
-                    client.DefaultRequestHeaders.Add("user-agent", TVSettings.USER_AGENT);
-                    Task<string> response = client.GetStringAsync(GITHUB_RELEASES_API_URL);
-                    gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
-                }                }).ConfigureAwait(false);
+                using HttpClient client = new();
+                client.DefaultRequestHeaders.Add("user-agent", TVSettings.USER_AGENT);
+                Task<string> response = client.GetStringAsync(GITHUB_RELEASES_API_URL);
+                gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
+            }).ConfigureAwait(false);
 
             if (gitHubInfo is null)
             {
@@ -152,7 +151,9 @@ public static class VersionUpdater
 
     private static ServerRelease? ParseFromJson(JObject gitHubReleaseJson)
     {
-        DateTime.TryParse(gitHubReleaseJson["published_at"]?.ToString(), out DateTime releaseDate);
+        DateTime releaseDate = DateTime.TryParse(gitHubReleaseJson["published_at"]?.ToString(), out DateTime rd)
+            ? rd
+            : DateTime.MinValue;
 
         string? url = (string?)gitHubReleaseJson["assets"]?[0]?["browser_download_url"];
         string? releaseNotesText = gitHubReleaseJson["body"]?.ToString();
@@ -182,8 +183,7 @@ public static class VersionUpdater
         //remove debug stuff
         if (inDebug)
         {
-            currentVersionString = currentVersionString.Substring(0,
-                currentVersionString.LastIndexOf(Helpers.DebugText, StringComparison.Ordinal));
+            currentVersionString = currentVersionString[..currentVersionString.LastIndexOf(Helpers.DebugText, StringComparison.Ordinal)];
         }
 
         return new Release(currentVersionString, Release.VersionType.friendly);

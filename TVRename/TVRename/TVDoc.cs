@@ -415,7 +415,7 @@ public class TVDoc : IDisposable
         }
     }
 
-    private void ForgetShow(ISeriesSpecifier? si)
+    private static void ForgetShow(ISeriesSpecifier? si)
     {
         if (si is null)
         {
@@ -957,7 +957,7 @@ public class TVDoc : IDisposable
         public readonly MediaConfiguration.MediaType Media;
         public readonly ScanProgress? UpdateUi;
 
-        public ScanSettings(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool hidden, TVSettings.ScanType st, CancellationToken tok, MediaConfiguration.MediaType media, UI owner, ScanProgress? updateUi)
+        public ScanSettings(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool hidden, TVSettings.ScanType st, MediaConfiguration.MediaType media, UI owner, ScanProgress? updateUi, CancellationToken tok)
         {
             Shows = shows;
             Movies = movies;
@@ -1732,7 +1732,7 @@ public class TVDoc : IDisposable
         }
         if (TVSettings.Instance.CopySubsFolders)
         {
-            FileFinder.CopySubsFolders(TheActionList, true, this);
+            FileFinder.CopySubsFolders(TheActionList, this);
         }
     }
 
@@ -1908,7 +1908,7 @@ public class TVDoc : IDisposable
             }
             if (TVSettings.Instance.CopySubsFolders)
             {
-                FileFinder.CopySubsFolders(TheActionList, true, this);
+                FileFinder.CopySubsFolders(TheActionList, this);
             }
             MoviesAddedOrEdited(true,false,false,ui,new List<MovieConfiguration>());
         }
@@ -2221,7 +2221,7 @@ public class TVDoc : IDisposable
         searchFinders = new FindMissingEpisodesSearch(this, settings);
     }
 
-    public void SaveCaches()
+    public static void SaveCaches()
     {
         Utility.Helper.TaskHelper.Run(
             () =>

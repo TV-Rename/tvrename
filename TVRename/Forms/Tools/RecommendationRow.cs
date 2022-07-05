@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace TVRename.Forms;
 
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class RecommendationRow
 {
     private readonly RecommendationResult result;

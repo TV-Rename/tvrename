@@ -215,7 +215,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
         }
     }
 
-    private bool MatchesBase(string baseFileName, string newBase)
+    private static bool MatchesBase(string baseFileName, string newBase)
     {
         if (baseFileName.CompareName().StartsWith(newBase.CompareName(),StringComparison.CurrentCultureIgnoreCase))
         {
@@ -292,7 +292,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
         }
     }
 
-    private bool IsClose(string baseFileName, MovieConfiguration config)
+    private static bool IsClose(string baseFileName, MovieConfiguration config)
     {
         (string targetFolder, string targetFolderEarlier, string targetFolderLater) = config.NeighbouringFolderNames();
         return baseFileName.Equals(targetFolderEarlier) || baseFileName.Equals(targetFolderLater) || baseFileName.Equals(targetFolder);

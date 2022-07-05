@@ -155,19 +155,14 @@ public abstract class MediaConfiguration : ISeriesSpecifier
     {
         get
         {
-            switch (ConfigurationProvider)
+            return ConfigurationProvider switch
             {
-                case TVDoc.ProviderType.libraryDefault:
-                    return DefaultProvider();
-
-                case TVDoc.ProviderType.TVmaze:
-                case TVDoc.ProviderType.TheTVDB:
-                case TVDoc.ProviderType.TMDB:
-                    return ConfigurationProvider;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                TVDoc.ProviderType.libraryDefault => DefaultProvider(),
+                TVDoc.ProviderType.TVmaze => ConfigurationProvider,
+                TVDoc.ProviderType.TheTVDB => ConfigurationProvider,
+                TVDoc.ProviderType.TMDB => ConfigurationProvider,
+                _ => throw new ArgumentOutOfRangeException(),
+            };
         }
     }
 

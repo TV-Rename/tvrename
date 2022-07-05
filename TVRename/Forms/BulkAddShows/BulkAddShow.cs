@@ -227,7 +227,7 @@ public partial class BulkAddShow : Form
             Thread.Sleep(10);
         }
 
-        engine.CheckFolders(cts.Token, UpdateProgress, true, true);
+        engine.CheckFolders(UpdateProgress, true, true, cts.Token);
         cts.Cancel();
         FillNewShowList(false);
     }

@@ -1590,7 +1590,7 @@ public partial class Preferences : Form
             int n = rowsIndex[0];
             string from = (string)ReplacementsGrid[n, 0].Value;
             if (string.IsNullOrEmpty(from) ||
-                TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) == -1)
+                !TVSettings.CompulsoryReplacements().Contains(from))
             {
                 ReplacementsGrid.Rows.Remove(n);
             }
@@ -1599,35 +1599,37 @@ public partial class Preferences : Form
 
     private void btnAddShowStatusColoring_Click(object sender, EventArgs e)
     {
-        if (cboShowStatus.SelectedItem != null && !string.IsNullOrEmpty(txtShowStatusColor.Text))
+        if (cboShowStatus.SelectedItem == null || string.IsNullOrEmpty(txtShowStatusColor.Text))
         {
-            try
-            {
-                TVSettings.ColouringRule? ssct =
-                    cboShowStatus.SelectedItem as TVSettings.ColouringRule;
+            return;
+        }
 
-                if (!ColorTranslator.FromHtml(txtShowStatusColor.Text).IsEmpty && ssct != null)
-                {
-                    ListViewItem item = lvwDefinedColors.FindItemWithText(ssct.Text);
-                    if (item is null)
-                    {
-                        item = new ListViewItem();
-                        item.SubItems.Add(txtShowStatusColor.Text);
-                        lvwDefinedColors.Items.Add(item);
-                    }
-
-                    item.Text = ssct.Text;
-                    item.SubItems[1].Text = txtShowStatusColor.Text;
-                    item.ForeColor = ColorTranslator.FromHtml(txtShowStatusColor.Text);
-                    item.Tag = ssct;
-                    txtShowStatusColor.Text = string.Empty;
-                    txtShowStatusColor.ForeColor = Color.Black;
-                }
-            }
-            catch
+        try
+        {
+            if (ColorTranslator.FromHtml(txtShowStatusColor.Text).IsEmpty ||
+                cboShowStatus.SelectedItem is not TVSettings.ColouringRule ssct)
             {
-                // ignored
+                return;
             }
+
+            ListViewItem item = lvwDefinedColors.FindItemWithText(ssct.Text);
+            if (item is null)
+            {
+                item = new ListViewItem();
+                item.SubItems.Add(txtShowStatusColor.Text);
+                lvwDefinedColors.Items.Add(item);
+            }
+
+            item.Text = ssct.Text;
+            item.SubItems[1].Text = txtShowStatusColor.Text;
+            item.ForeColor = ColorTranslator.FromHtml(txtShowStatusColor.Text);
+            item.Tag = ssct;
+            txtShowStatusColor.Text = string.Empty;
+            txtShowStatusColor.ForeColor = Color.Black;
+        }
+        catch
+        {
+            // ignored
         }
     }
 
