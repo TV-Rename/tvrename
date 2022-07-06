@@ -117,7 +117,19 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
             {
                 PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
             }
-            Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, movieFiles.FirstOrDefault(m => m.Name.StartsWith(newBase.RemoveBracketedYearFromEnd(), StringComparison.OrdinalIgnoreCase)) ?? movieFiles.First()));
+            return;
+        }
+
+        //Check for random crap at the end
+        if (renCheck
+            && bases.Select(b => b.RemoveBracketedYearFromEnd().ToLower()).Distinct().Count() == 1
+            && bases.All(b => b.StartsWith(newBase.RemoveBracketedYearFromEnd(), StringComparison.CurrentCultureIgnoreCase))
+            && newBase.RemoveBracketedYearFromEnd().Length > 6)
+        {
+            foreach (string baseString in bases)
+            {
+                 PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+            }
             return;
         }
 

@@ -106,16 +106,19 @@ public static class StringExtensions
     public static string RemoveBracketedYear(this string baseText)
         => baseText
             .RemovePattern(@"\(\d{4}\)")
-            .RemovePattern(@"\[\d{4}\]");
+            .RemovePattern(@"\[\d{4}\]")
+            .Trim();
 
     public static string RemoveYearFromEnd(this string baseText)
         => baseText
-            .RemovePattern(@"\s\d{4}$");
+            .RemovePattern(@"\s\d{4}$")
+            .Trim();
 
     public static string RemoveBracketedYearFromEnd(this string baseText)
         => baseText
             .RemovePattern(@"\s\[\d{4}\]$")
-            .RemovePattern(@"\s\(\d{4}\)$");
+            .RemovePattern(@"\s\(\d{4}\)$")
+            .Trim();
 
     public static string ReplaceInsensitive(this string source, string search, string? replacement)
     {
