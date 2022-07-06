@@ -668,8 +668,7 @@ internal static class FinderHelper
             //Seems like we have a year in the date
 
             //Work out the year
-            int.TryParse(m.Groups[1].Value, out int year);
-            possibleYear = year;
+            possibleYear = m.Groups[1].Value.ToInt();
 
             //remove year from string
             hint = Regex.Replace(hint.Trim(), PATTERN, " ");

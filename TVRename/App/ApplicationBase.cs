@@ -54,9 +54,6 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         SplashScreen.SafeInvoke(
             () => ((TVRenameSplash)SplashScreen).UpdateStatus("Initializing"), true);
 
-        // Update RegVersion to bring the WebBrowser up to speed
-        RegistryHelper.UpdateBrowserEmulationVersion();
-
         doc = LoadSettings(parameters);
 
         if (TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs)

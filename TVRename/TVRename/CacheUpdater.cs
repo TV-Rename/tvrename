@@ -262,7 +262,7 @@ public class CacheUpdater : IDisposable
 
             if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
             {
-                if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB),
+                if (!TheTVDB.LocalCache.Instance.GetUpdates(downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB), showErrorMsgBox,
                         cts))
                 {
                     DownloadDone = true;

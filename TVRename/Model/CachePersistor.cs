@@ -105,42 +105,40 @@ internal static class CachePersistor
             NewLineOnAttributes = true
         };
 
-        using (XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings))
+        using XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings);
+        writer.WriteStartDocument();
+        writer.WriteStartElement("Data");
+        writer.WriteAttributeToXml("time", timestamp);
+
+        foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
         {
-            writer.WriteStartDocument();
-            writer.WriteStartElement("Data");
-            writer.WriteAttributeToXml("time", timestamp);
-
-            foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
+            if (kvp.Value.SrvLastUpdated != 0)
             {
-                if (kvp.Value.SrvLastUpdated != 0)
-                {
-                    kvp.Value.WriteXml(writer);
-                }
-                else
-                {
-                    Logger.Info(
-                        $"Cannot save TV {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it has not been updated at all.");
-                }
+                kvp.Value.WriteXml(writer);
             }
-
-            foreach (KeyValuePair<int, CachedMovieInfo> kvp in movies)
+            else
             {
-                if (!kvp.Value.IsSearchResultOnly)
-                {
-                    kvp.Value.WriteXml(writer);
-                }
-                else
-                {
-                    Logger.Info(
-                        $"Cannot save Movie {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it is a search result that has not been used.");
-                }
+                Logger.Info(
+                    $"Cannot save TV {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it has not been updated at all.");
             }
-
-            writer.WriteEndElement(); // data
-
-            writer.WriteEndDocument();
         }
+
+        foreach (KeyValuePair<int, CachedMovieInfo> kvp in movies)
+        {
+            if (!kvp.Value.IsSearchResultOnly)
+            {
+                kvp.Value.WriteXml(writer);
+            }
+            else
+            {
+                Logger.Info(
+                    $"Cannot save Movie {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it is a search result that has not been used.");
+            }
+        }
+
+        writer.WriteEndElement(); // data
+
+        writer.WriteEndDocument();
     }
 
     public static bool LoadTvCache<T>(FileInfo loadFrom, T cache) where T : MediaCache, iTVSource
@@ -328,7 +326,7 @@ internal static class CachePersistor
         {
             int seriesId = bannersXml.ExtractInt("SeriesId") ?? -1;
 
-            localCache.GetSeries(seriesId)?.AddBanners(seriesId, bannersXml.Descendants("Banners").Descendants("Banner")
+            localCache.GetSeries(seriesId)?.AddBanners(bannersXml.Descendants("Banners").Descendants("Banner")
                 .Select(banner => ShowImage.GenerateFromLegacyBannerXml(seriesId, banner, localCache.SourceProvider())));
         }
     }

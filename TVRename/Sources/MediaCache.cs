@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace TVRename;
 
@@ -151,4 +152,5 @@ public abstract class MediaCache
     public abstract int PrimaryKey(ISeriesSpecifier ss);
     public abstract string CacheSourceName();
     public abstract void ReConnect(bool b);
+    public abstract bool GetUpdates(IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts);
 }

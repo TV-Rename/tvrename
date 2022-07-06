@@ -116,7 +116,7 @@ public class LocalCache : MediaCache, iTVSource
         return true;
     }
 
-    public bool GetUpdates(IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
+    public override bool GetUpdates(IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TVmaze cache");
         foreach (ISeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvMazeId)))

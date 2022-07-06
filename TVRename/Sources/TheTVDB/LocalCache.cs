@@ -288,7 +288,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    public bool GetUpdates(bool showErrorMsgBox, IEnumerable<ISeriesSpecifier> ss, CancellationToken cts)
+    public override bool GetUpdates(IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TheTVDB cache");
         IEnumerable<ISeriesSpecifier> seriesSpecifiers = ss.ToList();
@@ -2315,7 +2315,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private static ShowImage CreateShowImage(int tvdbId, JObject bannerData)
     {
         double.TryParse((string?)bannerData["ratingsInfo"]?["average"], NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out double rating);
-        int.TryParse((string?)bannerData["subKey"], out int seasonId);
+        int? seasonId = ((string?)bannerData["subKey"]).ToInt();
         // {
         //  "fileName": "string",
         //  "id": 0,

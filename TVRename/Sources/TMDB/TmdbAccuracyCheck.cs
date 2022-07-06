@@ -25,7 +25,7 @@ internal class TmdbAccuracyCheck
         Logger.Info($"Accuracy Check for {si.Name} on TMDB");
         try
         {
-            CachedMovieInfo newSi = lc.DownloadMovieNow(si, false,false);
+            CachedMovieInfo newSi = lc.DownloadMovieNow(si,false);
 
             if (!Match(newSi, si))
             {
@@ -49,7 +49,7 @@ internal class TmdbAccuracyCheck
         Logger.Info($"Accuracy Check for {si.Name} on TMDB");
         try
         {
-            CachedSeriesInfo newSi = lc.DownloadSeriesNow(si, false,false);
+            CachedSeriesInfo newSi = lc.DownloadSeriesNow(si,false);
 
             if (!Match(newSi, si)) //NB - we use a match method as we can't rely on update time
             {
@@ -68,7 +68,7 @@ internal class TmdbAccuracyCheck
         }
     }
 
-    private bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
+    private static bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
     {
         if (newSi.CollectionName != si.CollectionName)
         {
@@ -103,7 +103,7 @@ internal class TmdbAccuracyCheck
         return true;
     }
 
-    private bool Match(CachedSeriesInfo newSi, CachedSeriesInfo si)
+    private static bool Match(CachedSeriesInfo newSi, CachedSeriesInfo si)
     {
         if (newSi.Name != si.Name)
         {

@@ -792,7 +792,7 @@ internal static class ShowHtmlHelper
             case TVDoc.ProviderType.libraryDefault:
                 return EditTvSeriesUrl(si, TVSettings.Instance.DefaultProvider);
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(source),$"TV Url asked tobe created for {source.PrettyPrint()}");
         }
     }
 
@@ -1379,7 +1379,7 @@ internal static class ShowHtmlHelper
             ProcessedSeason.SeasonType.alternate => snum == 0
                 ? "Not in alternate season"
                 : "Alternate " + ProcessedSeason.UISeasonWord(snum),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException($"ShowConfig {si} has invalid Season Order {si.Order.PrettyPrint()}.")
         };
     }
 
@@ -1674,7 +1674,7 @@ internal static class ShowHtmlHelper
             TVDoc.ProviderType.TMDB => show.WebsiteUrl ?? string.Empty,
             TVDoc.ProviderType.libraryDefault => show.WebsiteUrl ?? string.Empty,
             TVDoc.ProviderType.TVmaze => show.WebsiteUrl ?? string.Empty,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException($"ShowConfig {show} has invalid Provider.")
         };
     }
 

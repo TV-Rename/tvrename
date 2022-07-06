@@ -56,7 +56,7 @@ public class PossibleNewMovie : ISeriesSpecifier
         int? tmdbId = FindShowCode("tmdbid", "tmdb").ToInt();
         Locale preferredLocale = new();
 
-        int? tmdbCode = ValidateOnTMDB(tmdbId, preferredLocale, showErrorMsgBox);
+        int? tmdbCode = ValidateOnTMDB(tmdbId, preferredLocale);
         if (tmdbCode.HasValue)
         {
             SetId(tmdbCode.Value, TVDoc.ProviderType.TMDB);
@@ -81,7 +81,7 @@ public class PossibleNewMovie : ISeriesSpecifier
 
         if (imdbToTest.HasValue())
         {
-            CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest, preferredLocale, showErrorMsgBox);
+            CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest, preferredLocale);
             if (s != null)
             {
                 SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -110,7 +110,7 @@ public class PossibleNewMovie : ISeriesSpecifier
         int? tvdbId = FindShowCode("tvdbid", "tvdb").ToInt();
         if (tvdbId.HasValue)
         {
-            CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, showErrorMsgBox, preferredLocale);
+            CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, preferredLocale);
             if (s2 != null)
             {
                 SetId(s2.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -167,7 +167,7 @@ public class PossibleNewMovie : ISeriesSpecifier
         return null;
     }
 
-    private static int? ValidateOnTMDB(int? tmdbId, Locale locale, bool showErrorMsgBox)
+    private static int? ValidateOnTMDB(int? tmdbId, Locale locale)
     {
         if (tmdbId.HasValue)
         {
@@ -175,7 +175,7 @@ public class PossibleNewMovie : ISeriesSpecifier
             {
                 ISeriesSpecifier ss = new SearchSpecifier(tmdbId.Value, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
 
-                CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(ss, showErrorMsgBox);
+                CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(ss);
                 return series.TmdbCode;
             }
             catch (MediaNotFoundException)

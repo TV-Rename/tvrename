@@ -129,11 +129,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
 
         return s.Media == MediaConfiguration.MediaType.movie
-            ? EnsureMovieUpdated(s, showErrorMsgBox)
-            : EnsureSeriesUpdated(s, showErrorMsgBox);
+            ? EnsureMovieUpdated(s)
+            : EnsureSeriesUpdated(s);
     }
 
-    private bool EnsureSeriesUpdated(ISeriesSpecifier s, bool showErrorMsgBox)
+    private bool EnsureSeriesUpdated(ISeriesSpecifier s)
     {
         lock (SERIES_LOCK)
         {
@@ -146,7 +146,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         Say($"Series {s.Name} from TMDB");
         try
         {
-            CachedSeriesInfo downloadedSi = DownloadSeriesNow(s, showErrorMsgBox);
+            CachedSeriesInfo downloadedSi = DownloadSeriesNow(s);
 
             if (downloadedSi.TmdbCode != s.TmdbId && s.TmdbId == -1)
             {
@@ -185,7 +185,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return true;
     }
 
-    private bool EnsureMovieUpdated(ISeriesSpecifier id, bool showErrorMsgBox)
+    private bool EnsureMovieUpdated(ISeriesSpecifier id)
     {
         lock (MOVIE_LOCK)
         {
@@ -198,7 +198,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         Say($"Movie: {id.Name} from TMDB");
         try
         {
-            CachedMovieInfo downloadedSi = DownloadMovieNow(id, showErrorMsgBox);
+            CachedMovieInfo downloadedSi = DownloadMovieNow(id);
 
             if (downloadedSi.TmdbCode != id.TmdbId && id.TmdbId == -1)
             {
@@ -228,7 +228,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
     }
 
-    public bool GetUpdates(IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
+    public override bool GetUpdates(IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TMDB cache");
         this.MarkPlaceHoldersDirty(ss);
@@ -379,11 +379,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TMDB;
 
-    public CachedMovieInfo GetMovieAndDownload(ISeriesSpecifier id, bool showErrorMsgBox) => HasMovie(id.TmdbId)
+    public CachedMovieInfo GetMovieAndDownload(ISeriesSpecifier id) => HasMovie(id.TmdbId)
         ? CachedMovieData[id.TmdbId]
-        : DownloadMovieNow(id, showErrorMsgBox);
+        : DownloadMovieNow(id);
 
-    internal CachedMovieInfo DownloadMovieNow(ISeriesSpecifier id, bool showErrorMsgBox,bool saveToCache = true)
+    internal CachedMovieInfo DownloadMovieNow(ISeriesSpecifier id,bool saveToCache = true)
     {
         string imageLanguage = $"{id.LanguageToUse().Abbreviation},null";
         try
@@ -547,7 +547,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return null;
     }
 
-    internal CachedSeriesInfo DownloadSeriesNow(ISeriesSpecifier ss, bool showErrorMsgBox, bool saveToCache = true)
+    internal CachedSeriesInfo DownloadSeriesNow(ISeriesSpecifier ss, bool saveToCache = true)
     {
         int id = ss.TmdbId > 0 ? ss.TmdbId : GetSeriesIdFromOtherCodes(ss) ?? 0;
 
@@ -832,11 +832,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     switch (type)
                     {
                         case MediaConfiguration.MediaType.tv:
-                            DownloadSeriesNow(ss, showErrorMsgBox);
+                            DownloadSeriesNow(ss);
                             break;
 
                         case MediaConfiguration.MediaType.movie:
-                            DownloadMovieNow(ss, showErrorMsgBox);
+                            DownloadMovieNow(ss);
                             break;
                     }
                 }
@@ -952,14 +952,14 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return null;
     }
 
-    public CachedMovieInfo? LookupMovieByImdb(string imdbToTest, Locale locale, bool showErrorMsgBox)
+    public CachedMovieInfo? LookupMovieByImdb(string imdbToTest, Locale locale)
     {
         FindContainer? results = Client.FindAsync(FindExternalSource.Imdb, imdbToTest).Result;
         LOGGER.Info($"Got {results.MovieResults.Count:N0} results searching for {imdbToTest}");
         foreach (SearchMovie result in results.MovieResults)
         {
             SearchSpecifier ss = new(result.Id, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
-            DownloadMovieNow(ss, showErrorMsgBox);
+            DownloadMovieNow(ss);
         }
 
         if (results.MovieResults.Count == 0)
@@ -1015,14 +1015,14 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return returnValue;
     }
 
-    public CachedMovieInfo? LookupMovieByTvdb(int tvdbId, bool showErrorMsgBox,Locale locale)
+    public CachedMovieInfo? LookupMovieByTvdb(int tvdbId,Locale locale)
     {
         FindContainer? results = Client.FindAsync(FindExternalSource.TvDb, tvdbId.ToString()).Result;
         LOGGER.Info($"Got {results.MovieResults.Count:N0} results searching for {tvdbId}");
         foreach (SearchMovie result in results.MovieResults)
         {
             SearchSpecifier ss = new(result.Id, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
-            DownloadMovieNow(ss, showErrorMsgBox);
+            DownloadMovieNow(ss);
         }
 
         if (results.MovieResults.Count == 0)

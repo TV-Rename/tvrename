@@ -209,7 +209,7 @@ public class CachedSeriesInfo : CachedMediaInfo
         }
     }
 
-    internal void AddBanners(int seriesId, IEnumerable<ShowImage> enumerable)
+    internal void AddBanners(IEnumerable<ShowImage> enumerable)
     {
         foreach (ShowImage s in enumerable)
         {

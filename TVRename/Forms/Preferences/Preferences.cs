@@ -409,7 +409,7 @@ public partial class Preferences : Form
         s.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
         s.RemoveDownloadDirectoriesFilesMatchMovies = cbCleanUpDownloadDirMovies.Checked;
         s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck = cbCleanUpDownloadDirMoviesLength.Checked;
-        int.TryParse(tbCleanUpDownloadDirMoviesLength.Text, out s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength);
+        s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength = tbCleanUpDownloadDirMoviesLength.Text.ToInt(8);
 
         s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
         s.DeleteMovieFromDisk = cbDeleteMovieFromDisk.Checked;
@@ -431,7 +431,7 @@ public partial class Preferences : Form
         s.Tidyup.EmptyIgnoreExtensions = cbEmptyIgnoreExtensions.Checked;
         s.Tidyup.EmptyIgnoreExtensionList = txtEmptyIgnoreExtensions.Text;
         s.Tidyup.EmptyMaxSizeCheck = cbEmptyMaxSize.Checked;
-        int.TryParse(txtEmptyMaxSize.Text, out s.Tidyup.EmptyMaxSizeMB);
+        s.Tidyup.EmptyMaxSizeMB = txtEmptyMaxSize.Text.ToInt(100);
 
         s.BulkAddCompareNoVideoFolders = cbIgnoreNoVideoFolders.Checked;
         s.BulkAddIgnoreRecycleBin = cbIgnoreRecycleBin.Checked;
