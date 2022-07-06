@@ -6,13 +6,13 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using Newtonsoft.Json.Linq;
 using NLog;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json.Nodes;
 using System.Windows.Forms;
 
 namespace TVRename.Forms;
@@ -39,7 +39,7 @@ public partial class UpdateNotification : Form
         HttpClient client = new();
         try
         {
-            JObject request = new()
+            JsonObject request = new()
             {
                 {"text", newVersion.ReleaseNotesText},
                 {"mode", "gfm"},
@@ -47,7 +47,7 @@ public partial class UpdateNotification : Form
             };
             client.DefaultRequestHeaders.UserAgent.ParseAdd(TVSettings.USER_AGENT);
             client.DefaultRequestHeaders.Accept
-                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                .Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
 
             HttpResponseMessage response = client.PostAsJsonAsync(GITHUB_CONVERSION_URL, request).Result;
             System.IO.StreamReader reader = new(response.Content.ReadAsStream());

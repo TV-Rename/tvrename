@@ -13,9 +13,7 @@ using NLog;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -1171,7 +1169,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 quickTimer.Dispose();
                 refreshWTWTimer.Dispose();
                 statusTimer.Dispose();
-                CefWrapper.Instance.Shutdown();
+                CefWrapper.Shutdown();
             }
         }
         catch (Exception ex)
@@ -4239,7 +4237,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         Logger.Warn(update.LogMessage());
 
-        if (inSilentMode || Debugger.IsAttached || !Environment.UserInteractive)
+        if (inSilentMode || Helpers.InDebug() || !Environment.UserInteractive)
         {
             return;
         }

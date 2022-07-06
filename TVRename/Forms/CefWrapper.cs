@@ -78,7 +78,7 @@ public class CefWrapper{
         Cef.EnableHighDPISupport();
     }
 
-    public void Shutdown()
+    public static void Shutdown()
     {
         Cef.Shutdown();
     }
@@ -175,17 +175,15 @@ public class CefWrapper{
 
             foreach (string subKeyName in dependencies.GetSubKeyNames().Where(n => !n.ToLower().Contains("dotnet") && !n.ToLower().Contains("microsoft")))
             {
-                using (RegistryKey? subDir = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH + "\\" + subKeyName))
+                using RegistryKey? subDir = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH + "\\" + subKeyName);
+                string? value = subDir?.GetValue("DisplayName")?.ToString();
+                if (string.IsNullOrEmpty(value))
                 {
-                    string? value = subDir?.GetValue("DisplayName")?.ToString();
-                    if (string.IsNullOrEmpty(value))
-                    {
-                        continue;
-                    }
-                    if (Regex.IsMatch(value, @"C\+\+"))
-                    {
-                        returnValue.Add(value);
-                    }
+                    continue;
+                }
+                if (Regex.IsMatch(value, @"C\+\+"))
+                {
+                    returnValue.Add(value);
                 }
             }
         }
