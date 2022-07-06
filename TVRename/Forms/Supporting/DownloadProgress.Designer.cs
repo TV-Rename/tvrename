@@ -48,9 +48,10 @@ namespace TVRename
             // bnCancel
             // 
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnCancel.Location = new System.Drawing.Point(159, 62);
+            this.bnCancel.Location = new System.Drawing.Point(186, 71);
+            this.bnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.bnCancel.Name = "bnCancel";
-            this.bnCancel.Size = new System.Drawing.Size(75, 23);
+            this.bnCancel.Size = new System.Drawing.Size(88, 27);
             this.bnCancel.TabIndex = 0;
             this.bnCancel.Text = "Cancel";
             this.bnCancel.UseVisualStyleBackColor = true;
@@ -60,27 +61,30 @@ namespace TVRename
             // 
             this.pbProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbProgressBar.Location = new System.Drawing.Point(12, 35);
+            this.pbProgressBar.Location = new System.Drawing.Point(14, 39);
+            this.pbProgressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbProgressBar.Name = "pbProgressBar";
-            this.pbProgressBar.Size = new System.Drawing.Size(366, 15);
+            this.pbProgressBar.Size = new System.Drawing.Size(406, 17);
             this.pbProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbProgressBar.TabIndex = 1;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 9);
+            this.label2.Location = new System.Drawing.Point(14, 10);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(116, 13);
+            this.label2.Size = new System.Drawing.Size(133, 15);
             this.label2.TabIndex = 2;
             this.label2.Text = "Currently Downloading:";
             // 
             // txtCurrent
             // 
             this.txtCurrent.AutoSize = true;
-            this.txtCurrent.Location = new System.Drawing.Point(134, 9);
+            this.txtCurrent.Location = new System.Drawing.Point(156, 10);
+            this.txtCurrent.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.txtCurrent.Name = "txtCurrent";
-            this.txtCurrent.Size = new System.Drawing.Size(16, 13);
+            this.txtCurrent.Size = new System.Drawing.Size(22, 15);
             this.txtCurrent.TabIndex = 2;
             this.txtCurrent.Text = "---";
             this.txtCurrent.UseMnemonic = false;
@@ -92,14 +96,15 @@ namespace TVRename
             // 
             // DownloadProgress
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(390, 97);
+            this.ClientSize = new System.Drawing.Size(434, 111);
             this.Controls.Add(this.txtCurrent);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.pbProgressBar);
             this.Controls.Add(this.bnCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "DownloadProgress";
@@ -107,6 +112,7 @@ namespace TVRename
             this.Text = "Download Progress";
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
