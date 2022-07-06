@@ -250,7 +250,7 @@ internal class DownloadKodiImages : DownloadIdentifier
         }
 
         doneThumbnails.Add(imgtbn.FullName);
-        return new ActionDownloadImage(si, ep is ProcessedEpisode episode ? episode : new ProcessedEpisode(ep, si), imgtbn, ban);
+        return new ActionDownloadImage(si, ep as ProcessedEpisode ?? new ProcessedEpisode(ep, si), imgtbn, ban);
     }
 
     public sealed override void Reset()

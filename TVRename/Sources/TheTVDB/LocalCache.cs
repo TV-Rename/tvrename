@@ -2655,7 +2655,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             e.AirsAfterSeason = (int?)r["airsAfterSeason"];
             e.SiteRatingCount = (int?)r["siteRatingCount"];
             e.AbsoluteNumber = (int?)r["absoluteNumber"];
-            e.Filename = GetString(r, "filename");
+            e.Filename = API.GetImageURL(GetString(r, "filename"));
             e.ImdbCode = GetString(r, "imdbId");
             e.ShowUrl = GetString(r, "showUrl");
             e.ProductionCode = GetString(r, "productionCode");
