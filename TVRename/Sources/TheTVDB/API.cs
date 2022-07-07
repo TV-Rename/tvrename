@@ -493,11 +493,11 @@ internal static class API
         {
             if (wex.StatusCode is HttpStatusCode.NotFound)
             {
-                Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404).");
+                Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404) via {uri}.");
 
                 if (TvdbIsUp() && code!=null)
                 {
-                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. Please Update";
+                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB via {uri}. Please Update";
                     throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
                         TVDoc.ProviderType.TheTVDB, type);
                 }
