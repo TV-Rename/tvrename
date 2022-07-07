@@ -77,6 +77,7 @@ namespace TVRename
             this.pbFile.Size = new System.Drawing.Size(282, 27);
             this.pbFile.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbFile.TabIndex = 6;
+            this.pbFile.Maximum = 1000;
             // 
             // pbGroup
             // 
@@ -86,6 +87,7 @@ namespace TVRename
             this.pbGroup.Size = new System.Drawing.Size(282, 27);
             this.pbGroup.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbGroup.TabIndex = 9;
+            this.pbGroup.Maximum = 1000;
             // 
             // bnCancel
             // 
@@ -151,6 +153,7 @@ namespace TVRename
             this.pbDiskSpace.Size = new System.Drawing.Size(284, 27);
             this.pbDiskSpace.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbDiskSpace.TabIndex = 12;
+            this.pbDiskSpace.Maximum = 1000;
             // 
             // label4
             // 

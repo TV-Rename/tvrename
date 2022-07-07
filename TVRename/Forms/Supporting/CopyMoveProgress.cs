@@ -23,7 +23,6 @@ namespace TVRename;
 /// </summary>
 public partial class CopyMoveProgress : Form
 {
-    private const int MAX_PROGRESS_BAR = 1000;
     private readonly ActionEngine mDoc;
     private readonly ItemList mToDo;
     private readonly System.Action mDoOnClose;
@@ -38,20 +37,7 @@ public partial class CopyMoveProgress : Form
         diskSpaceTimer.Start();
     }
 
-    private static int Normalise(double x)
-    {
-        if (x < 0)
-        {
-            return 0;
-        }
-
-        if (x > 100)
-        {
-            return 100;
-        }
-
-        return (int)Math.Round(x);
-    }
+    private static int Normalise(double x) => ((int)Math.Round(x)).Between(0,100);
 
     private void SetPercentages(double file, double group)
     {
@@ -59,8 +45,8 @@ public partial class CopyMoveProgress : Form
         txtTotal.Text = Normalise(group) + "% Done";
 
         // progress bars go 0 to MAX_PROGRESS_BAR
-        pbFile.Value = MAX_PROGRESS_BAR / 100 * Normalise(file);
-        pbGroup.Value = MAX_PROGRESS_BAR / 100 * Normalise(group);
+        pbFile.Value = (pbFile.Maximum / 100 * Normalise(file)).Between(pbFile.Minimum,pbFile.Maximum);
+        pbGroup.Value = (pbGroup.Maximum / 100 * Normalise(group)).Between(pbGroup.Minimum, pbGroup.Maximum);
         pbFile.Update();
         pbGroup.Update();
         txtFile.Update();
@@ -208,14 +194,14 @@ public partial class CopyMoveProgress : Form
             }
         }
 
-        pbDiskSpace.Value = diskValue;
+        pbDiskSpace.Value = diskValue.Between(pbDiskSpace.Minimum,pbDiskSpace.Maximum);
         txtDiskSpace.Text = diskText;
     }
 
-    private static (int value, string diskText) DiskValue(long diTotalFreeSpace, long totalSize)
+    private (int value, string diskText) DiskValue(long diTotalFreeSpace, long totalSize)
     {
-        int pct = (int)(MAX_PROGRESS_BAR * diTotalFreeSpace / totalSize);
-        int diskValue = MAX_PROGRESS_BAR - pct;
+        int pct = (int)(pbDiskSpace.Maximum * diTotalFreeSpace / totalSize);
+        int diskValue = pbDiskSpace.Maximum - pct;
         string diskText = diTotalFreeSpace.GBMB(1) + " free";
         return (diskValue, diskText);
     }
