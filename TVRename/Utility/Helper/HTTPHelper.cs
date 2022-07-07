@@ -59,8 +59,8 @@ public static class HttpHelper
         else
         {
             Client.DefaultRequestHeaders.Add("user-agent", TVSettings.USER_AGENT);
-            HttpResponseMessage response = Client.GetAsync(url).Result;
-            response.EnsureSuccessStatusCode();
+            //HttpResponseMessage response = Client.GetAsync(url).Result;
+            //response.EnsureSuccessStatusCode();
             Task<string> task = Task.Run(async () => await Client.GetStringAsync(url));
             return task.Result;
         }
