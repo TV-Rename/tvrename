@@ -590,15 +590,10 @@ internal static class FinderHelper
                && currentlyMatchedTvShow.IdFor(p) > 0;
     }
 
-    private static string RemoveSe(string hint)
+    public static string RemoveSe(string hint)
     {
-        foreach (TVSettings.FilenameProcessorRE re in TVSettings.Instance.FNPRegexs)
+        foreach (TVSettings.FilenameProcessorRE re in TVSettings.Instance.FNPRegexs.Where(re => re.Enabled))
         {
-            if (!re.Enabled)
-            {
-                continue;
-            }
-
             try
             {
                 Match m = Regex.Match(hint, re.RegExpression, RegexOptions.IgnoreCase);
