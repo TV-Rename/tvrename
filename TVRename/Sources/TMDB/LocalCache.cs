@@ -1047,7 +1047,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         Say($"TMDB Accuracy Check (TV) running for {FullShows().Count} shows.");
 
-        Parallel.ForEach(FullShows(), si => {
+        Parallel.ForEach(FullShows(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },si => {
             Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
             check.ServerAccuracyCheck(si);
         });
@@ -1066,7 +1066,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         Say($"TmDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
 
-        Parallel.ForEach(FullMovies(), si => {
+        Parallel.ForEach(FullMovies(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },si => {
             Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
             check.ServerAccuracyCheck(si);
         });

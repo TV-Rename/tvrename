@@ -146,7 +146,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         Say($"TVDB Accuracy Check (TV) running for {FullShows().Count} shows.");
 
-        Parallel.ForEach(FullShows(), si => {
+        Parallel.ForEach(FullShows(),
+            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+            si => {
             Thread.CurrentThread.Name ??= $"TVDB Consistency Check: {si.Name}"; // Can only set it once
             check.ServerAccuracyCheck(si);
         });
@@ -165,7 +167,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         Say($"TVDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
 
-        Parallel.ForEach(FullMovies(), si => {
+        Parallel.ForEach(FullMovies(),
+            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+            si => {
             Thread.CurrentThread.Name ??= $"TVDB Consistency Check: {si.Name}"; // Can only set it once
             check.ServerAccuracyCheck(si);
         });
@@ -443,7 +447,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         Say("Processing Updates from TVDB");
 
-        Parallel.ForEach(updatesResponses, o =>
+        Parallel.ForEach(updatesResponses, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, o =>
         {
             Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
             ProcessUpdate(o, cts);
@@ -1880,24 +1884,23 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private static void AddSeasonsV4(JObject r, ProcessedSeason.SeasonType seasonType, CachedSeriesInfo si)
     {
         JToken? seasonJsons = r["data"]?["seasons"];
-        if (seasonJsons is not null)
+        if (seasonJsons is null)
         {
-            foreach (JToken? seasonJson in seasonJsons)
-            {
-                if (seasonJson!= null && seasonType == GetSeasonType(seasonJson))
-                {
-                    int seasonId = seasonJson.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
-                    string? seasonName = (string?)seasonJson["name"];
-                    int seasonSeriesId = seasonJson.GetMandatoryInt("seriesId",TVDoc.ProviderType.TheTVDB);
-                    int seasonNumber = seasonJson.GetMandatoryInt("number",TVDoc.ProviderType.TheTVDB);
-                    string seasonDescription = string.Empty;
-                    string? imageUrl = (string?)seasonJson["image"];
-                    string url = string.Empty;
+            return;
+        }
 
-                    si.AddSeason(new Season(seasonId, seasonNumber
-                        , seasonName, seasonDescription, url, imageUrl, seasonSeriesId));
-                }
-            }
+        foreach (JToken seasonJson in seasonJsons.Where(x=>seasonType == GetSeasonType(x)))
+        {
+            int seasonId = seasonJson.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
+            string? seasonName = (string?)seasonJson["name"];
+            int seasonSeriesId = seasonJson.GetMandatoryInt("seriesId",TVDoc.ProviderType.TheTVDB);
+            int seasonNumber = seasonJson.GetMandatoryInt("number",TVDoc.ProviderType.TheTVDB);
+            string seasonDescription = string.Empty;
+            string? imageUrl = (string?)seasonJson["image"];
+            string url = string.Empty;
+
+            si.AddSeason(new Season(seasonId, seasonNumber
+                , seasonName, seasonDescription, url, imageUrl, seasonSeriesId));
         }
     }
 
@@ -2428,7 +2431,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     public static void ReloadEpisodesV4(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
     {
-        Parallel.ForEach(si.Seasons, s =>
+        Parallel.ForEach(si.Seasons, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, s =>
         {
             Thread.CurrentThread.Name ??= $"Download Season {s.SeasonNumber} for {si.Name}"; // Can only set it once
             try
@@ -2440,7 +2443,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
                 if (episodeData != null)
                 {
-                    Parallel.ForEach(episodeData, x =>
+                    Parallel.ForEach(episodeData,new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, x =>
                     {
                         int? epNumber = x["number"]?.ToObject<int>();
                         Thread.CurrentThread.Name ??=
@@ -2510,7 +2513,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (MediaNotFoundException mnfe)
         {
-            LOGGER.Error(mnfe, "Episode (+ Translations) claimed to exist, but got a 404 when searching for them. Ignoring Episode, but might be worth a full refresh of the show and contacting TVDB if it does not get resolved");
+            LOGGER.Error($"Episode (+ Translations) claimed to exist, but got a 404 when searching for them. Ignoring Episode, but might be worth a full refresh of the show and contacting TVDB if it does not get resolved. {mnfe.Message}");
             si.Dirty = true;
         }
         catch (SourceConnectivityException sce1)
@@ -2668,7 +2671,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 LOGGER.Error("Issue with episode " + e.EpisodeId + " airedSeason = null");
                 LOGGER.Error(r.ToString());
             }
-            
+
             e.DvdEpNum = r.ExtractStringToInt("dvdEpisodeNumber");
             e.ReadDvdSeasonNum = r.ExtractStringToInt("dvdSeason");
 
@@ -2742,7 +2745,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         Dictionary<int, Tuple<JToken?, JToken?>> episodeResponses =
             MergeEpisodeResponses(episodePrefLangResponses, episodeDefaultLangResponses);
 
-        Parallel.ForEach(episodeResponses, episodeData =>
+        Parallel.ForEach(episodeResponses, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, episodeData =>
         {
             int episodeId = episodeData.Key;
             Thread.CurrentThread.Name ??= $"Episode {episodeId} for {si.Name}"; // Can only set it once
@@ -3065,7 +3068,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             }
         }
 
-        Parallel.ForEach(extraEpisodes, ee =>
+        Parallel.ForEach(extraEpisodes, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, ee =>
         {
             if (ee.Value.SeriesId != code || ee.Value.Done)
             {
