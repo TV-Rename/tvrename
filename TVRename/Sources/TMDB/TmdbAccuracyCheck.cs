@@ -70,7 +70,7 @@ internal class TmdbAccuracyCheck
 
     private static bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
     {
-        if (newSi.CollectionName != si.CollectionName)
+        if ((newSi.CollectionName??string.Empty) != (si.CollectionName??string.Empty))
         {
             return false;
         }
@@ -90,7 +90,7 @@ internal class TmdbAccuracyCheck
             return false;
         }
 
-        if (newSi.TagLine != si.TagLine)
+        if ((newSi.TagLine??string.Empty) != (si.TagLine??string.Empty))
         {
             return false;
         }
