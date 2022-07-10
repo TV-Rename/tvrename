@@ -68,9 +68,14 @@ internal class TmdbAccuracyCheck
         }
     }
 
-    private static bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
+    private static bool Match(CachedMovieInfo newSi, CachedMovieInfo si) =>
+        (newSi.CollectionName ?? string.Empty) == (si.CollectionName ?? string.Empty)
+        && (newSi.TagLine ?? string.Empty) == (si.TagLine ?? string.Empty)
+        && Match((CachedMediaInfo)newSi, si);
+
+    private static bool Match(CachedMediaInfo newSi, CachedMediaInfo si)
     {
-        if ((newSi.CollectionName??string.Empty) != (si.CollectionName??string.Empty))
+        if (newSi.Name != si.Name)
         {
             return false;
         }
@@ -80,42 +85,29 @@ internal class TmdbAccuracyCheck
             return false;
         }
 
+        if ((newSi.Country ?? string.Empty) != (si.Country ?? string.Empty))
+        {
+            return false;
+        }
+
+        if ((newSi.Network ?? string.Empty) != (si.Network ?? string.Empty))
+        {
+            return false;
+        }
+
+        if ((newSi.Runtime ?? string.Empty) != (si.Runtime ?? string.Empty))
+        {
+            return false;
+        }
+        if (newSi.Status != si.Status)
+        {
+            return false;
+        }
         if (newSi.ContentRating != si.ContentRating)
         {
             return false;
         }
 
-        if (newSi.Name != si.Name)
-        {
-            return false;
-        }
-
-        if ((newSi.TagLine??string.Empty) != (si.TagLine??string.Empty))
-        {
-            return false;
-        }
-
-        if (newSi.Network != si.Network)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    private static bool Match(CachedSeriesInfo newSi, CachedSeriesInfo si)
-    {
-        if (newSi.Name != si.Name)
-        {
-            return false;
-        }
-
-        if (newSi.Overview != si.Overview)
-        {
-            return false;
-        }
-
-        //TODO - Check More fields
         return true;
     }
 }
