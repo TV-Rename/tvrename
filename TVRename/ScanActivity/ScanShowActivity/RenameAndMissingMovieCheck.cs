@@ -21,6 +21,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
         List<string> allFolders = si.Locations.ToList();
         if (allFolders.Count == 0) // no folders defined for this show
         {
+            LOGGER.Warn($"No Folders defined for {si.Name}, please review the configuration for that movie;");
             return; // so, nothing to do.
         }
 
