@@ -2128,7 +2128,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             AddRcMenuItem("Edit TV Show", (_, _) => EditShow(si));
             AddRcMenuItem("Delete TV Show", (_, _) => DeleteShow(si));
-        
+
             if (seas != null)
             {
                 string uiFullSeasonWord = ProcessedSeason.UIFullSeasonWord(seas.SeasonNumber);
@@ -2975,42 +2975,50 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 .Where(f => f.IsMovieFile())
                 .Select(s=>s.TrimStartString(folderName));
 
-            List<ShowConfiguration> showsthatmatchanyfiles = mDoc.TvLibrary.Shows
-                .Where(show => show != si)
-                .Where(show => videofilesThatWouldBeDeleted.Any(show.NameMatch))
-                .ToList();
+            List<(ShowConfiguration,string)> showsthatmatchanyfiles =
+                mDoc.TvLibrary.Shows
+                    .Where(show => show != si)
+                    .SelectMany(show => videofilesThatWouldBeDeleted, (show, filename) => new { show, filename })
+                    .Where(t => t.show.NameMatch(t.filename))
+                    .Select(t => (t.show, t.filename))
+                    .ToList();
 
             if (showsthatmatchanyfiles.Any())
             {
+                string otherFilesDetails = showsthatmatchanyfiles.Select(m => $"{m.Item1.ShowName}:[{m.Item2}]").ToCsv();
+
                 DialogResult res1 = MessageBox.Show(
-                    $"Do you want to remove {folderName}?  It is matches other shows {showsthatmatchanyfiles.Select(m => m.ShowName).ToCsv()}",
+                    $"Do you want to remove {folderName}?  It contains files that match other shows {otherFilesDetails}",
                     "Confirmation",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Hand);
 
                 if (res1 != DialogResult.Yes)
                 {
-                    Logger.Warn($"Did not remove {folderName} as it is matches other shows {showsthatmatchanyfiles.Select(m => m.ShowName).ToCsv()}");
+                    Logger.Warn($"Did not remove {folderName} as it contains files that match other shows {otherFilesDetails}");
                     return;
                 }
             }
 
-            List<MovieConfiguration> moviesthatmatchanyfiles = mDoc.FilmLibrary.Movies
+            List<(MovieConfiguration,string)> moviesthatmatchanyfiles = mDoc.FilmLibrary.Movies
                 .Where(show => show != si)
-                .Where(show => videofilesThatWouldBeDeleted.Any(show.NameMatch))
+                .SelectMany(show => videofilesThatWouldBeDeleted, (show, filename) => new { show, filename })
+                .Where(t => t.show.NameMatch(t.filename))
+                .Select(t => (t.show, t.filename))
                 .ToList();
 
             if (moviesthatmatchanyfiles.Any())
             {
+                string otherFilesDetails = moviesthatmatchanyfiles.Select(m => $"{m.Item1.ShowName}:[{m.Item2}]").ToCsv();
                 DialogResult res2 = MessageBox.Show(
-                    $"Do you want to remove {folderName}?  It is matches other movies {moviesthatmatchanyfiles.Select(m => m.ShowName).ToCsv()}",
+                    $"Do you want to remove {folderName}?  It contains files that match other movies {otherFilesDetails}",
                     "Confirmation",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Hand);
 
                 if (res2 != DialogResult.Yes)
                 {
-                    Logger.Warn($"Did not remove {folderName} as it is matches other movies {moviesthatmatchanyfiles.Select(m => m.ShowName).ToCsv()}");
+                    Logger.Warn($"Did not remove {folderName} as contains files that match other movies {otherFilesDetails}");
                     return;
                 }
             }
