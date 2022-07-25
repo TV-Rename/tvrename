@@ -58,9 +58,8 @@ public static class HttpHelper
         }
         else
         {
-            Client.DefaultRequestHeaders.Add("user-agent", TVSettings.USER_AGENT);
-            //HttpResponseMessage response = Client.GetAsync(url).Result;
-            //response.EnsureSuccessStatusCode();
+            Client.DefaultRequestHeaders.UserAgent.Clear();
+            Client.DefaultRequestHeaders.UserAgent.ParseAdd(TVSettings.USER_AGENT);
             Task<string> task = Task.Run(async () => await Client.GetStringAsync(url));
             return task.Result;
         }
@@ -93,7 +92,8 @@ public static class HttpHelper
         }
         else
         {
-            Client.DefaultRequestHeaders.Add("user-agent", TVSettings.USER_AGENT);
+            Client.DefaultRequestHeaders.UserAgent.Clear();
+            Client.DefaultRequestHeaders.UserAgent.ParseAdd(TVSettings.USER_AGENT);
             Task<byte[]> task = Task.Run(async () => await Client.GetByteArrayAsync(url));
             return task.Result;
         }
