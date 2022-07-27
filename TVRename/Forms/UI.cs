@@ -2799,23 +2799,21 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void SelectSeason(ProcessedSeason seas)
     {
-        foreach (TreeNode n in MyShowTree.Nodes)
-        {
-            if (NodeIsForShow(seas.Show, n))
-            {
-                foreach (TreeNode n2 in n.Nodes)
-                {
-                    if (TreeNodeToSeason(n2)?.SeasonNumber == seas.SeasonNumber)
-                    {
-                        n2.EnsureVisible();
-                        MyShowTree.SelectedNode = n2;
-                        return;
-                    }
-                }
-            }
-        }
+        TreeNode? n2 = MyShowTree.Nodes
+                     .Cast<TreeNode>()
+                     .Where(n => NodeIsForShow(seas.Show, n))
+                     .SelectMany(n => n.Nodes.OfType<TreeNode>())
+                     .FirstOrDefault(n2 => TreeNodeToSeason(n2)?.SeasonNumber == seas.SeasonNumber);
 
-        FillEpGuideHtml(null);
+        if (n2 == null)
+        {
+            FillEpGuideHtml(null);
+        }
+        else
+        {
+            n2.EnsureVisible();
+            MyShowTree.SelectedNode = n2;
+        }
     }
 
     private static bool NodeIsForShow(ShowConfiguration si, TreeNode n)
@@ -2825,24 +2823,28 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void SelectShow(ShowConfiguration si)
     {
-        foreach (TreeNode n in MyShowTree.Nodes.Cast<TreeNode>().Where(n => TreeNodeToShowItem(n) == si))
+        TreeNode? n = MyShowTree.Nodes.Cast<TreeNode>().FirstOrDefault(n => NodeIsForShow(si, n));
+
+        if (n is null)
+        {
+            FillEpGuideHtml(null);
+        }
+        else
         {
             n.EnsureVisible();
             MyShowTree.SelectedNode = n;
-            return;
         }
-
-        FillEpGuideHtml(null);
     }
 
     private void SelectMovie(MovieConfiguration m)
     {
-        foreach (TreeNode n in movieTree.Nodes.Cast<TreeNode>().Where(n => TreeNodeToMovieItem(n) == m))
+        TreeNode? n = movieTree.Nodes.Cast<TreeNode>().FirstOrDefault(n => TreeNodeToMovieItem(n) == m);
+        if (n is null)
         {
-            n.EnsureVisible();
-            movieTree.SelectedNode = n;
             return;
         }
+        n.EnsureVisible();
+        movieTree.SelectedNode = n;
     }
 
     private void AddMovie_Click(object sender, EventArgs e)
@@ -2992,7 +2994,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             List<(ShowConfiguration,string)> showsthatmatchanyfiles =
                 mDoc.TvLibrary.Shows
                     .Where(show => show != si)
-                    .SelectMany(show => videofilesThatWouldBeDeleted, (show, filename) => new { show, filename })
+                    .SelectMany(_ => videofilesThatWouldBeDeleted, (show, filename) => new { show, filename })
                     .Where(t => t.show.NameMatch(t.filename))
                     .Select(t => (t.show, t.filename))
                     .ToList();
@@ -3016,7 +3018,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
             List<(MovieConfiguration,string)> moviesthatmatchanyfiles = mDoc.FilmLibrary.Movies
                 .Where(show => show != si)
-                .SelectMany(show => videofilesThatWouldBeDeleted, (show, filename) => new { show, filename })
+                .SelectMany(_ => videofilesThatWouldBeDeleted, (show, filename) => new { show, filename })
                 .Where(t => t.show.NameMatch(t.filename))
                 .Select(t => (t.show, t.filename))
                 .ToList();
