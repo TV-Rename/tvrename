@@ -820,7 +820,16 @@ public static class FileHelper
         {
             return true;
         }
-
+        if (f1.FileNameNoExt().EndsWith(part + "01", true, CultureInfo.CurrentCulture) &&
+            f2.FileNameNoExt().EndsWith(part + "02", true, CultureInfo.CurrentCulture))
+        {
+            return true;
+        }
+        if (f1.FileNameNoExt().EndsWith(part + "02", true, CultureInfo.CurrentCulture) &&
+            f2.FileNameNoExt().EndsWith(part + "01", true, CultureInfo.CurrentCulture))
+        {
+            return true;
+        }
         return false;
     }
 
@@ -829,7 +838,7 @@ public static class FileHelper
 
     private static readonly Regex[] MovieMultiPartRegex =
     {
-        new(@"(?<base>.*)[ _.-]+(cd|dvd|pt|part|disc|disk)[ _.-]*(?<part>[0-9]|[A-D])$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+        new(@"(?<base>.*)[ _.-]+(cd|dvd|pt|part|disc|disk)[ _.-0]*(?<part>[0-9]|[A-D])$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         new(@"(?<base>.*)[ ._-]+(?<part>[A-D])$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
     };
 
