@@ -18,8 +18,8 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged // someth
     public abstract string ScanListViewGroup { get; } // which group name for the listview
     public abstract int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none
     public abstract IgnoreItem? Ignore { get; } // what to add to the ignore list / compare against the ignore list
-    public ProcessedEpisode? Episode { get; protected set; } // associated episode
-    public MovieConfiguration? Movie { get; protected set; } // associated movie
+    public ProcessedEpisode? Episode { get; protected init; } // associated episode
+    public MovieConfiguration? Movie { get; protected init; } // associated movie
 
     public abstract int CompareTo(Item? obj); // for sorting items in scan list (ActionItemSorter)
 
@@ -75,53 +75,6 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged // someth
 
     public int CompareTo(object obj) => CompareTo(obj as Item);
 
-    public override bool Equals(object? obj)
-    {
-        if (obj is not Item other)
-        {
-            return false;
-        }
-        return CompareTo(other) == 0;
-    }
-
-    public static bool operator ==(Item? left, Item? right)
-    {
-        if (left is null)
-        {
-            return right is null;
-        }
-
-        if (right is null)
-        {
-            return false;
-        }
-        return left.Equals(right);
-    }
-
-    public override int GetHashCode() => base.GetHashCode();
-
-    public static bool operator !=(Item? left, Item? right) => !(left == right);
-
-    public static bool operator <(Item left, Item right) => Compare(left, right) < 0;
-
-    public static bool operator >(Item left, Item right) => Compare(left, right) > 0;
-
-    private static int Compare(Item? left, Item? right)
-    {
-        if (ReferenceEquals(left, right))
-        {
-            return 0;
-        }
-        if (left is null)
-        {
-            return -1;
-        }
-        if (right is null)
-        {
-            return 1;
-        }
-        return left.CompareTo(right);
-    }
     public abstract bool CheckedItem
     {
         get;

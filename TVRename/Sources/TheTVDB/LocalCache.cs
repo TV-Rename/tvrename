@@ -1408,7 +1408,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             LanguageCode = (string?)imageJson["language"],
             Rating = imageJson.GetMandatoryInt("score",TVDoc.ProviderType.TheTVDB),
             MovieId = si.TvdbCode,
-            ImageStyle = MapBannerTvdbV4APICode(imageJson.GetMandatoryInt("type",TVDoc.ProviderType.TheTVDB)),
+            ImageStyle = MapBannerTvdbV4ApiCode(imageJson.GetMandatoryInt("type",TVDoc.ProviderType.TheTVDB)),
             MovieSource = TVDoc.ProviderType.TheTVDB,
             RatingCount = 1
         };
@@ -1429,7 +1429,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private static MediaImage.ImageType MapBannerTvdbV4APICode(int v)
+    private static MediaImage.ImageType MapBannerTvdbV4ApiCode(int v)
     {
         // from call to API.ImageTypesV4()
         return v switch
@@ -1463,7 +1463,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         };
     }
 
-    private static MediaImage.ImageSubject MapSubjectTVDBV4APICode(int v)
+    private static MediaImage.ImageSubject MapSubjectTvdbv4ApiCode(int v)
     {
         // from call to API.ImageTypesV4()
         return v switch
@@ -1500,7 +1500,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         if (r["people"]?["actors"] is not null)
         {
-            foreach (JToken? actorJson in r?["people"]?["actors"]!)
+            foreach (JToken? actorJson in r["people"]?["actors"]!)
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string name = actorJson["name"]?.ToString() ?? string.Empty;
@@ -1860,7 +1860,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         JToken? characterNode = r["data"]?["characters"];
         if (characterNode is not null)
         {
-            foreach (JToken? actorJson in characterNode.Where(x => x?["peopleType"]?.ToString() == "Actor"))
+            foreach (JToken? actorJson in characterNode.Where(x => x["peopleType"]?.ToString() == "Actor"))
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string name = actorJson["personName"]?.ToString() ?? string.Empty;
@@ -2491,8 +2491,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             LanguageCode = (string?)imageJson["language"],
             Rating = imageJson.GetMandatoryInt("score",TVDoc.ProviderType.TheTVDB),
             SeriesId = si.TvdbCode,
-            ImageStyle = MapBannerTvdbV4APICode(imageCodeType),
-            Subject = MapSubjectTVDBV4APICode(imageCodeType),
+            ImageStyle = MapBannerTvdbV4ApiCode(imageCodeType),
+            Subject = MapSubjectTvdbv4ApiCode(imageCodeType),
             SeriesSource = TVDoc.ProviderType.TheTVDB,
             RatingCount = 1
         };
@@ -3058,14 +3058,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             ok = DownloadSeriesNow(seriesd, false, bannersToo, showErrorMsgBox) != null;
         }
 
-        ICollection<Episode>? collection = Series[code]?.Episodes;
-        if (collection != null)
+        foreach (Episode e in Series[code].Episodes.Where(e => e.Dirty && e.EpisodeId > 0))
         {
-            foreach (Episode e in collection.Where(e => e.Dirty && e.EpisodeId > 0))
-            {
-                extraEpisodes.TryAdd(e.EpisodeId, new ExtraEp(e.SeriesId, e.EpisodeId,seriesd.SeasonOrder));
-                extraEpisodes[e.EpisodeId].Done = false;
-            }
+            extraEpisodes.TryAdd(e.EpisodeId, new ExtraEp(e.SeriesId, e.EpisodeId,seriesd.SeasonOrder));
+            extraEpisodes[e.EpisodeId].Done = false;
         }
 
         Parallel.ForEach(extraEpisodes, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, ee =>
@@ -3082,7 +3078,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         foreach (ExtraEp episodeToRemove in removeEpisodeIds.Values)
         {
-            Series[episodeToRemove.SeriesId]?.RemoveEpisode(episodeToRemove.EpisodeId);
+            Series[episodeToRemove.SeriesId].RemoveEpisode(episodeToRemove.EpisodeId);
         }
 
         removeEpisodeIds.Clear();
@@ -3318,7 +3314,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         CachedMovieInfo si = new(locale, TVDoc.ProviderType.TheTVDB)
         {
-            TvdbCode = ParseIdFromObjectID(r["objectID"]),
+            TvdbCode = ParseIdFromObjectId(r["objectID"]),
             Slug = ((string?)r["slug"])?.Trim(),
             PosterUrl = (string?)r["image_url"],
             Status = (string?)r["status"],
@@ -3389,7 +3385,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private static int ParseIdFromObjectID(JToken? jToken)
+    private static int ParseIdFromObjectId(JToken? jToken)
     {
         string? baseValue = jToken?.ToString();
         string[]? splitString = baseValue?.Split('-');
@@ -3409,7 +3405,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         CachedSeriesInfo si = new(locale, TVDoc.ProviderType.TheTVDB)
         {
-            TvdbCode = ParseIdFromObjectID(r["objectID"]),
+            TvdbCode = ParseIdFromObjectId(r["objectID"]),
             Slug = ((string?)r["slug"])?.Trim(),
             PosterUrl = (string?)r["image_url"],
             Network = (string?)r["network"],

@@ -513,9 +513,7 @@ public static class FileHelper
         StringBuilder sb = new();
         foreach (IShellProperty prop in properties)
         {
-            string value = prop.ValueAsObject is null
-                ? ""
-                : prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
+            string value = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
 
             sb.AppendLine($"{prop.CanonicalName} = {value}");
         }

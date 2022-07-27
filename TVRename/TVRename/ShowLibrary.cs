@@ -256,13 +256,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             return null;
         }
 
-        ProcessedSeason? seas = si.AppropriateSeasons()[snum];
-
-        if (seas is null || seas.Episodes is null)
-        {
-            Logger.Error($"Asked to update season {snum} of {si.ShowName}, whilst it exists, it has no contents");
-            return null;
-        }
+        ProcessedSeason seas = si.AppropriateSeasons()[snum];
 
         List<ProcessedEpisode> eis = seas.Episodes.Values.Select(e => new ProcessedEpisode(e, si)).ToList();
 
@@ -717,11 +711,6 @@ public class ShowLibrary : SafeList<ShowConfiguration>
                     }
 
                     if (v.Key == 0 && TVSettings.Instance.IgnoreAllSpecials)
-                    {
-                        continue;
-                    }
-
-                    if (v.Value is null)
                     {
                         continue;
                     }
