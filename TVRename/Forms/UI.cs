@@ -195,17 +195,31 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             Wait(100);
             numberOfWaits++;
-            if (doLogging)
+            if (doLogging && WorthLogging(numberOfWaits))
             {
                 Logger.Error($"Waiting for {textMessage} {numberOfWaits}/{maxSeconds}");
             }
         }
     }
 
+    private static bool WorthLogging(int numberOfWaits)
+    {
+        return numberOfWaits switch
+        {
+            < 20 => true,
+            < 200 => numberOfWaits % 10 == 0,
+            < 2000 => numberOfWaits % 100 == 0,
+            < 20000 => numberOfWaits % 1000 == 0,
+            < 200000 => numberOfWaits % 10000 == 0,
+            < 2000000 => numberOfWaits % 100000 == 0,
+            _ => numberOfWaits % 1000000 == 0
+        };
+    }
+
     private static void Wait(int milliseconds)
     {
         Timer timer1 = new();
-        if (milliseconds == 0 || milliseconds < 0)
+        if (milliseconds is 0 or < 0)
         {
             return;
         }
@@ -4229,9 +4243,9 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        UpdateNotification unForm = new(update);
-        if (!TVSettings.Instance.SuppressUpdateAvailablePopup)
+        if (!TVSettings.Instance.SuppressUpdateAvailablePopup && !showNoUpdateRequiredDialog)
         {
+            UpdateNotification unForm = new(update);
             unForm.ShowDialog(this);
             if (unForm.DialogResult == DialogResult.Abort)
             {
