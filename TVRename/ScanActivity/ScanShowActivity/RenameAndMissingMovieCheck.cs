@@ -74,7 +74,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
     private void CheckSingleMovieFolder(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, DirFilesCache dfc, bool renCheck)
     {
         FileInfo[] files = dfc.GetFiles(folder);
-        FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).ToArray();
+        FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).Where(f=>!f.IsSampleFile()).ToArray();
         List<string> bases = movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct().ToList();
         string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
 
@@ -143,7 +143,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
             {
                 Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, matchingFile));
                 FileIsCorrect(si, matchingFile.FullName);
-                LOGGER.Warn($"{matchingFile.Name} matches {newBase}, but other files are present; please review.");
+                LOGGER.Warn($"{matchingFile.Name} matches {newBase}, but other files [{movieFiles.Select(f=>f.Name).ToCsv()}] are present; please review.");
                 return;
             }
 
