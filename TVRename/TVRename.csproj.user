@@ -191,6 +191,9 @@
     <EmbeddedResource Update="Forms\Preferences\AddEditSearchEngine.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Supporting\CopyMoveProgress.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Forms\UI.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
