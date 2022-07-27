@@ -113,7 +113,8 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
         }
 
         return null;
-    }        private string? RemoveIfEmpty(ShowConfiguration si, string folderName)
+    }
+    private string? RemoveIfEmpty(ShowConfiguration si, string folderName)
     {
         if (CanRemove(folderName))
         {
