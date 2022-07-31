@@ -198,11 +198,11 @@ public static class Helpers
         return string.Empty;
     }
 
-    public static long ToUnixTime(this DateTime date) => Convert.ToInt64((date.ToUniversalTime() - Epoch).TotalSeconds);
+    public static long ToUnixTime(this DateTime date) => Convert.ToInt64((date.ToUniversalTime() - DateTime.UnixEpoch).TotalSeconds);
 
-    public static DateTime FromUnixTime(double unixTime) => Epoch.AddSeconds(unixTime);
+    public static DateTime FromUnixTime(this double unixTime) => DateTime.UnixEpoch.AddSeconds(unixTime);
+    public static DateTime FromUnixTime(this long unixTime) => DateTime.UnixEpoch.AddSeconds(unixTime);
 
-    private static readonly DateTime Epoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     private static readonly DateTime WindowsStartDateTime = new(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
     public static bool OpenFolder(string? folder)

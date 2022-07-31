@@ -30,7 +30,7 @@ internal class TmdbAccuracyCheck
             if (!Match(newSi, si))
             {
                 Issues.Add(
-                    $"{si.Name} is not up to date: Local is {DateTimeOffset.FromUnixTimeSeconds(si.SrvLastUpdated)} ({si.SrvLastUpdated}) server is {DateTimeOffset.FromUnixTimeSeconds(newSi.SrvLastUpdated)} ({newSi.SrvLastUpdated})");
+                    $"{si.Name} ({si.Id()}) is not up to date: Local is {si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is {newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
                 si.Dirty = true;
                 if (!MoviesToUpdate.Contains(si))
                 {
@@ -54,7 +54,7 @@ internal class TmdbAccuracyCheck
             if (!Match(newSi, si)) //NB - we use a match method as we can't rely on update time
             {
                 Issues.Add(
-                    $"{si.Name} is not up to date: Local is { DateTimeOffset.FromUnixTimeSeconds(si.SrvLastUpdated)} ({si.SrvLastUpdated}) server is { DateTimeOffset.FromUnixTimeSeconds(newSi.SrvLastUpdated)} ({newSi.SrvLastUpdated})");
+                    $"{si.Name} ({si.Id()}) is not up to date: Local is { si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is { newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
                 si.Dirty = true;
                 if (!ShowsToUpdate.Contains(si))
                 {

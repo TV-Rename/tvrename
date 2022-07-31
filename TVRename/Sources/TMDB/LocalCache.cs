@@ -241,11 +241,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             if (updateFromEpochTime == 0)
             {
                 this.MarkAllDirty();
-                latestUpdateTime.RegisterServerUpdate(DateTime.Now.ToUnixTime());
+                latestUpdateTime.RegisterServerUpdate(DateTime.UtcNow.ToUnixTime());
                 return true;
             }
 
-            latestUpdateTime.RegisterServerUpdate(DateTime.Now.ToUnixTime());
+            latestUpdateTime.RegisterServerUpdate(DateTime.UtcNow.ToUnixTime());
 
             List<int> movieUpdates = Client.GetChangesMovies(latestUpdateTime, cts).Select(item => item.Id)
                 .Distinct().ToList();
@@ -657,7 +657,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     Writer = downloadedEpisode.Crew
                         .Where(x => x.Department == "Writing").Select(crew => crew.Name)
                         .ToPsv(),
-                    SrvLastUpdated = DateTime.Now.ToUnixTime()
+                    SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime()
                 };
 
                 m.AddEpisode(newEpisode);

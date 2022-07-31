@@ -295,17 +295,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     public override bool GetUpdates(IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TheTVDB cache");
-        IEnumerable<ISeriesSpecifier> seriesSpecifiers = ss.ToList();
-        foreach (ISeriesSpecifier downloadShow in seriesSpecifiers.Where(downloadShow => downloadShow.Media==MediaConfiguration.MediaType.tv && !HasSeries(downloadShow.TvdbId)))
-        {
-            this.AddPlaceholderSeries(downloadShow);
-        }
-        foreach (ISeriesSpecifier downloadShow in seriesSpecifiers.Where(downloadShow => downloadShow.Media == MediaConfiguration.MediaType.movie && !HasMovie(downloadShow.TvdbId)))
-        {
-            this.AddPlaceholderMovie(downloadShow);
-        }
-
-        Say("Updates list from TVDB");
+        AddPlaceholders(ss);
 
         if (!IsConnected && !Connect(showErrorMsgBox))
         {
@@ -313,6 +303,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return false;
         }
 
+        Say("Calculating updates needed from TVDB");
         long updateFromEpochTime = LatestUpdateTime.LastSuccessfulServerUpdateTimecode();
 
         if (updateFromEpochTime == 0)
@@ -339,48 +330,83 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return true; // that's it for now
         }
 
+        try
+        {
+            Say("Getting updates list from TVDB");
+            List<JObject> updatesResponses = ApiVersion.v4 == TVSettings.Instance.TvdbVersion
+                ? GetUpdatesV4(updateFromEpochTime, cts)
+                : GetUpdatesV3(updateFromEpochTime, cts);
+
+            Say("Processing Updates from TVDB");
+            Parallel.ForEach(updatesResponses, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, o =>
+            {
+                Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
+                ProcessUpdate(o, cts);
+            });
+        }
+        catch (UpdateCancelledException)
+        {
+            SayNothing();
+            return false;
+        }
+        catch (SourceConsistencyException sce)
+        {
+            LOGGER.Error(sce);
+            SayNothing();
+            return false;
+        }
+
+        Say("Upgrading dirty locks");
+
+        UpgradeDirtyLocks();
+
+        SayNothing();
+
+        return true;
+    }
+
+    private List<JObject> GetUpdatesV3(long updateFromEpochTime, CancellationToken cts)
+    {
         //We need to ask for updates in blocks of 7 days
         //We'll keep asking until we get to a date within 7 days of today
         //(up to a maximum of 52 - if you are this far behind then you may need multiple refreshes)
-
-        List<JObject> updatesResponses = new();
-
         bool moreUpdates = true;
         int numberOfCallsMade = 0;
+        List<JObject> updatesResponses = new();
 
         while (moreUpdates)
         {
             if (cts.IsCancellationRequested)
             {
-                SayNothing();
-                return true;
+                throw new UpdateCancelledException();
             }
 
             //If this date is in the last week then this needs to be the last call to the update
-            const int OFFSET =0;
+            const int OFFSET = 0;
 
-            DateTime requestedTime = GetRequestedTime(updateFromEpochTime - OFFSET, numberOfCallsMade);
+            long fromEpochTime = updateFromEpochTime - OFFSET;
+            DateTime requestedTime = GetRequestedTime(fromEpochTime);
 
-            if (ApiVersion.v4 != TVSettings.Instance.TvdbVersion && (DateTime.UtcNow - requestedTime).TotalDays < 7)
+            if ((DateTime.UtcNow - requestedTime).TotalDays < 7)
             {
                 moreUpdates = false;
             }
 
-            JObject? jsonUpdateResponse = GetUpdatesJson(updateFromEpochTime - OFFSET, requestedTime, numberOfCallsMade);
+            JObject? jsonUpdateResponse =
+                GetUpdatesJson(fromEpochTime, numberOfCallsMade);
+
             if (jsonUpdateResponse is null)
             {
-                return false;
-            }
-
-            if (ApiVersion.v4 == TVSettings.Instance.TvdbVersion && !MoreFrom(jsonUpdateResponse))
-            {
-                moreUpdates = false;
+                throw new SourceConsistencyException(
+                    $"No Updates available: {fromEpochTime}:{numberOfCallsMade}", TVDoc.ProviderType.TheTVDB);
             }
 
             int? numberOfResponses = GetNumResponses(jsonUpdateResponse, requestedTime);
             if (numberOfResponses is null)
             {
-                return false;
+                throw new SourceConsistencyException(
+                    $"No UpnumberOfResponses is null: {fromEpochTime}:{numberOfCallsMade}:{jsonUpdateResponse}",
+                    TVDoc.ProviderType.TheTVDB);
             }
 
             long maxUpdateTime;
@@ -417,12 +443,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             //As a safety measure we check that no more than 52 calls are made
             const int MAX_NUMBER_OF_CALLS = 52;
-            if ( TooManyCallsMade(numberOfCallsMade, MAX_NUMBER_OF_CALLS))
+            if (numberOfCallsMade > MAX_NUMBER_OF_CALLS)
             {
                 if (cts.IsCancellationRequested)
                 {
-                    SayNothing();
-                    return false;
+                    throw new UpdateCancelledException();
                 }
 
                 moreUpdates = false;
@@ -445,30 +470,95 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             }
         }
 
-        Say("Processing Updates from TVDB");
-
-        Parallel.ForEach(updatesResponses, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, o =>
-        {
-            Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
-            ProcessUpdate(o, cts);
-        });
-
-        Say("Upgrading dirty locks");
-
-        UpgradeDirtyLocks();
-
-        SayNothing();
-
-        return true;
+        return updatesResponses;
     }
 
-    private static bool TooManyCallsMade(int numberOfCallsMade, int maxNumberOfCalls)
+    private List<JObject> GetUpdatesV4(long updateFromEpochTime, CancellationToken cts)
     {
-        return TVSettings.Instance.TvdbVersion switch
+        //We need to ask for a number of pages
+        //We'll keep asking until we get to a page until there is no next pages
+
+        bool moreUpdates = true;
+        int pageNumber = 0;
+        const int MAX_NUMBER_OF_CALLS = 1000;
+        const int OFFSET = 0;
+        long fromEpochTime = updateFromEpochTime - OFFSET; List<JObject> updatesResponses = new();
+
+        while (moreUpdates)
         {
-            ApiVersion.v4 => numberOfCallsMade > 1000,
-            _ => numberOfCallsMade > maxNumberOfCalls
-        };
+            if (cts.IsCancellationRequested)
+            {
+                throw new UpdateCancelledException();
+            }
+
+            JObject? jsonUpdateResponse = GetUpdatesJson(fromEpochTime, pageNumber);
+
+            if (jsonUpdateResponse is null)
+            {
+                throw new SourceConsistencyException(
+                    $"No Updates available: {fromEpochTime}:{pageNumber}", TVDoc.ProviderType.TheTVDB);
+            }
+
+            int? numberOfResponses = GetNumResponses(jsonUpdateResponse, GetRequestedTime(fromEpochTime));
+            if (numberOfResponses is null)
+            {
+                throw new SourceConsistencyException(
+                    $"NumberOfResponses is null: {fromEpochTime}:{pageNumber}:{jsonUpdateResponse}",
+                    TVDoc.ProviderType.TheTVDB);
+            }
+
+            updatesResponses.Add(jsonUpdateResponse);
+            pageNumber++;
+            long maxTime = GetUpdateTime(jsonUpdateResponse);
+            LOGGER.Info($"Obtained {numberOfResponses} responses from lastupdated query #{pageNumber} - until {maxTime.FromUnixTime().ToLocalTime()} ({maxTime})");
+
+            if (!MoreFrom(jsonUpdateResponse))
+            {
+                moreUpdates = false;
+            }
+
+            //As a safety measure we check that no more than MAX_NUMBER_OF_CALLS calls are made
+            if (pageNumber > MAX_NUMBER_OF_CALLS)
+            {
+                moreUpdates = false;
+                string errorMessage =
+                    $"We have got {pageNumber} pages of updates and we are not up to date.  The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {LatestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {LatestUpdateTime.ProposedServerUpdateDateTime()}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MAX_NUMBER_OF_CALLS} week blocks of updates, otherwise consider a 'Force Refresh All'";
+
+                LOGGER.Error(errorMessage);
+                if (showConnectionIssues && Environment.UserInteractive)
+                {
+                    MessageBox.Show(errorMessage, "Long Running Update", MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        long maxUpdateTime = updatesResponses.Max(GetUpdateTime);
+
+        if (maxUpdateTime > 0)
+        {
+            LatestUpdateTime.RegisterServerUpdate(maxUpdateTime);
+            LOGGER.Info(
+                $"Obtained {pageNumber} pages of updates - since (local) {GetRequestedTime(fromEpochTime).ToLocalTime()} - to (local) {LatestUpdateTime}");
+        }
+
+        return updatesResponses;
+    }
+
+    private void AddPlaceholders(IEnumerable<ISeriesSpecifier> ss)
+    {
+        IEnumerable<ISeriesSpecifier> seriesSpecifiers = ss.ToList();
+        foreach (ISeriesSpecifier downloadShow in seriesSpecifiers.Where(downloadShow =>
+                     downloadShow.Media == MediaConfiguration.MediaType.tv && !HasSeries(downloadShow.TvdbId)))
+        {
+            this.AddPlaceholderSeries(downloadShow);
+        }
+
+        foreach (ISeriesSpecifier downloadShow in seriesSpecifiers.Where(downloadShow =>
+                     downloadShow.Media == MediaConfiguration.MediaType.movie && !HasMovie(downloadShow.TvdbId)))
+        {
+            this.AddPlaceholderMovie(downloadShow);
+        }
     }
 
     private static bool MoreFrom(JObject jsonUpdateResponse)
@@ -513,7 +603,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private JObject? GetUpdatesJson(long updateFromEpochTime, DateTime requestedTime, int page)
+    internal JObject? GetUpdatesJson(long updateFromEpochTime, int page)
     {
         try
         {
@@ -522,7 +612,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         catch (System.IO.IOException iex)
         {
             LOGGER.LogIoException(
-                $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", iex);
+                $"Error obtaining lastupdated query since (local) {updateFromEpochTime}: Message is", iex);
 
             SayNothing();
             LastErrorMessage = iex.LoggableDetails();
@@ -531,7 +621,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         catch (WebException ex)
         {
             LOGGER.LogWebException(
-                $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", ex);
+                $"Error obtaining lastupdated query since (local) {updateFromEpochTime}: Message is", ex);
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
@@ -540,7 +630,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         catch (AggregateException aex) when (aex.InnerException is WebException ex)
         {
             LOGGER.LogWebException(
-                $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", ex);
+                $"Error obtaining lastupdated query since (local) {updateFromEpochTime}: Message is", ex);
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
@@ -549,7 +639,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
         {
             LOGGER.LogHttpRequestException(
-                $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", ex);
+                $"Error obtaining lastupdated query since (local) {updateFromEpochTime}: Message is", ex);
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
@@ -557,7 +647,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private DateTime GetRequestedTime(long updateFromEpochTime, int numberOfCallsMade)
+    private static DateTime GetRequestedTime(long updateFromEpochTime)
     {
         try
         {
@@ -566,7 +656,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         catch (Exception ex)
         {
             LOGGER.Error(ex,
-                $"Could not get updates({numberOfCallsMade}): LastSuccessFullServer {LatestUpdateTime.LastSuccessfulServerUpdateTimecode()}: Series Time: {GetUpdateTimeFromShows()} {LatestUpdateTime}, Tried to parse {updateFromEpochTime}");
+                $"Could not convert {updateFromEpochTime} to DateTime.");
         }
 
         //Have to do something!!
@@ -729,7 +819,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 CachedSeriesInfo? selectedCachedSeriesInfo = GetSeries(id);
                 if (selectedCachedSeriesInfo!=null)
                 {
-                    ProcessUpdate(selectedCachedSeriesInfo, time, $"as it({id}) has been updated");
+                    ProcessUpdate(selectedCachedSeriesInfo, time, $"as it({id}) has been updated at {time}");
                 }
                 return;
             }
@@ -740,7 +830,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 CachedMovieInfo? selectedMovieCachedData = GetMovie(id);
                 if (selectedMovieCachedData!=null)
                 {
-                    ProcessUpdate(selectedMovieCachedData, time, $"as it({id}) has been updated");
+                    ProcessUpdate(selectedMovieCachedData, time, $"as it({id}) has been updated at {time}");
                 }
 
                 return;
@@ -756,7 +846,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
                 foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
                 {
-                    ProcessUpdate(selectedCachedSeriesInfo, time, $"as episodes({id}) have been updated");
+                    ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as episodes({id}) have been updated at {time}");
                 }
                 return;
             }
@@ -770,7 +860,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 }
                 foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
                 {
-                    ProcessUpdate(selectedCachedSeriesInfo, time, $"as seasons({id}) have been updated");
+                    ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as seasons({id}) have been updated at {time}");
                 }
                 return;
             }
@@ -1692,7 +1782,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private static long GetUnixTime(JToken dataNode, string key)
     {
         JToken updated = dataNode[key] ?? throw new SourceConsistencyException($"Data element {key} not found in {dataNode}", TVDoc.ProviderType.TheTVDB);
-        return ((DateTime)updated).ToUnixTime();
+        DateTime dt = DateTime.SpecifyKind((DateTime)updated,DateTimeKind.Utc);
+        return dt.ToUnixTime();
     }
 
     private static JToken? GetCollectionNodeV4(JToken? r)
@@ -2700,7 +2791,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 return DEFLT;
             }
             //"lastUpdated": "2021-06-11 12:42:28",
-            return DateTime.ParseExact(lastUpdateString, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUnixTime();
+            DateTime rawDateTime = DateTime.ParseExact(lastUpdateString, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+
+            return DateTime.SpecifyKind(rawDateTime,DateTimeKind.Utc).ToUnixTime();
         }
         catch
         {
@@ -3553,4 +3646,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         return Provider();
     }
+}
+
+public class UpdateCancelledException : Exception
+{
 }

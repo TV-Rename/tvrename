@@ -218,16 +218,25 @@ internal static class API
     {
         if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
         {
-            return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/updates",
-                new Dictionary<string, string?> { { "since", time.ToString() }, { "page", page.ToString() } },
-                TokenProvider, lang, true);
+            return GetShowUpdatesSinceV4(time,lang,page);
         }
         else
         {
+            return GetShowUpdatesSinceV3(time, lang);
+        }
+    }
+
+    public static JObject? GetShowUpdatesSinceV3(long time, string lang)
+    {
             return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/updated/query",
                 new Dictionary<string, string?> { { "fromTime", time.ToString() } },
                 TokenProvider, lang, true);
-        }
+    }
+    public static JObject? GetShowUpdatesSinceV4(long time, string lang, int page)
+    {
+            return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/updates",
+                new Dictionary<string, string?> { { "since", time.ToString() }, { "page", page.ToString() } },
+                TokenProvider, lang, true);
     }
 
     public static JObject? GetSeriesEpisodes(int seriesId, string languageCode, int pageNumber = 0)
@@ -244,6 +253,7 @@ internal static class API
             null, TokenProvider, false);
     }
 
+    // ReSharper disable once UnusedParameter.Global
     internal static string BuildUrl(int apiKey, string lang)
         //would rather make this private to hide api key from outside world
         //https://forum.kodi.tv/showthread.php?tid=323588

@@ -38,7 +38,7 @@ internal class TvdbAccuracyCheck
             if (!Match(newSi, si))
             {
                 Issues.Add(
-                    $"{si.Name} is not up to date: Local is { DateTimeOffset.FromUnixTimeSeconds(si.SrvLastUpdated)} ({si.SrvLastUpdated}) server is { DateTimeOffset.FromUnixTimeSeconds(newSi.SrvLastUpdated)} ({newSi.SrvLastUpdated})");
+                    $"{si.Name} ({si.Id()}) is not up to date: Local is { si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is { newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
                 si.Dirty = true;
                 if (!MoviesToUpdate.Contains(si))
                 {
@@ -65,7 +65,7 @@ internal class TvdbAccuracyCheck
             if (newSi.SrvLastUpdated != si.SrvLastUpdated)
             {
                 Issues.Add(
-                    $"{si.Name} is not up to date: Local is {DateTimeOffset.FromUnixTimeSeconds(si.SrvLastUpdated)} ({si.SrvLastUpdated}) server is {DateTimeOffset.FromUnixTimeSeconds(newSi.SrvLastUpdated)} ({newSi.SrvLastUpdated})");
+                    $"{si.Name} ({si.Id()}) is not up to date: Local is {si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is {newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
 
                 EnsureUpdated(si);
             }
@@ -115,7 +115,7 @@ internal class TvdbAccuracyCheck
             if (newSi.SrvLastUpdated != si.SrvLastUpdated)
             {
                 Issues.Add(
-                    $"{si.Name} is not up to date: Local is {DateTimeOffset.FromUnixTimeSeconds(si.SrvLastUpdated)} ({si.SrvLastUpdated}) server is {DateTimeOffset.FromUnixTimeSeconds(newSi.SrvLastUpdated)} ({newSi.SrvLastUpdated})");
+                    $"{si.Name} ({si.Id()}) is not up to date: Local is {si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is {newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
 
                 EnsureUpdated(si);
             }
@@ -177,7 +177,7 @@ internal class TvdbAccuracyCheck
                 EnsureUpdated(si);
                 string diff = serverUpdateTime > ep.SrvLastUpdated ? "not up to date" : "in the future";
                 Issues.Add(
-                    $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is {diff}: Local is {DateTimeOffset.FromUnixTimeSeconds(ep.SrvLastUpdated)} ({ep.SrvLastUpdated}) server is {DateTimeOffset.FromUnixTimeSeconds(serverUpdateTime)} ({serverUpdateTime})");
+                    $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is {diff}: Local is {ep.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({ep.SrvLastUpdated}) server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
             }
         }
         catch (ShowConfiguration.EpisodeNotFoundException)
@@ -206,7 +206,7 @@ internal class TvdbAccuracyCheck
                 EnsureUpdated(si);
                 string diff = serverUpdateTime > ep.SrvLastUpdated ? "not up to date" : "in the future";
                 Issues.Add(
-                    $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is {diff}: Local is {DateTimeOffset.FromUnixTimeSeconds(ep.SrvLastUpdated)} ({ep.SrvLastUpdated}) server is {DateTimeOffset.FromUnixTimeSeconds(serverUpdateTime)} ({serverUpdateTime})");
+                    $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is {diff}: Local is {ep.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({ep.SrvLastUpdated}) server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
             }
         }
         catch (ShowConfiguration.EpisodeNotFoundException)

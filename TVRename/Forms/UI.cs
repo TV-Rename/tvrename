@@ -35,6 +35,7 @@ using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.WindowsAPICodePack.Taskbar;
+using Newtonsoft.Json.Linq;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using MessageBox = System.Windows.Forms.MessageBox;
 using SystemColors = System.Drawing.SystemColors;
@@ -5343,6 +5344,119 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         e.SecondaryColumnToSort = new OLVColumn("AbsoluteOrder", "OrderKey");
         e.SecondarySortOrder = SortOrder.Ascending;
         olvAction.ShowSortIndicator();
+    }
+
+    private void tVDBUPdateCheckerLogToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        //Testing
+        //2022-07-28 16:27:12|WARN| Obi-Wan Kenobi is not up to date: Local is 26/07/2022 12:41:50 PM +00:00 (1658839310) server is 27/07/2022 10:40:52 AM +00:00 (1658918452)
+        //2022-07-29 10:32:14|WARN| Raised by Wolves is not up to date: Local is 24 / 07 / 2022 6:51:51 PM + 00:00(1658688711) server is 28 / 07 / 2022 4:24:52 AM + 00:00(1658982292)
+        //2022-07-29 21:51:31|WARN| Westworld S4E6 is not up to date: Local is 25/07/2022 2:19:49 AM +00:00 (1658715589) server is 29/07/2022 1:43:46 PM +00:00 (1659102226) 
+        //2022-07-30 12:01:17|WARN| Barry is not up to date: Local is 23/07/2022 3:29:51 AM +00:00 (1658546991) server is 29/07/2022 9:15:07 PM +00:00 (1659129307) 
+
+        Logger.Info($" BETA Update Checker: Testing: |WARN| Westworld S4E6 is not up to date: Local is 25/07/2022 2:19:49 AM +00:00 (1658715589) server is 29/07/2022 1:43:46 PM +00:00 (1659102226) ");
+        int targetId = 358211;
+        long baseTime = 1659257393 - (60*60);
+
+        for (int page = 0; page < 10000; page++)
+        {
+            Logger.Info($" BETA Update Checker: {page}");
+            JObject? currentDownload = TheTVDB.LocalCache.Instance.GetUpdatesJson(baseTime,page);
+            JToken? jToken = currentDownload?["data"];
+
+            if (jToken?.Children().Any() != true)
+            {
+                return;
+            }
+            foreach (JToken seriesResponse in jToken)
+            {
+                int id = seriesResponse.GetMandatoryInt("recordId", TVDoc.ProviderType.TheTVDB);
+                long time = seriesResponse.GetMandatoryLong("timeStamp", TVDoc.ProviderType.TheTVDB);
+                string? entityType = (string?)seriesResponse["entityType"];
+                //string method = (string)seriesResponse["method"];
+
+                switch (entityType)
+                {
+                    case "series":
+                    case "translatedseries":
+                    case "seriespeople":
+                    {
+                        if (id != targetId)
+                        {
+                            continue;
+                        }
+                        Logger.Error(seriesResponse);
+                        continue;
+                    }
+                    case "movies":
+                    case "translatedmovies":
+                    case "movie-genres":
+                        //todo - make work for movies too
+                    case "episodes":
+                    case "translatedepisodes":
+                    {
+                        bool Predicate(KeyValuePair<int, CachedSeriesInfo> x) => x.Value.Episodes.Any(s => s.EpisodeId == id);
+                        KeyValuePair<int, CachedSeriesInfo>? firstOrDefault = TheTVDB.LocalCache.Instance.CachedShowData.FirstOrDefault(Predicate);
+
+                        int? episodeId = firstOrDefault?.Value?.TvdbId;
+
+                        if (episodeId is null || episodeId != targetId)
+                        {
+                            continue;
+                        }
+                        Logger.Error(seriesResponse);
+                        continue;
+                    }
+                    case "seasons":
+                    case "translatedseasons":
+                    {
+                        bool Predicate(KeyValuePair<int, CachedSeriesInfo> x) => x.Value.Seasons.Any(s => s.SeasonId == id);
+                        KeyValuePair<int, CachedSeriesInfo>? firstOrDefault = TheTVDB.LocalCache.Instance.CachedShowData.FirstOrDefault(Predicate);
+
+                        int? seriesId = firstOrDefault?.Value?.TvdbId;
+
+                        if (seriesId is null || seriesId != targetId)
+                        {
+                            continue;
+                        }
+                        Logger.Error(seriesResponse);
+                        continue;
+                    }
+                    case "artwork":
+                    case "artworktypes":
+                    case "people":
+                    case "characters":
+                    case "award-nominees":
+                    case "award_categories":
+                    case "companies":
+                    case "awards":
+                    case "company_types":
+                    case "movie_status":
+                    case "content_ratings":
+                    case "countries":
+                    case "entity_types":
+                    case "genres":
+                    case "languages":
+                    case "peopletypes":
+                    case "seasontypes":
+                    case "sourcetypes":
+                    case "translatedpeople":
+                    case "translatedcharacters":
+                    case "lists":
+                    case "translatedlists":
+                    case "translatedcompanies":
+                    case "tags":
+                    case "tag-options":
+                    case "award-categories":
+
+                        continue;
+
+                    default:
+                        Logger.Error($"Found update record for '{entityType}' = {id}");
+                        return;
+                }
+            }
+        }
     }
 }
 
