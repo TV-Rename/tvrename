@@ -176,13 +176,13 @@ internal class TvdbAccuracyCheck
                 EnsureUpdated(si);
                 string diff = serverUpdateTime > ep.SrvLastUpdated ? "not up to date" : "in the future";
                 Issues.Add(
-                    $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is {diff}: Local is {ep.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({ep.SrvLastUpdated}) server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
+                    $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} ({ep.EpisodeId}) is {diff}: Local is {ep.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({ep.SrvLastUpdated}) server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
             }
         }
         catch (ShowConfiguration.EpisodeNotFoundException)
         {
             Issues.Add(
-                $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime}");
+                $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
 
             EnsureUpdated(si);
         }
@@ -205,13 +205,13 @@ internal class TvdbAccuracyCheck
                 EnsureUpdated(si);
                 string diff = serverUpdateTime > ep.SrvLastUpdated ? "not up to date" : "in the future";
                 Issues.Add(
-                    $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is {diff}: Local is {ep.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({ep.SrvLastUpdated}) server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
+                    $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} ({ep.EpisodeId}) is {diff}: Local is {ep.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({ep.SrvLastUpdated}) server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
             }
         }
         catch (ShowConfiguration.EpisodeNotFoundException)
         {
             Issues.Add(
-                $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime}");
+                $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
 
             EnsureUpdated(si);
         }

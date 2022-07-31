@@ -819,7 +819,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 CachedSeriesInfo? selectedCachedSeriesInfo = GetSeries(id);
                 if (selectedCachedSeriesInfo!=null)
                 {
-                    ProcessUpdate(selectedCachedSeriesInfo, time, $"as it({id}) has been updated at {time}");
+                    ProcessUpdate(selectedCachedSeriesInfo, time, $"as it({id}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})");
                 }
                 return;
             }
@@ -830,7 +830,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 CachedMovieInfo? selectedMovieCachedData = GetMovie(id);
                 if (selectedMovieCachedData!=null)
                 {
-                    ProcessUpdate(selectedMovieCachedData, time, $"as it({id}) has been updated at {time}");
+                    ProcessUpdate(selectedMovieCachedData, time, $"as it({id}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})");
                 }
 
                 return;
@@ -846,7 +846,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
                 foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
                 {
-                    ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as episodes({id}) have been updated at {time}");
+                    ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as episodes({id}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})");
                 }
                 return;
             }
@@ -860,7 +860,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 }
                 foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
                 {
-                    ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as seasons({id}) have been updated at {time}");
+                    ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as seasons({id}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})");
                 }
                 return;
             }
