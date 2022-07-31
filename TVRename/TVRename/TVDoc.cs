@@ -945,7 +945,7 @@ public class TVDoc : IDisposable
             Token = token;
         }
     }
-    public class ScanSettings : IEquatable<ScanSettings>
+    public class ScanSettings
     {
         public readonly bool Unattended;
         public readonly bool Hidden;

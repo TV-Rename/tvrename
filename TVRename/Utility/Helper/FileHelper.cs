@@ -513,7 +513,10 @@ public static class FileHelper
         StringBuilder sb = new();
         foreach (IShellProperty prop in properties)
         {
-            string value = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            string value = prop.ValueAsObject is null
+                ? string.Empty
+                : prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
 
             sb.AppendLine($"{prop.CanonicalName} = {value}");
         }

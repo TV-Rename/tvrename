@@ -79,7 +79,7 @@ namespace TVRename
             this.txtFindThis.Name = "txtFindThis";
             this.txtFindThis.Size = new System.Drawing.Size(228, 20);
             this.txtFindThis.TabIndex = 1;
-            this.txtFindThis.TextChanged += new System.EventHandler(this.txtFindThis_TextChanged);
+            this.txtFindThis.TextChanged += new System.EventHandler(this.TxtFindThis_TextChanged);
             this.txtFindThis.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFindThis_KeyDown);
             // 
             // lvMatches

@@ -142,7 +142,7 @@ public abstract partial class CodeFinder : UserControl
         }
     }
 
-    private void txtFindThis_TextChanged(object sender, EventArgs e)
+    private void TxtFindThis_TextChanged(object sender, EventArgs e)
     {
         hasChanged = true;
         if (!mInternal && txtFindThis.Text.Length > 2)
