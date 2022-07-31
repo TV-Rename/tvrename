@@ -1582,6 +1582,8 @@ public class TVDoc : IDisposable
     internal void TVDBServerAccuracyCheck(bool unattended, bool hidden, UI owner)
     {
         PreventAutoScan("TVDB Accuracy Check");
+        DoDownloadsBG();
+
         IEnumerable<CachedSeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerTvAccuracyCheck();
         IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode, ProviderType.TheTVDB)).OfType<ShowConfiguration>();
         ForceRefreshShows(showsToUpdate, unattended, hidden, owner);
@@ -1624,6 +1626,7 @@ public class TVDoc : IDisposable
     internal void TMDBServerAccuracyCheck(bool unattended, bool hidden, UI owner)
     {
         PreventAutoScan("TMDB Accuracy Check");
+        DoDownloadsBG();
 
         IEnumerable<CachedMovieInfo> moviesToUpdate = TMDB.LocalCache.Instance.ServerMovieAccuracyCheck();
         IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TmdbCode, ProviderType.TMDB)).OfType<MovieConfiguration>();
