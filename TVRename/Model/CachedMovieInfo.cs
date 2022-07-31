@@ -21,7 +21,7 @@ public class CachedMovieInfo : CachedMediaInfo
 
     public bool InCollection => CollectionId.HasValue && CollectionName.HasValue();
 
-    private void DefaultValues()
+    private static void DefaultValues()
     {
     }
 

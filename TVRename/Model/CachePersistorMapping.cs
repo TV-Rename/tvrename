@@ -46,7 +46,7 @@ internal static class CachePersistorMapping
         writer.WriteEndElement(); //Episode
     }
     public static Episode CreateEpisode(this XElement r) =>
-        new Episode
+        new()
         {
             // </Episode>
             //  blah blah
@@ -90,7 +90,6 @@ internal static class CachePersistorMapping
     private static int ExtractAndParse(XElement r, string key)
     {
         string value = r.ExtractString(key);
-        int.TryParse(value, out int intValue);
-        return intValue;
+        return int.TryParse(value, out int intValue) ? intValue : -1 ;
     }
 }
