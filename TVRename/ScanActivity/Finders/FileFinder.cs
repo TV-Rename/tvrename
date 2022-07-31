@@ -519,9 +519,7 @@ internal abstract class FileFinder : Finder
         // then set the last of each source file to be a move
         for (int i = 0; i < newList.Count; i++)
         {
-            ActionCopyMoveRename? cmr1 = newList[i] as ActionCopyMoveRename;
-            
-            if (cmr1 == null)
+            if (newList[i] is not ActionCopyMoveRename cmr1)
             {
                 continue;
             }
