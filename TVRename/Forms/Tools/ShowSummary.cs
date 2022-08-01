@@ -34,11 +34,23 @@ public partial class ShowSummary : Form, IDialogParent
     {
         MainWindow = parent;
         mDoc = doc;
+        showList = new SafeList<ShowSummaryData>();
 
         InitializeComponent();
+        InitializeCmbShowStatus();
 
-        showList = new SafeList<ShowSummaryData>();
         Scan();
+    }
+
+    private void InitializeCmbShowStatus()
+    {
+        cmbShowStatus.Items.Clear();
+        foreach (string s in mDoc.TvLibrary.ShowStatuses)
+        {
+            cmbShowStatus.Items.Add(s);
+        }
+
+        cmbShowStatus.SelectedIndex = 0;
     }
 
     private void GenerateData(BackgroundWorker bw)
@@ -56,7 +68,9 @@ public partial class ShowSummary : Form, IDialogParent
 
     private void PopulateGrid()
     {
-        if (grid1.IsDisposed)
+        cmbShowStatus.Enabled = chkOnlyShow.Checked;
+
+        if (grid1.IsDisposed || !showList.Any())
         {
             return;
         }
@@ -151,8 +165,8 @@ public partial class ShowSummary : Form, IDialogParent
                 continue;
             }
 
-            if (chkOnlyShowEnded.Checked &&
-                !show.ShowConfiguration.ShowStatus.Equals("Ended", StringComparison.OrdinalIgnoreCase))
+            if (chkOnlyShow.Checked &&
+                !show.ShowConfiguration.ShowStatus.Equals(cmbShowStatus.SelectedItem.ToString(), StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -705,7 +719,7 @@ public partial class ShowSummary : Form, IDialogParent
         chkHideSpecials.Checked = false;
         chkHideUnaired.Checked = false;
         chkHideNotScanned.Checked = false;
-        chkOnlyShowEnded.Checked = false;
+        chkOnlyShow.Checked = false;
         chkHideDiskEps.Checked = false;
 
         PopulateGrid();
@@ -728,7 +742,7 @@ public partial class ShowSummary : Form, IDialogParent
         chkHideSpecials.Enabled = enabled;
         chkHideUnaired.Enabled = enabled;
         chkHideNotScanned.Enabled = enabled;
-        chkOnlyShowEnded.Enabled = enabled;
+        chkOnlyShow.Enabled = enabled;
         chkHideDiskEps.Enabled = enabled;
 
         btnClear.Enabled = enabled;
@@ -767,5 +781,10 @@ public partial class ShowSummary : Form, IDialogParent
     private void button1_Click(object sender, EventArgs e)
     {
         Close();
+    }
+
+    private void cmbShowStatus_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        PopulateGrid();
     }
 }
