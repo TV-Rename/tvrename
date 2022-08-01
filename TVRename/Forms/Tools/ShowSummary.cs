@@ -162,13 +162,18 @@ public partial class ShowSummary : Form, IDialogParent
                 continue;
             }
 
+            //Gray if the show is not checked for missing episodes in the scan
+            Color cellColour = show.ShowConfiguration.DoMissingCheck ? Color.Black : Color.Gray;
+            if (show.ShowConfiguration.DoMissingCheck && TVSettings.Instance.ShowStatusColors.AppliesTo(show.ShowConfiguration))
+            {
+                cellColour = TVSettings.Instance.ShowStatusColors.GetColour(show.ShowConfiguration);
+            }
+
             RowHeader rh = new(show.ShowName)
             {
                 ResizeEnabled = false,
-                View = new Cell { ForeColor = show.ShowConfiguration.DoMissingCheck ? Color.Black : Color.Gray }
+                View = new Cell { ForeColor = cellColour}
             };
-
-            //Gray if the show is not checked for missing episodes in the scan
 
             grid1[r + 1, 0] = rh;
             grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowConfiguration,mDoc));
@@ -176,10 +181,8 @@ public partial class ShowSummary : Form, IDialogParent
             RowHeader rh2 = new(show.ShowConfiguration.ShowStatus)
             {
                 ResizeEnabled = false,
-                View = new Cell { ForeColor = show.ShowConfiguration.DoMissingCheck ? Color.Black : Color.Gray }
+                View = new Cell { ForeColor = cellColour }
             };
-
-            //Gray if the show is not checked for missing episodes in the scan
 
             grid1[r + 1, 1] = rh2;
 
