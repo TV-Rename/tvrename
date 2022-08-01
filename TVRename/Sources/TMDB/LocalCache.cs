@@ -457,6 +457,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                             GetCertification(downloadedMovie, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
             OfficialUrl = downloadedMovie.Homepage,
             TrailerUrl = GetYouTubeUrl(downloadedMovie),
+            WebUrl = $"https://www.themoviedb.org/movie/{downloadedMovie.Id}",
             Dirty = false,
             Country = downloadedMovie.ProductionCountries.FirstOrDefault()?.Name,
         };
@@ -585,6 +586,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             SeriesType = downloadedSeries.Type,
             SeasonOrderType = ss.SeasonOrder,
             TrailerUrl = GetYouTubeUrl(downloadedSeries),
+            WebUrl = $"https://www.themoviedb.org/tv/{downloadedSeries.Id}",
             Popularity = downloadedSeries.Popularity,
             Country = downloadedSeries.OriginCountry.FirstOrDefault(),
             Dirty = false,
@@ -626,8 +628,12 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             TvSeason? downloadedSeason = Client.GetTvSeasonAsync(downloadedSeries.Id, snum, TvSeasonMethods.Images,
                 ss.LanguageToUse().Abbreviation).Result;
 
+            string seasonUrl = m.WebUrl.HasValue()
+                ? m.WebUrl + $"/season/{snum}"
+                : string.Empty;
+
             Season newSeason = new(downloadedSeason.Id ?? 0, snum, downloadedSeason.Name, downloadedSeason.Overview,
-                string.Empty, downloadedSeason.PosterPath, downloadedSeries.Id);
+                seasonUrl, downloadedSeason.PosterPath, downloadedSeries.Id);
 
             m.AddSeason(newSeason);
 

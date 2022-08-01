@@ -19,7 +19,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms.Utilities;
-using Alphaleonis.Win32.Filesystem;
+using Newtonsoft.Json;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Talk to the TheTVDB web API, and get tv cachedSeries info
 
@@ -296,6 +298,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         Say("Validating TheTVDB cache");
         AddPlaceholders(ss);
+        bool AuditUpdates = true;
 
         if (!IsConnected && !Connect(showErrorMsgBox))
         {
@@ -343,6 +346,16 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
                 ProcessUpdate(o, cts);
             });
+
+            if (AuditUpdates && updatesResponses.Any())
+            {
+                Say("Recording Updates");
+                int n = 0;
+                foreach (JObject response in updatesResponses)
+                {
+                    PersistResponse(response, updateFromEpochTime, n++);
+                }
+            }
         }
         catch (UpdateCancelledException)
         {
@@ -363,6 +376,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         SayNothing();
 
         return true;
+    }
+
+    private void PersistResponse(JObject response, long updateFromEpochTime, int i)
+    {
+        //open file stream
+        using System.IO.StreamWriter file = File.CreateText(PathManager.AuditLogFile($"-{updateFromEpochTime}-{i}"));
+        JsonSerializer serializer = new();
+        //serialize object directly into file stream
+        serializer.Serialize(file, response);
     }
 
     private List<JObject> GetUpdatesV3(long updateFromEpochTime, CancellationToken cts)
@@ -908,8 +930,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         else
         {
             LOGGER.Info(selectedCachedSeriesInfo.Name + " has a lastupdated of  " +
-                        Helpers.FromUnixTime(selectedCachedSeriesInfo.SrvLastUpdated) + " server says " +
-                        Helpers.FromUnixTime(time));
+                        selectedCachedSeriesInfo.SrvLastUpdated.FromUnixTime().ToLocalTime() + " server says " +
+                        time.FromUnixTime().ToLocalTime());
         }
 
         LOGGER.Info($"Updating {selectedCachedSeriesInfo.Name} {message}");

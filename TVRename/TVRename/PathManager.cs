@@ -88,7 +88,6 @@ public static class PathManager
             }
         }
     }
-
     public static string CefLogFile
     {
         get
@@ -97,5 +96,11 @@ public static class PathManager
             Directory.CreateDirectory(path);
             return Path.Combine(path, "cef-debug.log");
         }
+    }
+    public static string AuditLogFile(string postfix)
+    {
+        string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "audit");
+        Directory.CreateDirectory(path);
+        return Path.Combine(path, $"Updates{postfix}.json");
     }
 }

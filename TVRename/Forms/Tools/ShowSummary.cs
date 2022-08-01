@@ -284,26 +284,6 @@ public partial class ShowSummary : Form, IDialogParent
         showRightClickMenu.Close();
     }
 
-    private static void OpenLinkFor(ProcessedSeason? seas)
-    {
-        if (seas?.WebsiteUrl is null)
-        {
-            return;
-        }
-
-        Helpers.OpenUrl(seas.WebsiteUrl);
-    }
-
-    private static void OpenLinkFor(ShowConfiguration? si)
-    {
-        if (si?.WebsiteUrl is null)
-        {
-            return;
-        }
-
-        Helpers.OpenUrl(si.WebsiteUrl);
-    }
-
     private delegate void ShowChildConsumer(Form childForm);
 
     public void ShowChildDialog(Form childForm)
@@ -410,11 +390,11 @@ public partial class ShowSummary : Form, IDialogParent
                 {
                     if (processedSeason is null)
                     {
-                        OpenLinkFor(show);
+                        UI.TvSourceFor(show);
                     }
                     else
                     {
-                        OpenLinkFor(processedSeason);
+                        UI.TvSourceFor(processedSeason);
                     }
                 }
             );

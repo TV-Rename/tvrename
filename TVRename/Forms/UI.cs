@@ -731,7 +731,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     }
 
     private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) =>
-        Helpers.OpenUrl("https://tvrename.com");
+        Helpers.OpenUrl("http://tvrename.com");
 
     private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
 
@@ -1551,29 +1551,37 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             });
     }
 
-    private static void TvSourceFor(ProcessedEpisode? e)
+    public static void TvSourceFor(ProcessedEpisode? e)
     {
-        if (e?.WebsiteUrl != null)
+        if (e?.WebsiteUrl != null && e.WebsiteUrl.HasValue())
         {
             Helpers.OpenUrl(e.WebsiteUrl);
         }
-    }
-
-    private static void TvSourceFor(ProcessedSeason? seas)
-    {
-        if (seas?.WebsiteUrl != null)
+        else
         {
-            Helpers.OpenUrl(seas.WebsiteUrl);
+            TvSourceFor(e?.AppropriateProcessedSeason);
         }
     }
 
-    private static void TvSourceFor(ShowConfiguration? si)
+    public static void TvSourceFor(ProcessedSeason? seas)
+    {
+        if (seas?.WebsiteUrl != null && seas.WebsiteUrl.HasValue())
+        {
+            Helpers.OpenUrl(seas.WebsiteUrl);
+        }
+        else
+        {
+            TvSourceFor(seas?.Show);
+        }
+    }
+
+    public static void TvSourceFor(ShowConfiguration? si)
     {
         if (si != null)
         {
             if (si.WebsiteUrl.HasValue())
             {
-                Helpers.OpenUrl(si.WebsiteUrl!);
+                Helpers.OpenUrl(si.WebsiteUrl);
             }
             else if (si.CachedShow?.WebUrl.HasValue() ?? false)
             {
