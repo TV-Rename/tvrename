@@ -378,7 +378,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return true;
     }
 
-    private void PersistResponse(JObject response, long updateFromEpochTime, int i)
+    private static void PersistResponse(JObject response, long updateFromEpochTime, int i)
     {
         //open file stream
         using System.IO.StreamWriter file = File.CreateText(PathManager.AuditLogFile($"-{updateFromEpochTime}-{i}"));

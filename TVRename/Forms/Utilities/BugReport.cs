@@ -153,10 +153,8 @@ public partial class BugReport : Form
     {
         try
         {
-            using (System.IO.StreamReader sr = new(PathManager.TVDocSettingsFile.FullName))
-            {
-                txt.AppendLine(sr.ReadToEnd());
-            }
+            using System.IO.StreamReader sr = new(PathManager.TVDocSettingsFile.FullName);
+            txt.AppendLine(sr.ReadToEnd());
         }
         catch
         {

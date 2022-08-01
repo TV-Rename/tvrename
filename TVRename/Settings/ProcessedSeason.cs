@@ -122,7 +122,7 @@ public class ProcessedSeason
             .MaxOrDefault(airDateTime => airDateTime.Year, 0);
     }
 
-    private bool HasEpisodes => Episodes.Count > 0;
+    private bool HasEpisodes => !Episodes.IsEmpty;
 
     public int SeasonIndex => Show.GetSeasonIndex(SeasonNumber);
 

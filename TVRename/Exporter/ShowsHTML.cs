@@ -24,24 +24,22 @@ internal class ShowsHtml : ShowsExporter
 
     protected override void Do()
     {
-        using (System.IO.StreamWriter file = new(Location()))
+        using System.IO.StreamWriter file = new(Location());
+        file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
+        foreach (ShowConfiguration si in Shows)
         {
-            file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
-            foreach (ShowConfiguration si in Shows)
+            try
             {
-                try
-                {
-                    file.WriteLine(CreateHtml(si));
-                }
-                catch (NullReferenceException ex)
-                {
-                    LOGGER.Error(ex,
-                        $"Skipped adding {si.ShowName} to the output HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
-                }
+                file.WriteLine(CreateHtml(si));
             }
-
-            file.WriteLine(ShowHtmlHelper.HTMLFooter());
+            catch (NullReferenceException ex)
+            {
+                LOGGER.Error(ex,
+                    $"Skipped adding {si.ShowName} to the output HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
+            }
         }
+
+        file.WriteLine(ShowHtmlHelper.HTMLFooter());
     }
 
     private static string CreateHtml(ShowConfiguration si)
