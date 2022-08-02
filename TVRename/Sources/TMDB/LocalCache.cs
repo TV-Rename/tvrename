@@ -428,7 +428,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
         CachedMovieInfo m = new(id.TargetLocale, TVDoc.ProviderType.TMDB)
         {
-            Imdb = downloadedMovie.ExternalIds.ImdbId,
+            Imdb = downloadedMovie.ExternalIds?.ImdbId,
             TmdbCode = downloadedMovie.Id,
             Name = downloadedMovie.Title,
             Runtime = downloadedMovie.Runtime.ToString(),
@@ -448,9 +448,9 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             CollectionId = downloadedMovie.BelongsToCollection?.Id,
             TagLine = downloadedMovie.Tagline,
             Popularity = downloadedMovie.Popularity,
-            TwitterId = downloadedMovie.ExternalIds.TwitterId,
-            InstagramId = downloadedMovie.ExternalIds.InstagramId,
-            FacebookId = downloadedMovie.ExternalIds.InstagramId,
+            TwitterId = downloadedMovie.ExternalIds?.TwitterId,
+            InstagramId = downloadedMovie.ExternalIds?.InstagramId,
+            FacebookId = downloadedMovie.ExternalIds?.InstagramId,
             FanartUrl = OriginalImageUrl(downloadedMovie.BackdropPath),
             ContentRating = GetCertification(downloadedMovie, id.RegionToUse().Abbreviation) ??
                             GetCertification(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ??
@@ -468,22 +468,25 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             m.AddAlias(s);
         }
 
-        foreach (Cast? s in downloadedMovie.Credits.Cast)
+        if (downloadedMovie.Credits != null)
         {
-            if (s is not null)
+            foreach (Cast? s in downloadedMovie.Credits.Cast)
             {
-                m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character, s.CastId, s.Order));
+                if (s is not null)
+                {
+                    m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character, s.CastId,
+                        s.Order));
+                }
+            }
+            foreach (TMDbLib.Objects.General.Crew? s in downloadedMovie.Credits.Crew)
+            {
+                if (s is not null)
+                {
+                    m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Job, s.Department, s.CreditId));
+                }
             }
         }
-
-        foreach (TMDbLib.Objects.General.Crew? s in downloadedMovie.Credits.Crew)
-        {
-            if (s is not null)
-            {
-                m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Job, s.Department, s.CreditId));
-            }
-        }
-
+        
         AddMovieImages(downloadedMovie, m);
         return m;
     }
@@ -491,7 +494,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     private static void AddMovieImages(Movie downloadedMovie, CachedMovieInfo m)
     {
         int imageId = 1; //TODO See https://www.themoviedb.org/talk/60ba61a4cb9f4b006f30f82b for  why we need this
-        if (downloadedMovie.Images.Backdrops.Any())
+        if (downloadedMovie.Images?.Backdrops != null && downloadedMovie.Images.Backdrops.Any())
         {
             foreach (ImageData? image in downloadedMovie.Images.Backdrops)
             {
@@ -511,7 +514,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             }
         }
 
-        if (downloadedMovie.Images.Posters.Any())
+        if (downloadedMovie.Images?.Posters != null && downloadedMovie.Images.Posters.Any())
         {
             foreach (ImageData? image in downloadedMovie.Images.Posters)
             {
@@ -560,9 +563,9 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         CachedSeriesInfo m = new(ss.TargetLocale, TVDoc.ProviderType.TMDB)
         {
-            Imdb = downloadedSeries.ExternalIds.ImdbId,
+            Imdb = downloadedSeries.ExternalIds?.ImdbId,
             TmdbCode = downloadedSeries.Id,
-            TvdbCode = downloadedSeries.ExternalIds.TvdbId.ToInt(ss.TvdbId),
+            TvdbCode = downloadedSeries.ExternalIds?.TvdbId.ToInt(ss.TvdbId) ?? -1,
             TvMazeCode = -1,
             Name = downloadedSeries.Name,
             Runtime = DecodeAverage(downloadedSeries.EpisodeRunTime),
@@ -577,9 +580,9 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             PosterUrl = PosterImageUrl(downloadedSeries.PosterPath),
             SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
             TagLine = downloadedSeries.Tagline,
-            TwitterId = downloadedSeries.ExternalIds.TwitterId,
-            InstagramId = downloadedSeries.ExternalIds.InstagramId,
-            FacebookId = downloadedSeries.ExternalIds.InstagramId,
+            TwitterId = downloadedSeries.ExternalIds?.TwitterId,
+            InstagramId = downloadedSeries.ExternalIds?.InstagramId,
+            FacebookId = downloadedSeries.ExternalIds?.InstagramId,
             FanartUrl = OriginalImageUrl(downloadedSeries.BackdropPath),
             ContentRating = GetCertification(downloadedSeries, ss.TargetLocale.RegionToUse(TVDoc.ProviderType.TMDB).Abbreviation) ?? GetCertification(downloadedSeries, TVSettings.Instance.TMDBRegion.Abbreviation) ?? GetCertification(downloadedSeries, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
             OfficialUrl = downloadedSeries.Homepage,
@@ -798,13 +801,13 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     private static string GetYouTubeUrl(Movie downloadedMovie)
     {
-        string yid = downloadedMovie.Videos.Results.Where(video => video.Type == "Trailer" && video.Site == "YouTube").OrderByDescending(v => v.Size).Select(video => video.Key).FirstOrDefault() ?? string.Empty;
+        string? yid = downloadedMovie.Videos?.Results.Where(video => video.Type == "Trailer" && video.Site == "YouTube").OrderByDescending(v => v.Size).Select(video => video.Key).FirstOrDefault();
         return yid.HasValue() ? $"https://www.youtube.com/watch?v={yid}" : string.Empty;
     }
 
     private static string GetYouTubeUrl(TvShow downloadedMovie)
     {
-        string yid = downloadedMovie.Videos.Results.Where(video => video.Type == "Trailer" && video.Site == "YouTube").OrderByDescending(v => v.Size).Select(video => video.Key).FirstOrDefault() ?? string.Empty;
+        string? yid = downloadedMovie.Videos?.Results.Where(video => video.Type == "Trailer" && video.Site == "YouTube").OrderByDescending(v => v.Size).Select(video => video.Key).FirstOrDefault();
         return yid.HasValue() ? $"https://www.youtube.com/watch?v={yid}" : string.Empty;
     }
 
