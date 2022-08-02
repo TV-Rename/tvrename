@@ -298,7 +298,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         Say("Validating TheTVDB cache");
         AddPlaceholders(ss);
-        bool AuditUpdates = true;
+        bool auditUpdates = Helpers.InDebug();
 
         if (!IsConnected && !Connect(showErrorMsgBox))
         {
@@ -347,7 +347,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 ProcessUpdate(o, cts);
             });
 
-            if (AuditUpdates && updatesResponses.Any())
+            if (auditUpdates && updatesResponses.Any())
             {
                 Say("Recording Updates");
                 int n = 0;
@@ -870,6 +870,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 {
                     ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as episodes({id}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})");
                 }
+
+                foreach (Episode updatedEpisode in Series.Values.SelectMany(s=>s.Episodes).Where(e=>e.EpisodeId==id))
+                {
+                    updatedEpisode.Dirty = true;
+                }
                 return;
             }
             case "seasons":
@@ -925,6 +930,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         if (time > selectedCachedSeriesInfo.SrvLastUpdated) // newer version on the server
         {
+            LOGGER.Info($"Updating {selectedCachedSeriesInfo.Name} {message} - Marking as dirty");
             selectedCachedSeriesInfo.Dirty = true; // mark as dirty, so it'll be fetched again later
         }
         else
@@ -933,8 +939,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                         selectedCachedSeriesInfo.SrvLastUpdated.FromUnixTime().ToLocalTime() + " server says " +
                         time.FromUnixTime().ToLocalTime());
         }
-
-        LOGGER.Info($"Updating {selectedCachedSeriesInfo.Name} {message}");
     }
 
     private void ProcessEpisodes(CachedSeriesInfo si, Dictionary<int, Tuple<JToken?, JToken?>> episodesResponses)
