@@ -774,9 +774,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         else
         {
-            LOGGER.Info(selectedCachedSeriesInfo.Name + " has a lastupdated of  " +
-                        Helpers.FromUnixTime(selectedCachedSeriesInfo.SrvLastUpdated) + " server says " +
-                        Helpers.FromUnixTime(time));
+            LOGGER.Info(
+                $"{selectedCachedSeriesInfo.Name} has a lastupdated of  {selectedCachedSeriesInfo.SrvLastUpdated.FromUnixTime().ToLocalTime()} server says {time.FromUnixTime().ToLocalTime()}");
         }
 
         //now we wish to see if any episodes from the cachedSeries have been updated. If so then mark them as dirty too
