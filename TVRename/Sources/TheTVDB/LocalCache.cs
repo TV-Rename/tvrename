@@ -3177,9 +3177,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             extraEpisodes[e.EpisodeId].Done = false;
         }
 
-        Parallel.ForEach(extraEpisodes, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, ee =>
+        Parallel.ForEach(extraEpisodes.Where(e => e.Value.SeriesId == code), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, ee =>
         {
-            if (ee.Value.SeriesId != code || ee.Value.Done)
+            if (ee.Value.Done)
             {
                 return;
             }
