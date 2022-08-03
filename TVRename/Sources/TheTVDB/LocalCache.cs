@@ -89,8 +89,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         System.Diagnostics.Debug.Assert(cache != null);
         CacheFile = cache;
 
-        LOGGER.Info($"Assumed we have updates until {LatestUpdateTime}");
-
         if (loadFrom is null)
         {
             LoadOk = true;
@@ -100,6 +98,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         bool mOk = CachePersistor.LoadMovieCache(loadFrom, this);
         bool tvOk = CachePersistor.LoadTvCache(loadFrom, this);
         LoadOk = mOk && tvOk;
+        LOGGER.Info($"Assumed we have updates until {LatestUpdateTime}");
     }
 
     public byte[]? GetTvdbDownload(string url)
@@ -128,7 +127,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    public CachedSeriesInfo? GetSeriesAndDownload(ISeriesSpecifier id, bool showErrorMsgBox) => HasSeries(id.TvdbId)
+    public CachedSeriesInfo? GetSeriesOrDownload(ISeriesSpecifier id, bool showErrorMsgBox) => HasSeries(id.TvdbId)
         ? Series[id.TvdbId]
         : DownloadSeriesNow(id, false, false, new Locale(TVSettings.Instance.PreferredTVDBLanguage),
             showErrorMsgBox);
@@ -189,16 +188,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         lock (SERIES_LOCK)
         {
-            foreach (KeyValuePair<int, CachedSeriesInfo> kvp in Series.ToList())
-            {
-                foreach (Episode e in kvp.Value.Episodes.Where(e => e.EpisodeId == id))
-                {
-                    return e;
-                }
-            }
+            return Series
+                .Values
+                .SelectMany(s => s.Episodes)
+                .FirstOrDefault(e => e.EpisodeId == id);
         }
-
-        return null;
     }
 
     public bool Connect(bool showErrorMsgBox) => TVDBLogin(showErrorMsgBox);
@@ -737,7 +731,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                     }
                     else
                     {
-                        ProcessSeriesUpdate(seriesResponse);
+                        ProcessSeriesUpdateV3(seriesResponse);
                     }
                 }
             }
@@ -756,7 +750,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private void ProcessSeriesUpdate(JObject seriesResponse)
+    private void ProcessSeriesUpdateV3(JObject seriesResponse)
     {
         int id = seriesResponse.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
         long time = seriesResponse.GetMandatoryLong("lastUpdated", TVDoc.ProviderType.TheTVDB);
@@ -934,7 +928,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         else
         {
-            LOGGER.Info(selectedCachedSeriesInfo.Name + " has a lastupdated of  " +
+            LOGGER.Error(selectedCachedSeriesInfo.Name + " has a lastupdated of  " +
                         selectedCachedSeriesInfo.SrvLastUpdated.FromUnixTime().ToLocalTime() + " server says " +
                         time.FromUnixTime().ToLocalTime());
         }
@@ -1042,14 +1036,13 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             IEnumerable<long>? updateTimes = jsonUpdateResponse["data"]?.Select(a => a.GetMandatoryLong(keyName,TVDoc.ProviderType.TheTVDB));
             long maxUpdateTime = updateTimes?.DefaultIfEmpty(0).Max() ?? 0;
 
-            //Add a day to take into account any timezone issues
-            long nowTime = DateTime.UtcNow.ToUnixTime() + (int)1.Days().TotalSeconds;
+            long nowTime = DateTime.UtcNow.ToUnixTime();
             if (maxUpdateTime > nowTime)
             {
                 LOGGER.Error(
-                    $"Assuming up to date: Update time from TVDB API is greater than current time for {maxUpdateTime} > {nowTime} ({Helpers.FromUnixTime(maxUpdateTime)} > {Helpers.FromUnixTime(nowTime)}) from: {jsonUpdateResponse}");
+                    $"Assuming up to date: Update time from TVDB API is greater than current time for {maxUpdateTime} > {nowTime} ({maxUpdateTime.FromUnixTime().ToLocalTime()} > {nowTime.FromUnixTime().ToLocalTime()}) from: {jsonUpdateResponse}");
 
-                return DateTime.UtcNow.ToUnixTime();
+                return nowTime;
             }
 
             return maxUpdateTime;
@@ -1065,7 +1058,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
         // This will only happen the first time we do an update, so a false _all update isn't too bad.
-        return Series.Values.Where(info => !info.IsSearchResultOnly).Select(info => info.SrvLastUpdated)
+        return Series.Values
+            .Where(info => !info.IsSearchResultOnly)
+            .Select(info => info.SrvLastUpdated)
             .Where(i => i > 0)
             .DefaultIfEmpty(0).Min();
     }

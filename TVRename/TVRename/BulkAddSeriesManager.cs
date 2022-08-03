@@ -54,7 +54,7 @@ public class BulkAddSeriesManager
             try
             {
                 ai.UpdateId(tvdbId, TVDoc.ProviderType.TheTVDB);
-                CachedSeriesInfo? cachedSeries = TheTVDB.LocalCache.Instance.GetSeriesAndDownload(ai, showErrorMsgBox);
+                CachedSeriesInfo? cachedSeries = TheTVDB.LocalCache.Instance.GetSeriesOrDownload(ai, showErrorMsgBox);
                 if (cachedSeries != null)
                 {
                     return;
