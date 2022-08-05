@@ -285,7 +285,7 @@ internal class TvdbAccuracyCheck
                             KeyValuePair<int, CachedSeriesInfo>? firstOrDefault =
                                 LocalCache.Instance.CachedShowData.FirstOrDefault(Predicate);
 
-                            int? episodeId = firstOrDefault?.Value.TvdbId;
+                            int? episodeId = firstOrDefault?.Value?.TvdbId;
 
                             if (episodeId is null || episodeId != targetId)
                             {
@@ -302,7 +302,7 @@ internal class TvdbAccuracyCheck
                             KeyValuePair<int, CachedSeriesInfo>? firstOrDefault =
                                 LocalCache.Instance.CachedShowData.FirstOrDefault(Predicate);
 
-                            int? seriesId = firstOrDefault?.Value.TvdbId;
+                            int? seriesId = firstOrDefault?.Value?.TvdbId;
 
                             if (seriesId is null || seriesId != targetId)
                             {
