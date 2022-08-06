@@ -269,13 +269,21 @@ internal class TvdbAccuracyCheck
                                 continue;
                             }
 
-                            Logger.Error($"SERIES:{time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
+                            Logger.Error($"SERIES: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
                             continue;
                         }
                     case "movies":
                     case "translatedmovies":
                     case "movie-genres":
-                    //todo - make work for movies too
+                    {
+                        if (id != targetId)
+                        {
+                            continue;
+                        }
+
+                        Logger.Error($"MOVIE: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
+                        continue;
+                    }
                     case "episodes":
                     case "translatedepisodes":
                         {
@@ -289,7 +297,7 @@ internal class TvdbAccuracyCheck
                                 continue;
                             }
 
-                            Logger.Error($"EPISODE:{targetEpisode}:{time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
+                            Logger.Error($"EPISODE: S{targetEpisode.AiredSeasonNumber:D2}E{targetEpisode.AiredEpNum:D2}: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
                             continue;
                         }
                     case "seasons":
@@ -305,7 +313,7 @@ internal class TvdbAccuracyCheck
                                 continue;
                             }
 
-                            Logger.Error($"SEASON:{targetSeason}:{time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
+                            Logger.Error($"SEASON: S{targetSeason.SeasonNumber:D2}:{targetSeason.SeasonName}: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
                             continue;
                         }
                     case "artwork":
