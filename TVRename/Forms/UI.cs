@@ -5355,14 +5355,24 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void tVDBUPdateCheckerLogToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        //Testing
-        //2022-07-28 16:27:12|WARN| Obi-Wan Kenobi is not up to date: Local is 26/07/2022 12:41:50 PM +00:00 (1658839310) server is 27/07/2022 10:40:52 AM +00:00 (1658918452)
-        //2022-07-29 10:32:14|WARN| Raised by Wolves is not up to date: Local is 24 / 07 / 2022 6:51:51 PM + 00:00(1658688711) server is 28 / 07 / 2022 4:24:52 AM + 00:00(1658982292)
-        //2022-07-29 21:51:31|WARN| Westworld S4E6 is not up to date: Local is 25/07/2022 2:19:49 AM +00:00 (1658715589) server is 29/07/2022 1:43:46 PM +00:00 (1659102226)
-        //2022-07-30 12:01:17|WARN| Barry is not up to date: Local is 23/07/2022 3:29:51 AM +00:00 (1658546991) server is 29/07/2022 9:15:07 PM +00:00 (1659129307)
+        TvdbUpdateChecker form = new(mDoc);
+        if (form.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
 
-        Logger.Info($" BETA Update Checker: Testing: |WARN| Westworld S4E6 is not up to date: Local is 25/07/2022 2:19:49 AM +00:00 (1658715589) server is 29/07/2022 1:43:46 PM +00:00 (1659102226) ");
-        TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSince(358211, 1659257393 - (60 * 60));
+        //Show Log Pane
+        logToolStripMenuItem_Click(sender, e);
+        MediaConfiguration? config = form.SelectedMedia;
+        long? timeSince = form.TimeSince;
+
+        if (timeSince == null || config == null)
+        {
+            return;
+        }
+
+        Logger.Info($"BETA Update Checker: Testing: {config.Name} ({config.Id()}) since {timeSince.Value.FromUnixTime().ToLocalTime()} ({timeSince}), last update was {config.CachedData?.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({config.CachedData?.SrvLastUpdated})");
+        TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSince(config.Id(), timeSince.Value);
     }
 }
 

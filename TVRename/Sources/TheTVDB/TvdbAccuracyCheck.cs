@@ -254,7 +254,7 @@ internal class TvdbAccuracyCheck
             foreach (JToken seriesResponse in jToken)
             {
                 int id = seriesResponse.GetMandatoryInt("recordId", TVDoc.ProviderType.TheTVDB);
-                //long time = seriesResponse.GetMandatoryLong("timeStamp", TVDoc.ProviderType.TheTVDB);
+                long time = seriesResponse.GetMandatoryLong("timeStamp", TVDoc.ProviderType.TheTVDB);
                 string? entityType = (string?)seriesResponse["entityType"];
                 //string method = (string)seriesResponse["method"];
 
@@ -269,7 +269,7 @@ internal class TvdbAccuracyCheck
                                 continue;
                             }
 
-                            Logger.Error(seriesResponse);
+                            Logger.Error($"SERIES:{time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
                             continue;
                         }
                     case "movies":
@@ -279,37 +279,33 @@ internal class TvdbAccuracyCheck
                     case "episodes":
                     case "translatedepisodes":
                         {
-                            bool Predicate(KeyValuePair<int, CachedSeriesInfo> x) =>
-                                x.Value.Episodes.Any(s => s.EpisodeId == id);
+                            Episode? targetEpisode = LocalCache.Instance.CachedShowData.Values
+                                .Where(s => s.Id() == targetId)
+                                .SelectMany(s => s.Episodes)
+                                .FirstOrDefault(e => e.EpisodeId == id);
 
-                            KeyValuePair<int, CachedSeriesInfo>? firstOrDefault =
-                                LocalCache.Instance.CachedShowData.FirstOrDefault(Predicate);
-
-                            int? episodeId = firstOrDefault?.Value?.TvdbId;
-
-                            if (episodeId is null || episodeId != targetId)
+                            if (targetEpisode is null)
                             {
                                 continue;
                             }
 
-                            Logger.Error(seriesResponse);
+                            Logger.Error($"EPISODE:{targetEpisode}:{time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
                             continue;
                         }
                     case "seasons":
                     case "translatedseasons":
                         {
-                            bool Predicate(KeyValuePair<int, CachedSeriesInfo> x) => x.Value.Seasons.Any(s => s.SeasonId == id);
-                            KeyValuePair<int, CachedSeriesInfo>? firstOrDefault =
-                                LocalCache.Instance.CachedShowData.FirstOrDefault(Predicate);
+                            Season? targetSeason = LocalCache.Instance.CachedShowData.Values
+                                .Where(s => s.Id() == targetId)
+                                .SelectMany(s => s.Seasons)
+                                .FirstOrDefault(e => e.SeasonId == id);
 
-                            int? seriesId = firstOrDefault?.Value?.TvdbId;
-
-                            if (seriesId is null || seriesId != targetId)
+                            if (targetSeason is null)
                             {
                                 continue;
                             }
 
-                            Logger.Error(seriesResponse);
+                            Logger.Error($"SEASON:{targetSeason}:{time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
                             continue;
                         }
                     case "artwork":

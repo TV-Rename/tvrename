@@ -102,6 +102,9 @@
     <Compile Update="Forms\Supporting\ScanProgress.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\Supporting\TVDBUpdateChecker.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\Supporting\TVRenameSplash.cs">
       <SubType>Form</SubType>
     </Compile>
