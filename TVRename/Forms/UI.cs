@@ -1856,7 +1856,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (next1.Any())
         {
             ProcessedEpisode ei = next1.First();
-            tsNextShowTxt.Text += $"{CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(1))}, {ei.HowLong()} ({ei.DayOfWeek()}, {ei.TimeOfDay()})";
+            tsNextShowTxt.Text += $"{CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(1))}, {ei.HowLong()} ({ei.DayOfWeek()}, {ei.TimeOfDay()})".ToUiVersion();
         }
         else
         {

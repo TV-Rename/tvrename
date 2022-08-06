@@ -2225,7 +2225,6 @@ namespace TVRename
             this.tsNextShowTxt.Size = new System.Drawing.Size(487, 15);
             this.tsNextShowTxt.TabIndex = 1;
             this.tsNextShowTxt.Text = "---";
-            this.tsNextShowTxt.UseMnemonic = false;
             //
             // columnHeader5
             //

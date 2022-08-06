@@ -68,9 +68,9 @@ namespace TVRename
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.diskSpaceTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
-            // 
+            //
             // pbFile
-            // 
+            //
             this.pbFile.Location = new System.Drawing.Point(59, 39);
             this.pbFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbFile.Name = "pbFile";
@@ -78,9 +78,9 @@ namespace TVRename
             this.pbFile.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbFile.TabIndex = 6;
             this.pbFile.Maximum = 1000;
-            // 
+            //
             // pbGroup
-            // 
+            //
             this.pbGroup.Location = new System.Drawing.Point(59, 73);
             this.pbGroup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbGroup.Name = "pbGroup";
@@ -88,9 +88,9 @@ namespace TVRename
             this.pbGroup.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbGroup.TabIndex = 9;
             this.pbGroup.Maximum = 1000;
-            // 
+            //
             // bnCancel
-            // 
+            //
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.Location = new System.Drawing.Point(342, 300);
             this.bnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -100,9 +100,9 @@ namespace TVRename
             this.bnCancel.Text = "Cancel";
             this.bnCancel.UseVisualStyleBackColor = true;
             this.bnCancel.Click += new System.EventHandler(this.bnCancel_Click);
-            // 
+            //
             // label1
-            // 
+            //
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 44);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -111,9 +111,9 @@ namespace TVRename
             this.label1.TabIndex = 5;
             this.label1.Text = "File:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
+            //
             // label2
-            // 
+            //
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 77);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -122,9 +122,9 @@ namespace TVRename
             this.label2.TabIndex = 8;
             this.label2.Text = "Total:";
             this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
+            //
             // label3
-            // 
+            //
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(12, 10);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -133,20 +133,19 @@ namespace TVRename
             this.label3.TabIndex = 3;
             this.label3.Text = "Filename:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
+            //
             // txtFilename
-            // 
-            this.txtFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.txtFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilename.Location = new System.Drawing.Point(76, 10);
             this.txtFilename.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.txtFilename.Name = "txtFilename";
             this.txtFilename.Size = new System.Drawing.Size(351, 18);
             this.txtFilename.TabIndex = 4;
-            this.txtFilename.UseMnemonic = false;
-            // 
+            //
             // pbDiskSpace
-            // 
+            //
             this.pbDiskSpace.Location = new System.Drawing.Point(59, 106);
             this.pbDiskSpace.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbDiskSpace.Name = "pbDiskSpace";
@@ -154,9 +153,9 @@ namespace TVRename
             this.pbDiskSpace.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbDiskSpace.TabIndex = 12;
             this.pbDiskSpace.Maximum = 1000;
-            // 
+            //
             // label4
-            // 
+            //
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(12, 111);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -165,9 +164,9 @@ namespace TVRename
             this.label4.TabIndex = 11;
             this.label4.Text = "Disk:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
+            //
             // txtDiskSpace
-            // 
+            //
             this.txtDiskSpace.AutoSize = true;
             this.txtDiskSpace.Location = new System.Drawing.Point(351, 111);
             this.txtDiskSpace.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -176,9 +175,9 @@ namespace TVRename
             this.txtDiskSpace.TabIndex = 13;
             this.txtDiskSpace.Text = "--- GB free";
             this.txtDiskSpace.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
+            //
             // txtTotal
-            // 
+            //
             this.txtTotal.AutoSize = true;
             this.txtTotal.Location = new System.Drawing.Point(350, 77);
             this.txtTotal.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -187,9 +186,9 @@ namespace TVRename
             this.txtTotal.TabIndex = 10;
             this.txtTotal.Text = "---% Done";
             this.txtTotal.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
+            //
             // txtFile
-            // 
+            //
             this.txtFile.AutoSize = true;
             this.txtFile.Location = new System.Drawing.Point(351, 44);
             this.txtFile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -198,14 +197,14 @@ namespace TVRename
             this.txtFile.TabIndex = 7;
             this.txtFile.Text = "---% Done";
             this.txtFile.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
+            //
             // copyTimer
-            // 
+            //
             this.copyTimer.Interval = 50;
             this.copyTimer.Tick += new System.EventHandler(this.copyTimer_Tick);
-            // 
+            //
             // cbPause
-            // 
+            //
             this.cbPause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cbPause.Appearance = System.Windows.Forms.Appearance.Button;
             this.cbPause.Location = new System.Drawing.Point(247, 300);
@@ -217,11 +216,11 @@ namespace TVRename
             this.cbPause.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.cbPause.UseVisualStyleBackColor = true;
             this.cbPause.CheckedChanged += new System.EventHandler(this.cbPause_CheckedChanged);
-            // 
+            //
             // lvProgress
-            // 
-            this.lvProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.lvProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvProgress.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
@@ -237,24 +236,24 @@ namespace TVRename
             this.lvProgress.TabIndex = 0;
             this.lvProgress.UseCompatibleStateImageBehavior = false;
             this.lvProgress.View = System.Windows.Forms.View.Details;
-            // 
+            //
             // columnHeader1
-            // 
+            //
             this.columnHeader1.Text = "Action";
             this.columnHeader1.Width = 91;
-            // 
+            //
             // columnHeader2
-            // 
+            //
             this.columnHeader2.Text = "Item";
             this.columnHeader2.Width = 299;
-            // 
+            //
             // diskSpaceTimer
-            // 
+            //
             this.diskSpaceTimer.Interval = 1000;
             this.diskSpaceTimer.Tick += new System.EventHandler(this.diskSpaceTimer_Tick);
-            // 
+            //
             // CopyMoveProgress
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(434, 336);
