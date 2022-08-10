@@ -5374,6 +5374,9 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         Logger.Info($"BETA Update Checker: Testing: {config.Name} ({config.Id()}) since {timeSince.Value.FromUnixTime().ToLocalTime()} ({timeSince}), last update was {config.CachedData?.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({config.CachedData?.SrvLastUpdated})");
         TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSince(config.Id(), timeSince.Value);
     }
+
+    private void requestANewFeatureToolStripMenuItem_Click(object sender, EventArgs e)
+        => Helpers.OpenUrl("https://tvrename.featureupvote.com/");
 }
 
 /// <summary>
