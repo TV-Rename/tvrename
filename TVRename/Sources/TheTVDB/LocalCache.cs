@@ -766,9 +766,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             selectedCachedSeriesInfo.Dirty = true; // mark as dirty, so it'll be fetched again later
         }
-        else
+        else if (time < selectedCachedSeriesInfo.SrvLastUpdated)
         {
-            LOGGER.Info(
+            LOGGER.Error(
                 $"{selectedCachedSeriesInfo.Name} has a lastupdated of  {selectedCachedSeriesInfo.SrvLastUpdated.FromUnixTime().ToLocalTime()} server says {time.FromUnixTime().ToLocalTime()}");
         }
 
@@ -926,7 +926,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             LOGGER.Info($"Updating {selectedCachedSeriesInfo.Name} {message} - Marking as dirty");
             selectedCachedSeriesInfo.Dirty = true; // mark as dirty, so it'll be fetched again later
         }
-        else
+        else if (time < selectedCachedSeriesInfo.SrvLastUpdated)
         {
             LOGGER.Error(selectedCachedSeriesInfo.Name + " has a lastupdated of  " +
                         selectedCachedSeriesInfo.SrvLastUpdated.FromUnixTime().ToLocalTime() + " server says " +
@@ -1316,7 +1316,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             (si, Language? languageCodeToUse) = GenerateSeriesInfoV4(DownloadSeriesJson(code, locale), locale, st);
             if (languageCodeToUse!=null)
             {
-                AddTranslations(si, DownloadSeriesTranslationsJsonV4(code, new Locale(languageCodeToUse)));
+                AddTranslations(si, DownloadSeriesTranslationsJsonV4(code, new Locale(languageCodeToUse),showErrorMsgBox));
             }
         }
         else
@@ -1382,14 +1382,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             throw new SourceConnectivityException();
         }
 
-        CachedMovieInfo si;
         if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
         {
-            (si, Language? languageCode) = GenerateMovieInfoV4(DownloadMovieJson(code, locale), locale);
+            (CachedMovieInfo si, Language? languageCode) = GenerateMovieInfoV4(DownloadMovieJson(code, locale), locale);
             if (languageCode!=null)
             {
-                AddTranslations(si, DownloadMovieTranslationsJsonV4(code, new Locale(languageCode)));
+                AddTranslations(si, DownloadMovieTranslationsJsonV4(code, new Locale(languageCode),showErrorMsgBox));
             }
+
+            return si;
         }
         else
         {
@@ -1407,17 +1408,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 throw new SourceConsistencyException($"Data element not found in {jsonResponse}", TVDoc.ProviderType.TheTVDB);
             }
 
-            si =  GenerateCachedMovieInfo(seriesData, locale);
+            return GenerateCachedMovieInfo(seriesData, locale);
         }
-
-        if (si is null)
-        {
-            LOGGER.Error($"Error obtaining movie {code} - cound not generate a cachedMovie from the responses");
-            SayNothing();
-            throw new SourceConnectivityException();
-        }
-
-        return si;
     }
 
     private JObject DownloadMovieJson(ISeriesSpecifier code, Locale locale)
@@ -2149,12 +2141,12 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private JObject DownloadSeriesJson(ISeriesSpecifier code, Locale locale)
     {
-        JObject? jsonResponse;
         try
         {
-            jsonResponse = TVSettings.Instance.TvdbVersion == ApiVersion.v4
+            return TVSettings.Instance.TvdbVersion == ApiVersion.v4
                 ? API.GetSeriesV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
-                : API.GetSeries(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation);
+                : API.GetSeries(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation)
+                  ?? throw new SourceConnectivityException();
         }
         catch (System.IO.IOException e)
         {
@@ -2191,22 +2183,37 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             LastErrorMessage = ex.LoggableDetails();
             throw new SourceConnectivityException();
         }
-
-        return jsonResponse ?? throw new SourceConnectivityException();
     }
 
-    private JObject DownloadMovieTranslationsJsonV4(ISeriesSpecifier code, Locale locale)
+    private JObject DownloadMovieTranslationsJsonV4(ISeriesSpecifier code, Locale locale, bool showErrorMsgBox)
     {
+        return HandleWebErrorsFor(
+            ()=>API.GetMovieTranslationsV4(code,locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation),
+        $"obtaining translations for {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}",showErrorMsgBox);
+    }
+
+    private JObject DownloadSeriesTranslationsJsonV4(ISeriesSpecifier code, Locale locale, bool showErrorMsgBox)
+    {
+        return HandleWebErrorsFor(
+            () => API.GetSeriesTranslationsV4(code,locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation),
+            $"obtaining translations for {code.TvdbId} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}",showErrorMsgBox);
+    }
+
+    private T HandleWebErrorsFor<T>(Func<T> webCall, string errorMessage, bool showErrorMsgBox)
+    {
+        if (!IsConnected && !Connect(showErrorMsgBox))
+        {
+            Say("Failed to Connect to TVDB");
+            SayNothing();
+            throw new SourceConnectivityException();
+        }
         try
         {
-            return API.GetMovieTranslationsV4(code,
-                locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
+            return webCall();
         }
         catch (System.IO.IOException ioex)
         {
-            LOGGER.LogIoException(
-                $"Error obtaining translations for {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                ioex);
+            LOGGER.LogIoException($"Error {errorMessage}:", ioex);
 
             SayNothing();
             LastErrorMessage = ioex.LoggableDetails();
@@ -2214,48 +2221,23 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (WebException ex)
         {
-            LOGGER.LogWebException(
-                $"Error obtaining translations for {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                ex);
+            LOGGER.LogWebException($"Error {errorMessage}:", ex);
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
             throw new SourceConnectivityException();
         }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        catch (AggregateException ex) when (ex.InnerException is WebException wex)
         {
-            LOGGER.LogHttpRequestException(
-                $"Error obtaining translations for {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                wex);
+            LOGGER.LogWebException($"Error {errorMessage}:", wex);
 
             SayNothing();
             LastErrorMessage = wex.LoggableDetails();
             throw new SourceConnectivityException();
         }
-    }
-
-    private JObject DownloadSeriesTranslationsJsonV4(ISeriesSpecifier code, Locale locale)
-    {
-        try
+        catch (HttpRequestException ex)
         {
-            return API.GetSeriesTranslationsV4(code,
-                locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
-        }
-        catch (System.IO.IOException ioex)
-        {
-            LOGGER.LogIoException(
-                $"Error obtaining translations for {code.TvdbId} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                ioex);
-
-            SayNothing();
-            LastErrorMessage = ioex.LoggableDetails();
-            throw new SourceConnectivityException();
-        }
-        catch (WebException ex)
-        {
-            LOGGER.LogWebException(
-                $"Error obtaining translations for {code.TvdbId} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                ex);
+            LOGGER.LogHttpRequestException($"Error {errorMessage}:", ex);
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
@@ -2263,9 +2245,23 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
-            LOGGER.LogHttpRequestException(
-                $"Error obtaining translations for {code.TvdbId} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                wex);
+            LOGGER.LogHttpRequestException($"Error {errorMessage}:", wex);
+
+            SayNothing();
+            LastErrorMessage = wex.LoggableDetails();
+            throw new SourceConnectivityException();
+        }
+        catch (TaskCanceledException ex)
+        {
+            LOGGER.LogTaskCanceledException($"Error {errorMessage}:", ex);
+
+            SayNothing();
+            LastErrorMessage = ex.LoggableDetails();
+            throw new SourceConnectivityException();
+        }
+        catch (AggregateException ex) when (ex.InnerException is TaskCanceledException wex)
+        {
+            LOGGER.LogTaskCanceledException($"Error {errorMessage}:", wex);
 
             SayNothing();
             LastErrorMessage = wex.LoggableDetails();

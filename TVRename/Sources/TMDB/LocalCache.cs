@@ -125,7 +125,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         if (s.TmdbId is -1 or 0)
         {
-            throw new SourceConsistencyException($"Asked to update {s.Name} from TMDB, but it has no id {s.TmdbId} for TMDB.", TVDoc.ProviderType.TMDB);
+            throw new MediaNotFoundException(s, $"Please edit {s.Name} to ensure it has a TMDB Id, or use another source for that show.", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, s.Media);
         }
 
         return s.Media == MediaConfiguration.MediaType.movie
@@ -169,13 +169,19 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         catch (SourceConnectivityException ex)
         {
             LastErrorMessage = ex.Message;
-            return true;
+            return false;
         }
         catch (SourceConsistencyException sce)
         {
             LOGGER.Error(sce.Message);
             LastErrorMessage = sce.Message;
-            return true;
+            return false;
+        }
+        catch (TaskCanceledException tce)
+        {
+            LOGGER.Warn($"Timeout obtaining {s.Name} from TMDB");
+            LastErrorMessage = tce.Message;
+            return false;
         }
         finally
         {
@@ -486,7 +492,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                 }
             }
         }
-        
+
         AddMovieImages(downloadedMovie, m);
         return m;
     }

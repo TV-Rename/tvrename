@@ -48,15 +48,25 @@ internal static class API
             Logger.LogHttpRequestException("Could not get updates from TV Maze due to", wex);
             throw new SourceConnectivityException(ex.Message);
         }
+        catch (System.Threading.Tasks.TaskCanceledException ex)
+        {
+            Logger.Warn($"Could not get updates from TV Maze due to {ex.Message}");
+            throw new SourceConnectivityException(ex.Message);
+        }
+        catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
+        {
+            Logger.Warn($"Could not get updates from TV Maze due to {ex.Message}");
+            throw new SourceConnectivityException(ex.Message);
+        }
     }
 
     public static IEnumerable<CachedSeriesInfo> ShowSearch(string searchText)
     {
-        JArray? response;
         try
         {
             string fullUrl = $"{APIRoot}/search/shows?q={searchText}";
-            response = HttpHelper.HttpGetArrayRequestWithRetry(fullUrl, 5, 2);
+            JArray response = HttpHelper.HttpGetArrayRequestWithRetry(fullUrl, 5, 2);
+            return response.Children().Select(ConvertSearchResult).OfType<CachedSeriesInfo>();
         }
         catch (WebException wex)
         {
@@ -74,7 +84,16 @@ internal static class API
             Logger.LogHttpRequestException($"Could not search for show '{searchText}' from TV Maze due to", wex);
             throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
         }
-        return response.Children().Select(ConvertSearchResult).OfType<CachedSeriesInfo>();
+        catch (System.Threading.Tasks.TaskCanceledException ex)
+        {
+            Logger.Warn($"Could not get search from TV Maze due to {ex.Message}");
+            throw new SourceConnectivityException(ex.Message);
+        }
+        catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
+        {
+            Logger.Warn($"Could not get search from TV Maze due to {ex.Message}");
+            throw new SourceConnectivityException(ex.Message);
+        }
     }
 
     private static CachedSeriesInfo? ConvertSearchResult(JToken token)

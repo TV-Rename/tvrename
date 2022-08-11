@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Alphaleonis.Win32.Filesystem;
 
 // Talk to the TVmaze web API, and get tv cachedSeries info
@@ -166,12 +167,19 @@ public class LocalCache : MediaCache, iTVSource
         catch (SourceConnectivityException conex)
         {
             LastErrorMessage = conex.Message;
+            LOGGER.Warn(conex);
             return false;
         }
         catch (SourceConsistencyException sce)
         {
             LOGGER.Error(sce.Message);
             LastErrorMessage = sce.Message;
+            return false;
+        }
+        catch (TaskCanceledException)
+        {
+            LastErrorMessage = "Request to get updates Cancelled";
+            LOGGER.Warn(LastErrorMessage);
             return false;
         }
     }

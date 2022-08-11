@@ -35,6 +35,11 @@ public static class HttpHelper
 
     public static string GetUrl(string url, bool useCloudflareProtection)
     {
+        if (!url.IsWebLink())
+        {
+            //lets try this
+            url = "https://" + url;
+        }
         if (useCloudflareProtection)
         {
             try
@@ -163,7 +168,10 @@ public static class HttpHelper
     {
         l.Warn(message + " " + wex.LoggableDetails());
     }
-
+    public static void LogTaskCanceledException(this Logger l, string message, TaskCanceledException wex)
+    {
+        l.Warn(message + " " + wex.LoggableDetails());
+    }
     public static void LogHttpRequestException(this Logger l, string message, HttpRequestException wex)
     {
         if (wex.IsUnimportant())
@@ -243,6 +251,12 @@ public static class HttpHelper
         }
         return s.ToString();
     }
+    public static string LoggableDetails(this TaskCanceledException ex)
+    {
+        return ex.InnerException != null
+            ? $"TaskCanceledException obtained. {ex.Message}. Further details: {ex.InnerException.Message}"
+            : $"TaskCanceledException obtained. {ex.Message}";
+    }
 
     public static string LoggableDetails(this WebException ex)
     {
@@ -296,11 +310,10 @@ public static class HttpHelper
 
     public static JObject JsonHttpPostRequest(string url, JObject request, bool retry)
     {
-        TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
-
         string? response = null;
         if (retry)
         {
+            TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
             RetryOnException(3, pauseBetweenFailures, url, _ => true,
                 () => { response = HttpRequest("POST", url, request.ToString(), "application/json", string.Empty); },
                 null);
@@ -410,7 +423,7 @@ public static class HttpHelper
         JObject? response = null;
         TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
         RetryOnException(times, gap, fullUrl,
-            exception => (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
+            exception => exception is TaskCanceledException || (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
             , () => { response = JsonHttpGetRequest(fullUrl, null); }
             , null);
 
@@ -422,7 +435,7 @@ public static class HttpHelper
         JArray? response = null;
         TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
         RetryOnException(times, gap, fullUrl,
-            exception => (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
+            exception => exception is TaskCanceledException || (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
             , () => { response = JsonListHttpGetRequest(fullUrl, null); }
             , null);
 
