@@ -88,16 +88,20 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
         {
             string baseString = bases[0];
             //All Seems OK
+            FileInfo matchingMovieFile = movieFiles.First(m => si.NameMatch(m,false));
+            FileInfo newFile = matchingMovieFile;
+
             if (renCheck && !baseString.Equals(newBase,StringComparison.OrdinalIgnoreCase))
             {
                 //Do a tweak to filename (case insensitive ones are dealt with below; this is for changes that are around punctuation
                 PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                string newName = baseString.HasValue() ? matchingMovieFile.Name.Replace(baseString, newBase) : newBase + matchingMovieFile.Extension;
+                newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
             }
 
             //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
             //it has all the required files for that show
-            FileInfo matchingMovieFile = movieFiles.First(m => si.NameMatch(m,false));
-            Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, matchingMovieFile));
+            Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, newFile));
             FileIsCorrect(si, movieFiles.First().FullName);
             return;
         }
