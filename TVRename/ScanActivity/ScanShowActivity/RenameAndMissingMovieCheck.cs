@@ -84,19 +84,25 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
             return;
         }
 
-        if (bases.Count == 1 && bases[0].Equals(newBase))
+        if (bases.Count == 1 && si.NameMatch(bases[0]))
         {
+            string baseString = bases[0];
             //All Seems OK
+            if (renCheck && !baseString.Equals(newBase,StringComparison.OrdinalIgnoreCase))
+            {
+                //Do a tweak to filename (case insensitive ones are dealt with below; this is for changes that are around punctuation
+                PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+            }
 
             //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
             //it has all the required files for that show
-            Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, movieFiles.First(m => m.Name.StartsWith(newBase, StringComparison.Ordinal))));
+            FileInfo matchingMovieFile = movieFiles.First(m => si.NameMatch(m,false));
+            Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, matchingMovieFile));
             FileIsCorrect(si, movieFiles.First().FullName);
             return;
         }
 
-        if (renCheck && bases.Select(b => b.ToLower()).Distinct().Count() == 1 &&
-            bases.All(b => b.Equals(newBase, StringComparison.CurrentCultureIgnoreCase)))
+        if (renCheck && bases.Select(b => b.ToLower()).Distinct().Count() == 1 && bases.All(si.NameMatch))
         {
             //We have a case sensitive issue and have been asked to rename
             if (TVSettings.Instance.FileNameCaseSensitiveMatch)
@@ -134,10 +140,10 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
             return;
         }
 
-        if (bases.Any(b => b.Equals(newBase, StringComparison.Ordinal)))
+        if (bases.Any(si.NameMatch))
         {
             FileInfo? matchingFile = movieFiles
-                .FirstOrDefault(m => m.Name.StartsWith(newBase, StringComparison.Ordinal));
+                .FirstOrDefault(m => si.NameMatch(m,false));
 
             if (matchingFile != null)
             {

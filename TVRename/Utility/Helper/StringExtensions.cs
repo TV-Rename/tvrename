@@ -57,6 +57,7 @@ public static class StringExtensions
     {
         n = n.ToLower();
         n = RemoveDiacritics(n);
+        n = n.Replace(":", "");
         n = n.Replace(".", " ");
         n = n.Replace("'", "");
         n = n.Replace("‘", "");
