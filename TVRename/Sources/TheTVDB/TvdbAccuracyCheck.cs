@@ -166,6 +166,13 @@ internal class TvdbAccuracyCheck
         long serverUpdateTime = t.GetMandatoryLong("lastUpdated",TVDoc.ProviderType.TheTVDB);
         int epId = t.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
 
+        EpisodeAccuracyCheck(si, serverUpdateTime, epId);
+
+        return epId;
+    }
+
+    private void EpisodeAccuracyCheck(CachedSeriesInfo si, long serverUpdateTime, int epId)
+    {
         try
         {
             Episode ep = si.GetEpisode(epId);
@@ -176,18 +183,16 @@ internal class TvdbAccuracyCheck
                 EnsureUpdated(si);
                 string diff = serverUpdateTime > ep.SrvLastUpdated ? "not up to date" : "in the future";
                 Issues.Add(
-                    $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} ({ep.EpisodeId}) is {diff}: Local is {ep.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({ep.SrvLastUpdated}) server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
+                    $"{si.Name}({si.TvdbId}), S{ep.AiredSeasonNumber}E{ep.AiredEpNum} ({ep.EpisodeId}) is {diff}: Local is {ep.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({ep.SrvLastUpdated}) server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
             }
         }
         catch (ShowConfiguration.EpisodeNotFoundException)
         {
             Issues.Add(
-                $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
+                $"{si.Name}({si.TvdbId}), episode with Id {epId} is not found: Local is missing; server was updated on {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
 
             EnsureUpdated(si);
         }
-
-        return epId;
     }
 
     private void EpisodeAccuracyCheck(CachedSeriesInfo si, Episode t)
@@ -195,26 +200,7 @@ internal class TvdbAccuracyCheck
         long serverUpdateTime = t.SrvLastUpdated;
         int epId = t.EpisodeId;
 
-        try
-        {
-            Episode ep = si.GetEpisode(epId);
-
-            if (serverUpdateTime != ep.SrvLastUpdated)
-            {
-                ep.Dirty = true;
-                EnsureUpdated(si);
-                string diff = serverUpdateTime > ep.SrvLastUpdated ? "not up to date" : "in the future";
-                Issues.Add(
-                    $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} ({ep.EpisodeId}) is {diff}: Local is {ep.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({ep.SrvLastUpdated}) server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
-            }
-        }
-        catch (ShowConfiguration.EpisodeNotFoundException)
-        {
-            Issues.Add(
-                $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
-
-            EnsureUpdated(si);
-        }
+        EpisodeAccuracyCheck(si, serverUpdateTime, epId);
     }
 
     private static bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
