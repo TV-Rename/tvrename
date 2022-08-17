@@ -13,7 +13,7 @@ using System.Xml;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class MissingXML : ActionListExporter
+internal class MissingXML : MissingActionListExporter
 {
     public MissingXML(ItemList theActionList) : base(theActionList)
     {
@@ -23,8 +23,6 @@ internal class MissingXML : ActionListExporter
     protected override string Name() => "Missing XML Exporter";
 
     protected override string Location() => TVSettings.Instance.ExportMissingXMLTo;
-
-    public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full;
 
     protected override void Do()
     {

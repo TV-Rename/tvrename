@@ -3,7 +3,7 @@ using System.Xml;
 
 namespace TVRename;
 
-internal class MissingMovieXml : ActionListExporter
+internal class MissingMovieXml : MissingActionListExporter
 {
     public MissingMovieXml(ItemList theActionList) : base(theActionList)
     {
@@ -13,8 +13,6 @@ internal class MissingMovieXml : ActionListExporter
     protected override string Name() => "Missing Movie XML Exporter";
 
     protected override string Location() => TVSettings.Instance.ExportMissingMoviesXMLTo;
-
-    public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full;
 
     protected override void Do()
     {

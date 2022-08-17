@@ -3,7 +3,7 @@ using System;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class MissingCSV : ActionListExporter
+internal class MissingCSV : MissingActionListExporter
 {
     public MissingCSV(ItemList theActionList) : base(theActionList)
     {
@@ -13,8 +13,6 @@ internal class MissingCSV : ActionListExporter
 
     protected override string Location() => TVSettings.Instance.ExportMissingCSVTo;
     protected override string Name() => "Missing CSV Exporter";
-
-    public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full;
 
     protected override void Do()
     {

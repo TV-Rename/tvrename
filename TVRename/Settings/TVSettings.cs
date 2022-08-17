@@ -136,6 +136,7 @@ public sealed class TVSettings
     public bool AutoSelectShowInMyShows = true;
     public bool AutoCreateFolders = false;
     public bool BGDownload = false;
+    public bool RestrictMissingExportsToFullScans = true;
     public bool CheckuTorrent = false;
     public bool CheckqBitTorrent = false;
     public bool RemoveCompletedTorrents = false;
@@ -594,6 +595,7 @@ public sealed class TVSettings
         writer.WriteElement("MonitoredFoldersScanType", (int)MonitoredFoldersScanType);
         writer.WriteElement("DefaultProvider", (int)DefaultProvider);
         writer.WriteElement("CheckuTorrent", CheckuTorrent);
+        writer.WriteElement("RestrictMissingExportsToFullScans", RestrictMissingExportsToFullScans);
         writer.WriteElement("RemoveCompletedTorrents", RemoveCompletedTorrents);
         writer.WriteElement("CheckqBitTorrent", CheckqBitTorrent);
         writer.WriteElement("qBitTorrentHost", qBitTorrentHost);
@@ -1504,6 +1506,7 @@ public sealed class TVSettings
         RenameCheck = xmlSettings.ExtractBool("RenameCheck", true);
         PreventMove = xmlSettings.ExtractBool("PreventMove", false);
         CheckuTorrent = xmlSettings.ExtractBool("CheckuTorrent", false);
+        RestrictMissingExportsToFullScans = xmlSettings.ExtractBool("RestrictMissingExportsToFullScans", true);
         CheckqBitTorrent = xmlSettings.ExtractBool("CheckqBitTorrent", false);
         RemoveCompletedTorrents = xmlSettings.ExtractBool("RemoveCompletedTorrents", false);
         qBitTorrentHost = xmlSettings.ExtractString("qBitTorrentHost", "localhost");
