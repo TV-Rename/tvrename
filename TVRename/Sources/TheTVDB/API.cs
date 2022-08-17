@@ -413,9 +413,16 @@ internal static class API
 
     public static JObject GetSeasonV4(ISeriesSpecifier code, int seasonId, string requestLangCode)
     {
-        string uri = $"{TokenProvider.TVDB_API_URL}/series/{seasonId}/extended";
+        string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
         return GetUrl(code,uri, requestLangCode,MediaConfiguration.MediaType.tv);
     }
+
+    public static JObject GetSeriesEpisodesV4(ISeriesSpecifier code, string requestLangCode, ProcessedSeason.SeasonType type)
+    {
+        string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/episodes/{type.PrettyPrint()}";
+        return GetUrl(code,uri, requestLangCode,MediaConfiguration.MediaType.tv);
+    }
+
     public static JObject? GetEpisode(int episodeId, string requestLangCode)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}";

@@ -1258,20 +1258,23 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         //We push the results into a bag to use later
         //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
 
-        if (episodesToo || forceReload)
+        if (si != null)
         {
-            if (si != null)
-            {
-                ProcessedSeason.SeasonType st = code is ShowConfiguration sc
-                    ? sc.Order
-                    : ProcessedSeason.SeasonType.aired;
-                ReloadEpisodes(code, locale, si,st);
-            }
-        }
+            ProcessedSeason.SeasonType st = code is ShowConfiguration sc
+                ? sc.Order
+                : ProcessedSeason.SeasonType.aired;
 
-        if (bannersToo && forceReload)
-        {
-            if (si != null)
+            if (episodesToo || forceReload)
+            {
+                ReloadEpisodes(code, locale, si, st);
+            }
+            else if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
+            {
+                //The Series has changed, so we need to check for any new episodes
+                CheckForNewEpisodes(code, locale, si, st);
+            }
+
+            if (bannersToo && forceReload)
             {
                 if (TVSettings.Instance.TvdbVersion != ApiVersion.v4)
                 {
@@ -1295,6 +1298,48 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         Series.TryGetValue(code.TvdbId, out CachedSeriesInfo? returnValue);
         SayNothing();
         return returnValue;
+    }
+
+    private static void CheckForNewEpisodes(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType st)
+    {
+        try
+        {
+            JObject episodeInfo = API.GetSeriesEpisodesV4(si,
+                locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation, st);
+
+            JToken? episodeData = episodeInfo["data"]?["episodes"];
+
+            if (episodeData == null)
+            {
+                return;
+            }
+
+            IEnumerable<(int? id, JToken jsonData)> availableEpisodes = episodeData.Select(x => (x["id"]?.ToObject<int>(),x)).Where(x => x.Item1.HasValue);
+            IEnumerable<(int? id, JToken jsonData)> neededEpisodes =
+                availableEpisodes.Where(x => x.id.HasValue && si.Episodes.All(e => e.EpisodeId != x.id));
+
+            Parallel.ForEach(neededEpisodes,
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, x =>
+                {
+                    int? epNumber = x.jsonData["number"]?.ToObject<int>();
+                    Thread.CurrentThread.Name ??=
+                        $"Creating SE{epNumber} Episode for {si.Name}"; // Can only set it once
+
+                    GenerateAddEpisodeV4(code, locale, si, x.jsonData, st);
+                });
+        }
+        catch (SourceConnectivityException sce)
+        {
+            LOGGER.Error(sce);
+        }
+        catch (SourceConsistencyException sce)
+        {
+            LOGGER.Error(sce);
+        }
+        catch (MediaNotFoundException mnfe)
+        {
+            LOGGER.Error($"Season Issue: {mnfe.Message}");
+        }
     }
 
     internal CachedSeriesInfo DownloadSeriesInfo(ISeriesSpecifier code, Locale locale, bool showErrorMsgBox)
