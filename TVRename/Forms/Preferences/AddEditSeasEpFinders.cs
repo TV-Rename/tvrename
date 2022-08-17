@@ -390,21 +390,24 @@ public partial class AddEditSeasEpFinders : Form
 
     private IEnumerable<TorrentEntry> GetTorrentDownloads()
     {
-        if (torrentCache is null)
-        {
-            torrentCache = new List<TorrentEntry>();
-            if (TVSettings.Instance.CheckuTorrent)
-            {
-                torrentCache.AddNullableRange(new uTorrent().GetTorrentDownloads());
-            }
+        torrentCache ??= GetTorrentCache();
+        return torrentCache;
+    }
 
-            if (TVSettings.Instance.CheckqBitTorrent)
-            {
-                torrentCache.AddNullableRange(new qBitTorrent().GetTorrentDownloads());
-            }
+    private static List<TorrentEntry> GetTorrentCache()
+    {
+        List<TorrentEntry> newTorrentCache = new();
+        if (TVSettings.Instance.CheckuTorrent)
+        {
+            newTorrentCache.AddNullableRange(new uTorrent().GetTorrentDownloads());
         }
 
-        return torrentCache;
+        if (TVSettings.Instance.CheckqBitTorrent)
+        {
+            newTorrentCache.AddNullableRange(new qBitTorrent().GetTorrentDownloads());
+        }
+
+        return newTorrentCache;
     }
 
     private void bnDefaults_Click(object sender, EventArgs e)
