@@ -667,7 +667,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         try
         {
-            return Helpers.FromUnixTime(updateFromEpochTime).ToUniversalTime();
+            return updateFromEpochTime.FromUnixTime().ToUniversalTime();
         }
         catch (Exception ex)
         {

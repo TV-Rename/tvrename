@@ -168,31 +168,23 @@ internal static class API
 
     private static JObject? JsonHttpGetRequest(string url, Dictionary<string, string?>? parameters, TokenProvider? authToken, string lang, bool retry)
     {
-        TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
         string fullUrl = url + HttpHelper.GetHttpParameters(parameters);
 
         string? response = null;
 
+        void Operation()
+        {
+            response = HttpRequest("GET", fullUrl, "application/json", authToken, lang);
+        }
+
         if (retry)
         {
-            if (authToken != null)
-            {
-                HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl,
-                    _ => true,
-                    () => { response = HttpRequest("GET", fullUrl, "application/json", authToken, lang); },
-                    authToken.EnsureValid);
-            }
-            else
-            {
-                HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl,
-                    _ => true,
-                    () => { response = HttpRequest("GET", fullUrl, "application/json", null, lang); },
-                    () => { });
-            }
+            TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
+            HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl, _ => true, Operation, () => {authToken?.EnsureValid(); });
         }
         else
         {
-            response = HttpRequest("GET", fullUrl, "application/json", authToken, lang);
+            Operation();
         }
 
         try
@@ -226,13 +218,14 @@ internal static class API
         }
     }
 
-    public static JObject? GetShowUpdatesSinceV3(long time, string lang)
+    private static JObject? GetShowUpdatesSinceV3(long time, string lang)
     {
             return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/updated/query",
                 new Dictionary<string, string?> { { "fromTime", time.ToString() } },
                 TokenProvider, lang, true);
     }
-    public static JObject? GetShowUpdatesSinceV4(long time, string lang, int page)
+
+    private static JObject? GetShowUpdatesSinceV4(long time, string lang, int page)
     {
             return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/updates",
                 new Dictionary<string, string?> { { "since", time.ToString() }, { "page", page.ToString() } },

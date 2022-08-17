@@ -311,16 +311,20 @@ public static class HttpHelper
     public static JObject JsonHttpPostRequest(string url, JObject request, bool retry)
     {
         string? response = null;
+
+        void Operation()
+        {
+            response = HttpRequest("POST", url, request.ToString(), "application/json", string.Empty);
+        }
+
         if (retry)
         {
             TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
-            RetryOnException(3, pauseBetweenFailures, url, _ => true,
-                () => { response = HttpRequest("POST", url, request.ToString(), "application/json", string.Empty); },
-                null);
+            RetryOnException(3, pauseBetweenFailures, url, _ => true, Operation,null);
         }
         else
         {
-            response = HttpRequest("POST", url, request.ToString(), "application/json", string.Empty);
+            Operation();
         }
 
         return JObject.Parse(response??string.Empty);
