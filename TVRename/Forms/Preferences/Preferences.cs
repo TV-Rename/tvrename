@@ -843,6 +843,8 @@ public partial class Preferences : Form
         cbMissingCSV.Checked = s.ExportMissingCSV;
         txtMissingCSV.Text = s.ExportMissingCSVTo;
 
+        chkRestrictMissingExportsToFullScans.Checked = s.RestrictMissingExportsToFullScans;
+
         cbXSPF.Checked = s.ExportRecentXSPF;
         txtXSPF.Text = s.ExportRecentXSPFTo;
         cbM3U.Checked = s.ExportRecentM3U;
@@ -1033,6 +1035,8 @@ public partial class Preferences : Form
         cbDefMovieUseDefLocation.Checked = s.DefMovieUseDefaultLocation;
         cbDefMovieIncludeFuture.Checked = s.DefMovieCheckFutureDatedMovies;
         cbDefMovieIncludeNoAirdate.Checked = s.DefMovieCheckNoDatedMovies;
+
+        s.RestrictMissingExportsToFullScans = chkRestrictMissingExportsToFullScans.Checked;
 
         cbTMDBLanguages.Text = s.TMDBLanguage.LocalName;
         cbTMDBRegions.Text = s.TMDBRegion.EnglishName ?? Regions.Instance.FallbackRegion.EnglishName;
