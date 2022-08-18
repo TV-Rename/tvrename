@@ -6,7 +6,7 @@ Here are some important resources:
 
   * [TV Rename website](http://www.tvrename.com/)
   * Join our [support forum](https://groups.google.com/forum/#!forum/tvrename)
-  * Vote on [feature suggestions](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0)
+  * Vote on [feature suggestions](https://tvrename.featureupvote.com/)
 
 ## Testing
 
