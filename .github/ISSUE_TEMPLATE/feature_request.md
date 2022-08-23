@@ -1,13 +1,13 @@
 ---
 name: Feature request
-about: Suggest an idea for this project - please add to 'The Ideas Wall'
+about: Suggest an idea for this project - please add to 'Feature Upvote'
 title: "[Feature Request]"
-labels: Tracked on Idea Wall
+labels: Tracked on 'Feature Upvote'
 assignees: ''
 
 ---
 
-These should be raised on the [Idea Wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0) and linked to here. Unprioritised new features will not be worked on.
+These should be raised on the [Feature Upvote](https://tvrename.featureupvote.com/) and linked to here. Unprioritised new features will not be worked on.
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]

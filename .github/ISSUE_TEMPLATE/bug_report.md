@@ -14,7 +14,7 @@ Please answer the following questions for yourself before submitting an issue. *
 - [ ] I am running the latest [version](https://github.com/TV-Rename/tvrename/releases)
 - [ ] I checked the [documentation](https://www.tvrename.com/manual/user/) / [support forum](https://groups.google.com/forum/#!forum/tvrename) and found no answer
 - [ ] I checked to make sure that this issue has not already been [filed](https://github.com/TV-Rename/tvrename/issues)
-- [ ] It is a bug (i.e. something that is going wrong) and not a new feature (These should be raised on the [Idea Wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0))
+- [ ] It is a bug (i.e. something that is going wrong) and not a new feature (These should be raised on [Feature Upvote](https://tvrename.featureupvote.com/))
  - [ ] It is not a general question( these should be asked on the [support forum](https://groups.google.com/forum/#!forum/tvrename))
 
 # Bug Details
