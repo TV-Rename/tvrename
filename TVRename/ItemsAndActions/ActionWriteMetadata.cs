@@ -41,7 +41,8 @@ public abstract class ActionWriteMetadata : ActionDownload
 
     public override int IconNumber => 7;
 
-    public override string SeriesName => Episode?.Show.ShowName ?? SelectedShow?.ShowName ?? Movie!.ShowName;
+    public override string SeriesName => Series?.ShowName ?? Movie!.ShowName;
     public override string DestinationFolder => Where.DirectoryName;
     public override string DestinationFile => Where.Name;
+    public override ShowConfiguration? Series => Episode?.Show ?? SelectedShow;
 }

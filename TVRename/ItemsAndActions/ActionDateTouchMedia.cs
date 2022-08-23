@@ -19,4 +19,6 @@ internal class ActionDateTouchMedia : ActionDateTouchDirectory
     public override string SeriesName => show.ShowName;
     public override string SeasonNumber => string.Empty;
     public override int? SeasonNumberAsInt => null;
+
+    public override ShowConfiguration? Series => show as ShowConfiguration;
 }
