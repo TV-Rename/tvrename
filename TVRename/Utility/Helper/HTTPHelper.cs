@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Humanizer;
 
 namespace TVRename;
 
@@ -319,8 +320,7 @@ public static class HttpHelper
 
         if (retry)
         {
-            TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
-            RetryOnException(3, pauseBetweenFailures, url, _ => true, Operation,null);
+            RetryOnException(3, 2.Seconds(), url, _ => true, Operation,null);
         }
         else
         {
@@ -425,8 +425,7 @@ public static class HttpHelper
     public static JObject HttpGetRequestWithRetry(string fullUrl, int times, int secondsGap)
     {
         JObject? response = null;
-        TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
-        RetryOnException(times, gap, fullUrl,
+        RetryOnException(times, secondsGap.Seconds(), fullUrl,
             exception => exception is TaskCanceledException || (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
             , () => { response = JsonHttpGetRequest(fullUrl, null); }
             , null);
@@ -437,8 +436,7 @@ public static class HttpHelper
     public static JArray HttpGetArrayRequestWithRetry(string fullUrl, int times, int secondsGap)
     {
         JArray? response = null;
-        TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
-        RetryOnException(times, gap, fullUrl,
+        RetryOnException(times, secondsGap.Seconds(), fullUrl,
             exception => exception is TaskCanceledException || (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
             , () => { response = JsonListHttpGetRequest(fullUrl, null); }
             , null);

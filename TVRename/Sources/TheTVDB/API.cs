@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Humanizer;
 
 namespace TVRename.TheTVDB;
 
@@ -179,8 +180,7 @@ internal static class API
 
         if (retry)
         {
-            TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
-            HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl, _ => true, Operation, () => {authToken?.EnsureValid(); });
+            HttpHelper.RetryOnException(3, 2.Seconds(), fullUrl, _ => true, Operation, () => {authToken?.EnsureValid(); });
         }
         else
         {

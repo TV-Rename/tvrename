@@ -11,6 +11,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Humanizer;
 
 namespace TVRename;
 
@@ -55,7 +56,7 @@ public static class VersionUpdater
             JArray? gitHubInfo = null;
 
             await HttpHelper.RetryOnExceptionAsync<Exception>
-            (3, TimeSpan.FromSeconds(2), GITHUB_RELEASES_API_URL, async () =>
+            (3, 2.Seconds(), GITHUB_RELEASES_API_URL, async () =>
             {
                 using HttpClient client = new();
                 client.DefaultRequestHeaders.Add("user-agent", TVSettings.USER_AGENT);
