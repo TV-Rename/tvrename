@@ -1,6 +1,7 @@
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
+using Humanizer;
 
 namespace TVRename.TheTVDB;
 
@@ -123,9 +124,9 @@ internal class TokenProvider
         lastRefreshTime = DateTime.Now;
     }
 
-    private bool ShouldRefreshToken() => DateTime.Now - lastRefreshTime >= TimeSpan.FromHours(23);
+    private bool ShouldRefreshToken() => DateTime.Now - lastRefreshTime >= 12.Hours();
 
-    private bool TokenIsValid() => DateTime.Now - lastRefreshTime < TimeSpan.FromDays(1) - TimeSpan.FromMinutes(1);
+    private bool TokenIsValid() => DateTime.Now - lastRefreshTime < 1.Days() - 1.Minutes();
 
     private bool IsTokenAcquired() => lastKnownToken != string.Empty;
 }
