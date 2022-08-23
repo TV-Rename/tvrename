@@ -498,7 +498,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         int pageNumber = 0;
         const int MAX_NUMBER_OF_CALLS = 1000;
         const int OFFSET = 0;
-        long fromEpochTime = updateFromEpochTime - OFFSET; List<JObject> updatesResponses = new();
+        long fromEpochTime = updateFromEpochTime - OFFSET;
+        List<JObject> updatesResponses = new();
 
         while (moreUpdates)
         {
@@ -1315,8 +1316,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             }
 
             IEnumerable<(int? id, JToken jsonData)> availableEpisodes = episodeData.Select(x => (x["id"]?.ToObject<int>(),x)).Where(x => x.Item1.HasValue);
-            IEnumerable<(int? id, JToken jsonData)> neededEpisodes =
-                availableEpisodes.Where(x => x.id.HasValue && si.Episodes.All(e => e.EpisodeId != x.id));
+            List<(int? id, JToken jsonData)> neededEpisodes =
+                availableEpisodes
+                    .Where(x => x.id.HasValue && si.Episodes.All(e => e.EpisodeId != x.id))
+                    .ToList();
+
+            if (!neededEpisodes.Any())
+            {
+                return;
+            }
 
             Parallel.ForEach(neededEpisodes,
                 new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, x =>
@@ -3218,7 +3226,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             extraEpisodes[e.EpisodeId].Done = false;
         }
 
-        Parallel.ForEach(extraEpisodes.Where(e => e.Value.SeriesId == code), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, ee =>
+        Parallel.ForEach(extraEpisodes.Where(e => e.Value.SeriesId == code && !e.Value.Done), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, ee =>
         {
             if (ee.Value.Done)
             {
