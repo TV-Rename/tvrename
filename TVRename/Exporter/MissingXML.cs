@@ -41,6 +41,20 @@ internal class MissingXML : MissingActionListExporter
             writer.WriteAttributeToXml("Version", "2.1");
             writer.WriteStartElement("MissingItems");
 
+            foreach (ShowSeasonMissing? missing in TheActionList.MissingSeasons)
+            {
+                writer.WriteStartElement("MissingItem");
+
+                writer.WriteElement("id", missing.Show.TvdbCode);
+                writer.WriteElement("title", missing.Show.Name);
+                int? missingSeasonNumberAsInt = missing.SeasonNumberAsInt;
+                if (missingSeasonNumberAsInt!= null)
+                {
+                    writer.WriteElement("season", missingSeasonNumberAsInt.Value.Pad());
+                }
+
+                writer.WriteEndElement(); // MissingItem
+            }
             foreach (ShowItemMissing? missing in TheActionList.MissingEpisodes)
             {
                 writer.WriteStartElement("MissingItem");

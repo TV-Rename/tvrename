@@ -881,6 +881,11 @@ public class TVDoc : IDisposable
                 return;
             }
 
+            if (TVSettings.Instance.GroupMissingEpisodesIntoSeasons)
+            {
+                GroupMissingSeasons();
+            }
+
             // sort Action list by type
             TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
 
@@ -915,6 +920,26 @@ public class TVDoc : IDisposable
         {
             scanProgDlg?.Done();
             AllowAutoScan();
+        }
+    }
+
+    private void GroupMissingSeasons()
+    {
+        List<IGrouping<(ShowConfiguration? Series, int? SeasonNumberAsInt), ShowItemMissing>> oldActions
+            = TheActionList.MissingEpisodes.GroupBy(e => (e.Series, e.SeasonNumberAsInt)).ToList();
+
+        foreach (IGrouping<(ShowConfiguration? Series, int? SeasonNumberAsInt),ShowItemMissing> season in oldActions)
+        {
+            ShowConfiguration? configuration = season.Key.Series;
+            int? seasonNum = season.Key.SeasonNumberAsInt;
+
+            if (configuration!= null && seasonNum != null)
+            {
+                if (configuration.SeasonEpisodes[seasonNum.Value].Count == season.Count())
+                {
+                    TheActionList.Replace(season, new ShowSeasonMissing(configuration,seasonNum.Value,season.First().TargetFolder,season.ToList()));
+                }
+            }
         }
     }
 
@@ -1833,6 +1858,13 @@ public class TVDoc : IDisposable
         TheActionList.Remove(toRemove);
     }
 
+    public void RevertSeasonAction(Item item)
+    {
+        if (item is ShowSeasonMissing ssm)
+        {
+            TheActionList.Replace(ssm.AsList(),ssm.OriginalItems);
+        }
+    }
     public void MovieFolderScan(UI ui,string downloadFolder)
     {
         if (!Directory.Exists(downloadFolder))

@@ -722,7 +722,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return MediaConfiguration.MediaType.movie;
         }
 
-        if (listSelectedObjects.Count == listSelectedObjects.OfType<ShowItemMissing>().Count())
+        if (listSelectedObjects.Count == (listSelectedObjects.OfType<ShowItemMissing>().Count() + listSelectedObjects.OfType<ShowSeasonMissing>().Count()))
         {
             return MediaConfiguration.MediaType.tv;
         }
@@ -3850,7 +3850,15 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         FillActionList();
         RefreshWTW(false, false);
     }
+    private void RevertSeasons()
+    {
+        foreach (Item item in GetSelectedItems())
+        {
+            mDoc.RevertSeasonAction(item);
+        }
 
+        FillActionList();
+    }
     private void folderMonitorToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
@@ -3923,7 +3931,12 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             AddRcMenuItem("Revert to Missing", (_, _) => Revert());
         }
 
-        if (lvr.Count == lvr.Missing.ToList().Count) // only missing items selected?
+        if (lvr.MissingSeasons.Count > 0)
+        {
+            AddRcMenuItem("Revert to Missing Episodes", (_, _) => RevertSeasons());
+        }
+
+        if (lvr.Count == lvr.MissingEpisodes.ToList().Count + lvr.MissingMovies.ToList().Count) // only missing items selected?
         {
             if (lvr.Count == 1) // only one selected
             {
@@ -3934,7 +3947,6 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 showRightClickMenu.Items.Add(new ToolStripSeparator());
                 MenuSearchFor(episode);
             }
-
             if (movie != null)
             {
                 showRightClickMenu.Items.Add(new ToolStripSeparator());
@@ -4961,6 +4973,10 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 if (i?.Episode != null)
                 {
                     JackettFinder.SearchForEpisode(i.Episode);
+                }
+                else if (i is ShowSeasonMissing { Series: { }, SeasonNumberAsInt: { } } ssm)
+                {
+                    JackettFinder.SearchForSeason(ssm.Series, ssm.SeasonNumberAsInt.Value);
                 }
 
                 if (i?.Movie != null)

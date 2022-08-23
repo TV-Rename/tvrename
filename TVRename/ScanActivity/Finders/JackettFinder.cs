@@ -54,13 +54,17 @@ internal class JackettFinder : DownloadFinder
 
                 UpdateStatus(n++, c, action.Filename);
 
-                if (action is ShowItemMissing showItemMissing)
+                switch (action)
                 {
-                    FindMissingEpisode(showItemMissing, toRemove, newItems);
-                }
-                else
-                {
-                    FindMissingEpisode((MovieItemMissing)action, toRemove, newItems);
+                    case ShowItemMissing showItemMissing:
+                        FindMissingEpisode(showItemMissing, toRemove, newItems);
+                        break;
+                    case MovieItemMissing movieItemMissing:
+                        FindMissingEpisode(movieItemMissing, toRemove, newItems);
+                        break;
+                    //case ShowSeasonMissing seasonMissing:
+                        //TODO - FindMissingSeason(seasonMissing, toRemove, newItems);
+                        //break;
                 }
             }
         }
@@ -154,15 +158,13 @@ internal class JackettFinder : DownloadFinder
         string apikey = TVSettings.Instance.JackettAPIKey;
         const string FORMAT = "{ShowName}";
         string text = WebUtility.UrlEncode(CustomMovieName.NameFor(actionMovieConfig, FORMAT));
-        return
-            $"{IndexerUrl()}api?t=movie&q={text}&apikey={apikey}";
+        return $"{IndexerUrl()}api?t=movie&q={text}&apikey={apikey}";
     }
 
     private static string NormalJackettUrl(MovieConfiguration actionMovieConfig)
     {
         string apikey = TVSettings.Instance.JackettAPIKey;
-        return
-            $"{IndexerUrl()}api?t=movie&apikey={apikey}&tmdbid={actionMovieConfig.TmdbCode}";
+        return $"{IndexerUrl()}api?t=movie&apikey={apikey}&tmdbid={actionMovieConfig.TmdbCode}";
     }
 
     private static string NormalJackettUrl(ProcessedEpisode processedEpisode)
@@ -179,33 +181,38 @@ internal class JackettFinder : DownloadFinder
         string apikey = TVSettings.Instance.JackettAPIKey;
         const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
         string text = WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false));
-        return
-            $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
+        return $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
     }
 
     public static void SearchForEpisode(ProcessedEpisode episode)
     {
         const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
-
-        string url = $"{SearchServer()}UI/Dashboard#search={WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false))}&tracker=&category=";
-
-        Helpers.OpenUrl(url);
+        string searchTerm = CustomEpisodeName.NameForNoExt(episode, FORMAT, false);
+        SearchFor(searchTerm);
     }
 
     public static void SearchForMovie(MovieConfiguration mov)
     {
         const string FORMAT = "{ShowName} ({Year})";
-
-        string url = $"{SearchServer()}UI/Dashboard#search={WebUtility.UrlEncode(CustomMovieName.NameFor(mov, FORMAT))}&tracker=&category=";
-
-        Helpers.OpenUrl(url);
+        string searchTerm = CustomMovieName.NameFor(mov, FORMAT);
+        SearchFor(searchTerm);
     }
 
-    private static string SearchServer()
+    public static void SearchForSeason(ShowConfiguration series, int snum)
+    {
+        const string FORMAT = "{ShowName} S{Season:2}";
+        string searchTerm = CustomSeasonName.NameFor(series,snum, FORMAT);
+        SearchFor(searchTerm);
+    }
+
+    private static void SearchFor(string searchTerm)
     {
         string serverName = TVSettings.Instance.JackettServer;
         string serverPort = TVSettings.Instance.JackettPort;
+        string searchServer =  $"http://{serverName}:{serverPort}/";
 
-        return $"http://{serverName}:{serverPort}/";
+        string url = $"{searchServer}UI/Dashboard#search={WebUtility.UrlEncode(searchTerm)}&tracker=&category=";
+
+        Helpers.OpenUrl(url);
     }
 }

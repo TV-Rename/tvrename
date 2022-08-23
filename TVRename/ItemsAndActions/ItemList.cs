@@ -33,6 +33,7 @@ public sealed class ItemList : SafeList<Item>
     public List<ItemMissing> Missing => this.OfType<ItemMissing>().ToList();
 
     public List<ShowItemMissing> MissingEpisodes => this.OfType<ShowItemMissing>().ToList();
+    public List<ShowSeasonMissing> MissingSeasons => this.OfType<ShowSeasonMissing>().ToList();
     public List<MovieItemMissing> MissingMovies => this.OfType<MovieItemMissing>().ToList();
 
     public List<ActionMoveRenameDirectory> MoveRenameDirectories => this.OfType<ActionMoveRenameDirectory>().ToList();

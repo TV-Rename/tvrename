@@ -133,7 +133,7 @@ public class ProcessedEpisode : Episode
 
     public bool PreviouslySeen => TVSettings.Instance.PreviouslySeenEpisodes.Contains(EpisodeId);
 
-    public string SeasonNumberAsText => AppropriateSeasonNumber != 0 ? AppropriateSeasonNumber.ToString() : TVSettings.SpecialsListViewName;
+    public string SeasonNumberAsText => TVSettings.SeasonNameFor(AppropriateSeasonNumber);
 
     public string? WebsiteUrl
     {

@@ -13,6 +13,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using Humanizer;
 using TimeZoneConverter;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using Control = System.Windows.Forms.Control;
@@ -423,6 +424,7 @@ public partial class Preferences : Form
         s.Mede8erXML = cbXMLFiles.Checked;
         s.ShrinkLargeMede8erImages = cbShrinkLarge.Checked;
         s.FanArtJpg = cbFantArtJpg.Checked;
+        s.GroupMissingEpisodesIntoSeasons = chkGroupMissingEpisodesIntoSeasons.Checked;
 
         s.Tidyup.DeleteEmpty = cbDeleteEmpty.Checked;
         s.Tidyup.DeleteEmptyIsRecycle = cbRecycleNotDelete.Checked;
@@ -1007,6 +1009,7 @@ public partial class Preferences : Form
         cbEmptyMaxSize.Checked = s.Tidyup.EmptyMaxSizeCheck;
         txtEmptyMaxSize.Text = s.Tidyup.EmptyMaxSizeMB.ToString();
         txtSeasonFolderName.Text = s.defaultSeasonWord;
+        chkGroupMissingEpisodesIntoSeasons.Checked = s.GroupMissingEpisodesIntoSeasons;
 
         cbIgnoreRecycleBin.Checked = s.BulkAddIgnoreRecycleBin;
         cbIgnoreNoVideoFolders.Checked = s.BulkAddCompareNoVideoFolders;
@@ -1115,13 +1118,13 @@ public partial class Preferences : Form
         cboUpdateCheckInterval.ValueMember = nameof(UpdateCheckInterval.Interval);
         cboUpdateCheckInterval.DataSource = new[]
         {
-            new UpdateCheckInterval( "1 Hour",  TimeSpan.FromHours(1)),
-            new UpdateCheckInterval( "12 Hours",  TimeSpan.FromHours(12)),
-            new UpdateCheckInterval( "1 Day",  TimeSpan.FromHours(24)),
-            new UpdateCheckInterval( "1 Week", TimeSpan.FromDays(7)),
-            new UpdateCheckInterval( "2 Week",  TimeSpan.FromDays(7 * 2)),
-            new UpdateCheckInterval( "30 Days",  TimeSpan.FromDays(30)),
-            new UpdateCheckInterval( "90 Days",  TimeSpan.FromDays(90)),
+            new UpdateCheckInterval( "1 Hour",  1.Hours()),
+            new UpdateCheckInterval( "12 Hours",  12.Hours()),
+            new UpdateCheckInterval( "1 Day",  1.Days()),
+            new UpdateCheckInterval( "1 Week", 1.Weeks()),
+            new UpdateCheckInterval( "2 Week",  2.Weeks()),
+            new UpdateCheckInterval( "30 Days",  30.Days()),
+            new UpdateCheckInterval( "90 Days",  90.Days()),
         };
     }
 

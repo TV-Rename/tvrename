@@ -480,6 +480,7 @@ namespace TVRename
             this.label45 = new System.Windows.Forms.Label();
             this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
             this.tpAutoExportLibrary = new System.Windows.Forms.TabPage();
+            this.chkRestrictMissingExportsToFullScans = new System.Windows.Forms.CheckBox();
             this.pbuShowExport = new System.Windows.Forms.PictureBox();
             this.label89 = new System.Windows.Forms.Label();
             this.groupBox26 = new System.Windows.Forms.GroupBox();
@@ -519,7 +520,7 @@ namespace TVRename
             this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
-            this.chkRestrictMissingExportsToFullScans = new System.Windows.Forms.CheckBox();
+            this.chkGroupMissingEpisodesIntoSeasons = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -5266,6 +5267,7 @@ namespace TVRename
             // 
             // tpScanSettings
             // 
+            this.tpScanSettings.Controls.Add(this.chkGroupMissingEpisodesIntoSeasons);
             this.tpScanSettings.Controls.Add(this.groupBox17);
             this.tpScanSettings.Controls.Add(this.groupBox1);
             this.tpScanSettings.Controls.Add(this.cbScanIncludesBulkAdd);
@@ -6084,6 +6086,16 @@ namespace TVRename
             this.tpAutoExportLibrary.Text = "Library Export";
             this.tpAutoExportLibrary.UseVisualStyleBackColor = true;
             // 
+            // chkRestrictMissingExportsToFullScans
+            // 
+            this.chkRestrictMissingExportsToFullScans.AutoSize = true;
+            this.chkRestrictMissingExportsToFullScans.Location = new System.Drawing.Point(10, 67);
+            this.chkRestrictMissingExportsToFullScans.Name = "chkRestrictMissingExportsToFullScans";
+            this.chkRestrictMissingExportsToFullScans.Size = new System.Drawing.Size(220, 19);
+            this.chkRestrictMissingExportsToFullScans.TabIndex = 45;
+            this.chkRestrictMissingExportsToFullScans.Text = "Restrict Missing Exports to Full Scans";
+            this.chkRestrictMissingExportsToFullScans.UseVisualStyleBackColor = true;
+            // 
             // pbuShowExport
             // 
             this.pbuShowExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -6573,15 +6585,18 @@ namespace TVRename
             this.optUpdateCheckAlways.UseVisualStyleBackColor = true;
             this.optUpdateCheckAlways.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
             // 
-            // chkRestrictMissingExportsToFullScans
+            // chkGroupMissingEpisodesIntoSeasons
             // 
-            this.chkRestrictMissingExportsToFullScans.AutoSize = true;
-            this.chkRestrictMissingExportsToFullScans.Location = new System.Drawing.Point(10, 67);
-            this.chkRestrictMissingExportsToFullScans.Name = "chkRestrictMissingExportsToFullScans";
-            this.chkRestrictMissingExportsToFullScans.Size = new System.Drawing.Size(220, 19);
-            this.chkRestrictMissingExportsToFullScans.TabIndex = 45;
-            this.chkRestrictMissingExportsToFullScans.Text = "Restrict Missing Exports to Full Scans";
-            this.chkRestrictMissingExportsToFullScans.UseVisualStyleBackColor = true;
+            this.chkGroupMissingEpisodesIntoSeasons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkGroupMissingEpisodesIntoSeasons.AutoSize = true;
+            this.chkGroupMissingEpisodesIntoSeasons.Location = new System.Drawing.Point(8, 647);
+            this.chkGroupMissingEpisodesIntoSeasons.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.chkGroupMissingEpisodesIntoSeasons.Name = "chkGroupMissingEpisodesIntoSeasons";
+            this.chkGroupMissingEpisodesIntoSeasons.Size = new System.Drawing.Size(244, 19);
+            this.chkGroupMissingEpisodesIntoSeasons.TabIndex = 50;
+            this.chkGroupMissingEpisodesIntoSeasons.Text = "Group Entire Seasons of Missing Episodes";
+            this.chkGroupMissingEpisodesIntoSeasons.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -7228,5 +7243,6 @@ namespace TVRename
         private System.Windows.Forms.Label label98;
         private System.Windows.Forms.DomainUpDown upDownScanSeconds;
         private System.Windows.Forms.CheckBox chkRestrictMissingExportsToFullScans;
+        private System.Windows.Forms.CheckBox chkGroupMissingEpisodesIntoSeasons;
     }
 }

@@ -20,6 +20,11 @@ internal class MissingCSV : MissingActionListExporter
         {
             file.WriteLine("Show Name,Season,Episode,Episode Name,Air Date,Folder,Nice Name,thetvdb.com Code");
 
+            foreach (ShowSeasonMissing im in TheActionList.MissingSeasons)
+            {
+                file.WriteLine(
+                    $"\"{im.Series.Name}\",{im.SeasonNumberAsInt},,,,\"{im.TargetFolder}\",\"{im.Filename}\",{im.Series.Id()}");
+            }
             foreach (ShowItemMissing? im in TheActionList.MissingEpisodes)
             {
                 ProcessedEpisode pe = im.MissingEpisode;

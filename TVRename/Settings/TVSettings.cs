@@ -149,6 +149,7 @@ public sealed class TVSettings
     public bool SeriesJpg = false;
     public bool ShrinkLargeMede8erImages = false;
     public bool FanArtJpg = false;
+    public bool GroupMissingEpisodesIntoSeasons = true;
     public bool Mede8erXML = false;
     public bool ExportFOXML = false;
     public string ExportFOXMLTo = string.Empty;
@@ -439,7 +440,7 @@ public sealed class TVSettings
 
     public bool SuppressUpdateAvailablePopup = false;
     public UpdateCheckMode UpdateCheckType = UpdateCheckMode.Everytime;
-    internal TimeSpan UpdateCheckInterval = TimeSpan.FromDays(1);
+    internal TimeSpan UpdateCheckInterval = 1.Days();
 
     public string? DefMovieDefaultLocation;
     public TVDoc.ProviderType DefaultMovieProvider = TVDoc.ProviderType.TMDB;
@@ -637,6 +638,7 @@ public sealed class TVSettings
         writer.WriteElement("WTWDoubleClick", (int)WTWDoubleClick);
         writer.WriteElement("EpJPGs", EpJPGs);
         writer.WriteElement("SeriesJpg", SeriesJpg);
+        writer.WriteElement("GroupMissingEpisodesIntoSeasons", GroupMissingEpisodesIntoSeasons);
         writer.WriteElement("Mede8erXML", Mede8erXML);
         writer.WriteElement("ShrinkLargeMede8erImages", ShrinkLargeMede8erImages);
         writer.WriteElement("FanArtJpg", FanArtJpg);
@@ -1542,6 +1544,7 @@ public sealed class TVSettings
         EpJPGs = xmlSettings.ExtractBool("EpJPGs", false);
         SeriesJpg = xmlSettings.ExtractBool("SeriesJpg", false);
         Mede8erXML = xmlSettings.ExtractBool("Mede8erXML", false);
+        GroupMissingEpisodesIntoSeasons = xmlSettings.ExtractBool("GroupMissingEpisodesIntoSeasons", true);
         ShrinkLargeMede8erImages = xmlSettings.ExtractBool("ShrinkLargeMede8erImages", false);
         FanArtJpg = xmlSettings.ExtractBool("FanArtJpg", false);
         BulkAddIgnoreRecycleBin = xmlSettings.ExtractBool("BulkAddIgnoreRecycleBin", false);
@@ -1643,7 +1646,7 @@ public sealed class TVSettings
         XElement? subElement = xmlSettings.Element("AppUpdate");
         if (subElement != null)
         {
-            UpdateCheckInterval = TimeSpan.Parse(subElement.ExtractString("Interval", TimeSpan.FromHours(1).ToString()));
+            UpdateCheckInterval = TimeSpan.Parse(subElement.ExtractString("Interval", 1.Hours().ToString()));
             UpdateCheckType = (UpdateCheckMode)Enum.Parse(typeof(UpdateCheckMode), subElement.ExtractString("Mode", ((int)UpdateCheckMode.Everytime).ToString()));
             SuppressUpdateAvailablePopup = subElement.ExtractBool("SuppressPopup", false);
         }
@@ -1903,4 +1906,6 @@ public sealed class TVSettings
         string folderName = CustomTvShowName.DirectoryNameFor(showConfiguration,style);
         return DefaultTVShowFolder(folderName);
     }
+
+    public static string SeasonNameFor(int seasonNumber) => seasonNumber != 0 ? seasonNumber.ToString() : SpecialsListViewName;
 }
