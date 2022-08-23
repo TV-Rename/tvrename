@@ -13,11 +13,11 @@ public class DateActionComparer : ObjectListViewComparer<DateTime>
     {
         try
         {
-            return ((Item)x.RowObject).AirDate ?? DateTime.Now;
+            return ((Item)x.RowObject).AirDate ?? DateTime.MinValue;
         }
         catch
         {
-            return DateTime.Now;
+            return DateTime.MinValue;
         }
     }
 }
