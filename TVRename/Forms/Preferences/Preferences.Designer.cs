@@ -321,7 +321,6 @@ namespace TVRename
             this.label66 = new System.Windows.Forms.Label();
             this.txtMaxSampleSize = new System.Windows.Forms.TextBox();
             this.txtVideoExtensions = new System.Windows.Forms.TextBox();
-            this.bnTags = new System.Windows.Forms.Button();
             this.label39 = new System.Windows.Forms.Label();
             this.cbKeepTogetherMode = new System.Windows.Forms.ComboBox();
             this.bnReplaceRemove = new System.Windows.Forms.Button();
@@ -417,6 +416,7 @@ namespace TVRename
             this.cbDefShowNextAirdate = new System.Windows.Forms.CheckBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tpScanSettings = new System.Windows.Forms.TabPage();
+            this.chkGroupMissingEpisodesIntoSeasons = new System.Windows.Forms.CheckBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.cbIgnorePreviouslySeenMovies = new System.Windows.Forms.CheckBox();
             this.chkMoveLibraryFiles = new System.Windows.Forms.CheckBox();
@@ -520,7 +520,6 @@ namespace TVRename
             this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
-            this.chkGroupMissingEpisodesIntoSeasons = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -3970,7 +3969,6 @@ namespace TVRename
             this.tbFilesAndFolders.Controls.Add(this.txtMaxSampleSize);
             this.tbFilesAndFolders.Controls.Add(this.txtOtherExtensions);
             this.tbFilesAndFolders.Controls.Add(this.txtVideoExtensions);
-            this.tbFilesAndFolders.Controls.Add(this.bnTags);
             this.tbFilesAndFolders.Controls.Add(this.label39);
             this.tbFilesAndFolders.Controls.Add(this.cbKeepTogetherMode);
             this.tbFilesAndFolders.Controls.Add(this.bnReplaceRemove);
@@ -4063,18 +4061,6 @@ namespace TVRename
             this.txtVideoExtensions.Name = "txtVideoExtensions";
             this.txtVideoExtensions.Size = new System.Drawing.Size(348, 23);
             this.txtVideoExtensions.TabIndex = 5;
-            // 
-            // bnTags
-            // 
-            this.bnTags.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnTags.Location = new System.Drawing.Point(523, 378);
-            this.bnTags.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.bnTags.Name = "bnTags";
-            this.bnTags.Size = new System.Drawing.Size(88, 27);
-            this.bnTags.TabIndex = 24;
-            this.bnTags.Text = "Tags...";
-            this.bnTags.UseVisualStyleBackColor = true;
-            this.bnTags.Click += new System.EventHandler(this.bnTags_Click);
             // 
             // label39
             // 
@@ -5282,6 +5268,19 @@ namespace TVRename
             this.tpScanSettings.TabIndex = 16;
             this.tpScanSettings.Text = "Scan Settings";
             this.tpScanSettings.UseVisualStyleBackColor = true;
+            // 
+            // chkGroupMissingEpisodesIntoSeasons
+            // 
+            this.chkGroupMissingEpisodesIntoSeasons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkGroupMissingEpisodesIntoSeasons.AutoSize = true;
+            this.chkGroupMissingEpisodesIntoSeasons.Location = new System.Drawing.Point(8, 647);
+            this.chkGroupMissingEpisodesIntoSeasons.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.chkGroupMissingEpisodesIntoSeasons.Name = "chkGroupMissingEpisodesIntoSeasons";
+            this.chkGroupMissingEpisodesIntoSeasons.Size = new System.Drawing.Size(244, 19);
+            this.chkGroupMissingEpisodesIntoSeasons.TabIndex = 50;
+            this.chkGroupMissingEpisodesIntoSeasons.Text = "Group Entire Seasons of Missing Episodes";
+            this.chkGroupMissingEpisodesIntoSeasons.UseVisualStyleBackColor = true;
             // 
             // groupBox17
             // 
@@ -6585,19 +6584,6 @@ namespace TVRename
             this.optUpdateCheckAlways.UseVisualStyleBackColor = true;
             this.optUpdateCheckAlways.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
             // 
-            // chkGroupMissingEpisodesIntoSeasons
-            // 
-            this.chkGroupMissingEpisodesIntoSeasons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkGroupMissingEpisodesIntoSeasons.AutoSize = true;
-            this.chkGroupMissingEpisodesIntoSeasons.Location = new System.Drawing.Point(8, 647);
-            this.chkGroupMissingEpisodesIntoSeasons.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkGroupMissingEpisodesIntoSeasons.Name = "chkGroupMissingEpisodesIntoSeasons";
-            this.chkGroupMissingEpisodesIntoSeasons.Size = new System.Drawing.Size(244, 19);
-            this.chkGroupMissingEpisodesIntoSeasons.TabIndex = 50;
-            this.chkGroupMissingEpisodesIntoSeasons.Text = "Group Entire Seasons of Missing Episodes";
-            this.chkGroupMissingEpisodesIntoSeasons.UseVisualStyleBackColor = true;
-            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -6893,7 +6879,6 @@ namespace TVRename
         private System.Windows.Forms.TextBox txtMaxSampleSize;
         private System.Windows.Forms.TextBox txtOtherExtensions;
         private System.Windows.Forms.TextBox txtVideoExtensions;
-        private System.Windows.Forms.Button bnTags;
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.ComboBox cbKeepTogetherMode;
         private System.Windows.Forms.Button bnReplaceRemove;

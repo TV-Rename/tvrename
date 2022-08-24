@@ -5,6 +5,9 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -22,65 +25,38 @@ public partial class CustomNameTagsFloatingWindow : Form
 {
     public CustomNameTagsFloatingWindow(ProcessedEpisode? pe)
     {
-        InitializeComponent();
-
-        foreach (string s in CustomEpisodeName.TAGS)
-        {
-            string txt = s;
-            if (pe != null)
-            {
-                txt += " - " + CustomEpisodeName.NameForNoExt(pe, s);
-            }
-
-            label1.Text += txt + "\r\n";
-        }
+        InitializeComponent(CustomEpisodeName.TAGS, pe != null, s => CustomEpisodeName.NameForNoExt(pe!, s));
     }
 
     public CustomNameTagsFloatingWindow(ProcessedSeason? pe)
     {
-        InitializeComponent();
-
-        foreach (string s in CustomSeasonName.TAGS)
-        {
-            string txt = s;
-            if (pe != null)
-            {
-                txt += " - " + CustomSeasonName.NameFor(pe, s);
-            }
-
-            label1.Text += txt + "\r\n";
-        }
+        InitializeComponent(CustomSeasonName.TAGS, pe != null, s => CustomSeasonName.NameFor(pe!, s));
     }
 
     public CustomNameTagsFloatingWindow(MovieConfiguration? movie)
     {
-        InitializeComponent();
-
-        foreach (string s in CustomMovieName.TAGS)
-        {
-            string txt = s;
-            if (movie != null)
-            {
-                txt += " - " + CustomMovieName.NameFor(movie, s);
-            }
-
-            label1.Text += txt + "\r\n";
-        }
+        InitializeComponent(CustomMovieName.TAGS, movie != null, s => CustomMovieName.NameFor(movie, s));
     }
 
     public CustomNameTagsFloatingWindow(ShowConfiguration? tvShow)
     {
+        InitializeComponent(CustomTvShowName.TAGS, tvShow != null, s => CustomTvShowName.NameFor(tvShow, s));
+    }
+
+    private void InitializeComponent(List<string> tags, bool showExamples, Func<string, string> createExampleFromTagFunc)
+    {
         InitializeComponent();
 
-        foreach (string s in CustomTvShowName.TAGS)
+        foreach (string s in tags)
         {
-            string txt = s;
-            if (tvShow != null)
+            if (showExamples)
             {
-                txt += " - " + CustomTvShowName.NameFor(tvShow, s);
+                label1.Text += $"{s} - {createExampleFromTagFunc(s)}\r\n";
             }
-
-            label1.Text += txt + "\r\n";
+            else
+            {
+                label1.Text += $"{s}\r\n";
+            }
         }
     }
 }

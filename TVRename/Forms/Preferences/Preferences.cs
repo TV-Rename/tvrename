@@ -1794,13 +1794,6 @@ public partial class Preferences : Form
         e.SuppressKeyPress = true;
     }
 
-    private void bnTags_Click(object sender, EventArgs e)
-    {
-        cntfw = new CustomNameTagsFloatingWindow(sampleProcessedSeason);
-        cntfw.Show(this);
-        Focus();
-    }
-
     private void tpSearch_DrawItem(object sender, DrawItemEventArgs e)
     {
         //Follow this advice https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/how-to-display-side-aligned-tabs-with-tabcontrol
@@ -2125,9 +2118,7 @@ public partial class Preferences : Form
 
     private void button1_Click(object sender, EventArgs e)
     {
-        ProcessedSeason? t = null;
-        // ReSharper disable once ExpressionIsAlwaysNull
-        cntfw = new CustomNameTagsFloatingWindow(t);
+        cntfw = new CustomNameTagsFloatingWindow(sampleProcessedSeason);
         cntfw.Show(this);
         Focus();
     }
@@ -2275,7 +2266,9 @@ public partial class Preferences : Form
         RemoveSelectedMovieMonitorFolder();
     }
 
-    private void button2_Click(object sender, EventArgs e)
+    private void button2_Click(object sender, EventArgs e) => OpenMovieTags();
+
+    private void OpenMovieTags()
     {
         MovieConfiguration? t = null;
         // ReSharper disable once ExpressionIsAlwaysNull
@@ -2284,14 +2277,7 @@ public partial class Preferences : Form
         Focus();
     }
 
-    private void button3_Click(object sender, EventArgs e)
-    {
-        MovieConfiguration? t = null;
-        // ReSharper disable once ExpressionIsAlwaysNull
-        cntfw = new CustomNameTagsFloatingWindow(t);
-        cntfw.Show(this);
-        Focus();
-    }
+    private void button3_Click(object sender, EventArgs e) => OpenMovieTags();
 
     private void chkUpdateCheckEnabled_CheckedChanged(object sender, EventArgs e)
     {
