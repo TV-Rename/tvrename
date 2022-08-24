@@ -8,6 +8,7 @@
 
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
@@ -45,7 +46,19 @@ public static class Program
             Application.ThreadException += delegate (object _, ThreadExceptionEventArgs eventArgs)
             {
                 Exception e = eventArgs.Exception;
-                Logger.Fatal(e, "UNHANDLED ERROR - Application.ThreadException");
+                if (e is HttpRequestException hre)
+                {
+                    Logger.Fatal(e, $"UNHANDLED ERROR - Application.ThreadException ({hre.TargetSite}-{hre.InnerException})");
+                    if (hre.InnerException is { } ie)
+                    {
+                        Logger.Fatal(ie, $"UNHANDLED ERROR - Application.ThreadException ({ie.TargetSite}-{ie.InnerException})");
+                    }
+                }
+                else
+                {
+                    Logger.Fatal(e, $"UNHANDLED ERROR - Application.ThreadException");
+                }
+
                 Environment.Exit(1);
             };
         }
