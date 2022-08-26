@@ -929,9 +929,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         else if (time < selectedCachedSeriesInfo.SrvLastUpdated)
         {
-            LOGGER.Error(selectedCachedSeriesInfo.Name + " has a lastupdated of  " +
-                        selectedCachedSeriesInfo.SrvLastUpdated.FromUnixTime().ToLocalTime() + " server says " +
-                        time.FromUnixTime().ToLocalTime());
+            LOGGER.Error(
+                $"{selectedCachedSeriesInfo.Name} has a lastupdated of {selectedCachedSeriesInfo.SrvLastUpdated.FromUnixTime().ToLocalTime()} server says {time.FromUnixTime().ToLocalTime()} {message}");
         }
     }
 
