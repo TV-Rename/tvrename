@@ -1580,7 +1580,7 @@ internal static class ShowHtmlHelper
 
         string seasText = SeasonName(si, snum);
         string? seasonUrl = s.WebsiteUrl;
-        if (eis.Count > 0 && eis[0].SeasonId > 0 && seasonUrl.HasValue())
+        if (eis.Any() && eis[0].SeasonId > 0 && seasonUrl.HasValue())
         {
             seasText = $" - <A HREF=\"{seasonUrl}\">{seasText}</a>";
         }
@@ -1608,7 +1608,7 @@ internal static class ShowHtmlHelper
             }
 
             List<FileInfo> fl = dfc.FindEpOnDisk(ei);
-            if (fl.Count > 0)
+            if (fl.Any())
             {
                 foreach (FileInfo fi in fl)
                 {

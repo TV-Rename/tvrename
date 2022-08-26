@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using Alphaleonis.Win32.Filesystem;
 
@@ -56,7 +57,7 @@ internal class UpcomingXML : UpcomingExporter
                 if (airdt.HasValue && airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
                 {
                     List<FileInfo> fl = dfc.FindEpOnDisk(ei);
-                    if (fl.Count > 0)
+                    if (fl.Any())
                     {
                         writer.WriteValue("true");
                     }

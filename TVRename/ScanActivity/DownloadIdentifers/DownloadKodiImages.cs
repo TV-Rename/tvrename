@@ -101,7 +101,7 @@ internal class DownloadKodiImages : DownloadIdentifier
         {
             ItemList theActionList = new();
             // base folder:
-            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && si.AllFolderLocations(false).Count > 0)
+            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && si.AllFolderLocations(false).Any())
             {
                 FileInfo posterJpg = FileHelper.FileInFolder(si.AutoAddFolderBase, "poster.jpg");
                 FileInfo bannerJpg = FileHelper.FileInFolder(si.AutoAddFolderBase, "banner.jpg");

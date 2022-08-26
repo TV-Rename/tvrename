@@ -678,7 +678,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                 m.AddEpisode(newEpisode);
             }
 
-            if (downloadedSeason.Images != null && downloadedSeason.Images.Posters.Count > 0)
+            if (downloadedSeason.Images != null && downloadedSeason.Images.Posters.Any())
             {
                 int imageId = snum * 1000;
                 foreach (ImageData? image in downloadedSeason.Images.Posters)

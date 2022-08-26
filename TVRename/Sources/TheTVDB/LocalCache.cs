@@ -972,7 +972,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LOGGER.Info(si.Name + " had " + numberOfUpdatedEpisodes +
                     " episodes updated and " + numberOfNewEpisodes + " new episodes ");
 
-        if (oldEpisodeIds.Count > 0)
+        if (oldEpisodeIds.Any())
         {
             LOGGER.Warn(
                 $"{si.Name} had {oldEpisodeIds.Count} episodes deleted: {string.Join(",", oldEpisodeIds)}");

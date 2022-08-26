@@ -144,11 +144,11 @@ internal class CleanDownloadDirectory : ScanActivity
             return;
         }
 
-        if (matchingShows.Count > 0 && TVSettings.Instance.RemoveDownloadDirectoriesFiles)
+        if (matchingShows.Any() && TVSettings.Instance.RemoveDownloadDirectoriesFiles)
         {
             returnActions.Add(SetupDirectoryRemoval(di, matchingShows));
         }
-        if (matchingMovies.Count > 0 && TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies)
+        if (matchingMovies.Any() && TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies)
         {
             returnActions.Add(SetupDirectoryRemoval(di, matchingMovies));
         }

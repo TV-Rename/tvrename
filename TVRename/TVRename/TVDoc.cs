@@ -815,8 +815,8 @@ public class TVDoc : IDisposable
         {
             Logger.Info("*******************************");
             string desc = settings.Unattended ? "unattended " : "";
-            string showsdesc = settings.Shows.Count > 0 ? settings.Shows.Count.ToString() : "all";
-            string moviesdesc = settings.Movies.Count > 0 ? settings.Movies.Count.ToString() : "all";
+            string showsdesc = settings.Shows.Any() ? settings.Shows.Count.ToString() : "all";
+            string moviesdesc = settings.Movies.Any() ? settings.Movies.Count.ToString() : "all";
             string scantype = settings.Type.PrettyPrint();
             string mediatype = settings.Media.PrettyPrint();
             Logger.Info($"Starting {desc}{scantype} {mediatype} Scan for {showsdesc} shows and {moviesdesc} movies...");
@@ -1798,7 +1798,7 @@ public class TVDoc : IDisposable
             TheActionList.Remove(action);
         }
 
-        if (remove.Count > 0)
+        if (remove.Any())
         {
             SetDirty();
         }

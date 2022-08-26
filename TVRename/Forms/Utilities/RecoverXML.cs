@@ -7,6 +7,7 @@
 //
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 
@@ -60,7 +61,7 @@ public partial class RecoverXml : Form
     private static void Setup(ListBox lb, string defaultValue, IReadOnlyCollection<FileInfo> files)
     {
         lb.Items.Add(defaultValue);
-        if (files.Count > 0)
+        if (files.Any())
         {
             foreach (FileInfo fi in files)
             {

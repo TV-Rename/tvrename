@@ -710,7 +710,7 @@ public class ShowConfiguration : MediaConfiguration
 
         foreach (KeyValuePair<int, List<ShowRule>> kvp in SeasonRules)
         {
-            if (kvp.Value.Count > 0)
+            if (kvp.Value.Any())
             {
                 writer.WriteStartElement("Rules");
                 writer.WriteAttributeToXml("SeasonNumber", kvp.Key);
@@ -725,7 +725,7 @@ public class ShowConfiguration : MediaConfiguration
         }
         foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations)
         {
-            if (kvp.Value.Count > 0)
+            if (kvp.Value.Any())
             {
                 writer.WriteStartElement("SeasonFolders");
 

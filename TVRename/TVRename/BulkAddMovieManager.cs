@@ -305,7 +305,7 @@ public class BulkAddMovieManager
         AddItems = new PossibleNewMovies();
 
         CurrentPhaseTotal = 1;
-        if (TVSettings.Instance.MovieLibraryFolders.Count > 0)
+        if (TVSettings.Instance.MovieLibraryFolders.Any())
         {
             CurrentPhaseTotal = TVSettings.Instance.MovieLibraryFolders.Count;
         }

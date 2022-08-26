@@ -497,7 +497,7 @@ public partial class ShowSummary : Form, IDialogParent
             foreach (ProcessedEpisode epds in show.SeasonEpisodes[seas.SeasonNumber])
             {
                 List<FileInfo> fl = dfc.FindEpOnDisk(epds, false);
-                if (fl.Count > 0)
+                if (fl.Any())
                 {
                     if (first)
                     {

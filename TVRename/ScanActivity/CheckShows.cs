@@ -36,7 +36,7 @@ internal class CheckShows : ScanActivity
 
         List<ShowConfiguration> showList = Settings.Shows;
 
-        if (Settings.Type == TVSettings.ScanType.Full && showList.Count > 0)
+        if (Settings.Type == TVSettings.ScanType.Full && showList.Any())
         {
             // only do episode count if we're doing all shows and seasons
             MDoc.CurrentStats.NsNumberOfEpisodes = 0;

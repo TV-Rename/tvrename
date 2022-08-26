@@ -696,7 +696,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         Searchers searchers = GetUsedSearchers();
         string name = searchers.CurrentSearch.Name;
-        bool enabled = name.HasValue() && searchers.Count > 0;
+        bool enabled = name.HasValue() && searchers.Any();
 
         btnScheduleBTSearch.Enabled = enabled;
         btnScheduleBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
@@ -1767,7 +1767,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         ProcessedEpisode ei = (ProcessedEpisode)lvWhenToWatch.SelectedItems[0].Tag;
         List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, ei);
-        if (fl.Count > 0)
+        if (fl.Any())
         {
             Helpers.OpenFile(fl[0].FullName);
             return;
@@ -2194,7 +2194,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void AddEpisodesMenu(ProcessedEpisode ep)
     {
         List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, ep);
-        if (fl.Count > 0)
+        if (fl.Any())
         {
             showRightClickMenu.Items.Add(new ToolStripSeparator());
 
@@ -2789,7 +2789,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                                         || !pe.Show.DoRename
                                         || fl.All(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase));
 
-        if (fl.Count > 0 && appropriateFileNameFound)
+        if (fl.Any() && appropriateFileNameFound)
         {
             return 0; //Disk
         }
@@ -3468,7 +3468,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         ShowConfiguration? currentShow = TreeNodeToShowItem(MyShowTree.SelectedNode);
         string theFolder = GetFolderForShow(currentShow);
 
-        if (string.IsNullOrWhiteSpace(theFolder) && TVSettings.Instance.DownloadFolders.Count > 0)
+        if (string.IsNullOrWhiteSpace(theFolder) && TVSettings.Instance.DownloadFolders.Any())
         {
             theFolder = TVSettings.Instance.DownloadFolders.First();
         }
@@ -3925,13 +3925,13 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             AddRcMenuItem("Action Selected", (_, _) => ActionAction(false, false, false));
         }
-        if (lvr.CopyMove.Count > 0 || lvr.DownloadTorrents.Count > 0 || lvr.Downloading.Count > 0)
+        if (lvr.CopyMove.Any() || lvr.DownloadTorrents.Any() || lvr.Downloading.Any())
         {
             showRightClickMenu.Items.Add(new ToolStripSeparator());
             AddRcMenuItem("Revert to Missing", (_, _) => Revert());
         }
 
-        if (lvr.MissingSeasons.Count > 0)
+        if (lvr.MissingSeasons.HasAny())
         {
             AddRcMenuItem("Revert to Missing Episodes", (_, _) => RevertSeasons());
         }
