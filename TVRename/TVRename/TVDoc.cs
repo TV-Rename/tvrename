@@ -935,7 +935,7 @@ public class TVDoc : IDisposable
 
             if (configuration!= null && seasonNum != null)
             {
-                if (configuration.SeasonEpisodes[seasonNum.Value].Count == season.Count())
+                if (configuration.SeasonEpisodes[seasonNum.Value].Count == season.Count() && season.Count() > 1)
                 {
                     TheActionList.Replace(season, new ShowSeasonMissing(configuration,seasonNum.Value,season.First().TargetFolder,season.ToList()));
                 }
