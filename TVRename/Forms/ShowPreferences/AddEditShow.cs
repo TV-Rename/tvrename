@@ -580,6 +580,10 @@ public partial class AddEditShow : Form
         {
             Logger.Error(ex,"Could not load Folder Selection Dialog:");
         }
+        catch (InvalidOperationException ex)
+        {
+            Logger.Error(ex,"Could not load Folder Selection Dialog:");
+        }
     }
 
     private void cbDoMissingCheck_CheckedChanged(object? sender, EventArgs? e)

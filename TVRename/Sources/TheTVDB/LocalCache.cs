@@ -835,7 +835,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 CachedSeriesInfo? selectedCachedSeriesInfo = GetSeries(id);
                 if (selectedCachedSeriesInfo!=null)
                 {
-                    ProcessUpdate(selectedCachedSeriesInfo, time, $"as it({id}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})");
+                    ProcessUpdate(selectedCachedSeriesInfo, time, $"as it({id}-{entityType}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})",true);
                 }
                 return;
             }
@@ -846,7 +846,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 CachedMovieInfo? selectedMovieCachedData = GetMovie(id);
                 if (selectedMovieCachedData!=null)
                 {
-                    ProcessUpdate(selectedMovieCachedData, time, $"as it({id}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})");
+                    ProcessUpdate(selectedMovieCachedData, time, $"as it({id}-{entityType}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})",true);
                 }
 
                 return;
@@ -862,7 +862,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
                 foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
                 {
-                    ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as episodes({id}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})");
+                    ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as episodes({id}-{entityType}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})", false);
                 }
 
                 foreach (Episode updatedEpisode in Series.Values.SelectMany(s=>s.Episodes).Where(e=>e.EpisodeId==id))
@@ -881,7 +881,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 }
                 foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
                 {
-                    ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as seasons({id}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})");
+                    ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as seasons({id}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})", false);
                 }
                 return;
             }
@@ -920,14 +920,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private static void ProcessUpdate(CachedMediaInfo selectedCachedSeriesInfo, long time, string message)
+    private static void ProcessUpdate(CachedMediaInfo selectedCachedSeriesInfo, long time, string message, bool notifyTimeDiscrepancy)
     {
         if (time > selectedCachedSeriesInfo.SrvLastUpdated) // newer version on the server
         {
             LOGGER.Info($"Updating {selectedCachedSeriesInfo.Name} {message} - Marking as dirty");
             selectedCachedSeriesInfo.Dirty = true; // mark as dirty, so it'll be fetched again later
         }
-        else if (time < selectedCachedSeriesInfo.SrvLastUpdated)
+        else if (time < selectedCachedSeriesInfo.SrvLastUpdated && notifyTimeDiscrepancy)
         {
             LOGGER.Error(
                 $"{selectedCachedSeriesInfo.Name} has a lastupdated of {selectedCachedSeriesInfo.SrvLastUpdated.FromUnixTime().ToLocalTime()} server says {time.FromUnixTime().ToLocalTime()} {message}");
@@ -1039,8 +1039,17 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             long nowTime = DateTime.UtcNow.ToUnixTime();
             if (maxUpdateTime > nowTime)
             {
-                LOGGER.Error(
-                    $"Assuming up to date: Update time from TVDB API is greater than current time for {maxUpdateTime} > {nowTime} ({maxUpdateTime.FromUnixTime().ToLocalTime()} > {nowTime.FromUnixTime().ToLocalTime()}) from: {jsonUpdateResponse}");
+                int buffer = 10.Seconds().Seconds;
+                if (maxUpdateTime > nowTime+ buffer)
+                {
+                    LOGGER.Error(
+                        $"Assuming up to date: Update time from TVDB API is greater than current time for {maxUpdateTime} > {nowTime} ({maxUpdateTime.FromUnixTime().ToLocalTime()} > {nowTime.FromUnixTime().ToLocalTime()}) from: {jsonUpdateResponse}");
+                }
+                else
+                {
+                    LOGGER.Warn(
+                        $"Assuming up to date: Update time from TVDB API is greater than current time for {maxUpdateTime} > {nowTime} ({maxUpdateTime.FromUnixTime().ToLocalTime()} > {nowTime.FromUnixTime().ToLocalTime()}) from: {jsonUpdateResponse}");
+                }
 
                 return nowTime;
             }

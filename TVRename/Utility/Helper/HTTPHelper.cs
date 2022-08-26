@@ -49,8 +49,7 @@ public static class HttpHelper
                 HttpClient client = new(new ClearanceHandler());
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
-                Task<string> task = Task.Run(async () => await client.GetStringAsync(url));
-                return task.Result;
+                return TaskObtainStringFromUrl(url, client);
             }
             catch (AggregateException ex) when (ex.InnerException is CloudFlareClearanceException)
             {
@@ -66,8 +65,7 @@ public static class HttpHelper
         {
             Client.DefaultRequestHeaders.UserAgent.Clear();
             Client.DefaultRequestHeaders.UserAgent.ParseAdd(TVSettings.USER_AGENT);
-            Task<string> task = Task.Run(async () => await Client.GetStringAsync(url));
-            return task.Result;
+            return TaskObtainStringFromUrl(url, Client);
         }
 
         return string.Empty;
@@ -147,8 +145,24 @@ public static class HttpHelper
             return response.Content.ReadAsStringAsync().Result;
         }
 
-        Task<string> task = Task.Run(async () => await newClient.GetStringAsync(url));
-        return task.Result;
+        return TaskObtainStringFromUrl(url, newClient);
+    }
+
+    private static string TaskObtainStringFromUrl(string url, HttpClient client)
+        => Task.Run(ObtainStringFromUrlFunc(url, client)).Result;
+
+    private static Func<Task<string>> ObtainStringFromUrlFunc(string url, HttpClient client)
+    {
+        try
+        {
+            return async () => await client.GetStringAsync(url);
+        }
+        catch (HttpRequestException hre)
+        {
+            Logger.Fatal(hre,$"Could not obtain {url}");
+        }
+
+        return () => Task.FromResult(string.Empty);
     }
 
     public static string Obtain(string url) => GetUrl(url, false);
