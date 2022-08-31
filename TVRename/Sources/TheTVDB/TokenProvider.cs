@@ -72,7 +72,22 @@ internal class TokenProvider
         //If we have logged on and have a valid token that is nearing its use-by date then refresh
         if (ShouldRefreshToken())
         {
-            RefreshToken();
+            if (ApiVersion.v4 == TVSettings.Instance.TvdbVersion)
+            {
+                AcquireToken();
+            }
+            else
+            {
+                try
+                {
+                    RefreshToken();
+                }
+                catch (Exception e)
+                {
+                    Logger.Error($"Could not refresh Token: {e.Message}");
+                    AcquireToken();
+                }
+            }
         }
 
         return lastKnownToken;
@@ -124,9 +139,27 @@ internal class TokenProvider
         lastRefreshTime = DateTime.Now;
     }
 
-    private bool ShouldRefreshToken() => DateTime.Now - lastRefreshTime >= 12.Hours();
+    private bool ShouldRefreshToken() => DateTime.Now - lastRefreshTime >= RefreshTokenPeriod;
 
-    private bool TokenIsValid() => DateTime.Now - lastRefreshTime < 1.Days() - 1.Minutes();
+    private static TimeSpan RefreshTokenPeriod =>
+        TVSettings.Instance.TvdbVersion switch
+        {
+            ApiVersion.v2 => 12.Hours(),
+            ApiVersion.v3 => 12.Hours(),
+            ApiVersion.v4 => 20.Days(),
+            _ => throw new NotSupportedException()
+        };
+
+    private bool TokenIsValid() => DateTime.Now - lastRefreshTime < TokenValidityPeriod;
+
+    private static TimeSpan TokenValidityPeriod =>
+        TVSettings.Instance.TvdbVersion switch
+        {
+            ApiVersion.v2 => 1.Days() - 1.Minutes(),
+            ApiVersion.v3 => 1.Days() - 1.Minutes(),
+            ApiVersion.v4 => 30.Days(),
+            _ => throw new NotSupportedException()
+        };
 
     private bool IsTokenAcquired() => lastKnownToken != string.Empty;
 }

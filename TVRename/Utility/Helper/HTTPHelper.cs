@@ -394,8 +394,14 @@ public static class HttpHelper
                 Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
 
                 Task.Delay(delay).Wait();
-
-                updateOperation?.Invoke();
+                try
+                {
+                    updateOperation?.Invoke();
+                }
+                catch (Exception refreshException)
+                {
+                    Logger.Error($"Could not complete the update operation: {refreshException.Message}");
+                }
             }
         } while (true);
     }
