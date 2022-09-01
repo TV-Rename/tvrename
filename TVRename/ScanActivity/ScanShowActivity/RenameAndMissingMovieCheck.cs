@@ -157,10 +157,10 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
                 return;
             }
 
-            LOGGER.Error($"Bases match {bases.ToCsv()}, but no file do {movieFiles.ToCsv()}");
+            LOGGER.Error($"Bases match {bases.ToCsv()}, but no files do {movieFiles.ToCsv()}");
         }
 
-        LOGGER.Error($"Unclear what to do with '{bases.ToCsv()}' for {si} with {newBase}. Marking as missing.");
+        LOGGER.Warn($"Unclear what to do with '{bases.ToCsv()}' for {si} with {newBase}. Marking as missing.");
         FileIsMissing(si, folder);
     }
 
