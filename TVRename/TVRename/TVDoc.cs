@@ -280,26 +280,28 @@ public class TVDoc : IDisposable
 
         if (currentValue <= 0 && valueFromCache > 0)
         {
-            Logger.Info($"Updatng media:{type.PrettyPrint()} {show.ShowName} {provider.PrettyPrint()} Id to {valueFromCache}, {basedOnInformation}.");
+            Logger.Warn($"Updatng media:{type.PrettyPrint()} {show.ShowName} {provider.PrettyPrint()} Id to {valueFromCache}, {basedOnInformation}.");
             return valueFromCache;
         }
 
         if (currentValue > 0 && valueFromCache > 0 && currentValue != valueFromCache)
         {
-            Logger.Error($"Media:{type.PrettyPrint()}: {show.ShowName} ({show}) has inconsistent {provider.PrettyPrint()} Id: {currentValue } {valueFromCache}, updating to {valueFromCache}, {basedOnInformation} (Cached Value is {cachedData}).");
-            Logger.Error($"    Config: {show}");
-            Logger.Error($"    Cache:  {cachedData}");
+            string baseMessage = $"Media:{type.PrettyPrint()}: {show.ShowName} ({show}) has inconsistent {provider.PrettyPrint()} Id: {currentValue } {valueFromCache}, updating to {valueFromCache}, {basedOnInformation} (Cached Value is {cachedData})."+Environment.NewLine
+                + $"    Config: {show}" + Environment.NewLine
+                + $"    Cache:  {cachedData}";
             switch (show.Media)
             {
                 case MediaConfiguration.MediaType.tv:
-                    Logger.Error($"    TVDB:   {TheTVDB.LocalCache.Instance.GetSeries(show.TvdbId)}");
-                    Logger.Error($"    TMDB:   {TMDB.LocalCache.Instance.GetSeries(show.TmdbId)}");
-                    Logger.Error($"    TVMaze: {TVmaze.LocalCache.Instance.GetSeries(show.TvMazeId)}");
+                    Logger.Error(baseMessage+Environment.NewLine+
+                                 $"    TVDB:   {TheTVDB.LocalCache.Instance.GetSeries(show.TvdbId)}"+ Environment.NewLine+
+                                 $"    TMDB:   {TMDB.LocalCache.Instance.GetSeries(show.TmdbId)}"+ Environment.NewLine+
+                                 $"    TVMaze: {TVmaze.LocalCache.Instance.GetSeries(show.TvMazeId)}");
                     FullyRefresh((ShowConfiguration)show);
                     break;
                 case MediaConfiguration.MediaType.movie:
-                    Logger.Error($"    TVDB:   {TheTVDB.LocalCache.Instance.GetMovie(show.TvdbId)}");
-                    Logger.Error($"    TMDB:   {TMDB.LocalCache.Instance.GetMovie(show.TmdbId)}");
+                    Logger.Error(baseMessage+Environment.NewLine+
+                                 $"    TVDB:   {TheTVDB.LocalCache.Instance.GetMovie(show.TvdbId)}"+ Environment.NewLine+
+                                 $"    TMDB:   {TMDB.LocalCache.Instance.GetMovie(show.TmdbId)}");
                     FullyRefresh((MovieConfiguration)show);
                     break;
                 default:
