@@ -4193,6 +4193,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         ShowSummary f = new(mDoc, this);
         f.Show(this);
+        FillMyShows(true);
     }
 
     private void lvAction_ItemChecked(object sender, ItemCheckedEventArgs e) => UpdateActionCheckboxes();
