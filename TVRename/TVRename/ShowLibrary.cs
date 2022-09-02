@@ -173,7 +173,6 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
         //OK we have multiple!!
         Logger.Error($"Searched for {id} on {provider.PrettyPrint()} TV Show Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
-        Logger.Error(Environment.StackTrace);
         return matching.FirstOrDefault(x => x.Provider == provider) ?? matching.First();
     }
 

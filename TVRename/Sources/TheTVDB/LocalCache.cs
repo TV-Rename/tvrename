@@ -1040,15 +1040,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             if (maxUpdateTime > nowTime)
             {
                 int buffer = 10.Seconds().Seconds;
+                string message = $"Assuming up to date: Update time from TVDB API is greater than current time for {maxUpdateTime} > {nowTime} ({maxUpdateTime.FromUnixTime().ToLocalTime()} > {nowTime.FromUnixTime().ToLocalTime()})";
                 if (maxUpdateTime > nowTime+ buffer)
                 {
-                    LOGGER.Error(
-                        $"Assuming up to date: Update time from TVDB API is greater than current time for {maxUpdateTime} > {nowTime} ({maxUpdateTime.FromUnixTime().ToLocalTime()} > {nowTime.FromUnixTime().ToLocalTime()}) from: {jsonUpdateResponse}");
+                    LOGGER.Error(message);
                 }
                 else
                 {
-                    LOGGER.Warn(
-                        $"Assuming up to date: Update time from TVDB API is greater than current time for {maxUpdateTime} > {nowTime} ({maxUpdateTime.FromUnixTime().ToLocalTime()} > {nowTime.FromUnixTime().ToLocalTime()}) from: {jsonUpdateResponse}");
+                    LOGGER.Warn(message);
                 }
 
                 return nowTime;

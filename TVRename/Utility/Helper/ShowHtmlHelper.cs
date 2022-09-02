@@ -849,6 +849,7 @@ internal static class ShowHtmlHelper
         return string.Empty;
     }
 
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private static string CreateHorizontalBannerHtml(this ProcessedSeason s)
     {
         string url = s.WideBannerUrl();
@@ -1271,12 +1272,18 @@ internal static class ShowHtmlHelper
 
     private static string DateDetailsHtml(this ProcessedEpisode ei)
     {
-        DateTime? dt = ei.GetAirDateDt(true);
-        if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
+        try
         {
-            return $"<h6>{dt.Value.ToShortDateString()}</h6><small class=\"text-muted\">({ei.HowLong()})</small>";
+            DateTime? dt = ei.GetAirDateDt(true);
+            if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
+            {
+                return $"<h6>{dt.Value.ToShortDateString()}</h6><small class=\"text-muted\">({ei.HowLong()})</small>";
+            }
         }
-
+        catch (Exception e)
+        {
+            Logger.Error(e,$"Could not display date from {ei.Show.Name} S{ei.AppropriateSeasonNumber}E{ei.AppropriateEpNum}");
+        }
         return string.Empty;
     }
 
