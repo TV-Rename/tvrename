@@ -1205,7 +1205,8 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         return tsi;
     }
 
-    private void FillMyShows(bool updateSelectedNode)
+    internal void FillMyShows() => FillMyShows(false);
+    internal void FillMyShows(bool updateSelectedNode)
     {
         ProcessedSeason? currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
         ShowConfiguration? currentSi = TreeNodeToShowItem(MyShowTree.SelectedNode);
@@ -4193,7 +4194,6 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         ShowSummary f = new(mDoc, this);
         f.Show(this);
-        FillMyShows(true);
     }
 
     private void lvAction_ItemChecked(object sender, ItemCheckedEventArgs e) => UpdateActionCheckboxes();

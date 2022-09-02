@@ -107,34 +107,28 @@ public partial class ShowSummary : Form, IDialogParent
         grid1.Rows[0].AutoSizeMode = SourceGrid.AutoSizeMode.MinimumSize;
         grid1.Rows[0].Height = 65;
 
-        ColumnHeader h = new("Show")
+        grid1[0, 0] = new ColumnHeader("Show")
         {
             AutomaticSortEnabled = false,
             ResizeEnabled = false
         };
-
-        grid1[0, 0] = h;
         grid1[0, 0].View = topleftTitleModel;
 
-        ColumnHeader h2 = new("Status")
+        grid1[0, 1] = new ColumnHeader("Status")
         {
             AutomaticSortEnabled = false,
             ResizeEnabled = false
         };
-
-        grid1[0, 1] = h2;
         grid1[0, 1].View = topleftTitleModel;
 
         // Draw season
         for (int c = chkHideSpecials.Checked ? 1 : 0; c < maxSeason + 1; c++)
         {
-            h = new ColumnHeader(c==0?ProcessedSeason.UIFullSeasonWord(c):"S"+c.Pad(2))
+            grid1[0, c + 2] = new ColumnHeader(c==0?ProcessedSeason.UIFullSeasonWord(c):"S"+c.Pad(2))
             {
                 AutomaticSortEnabled = false,
                 ResizeEnabled = false
             };
-
-            grid1[0, c + 2] = h;
             grid1[0, c + 2].View = colTitleModel;
 
             grid1.Columns[c + 2].AutoSizeMode = SourceGrid.AutoSizeMode.EnableAutoSize;
@@ -183,22 +177,18 @@ public partial class ShowSummary : Form, IDialogParent
                 cellColour = TVSettings.Instance.ShowStatusColors.GetColour(show.ShowConfiguration);
             }
 
-            RowHeader rh = new(show.ShowName)
+            grid1[r + 1, 0] = new RowHeader(show.ShowName)
             {
                 ResizeEnabled = false,
                 View = new Cell { ForeColor = cellColour}
             };
-
-            grid1[r + 1, 0] = rh;
             grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowConfiguration,mDoc));
 
-            RowHeader rh2 = new(show.ShowConfiguration.ShowStatus)
+            grid1[r + 1, 1]  = new RowHeader(show.ShowConfiguration.ShowStatus)
             {
                 ResizeEnabled = false,
                 View = new Cell { ForeColor = cellColour }
             };
-
-            grid1[r + 1, 1] = rh2;
 
             foreach (ShowSummaryData.ShowSummarySeasonData seasonData in show.SeasonDataList)
             {
@@ -358,6 +348,7 @@ public partial class ShowSummary : Form, IDialogParent
                         processedSeason.Show.IgnoreSeasons.Remove(processedSeason.SeasonNumber);
                         mDoc.TvAddedOrEdited(false, false, false, null, processedSeason.Show);
                         gridSummary.PopulateGrid();
+                        gridSummary.MainWindow.FillMyShows();
                     });
                 }
                 else
@@ -367,6 +358,7 @@ public partial class ShowSummary : Form, IDialogParent
                         processedSeason.Show.IgnoreSeasons.Add(processedSeason.SeasonNumber);
                         mDoc.TvAddedOrEdited(false,false,false,null, processedSeason.Show);
                         gridSummary.PopulateGrid();
+                        gridSummary.MainWindow.FillMyShows();
                     });
                 }
             }
@@ -378,6 +370,7 @@ public partial class ShowSummary : Form, IDialogParent
                     show.DoMissingCheck = false;
                     mDoc.TvAddedOrEdited(false, false, false, null, show);
                     gridSummary.PopulateGrid();
+                    gridSummary.MainWindow.FillMyShows();
                 });
             }
             else
@@ -387,6 +380,7 @@ public partial class ShowSummary : Form, IDialogParent
                     show.DoMissingCheck = true;
                     mDoc.TvAddedOrEdited(false, false, false, null, show);
                     gridSummary.PopulateGrid();
+                    gridSummary.MainWindow.FillMyShows();
                 });
             }
 
