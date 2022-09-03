@@ -202,15 +202,7 @@ public class TVDoc : IDisposable
 
         foreach (ShowConfiguration? show in TvLibrary.Shows)
         {
-            CachedSeriesInfo? cachedData = show.CachedShow;
-            if (cachedData is null)
-            {
-                continue;
-            }
-
-            show.TmdbCode = GetBestValue(show, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.tv, $"based on looking up {ProviderType.TMDB.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
-            show.TvdbCode = GetBestValue(show, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.tv, $"based on looking up {ProviderType.TheTVDB.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
-            show.TVmazeCode = GetBestValue(show, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.tv, $"based on looking up {ProviderType.TVmaze.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
+            UpdateIdsFromCache(show);
         }
 
         foreach (MovieConfiguration? show in FilmLibrary.Movies)
@@ -225,6 +217,24 @@ public class TVDoc : IDisposable
             show.TvdbCode = GetBestValue(show, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.movie, $"based on looking up {ProviderType.TheTVDB.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
             show.TVmazeCode = GetBestValue(show, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.movie, $"based on looking up {ProviderType.TVmaze.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
         }
+    }
+
+    private void UpdateIdsFromCache(ShowConfiguration show)
+    {
+        CachedSeriesInfo? cachedData = show.CachedShow;
+        if (cachedData is null)
+        {
+            return;
+        }
+
+        show.TmdbCode = GetBestValue(show, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.tv,
+            $"based on looking up {ProviderType.TMDB.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
+
+        show.TvdbCode = GetBestValue(show, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.tv,
+            $"based on looking up {ProviderType.TheTVDB.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
+
+        show.TVmazeCode = GetBestValue(show, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.tv,
+            $"based on looking up {ProviderType.TVmaze.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
     }
 
     // ReSharper disable once InconsistentNaming
@@ -718,9 +728,21 @@ public class TVDoc : IDisposable
 
     internal void Add(List<ShowConfiguration>? newShow, bool showErrors)
     {
-        TvLibrary.AddShows(newShow, showErrors);
-        forceShowsRefresh.AddNullableRange(newShow);
-        forceShowsScan.AddNullableRange(newShow);
+        if (newShow is null)
+        {
+            return;
+        }
+
+        foreach (ShowConfiguration show in newShow)
+        {
+            UpdateIdsFromCache(show);
+            TvLibrary.AddShow(show, showErrors);
+            if (TvLibrary.Contains(show)) //It might not as it may be a duplicate
+            {
+                forceShowsRefresh.Add(show);
+                forceShowsScan.Add(show);
+            }
+        }
         SetDirty();
         ExportShowInfo();
     }
