@@ -1972,6 +1972,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             throw new SourceConsistencyException($"Data element not found in {r}", TVDoc.ProviderType.TheTVDB);
         }
+        LOGGER.Info($"Update obtained for {GetName(r)} at {GetUnixTime(jToken, "lastUpdated")} based on {jToken["lastUpdated"]}");
         return new CachedSeriesInfo(locale, TVDoc.ProviderType.TheTVDB)
         {
             Name = GetName(r),
@@ -2229,7 +2230,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 if (API.TvdbIsUp() && !CanFindEpisodesFor(code, locale))
                 {
                     LastErrorMessage = ex.LoggableDetails();
-                    string msg = $"Show with TVDB Id {code} is no longer found on TVDB. Please Update";
+                    string msg = $"Show with TVDB Id {code} is no longer found on TVDB. Please Update. ";
                     throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
                         TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
                 }

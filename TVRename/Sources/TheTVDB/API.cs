@@ -490,7 +490,7 @@ internal static class API
 
                 if (TvdbIsUp() && code!=null)
                 {
-                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. Please Update";
+                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. {uri} Please Update";
                     throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
                         TVDoc.ProviderType.TheTVDB, type);
                 }
