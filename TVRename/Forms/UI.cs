@@ -4248,15 +4248,16 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
         ServerRelease? result = await tuv.ConfigureAwait(false);
 
-        uiDisp.Invoke(() => NotifyUpdates(result, true));
+        uiDisp.Invoke(() => NotifyUpdates(result, true,false));
     }
 
-    private void NotifyUpdates(ServerRelease? update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
+    private void NotifyUpdates(ServerRelease? update, bool forceShowNoUpdateRequiredDialog, bool inSilentMode)
     {
+        btnUpdateAvailable.Visible = update is not null;
+
         if (update is null)
         {
-            btnUpdateAvailable.Visible = false;
-            if (showNoUpdateRequiredDialog && !inSilentMode && Environment.UserInteractive)
+            if (forceShowNoUpdateRequiredDialog || (!inSilentMode && Environment.UserInteractive))
             {
                 MessageBox.Show(@"There is no update available please try again later.", @"No update available",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -4271,18 +4272,22 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        if (!TVSettings.Instance.SuppressUpdateAvailablePopup && !showNoUpdateRequiredDialog)
+        if (TVSettings.Instance.SuppressUpdateAvailablePopup && !forceShowNoUpdateRequiredDialog)
         {
-            UpdateNotification unForm = new(update);
-            unForm.ShowDialog(this);
-            if (unForm.DialogResult == DialogResult.Abort)
-            {
-                Logger.Info("Downloading New Release and Quiting");
-                //We need to quit!
-                Close();
-            }
+            return;
         }
-        btnUpdateAvailable.Visible = true;
+
+        UpdateNotification unForm = new(update);
+        unForm.ShowDialog(this);
+        if (unForm.DialogResult != DialogResult.Abort)
+        {
+            return;
+        }
+
+        //User has decided to download and quit
+        Logger.Info("Downloading New Release and Quiting");
+        //We need to quit!
+        Close();
     }
 
     private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4300,7 +4305,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
         ServerRelease? result = await tuv.ConfigureAwait(false);
 
-        uiDisp.Invoke(() => NotifyUpdates(result, true));
+        uiDisp.Invoke(() => NotifyUpdates(result, true,false));
     }
 
     private void tmrPeriodicScan_Tick(object sender, EventArgs e) => RunAutoScan("Periodic Scan");
