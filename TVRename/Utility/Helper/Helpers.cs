@@ -190,11 +190,16 @@ public static class Helpers
 
     public static string PrettyPrint(this DateTime? dt)
     {
-        if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
+        try
         {
-            return dt.Value.ToShortDateString();
+            if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
+            {
+                return dt.Value.ToShortDateString();
+            }
         }
-
+        catch (ArgumentOutOfRangeException)
+        {
+        }
         return string.Empty;
     }
 
