@@ -1,4 +1,3 @@
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -202,34 +201,30 @@ internal static class API
         }
     }
 
-    private static string HttpRequest(string method, string url, string contentType,
-        TokenProvider? authToken, string lang = "")
+    private static string HttpRequest(string method, string url, string contentType, TokenProvider? authToken, string lang)
         => HttpHelper.HttpRequest(method, url, null, contentType, authToken?.GetToken(), lang);
 
     public static JObject? GetShowUpdatesSince(long time, string lang, int page)
     {
-        if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
-        {
-            return GetShowUpdatesSinceV4(time,lang,page);
-        }
-        else
-        {
-            return GetShowUpdatesSinceV3(time, lang);
-        }
+        return TVSettings.Instance.TvdbVersion == ApiVersion.v4
+            ? GetShowUpdatesSinceV4(time,lang,page)
+            : GetShowUpdatesSinceV3(time, lang);
     }
 
     private static JObject? GetShowUpdatesSinceV3(long time, string lang)
     {
-            return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/updated/query",
+        string url = $"{TokenProvider.TVDB_API_URL}/updated/query";
+        return JsonHttpGetRequest(url,
                 new Dictionary<string, string?> { { "fromTime", time.ToString() } },
                 TokenProvider, lang, true);
     }
 
     private static JObject? GetShowUpdatesSinceV4(long time, string lang, int page)
     {
-            return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/updates",
-                new Dictionary<string, string?> { { "since", time.ToString() }, { "page", page.ToString() } },
-                TokenProvider, lang, true);
+        string url = $"{TokenProvider.TVDB_API_URL}/updates";
+        return JsonHttpGetRequest(url,
+            new Dictionary<string, string?> { { "since", time.ToString() }, { "page", page.ToString() } },
+            TokenProvider, lang, true);
     }
 
     public static JObject? GetSeriesEpisodes(int seriesId, string languageCode, int pageNumber = 0)
@@ -242,8 +237,8 @@ internal static class API
 
     public static JObject? GetSeriesActors(int seriesId)
     {
-        return JsonHttpGetRequest($"{TokenProvider.TVDB_API_URL}/series/{seriesId}/actors",
-            null, TokenProvider, false);
+        string url = $"{TokenProvider.TVDB_API_URL}/series/{seriesId}/actors";
+        return JsonHttpGetRequest(url, null, TokenProvider, false);
     }
 
     // ReSharper disable once UnusedParameter.Global
@@ -307,17 +302,18 @@ internal static class API
 
     public static JObject? SearchV4(string text, string defaultLanguageCode, MediaConfiguration.MediaType media)
     {
-        string uri = TokenProvider.TVDB_API_URL + "/search";
+        string uri = $"{TokenProvider.TVDB_API_URL}/search";
         return media switch
         {
             MediaConfiguration.MediaType.tv => JsonHttpGetRequest(uri,
-                new Dictionary<string, string?> { { "q", text }, { "type", "series" } }, TokenProvider,
-                defaultLanguageCode, false),
+                new Dictionary<string, string?> { { "q", text }, { "type", "series" } },
+                TokenProvider, defaultLanguageCode, false),
             MediaConfiguration.MediaType.movie => JsonHttpGetRequest(uri,
-                new Dictionary<string, string?> { { "q", text }, { "type", "movie" } }, TokenProvider, defaultLanguageCode,
-                false),
+                new Dictionary<string, string?> { { "q", text }, { "type", "movie" } },
+                TokenProvider, defaultLanguageCode, false),
             MediaConfiguration.MediaType.both => JsonHttpGetRequest(uri,
-                new Dictionary<string, string?> { { "q", text } }, TokenProvider, defaultLanguageCode, false),
+                new Dictionary<string, string?> { { "q", text } },
+                TokenProvider, defaultLanguageCode, false),
             _ => throw new ArgumentOutOfRangeException(nameof(media), media, null)
         };
     }
@@ -333,7 +329,6 @@ internal static class API
         catch (WebException ex)
         {
             //we expect an Unauthorised response - so we know the site is up
-
             if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse resp)
             {
                 return resp.StatusCode switch
@@ -366,7 +361,7 @@ internal static class API
 
     public static List<JObject> GetImages(int code, string languageCode, IEnumerable<string> imageTypes)
     {
-        string uriImagesQuery = TokenProvider.TVDB_API_URL + "/series/" + code + "/images/query";
+        string uriImagesQuery = $"{TokenProvider.TVDB_API_URL}/series/{code}/images/query";
         List<JObject> returnList = new();
         foreach (string imageType in imageTypes)
         {
@@ -401,7 +396,7 @@ internal static class API
 
     public static JObject? GetSeries(int code, string requestedLanguageCode)
     {
-        string uri = TokenProvider.TVDB_API_URL + "/series/" + code;
+        string uri = $"{TokenProvider.TVDB_API_URL}/series/{code}";
         return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
     }
 
@@ -440,7 +435,7 @@ internal static class API
 
     public static JObject? GetMovie(int code, string requestedLanguageCode)
     {
-        string uri = TokenProvider.TVDB_API_URL + "/movies/" + code;
+        string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code}";
         return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
     }
 
@@ -483,8 +478,7 @@ internal static class API
         }
         catch (WebException webEx)
         {
-            if (webEx.Status == WebExceptionStatus.ProtocolError && webEx.Response is HttpWebResponse
-                    { StatusCode: HttpStatusCode.NotFound })
+            if (webEx.Is404())
             {
                 Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404).");
 
@@ -501,7 +495,7 @@ internal static class API
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
-            if (wex.StatusCode is HttpStatusCode.NotFound)
+            if (wex.Is404())
             {
                 Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404) via {uri}.");
 
@@ -525,7 +519,8 @@ internal static class API
 
     public static JObject ImageTypesV4()
     {
-        return GetUrl(null,"https://api4.thetvdb.com/v4/artwork/types", "en",MediaConfiguration.MediaType.both);
+        string uri = $"{TokenProvider.TVDB_API_URL}/artwork/types";
+        return GetUrl(null,uri, "en",MediaConfiguration.MediaType.both);
     }
 
     public static string WebsiteMovieUrl(string? serSlug)

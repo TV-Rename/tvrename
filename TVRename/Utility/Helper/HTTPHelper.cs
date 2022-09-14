@@ -446,18 +446,27 @@ public static class HttpHelper
     {
         JObject? response = null;
         RetryOnException(times, secondsGap.Seconds(), fullUrl,
-            exception => exception is TaskCanceledException || (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
+            RetryableWebException()
             , () => { response = JsonHttpGetRequest(fullUrl, null); }
             , null);
 
         return response!;
     }
 
+    private static Func<Exception, bool> RetryableWebException()
+    {
+        return exception => exception is TaskCanceledException
+                            || (exception is WebException wex && !wex.Is404())
+                            || exception is System.IO.IOException
+                            || (exception is HttpRequestException hre && !hre.Is404())
+                            || (exception is AggregateException ae && ae.InnerException != null  && RetryableWebException().Invoke(ae.InnerException));
+    }
+
     public static JArray HttpGetArrayRequestWithRetry(string fullUrl, int times, int secondsGap)
     {
         JArray? response = null;
         RetryOnException(times, secondsGap.Seconds(), fullUrl,
-            exception => exception is TaskCanceledException || (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
+            RetryableWebException()
             , () => { response = JsonListHttpGetRequest(fullUrl, null); }
             , null);
 

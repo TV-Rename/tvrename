@@ -123,7 +123,7 @@ internal static class API
         {
             throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}");
         }
-        catch (WebException wex)
+        catch (AggregateException ex1) when (ex1.InnerException is HttpRequestException wex)
         {
             if (wex.Is404())
             {
@@ -145,7 +145,7 @@ internal static class API
                     source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
                     return;
                 }
-                catch (WebException wex2)
+                catch (HttpRequestException wex2)
                 {
                     if (wex2.Is404() && TvMazeIsUp())
                     {
@@ -153,7 +153,7 @@ internal static class API
                     }
                     throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={source.TvdbId} {wex.Message}");
                 }
-                catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex2)
+                catch (AggregateException ex2) when (ex2.InnerException is HttpRequestException wex2)
                 {
                     if (wex2.Is404() && TvMazeIsUp())
                     {
@@ -200,6 +200,16 @@ internal static class API
             }
 
             Logger.LogWebException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", wex);
+            throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {wex.Message}");
+        }
+        catch (HttpRequestException wex)
+        {
+            if (wex.Is404() && TvMazeIsUp())
+            {
+                throw new MediaNotFoundException(tvMazeId, $"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+            }
+
+            Logger.LogHttpRequestException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", wex);
             throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {wex.Message}");
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
