@@ -247,11 +247,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             if (updateFromEpochTime == 0)
             {
                 this.MarkAllDirty();
-                latestUpdateTime.RegisterServerUpdate(DateTime.UtcNow.ToUnixTime());
+                latestUpdateTime.RegisterServerUpdate(TimeHelpers.UnixUtcNow());
                 return true;
             }
 
-            latestUpdateTime.RegisterServerUpdate(DateTime.UtcNow.ToUnixTime());
+            latestUpdateTime.RegisterServerUpdate(TimeHelpers.UnixUtcNow());
 
             List<int> movieUpdates = Client.GetChangesMovies(latestUpdateTime, cts).Select(item => item.Id)
                 .Distinct().ToList();
@@ -449,7 +449,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             SiteRating = (float)downloadedMovie.VoteAverage,
             SiteRatingVotes = downloadedMovie.VoteCount,
             PosterUrl = PosterImageUrl(downloadedMovie.PosterPath),
-            SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
+            SrvLastUpdated = TimeHelpers.UtcNow().Date.ToUnixTime(),
             CollectionName = downloadedMovie.BelongsToCollection?.Name,
             CollectionId = downloadedMovie.BelongsToCollection?.Id,
             TagLine = downloadedMovie.Tagline,
@@ -584,7 +584,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             SiteRating = (float)downloadedSeries.VoteAverage,
             SiteRatingVotes = downloadedSeries.VoteCount,
             PosterUrl = PosterImageUrl(downloadedSeries.PosterPath),
-            SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
+            SrvLastUpdated = TimeHelpers.UtcNow().Date.ToUnixTime(),
             TagLine = downloadedSeries.Tagline,
             TwitterId = downloadedSeries.ExternalIds?.TwitterId,
             InstagramId = downloadedSeries.ExternalIds?.InstagramId,
@@ -672,7 +672,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     Writer = downloadedEpisode.Crew
                         .Where(x => x.Department == "Writing").Select(crew => crew.Name)
                         .ToPsv(),
-                    SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime()
+                    SrvLastUpdated = TimeHelpers.UtcNow().Date.ToUnixTime()
                 };
 
                 m.AddEpisode(newEpisode);
@@ -922,7 +922,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             Popularity = result.Popularity,
             IsSearchResultOnly = true,
             Dirty = false,
-            SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
+            SrvLastUpdated = TimeHelpers.UtcNow().Date.ToUnixTime(),
             FanartUrl = OriginalImageUrl(result.BackdropPath),
             Country = result.OriginCountry.FirstOrDefault(),
         };

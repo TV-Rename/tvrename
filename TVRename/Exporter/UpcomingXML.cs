@@ -54,7 +54,7 @@ internal class UpcomingXML : UpcomingExporter
                 writer.WriteStartElement("available");
                 DateTime? airdt = ei.GetAirDateDt(true);
 
-                if (airdt.HasValue && airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
+                if (airdt.HasValue && airdt.Value.CompareTo(TimeHelpers.LocalNow()) < 0) // has aired
                 {
                     List<FileInfo> fl = dfc.FindEpOnDisk(ei);
                     if (fl.Any())

@@ -265,7 +265,7 @@ public partial class ShowSummary : Form, IDialogParent
                 epCount++;
 
                 // if has air date and has been aired in the past
-                if (ei.FirstAired != null && ei.FirstAired < DateTime.Now)
+                if (ei.FirstAired != null && ei.FirstAired < TimeHelpers.LocalNow())
                 {
                     epAiredCount++;
                 }

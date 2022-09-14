@@ -10,5 +10,5 @@ public class UpdateCheck
     // This state can be extended when we want to provide a "skip this version" feature etc.
 
     [XmlIgnore]
-    public TimeSpan LastUpdate => DateTime.UtcNow - LastUpdateCheckUtc.GetValueOrDefault(DateTime.MinValue);
+    public TimeSpan LastUpdate => TimeHelpers.UtcNow() - LastUpdateCheckUtc.GetValueOrDefault(DateTime.MinValue);
 }

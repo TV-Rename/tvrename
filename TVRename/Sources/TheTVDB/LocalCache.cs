@@ -403,7 +403,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             long fromEpochTime = updateFromEpochTime - OFFSET;
             DateTime requestedTime = GetRequestedTime(fromEpochTime);
 
-            if ((DateTime.UtcNow - requestedTime).TotalDays < 7)
+            if ((TimeHelpers.UtcNow() - requestedTime).TotalDays < 7)
             {
                 moreUpdates = false;
             }
@@ -428,7 +428,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             long maxUpdateTime;
 
             if (numberOfResponses == 0 &&
-                updateFromEpochTime + 7.Days().TotalSeconds < DateTime.UtcNow.ToUnixTime())
+                updateFromEpochTime + 7.Days().TotalSeconds < TimeHelpers.UnixUtcNow())
             {
                 maxUpdateTime = updateFromEpochTime + (int)7.Days().TotalSeconds;
             }
@@ -1036,7 +1036,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             IEnumerable<long>? updateTimes = jsonUpdateResponse["data"]?.Select(a => a.GetMandatoryLong(keyName,TVDoc.ProviderType.TheTVDB));
             long maxUpdateTime = updateTimes?.DefaultIfEmpty(0).Max() ?? 0;
 
-            long nowTime = DateTime.UtcNow.ToUnixTime();
+            long nowTime = TimeHelpers.UnixUtcNow();
             if (maxUpdateTime > nowTime)
             {
                 int buffer = 10.Seconds().Seconds;
@@ -1492,8 +1492,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (WebException ex)
         {
-            if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse
-                    { StatusCode: HttpStatusCode.NotFound })
+            if (ex.Is404())
             {
                 LOGGER.Warn($"Movie with Id {code} is no longer available from TVDB (got a 404).");
                 SayNothing();

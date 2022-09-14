@@ -49,7 +49,7 @@ public partial class CollectionsView : Form
         if (chkRemoveFuture.Checked)
         {
             IEnumerable<CollectionMember> historicCollectionMovies =
-                collectionMovies.Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < DateTime.Now && m.MovieYear.HasValue);
+                collectionMovies.Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < TimeHelpers.LocalNow() && m.MovieYear.HasValue);
 
             if (!chkRemoveCompleted.Checked)
             {
@@ -63,7 +63,7 @@ public partial class CollectionsView : Form
             List<CollectionMember> incompleteHistCollectionMovies =
                 collectionMovies
                     .Where(member => incompleteHistCollections.Contains(member.CollectionName))
-                    .Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < DateTime.Now && m.MovieYear.HasValue)
+                    .Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < TimeHelpers.LocalNow() && m.MovieYear.HasValue)
                     .ToList();
 
             olvCollections.SetObjects(incompleteHistCollectionMovies, true);
@@ -110,7 +110,7 @@ public partial class CollectionsView : Form
 
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100); 
+        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
         lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 

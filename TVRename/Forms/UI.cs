@@ -381,12 +381,12 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return string.Empty;
         }
 
-        if (episodeTime.Value > DateTime.Now)
+        if (episodeTime.Value > TimeHelpers.LocalNow())
         {
             return "Future";
         }
 
-        TimeSpan timeSince = DateTime.Now - episodeTime.Value;
+        TimeSpan timeSince = TimeHelpers.LocalNow() - episodeTime.Value;
 
         if (timeSince < 7.Days())
         {
@@ -409,31 +409,31 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private static object? GroupDateKeyDelegate(object rowObject)
     {
         DateTime? episodeTime = ((Item)rowObject).AirDate;
-        DateTime now = new(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+        DateTime now = TimeHelpers.LocalNow().Date;
 
         if (!episodeTime.HasValue)
         {
             return null;
         }
 
-        if (episodeTime.Value > DateTime.Now)
+        if (episodeTime.Value > TimeHelpers.LocalNow())
         {
             return now.AddDays(1);
         }
 
-        TimeSpan timeSince = DateTime.Now - episodeTime.Value;
+        TimeSpan timeSince = TimeHelpers.LocalNow() - episodeTime.Value;
 
         if (timeSince < 7.Days())
         {
             return now.AddDays(-1);
         }
 
-        if (DateTime.Now.Year == episodeTime.Value.Year && DateTime.Now.Month == episodeTime.Value.Month)
+        if (TimeHelpers.LocalNow().Year == episodeTime.Value.Year && TimeHelpers.LocalNow().Month == episodeTime.Value.Month)
         {
             return now.AddDays(-8);
         }
 
-        if (DateTime.Now.Year == episodeTime.Value.Year)
+        if (TimeHelpers.LocalNow().Year == episodeTime.Value.Year)
         {
             return new DateTime(episodeTime.Value.Year, episodeTime.Value.Month, 1);
         }
@@ -2503,7 +2503,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
         ServerRelease? result = await tuv.ConfigureAwait(false);
 
-        mDoc.CurrentAppState.UpdateCheck.LastUpdateCheckUtc = DateTime.UtcNow;
+        mDoc.CurrentAppState.UpdateCheck.LastUpdateCheckUtc = TimeHelpers.UtcNow();
         try
         {
             mDoc.CurrentAppState.SaveToDefaultFile();

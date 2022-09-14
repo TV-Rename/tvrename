@@ -21,7 +21,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
         Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
         if (allFolders.Count == 0) // no folders defined for this show
         {
-            LOGGER.Warn($"No Folders defined for {si.Name}, please review the configuration for that TV Show.");
+            LOGGER.Warn($"No Folders defined for {si.Name}, please review the configuration for that TV Show. Either there are no scanned episodes or the configuation is not complete");
             return; // so, nothing to do.
         }
 
@@ -33,8 +33,8 @@ internal class RenameAndMissingCheck : ScanShowActivity
         }
 
         //TODO Put the banner refresh period into the settings file, we'll default to 3 months
-        DateTime cutOff = DateTime.Now.AddMonths(-3);
-        DateTime lastUpdate = si.BannersLastUpdatedOnDisk ?? DateTime.Now.AddMonths(-4);
+        DateTime cutOff = TimeHelpers.LocalNow().AddMonths(-3);
+        DateTime lastUpdate = si.BannersLastUpdatedOnDisk ?? TimeHelpers.LocalNow().AddMonths(-4);
         bool timeForBannerUpdate = cutOff.CompareTo(lastUpdate) == 1;
 
         if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
@@ -42,7 +42,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
             Doc.TheActionList.Add(
                 downloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
 
-            si.BannersLastUpdatedOnDisk = DateTime.Now;
+            si.BannersLastUpdatedOnDisk = TimeHelpers.LocalNow();
             Doc.SetDirty();
         }
 
@@ -193,7 +193,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
         // == MISSING CHECK part 2/2 (includes NFO and Thumbnails) ==
         // look at the official list of episodes, and look to see if we have any gaps
 
-        DateTime today = DateTime.Now;
+        DateTime today = TimeHelpers.LocalNow();
         foreach (ProcessedEpisode episode in eps)
         {
             if (!localEps.ContainsKey(episode.AppropriateEpNum)) // not here locally

@@ -190,7 +190,7 @@ public class ProcessedSeason
             }
 
             //ignore episode if it's in the future
-            if (DateTime.Compare(episodeAirDate.Value.ToUniversalTime(), DateTime.UtcNow) > 0)
+            if (DateTime.Compare(episodeAirDate.Value.ToUniversalTime(), TimeHelpers.UtcNow()) > 0)
             {
                 continue;
             }
@@ -246,7 +246,7 @@ public class ProcessedSeason
                 return TVDBWebsiteUrl;
             }
 
-            return Show.CachedShow?.Season(SeasonNumber)?.Url; 
+            return Show.CachedShow?.Season(SeasonNumber)?.Url;
         }
     }
 

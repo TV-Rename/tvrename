@@ -27,7 +27,7 @@ namespace TVRename.Forms.Supporting
         private void comboBoxShow_SelectedIndexChanged(object sender, EventArgs e)
         {
             MediaConfiguration? currentShow = comboBoxShow.SelectedItem as MediaConfiguration;
-            dateTimePicker.Value = currentShow?.CachedData?.SrvLastUpdated.FromUnixTime().ToLocalTime() ?? DateTime.Now;
+            dateTimePicker.Value = currentShow?.CachedData?.SrvLastUpdated.FromUnixTime().ToLocalTime() ?? TimeHelpers.LocalNow();
         }
     }
 }

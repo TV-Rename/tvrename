@@ -112,7 +112,7 @@ internal class TokenProvider
         }
         UpdateToken(newToken);
 
-        Logger.Info("Performed login at " + DateTime.UtcNow);
+        Logger.Info("Performed login at " + TimeHelpers.LocalNow());
         Logger.Info("New Token " + lastKnownToken);
     }
 
@@ -129,17 +129,17 @@ internal class TokenProvider
         }
         UpdateToken(newToken);
 
-        Logger.Info("Refreshed token at " + DateTime.UtcNow);
+        Logger.Info("Refreshed token at " + TimeHelpers.LocalNow());
         Logger.Info("New Token " + lastKnownToken);
     }
 
     private void UpdateToken(string token)
     {
         lastKnownToken = token;
-        lastRefreshTime = DateTime.Now;
+        lastRefreshTime = TimeHelpers.LocalNow();
     }
 
-    private bool ShouldRefreshToken() => DateTime.Now - lastRefreshTime >= RefreshTokenPeriod;
+    private bool ShouldRefreshToken() => TimeHelpers.LocalNow() - lastRefreshTime >= RefreshTokenPeriod;
 
     private static TimeSpan RefreshTokenPeriod =>
         TVSettings.Instance.TvdbVersion switch
@@ -150,7 +150,7 @@ internal class TokenProvider
             _ => throw new NotSupportedException()
         };
 
-    private bool TokenIsValid() => DateTime.Now - lastRefreshTime < TokenValidityPeriod;
+    private bool TokenIsValid() => TimeHelpers.LocalNow() - lastRefreshTime < TokenValidityPeriod;
 
     private static TimeSpan TokenValidityPeriod =>
         TVSettings.Instance.TvdbVersion switch

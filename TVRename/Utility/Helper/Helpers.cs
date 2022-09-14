@@ -121,6 +121,7 @@ public static class Helpers
         {
             return;
         }
+
         (list[firstIndex], list[secondIndex]) = (list[secondIndex], list[firstIndex]);
     }
 
@@ -163,7 +164,9 @@ public static class Helpers
     {
         get
         {
-            string v = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false).Cast<AssemblyInformationalVersionAttribute>().First().InformationalVersion;
+            string v = Assembly.GetExecutingAssembly()
+                .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false)
+                .Cast<AssemblyInformationalVersionAttribute>().First().InformationalVersion;
 #if DEBUG
             v += DebugText;
 #endif
@@ -185,7 +188,7 @@ public static class Helpers
 
     public static string Pad(this int i, int size)
     {
-        return i.ToString().Length >= size ? i.ToString() : i.ToString().PadLeft(size,'0');
+        return i.ToString().Length >= size ? i.ToString() : i.ToString().PadLeft(size, '0');
     }
 
     public static string PrettyPrint(this DateTime? dt)
@@ -200,10 +203,12 @@ public static class Helpers
         catch (ArgumentOutOfRangeException)
         {
         }
+
         return string.Empty;
     }
 
-    public static long ToUnixTime(this DateTime date) => Convert.ToInt64((date.ToUniversalTime() - DateTime.UnixEpoch).TotalSeconds);
+    public static long ToUnixTime(this DateTime date) =>
+        Convert.ToInt64((date.ToUniversalTime() - DateTime.UnixEpoch).TotalSeconds);
 
     public static DateTime FromUnixTime(this double unixTime) => DateTime.UnixEpoch.AddSeconds(unixTime);
     public static DateTime FromUnixTime(this long unixTime) => DateTime.UnixEpoch.AddSeconds(unixTime);
@@ -216,10 +221,12 @@ public static class Helpers
         {
             return false;
         }
+
         if (Directory.Exists(folder))
         {
-            return SysOpen("explorer.exe",folder.EnsureEndsWithSeparator());
+            return SysOpen("explorer.exe", folder.EnsureEndsWithSeparator());
         }
+
         return false;
     }
 
@@ -292,6 +299,7 @@ public static class Helpers
             {
                 Process.Start(what);
             }
+
             return true;
         }
         catch (Win32Exception e)
@@ -334,6 +342,7 @@ public static class Helpers
         {
             return def;
         }
+
         try
         {
             return int.Parse(text);

@@ -18,7 +18,7 @@ public class UpdateTimeTracker
 
     public void Reset()
     {
-        SetTimes(DateTime.UtcNow.ToUnixTime());
+        SetTimes(TimeHelpers.UnixUtcNow());
     }
 
     private void SetTimes(long newTime)
@@ -37,17 +37,17 @@ public class UpdateTimeTracker
 
     public long LastSuccessfulServerUpdateTimecode() => srvTime;
 
-    public DateTime LastSuccessfulServerUpdateDateTime() => Helpers.FromUnixTime(srvTime).ToLocalTime();
+    public DateTime LastSuccessfulServerUpdateDateTime() => srvTime.FromUnixTime().ToLocalTime();
 
-    public DateTime ProposedServerUpdateDateTime() => Helpers.FromUnixTime(newSrvTime).ToLocalTime();
+    public DateTime ProposedServerUpdateDateTime() => newSrvTime.FromUnixTime().ToLocalTime();
 
     public void Load(string? time)
     {
         long newTime = time is null ? 0 : long.Parse(time);
-        if (newTime > DateTime.UtcNow.ToUnixTime() + 1.Days().TotalSeconds)
+        if (newTime > TimeHelpers.UnixUtcNow() + 1.Days().TotalSeconds)
         {
             Logger.Error($"Asked to update time to: {newTime} by parsing {time}");
-            newTime = DateTime.UtcNow.ToUnixTime();
+            newTime = TimeHelpers.UnixUtcNow();
         }
 
         SetTimes(newTime);
@@ -55,10 +55,10 @@ public class UpdateTimeTracker
 
     public void RegisterServerUpdate(long maxUpdateTime)
     {
-        if (maxUpdateTime > DateTime.UtcNow.ToUnixTime() + 1.Days().TotalSeconds)
+        if (maxUpdateTime > TimeHelpers.UnixUtcNow() + 1.Days().TotalSeconds)
         {
             Logger.Error($"Asked to update time to: {maxUpdateTime}");
-            newSrvTime = DateTime.UtcNow.ToUnixTime();
+            newSrvTime = TimeHelpers.UnixUtcNow();
         }
         else
         {
