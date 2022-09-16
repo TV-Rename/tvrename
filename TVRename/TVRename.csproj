@@ -113,7 +113,7 @@
     <PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
     <PackageReference Include="MscVersion" Version="1.0.0.9" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
-    <PackageReference Include="NLog.OutputDebugString" Version="5.0.3" />
+    <PackageReference Include="NLog.OutputDebugString" Version="5.0.4" />
     <PackageReference Include="NLog.Targets.Syslog" Version="7.0.0" />
     <PackageReference Include="NLog.Windows.Forms" Version="4.6.0" />
     <PackageReference Include="NodaTime" Version="3.1.2" />
@@ -140,7 +140,7 @@
     <PackageReference Include="System.Threading.Timer" Version="4.3.0" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
     <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
-    <PackageReference Include="TimeZoneConverter" Version="5.0.0" />
+    <PackageReference Include="TimeZoneConverter" Version="6.0.1" />
     <PackageReference Include="TMDbLib" Version="1.9.2" />
     <PackageReference Include="System.ServiceModel.Federation" Version="4.10.0" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.336902">
