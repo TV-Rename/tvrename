@@ -164,7 +164,7 @@ public class MovieConfiguration : MediaConfiguration
         return fld;
     }
 
-    private string AutoFolderNameForMovie()
+    public string AutoFolderNameForMovie()
     {
         if (string.IsNullOrEmpty(AutomaticFolderRoot))
         {

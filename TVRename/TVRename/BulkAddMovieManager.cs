@@ -145,11 +145,8 @@ public class BulkAddMovieManager
     private void CheckFolderForShows(DirectoryInfo di, CancellationToken token, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox)
     {
         int percentComplete = (int)(100.0 / CurrentPhaseTotal * (1.0 * CurrentPhase + 1.0 * CurrentPhaseDirectory / CurrentPhaseTotalDirectory));
-        if (percentComplete > 100)
-        {
-            percentComplete = 100;
-        }
-        bw.ReportProgress(percentComplete, di.Name);
+        bw.ReportProgress(percentComplete.Between(0,100), di.Name);
+
         if (!di.Exists)
         {
             return;
@@ -210,14 +207,13 @@ public class BulkAddMovieManager
                 continue;
             }
 
-            string? matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s => ai.Directory.FullName.IsSubfolderOf(s));
-            bool isInLibraryFolderFileFinder = matchingRoot.HasValue();
-
             // see if there is a matching show item
             MovieConfiguration? found = mDoc.FilmLibrary.GetMovie(ai);
             if (found is null)
             {
-                MovieConfiguration newMovie = AddNewMovieToLibrary(ai, isInLibraryFolderFileFinder, matchingRoot);
+                MovieConfiguration newMovie = GenerateConfiguration(ai);
+                mDoc.Add(found.AsList(), true);
+                mDoc.Stats().AutoAddedMovies++;
                 movies.Add(newMovie);
                 continue;
             }
@@ -230,6 +226,8 @@ public class BulkAddMovieManager
                 StringComparison.CurrentCultureIgnoreCase);
 
             bool existingLocationIsDefaultToo = found.UseAutomaticFolders && found.AutomaticFolderRoot.In(TVSettings.Instance.MovieLibraryFolders.ToArray());
+            string? matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s => ai.Directory.FullName.IsSubfolderOf(s));
+            bool isInLibraryFolderFileFinder = matchingRoot.HasValue();
 
             if (inDefaultPath && isInLibraryFolderFileFinder && !existingLocationIsDefaultToo)
             {
@@ -258,36 +256,28 @@ public class BulkAddMovieManager
         return movies;
     }
 
-    private MovieConfiguration AddNewMovieToLibrary(PossibleNewMovie ai, bool isInLibraryFolderFileFinder, string? matchingRoot)
+    private static MovieConfiguration GenerateConfiguration(PossibleNewMovie ai)
     {
         // need to add a new showitem
-        MovieConfiguration found = new(ai);
-
-        mDoc.Add(found.AsList(), true);
-
-        mDoc.Stats().AutoAddedMovies++;
-
-        bool inDefaultPath = ai.Directory.Name.Equals(
-            CustomMovieName.DirectoryNameFor(found, TVSettings.Instance.MovieFolderFormat),
-            StringComparison.CurrentCultureIgnoreCase);
-
-        if (inDefaultPath && isInLibraryFolderFileFinder)
+        MovieConfiguration found = new(ai)
         {
-            found.UseAutomaticFolders = true;
-            found.UseCustomFolderNameFormat = false;
-            found.AutomaticFolderRoot = matchingRoot!;
-            found.UseManualLocations = false;
+            UseCustomFolderNameFormat = false
+        };
+
+        string? matchingLibraryRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s => ai.Directory.FullName.IsSubfolderOf(s));
+        bool isUnderLibraryFolder = matchingLibraryRoot.HasValue();
+
+        if (isUnderLibraryFolder)
+        {
+            found.AutomaticFolderRoot = matchingLibraryRoot!;
         }
-        else
-        {
-            if (isInLibraryFolderFileFinder)
-            {
-                found.AutomaticFolderRoot = matchingRoot!;
-            }
 
-            found.UseAutomaticFolders = false;
-            found.UseCustomFolderNameFormat = false;
-            found.UseManualLocations = true;
+        bool inAutomaticFolder = isUnderLibraryFolder && found.AutoFolderNameForMovie().EnsureEndsWithSeparator().Equals(ai.Directory.FullName.EnsureEndsWithSeparator(),StringComparison.CurrentCulture );
+        found.UseAutomaticFolders = inAutomaticFolder;
+        found.UseManualLocations = !inAutomaticFolder;
+
+        if (!inAutomaticFolder)
+        {
             found.ManualLocations.Add(ai.Directory.FullName);
         }
 
