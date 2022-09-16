@@ -35,8 +35,8 @@ public partial class DoScanPartNotifier : Form
 
         activity.Check(source.Token,(percent, message, lastUpdate) =>
         {
-            BackgroundWorker backgroundWorker = ((BackgroundWorker)sender);
-            backgroundWorker.ReportProgress(percent, new Tuple<string, string>(message, lastUpdate));
+            BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
+            backgroundWorker.ReportProgress(percent.Between(0,100), new Tuple<string, string>(message, lastUpdate));
             if (backgroundWorker.CancellationPending)
             {
                 source.Cancel();

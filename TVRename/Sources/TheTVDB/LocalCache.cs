@@ -513,7 +513,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             if (jsonUpdateResponse is null)
             {
                 throw new SourceConsistencyException(
-                    $"No Updates available: {fromEpochTime}:{pageNumber}", TVDoc.ProviderType.TheTVDB);
+                    $"No Updates available: {fromEpochTime}:{pageNumber} ({LastErrorMessage})", TVDoc.ProviderType.TheTVDB);
             }
 
             int? numberOfResponses = GetNumResponses(jsonUpdateResponse, GetRequestedTime(fromEpochTime));
