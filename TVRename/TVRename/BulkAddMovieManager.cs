@@ -272,6 +272,14 @@ public class BulkAddMovieManager
             found.AutomaticFolderRoot = matchingLibraryRoot!;
         }
 
+        if (!TVSettings.Instance.DefMovieUseAutomaticFolders)
+        {
+            found.ManualLocations.Add(ai.Directory.FullName);
+            found.UseManualLocations = true;
+            found.UseAutomaticFolders = false;
+            return found;
+        }
+
         bool inAutomaticFolder = isUnderLibraryFolder && found.AutoFolderNameForMovie().EnsureEndsWithSeparator().Equals(ai.Directory.FullName.EnsureEndsWithSeparator(),StringComparison.CurrentCulture );
         found.UseAutomaticFolders = inAutomaticFolder;
         found.UseManualLocations = !inAutomaticFolder;
