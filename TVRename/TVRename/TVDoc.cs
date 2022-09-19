@@ -1893,12 +1893,12 @@ public class TVDoc : IDisposable
     {
         if (!Directory.Exists(downloadFolder))
         {
-            Logger.Warn($"Stopping 'Scan Movie Folder' '{downloadFolder}' does not exist");
+            Logger.Warn($"Stopping 'Move Movies From' as '{downloadFolder}' does not exist");
             return;
         }
         if (TVSettings.Instance.LibraryFolders.Contains(downloadFolder) || TVSettings.Instance.MovieLibraryFolders.Contains(downloadFolder))
         {
-            string msg = $"Stopping 'Scan Movie Folder' '{downloadFolder}' as it is a library folder. Either remove the folder from the library in Preferences or use Bulk Add to add shows that are already copied to the library.";
+            string msg = $"Stopping 'Move Movies From' from '{downloadFolder}' as it is already a library folder. Either remove the folder from the library in Preferences or use 'Bulk Add' to add shows into the library that are already copied to the library folders.";
             Logger.Warn(msg);
             MessageBox.Show(msg, "Can't scan folder", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
