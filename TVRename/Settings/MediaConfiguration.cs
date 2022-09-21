@@ -201,10 +201,10 @@ public abstract class MediaConfiguration : ISeriesSpecifier
         }
 
         //Also add the aliases provided
-        possibles.AddNullableRange(AliasNames.Select(s => s.CompareName()).Where(s => s.HasValue()).Where(s => s.Length > 2));
+        possibles.AddNullableRange(AliasNames.Select(s => s.CompareName()).Where(s => s.HasValue()).Where(s => s.Length > 3));
 
         //Also use the aliases from source provider
-        possibles.AddNullableRange(CachedData?.GetAliases().Select(s => s.CompareName()).Where(s => s.HasValue()).Where(s => s.Length > 6));
+        possibles.AddNullableRange(CachedData?.GetAliases().Select(s => s.CompareName()).Where(s => s.HasValue()).Where(s => s.Length > 4));
 
         return possibles;
     }
