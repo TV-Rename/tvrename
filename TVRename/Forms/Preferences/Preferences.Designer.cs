@@ -4263,9 +4263,9 @@ namespace TVRename
             this.chkShareCriticalLogs.Location = new System.Drawing.Point(15, 120);
             this.chkShareCriticalLogs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.chkShareCriticalLogs.Name = "chkShareCriticalLogs";
-            this.chkShareCriticalLogs.Size = new System.Drawing.Size(226, 19);
+            this.chkShareCriticalLogs.Size = new System.Drawing.Size(231, 19);
             this.chkShareCriticalLogs.TabIndex = 42;
-            this.chkShareCriticalLogs.Text = "Share critical Logs to help defeat bugs";
+            this.chkShareCriticalLogs.Text = "Share critical errors to help defeat bugs";
             this.chkShareCriticalLogs.UseVisualStyleBackColor = true;
             // 
             // label60
@@ -6472,6 +6472,7 @@ namespace TVRename
             // tbAppUpdate
             // 
             this.tbAppUpdate.Controls.Add(this.pbuUpdates);
+            this.tbAppUpdate.Controls.Add(this.chkUpdateCheckEnabled);
             this.tbAppUpdate.Controls.Add(this.label92);
             this.tbAppUpdate.Controls.Add(this.grpUpdateIntervalOption);
             this.tbAppUpdate.Location = new System.Drawing.Point(149, 4);
@@ -6512,22 +6513,21 @@ namespace TVRename
             this.grpUpdateIntervalOption.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grpUpdateIntervalOption.Controls.Add(this.chkNoPopupOnUpdate);
-            this.grpUpdateIntervalOption.Controls.Add(this.chkUpdateCheckEnabled);
             this.grpUpdateIntervalOption.Controls.Add(this.cboUpdateCheckInterval);
             this.grpUpdateIntervalOption.Controls.Add(this.optUpdateCheckInterval);
             this.grpUpdateIntervalOption.Controls.Add(this.optUpdateCheckAlways);
-            this.grpUpdateIntervalOption.Location = new System.Drawing.Point(13, 69);
+            this.grpUpdateIntervalOption.Location = new System.Drawing.Point(13, 82);
             this.grpUpdateIntervalOption.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.grpUpdateIntervalOption.Name = "grpUpdateIntervalOption";
             this.grpUpdateIntervalOption.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.grpUpdateIntervalOption.Size = new System.Drawing.Size(454, 156);
+            this.grpUpdateIntervalOption.Size = new System.Drawing.Size(454, 143);
             this.grpUpdateIntervalOption.TabIndex = 1;
             this.grpUpdateIntervalOption.TabStop = false;
             // 
             // chkNoPopupOnUpdate
             // 
             this.chkNoPopupOnUpdate.AutoSize = true;
-            this.chkNoPopupOnUpdate.Location = new System.Drawing.Point(19, 129);
+            this.chkNoPopupOnUpdate.Location = new System.Drawing.Point(8, 107);
             this.chkNoPopupOnUpdate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.chkNoPopupOnUpdate.Name = "chkNoPopupOnUpdate";
             this.chkNoPopupOnUpdate.Size = new System.Drawing.Size(226, 19);
@@ -6539,7 +6539,7 @@ namespace TVRename
             // 
             this.chkUpdateCheckEnabled.AutoSize = true;
             this.chkUpdateCheckEnabled.BackColor = System.Drawing.Color.White;
-            this.chkUpdateCheckEnabled.Location = new System.Drawing.Point(0, 1);
+            this.chkUpdateCheckEnabled.Location = new System.Drawing.Point(13, 70);
             this.chkUpdateCheckEnabled.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.chkUpdateCheckEnabled.Name = "chkUpdateCheckEnabled";
             this.chkUpdateCheckEnabled.Size = new System.Drawing.Size(123, 19);
@@ -6552,7 +6552,7 @@ namespace TVRename
             // 
             this.cboUpdateCheckInterval.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboUpdateCheckInterval.FormattingEnabled = true;
-            this.cboUpdateCheckInterval.Location = new System.Drawing.Point(19, 90);
+            this.cboUpdateCheckInterval.Location = new System.Drawing.Point(8, 68);
             this.cboUpdateCheckInterval.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cboUpdateCheckInterval.Name = "cboUpdateCheckInterval";
             this.cboUpdateCheckInterval.Size = new System.Drawing.Size(193, 23);
@@ -6561,7 +6561,7 @@ namespace TVRename
             // optUpdateCheckInterval
             // 
             this.optUpdateCheckInterval.AutoSize = true;
-            this.optUpdateCheckInterval.Location = new System.Drawing.Point(19, 62);
+            this.optUpdateCheckInterval.Location = new System.Drawing.Point(8, 40);
             this.optUpdateCheckInterval.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.optUpdateCheckInterval.Name = "optUpdateCheckInterval";
             this.optUpdateCheckInterval.Size = new System.Drawing.Size(121, 19);
@@ -6574,7 +6574,7 @@ namespace TVRename
             // optUpdateCheckAlways
             // 
             this.optUpdateCheckAlways.AutoSize = true;
-            this.optUpdateCheckAlways.Location = new System.Drawing.Point(19, 35);
+            this.optUpdateCheckAlways.Location = new System.Drawing.Point(8, 13);
             this.optUpdateCheckAlways.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.optUpdateCheckAlways.Name = "optUpdateCheckAlways";
             this.optUpdateCheckAlways.Size = new System.Drawing.Size(96, 19);
