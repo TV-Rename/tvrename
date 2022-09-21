@@ -3689,7 +3689,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (mDoc.ShowProblems.Any())
         {
             string message = mDoc.ShowProblems.Count() > 1
-                ? $"Shows with Id {string.Join(",", mDoc.ShowProblems.Select(exception => exception.Media.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
+                ? $"Shows with Id {mDoc.ShowProblems.Select(exception => exception.Media.ToString()).ToCsv()} are not found on TVDB, TMDB and TVMaze. Please update them"
                 : $"Show with {StringFor(mDoc.ShowProblems.First().ShowIdProvider)} Id {mDoc.ShowProblems.First().Media.IdFor(mDoc.ShowProblems.First().Media.Provider)} is not found on {StringFor(mDoc.ShowProblems.First().ErrorProvider)}. Please Update";
 
             DialogResult result = MessageBox.Show(message, "Series/Show No Longer Found", MessageBoxButtons.OKCancel,

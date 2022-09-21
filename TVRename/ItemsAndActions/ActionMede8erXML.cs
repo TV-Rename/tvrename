@@ -123,7 +123,7 @@ public class ActionMede8erXML : ActionWriteMetadata
             string epDirector = Episode.EpisodeDirector;
             if (!string.IsNullOrEmpty(epDirector))
             {
-                foreach (string daa in epDirector.Split('|').Where(daa => !string.IsNullOrEmpty(daa)))
+                foreach (string daa in epDirector.FromPsv())
                 {
                     writer.WriteElement("director", daa);
                 }

@@ -96,7 +96,7 @@ internal class ActionNfoEpisode : ActionNfo
         string? epDirector = episode.EpisodeDirector;
         if (!string.IsNullOrEmpty(epDirector))
         {
-            string[] dirs = epDirector.Split('|');
+            IEnumerable<string> dirs = epDirector.FromPsv().ToArray();
             if (dirs.Any())
             {
                 root.ReplaceElements("director", dirs);
@@ -107,7 +107,7 @@ internal class ActionNfoEpisode : ActionNfo
         string? epWriter = episode.Writer;
         if (!string.IsNullOrEmpty(epWriter))
         {
-            string[] writers = epWriter.Split('|');
+            string[] writers = epWriter.FromPsv().ToArray();
             if (writers.Any())
             {
                 root.ReplaceElements("credits", writers);

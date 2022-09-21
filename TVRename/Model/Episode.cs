@@ -162,11 +162,11 @@ public class Episode
 
     public bool SameAs(Episode o) => EpisodeId == o.EpisodeId;
 
-    public IEnumerable<string> GuestStars => string.IsNullOrEmpty(EpisodeGuestStars) ? Array.Empty<string>() : EpisodeGuestStars.Split('|').Where(s => s.HasValue());
+    public IEnumerable<string> GuestStars => EpisodeGuestStars.FromPsv();
 
-    public IEnumerable<string> Writers => string.IsNullOrEmpty(Writer) ? Array.Empty<string>() : Writer.Split('|').Where(s => s.HasValue());
+    public IEnumerable<string> Writers => Writer.FromPsv();
 
-    public IEnumerable<string> Directors => string.IsNullOrEmpty(EpisodeDirector) ? Array.Empty<string>() : EpisodeDirector.Split('|').Where(s => s.HasValue());
+    public IEnumerable<string> Directors => EpisodeDirector.FromPsv();
 
     public CachedSeriesInfo TheCachedSeries
     {
@@ -240,7 +240,7 @@ public class Episode
     {
         if (writers.HasAny())
         {
-            Writer = string.Join("|", writers);
+            Writer = writers.ToPsv();
         }
     }
 
@@ -248,7 +248,7 @@ public class Episode
     {
         if (directors.HasAny())
         {
-            EpisodeDirector = string.Join("|", directors);
+            EpisodeDirector = directors.ToPsv();
         }
     }
 

@@ -975,7 +975,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         if (oldEpisodeIds.Any())
         {
             LOGGER.Warn(
-                $"{si.Name} had {oldEpisodeIds.Count} episodes deleted: {string.Join(",", oldEpisodeIds)}");
+                $"{si.Name} had {oldEpisodeIds.Count} episodes deleted: {oldEpisodeIds.ToCsv()}");
         }
 
         foreach (int episodeId in oldEpisodeIds)

@@ -60,10 +60,10 @@ public class ActionPyTivoMeta : ActionWriteMetadata
 
                 WriteEntries(writer, "vDirector", Episode.EpisodeDirector);
                 WriteEntries(writer, "vWriter", Episode.Writer);
-                WriteEntries(writer, "vActor", string.Join("|", Episode.Show.GetActorNames()));
+                WriteEntries(writer, "vActor", Episode.Show.GetActorNames().ToPsv());
                 WriteEntries(writer, "vGuestStar",
                     Episode.EpisodeGuestStars); // not worrying about actors being repeated
-                WriteEntries(writer, "vProgramGenre", string.Join("|", Episode.Show.Genres));
+                WriteEntries(writer, "vProgramGenre", Episode.Show.Genres.ToPsv());
             }
 
             return ActionOutcome.Success();
@@ -87,7 +87,7 @@ public class ActionPyTivoMeta : ActionWriteMetadata
         }
         else
         {
-            foreach (string entry in entries.Split('|').Where(entry => !string.IsNullOrEmpty(entry)))
+            foreach (string entry in entries.FromPsv())
             {
                 writer.WriteLine($"{heading} : {entry}");
             }

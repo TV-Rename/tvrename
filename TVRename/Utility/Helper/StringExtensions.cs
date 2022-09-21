@@ -327,14 +327,14 @@ public static class StringExtensions
 
     public static bool ContainsOneOf(this string source, IEnumerable<string> terms) => terms.Any(source.Contains);
 
-    public static string ToCsv(this IEnumerable<string> values) => string.Join(", ", values);
+    public static string ToCsv(this IEnumerable<string?> values) => string.Join(", ", values);
 
     public static string ToCsv(this IEnumerable<int> values) => string.Join(",", values);
 
     public static string ToPsv(this IEnumerable<string> values) => string.Join("|", values);
 
-    public static IEnumerable<string> FromPsv(this string aggregate) => aggregate.FromSepValues('|');
-    public static IEnumerable<string> FromCsv(this string aggregate) => aggregate.FromSepValues(',');
+    public static IEnumerable<string> FromPsv(this string? aggregate) => aggregate.FromSepValues('|');
+    public static IEnumerable<string> FromCsv(this string? aggregate) => aggregate.FromSepValues(',');
     private static IEnumerable<string> FromSepValues(this string? aggregate, char delimiter)
     {
         return string.IsNullOrEmpty(aggregate)
