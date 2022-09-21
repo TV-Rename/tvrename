@@ -1172,7 +1172,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 }
                 else
                 {
-                    LOGGER.LogWebException($"Error obtaining episode {id} in {languageToUse.EnglishName}:", ex);
+                    LOGGER.LogWebException($"Error obtaining episodes for show with id = {id} in {languageToUse.EnglishName}:", ex);
                     return null;
                 }
             }
@@ -1197,13 +1197,13 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 }
                 else
                 {
-                    LOGGER.LogHttpRequestException($"Error obtaining episode {id} in {languageToUse.EnglishName}:", ex);
+                    LOGGER.LogHttpRequestException($"Error obtaining episodes for show with Id = {id} in {languageToUse.EnglishName}:", ex);
                     return null;
                 }
             }
             catch (System.IO.IOException ex)
             {
-                LOGGER.Warn(ex, $"Connection to TVDB Failed whilst loading episode with Id {id}.");
+                LOGGER.Warn(ex, $"Connection to TVDB Failed whilst loading episodes for show with Id {id}.");
                 return null;
             }
         }
@@ -3004,16 +3004,16 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return episodeIds;
     }
 
-    private bool DownloadEpisodeNow(int seriesId, int episodeId, Locale locale, ProcessedSeason.SeasonType order)
+    private bool DownloadEpisodeNow(ISeriesSpecifier series, int episodeId, Locale locale, ProcessedSeason.SeasonType order)
     {
         if (episodeId == 0)
         {
-            LOGGER.Warn($"Asked to download episodeId = 0 for cachedSeries {seriesId}");
+            LOGGER.Warn($"Asked to download episodeId = 0 for cachedSeries {series.Name}:{series.TvdbId}");
             SayNothing();
             return true;
         }
 
-        if (!Series.ContainsKey(seriesId))
+        if (!Series.ContainsKey(series.TvdbId))
         {
             return false; // shouldn't happen
         }
@@ -3021,11 +3021,12 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         Episode? ep = FindEpisodeById(episodeId);
         string eptxt = EpisodeDescription(order, episodeId, ep);
 
-        CachedSeriesInfo cachedSeriesInfo = Series[seriesId];
+        CachedSeriesInfo cachedSeriesInfo = Series[series.TvdbId];
         Say($"{cachedSeriesInfo.Name} ({eptxt}) in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
 
         JObject jsonEpisodeResponse;
         JObject jsonEpisodeDefaultLangResponse = new();
+        string errorMessage = $"Error obtaining {cachedSeriesInfo.Name} episode[{episodeId}]:";
 
         try
         {
@@ -3040,23 +3041,23 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (System.IO.IOException ex)
         {
-            LOGGER.LogIoException($"Error obtaining episode[{episodeId}]:", ex);
-
+            LOGGER.LogIoException(errorMessage, ex);
             LastErrorMessage = ex.LoggableDetails();
+            cachedSeriesInfo.Dirty = true;
             return false;
         }
         catch (WebException ex)
         {
-            LOGGER.LogWebException($"Error obtaining episode[{episodeId}]:", ex);
-
+            LOGGER.LogWebException(errorMessage, ex);
             LastErrorMessage = ex.LoggableDetails();
+            cachedSeriesInfo.Dirty = true;
             return false;
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
-            LOGGER.LogHttpRequestException($"Error obtaining episode[{episodeId}]:", wex);
-
+            LOGGER.LogHttpRequestException(errorMessage, wex);
             LastErrorMessage = wex.LoggableDetails();
+            cachedSeriesInfo.Dirty = true;
             return false;
         }
         finally
@@ -3075,11 +3076,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
         {
             JObject? seriesDataDefaultLang = (JObject?)jsonEpisodeDefaultLangResponse["data"];
-            return UpdateEpisodeNowv3(seriesId, jsonResponseData, seriesDataDefaultLang, cachedSeriesInfo);
+            return UpdateEpisodeNowv3(series.TvdbId, jsonResponseData, seriesDataDefaultLang, cachedSeriesInfo);
         }
         else
         {
-            return UpdateEpisodeNowv3(seriesId, jsonResponseData, null, cachedSeriesInfo);
+            return UpdateEpisodeNowv3(series.TvdbId, jsonResponseData, null, cachedSeriesInfo);
         }
     }
 
@@ -3241,7 +3242,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             }
             Thread.CurrentThread.Name ??= $"Download Episode {ee.Value.EpisodeId}"; // Can only set it once
 
-            ok = DownloadEpisodeNow(ee.Value.SeriesId, ee.Key, seriesd.TargetLocale, ee.Value.Order) && ok;
+            ok = DownloadEpisodeNow(seriesd, ee.Key, seriesd.TargetLocale, ee.Value.Order) && ok;
             ee.Value.Done = true;
         });
 
