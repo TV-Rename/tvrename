@@ -197,8 +197,7 @@ public class PossibleNewMovie : ISeriesSpecifier
                 IEnumerable<FileInfo> files = Directory.EnumerateFiles(fileName).ToList();
                 if (files.Any())
                 {
-                    foreach (string x in files.Select(info => FindShowCode(info, simpleIdCode, uniqueIdCode))
-                                 .Where(x => x.HasValue()).OfType<string>())
+                    foreach (string x in files.Select(info => FindShowCode(info, simpleIdCode, uniqueIdCode)).ValidStrings())
                     {
                         return x;
                     }

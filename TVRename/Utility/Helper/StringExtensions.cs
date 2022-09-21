@@ -339,9 +339,15 @@ public static class StringExtensions
     {
         return string.IsNullOrEmpty(aggregate)
             ? Array.Empty<string>()
-            : aggregate.Split(delimiter)
-                .Where(s => s.HasValue())
-                .Select(s => s.Trim());
+            : aggregate.Split(delimiter).ValidStrings();
+    }
+
+    public static IEnumerable<string> ValidStrings(this IEnumerable<string?>? possibleStrings)
+    {
+        return possibleStrings?
+            .Where(s => s.HasValue())
+            .OfType<string>()
+            .Select(s => s.Trim()) ?? Array.Empty<string>();
     }
 
     public static int? ToInt(this string? value)

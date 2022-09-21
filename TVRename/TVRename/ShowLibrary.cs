@@ -114,8 +114,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         return Shows
             .Select(s => s.CachedShow?.SeriesType)
             .Distinct()
-            .Where(s => s.HasValue())
-            .OfType<string>()
+            .ValidStrings()
             .OrderBy(s => s);
     }
 
@@ -136,7 +135,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             .Where(s => !string.IsNullOrWhiteSpace(s?.ContentRating))
             .OfType<CachedSeriesInfo>()
             .Select(s => s.ContentRating)
-            .OfType<string>()
+            .ValidStrings()
             .Distinct()
             .OrderBy(s => s);
     }

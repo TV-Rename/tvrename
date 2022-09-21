@@ -159,10 +159,9 @@ public class MovieLibrary : SafeList<MovieConfiguration>
     {
         return Movies
             .Select(s => s.CachedMovie)
-            .Where(s => !string.IsNullOrWhiteSpace(s?.Status))
             .OfType<CachedMovieInfo>()
             .Select(s => s.Status)
-            .OfType<string>()
+            .ValidStrings()
             .Distinct()
             .OrderBy(s => s);
     }
