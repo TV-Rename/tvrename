@@ -10,7 +10,7 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
-// "PossibleNewTVShow" represents a folder found by doing a Check in the 'Bulk Add Shows' dialog
+// "PossibleNewTVShow" represents a folder found by doing a Check in the 'Bulk Add TV Shows' dialog
 public class PossibleNewTvShow : ISeriesSpecifier
 {
     public readonly DirectoryInfo Folder;

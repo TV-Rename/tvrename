@@ -537,7 +537,7 @@ namespace TVRename
             this.folderMonitorToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("folderMonitorToolStripMenuItem.Image")));
             this.folderMonitorToolStripMenuItem.Name = "folderMonitorToolStripMenuItem";
             this.folderMonitorToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
-            this.folderMonitorToolStripMenuItem.Text = "Bulk &Add Shows...";
+            this.folderMonitorToolStripMenuItem.Text = "Bulk &Add TV Shows...";
             this.folderMonitorToolStripMenuItem.Click += new System.EventHandler(this.folderMonitorToolStripMenuItem_Click);
             //
             // bulkAddMoviesToolStripMenuItem

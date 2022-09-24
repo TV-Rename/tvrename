@@ -3863,7 +3863,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void folderMonitorToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Bulk add shows is open");
+        mDoc.PreventAutoScan("Bulk add TV Shows is open");
 
         BulkAddSeriesManager bam = new(mDoc);
         BulkAddShow fm = new(mDoc, bam,this);
@@ -5106,7 +5106,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void bulkAddMoviesToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Bulk Add Shows");
+        mDoc.PreventAutoScan("Bulk Add TV Shows");
         BulkAddMovieManager bam = new(mDoc);
         BulkAddMovie fm = new(mDoc, bam,this);
         fm.ShowDialog(this);

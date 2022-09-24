@@ -79,9 +79,9 @@ namespace TVRename
             this.tbIgnore.SuspendLayout();
             this.tbResults.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // bnCheck1
-            // 
+            //
             this.bnCheck1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCheck1.Location = new System.Drawing.Point(770, 384);
             this.bnCheck1.Name = "bnCheck1";
@@ -90,9 +90,9 @@ namespace TVRename
             this.bnCheck1.Text = "&Check >>";
             this.bnCheck1.UseVisualStyleBackColor = true;
             this.bnCheck1.Click += new System.EventHandler(this.bnCheck_Click);
-            // 
+            //
             // bnOpenMonFolder
-            // 
+            //
             this.bnOpenMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnOpenMonFolder.Enabled = false;
             this.bnOpenMonFolder.Location = new System.Drawing.Point(168, 384);
@@ -102,9 +102,9 @@ namespace TVRename
             this.bnOpenMonFolder.Text = "&Open";
             this.bnOpenMonFolder.UseVisualStyleBackColor = true;
             this.bnOpenMonFolder.Click += new System.EventHandler(this.bnOpenMonFolder_Click);
-            // 
+            //
             // bnRemoveMonFolder
-            // 
+            //
             this.bnRemoveMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveMonFolder.Enabled = false;
             this.bnRemoveMonFolder.Location = new System.Drawing.Point(87, 384);
@@ -114,18 +114,18 @@ namespace TVRename
             this.bnRemoveMonFolder.Text = "&Remove";
             this.bnRemoveMonFolder.UseVisualStyleBackColor = true;
             this.bnRemoveMonFolder.Click += new System.EventHandler(this.bnRemoveMonFolder_Click);
-            // 
+            //
             // label2
-            // 
+            //
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(3, 39);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(82, 13);
             this.label2.TabIndex = 5;
             this.label2.Text = "&Monitor Folders:";
-            // 
+            //
             // lstFMMonitorFolders
-            // 
+            //
             this.lstFMMonitorFolders.AllowDrop = true;
             this.lstFMMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.lstFMMonitorFolders.FormattingEnabled = true;
@@ -141,9 +141,9 @@ namespace TVRename
             this.lstFMMonitorFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lstFMMonitorFolders_DragOver);
             this.lstFMMonitorFolders.DoubleClick += new System.EventHandler(this.lstFMMonitorFolders_DoubleClick);
             this.lstFMMonitorFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstFMMonitorFolders_KeyDown);
-            // 
+            //
             // bnAddMonFolder
-            // 
+            //
             this.bnAddMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnAddMonFolder.Location = new System.Drawing.Point(6, 384);
             this.bnAddMonFolder.Name = "bnAddMonFolder";
@@ -152,18 +152,18 @@ namespace TVRename
             this.bnAddMonFolder.Text = "&Add";
             this.bnAddMonFolder.UseVisualStyleBackColor = true;
             this.bnAddMonFolder.Click += new System.EventHandler(this.bnAddMonFolder_Click);
-            // 
+            //
             // label7
-            // 
+            //
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(3, 39);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(77, 13);
             this.label7.TabIndex = 5;
             this.label7.Text = "&Ignore Folders:";
-            // 
+            //
             // bnOpenIgFolder
-            // 
+            //
             this.bnOpenIgFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnOpenIgFolder.Enabled = false;
             this.bnOpenIgFolder.Location = new System.Drawing.Point(169, 384);
@@ -173,9 +173,9 @@ namespace TVRename
             this.bnOpenIgFolder.Text = "O&pen";
             this.bnOpenIgFolder.UseVisualStyleBackColor = true;
             this.bnOpenIgFolder.Click += new System.EventHandler(this.bnOpenIgFolder_Click);
-            // 
+            //
             // bnAddIgFolder
-            // 
+            //
             this.bnAddIgFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnAddIgFolder.Location = new System.Drawing.Point(6, 384);
             this.bnAddIgFolder.Name = "bnAddIgFolder";
@@ -184,9 +184,9 @@ namespace TVRename
             this.bnAddIgFolder.Text = "A&dd";
             this.bnAddIgFolder.UseVisualStyleBackColor = true;
             this.bnAddIgFolder.Click += new System.EventHandler(this.bnAddIgFolder_Click);
-            // 
+            //
             // bnRemoveIgFolder
-            // 
+            //
             this.bnRemoveIgFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveIgFolder.Enabled = false;
             this.bnRemoveIgFolder.Location = new System.Drawing.Point(88, 384);
@@ -196,9 +196,9 @@ namespace TVRename
             this.bnRemoveIgFolder.Text = "Remo&ve";
             this.bnRemoveIgFolder.UseVisualStyleBackColor = true;
             this.bnRemoveIgFolder.Click += new System.EventHandler(this.bnRemoveIgFolder_Click);
-            // 
+            //
             // lstFMIgnoreFolders
-            // 
+            //
             this.lstFMIgnoreFolders.AllowDrop = true;
             this.lstFMIgnoreFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.lstFMIgnoreFolders.FormattingEnabled = true;
@@ -213,9 +213,9 @@ namespace TVRename
             this.lstFMIgnoreFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFMIgnoreFolders_DragDrop);
             this.lstFMIgnoreFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lstFMIgnoreFolders_DragOver);
             this.lstFMIgnoreFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstFMIgnoreFolders_KeyDown);
-            // 
+            //
             // bnVisitTVcom
-            // 
+            //
             this.bnVisitTVcom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnVisitTVcom.Enabled = false;
             this.bnVisitTVcom.Location = new System.Drawing.Point(346, 384);
@@ -225,9 +225,9 @@ namespace TVRename
             this.bnVisitTVcom.Text = "&Visit TVDB";
             this.bnVisitTVcom.UseVisualStyleBackColor = true;
             this.bnVisitTVcom.Click += new System.EventHandler(this.bnVisitTVcom_Click);
-            // 
+            //
             // bnFullAuto
-            // 
+            //
             this.bnFullAuto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnFullAuto.Location = new System.Drawing.Point(6, 384);
             this.bnFullAuto.Name = "bnFullAuto";
@@ -236,9 +236,9 @@ namespace TVRename
             this.bnFullAuto.Text = "&Auto ID All";
             this.bnFullAuto.UseVisualStyleBackColor = true;
             this.bnFullAuto.Click += new System.EventHandler(this.bnFullAuto_Click);
-            // 
+            //
             // bnFolderMonitorDone
-            // 
+            //
             this.bnFolderMonitorDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnFolderMonitorDone.Location = new System.Drawing.Point(770, 384);
             this.bnFolderMonitorDone.Name = "bnFolderMonitorDone";
@@ -247,18 +247,18 @@ namespace TVRename
             this.bnFolderMonitorDone.Text = "A&dd && Close";
             this.bnFolderMonitorDone.UseVisualStyleBackColor = true;
             this.bnFolderMonitorDone.Click += new System.EventHandler(this.bnFolderMonitorDone_Click);
-            // 
+            //
             // label6
-            // 
+            //
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(3, 39);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(64, 13);
             this.label6.TabIndex = 5;
             this.label6.Text = "&New Shows";
-            // 
+            //
             // bnRemoveNewFolder
-            // 
+            //
             this.bnRemoveNewFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveNewFolder.Enabled = false;
             this.bnRemoveNewFolder.Location = new System.Drawing.Point(175, 384);
@@ -268,9 +268,9 @@ namespace TVRename
             this.bnRemoveNewFolder.Text = "Re&move";
             this.bnRemoveNewFolder.UseVisualStyleBackColor = true;
             this.bnRemoveNewFolder.Click += new System.EventHandler(this.bnRemoveNewFolder_Click);
-            // 
+            //
             // bnNewFolderOpen
-            // 
+            //
             this.bnNewFolderOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnNewFolderOpen.Enabled = false;
             this.bnNewFolderOpen.Location = new System.Drawing.Point(427, 384);
@@ -280,9 +280,9 @@ namespace TVRename
             this.bnNewFolderOpen.Text = "Open &Folder";
             this.bnNewFolderOpen.UseVisualStyleBackColor = true;
             this.bnNewFolderOpen.Click += new System.EventHandler(this.bnNewFolderOpen_Click);
-            // 
+            //
             // bnIgnoreNewFolder
-            // 
+            //
             this.bnIgnoreNewFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnIgnoreNewFolder.Enabled = false;
             this.bnIgnoreNewFolder.Location = new System.Drawing.Point(256, 384);
@@ -292,13 +292,13 @@ namespace TVRename
             this.bnIgnoreNewFolder.Text = "&Ignore";
             this.bnIgnoreNewFolder.UseVisualStyleBackColor = true;
             this.bnIgnoreNewFolder.Click += new System.EventHandler(this.bnIgnoreNewFolder_Click);
-            // 
+            //
             // folderBrowser
-            // 
+            //
             this.folderBrowser.ShowNewFolderButton = false;
-            // 
+            //
             // tabControl1
-            // 
+            //
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tbFolders);
             this.tabControl1.Controls.Add(this.tbIgnore);
@@ -308,9 +308,9 @@ namespace TVRename
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(859, 436);
             this.tabControl1.TabIndex = 13;
-            // 
+            //
             // tbFolders
-            // 
+            //
             this.tbFolders.Controls.Add(this.bnCheck1);
             this.tbFolders.Controls.Add(this.label1);
             this.tbFolders.Controls.Add(this.label2);
@@ -325,17 +325,17 @@ namespace TVRename
             this.tbFolders.TabIndex = 0;
             this.tbFolders.Text = "Folders";
             this.tbFolders.UseVisualStyleBackColor = true;
-            // 
+            //
             // label1
-            // 
+            //
             this.label1.Location = new System.Drawing.Point(3, 3);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(562, 36);
             this.label1.TabIndex = 5;
             this.label1.Text = resources.GetString("label1.Text");
-            // 
+            //
             // tbIgnore
-            // 
+            //
             this.tbIgnore.Controls.Add(this.bnCheck2);
             this.tbIgnore.Controls.Add(this.label3);
             this.tbIgnore.Controls.Add(this.label7);
@@ -350,9 +350,9 @@ namespace TVRename
             this.tbIgnore.TabIndex = 1;
             this.tbIgnore.Text = "Ignore";
             this.tbIgnore.UseVisualStyleBackColor = true;
-            // 
+            //
             // bnCheck2
-            // 
+            //
             this.bnCheck2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCheck2.Location = new System.Drawing.Point(768, 384);
             this.bnCheck2.Name = "bnCheck2";
@@ -361,17 +361,17 @@ namespace TVRename
             this.bnCheck2.Text = "&Check >>";
             this.bnCheck2.UseVisualStyleBackColor = true;
             this.bnCheck2.Click += new System.EventHandler(this.bnCheck2_Click);
-            // 
+            //
             // label3
-            // 
+            //
             this.label3.Location = new System.Drawing.Point(3, 3);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(487, 36);
             this.label3.TabIndex = 10;
             this.label3.Text = "Add folders to this list, to have them ignored when Checking.  Drag and drop, or " + "click \"Add...\" below.  Click \"Check >>\" when done.";
-            // 
+            //
             // tbResults
-            // 
+            //
             this.tbResults.Controls.Add(this.bnEditEntry);
             this.tbResults.Controls.Add(this.label4);
             this.tbResults.Controls.Add(this.label6);
@@ -388,9 +388,9 @@ namespace TVRename
             this.tbResults.TabIndex = 2;
             this.tbResults.Text = "Scan Results";
             this.tbResults.UseVisualStyleBackColor = true;
-            // 
+            //
             // bnEditEntry
-            // 
+            //
             this.bnEditEntry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnEditEntry.Enabled = false;
             this.bnEditEntry.Location = new System.Drawing.Point(93, 384);
@@ -400,17 +400,17 @@ namespace TVRename
             this.bnEditEntry.Text = "&Edit";
             this.bnEditEntry.UseVisualStyleBackColor = true;
             this.bnEditEntry.Click += new System.EventHandler(this.bnEditEntry_Click);
-            // 
+            //
             // label4
-            // 
+            //
             this.label4.Location = new System.Drawing.Point(3, 3);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(645, 32);
             this.label4.TabIndex = 12;
             this.label4.Text = resources.GetString("label4.Text");
-            // 
+            //
             // lvFMNewShows
-            // 
+            //
             this.lvFMNewShows.AllowDrop = true;
             this.lvFMNewShows.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.lvFMNewShows.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.columnHeader42, this.columnHeader43, this.columnHeader44, this.columnHeader45 });
@@ -429,36 +429,36 @@ namespace TVRename
             this.lvFMNewShows.DragOver += new System.Windows.Forms.DragEventHandler(this.lvFMNewShows_DragOver);
             this.lvFMNewShows.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvFMNewShows_KeyDown);
             this.lvFMNewShows.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvFMNewShows_MouseDoubleClick);
-            // 
+            //
             // columnHeader42
-            // 
+            //
             this.columnHeader42.Text = "Folder";
             this.columnHeader42.Width = 240;
-            // 
+            //
             // columnHeader43
-            // 
+            //
             this.columnHeader43.Text = "Show";
             this.columnHeader43.Width = 277;
-            // 
+            //
             // columnHeader44
-            // 
+            //
             this.columnHeader44.Text = "Folder Structure";
             this.columnHeader44.Width = 103;
-            // 
+            //
             // columnHeader45
-            // 
+            //
             this.columnHeader45.Text = "Source Code";
             this.columnHeader45.Width = 94;
-            // 
+            //
             // imagesPassFail
-            // 
+            //
             this.imagesPassFail.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imagesPassFail.ImageStream")));
             this.imagesPassFail.TransparentColor = System.Drawing.Color.Transparent;
             this.imagesPassFail.Images.SetKeyName(0, "fail");
             this.imagesPassFail.Images.SetKeyName(1, "pass");
-            // 
+            //
             // bnClose
-            // 
+            //
             this.bnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.bnClose.Location = new System.Drawing.Point(774, 442);
@@ -468,9 +468,9 @@ namespace TVRename
             this.bnClose.Text = "Close";
             this.bnClose.UseVisualStyleBackColor = true;
             this.bnClose.Click += new System.EventHandler(this.bnClose_Click);
-            // 
+            //
             // BulkAddShow
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(859, 477);
@@ -483,7 +483,7 @@ namespace TVRename
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Bulk Add Shows";
+            this.Text = "Bulk Add TV Shows";
             this.tabControl1.ResumeLayout(false);
             this.tbFolders.ResumeLayout(false);
             this.tbFolders.PerformLayout();

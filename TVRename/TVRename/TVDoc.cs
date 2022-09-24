@@ -1898,7 +1898,7 @@ public class TVDoc : IDisposable
         }
         if (TVSettings.Instance.LibraryFolders.Contains(downloadFolder) || TVSettings.Instance.MovieLibraryFolders.Contains(downloadFolder))
         {
-            string msg = $"Stopping 'Move Movies From' from '{downloadFolder}' as it is already a library folder. Either remove the folder from the library in Preferences or use 'Bulk Add' to add shows into the library that are already copied to the library folders.";
+            string msg = $"Stopping 'Move Movies From' from '{downloadFolder}' as it is already a library folder. Either remove the folder from the library in Preferences or use 'Bulk Add' to add TV Shows into the library that are already copied to the library folders.";
             Logger.Warn(msg);
             MessageBox.Show(msg, "Can't scan folder", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
@@ -2225,7 +2225,7 @@ public class TVDoc : IDisposable
         if (TVSettings.Instance.LibraryFolders.Count + TVSettings.Instance.MovieLibraryFolders.Count == 0)
         {
             MessageBox.Show(
-                "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
+                "Please add some monitor (library) folders under 'Bulk Add TV Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
                 "Can't Auto Add Movie", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             return null;

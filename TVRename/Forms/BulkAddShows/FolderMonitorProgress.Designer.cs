@@ -93,7 +93,7 @@ namespace TVRename
             this.Name = "FolderMonitorProgress";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Bulk Add Shows - Progress";
+            this.Text = "Bulk Add TV Shows - Progress";
             this.Load += new System.EventHandler(this.FolderMonitorProgress_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

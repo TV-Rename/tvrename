@@ -383,7 +383,7 @@ public class BulkAddSeriesManager
             return;
         }
 
-        // is it on the ''Bulk Add Shows' ignore list?
+        // is it on the ''Bulk Add TV Shows' ignore list?
         if (TVSettings.Instance.IgnoreFolders.Contains(di.FullName.ToLower()))
         {
             if (fullLogging)

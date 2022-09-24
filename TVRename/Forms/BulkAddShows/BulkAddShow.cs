@@ -63,7 +63,7 @@ public partial class BulkAddShow : Form
     {
         if (!CanClose())
         {
-            if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"TV Shows\"?", "Bulk Add Shows", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
+            if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"TV Shows\"?", "Bulk Add TV Shows", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
             {
                 return;
             }
@@ -219,7 +219,7 @@ public partial class BulkAddShow : Form
         FmpUpto = "Checking folders";
         FmpPercent = 0;
 
-        Thread fmpshower = new(FmpShower) { Name = "'Bulk Add Shows' Progress (Folder Check)" };
+        Thread fmpshower = new(FmpShower) { Name = "'Bulk Add TV Shows' Progress (Folder Check)" };
         fmpshower.Start();
 
         while (progressDialog is null || !progressDialog.Ready)
@@ -336,7 +336,7 @@ public partial class BulkAddShow : Form
         FmpUpto = "Identifying shows";
         FmpPercent = 0;
 
-        Thread fmpshower = new(FmpShower) { Name = "Bulk Add Shows Progress (Full Auto)" };
+        Thread fmpshower = new(FmpShower) { Name = "Bulk Add TV Shows Progress (Full Auto)" };
         fmpshower.Start();
 
         while (progressDialog is null || !progressDialog.Ready)
@@ -399,7 +399,7 @@ public partial class BulkAddShow : Form
             return;
         }
 
-        DialogResult res = MessageBox.Show("Add selected folders to the 'Bulk Add Shows' ignore folders list?", "Bulk Add Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        DialogResult res = MessageBox.Show("Add selected folders to the 'Bulk Add TV Shows' ignore folders list?", "Bulk Add TV Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
         if (res != DialogResult.Yes)
         {
             return;
@@ -519,7 +519,7 @@ public partial class BulkAddShow : Form
     {
         if (engine.AddItems.Any())
         {
-            DialogResult res = MessageBox.Show("Add identified shows to \"TV Shows\"?", "Bulk Add Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult res = MessageBox.Show("Add identified shows to \"TV Shows\"?", "Bulk Add TV Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res != DialogResult.Yes)
             {
                 return;
