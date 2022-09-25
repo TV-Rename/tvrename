@@ -88,7 +88,8 @@ public sealed class TVSettings
         Recent,
         Quick,
         SingleShow,
-        FastSingleShow
+        FastSingleShow,
+        Incremental
     }
 
     #endregion ScanType enum

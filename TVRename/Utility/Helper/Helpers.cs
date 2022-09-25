@@ -60,6 +60,7 @@ public static class Helpers
             TVSettings.ScanType.Recent => "Recent",
             TVSettings.ScanType.SingleShow => "Single",
             TVSettings.ScanType.FastSingleShow => "Single (Fast)",
+            TVSettings.ScanType.Incremental => "Incremental",
             _ => throw new ArgumentOutOfRangeException(nameof(st), st, null)
         };
     }

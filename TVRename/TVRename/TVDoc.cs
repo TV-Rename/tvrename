@@ -181,7 +181,7 @@ public class TVDoc : IDisposable
         //OK, so we have a flurry of different Ids. There are 2 scenarios:
         // (1) Configuration has a cachedItem that has additional or different information to the main config. (This should be most)
         // (2) There is information in one of the caches that has information that could be useful (most should have been picked up in 1 above)
-        // We do them backwards as we precieve the (1) updates are better quality
+        // We do them backwards as we percieve the (1) updates are better quality
 
         CheckForUsefulTVIds(TVmaze.LocalCache.Instance, ProviderType.TheTVDB);
         CheckForUsefulTVIds(TVmaze.LocalCache.Instance, ProviderType.TMDB);
@@ -848,7 +848,10 @@ public class TVDoc : IDisposable
             PreventAutoScan("Scan " + scantype);
 
             UpdateMediaToScan(settings);
-            TheActionList.Clear();
+            if (settings.Type != TVSettings.ScanType.Incremental)
+            {
+                TheActionList.Clear();
+            }
 
             if (settings.Type != TVSettings.ScanType.FastSingleShow && settings.AnyMediaToUpdate)
             {
@@ -866,7 +869,7 @@ public class TVDoc : IDisposable
 
             SetProgressDelegate noProgress = NoProgress;
 
-            if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow && settings.Type != TVSettings.ScanType.FastSingleShow)
+            if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow && settings.Type != TVSettings.ScanType.FastSingleShow && settings.Type != TVSettings.ScanType.Incremental)
             {
                 new FindNewItemsInDownloadFolders(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 0, 50);
                 new FindNewShowsInLibrary(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 50, 100);
@@ -883,7 +886,7 @@ public class TVDoc : IDisposable
 
             new CheckShows(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg);
 
-            if (settings.Type != TVSettings.ScanType.FastSingleShow)
+            if (settings.Type != TVSettings.ScanType.FastSingleShow && settings.Type != TVSettings.ScanType.Incremental)
             {
                 new UnArchiveDownloadDirectory(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg);
                 new CleanDownloadDirectory(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg);
@@ -893,7 +896,7 @@ public class TVDoc : IDisposable
             downloadFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadingProg);
             searchFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg);
 
-            if (settings.Type != TVSettings.ScanType.FastSingleShow)
+            if (settings.Type != TVSettings.ScanType.FastSingleShow && settings.Type != TVSettings.ScanType.Incremental)
             {
                 new CleanUpTorrents(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg);
             }
@@ -1051,8 +1054,9 @@ public class TVDoc : IDisposable
             TVSettings.ScanType.Quick => GetQuickShowsToScan(true, true),
             TVSettings.ScanType.Recent => TvLibrary.GetRecentShows(),
             TVSettings.ScanType.SingleShow => passedShows ?? new List<ShowConfiguration>(),
+            TVSettings.ScanType.Incremental => passedShows ?? new List<ShowConfiguration>(),
             TVSettings.ScanType.FastSingleShow => passedShows ?? new List<ShowConfiguration>(),
-            _ => new List<ShowConfiguration>()
+            _ => passedShows ?? new List<ShowConfiguration>()
         };
     }
 
@@ -1069,7 +1073,8 @@ public class TVDoc : IDisposable
             TVSettings.ScanType.Recent => TVSettings.Instance.IncludeMoviesQuickRecent ? FilmLibrary.GetSortedMovies() : passedShows ?? new List<MovieConfiguration>(),
             TVSettings.ScanType.SingleShow => passedShows ?? new List<MovieConfiguration>(),
             TVSettings.ScanType.FastSingleShow => passedShows ?? new List<MovieConfiguration>(),
-            _ => new List<MovieConfiguration>()
+            TVSettings.ScanType.Incremental => passedShows ?? new List<MovieConfiguration>(),
+            _ => passedShows ?? new List<MovieConfiguration>()
         };
     }
 
@@ -1553,7 +1558,11 @@ public class TVDoc : IDisposable
         return showsToScan;
     }
 
-    internal void ForceRefreshShows(IEnumerable<ShowConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner)
+    internal void ForceRefreshShows(IEnumerable<ShowConfiguration>? sis, bool unattended, bool tvrMinimised,
+        UI owner) =>
+        ForceRefreshShows(sis, unattended, tvrMinimised, owner, true);
+
+    private void ForceRefreshShows(IEnumerable<ShowConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner, bool doDownloads)
     {
         if (sis == null)
         {
@@ -1567,7 +1576,10 @@ public class TVDoc : IDisposable
         {
             ForgetShow(si);
         }
-        DoDownloadsFg(unattended, tvrMinimised, owner, showConfigurations);
+        if (doDownloads)
+        {
+            DoDownloadsFg(unattended, tvrMinimised, owner, showConfigurations);
+        }
         AllowAutoScan();
     }
 
@@ -1604,7 +1616,11 @@ public class TVDoc : IDisposable
         };
     }
 
-    internal void ForceRefreshMovies(IEnumerable<MovieConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner)
+    internal void ForceRefreshMovies(IEnumerable<MovieConfiguration>? sis, bool unattended, bool tvrMinimised,
+        UI owner) =>
+        ForceRefreshMovies(sis, unattended, tvrMinimised, owner, true);
+
+    private void ForceRefreshMovies(IEnumerable<MovieConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner, bool doDownloads)
     {
         if (sis == null)
         {
@@ -1618,7 +1634,10 @@ public class TVDoc : IDisposable
         {
             ForgetMovie(si);
         }
-        DoDownloadsFg(unattended, tvrMinimised, owner, movieConfigurations);
+        if (doDownloads)
+        {
+            DoDownloadsFg(unattended, tvrMinimised, owner, movieConfigurations);
+        }
         AllowAutoScan();
     }
 
@@ -2306,5 +2325,26 @@ public class TVDoc : IDisposable
             DoActions(set.Lvr, set.Token.Token);
         }
         AllowAutoScan();
+    }
+
+    public void ForceRefreshBeforeRescan(List<ShowConfiguration> shows,List<MovieConfiguration> movies, bool unattended, bool tvrMinimised, UI owner)
+    {
+        RemoveActionsFromShows(shows);
+        RemoveActionsFromMovies(movies);
+
+        ForceRefreshShows(shows,unattended,tvrMinimised,owner,false);
+        ForceRefreshMovies(movies,unattended,tvrMinimised,owner,false);
+    }
+
+    private void RemoveActionsFromShows(IReadOnlyCollection<ShowConfiguration> shows)
+    {
+        List<Item> selectedActions = TheActionList.Where(a => shows.Any(s => a.Series == s)).ToList();
+        TheActionList.Remove(selectedActions);
+    }
+
+    private void RemoveActionsFromMovies(IReadOnlyCollection<MovieConfiguration> movie)
+    {
+        List<Item> selectedActions = TheActionList.Where(a => movie.Any(s => a.Movie == s)).ToList();
+        TheActionList.Remove(selectedActions);
     }
 }

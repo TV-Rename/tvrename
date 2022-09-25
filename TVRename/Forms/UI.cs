@@ -315,7 +315,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         olvType.GroupKeyToTitleConverter = GroupItemsTitleDelegate;
 
         olvDate.GroupKeyGetter = GroupDateKeyDelegate;
-        olvDate.GroupKeyToTitleConverter = GroupDateTitleDegate;
+        olvDate.GroupKeyToTitleConverter = GroupDateTitleDelegate;
 
         olvSeason.GroupKeyGetter = GroupSeasonKeyDelegate;
 
@@ -372,7 +372,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         return string.Empty;
     }
 
-    private static string GroupDateTitleDegate(object? groupKey)
+    private static string GroupDateTitleDelegate(object? groupKey)
     {
         DateTime? episodeTime = (DateTime?)groupKey;
 
@@ -3196,6 +3196,21 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         RefreshWTW(false, unattended);
     }
 
+    private void ForceRefreshAndRescanShows(IEnumerable<Item>? sis, bool unattended)
+    {
+        if (sis is null)
+        {
+            return;
+        }
+
+        IEnumerable<Item> enumerable = sis.ToList();
+        List<ShowConfiguration> shows = enumerable.Select(x => x.Series).OfType<ShowConfiguration>().ToList();
+        List<MovieConfiguration> movies = enumerable.Select(x => x.Movie).OfType<MovieConfiguration>().ToList();
+
+        mDoc.ForceRefreshBeforeRescan(shows,movies, unattended, WindowState == FormWindowState.Minimized, this);
+        UiScan(shows,movies,unattended,TVSettings.ScanType.Incremental,MediaConfiguration.MediaType.both);
+    }
+
     internal void ForceMovieRefresh(IEnumerable<MovieConfiguration>? sis, bool unattended)
     {
         IEnumerable<MovieConfiguration>? movieConfigurations = sis?.ToList();
@@ -3968,6 +3983,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (episode != null)
         {
             AddRcMenuItem("Ignore Entire Season", (_, _) => IgnoreSelectedSeasons(lvr));
+            AddRcMenuItem("Force Refresh and Rescan Show", (_, _) => ForceRefreshAndRescanShows(lvr,false));
         }
         AddRcMenuItem("Remove Selected", (_, _) => ActionDeleteSelected());
 
