@@ -255,7 +255,7 @@ internal class TvdbAccuracyCheck
                                 continue;
                             }
 
-                            Logger.Error($"SERIES: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
+                            Logger.Warn($"SERIES: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
                             continue;
                         }
                     case "movies":
@@ -267,7 +267,7 @@ internal class TvdbAccuracyCheck
                             continue;
                         }
 
-                        Logger.Error($"MOVIE: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
+                        Logger.Warn($"MOVIE: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
                         continue;
                     }
                     case "episodes":
@@ -283,7 +283,7 @@ internal class TvdbAccuracyCheck
                                 continue;
                             }
 
-                            Logger.Error($"EPISODE: S{targetEpisode.AiredSeasonNumber:D2}E{targetEpisode.AiredEpNum:D2}: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
+                            Logger.Warn($"EPISODE: S{targetEpisode.AiredSeasonNumber:D2}E{targetEpisode.AiredEpNum:D2}: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
                             continue;
                         }
                     case "seasons":
@@ -299,7 +299,7 @@ internal class TvdbAccuracyCheck
                                 continue;
                             }
 
-                            Logger.Error($"SEASON: S{targetSeason.SeasonNumber:D2}:{targetSeason.SeasonName}: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
+                            Logger.Warn($"SEASON: S{targetSeason.SeasonNumber:D2}:{targetSeason.SeasonName}: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
                             continue;
                         }
                     case "artwork":
