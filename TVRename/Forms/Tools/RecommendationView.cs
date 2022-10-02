@@ -196,27 +196,28 @@ public partial class RecommendationView : Form
     private void BwScan_DoWork(object sender, DoWorkEventArgs e)
     {
         System.Threading.Thread.CurrentThread.Name ??= "Recommendations Scan Thread"; // Can only set it once
-        string languageCode = TVSettings.Instance.TMDBLanguage.Abbreviation;
-        switch (media)
+        try
         {
-            case MediaConfiguration.MediaType.tv:
-                recs = TMDB.LocalCache.Instance.GetRecommendations((BackgroundWorker)sender, tvShows.ToList(), languageCode).Result;
-                foreach (KeyValuePair<int, RecommendationResult> rec in recs)
-                {
-                    Logger.Warn($"{rec.Key,-10} | {(rec.Value.TopRated ? "Top" : "   ")} | {(rec.Value.Trending ? "Trend" : "    ")} | {rec.Value.Related.Count,5} | {rec.Value.Similar.Count,5} | {mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != rec.Key)} | {TMDB.LocalCache.Instance.GetSeries(rec.Key)?.Name}");
-                }
-                break;
+            string languageCode = TVSettings.Instance.TMDBLanguage.Abbreviation;
+            switch (media)
+            {
+                case MediaConfiguration.MediaType.tv:
+                    recs = TMDB.LocalCache.Instance
+                        .GetRecommendations((BackgroundWorker)sender, tvShows.ToList(), languageCode).Result;
+                    break;
 
-            case MediaConfiguration.MediaType.movie:
-                recs = TMDB.LocalCache.Instance.GetRecommendations((BackgroundWorker)sender, movies.ToList(), languageCode).Result;
-                foreach (KeyValuePair<int, RecommendationResult> rec in recs)
-                {
-                    Logger.Warn($"{rec.Key,-10} | {(rec.Value.TopRated ? "Top" : "   ")} | {(rec.Value.Trending ? "Trend" : "    ")} | {rec.Value.Related.Count,5} | {rec.Value.Similar.Count,5} | {TMDB.LocalCache.Instance.GetMovie(rec.Key)?.IsSearchResultOnly} | {TMDB.LocalCache.Instance.GetMovie(rec.Key)?.Name}");
-                }
-                break;
+                case MediaConfiguration.MediaType.movie:
+                    recs = TMDB.LocalCache.Instance
+                        .GetRecommendations((BackgroundWorker)sender, movies.ToList(), languageCode).Result;
+                    break;
 
-            default:
-                throw new ArgumentOutOfRangeException();
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Fatal(ex,"UNHANDLED error obtinaing recommendations");
         }
     }
 
