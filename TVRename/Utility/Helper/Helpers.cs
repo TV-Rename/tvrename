@@ -26,6 +26,13 @@ public static class Helpers
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+    public static void Add(this ToolStripItemCollection items, string name, EventHandler command)
+    {
+        ToolStripMenuItem tsi = new(name.ToUiVersion());
+        tsi.Click += command;
+        items.Add(tsi);
+    }
+
     /// <summary>
     /// Gets a value indicating whether application is running under Mono.
     /// </summary>
@@ -282,6 +289,8 @@ public static class Helpers
     }
 
     public static void OpenFile(string filename) => OpenUrlInternal(filename);
+
+    public static void OpenFile(this FileInfo file) => OpenUrlInternal(file.FullName);
 
     static bool SysOpen(string? what, string? arguments)
     {

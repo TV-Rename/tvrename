@@ -32,6 +32,7 @@ public class TVDoc : IDisposable
         libraryDefault,
 
         // ReSharper disable once InconsistentNaming
+        // ReSharper disable once IdentifierTypo
         TVmaze,
 
         // ReSharper disable once InconsistentNaming
@@ -181,7 +182,7 @@ public class TVDoc : IDisposable
         //OK, so we have a flurry of different Ids. There are 2 scenarios:
         // (1) Configuration has a cachedItem that has additional or different information to the main config. (This should be most)
         // (2) There is information in one of the caches that has information that could be useful (most should have been picked up in 1 above)
-        // We do them backwards as we percieve the (1) updates are better quality
+        // We do them backwards as we perceive the (1) updates are better quality
 
         CheckForUsefulTVIds(TVmaze.LocalCache.Instance, ProviderType.TheTVDB);
         CheckForUsefulTVIds(TVmaze.LocalCache.Instance, ProviderType.TMDB);
@@ -343,7 +344,7 @@ public class TVDoc : IDisposable
 
     public bool Dirty() => mDirty;
 
-    public void DoActions(ItemList theList, CancellationToken token)
+    private void DoActions(ItemList theList, CancellationToken token)
     {
         try
         {
@@ -359,10 +360,8 @@ public class TVDoc : IDisposable
             List<Action> doneActions = TheActionList.Actions.Where(a => a.Outcome.Done && !a.Outcome.Error).ToList();
             List<Item> subsequentItems = doneActions.Select(a => a.Becomes()).OfType<Item>().ToList();
 
-            TheActionList.AddNullableRange(subsequentItems);
-
             // remove items from master list, unless it had an error
-            TheActionList.Remove(doneActions);
+            TheActionList.Replace(doneActions,subsequentItems);
         }
         catch (Exception e)
         {
@@ -370,7 +369,7 @@ public class TVDoc : IDisposable
         }
     }
 
-    public bool DoDownloadsFg(bool unattended, bool tvrMinimised, UI owner)
+    private bool DoDownloadsFg(bool unattended, bool tvrMinimised, UI owner)
     {
         List<ISeriesSpecifier> idsToDownload = new(TvLibrary);
         idsToDownload.AddRange(FilmLibrary.Movies);
@@ -378,7 +377,7 @@ public class TVDoc : IDisposable
     }
 
     // ReSharper disable once InconsistentNaming
-    public bool DoDownloadsFGNow(bool unattended, bool tvrMinimised, UI owner, List<ISeriesSpecifier> passedShows)
+    private bool DoDownloadsFGNow(bool unattended, bool tvrMinimised, UI owner, List<ISeriesSpecifier> passedShows)
     {
         bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
         bool showMsgBox = !unattended && !Args.Unattended && !Args.Hide && Environment.UserInteractive;
@@ -833,19 +832,14 @@ public class TVDoc : IDisposable
 
     public void Scan(ScanSettings settings)
     {
-        ScanProgress? scanProgDlg = settings.UpdateUi;
+        ScanProgress? scanProgressDlg = settings.UpdateUi;
 
         try
         {
             Logger.Info("*******************************");
-            string desc = settings.Unattended ? "unattended " : "";
-            string showsdesc = settings.Shows.Any() ? settings.Shows.Count.ToString() : "all";
-            string moviesdesc = settings.Movies.Any() ? settings.Movies.Count.ToString() : "all";
-            string scantype = settings.Type.PrettyPrint();
-            string mediatype = settings.Media.PrettyPrint();
-            Logger.Info($"Starting {desc}{scantype} {mediatype} Scan for {showsdesc} shows and {moviesdesc} movies...");
+            Logger.Info(settings.GenerateScanMessage());
 
-            PreventAutoScan("Scan " + scantype);
+            PreventAutoScan("Scan " + settings.Type.PrettyPrint());
 
             UpdateMediaToScan(settings);
             if (settings.Type != TVSettings.ScanType.Incremental)
@@ -862,7 +856,7 @@ public class TVDoc : IDisposable
                 }
             }
 
-            while (!Args.Hide && Environment.UserInteractive && (scanProgDlg is null || !scanProgDlg.Ready))
+            while (!Args.Hide && Environment.UserInteractive && (scanProgressDlg is null || !scanProgressDlg.Ready))
             {
                 Thread.Sleep(10); // wait for thread to create the dialog
             }
@@ -871,8 +865,8 @@ public class TVDoc : IDisposable
 
             if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow && settings.Type != TVSettings.ScanType.FastSingleShow && settings.Type != TVSettings.ScanType.Incremental)
             {
-                new FindNewItemsInDownloadFolders(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 0, 50);
-                new FindNewShowsInLibrary(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 50, 100);
+                new FindNewItemsInDownloadFolders(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.AddNewProg, 0, 50);
+                new FindNewShowsInLibrary(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.AddNewProg, 50, 100);
 
                 UpdateMediaToScan(settings);
             }
@@ -884,21 +878,21 @@ public class TVDoc : IDisposable
                 return;
             }
 
-            new CheckShows(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg);
+            new CheckShows(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.MediaLibProg);
 
             if (settings.Type != TVSettings.ScanType.FastSingleShow && settings.Type != TVSettings.ScanType.Incremental)
             {
-                new UnArchiveDownloadDirectory(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg);
-                new CleanDownloadDirectory(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg);
+                new UnArchiveDownloadDirectory(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.DownloadFolderProg);
+                new CleanDownloadDirectory(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.DownloadFolderProg);
             }
 
-            localFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.LocalSearchProg);
-            downloadFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadingProg);
-            searchFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg);
+            localFinders?.Check(scanProgressDlg is null ? noProgress : scanProgressDlg.LocalSearchProg);
+            downloadFinders?.Check(scanProgressDlg is null ? noProgress : scanProgressDlg.DownloadingProg);
+            searchFinders?.Check(scanProgressDlg is null ? noProgress : scanProgressDlg.ToBeDownloadedProg);
 
             if (settings.Type != TVSettings.ScanType.FastSingleShow && settings.Type != TVSettings.ScanType.Incremental)
             {
-                new CleanUpTorrents(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg);
+                new CleanUpTorrents(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.ToBeDownloadedProg);
             }
 
             if (settings.Token.IsCancellationRequested)
@@ -945,11 +939,10 @@ public class TVDoc : IDisposable
         }
         finally
         {
-            scanProgDlg?.Done();
+            scanProgressDlg?.Done();
             AllowAutoScan();
         }
     }
-
     private void GroupMissingSeasons()
     {
         List<IGrouping<(ShowConfiguration? Series, int? SeasonNumberAsInt), ShowItemMissing>> oldActions
@@ -984,10 +977,10 @@ public class TVDoc : IDisposable
     }
     public class ActionSettings
     {
-        public bool Unattended;
-        public bool DoAll;
-        public ItemList Lvr;
-        public CancellationTokenSource Token;
+        public readonly bool Unattended;
+        public readonly bool DoAll;
+        public readonly ItemList Lvr;
+        public readonly CancellationTokenSource Token;
 
         public ActionSettings(bool unattended, bool doAll, ItemList lvr, CancellationTokenSource token)
         {
@@ -1040,6 +1033,15 @@ public class TVDoc : IDisposable
             Shows = shows;
             Movies = movies;
         }
+
+        public string GenerateScanMessage()
+        {
+            string desc = Unattended ? "unattended " : string.Empty;
+            string shows = Shows.Any() ? Shows.Count.ToString() : "all";
+            string movies = Movies.Any() ? Movies.Count.ToString() : "all";
+
+            return $"Starting {desc}{Type.PrettyPrint()} {Media.PrettyPrint()} Scan for {shows} shows and {movies} movies...";
+        }
     }
 
     private IEnumerable<ShowConfiguration> GetShowList(TVSettings.ScanType st, MediaConfiguration.MediaType mt, IEnumerable<ShowConfiguration>? passedShows)
@@ -1078,7 +1080,7 @@ public class TVDoc : IDisposable
         };
     }
 
-    private IEnumerable<ShowConfiguration> GetQuickShowsToScan(bool doMissingRecents, bool doFilesInDownloadDir)
+    private IEnumerable<ShowConfiguration> GetQuickShowsToScan(bool doRecentMissing, bool doFilesInDownloadDir)
     {
         List<ShowConfiguration> showsToScan = new();
         if (doFilesInDownloadDir)
@@ -1086,7 +1088,7 @@ public class TVDoc : IDisposable
             showsToScan = GetShowsThatHaveDownloads();
         }
 
-        if (doMissingRecents)
+        if (doRecentMissing)
         {
             IEnumerable<ProcessedEpisode> lpe = GetMissingEps();
             foreach (ProcessedEpisode pe in lpe.Where(pe => !showsToScan.Contains(pe.Show)))
@@ -1131,7 +1133,7 @@ public class TVDoc : IDisposable
                 }
             }
 
-            // TODO Ensure Ingore PreviouslySeen Movies works
+            // TODO Ensure Ignore PreviouslySeen Movies works
             if (TVSettings.Instance.IgnorePreviouslySeenMovies)
             {
                 if (TVSettings.Instance.PreviouslySeenMovies.Includes(item) && item is ItemMissing)
@@ -1642,9 +1644,7 @@ public class TVDoc : IDisposable
     }
 
     private bool DoDownloadsFg(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MediaConfiguration> passedShows)
-    {
-        return DoDownloadsFGNow(unattended, tvrMinimised, owner, new List<ISeriesSpecifier>(passedShows));
-    }
+        => DoDownloadsFGNow(unattended, tvrMinimised, owner, new List<ISeriesSpecifier>(passedShows));
 
     // ReSharper disable once InconsistentNaming
     internal void TVDBServerAccuracyCheck(bool unattended, bool hidden, UI owner)
@@ -2054,19 +2054,19 @@ public class TVDoc : IDisposable
 
     private static FileInfo GetExistingFile(MovieConfiguration chosenShow, DirectoryInfo folder)
     {
-        List<FileInfo>? videofiles = folder.GetFiles().Where(fiTemp => fiTemp.IsMovieFile()).ToList();
+        List<FileInfo>? videoFiles = folder.GetFiles().Where(fiTemp => fiTemp.IsMovieFile()).ToList();
 
-        if (videofiles is null)
+        if (videoFiles is null)
         {
             throw new System.IO.FileNotFoundException();
         }
 
-        if (videofiles.Count != 1)
+        if (videoFiles.Count != 1)
         {
-            Logger.Warn($"{chosenShow.ShowName} has multiple files in {folder.FullName},just considering the first file {videofiles.First().Name} ");
+            Logger.Warn($"{chosenShow.ShowName} has multiple files in {folder.FullName},just considering the first file {videoFiles.First().Name} ");
         }
 
-        return videofiles.First();
+        return videoFiles.First();
     }
 
     private void LinkFileToShow(FileInfo fi, MovieConfiguration chosenShow, DirectoryInfo folder)
@@ -2225,7 +2225,7 @@ public class TVDoc : IDisposable
 
             return null;
         }
-        //remove any search folders  from the hint. They are probably useless at helping specify the showname
+        //remove any search folders  from the hint. They are probably useless at helping specify the show's name
         hint = FinderHelper.RemoveDownloadFolders(hint);
 
         //Remove any (nnnn) in the hint - probably a year

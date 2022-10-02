@@ -501,9 +501,7 @@ public partial class ShowSummary : Form, IDialogParent
 
                     foreach (FileInfo fi in fl)
                     {
-                        ToolStripMenuItem tsi = new("Watch: " + fi.FullName.ToUiVersion());
-                        tsi.Click += (_, _) => { Helpers.OpenFile(fi.FullName); };
-                        gridSummary.showRightClickMenu.Items.Add(tsi);
+                        gridSummary.showRightClickMenu.Items.Add("Watch: " + fi.FullName,(_, _) => fi.OpenFile());
                     }
                 }
             }

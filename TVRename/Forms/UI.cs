@@ -1770,7 +1770,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, ei);
         if (fl.Any())
         {
-            Helpers.OpenFile(fl[0].FullName);
+            fl[0].OpenFile();
             return;
         }
 
@@ -2067,13 +2067,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 first = false;
             }
 
-            ToolStripMenuItem tsi = new("Open: " + folder.ToUiVersion());
-            tsi.Click += (_, _) =>
-            {
-                Helpers.OpenFolder(folder);
-            };
-
-            showRightClickMenu.Items.Add(tsi);
+            showRightClickMenu.Items.Add("Open: " + folder,(_, _) => Helpers.OpenFolder(folder));
         }
     }
 
@@ -2084,13 +2078,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         foreach (string folder in foldersList.Where(folder => !string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !alreadyAdded.Contains(folder)))
         {
             alreadyAdded.Add(folder); // don't show the same folder more than once
-
-            ToolStripMenuItem tssi = new("Open: " + folder.ToUiVersion());
-            tssi.Click += (_, _) =>
-            {
-                Helpers.OpenFolder(folder);
-            };
-            tsi.DropDownItems.Add(tssi);
+            tsi.DropDownItems.Add("Open: " + folder, (_, _) => Helpers.OpenFolder(folder));
         }
 
         if (tsi.DropDownItems.Count > 0)
@@ -2104,18 +2092,18 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         showRightClickMenu.Items.Clear();
 
-        AddRcMenuItem("Force Refresh", (_, _) => ForceMovieRefresh(si, false));
-        AddRcMenuItem("Update Images", (_, _) => UpdateImages(new List<MovieConfiguration> { si }));
+        showRightClickMenu.Items.Add("Force Refresh", (_, _) => ForceMovieRefresh(si, false));
+        showRightClickMenu.Items.Add("Update Images", (_, _) => UpdateImages(new List<MovieConfiguration> { si }));
 
         showRightClickMenu.Items.Add(new ToolStripSeparator());
 
-        AddRcMenuItem("Edit Movie", (_, _) => EditMovie(si));
-        AddRcMenuItem("Delete Movie", (_, _) => DeleteMovie(si));
+        showRightClickMenu.Items.Add("Edit Movie", (_, _) => EditMovie(si));
+        showRightClickMenu.Items.Add("Delete Movie", (_, _) => DeleteMovie(si));
 
         showRightClickMenu.Items.Add(new ToolStripSeparator());
 
-        AddRcMenuItem($"Scan \"{si.ShowName}\"", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.SingleShow));
-        AddRcMenuItem($"Quick Scan \"{si.ShowName}\"", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.FastSingleShow));
+        showRightClickMenu.Items.Add($"Scan \"{si.ShowName}\"", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.SingleShow));
+        showRightClickMenu.Items.Add($"Quick Scan \"{si.ShowName}\"", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.FastSingleShow));
 
         if (si.Locations.Any())
         {
@@ -2133,41 +2121,41 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (sil.Count == 1)
         {
             MenuGuideAndTvdb(ep, sil[0], seas);
-            AddRcMenuItem("Schedule", (_, _) => GotoWtwFor(sil[0]));
+            showRightClickMenu.Items.Add("Schedule", (_, _) => GotoWtwFor(sil[0]));
         }
 
         ShowConfiguration? si = sil.Count >= 1 ? sil[0] : null;
 
         if (sil.Any())
         {
-            AddRcMenuItem("Force Refresh", (_, _) => ForceRefresh(sil, false));
-            AddRcMenuItem("Update Images", (_, _) => UpdateImages(sil));
+            showRightClickMenu.Items.Add("Force Refresh", (_, _) => ForceRefresh(sil, false));
+            showRightClickMenu.Items.Add("Update Images", (_, _) => UpdateImages(sil));
             showRightClickMenu.Items.Add(new ToolStripSeparator());
 
-            string scanText = sil.Count > 1 || si is null
+            string scanText = si is null || sil.Count > 1
                 ? "Scan Multiple Shows"
                 : "Scan \"" + si.ShowName + "\"";
 
-            AddRcMenuItem(scanText, (_, _) => RightMenuScan(sil, TVSettings.ScanType.SingleShow));
-            AddRcMenuItem($"Quick {scanText}", (_, _) => RightMenuScan(sil, TVSettings.ScanType.FastSingleShow));
+            showRightClickMenu.Items.Add(scanText, (_, _) => RightMenuScan(sil, TVSettings.ScanType.SingleShow));
+            showRightClickMenu.Items.Add($"Quick {scanText}", (_, _) => RightMenuScan(sil, TVSettings.ScanType.FastSingleShow));
         }
 
         if (sil.Count == 1 && si!= null)
         {
-            AddRcMenuItem("Edit TV Show", (_, _) => EditShow(si));
-            AddRcMenuItem("Delete TV Show", (_, _) => DeleteShow(si));
+            showRightClickMenu.Items.Add("Edit TV Show", (_, _) => EditShow(si));
+            showRightClickMenu.Items.Add("Delete TV Show", (_, _) => DeleteShow(si));
 
             if (seas != null)
             {
                 string uiFullSeasonWord = ProcessedSeason.UIFullSeasonWord(seas.SeasonNumber);
-                AddRcMenuItem("Edit " + uiFullSeasonWord, (_, _) => EditSeason(si, seas.SeasonNumber));
+                showRightClickMenu.Items.Add("Edit " + uiFullSeasonWord, (_, _) => EditSeason(si, seas.SeasonNumber));
                 if (si.IgnoreSeasons.Contains(seas.SeasonNumber))
                 {
-                    AddRcMenuItem("Include " + uiFullSeasonWord, (_, _) => IncludeSeason(si, seas.SeasonNumber));
+                    showRightClickMenu.Items.Add("Include " + uiFullSeasonWord, (_, _) => IncludeSeason(si, seas.SeasonNumber));
                 }
                 else
                 {
-                    AddRcMenuItem("Ignore " + uiFullSeasonWord, (_, _) => IgnoreSeason(si, seas.SeasonNumber));
+                    showRightClickMenu.Items.Add("Ignore " + uiFullSeasonWord, (_, _) => IgnoreSeason(si, seas.SeasonNumber));
                 }
             }
 
@@ -2201,9 +2189,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
             foreach (FileInfo fi in fl)
             {
-                ToolStripMenuItem tsi = new("Watch: " + fi.FullName.ToUiVersion());
-                tsi.Click += (_, _) => { Helpers.OpenFile(fi.FullName); };
-                showRightClickMenu.Items.Add(tsi);
+                showRightClickMenu.Items.Add("Watch: " + fi.FullName, (_, _) => fi.OpenFile());
             }
         }
     }
@@ -2225,10 +2211,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
                 foreach (FileInfo fi in fl)
                 {
-                    ToolStripMenuItem tsisi = new("Watch: " + fi.FullName.ToUiVersion());
-                    tsisi.Click += (_, _) => { Helpers.OpenFile(fi.FullName); };
-
-                    tsis.DropDownItems.Add(tsisi);
+                    tsis.DropDownItems.Add("Watch: " + fi.FullName, (_, _) => fi.OpenFile());
                 }
             }
         }
@@ -3993,15 +3976,13 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void MenuSearchFor(ProcessedEpisode ep)
     {
         ToolStripMenuItem tsi = new("Search");
-        tsi.Click += (_, _) => { TVDoc.SearchForEpisode(ep); };
+        tsi.Click += (_, _) => TVDoc.SearchForEpisode(ep);
 
         foreach (SearchEngine se in TVDoc.GetSearchers())
         {
             if (se.Name.HasValue())
             {
-                ToolStripMenuItem tssi = new(se.Name.ToUiVersion());
-                tssi.Click += (_, _) => { TVDoc.SearchForEpisode(se, ep); };
-                tsi.DropDownItems.Add(tssi);
+                tsi.DropDownItems.Add(se.Name, (_, _) => TVDoc.SearchForEpisode(se, ep));
             }
         }
 
@@ -4011,9 +3992,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             {
                 tsi.DropDownItems.Add(new ToolStripSeparator());
             }
-            ToolStripMenuItem tssi = new("Jackett Search");
-            tssi.Click += (_, _) => { JackettFinder.SearchForEpisode(ep); };
-            tsi.DropDownItems.Add(tssi);
+            tsi.DropDownItems.Add("Jackett Search",(_, _) => JackettFinder.SearchForEpisode(ep));
         }
 
         showRightClickMenu.Items.Add(tsi);
@@ -4022,16 +4001,11 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void MenuSearchFor(MovieConfiguration ep)
     {
         ToolStripMenuItem tsi = new("Search");
-        tsi.Click += (_, _) => { TVDoc.SearchForMovie(ep); };
+        tsi.Click += (_, _) => TVDoc.SearchForMovie(ep);
 
-        foreach (SearchEngine se in TVDoc.GetMovieSearchers())
+        foreach (SearchEngine se in TVDoc.GetMovieSearchers().Where(se => se.Name.HasValue()))
         {
-            if (se.Name.HasValue())
-            {
-                ToolStripMenuItem tssi = new(se.Name);
-                tssi.Click += (_, _) => { TVDoc.SearchForMovie(se, ep); };
-                tsi.DropDownItems.Add(tssi);
-            }
+            tsi.DropDownItems.Add(se.Name, (_, _) => TVDoc.SearchForMovie(se, ep));
         }
 
         if (TVSettings.Instance.SearchJackett || TVSettings.Instance.SearchJackettButton)
@@ -4040,9 +4014,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             {
                 tsi.DropDownItems.Add(new ToolStripSeparator());
             }
-            ToolStripMenuItem tssi = new("Jackett Search");
-            tssi.Click += (_, _) => { JackettFinder.SearchForMovie(ep); };
-            tsi.DropDownItems.Add(tssi);
+            tsi.DropDownItems.Add("Jackett Search", (_, _) => JackettFinder.SearchForMovie(ep));
         }
 
         showRightClickMenu.Items.Add(tsi);
@@ -4050,9 +4022,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void AddRcMenuItem(string name, EventHandler command)
     {
-        ToolStripMenuItem tsi = new(name.ToUiVersion());
-        tsi.Click += command;
-        showRightClickMenu.Items.Add(tsi);
+        showRightClickMenu.Items.Add(name,command);
     }
 
     private void lvAction_SelectedIndexChanged(object sender, EventArgs e)

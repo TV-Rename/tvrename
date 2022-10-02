@@ -19,11 +19,7 @@ public sealed class ItemList : SafeList<Item>
         {
             return;
         }
-
-        foreach (Item sli in slil)
-        {
-            Add(sli);
-        }
+        AddNullableRange(slil);
     }
 
     public List<Action> Actions => this.OfType<Action>().ToList();
@@ -51,7 +47,7 @@ public sealed class ItemList : SafeList<Item>
     public void Replace(IEnumerable<Item>? toRemove, IEnumerable<Item>? newList)
     {
         Remove(toRemove);
-        Add(newList);
+        AddNullableRange(newList);
     }
 
     public List<Action> TorrentActions => this.Where(a => a is ActionTRemove or ActionTDownload).OfType<Action>().ToList();
