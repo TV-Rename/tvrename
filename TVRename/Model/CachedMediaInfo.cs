@@ -166,7 +166,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
         return x;
     }
 
-    protected string GenerateErrorMessage() => "Error processing data for a show. " + this + "\r\nLanguage: \"" + ActualLocale?.PreferredLanguage?.EnglishName + "\"";
+    protected string GenerateErrorMessage() => "Error processing data for a show. " + this + "\r\nLanguage: " + ActualLocale?.PreferredLanguage?.EnglishName.InDoubleQuotes();
 
     private void LoadActors(XElement seriesXml)
     {
