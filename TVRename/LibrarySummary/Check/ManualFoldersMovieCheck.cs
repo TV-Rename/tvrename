@@ -46,19 +46,8 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
                 }
 
                 //try to copy/move files
-                List<string> automaticLocations = Movie.AutomaticLocations().ToList();
+                string automaticLocation = Movie.AutoFolderNameForMovie();
 
-                if (automaticLocations.Count > 1)
-                {
-                    throw new FixCheckException("Multiple target locations for the automated folders");
-                }
-
-                if (!automaticLocations.Any())
-                {
-                    throw new FixCheckException("No target automatic folders can be established");
-                }
-
-                string automaticLocation = automaticLocations.First();
                 if (source.FullName.Equals(automaticLocation, StringComparison.CurrentCultureIgnoreCase))
                 {
                     Movie.UseAutomaticFolders = true;
@@ -152,5 +141,5 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
 
     protected override string CustomFieldValue => Movie.ManualLocations.ToCsv();
 
-    protected override string DefaultFieldValue => Movie.AutomaticLocations().ToCsv();
+    protected override string DefaultFieldValue => Movie.AutoFolderNameForMovie();
 }

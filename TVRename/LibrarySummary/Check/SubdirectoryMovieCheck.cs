@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
@@ -17,41 +15,28 @@ internal class SubdirectoryMovieCheck : MovieCheck
 
     protected override void FixInternal()
     {
-        List<string> currentLocations = Movie.AutomaticLocations().ToList();
         string newLocation = Movie.AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.DirectoryNameFor(Movie, TVSettings.Instance.MovieFolderFormat);
+        string currentLocation = Movie.AutoFolderNameForMovie();
+        string message = $"Could not move files for {Movie.ShowName}. Would have liked to move files from [{currentLocation}] to '{newLocation}'";
 
         Movie.UseCustomFolderNameFormat = false;
 
-        if (!currentLocations.Any())
-        {
-            return;
-        }
-        string message = $"Could not move files for {Movie.ShowName}. Would have liked to move files from [{currentLocations.ToCsv()}] to '{newLocation}'";
-
-        if (currentLocations.Count > 1)
-        {
-            LOGGER.Warn($"{message}, but there are more than one source. ");
-            return;
-        }
-
-        string currentLocation = currentLocations.Single();
         if (currentLocation == newLocation)
         {
             //Nothing to do
             return;
         }
 
-        LOGGER.Info($"Moving files from '{currentLocations.Single()}' to '{newLocation}'");
+        LOGGER.Info($"Moving files from '{currentLocation}' to '{newLocation}'");
 
         if (Directory.Exists(newLocation))
         {
-            LOGGER.Warn($"{message}, but that directory already exists.");
-            return;
+            throw new FixCheckException($"{message}, but that directory already exists.");
         }
 
         try
         {
-            Directory.Move(currentLocations.Single(), newLocation);
+            Directory.Move(currentLocation, newLocation);
         }
         catch (UnauthorizedAccessException uae)
         {

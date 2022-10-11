@@ -12,7 +12,7 @@ internal class MovieManualFoldersMirrorAutomaticCheck : MovieCheck
 
     public override bool Check()
     {
-        return Movie.UseManualLocations && Movie.ManualLocations.Any(loc => Movie.AutomaticLocations().Any(aloc=>LocationsMatch(aloc,loc)));
+        return Movie.UseManualLocations && Movie.ManualLocations.Any(loc => LocationsMatch(Movie.AutoFolderNameForMovie(), loc));
     }
 
     private static bool LocationsMatch(string aloc, string loc) => string.Equals(aloc, loc, StringComparison.Ordinal);
@@ -20,7 +20,7 @@ internal class MovieManualFoldersMirrorAutomaticCheck : MovieCheck
     public override string Explain()
     {
         IEnumerable<string> matchingLocations =
-            Movie.ManualLocations.Where(loc => Movie.AutomaticLocations().Any(aloc => LocationsMatch(aloc, loc)));
+            Movie.ManualLocations.Where(loc => LocationsMatch(Movie.AutoFolderNameForMovie(), loc));
 
         return $"{Movie.Name} has manual locations that match automatic ones {matchingLocations.ToCsv()}";
     }
@@ -28,7 +28,7 @@ internal class MovieManualFoldersMirrorAutomaticCheck : MovieCheck
     protected override void FixInternal()
     {
         IEnumerable<string> matchingLocations =
-            Movie.ManualLocations.Where(loc => Movie.AutomaticLocations().Any(aloc => LocationsMatch(aloc, loc))).ToList();
+            Movie.ManualLocations.Where(loc => LocationsMatch(Movie.AutoFolderNameForMovie(), loc)).ToList();
 
         Movie.ManualLocations.RemoveNullableRange(matchingLocations);
 
@@ -38,5 +38,5 @@ internal class MovieManualFoldersMirrorAutomaticCheck : MovieCheck
         }
     }
 
-    protected override string MovieCheckName => "Manual Season Folders Mirror Automatic";
+    protected override string MovieCheckName => "Manual Movie Folders Mirror Automatic";
 }
