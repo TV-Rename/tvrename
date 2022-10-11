@@ -1826,7 +1826,7 @@ public partial class Preferences : Form
         //Setup the UI
         FolderBrowserDialogEx searchFolderBrowser = new()
         {
-            SelectedPath = "",
+            SelectedPath = string.Empty,
             Title = "Add New Search Folder...",
             ShowEditbox = true,
             StartPosition = FormStartPosition.CenterParent
@@ -1960,7 +1960,7 @@ public partial class Preferences : Form
     {
         FolderBrowserDialogEx searchFolderBrowser = new()
         {
-            SelectedPath = "",
+            SelectedPath = string.Empty,
             Title = "Add New Library Folder...",
             ShowEditbox = true,
             StartPosition = FormStartPosition.CenterParent
@@ -2240,7 +2240,7 @@ public partial class Preferences : Form
     {
         FolderBrowserDialogEx searchFolderBrowser = new()
         {
-            SelectedPath = "",
+            SelectedPath = string.Empty,
             Title = "Add New Library Folder...",
             ShowEditbox = true,
             StartPosition = FormStartPosition.CenterParent

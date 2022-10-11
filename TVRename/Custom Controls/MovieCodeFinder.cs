@@ -52,7 +52,7 @@ public class MovieCodeFinder : CodeFinder
 
         int matchedMovies = lvis.Count;
         MovieInitialFound = lvis.FirstOrDefault().Value;
-        txtSearchStatus.Text = "Found " + matchedMovies + " movie" + (matchedMovies != 1 ? "s" : "");
+        txtSearchStatus.Text = "Found " + matchedMovies + " movie" + (matchedMovies != 1 ? "s" : string.Empty);
         return matchedMovies;
     }
 }

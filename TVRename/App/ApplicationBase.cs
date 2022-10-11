@@ -243,7 +243,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         SetupPapertrailLogging();
         //SetupSemaTextLogging();
 
-        Logger.Fatal($"TV Rename {Helpers.DisplayVersion} logging started on {Environment.OSVersion}, {(Environment.Is64BitOperatingSystem ? "64 Bit OS" : "")}, {(Environment.Is64BitProcess ? "64 Bit Process" : "")} {Environment.Version} {(Environment.UserInteractive ? "Interactive" : "")} with args: {string.Join(" ", CommandLineArgs)}");
+        Logger.Fatal($"TV Rename {Helpers.DisplayVersion} logging started on {Environment.OSVersion}, {(Environment.Is64BitOperatingSystem ? "64 Bit OS" : string.Empty)}, {(Environment.Is64BitProcess ? "64 Bit Process" : "")} {Environment.Version} {(Environment.UserInteractive ? "Interactive" : "")} with args: {string.Join(" ", CommandLineArgs)}");
         Logger.Info($"Copyright (C) {TimeHelpers.LocalNow().Year} TV Rename");
         Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
     }

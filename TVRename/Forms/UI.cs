@@ -2102,8 +2102,8 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         showRightClickMenu.Items.Add(new ToolStripSeparator());
 
-        showRightClickMenu.Items.Add($"Scan \"{si.ShowName}\"", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.SingleShow));
-        showRightClickMenu.Items.Add($"Quick Scan \"{si.ShowName}\"", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.FastSingleShow));
+        showRightClickMenu.Items.Add($"Scan {si.ShowName.InDoubleQuotes()}", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.SingleShow));
+        showRightClickMenu.Items.Add($"Quick Scan {si.ShowName.InDoubleQuotes()}", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.FastSingleShow));
 
         if (si.Locations.Any())
         {
@@ -2134,7 +2134,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
             string scanText = si is null || sil.Count > 1
                 ? "Scan Multiple Shows"
-                : "Scan \"" + si.ShowName + "\"";
+                : "Scan " + si.ShowName.InDoubleQuotes();
 
             showRightClickMenu.Items.Add(scanText, (_, _) => RightMenuScan(sil, TVSettings.ScanType.SingleShow));
             showRightClickMenu.Items.Add($"Quick {scanText}", (_, _) => RightMenuScan(sil, TVSettings.ScanType.FastSingleShow));
@@ -2923,7 +2923,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void DeleteShow(ShowConfiguration si)
     {
         DialogResult res = MessageBox.Show(
-            "Remove show \"" + si.ShowName + "\".  Are you sure?", "Confirmation", MessageBoxButtons.YesNo,
+            $"Remove show {si.ShowName.InDoubleQuotes()}.  Are you sure?", "Confirmation", MessageBoxButtons.YesNo,
             MessageBoxIcon.Warning);
 
         if (res != DialogResult.Yes)
@@ -2973,7 +2973,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
 
         DialogResult res3 = MessageBox.Show(
-            $"Remove folder \"{folderName}\" from disk?",
+            $"Remove folder {folderName.InDoubleQuotes()} from disk?",
             "Confirmation",
             MessageBoxButtons.YesNo,
             MessageBoxIcon.Warning);
@@ -3062,7 +3062,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void DeleteMovie(MovieConfiguration si)
     {
         DialogResult res = MessageBox.Show(
-            "Remove movie \"" + si.ShowName + "\".  Are you sure?", "Confirmation", MessageBoxButtons.YesNo,
+            $"Remove movie {si.ShowName.InDoubleQuotes()}.  Are you sure?", "Confirmation", MessageBoxButtons.YesNo,
             MessageBoxIcon.Warning);
 
         if (res != DialogResult.Yes)

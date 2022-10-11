@@ -21,7 +21,7 @@ internal class MissingMovieCsv : MissingActionListExporter
             {
                 MovieConfiguration pe = im.MovieConfig;
                 file.WriteLine(
-                    $"\"{pe.ShowName}\",{pe.CachedMovie?.Year},\"{im.TargetFolder}\",\"{im.Filename}\"");
+                    $"{pe.ShowName.InDoubleQuotes()},{pe.CachedMovie?.Year},{im.TargetFolder.InDoubleQuotes()},{im.Filename.InDoubleQuotes()}");
             }
         }
     }

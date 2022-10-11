@@ -129,7 +129,7 @@ public partial class BulkAddShow : Form
     {
         FolderBrowserDialogEx searchFolderBrowser = new()
         {
-            SelectedPath = "",
+            SelectedPath = string.Empty,
             Title = "Add New Monitor Folder...",
             ShowEditbox = true,
             StartPosition = FormStartPosition.CenterParent
@@ -156,7 +156,7 @@ public partial class BulkAddShow : Form
     {
         FolderBrowserDialogEx ignoreFolderBrowser = new()
         {
-            SelectedPath = "",
+            SelectedPath = string.Empty,
             Title = "Add New Ignore Folder...",
             ShowEditbox = true,
             StartPosition = FormStartPosition.CenterParent

@@ -22,7 +22,7 @@ public partial class BulkAddEditMovie : Form
 
     public BulkAddEditMovie(PossibleNewMovie hint)
     {
-        codeFinderControl = new MovieCodeFinder("", TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
+        codeFinderControl = new MovieCodeFinder(string.Empty, TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
         InitializeComponent();
 
         codeFinderControl.SelectionChanged += CodeChanged;

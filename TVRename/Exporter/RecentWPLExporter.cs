@@ -27,7 +27,7 @@ internal class RecentWPLExporter : RecentExporter
     protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length)
     {
         string filen = System.Security.SecurityElement.Escape(file.UrlPathFullName());
-        return $"             <media src=\"{filen}\"/>";
+        return $"             <media src={filen.InDoubleQuotes()}/>";
     }
 
     protected override string GenerateFooter() => "         </seq>\r\n    </body>\r\n</smil>";

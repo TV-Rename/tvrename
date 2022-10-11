@@ -118,7 +118,7 @@ public partial class BulkAddMovie : Form
     {
         FolderBrowserDialogEx searchFolderBrowser = new()
         {
-            SelectedPath = "",
+            SelectedPath = string.Empty,
             Title = "Add New Movie Base Folder...",
             ShowEditbox = true,
             StartPosition = FormStartPosition.CenterParent
@@ -145,7 +145,7 @@ public partial class BulkAddMovie : Form
     {
         FolderBrowserDialogEx ignoreFolderBrowser = new()
         {
-            SelectedPath = "",
+            SelectedPath = string.Empty,
             Title = "Add New Ignore Folder...",
             ShowEditbox = true,
             StartPosition = FormStartPosition.CenterParent

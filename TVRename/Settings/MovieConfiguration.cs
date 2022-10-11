@@ -315,8 +315,5 @@ public class MovieConfiguration : MediaConfiguration
 
     public IEnumerable<string> AutomaticLocations() => AllFolderLocations(false, false).Values.SelectMany(x => x);
 
-    public bool IsDvdBluRay()
-    {
-        return Format is MovieFolderFormat.bluray or MovieFolderFormat.dvd;
-    }
+    public bool IsDvdBluRay() => Format is MovieFolderFormat.bluray or MovieFolderFormat.dvd;
 }

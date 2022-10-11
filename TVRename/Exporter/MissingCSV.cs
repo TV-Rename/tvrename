@@ -23,14 +23,14 @@ internal class MissingCSV : MissingActionListExporter
             foreach (ShowSeasonMissing im in TheActionList.MissingSeasons)
             {
                 file.WriteLine(
-                    $"\"{im.Series.Name}\",{im.SeasonNumberAsInt},,,,\"{im.TargetFolder}\",\"{im.Filename}\",{im.Series.Id()}");
+                    $"{im.Series.Name.InDoubleQuotes()},{im.SeasonNumberAsInt},,,,{im.TargetFolder.InDoubleQuotes()},{im.Filename.InDoubleQuotes()},{im.Series.Id()}");
             }
             foreach (ShowItemMissing? im in TheActionList.MissingEpisodes)
             {
                 ProcessedEpisode pe = im.MissingEpisode;
                 DateTime? dt = pe.GetAirDateDt(true);
                 file.WriteLine(
-                    $"\"{pe.TheCachedSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.EpNumsAsString()},\"{pe.Name}\",{dt:G},\"{im.TargetFolder}\",\"{im.Filename}\",{pe.SeriesId}");
+                    $"{pe.TheCachedSeries.Name.InDoubleQuotes()},{pe.AppropriateSeasonNumber},{pe.EpNumsAsString()},{pe.Name.InDoubleQuotes()},{dt:G},{im.TargetFolder.InDoubleQuotes()},{im.Filename.InDoubleQuotes()},{pe.SeriesId}");
             }
         }
     }

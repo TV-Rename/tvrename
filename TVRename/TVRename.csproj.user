@@ -179,6 +179,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Update="Custom Controls\CodeFinder.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Forms\BulkAddMovies\BulkAddEditMovie.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -192,6 +195,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\Preferences\AddEditSearchEngine.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Preferences\AddEditSeasEpFinders.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\Supporting\CopyMoveProgress.resx">

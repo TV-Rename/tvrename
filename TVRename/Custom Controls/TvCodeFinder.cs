@@ -54,7 +54,7 @@ public class TvCodeFinder : CodeFinder
 
         int matchedTvShows = lvis.Count;
         TvShowInitialFound = lvis.FirstOrDefault().Value;
-        txtSearchStatus.Text = "Found " + matchedTvShows + " show" + (matchedTvShows != 1 ? "s" : "");
+        txtSearchStatus.Text = "Found " + matchedTvShows + " show" + (matchedTvShows != 1 ? "s" : string.Empty);
         return matchedTvShows;
     }
 }

@@ -22,7 +22,7 @@ public partial class BulkAddEditShow : Form
 
     public BulkAddEditShow(PossibleNewTvShow hint)
     {
-        codeFinderControl = new TvCodeFinder("", TVSettings.Instance.DefaultProvider) { Dock = DockStyle.Fill };
+        codeFinderControl = new TvCodeFinder(string.Empty, TVSettings.Instance.DefaultProvider) { Dock = DockStyle.Fill };
         InitializeComponent();
 
         codeFinderControl.SelectionChanged += CodeChanged;

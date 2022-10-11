@@ -138,9 +138,9 @@ public partial class AddEditSeasEpFinders : Form
         Grid1.RowsCount = r + 1;
 
         Grid1[r, 0] = new SourceGrid.Cells.CheckBox(null, true);
-        Grid1[r, 1] = new SourceGrid.Cells.Cell("", typeof(string));
+        Grid1[r, 1] = new SourceGrid.Cells.Cell(string.Empty, typeof(string));
         Grid1[r, 2] = new SourceGrid.Cells.CheckBox(null, false);
-        Grid1[r, 3] = new SourceGrid.Cells.Cell("", typeof(string));
+        Grid1[r, 3] = new SourceGrid.Cells.Cell(string.Empty, typeof(string));
 
         ChangedCont changed = new(this);
         for (int c = 0; c < 4; c++)
@@ -189,7 +189,7 @@ public partial class AddEditSeasEpFinders : Form
         bool en = (bool)Grid1[i, 0].Value;
         string regex = (string)Grid1[i, 1].Value;
         bool fullPath = (bool)Grid1[i, 2].Value;
-        string notes = (string)Grid1[i, 3].Value ?? "";
+        string notes = (string)Grid1[i, 3].Value ?? string.Empty;
 
         return string.IsNullOrEmpty(regex) ? null : new TVSettings.FilenameProcessorRE(en, regex, fullPath, notes);
     }
@@ -378,7 +378,7 @@ public partial class AddEditSeasEpFinders : Form
         ListViewItem lvi = new() { Text = filename };
         lvi.SubItems.Add(showDisplayString);
         lvi.SubItems.Add(seas == -1 ? "-" : seas.ToString());
-        lvi.SubItems.Add(ep == -1 ? "-" : ep + (maxEp != -1 ? "-" + maxEp : ""));
+        lvi.SubItems.Add(ep == -1 ? "-" : ep + (maxEp != -1 ? "-" + maxEp : string.Empty));
         lvi.SubItems.Add(matchRex is null ? "-" : matchRex.Notes);
         if (!r)
         {

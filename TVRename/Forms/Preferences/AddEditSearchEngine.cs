@@ -103,8 +103,8 @@ public partial class AddEditSearchEngine : Form
         int r = grid1.RowsCount;
         grid1.RowsCount = r + 1;
 
-        grid1[r, 0] = new SourceGrid.Cells.Cell("", typeof(string));
-        grid1[r, 1] = new SourceGrid.Cells.Cell("", typeof(string));
+        grid1[r, 0] = new SourceGrid.Cells.Cell(string.Empty, typeof(string));
+        grid1[r, 1] = new SourceGrid.Cells.Cell(string.Empty, typeof(string));
     }
 
     private void bnAdd_Click(object sender, EventArgs e)

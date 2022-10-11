@@ -93,7 +93,7 @@ public class DirCache : List<DirCacheEntry>
     {
         if (!Directory.Exists(folder))
         {
-            Logger.Warn("The search folder \"" + folder + " does not exist.");
+            Logger.Warn($"The search folder {folder.InDoubleQuotes()} does not exist.");
             return;
         }
 

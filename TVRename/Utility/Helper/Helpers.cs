@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 
@@ -232,15 +233,22 @@ public static class Helpers
 
         if (Directory.Exists(folder))
         {
-            return SysOpen("explorer.exe", folder.EnsureEndsWithSeparator());
+            return SysOpen("explorer.exe", folder.EnsureEndsWithSeparator().InDoubleQuotes());
         }
 
         return false;
     }
 
+    public static string InDoubleQuotes(this string? source)
+    {
+        StringBuilder sb = new();
+        sb.Append('"').Append(source).Append('"');
+        return sb.ToString();
+    }
+
     public static void OpenFolderSelectFile(string filename)
     {
-        string args = $"/e, /select, \"{filename}\"";
+        string args = $"/e, /select, {filename.InDoubleQuotes()}";
 
         ProcessStartInfo info = new() { FileName = "explorer", Arguments = args };
         Process.Start(info);
