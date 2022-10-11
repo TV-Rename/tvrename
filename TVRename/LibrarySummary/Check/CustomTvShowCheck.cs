@@ -14,5 +14,5 @@ internal abstract class CustomTvShowCheck : TvShowCheck
 
     public override bool Check() => Field;
 
-    public override string Explain() => $"{FieldName} is enabled for this TV Show [{CustomFieldValue}], by default is is not [{DefaultFieldValue}].";
+    public override string Explain() => $"{FieldName} is enabled for this TV Show [{CustomFieldValue}], by default it is not [{DefaultFieldValue}].";
 }

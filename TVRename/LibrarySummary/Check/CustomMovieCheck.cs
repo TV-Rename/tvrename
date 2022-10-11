@@ -14,5 +14,5 @@ internal abstract class CustomMovieCheck : MovieCheck
 
     public override bool Check() => Field;
 
-    public override string Explain() => $"{FieldName} is enabled for this Movie [{CustomFieldValue}], by default is is not [{DefaultFieldValue}].";
+    public override string Explain() => $"{FieldName} is enabled for this Movie [{CustomFieldValue}], by default it is not [{DefaultFieldValue}].";
 }
