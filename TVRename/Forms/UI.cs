@@ -2446,6 +2446,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             // we've just finished a bunch of background downloads
             SaveCaches();
+            mDoc.SaveSettingsIfNeeded();
             RefreshWTW(false, true);
 
             backgroundDownloadNowToolStripMenuItem.Enabled = true;
@@ -3081,6 +3082,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         Logger.Info($"User asked to remove {si.ShowName} - removing now");
         mDoc.FilmLibrary.Remove(si);
         mDoc.RunExporters();
+        mDoc.SaveSettingsIfNeeded();
 
         FillMyMovies();
     }

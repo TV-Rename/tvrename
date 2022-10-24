@@ -344,6 +344,14 @@ public class TVDoc : IDisposable
 
     public bool Dirty() => mDirty;
 
+    public void SaveSettingsIfNeeded()
+    {
+        if (Dirty() && TVSettings.Instance.AutoSaveOnExit)
+        {
+            WriteXMLSettings();
+        }
+    }
+
     private void DoActions(ItemList theList, CancellationToken token)
     {
         try
@@ -779,6 +787,7 @@ public class TVDoc : IDisposable
         }
 
         RunExporters();
+        SaveSettingsIfNeeded();
     }
 
     internal void UpdateMedia(bool download, bool unattended, bool hidden, UI owner)
@@ -819,6 +828,7 @@ public class TVDoc : IDisposable
             UpdateDenormalisations();
         }
         RunExporters();
+        SaveSettingsIfNeeded();
     }
 
     public IEnumerable<MediaNotFoundException> ShowProblems => cacheManager.Problems.Where(x => x.SourceType == MediaConfiguration.MediaType.tv);
