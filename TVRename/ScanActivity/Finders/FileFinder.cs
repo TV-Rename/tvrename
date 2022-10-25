@@ -380,7 +380,7 @@ internal abstract class FileFinder : Finder
 
     private static bool IsSubTitleFile(FileInfo file)
     {
-        return TVSettings.Instance.subtitleExtensionsArray.Contains(file.Extension);
+        return TVSettings.Instance.SubtitleExtensionsArray.Contains(file.Extension);
     }
 
     public static bool IsSubsFolder(DirectoryInfo folder)

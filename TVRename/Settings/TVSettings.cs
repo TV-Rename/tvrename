@@ -259,15 +259,15 @@ public sealed class TVSettings
 
     public string keepTogetherExtensionsString;
 
-    private IEnumerable<string> keepTogetherExtensionsArray => Convert(keepTogetherExtensionsString);
+    private IEnumerable<string> KeepTogetherExtensionsArray => Convert(keepTogetherExtensionsString);
 
     public string subtitleExtensionsString;
 
-    public IEnumerable<string> subtitleExtensionsArray => Convert(subtitleExtensionsString);
+    public IEnumerable<string> SubtitleExtensionsArray => Convert(subtitleExtensionsString);
 
     public string searchSeasonWordsString = "Season;Series;Saison;Temporada;Seizoen";
 
-    public IEnumerable<string> searchSeasonWordsArray => Convert(searchSeasonWordsString);
+    public IEnumerable<string> SearchSeasonWordsArray => Convert(searchSeasonWordsString);
 
     public string preferredRSSSearchTermsString = "720p;1080p";
 
@@ -1192,8 +1192,8 @@ public sealed class TVSettings
         return keepTogetherMode switch
         {
             KeepTogetherModes.All => true,
-            KeepTogetherModes.Just => keepTogetherExtensionsArray.Contains(fileExtension),
-            KeepTogetherModes.AllBut => !keepTogetherExtensionsArray.Contains(fileExtension),
+            KeepTogetherModes.Just => KeepTogetherExtensionsArray.Contains(fileExtension),
+            KeepTogetherModes.AllBut => !KeepTogetherExtensionsArray.Contains(fileExtension),
             _ => throw new NotSupportedException($"keepTogetherMode = {keepTogetherMode} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}")
         };
     }
@@ -1215,7 +1215,7 @@ public sealed class TVSettings
 
         public IEnumerable<string> EmptyIgnoreWordsArray => Convert(EmptyIgnoreWordList);
 
-        public void load(XElement xmlSettings)
+        public void Load(XElement xmlSettings)
         {
             DeleteEmpty = xmlSettings.ExtractBool("DeleteEmpty", false);
             DeleteEmptyIsRecycle = xmlSettings.ExtractBool("DeleteEmptyIsRecycle", true);
@@ -1278,13 +1278,13 @@ public sealed class TVSettings
         {
         }
 
-        public bool AppliesTo(ShowConfiguration show) => Keys.Any(rule => rule.appliesTo(show));
+        public bool AppliesTo(ShowConfiguration show) => Keys.Any(rule => rule.AppliesTo(show));
 
         public System.Drawing.Color GetColour(ShowConfiguration show)
         {
             foreach (KeyValuePair<ColouringRule, System.Drawing.Color> e in this)
             {
-                if (e.Key.appliesTo(show))
+                if (e.Key.AppliesTo(show))
                 {
                     return e.Value;
                 }
@@ -1297,7 +1297,7 @@ public sealed class TVSettings
         {
             foreach (KeyValuePair<ColouringRule, System.Drawing.Color> e in this)
             {
-                if (e.Key.appliesTo(s))
+                if (e.Key.AppliesTo(s))
                 {
                     return e.Value;
                 }
@@ -1306,7 +1306,7 @@ public sealed class TVSettings
             return System.Drawing.Color.Empty;
         }
 
-        public bool AppliesTo(ProcessedSeason s) => Keys.Any(rule => rule.appliesTo(s));
+        public bool AppliesTo(ProcessedSeason s) => Keys.Any(rule => rule.AppliesTo(s));
     }
 
     public abstract class ColouringRule
@@ -1317,9 +1317,9 @@ public sealed class TVSettings
             get;
         }
 
-        public abstract bool appliesTo(ProcessedSeason s);
+        public abstract bool AppliesTo(ProcessedSeason s);
 
-        public abstract bool appliesTo(ShowConfiguration s);
+        public abstract bool AppliesTo(ShowConfiguration s);
     }
 
     public class ShowStatusColouringRule : ColouringRule
@@ -1332,9 +1332,9 @@ public sealed class TVSettings
         public readonly string status;
         public override string Text => "Show Status: " + status;
 
-        public override bool appliesTo(ProcessedSeason s) => false;
+        public override bool AppliesTo(ProcessedSeason s) => false;
 
-        public override bool appliesTo(ShowConfiguration s) => status == s.ShowStatus;
+        public override bool AppliesTo(ShowConfiguration s) => status == s.ShowStatus;
     }
 
     public class ShowAirStatusColouringRule : ColouringRule
@@ -1361,9 +1361,9 @@ public sealed class TVSettings
 
         public override string Text => ToString();
 
-        public override bool appliesTo(ProcessedSeason s) => false;
+        public override bool AppliesTo(ProcessedSeason s) => false;
 
-        public override bool appliesTo(ShowConfiguration s) => status == s.SeasonsAirStatus;
+        public override bool AppliesTo(ShowConfiguration s) => status == s.SeasonsAirStatus;
     }
 
     public class SeasonStatusColouringRule : ColouringRule
@@ -1389,13 +1389,13 @@ public sealed class TVSettings
             };
         }
 
-        public override bool appliesTo(ProcessedSeason s) => status == s.Status(s.Show.GetTimeZone());
+        public override bool AppliesTo(ProcessedSeason s) => status == s.Status(s.Show.GetTimeZone());
 
-        public override bool appliesTo(ShowConfiguration s) => false;
+        public override bool AppliesTo(ShowConfiguration s) => false;
     }
 
     // ReSharper disable once FunctionComplexityOverflow
-    public void load(XElement xmlSettings)
+    public void Load(XElement xmlSettings)
     {
         FolderMonitorDelaySeconds = xmlSettings.ExtractInt("FolderMonitorDelaySeconds", 1);
         UseColoursOnWtw = xmlSettings.ExtractBool("UseColoursOnWtw", false);
@@ -1629,7 +1629,7 @@ public sealed class TVSettings
         TMDBPercentDirty = xmlSettings.ExtractFloat("TMDBPercentDirty", 20);
         IncludeMoviesQuickRecent = xmlSettings.ExtractBool("IncludeMoviesQuickRecent", false);
 
-        Tidyup.load(xmlSettings);
+        Tidyup.Load(xmlSettings);
         RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL") ?? new List<string>();
         TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").FirstOrDefault(), MediaConfiguration.MediaType.tv);
         TheMovieSearchers = new Searchers(xmlSettings.Descendants("TheMovieSearchers").FirstOrDefault(), MediaConfiguration.MediaType.movie);
@@ -1785,7 +1785,7 @@ public sealed class TVSettings
             "SeasonStatusColouringRule" => new SeasonStatusColouringRule(ExtractEnum<ProcessedSeason.SeasonStatus>(showStatus)),
             "ShowStatusColouringRule" => new ShowStatusColouringRule(showStatus),
             "ShowAirStatusColouringRule" => new ShowAirStatusColouringRule(ExtractEnum<ShowConfiguration.ShowAirStatus>(showStatus)),
-            _ => throw new NotSupportedException($"type = {type} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}")
+            _ => throw new NotSupportedException($"type = {type} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}")
         };
     }
 

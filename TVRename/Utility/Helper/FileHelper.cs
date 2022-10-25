@@ -348,7 +348,7 @@ public static class FileHelper
             @"(?<ext>\.\w{2}-\w{2}\" + TOKEN + ")$",
         };
 
-        foreach (string subExtension in TVSettings.Instance.subtitleExtensionsArray
+        foreach (string subExtension in TVSettings.Instance.SubtitleExtensionsArray
                      .Where(subExtension => file.Name.EndsWith(subExtension, StringComparison.CurrentCultureIgnoreCase))
                 )
         {

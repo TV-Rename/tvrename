@@ -644,7 +644,7 @@ public class TVDoc : IDisposable
                 return false;
             }
 
-            TVSettings.Instance.load(x.Descendants("Settings").First());
+            TVSettings.Instance.Load(x.Descendants("Settings").First());
             TvLibrary.LoadFromXml(x.Descendants("MyShows").First());
             FilmLibrary.LoadFromXml(x.Descendants("MyMovies").FirstOrDefault());
             TVSettings.Instance.IgnoreFolders =

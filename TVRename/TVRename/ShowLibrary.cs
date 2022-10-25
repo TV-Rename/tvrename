@@ -20,7 +20,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     public IEnumerable<string> SeasonWords()
     {
         //See https://github.com/TV-Rename/tvrename/issues/241 for background
-        List<string> results = TVSettings.Instance.searchSeasonWordsArray.ToList();
+        List<string> results = TVSettings.Instance.SearchSeasonWordsArray.ToList();
 
         if (!TVSettings.Instance.ForceBulkAddToUseSettingsOnly)
         {
