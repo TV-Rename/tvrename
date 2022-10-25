@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
@@ -96,19 +96,19 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AlphaFS" Version="2.2.6" />
-    <PackageReference Include="cef.redist.x64" Version="104.4.24" />
-    <PackageReference Include="cef.redist.x86" Version="104.4.24" />
-    <PackageReference Include="CefSharp.Common.NETCore" Version="104.4.240" />
-    <PackageReference Include="CefSharp.WinForms.NETCore" Version="104.4.240" />
+    <PackageReference Include="cef.redist.x64" Version="106.0.29" />
+    <PackageReference Include="cef.redist.x86" Version="106.0.29" />
+    <PackageReference Include="CefSharp.Common.NETCore" Version="106.0.290" />
+    <PackageReference Include="CefSharp.WinForms.NETCore" Version="106.0.290" />
     <PackageReference Include="CloudFlareUtilities" Version="1.3.0" />
     <PackageReference Include="GuerrillaNtp" Version="3.0.0" />
     <PackageReference Include="Humanizer" Version="2.14.1" />
     <PackageReference Include="Ical.Net" Version="4.2.0" />
     <PackageReference Include="IMDbApiLib" Version="1.8.1" />
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
-    <PackageReference Include="MediaInfo.Wrapper.Core" Version="21.9.2" />
+    <PackageReference Include="MediaInfo.Wrapper.Core" Version="21.9.3" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.NETCore.Platforms" Version="6.0.5" />
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="6.0.6" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
     <PackageReference Include="MscVersion" Version="1.0.0.9" />
@@ -116,7 +116,7 @@
     <PackageReference Include="NLog.OutputDebugString" Version="5.0.4" />
     <PackageReference Include="NLog.Targets.Syslog" Version="7.0.0" />
     <PackageReference Include="NLog.Windows.Forms" Version="4.6.0" />
-    <PackageReference Include="NodaTime" Version="3.1.2" />
+    <PackageReference Include="NodaTime" Version="3.1.4" />
     <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="SharpCompress" Version="0.32.2" />
@@ -143,7 +143,7 @@
     <PackageReference Include="TimeZoneConverter" Version="6.0.1" />
     <PackageReference Include="TMDbLib" Version="1.9.2" />
     <PackageReference Include="System.ServiceModel.Federation" Version="4.10.0" />
-    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.336902">
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.346202">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
@@ -159,5 +159,14 @@
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="106.0.29" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="106.0.29" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="106.0.29" />
   </ItemGroup>
 </Project>
