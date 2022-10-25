@@ -199,7 +199,7 @@ public class ActionCopyMoveRename : ActionFileOperation
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new NotSupportedException($"Operation = {Operation} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
         }
     }
 
@@ -278,7 +278,9 @@ public class ActionCopyMoveRename : ActionFileOperation
     }
 
     // ReSharper disable once UnusedMember.Local
+#pragma warning disable IDE0051 // Remove unused private members
     private static void KeepTimestamps(FileSystemInfo from, FileSystemInfo to)
+#pragma warning restore IDE0051 // Remove unused private members
     {
         to.CreationTime = from.CreationTime;
         to.CreationTimeUtc = from.CreationTimeUtc;

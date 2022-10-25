@@ -142,7 +142,7 @@ public partial class CustomNameDesigner : Form
 
         int p = txtTemplate.SelectionStart;
         string s = txtTemplate.Text;
-        txtTemplate.Text = s.Substring(0, p) + CustomEpisodeName.TAGS[cbTags.SelectedIndex] + s.Substring(p);
+        txtTemplate.Text = s[..p] + CustomEpisodeName.TAGS[cbTags.SelectedIndex] + s[p..];
 
         cbTags.SelectedIndex = -1;
     }

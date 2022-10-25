@@ -13,16 +13,14 @@ internal class MissingMovieCsv : MissingActionListExporter
 
     protected override void Do()
     {
-        using (System.IO.StreamWriter file = new(Location()))
-        {
-            file.WriteLine("Movie Name,Year,Folder,Nice Name");
+        using System.IO.StreamWriter file = new(Location());
+        file.WriteLine("Movie Name,Year,Folder,Nice Name");
 
-            foreach (MovieItemMissing im in TheActionList.MissingMovies)
-            {
-                MovieConfiguration pe = im.MovieConfig;
-                file.WriteLine(
-                    $"{pe.ShowName.InDoubleQuotes()},{pe.CachedMovie?.Year},{im.TargetFolder.InDoubleQuotes()},{im.Filename.InDoubleQuotes()}");
-            }
+        foreach (MovieItemMissing im in TheActionList.MissingMovies)
+        {
+            MovieConfiguration pe = im.MovieConfig;
+            file.WriteLine(
+                $"{pe.ShowName.InDoubleQuotes()},{pe.CachedMovie?.Year},{im.TargetFolder.InDoubleQuotes()},{im.Filename.InDoubleQuotes()}");
         }
     }
 }

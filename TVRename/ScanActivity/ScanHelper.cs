@@ -35,7 +35,7 @@ public static class ScanHelper
                     return false;
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new NotSupportedException($"result = {result} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
             }
         }
         catch (System.IO.FileNotFoundException)
@@ -73,7 +73,7 @@ public static class ScanHelper
                     return false;
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new NotSupportedException($"result = {result} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
             }
         }
         catch (System.IO.FileNotFoundException)

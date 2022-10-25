@@ -92,7 +92,7 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
         }
     }
 
-    private void MoveFiles(IEnumerable<FileInfo> where, string destination)
+    private static void MoveFiles(IEnumerable<FileInfo> where, string destination)
     {
         Directory.CreateDirectory(destination);
         foreach (FileInfo? f in where)
@@ -103,7 +103,7 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
         }
     }
 
-    private void CopyOrMove(DirectoryInfo fromDirectory, string toDirectory)
+    private static void CopyOrMove(DirectoryInfo fromDirectory, string toDirectory)
     {
         DirectoryInfo target = new(toDirectory);
 

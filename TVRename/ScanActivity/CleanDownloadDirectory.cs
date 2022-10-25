@@ -162,7 +162,7 @@ internal class CleanDownloadDirectory : ScanActivity
         CachedSeriesInfo? s = si.CachedShow;
         if (s is null)
         {
-            throw new ArgumentNullException(nameof(s));
+            throw new ArgumentNullException(nameof(matchingShows),$"s is null");
         }
 
         ProcessedEpisode pep = si.GetEpisode(seasF, epF);
@@ -466,7 +466,7 @@ internal class CleanDownloadDirectory : ScanActivity
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new NotSupportedException($"newResult = {newResult} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
         }
         return null;
     }
@@ -535,7 +535,7 @@ internal class CleanDownloadDirectory : ScanActivity
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new NotSupportedException($"newResult = {newResult} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
         }
         return null;
     }

@@ -159,7 +159,7 @@ internal class CheckAllMovieFoldersExist : ScanMovieActivity
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new NotSupportedException($"whatToDo = {whatToDo} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
             }
         } while (goAgain);
     }

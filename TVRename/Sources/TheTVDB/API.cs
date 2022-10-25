@@ -242,7 +242,9 @@ internal static class API
     }
 
     // ReSharper disable once UnusedParameter.Global
+#pragma warning disable IDE0060 // Remove unused parameter
     internal static string BuildUrl(int apiKey, string lang)
+#pragma warning restore IDE0060 // Remove unused parameter
         //would rather make this private to hide api key from outside world
         //https://forum.kodi.tv/showthread.php?tid=323588
         //says that we need a format like this:

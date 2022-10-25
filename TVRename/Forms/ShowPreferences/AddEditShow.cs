@@ -239,7 +239,8 @@ public partial class AddEditShow : Form
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(si),
+                    $"SetAutoAdd: si has invalid AutoAddType {si.AutoAddType}");
         }
     }
 
@@ -264,7 +265,8 @@ public partial class AddEditShow : Form
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(si),
+                    $"SetProvider: si has invalid ConfigurationProvider {si.ConfigurationProvider}");
         }
     }
 

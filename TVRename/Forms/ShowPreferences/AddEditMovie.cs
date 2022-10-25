@@ -233,7 +233,8 @@ public partial class AddEditMovie : Form
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(si),
+                    $"SetProvider: si has invalid ConfigurationProvider {si.ConfigurationProvider}");
         }
     }
 

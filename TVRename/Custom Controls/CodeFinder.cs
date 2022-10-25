@@ -19,7 +19,9 @@ public abstract partial class CodeFinder : UserControl
     private MediaConfiguration.MediaType Type { get; }
     internal TVDoc.ProviderType Source { get; private set; }
 #pragma warning disable CS0414
+#pragma warning disable IDE0052 // Remove unread private members
     private bool hasChanged;
+#pragma warning restore IDE0052 // Remove unread private members
 #pragma warning restore CS0414
     private bool mInternal;
     private readonly ListViewColumnSorter lvwCodeFinderColumnSorter;

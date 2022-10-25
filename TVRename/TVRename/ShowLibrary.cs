@@ -275,7 +275,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(si), $"GenerateEpisodes: si has invalid Order {si.Order}");
         }
 
         if (si.CountSpecials && si.AppropriateSeasons().ContainsKey(0) && !TVSettings.Instance.IgnoreAllSpecials)

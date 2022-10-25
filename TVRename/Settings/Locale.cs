@@ -53,7 +53,9 @@ public class Locale
     }
 
     // ReSharper disable once UnusedParameter.Local
+#pragma warning disable IDE0060 // Remove unused parameter
     private static Region DefaultRegion(TVDoc.ProviderType provider) => TVSettings.Instance.TMDBRegion;
+#pragma warning restore IDE0060 // Remove unused parameter
 
     public bool IsDifferentLanguageToDefaultFor(TVDoc.ProviderType provider)
     {

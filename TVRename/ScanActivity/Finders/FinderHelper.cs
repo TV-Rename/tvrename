@@ -642,13 +642,17 @@ internal static class FinderHelper
     }
 
     // ReSharper disable once UnusedMember.Local
+#pragma warning disable IDE0051 // Remove unused private members
     private static bool LookForMovie(FileSystemInfo test, IEnumerable<MovieConfiguration> shows)
+#pragma warning restore IDE0051 // Remove unused private members
     {
         return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));
     }
 
     // ReSharper disable once UnusedMember.Local
+#pragma warning disable IDE0051 // Remove unused private members
     private static bool LookForSeries(FileSystemInfo test, IEnumerable<ShowConfiguration> shows)
+#pragma warning restore IDE0051 // Remove unused private members
     {
         return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));
     }

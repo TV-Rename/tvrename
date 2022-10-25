@@ -316,7 +316,8 @@ public class TVDoc : IDisposable
                     FullyRefresh((MovieConfiguration)show);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(show),
+                        $"GetBestValue: show has invalid Media {show.Media}");
             }
             return valueFromCache;
         }
@@ -430,7 +431,8 @@ public class TVDoc : IDisposable
                 TMDB.LocalCache.Instance.ForgetMovie(si);
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(si),
+                    $"ForgetMovie: si has invalid Provider {si.Provider}");
         }
     }
 
@@ -452,7 +454,8 @@ public class TVDoc : IDisposable
                 TMDB.LocalCache.Instance.ForgetShow(si);
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(si),
+                    $"ForgetShow: si has invalid Provider {si.Provider}");
         }
     }
 
@@ -1256,7 +1259,9 @@ public class TVDoc : IDisposable
                 TheActionList.Replace(actions, actions.First().UndoItemMissing);
                 continue;
             }
-            switch (WhatAction(unattended))
+
+            TVSettings.DuplicateActionOutcome duplicateActionOutcome = WhatAction(unattended);
+            switch (duplicateActionOutcome)
             {
                 case TVSettings.DuplicateActionOutcome.IgnoreAll:
                     TheActionList.Replace(actions, actions.First().UndoItemMissing);
@@ -1303,7 +1308,7 @@ public class TVDoc : IDisposable
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new NotSupportedException($"duplicateActionOutcome = {duplicateActionOutcome} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
             }
         }
     }
@@ -2114,7 +2119,7 @@ public class TVDoc : IDisposable
                 return null;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new NotSupportedException($"result = {result} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
         }
     }
 

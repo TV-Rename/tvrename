@@ -199,21 +199,16 @@ public partial class RecommendationView : Form
         try
         {
             string languageCode = TVSettings.Instance.TMDBLanguage.Abbreviation;
-            switch (media)
+            recs = media switch
             {
-                case MediaConfiguration.MediaType.tv:
-                    recs = TMDB.LocalCache.Instance
-                        .GetRecommendations((BackgroundWorker)sender, tvShows.ToList(), languageCode).Result;
-                    break;
-
-                case MediaConfiguration.MediaType.movie:
-                    recs = TMDB.LocalCache.Instance
-                        .GetRecommendations((BackgroundWorker)sender, movies.ToList(), languageCode).Result;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                MediaConfiguration.MediaType.tv => TMDB.LocalCache.Instance
+                    .GetRecommendations((BackgroundWorker)sender, tvShows.ToList(), languageCode)
+                    .Result,
+                MediaConfiguration.MediaType.movie => TMDB.LocalCache.Instance
+                    .GetRecommendations((BackgroundWorker)sender, movies.ToList(), languageCode)
+                    .Result,
+                _ => throw new NotSupportedException($"media = {media} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}")
+            };
         }
         catch (Exception ex)
         {

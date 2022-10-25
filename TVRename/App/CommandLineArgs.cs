@@ -61,7 +61,7 @@ public class CommandLineArgs
 
         Save = args.Contains("/save", StringComparer.OrdinalIgnoreCase);
 
-        UserFilePath = args.Where(a => a.StartsWith("/userfilepath:", StringComparison.OrdinalIgnoreCase)).Select(a => a.Substring(a.IndexOf(":", StringComparison.Ordinal) + 1)).FirstOrDefault();
+        UserFilePath = args.Where(a => a.StartsWith("/userfilepath:", StringComparison.OrdinalIgnoreCase)).Select(a => a[(a.IndexOf(":", StringComparison.Ordinal) + 1)..]).FirstOrDefault();
 
         MissingFolder = DecodeMissingFolderType(args);
     }

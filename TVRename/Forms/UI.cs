@@ -1161,7 +1161,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                         break;
 
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        throw new NotSupportedException($"UI_FormClosing: MessageBox.Show returned invalid resullt {res}");
                 }
             }
 
@@ -1788,7 +1788,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new NotSupportedException($"TVSettings.Instance.WTWDoubleClick = {TVSettings.Instance.WTWDoubleClick} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
         }
     }
 
@@ -2317,7 +2317,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
         else
         {
-            throw new ArgumentOutOfRangeException();
+            throw new NotSupportedException($"tabControl1.SelectedTab = {tabControl1.SelectedTab} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
         }
     }
 
@@ -4486,7 +4486,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             CheckState.Unchecked => CheckState.Checked,
             CheckState.Checked => CheckState.Unchecked,
             CheckState.Indeterminate => CheckState.Unchecked,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(menuItem), $"UpdateCheckboxGroup: menuItem has invalid CheckState {menuItem.CheckState}")
         };
 
         bool checkedStatus = menuItem.CheckState == CheckState.Checked;

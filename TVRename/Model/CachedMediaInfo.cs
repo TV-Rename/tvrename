@@ -99,7 +99,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
             TVDoc.ProviderType.TVmaze => TvMazeCode,
             TVDoc.ProviderType.TheTVDB => TvdbCode,
             TVDoc.ProviderType.TMDB => TmdbCode,
-            _ => throw new ArgumentOutOfRangeException(nameof(Source), selectedSource, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(selectedSource), selectedSource, null)
         };
     }
 

@@ -534,7 +534,7 @@ public partial class Preferences : Form
             "Download All" => TVSettings.DuplicateActionOutcome.DoAll,
             "Ignore" => TVSettings.DuplicateActionOutcome.IgnoreAll,
             "Choose Most Popular" => TVSettings.DuplicateActionOutcome.MostSeeders,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(p0),$"ConvertToDupActEnum: p0 has invalid Text {p0.Text}")
         };
     }
 
@@ -546,7 +546,7 @@ public partial class Preferences : Form
             "Many Movies per Folder" => MovieConfiguration.MovieFolderFormat.multiPerDirectory,
             "Bluray format" => MovieConfiguration.MovieFolderFormat.bluray,
             "DVD format" => MovieConfiguration.MovieFolderFormat.dvd ,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(p0), $"ConvertToMovieFormat: p0 has invalid Text {p0.Text}")
         };
     }
 

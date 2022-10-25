@@ -1194,7 +1194,7 @@ public sealed class TVSettings
             KeepTogetherModes.All => true,
             KeepTogetherModes.Just => keepTogetherExtensionsArray.Contains(fileExtension),
             KeepTogetherModes.AllBut => !keepTogetherExtensionsArray.Contains(fileExtension),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new NotSupportedException($"keepTogetherMode = {keepTogetherMode} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}")
         };
     }
 
@@ -1785,7 +1785,7 @@ public sealed class TVSettings
             "SeasonStatusColouringRule" => new SeasonStatusColouringRule(ExtractEnum<ProcessedSeason.SeasonStatus>(showStatus)),
             "ShowStatusColouringRule" => new ShowStatusColouringRule(showStatus),
             "ShowAirStatusColouringRule" => new ShowAirStatusColouringRule(ExtractEnum<ShowConfiguration.ShowAirStatus>(showStatus)),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new NotSupportedException($"type = {type} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}")
         };
     }
 
@@ -1798,7 +1798,7 @@ public sealed class TVSettings
 
         if (value is null)
         {
-            throw new ArgumentException();
+            throw new ArgumentNullException(nameof(value),value);
         }
 
         int val = int.Parse(value);
@@ -1808,7 +1808,7 @@ public sealed class TVSettings
             return (T)Enum.Parse(typeof(T), value, true);
         }
 
-        throw new ArgumentException();
+        throw new ArgumentException($"'{value}' cannot be mapped to type {typeof(T)}",nameof(value));
     }
 
     private static ShowConfiguration.ShowAirStatus ConvertToShowAirStatus(string value)
@@ -1827,7 +1827,7 @@ public sealed class TVSettings
             "Partially aired" => ShowConfiguration.ShowAirStatus.partiallyAired,
             "PartiallyAired" => ShowConfiguration.ShowAirStatus.partiallyAired,
             "partiallyAired" => ShowConfiguration.ShowAirStatus.partiallyAired,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(value),value)
         };
     }
 
@@ -1847,7 +1847,7 @@ public sealed class TVSettings
             "Partially aired" => ProcessedSeason.SeasonStatus.partiallyAired,
             "PartiallyAired" => ProcessedSeason.SeasonStatus.partiallyAired,
             "partiallyAired" => ProcessedSeason.SeasonStatus.partiallyAired,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(value), value)
         };
     }
 

@@ -208,7 +208,7 @@ public partial class DuplicateMovieFinder : Form
                 return;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new NotSupportedException($"MergeConfigurationAndFiles: BetterQualityFile returned invalid VideoComparison {newResult}");
         }
     }
 
@@ -237,7 +237,7 @@ public partial class DuplicateMovieFinder : Form
                     return;
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new NotSupportedException($"result = {result} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
             }
         }
         catch (System.IO.FileNotFoundException)

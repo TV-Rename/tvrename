@@ -38,7 +38,7 @@ public static class PathManager
         }
         if (System.IO.File.Exists(path))
         {
-            throw new ArgumentException("path");
+            throw new ArgumentException($"File at {path} does not exist",nameof(path));
         }
         path = System.IO.Path.GetFullPath(path); // Get absolute path, in case the given path was a relative one. This will make the Path absolute depending on the Environment.CurrentDirectory.
         // Why are we getting a absolute path here ? Simply because it is not guaranteed that the Environment.CurrentDirectory will not change a some point during runtime and then all bets are off were the Files are going to be saved, which would be fatal to the data integrity.(Saved changes might go to some file nobody even knew about )

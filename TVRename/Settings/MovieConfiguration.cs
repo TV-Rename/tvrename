@@ -122,7 +122,8 @@ public class MovieConfiguration : MediaConfiguration
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(movie),
+                    $"MovieConfiguration: movie has invalid SourceProvider {movie.SourceProvider}");
         }
 
         ConfigurationProvider = TVSettings.Instance.DefaultMovieProvider == movie.SourceProvider

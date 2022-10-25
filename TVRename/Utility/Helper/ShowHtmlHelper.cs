@@ -718,7 +718,7 @@ internal static class ShowHtmlHelper
 
             case TVDoc.ProviderType.libraryDefault:
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new NotSupportedException($"si.Provider = {si.Provider} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
         }
     }
 
