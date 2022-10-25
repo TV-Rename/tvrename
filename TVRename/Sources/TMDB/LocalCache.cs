@@ -1100,7 +1100,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         int total = shows.Count;
         int current = 0;
         Task<SearchContainer<SearchTv>> topRated = Client.GetTvShowTopRatedAsync(language: languageCode);
-        Task<SearchContainer<SearchTv>> trending = Client.GetTrendingTvAsync(TimeWindow.Week);
+        Task<SearchContainer<SearchTv>> trending = Client.GetTrendingTvAsync(TimeWindow.Week); //Client.GetTvShowTopRatedAsync(language: languageCode); //;
         await topRated;
         await trending;
 
@@ -1194,7 +1194,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         int total = movies.Count;
         int current = 0;
         Task<SearchContainer<SearchMovie>> topRated = Client.GetMovieTopRatedListAsync(languageCode);
-        Task<SearchContainer<SearchMovie>> trending = Client.GetTrendingMoviesAsync(TimeWindow.Week);
+        Task<SearchContainer<SearchMovie>> trending = Client.GetMovieTopRatedListAsync(languageCode);//Client.GetTrendingMoviesAsync(TimeWindow.Month);
         await topRated;
         await trending;
 
