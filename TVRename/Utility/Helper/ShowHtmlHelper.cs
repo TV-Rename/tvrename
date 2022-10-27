@@ -995,7 +995,7 @@ internal static class ShowHtmlHelper
         string airedText = ep.HasAired() ? " (Aired)" : string.Empty;
         DateTime? airDateDt = ep.GetAirDateDt(true);
         string airDateString = airDateDt.HasValue && airDateDt > DateTime.MinValue
-            ? airDateDt.Value.ToString("d",CultureInfo.InvariantCulture)
+            ? airDateDt.Value.ToString("d", DateTimeFormatInfo.CurrentInfo)
             : string.Empty;
         return
             $"<tr><th scope=\"row\">{ep.AppropriateEpNum}</th><td>{airDateString}{airedText}</td><td>{ep.Name}</td><td>{status}</td><td class=\"text-right\">{searchButton}{viewButton}</td></tr>";

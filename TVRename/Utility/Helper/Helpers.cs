@@ -226,17 +226,12 @@ public static class Helpers
 
     public static bool OpenFolder(string? folder)
     {
-        if (folder is null)
+        if (folder is null || !Directory.Exists(folder))
         {
             return false;
         }
 
-        if (Directory.Exists(folder))
-        {
-            return SysOpen("explorer.exe", folder.EnsureEndsWithSeparator().InDoubleQuotes());
-        }
-
-        return false;
+        return SysOpen("explorer.exe", folder.EnsureEndsWithSeparator().InDoubleQuotes());
     }
 
     public static string InDoubleQuotes(this string? source)
