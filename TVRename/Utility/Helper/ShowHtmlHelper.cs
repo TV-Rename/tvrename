@@ -1513,11 +1513,9 @@ internal static class ShowHtmlHelper
             first = false;
         }
 
-        string? airsTime = ser?.AirsTime.PrettyPrint();
-        string? airsDay = ser?.AirsDay;
-        if (ser != null && !string.IsNullOrEmpty(airsTime) && !string.IsNullOrEmpty(airsDay))
+        if (ser != null)
         {
-            body += "<h2>Airs</h2> " + airsTime + " " + airsDay;
+            body += $"<h2>Airs</h2>{ser.AirsDay} {ParseAirsTime(ser)}";
             string? net = ser.Network;
             if (!string.IsNullOrEmpty(net))
             {
@@ -1526,7 +1524,6 @@ internal static class ShowHtmlHelper
         }
 
         string yearRange = YearRange(ser);
-
         string siteRating = PrettyPrint(ser?.SiteRating);
         string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si) : string.Empty;
 
