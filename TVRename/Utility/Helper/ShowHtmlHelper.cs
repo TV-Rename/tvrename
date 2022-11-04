@@ -119,6 +119,11 @@ internal static class ShowHtmlHelper
         return sb.ToString();
     }
 
+    private static string ToImdbLink(this string? imdbId)
+    {
+        return string.IsNullOrWhiteSpace(imdbId) ? string.Empty : $"https://www.imdb.com/title/{imdbId}";
+    }
+
     private static void AppendShowSummary(this StringBuilder sb, ShowConfiguration? si, DirFilesCache dfc, Color backgroundColour, bool includeDirectoryLinks)
     {
         CachedSeriesInfo? ser = si?.CachedShow;
@@ -130,7 +135,7 @@ internal static class ShowHtmlHelper
         string horizontalBanner = CreateHorizontalBannerHtml(si);
         string yearRange = YearRange(ser);
         string episodeSummary = ser.Episodes.Count.ToString();
-        string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"https://www.imdb.com/title/{ser.Imdb}";
+        string imdbLink = ser.Imdb.ToImdbLink();
         string table = CreateEpisodeTableHeader(CreateTableRows(si!, dfc, includeDirectoryLinks));
 
         sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
@@ -464,7 +469,7 @@ internal static class ShowHtmlHelper
         string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
         string dayTime = $"{ser.AirsDay} {ParseAirsTime(ser)}";
 
-        string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"https://www.imdb.com/title/{ser.Imdb}";
+        string imdbLink = ser.Imdb.ToImdbLink();
         string? mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
         string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteShowUrl(ser) : string.Empty;
         string tvdbLink = ser.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser) : string.Empty;
@@ -597,7 +602,7 @@ internal static class ShowHtmlHelper
         string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
         string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
         string tvdbLink = ser.Slug.HasValue() ? TheTVDB.API.WebsiteMovieUrl(ser.Slug) : string.Empty;
-        string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"https://www.imdb.com/title/{ser.Imdb}";
+        string imdbLink = ser.Imdb.ToImdbLink();
         string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(ser.TmdbCode) : string.Empty;
         string? mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
 
@@ -1157,7 +1162,7 @@ internal static class ShowHtmlHelper
             ? rating + "/10" + AddRatingCount(ep.SiteRatingCount ?? 0)
             : "";
 
-        string imdbLink = string.IsNullOrWhiteSpace(ep.ImdbCode) ? string.Empty : "https://www.imdb.com/title/" + ep.ImdbCode;
+        string imdbLink = ep.ImdbCode.ToImdbLink();
         string productionCode = string.IsNullOrWhiteSpace(ep.ProductionCode)
             ? string.Empty
             : "Production Code <br/>" + ep.ProductionCode;
@@ -1406,14 +1411,19 @@ internal static class ShowHtmlHelper
             : "";
     }
 
-    private static string ActorLinkHtml(Actor actor)
+    private static string ActorLinkHtml(this Actor actor)
     {
         string asText = actor.AsSelf() ? string.Empty
             : string.IsNullOrWhiteSpace(actor.ActorRole) ? string.Empty
             : " as " + actor.ActorRole;
         string tryText =
-            $@"<a href=""https://www.imdb.com/find?s=nm&q={actor.ActorName}"">{actor.ActorName}</a>{asText}";
+            $@"<a href=""{actor.ActorName.ToImdbActorLink()}"">{actor.ActorName}</a>{asText}";
         return tryText;
+    }
+
+    public static string ToImdbActorLink(this string name)
+    {
+        return $@"https://www.imdb.com/find?s=nm&q={name}";
     }
 
     private static string StarRating(string? rating)
@@ -1509,7 +1519,7 @@ internal static class ShowHtmlHelper
         {
             body += first ? "<h2>Actors</h2>" : ", ";
 
-            body += "<A HREF=\"https://www.imdb.com/find?s=nm&q=" + aa.ActorName + "\">" + aa.ActorName + $"</a> as {aa.ActorRole}";
+            body += aa.ActorLinkHtml();
             first = false;
         }
 
@@ -1529,8 +1539,8 @@ internal static class ShowHtmlHelper
 
         string tableHtml = string.Empty;
 
-        tableHtml += GetOverviewPart("thetvdb.com", $"<A HREF=\"{tvdbLink}\">Visit</a>");
-        tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"https://www.imdb.com/title/" + ser?.Imdb + "\">Visit</a>");
+        tableHtml += GetOverviewLinkPart("thetvdb.com", tvdbLink);
+        tableHtml += GetOverviewLinkPart("imdb.com", ser?.Imdb.ToImdbLink());
         tableHtml += GetOverviewPart("Runtime", ser?.Runtime);
         tableHtml += GetOverviewPart("Aliases", si.AliasNames.ToCsv());
         tableHtml += GetOverviewPart("Genres", si.Genres.ToCsv());
@@ -1696,7 +1706,7 @@ internal static class ShowHtmlHelper
         {
             body += first ? "<h2>Actors</h2>" : ", ";
 
-            body += "<A HREF=\"https://www.imdb.com/find?s=nm&q=" + aa.ActorName + "\">" + aa.ActorName + $"</a> as {aa.ActorRole}";
+            body += aa.ActorLinkHtml();
             first = false;
         }
 
@@ -1710,33 +1720,13 @@ internal static class ShowHtmlHelper
 
         string tableHtml = string.Empty;
 
-        tableHtml += GetOverviewPart("thetvdb.com", $"<A HREF=\"{tvdbLink}\">Visit</a>");
-        tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"https://www.imdb.com/title/" + ser?.Imdb + "\">Visit</a>");
-        if (tmdbLink.HasValue())
-        {
-            tableHtml += GetOverviewPart("MovieDB", $"<A HREF=\"{tmdbLink}\">Visit</a>");
-        }
-
-        if (mazeLink.HasValue())
-        {
-            tableHtml += GetOverviewPart("TV Maze", $"<A HREF=\"{mazeLink}\">Visit</a>");
-        }
-
-        if (facebookButton.HasValue())
-        {
-            tableHtml += GetOverviewPart("Facebook", $"<A HREF=\"{facebookButton}\">Visit</a>");
-        }
-
-        if (instagramButton.HasValue())
-        {
-            tableHtml += GetOverviewPart("Instagram", $"<A HREF=\"{instagramButton}\">Visit</a>");
-        }
-
-        if (twitterButton.HasValue())
-        {
-            tableHtml += GetOverviewPart("Twitter", $"<A HREF=\"{twitterButton}\">Visit</a>");
-        }
-
+        tableHtml += GetOverviewLinkPart("thetvdb.com", tvdbLink);
+        tableHtml += GetOverviewLinkPart("imdb.com", ser?.Imdb.ToImdbLink());
+        tableHtml += GetOverviewLinkPart("MovieDB", tmdbLink);
+        tableHtml += GetOverviewLinkPart("TV Maze", mazeLink);
+        tableHtml += GetOverviewLinkPart("Facebook", facebookButton);
+        tableHtml += GetOverviewLinkPart("Instagram", instagramButton);
+        tableHtml += GetOverviewLinkPart("Twitter", twitterButton);
         tableHtml += GetOverviewPart("Runtime", ser?.Runtime);
         tableHtml += GetOverviewPart("Aliases", si.AliasNames.ToCsv());
         tableHtml += GetOverviewPart("Genres", si.Genres.ToCsv());
@@ -1771,8 +1761,8 @@ internal static class ShowHtmlHelper
     {
         string overviewString = string.Empty;
 
-        overviewString += GetOverviewPart("imdb.com", "<A HREF=\"https://www.imdb.com/title/" + ei.ImdbCode + "\">Visit</a>");
-        overviewString += GetOverviewPart("Link", "<A HREF=\"" + ei.ShowUrl + "\">Visit</a>");
+        overviewString += GetOverviewLinkPart("imdb.com", ei.ImdbCode);
+        overviewString += GetOverviewLinkPart("Link", ei.ShowUrl);
         overviewString += GetOverviewPart("Director", ei.EpisodeDirector);
         overviewString += GetOverviewPart("Guest Stars", ei.EpisodeGuestStars);
         overviewString += GetOverviewPart("Production Code", ei.ProductionCode);
@@ -1789,6 +1779,10 @@ internal static class ShowHtmlHelper
     private static string GetOverviewPart(string name, string? value)
     {
         return string.IsNullOrWhiteSpace(value) ? string.Empty : "<tr><td width=120px>" + name + "</td><td>" + value + "</td></tr>";
+    }
+    private static string GetOverviewLinkPart(string name, string? link)
+    {
+        return string.IsNullOrWhiteSpace(link) ? string.Empty : GetOverviewPart(name, $"<A HREF=\"{link}\">Visit</a>");
     }
 
     public static string? YoutubeTrailer(CachedMediaInfo? si)
