@@ -341,7 +341,7 @@ public static class Helpers
         return mediaConfigurations.First(config => config.ShowName.Length == longestName);
     }
 
-    public static string TranslateColorToHtml(Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
+    public static string TranslateColorToHtml(this Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
 
     public static DateTime GetMinWindowsTime(DateTime dateTime)
     {

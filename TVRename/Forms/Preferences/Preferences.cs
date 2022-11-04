@@ -1404,7 +1404,7 @@ public partial class Preferences : Form
                 ForeColor = showStatusColor.Value
             };
 
-            item.SubItems.Add(Helpers.TranslateColorToHtml(showStatusColor.Value));
+            item.SubItems.Add(showStatusColor.Value.TranslateColorToHtml());
             lvwDefinedColors.Items.Add(item);
         }
     }
@@ -1657,7 +1657,7 @@ public partial class Preferences : Form
 
         if (colorDialog.ShowDialog(this) == DialogResult.OK)
         {
-            txtShowStatusColor.Text = Helpers.TranslateColorToHtml(colorDialog.Color);
+            txtShowStatusColor.Text = colorDialog.Color.TranslateColorToHtml();
             txtShowStatusColor.ForeColor = colorDialog.Color;
         }
     }

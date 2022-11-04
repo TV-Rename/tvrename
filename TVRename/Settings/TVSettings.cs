@@ -859,7 +859,7 @@ public sealed class TVSettings
                     break;
             }
 
-            writer.WriteAttributeToXml("Color", Helpers.TranslateColorToHtml(e.Value));
+            writer.WriteAttributeToXml("Color", e.Value.TranslateColorToHtml());
 
             writer.WriteEndElement(); //ShowStatusTVWColor
         }
