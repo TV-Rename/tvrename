@@ -142,12 +142,12 @@ public partial class ChooseFile : Form
 
     private void lnkOpenLeftFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        Helpers.OpenFolderSelectFile(leftFile.FullName);
+        leftFile.FullName.OpenFolderSelectFile();
     }
 
     private void lnkOpenRightFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        Helpers.OpenFolderSelectFile(rightFile.FullName);
+        rightFile.FullName.OpenFolderSelectFile();
     }
 
     private void btnLeft_Click(object sender, EventArgs e)

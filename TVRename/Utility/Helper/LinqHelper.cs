@@ -8,6 +8,15 @@ namespace TVRename;
 
 internal static class LinqHelper
 {
+    public static bool In<T>(this T? item, params T[] items)
+    {
+        if (items == null)
+        {
+            throw new ArgumentNullException(nameof(items));
+        }
+
+        return items.Contains(item);
+    }
     public static List<T> AsList<T>(this T? item) => item is null ? new List<T>() :new List<T> { item };
 
     public static Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP = 4)

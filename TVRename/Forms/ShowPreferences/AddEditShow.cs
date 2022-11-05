@@ -428,7 +428,7 @@ public partial class AddEditShow : Form
 
     private static void OpenInfoWindow(string page)
     {
-        Helpers.OpenUrl($"https://www.tvrename.com/manual/user{page}");
+        $"https://www.tvrename.com/manual/user{page}".OpenUrlInBrowser();
     }
 
     #endregion HelpWindows
@@ -815,7 +815,7 @@ public partial class AddEditShow : Form
 
     private void llCustomSearchPreview_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        Helpers.OpenUrl(llCustomSearchPreview.Text);
+        llCustomSearchPreview.Text.OpenUrlInBrowser();
     }
 
     private void MTCCF_SelectionChanged(object? sender, EventArgs e)

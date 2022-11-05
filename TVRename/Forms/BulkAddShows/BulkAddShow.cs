@@ -184,7 +184,7 @@ public partial class BulkAddShow : Form
     {
         if (lstFMMonitorFolders.SelectedIndex != -1)
         {
-            Helpers.OpenFolder(TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex]);
+            TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex].OpenFolder();
         }
     }
 
@@ -192,7 +192,7 @@ public partial class BulkAddShow : Form
     {
         if (lstFMIgnoreFolders.SelectedIndex != -1)
         {
-            Helpers.OpenFolder(TVSettings.Instance.LibraryFolders[lstFMIgnoreFolders.SelectedIndex]);
+            TVSettings.Instance.LibraryFolders[lstFMIgnoreFolders.SelectedIndex].OpenFolder();
         }
     }
 
@@ -438,7 +438,7 @@ public partial class BulkAddShow : Form
 
         if (lvFMNewShows.SelectedItems[0].Tag is PossibleNewTvShow ai)
         {
-            Helpers.OpenFolder(ai.Folder.FullName);
+            ai.Folder.FullName.OpenFolder();
         }
     }
 
@@ -551,15 +551,15 @@ public partial class BulkAddShow : Form
         switch (fme.Provider)
         {
             case TVDoc.ProviderType.TheTVDB:
-                Helpers.OpenUrl(TheTVDB.API.WebsiteShowUrl(fme.ProviderCode));
+                TheTVDB.API.WebsiteShowUrl(fme.ProviderCode).OpenUrlInBrowser();
                 break;
 
             case TVDoc.ProviderType.TVmaze:
-                Helpers.OpenUrl(TVmaze.LocalCache.Instance.GetSeries(fme.ProviderCode)?.WebUrl ?? string.Empty);
+                (TVmaze.LocalCache.Instance.GetSeries(fme.ProviderCode)?.WebUrl ?? string.Empty).OpenUrlInBrowser();
                 break;
 
             case TVDoc.ProviderType.TMDB:
-                Helpers.OpenUrl(TMDB.API.WebsiteShowUrl(fme.ProviderCode));
+                TMDB.API.WebsiteShowUrl(fme.ProviderCode).OpenUrlInBrowser();
                 break;
         }
     }

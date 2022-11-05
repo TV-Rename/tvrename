@@ -213,6 +213,6 @@ internal class JackettFinder : DownloadFinder
 
         string url = $"{searchServer}UI/Dashboard#search={WebUtility.UrlEncode(searchTerm)}&tracker=&category=";
 
-        Helpers.OpenUrl(url);
+        url.OpenUrlInBrowser();
     }
 }

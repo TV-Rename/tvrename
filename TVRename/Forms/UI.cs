@@ -731,7 +731,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     }
 
     private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) =>
-        Helpers.OpenUrl("http://tvrename.com");
+        "http://tvrename.com".OpenUrlInBrowser();
 
     private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
 
@@ -1570,7 +1570,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         if (e?.WebsiteUrl != null && e.WebsiteUrl.HasValue())
         {
-            Helpers.OpenUrl(e.WebsiteUrl);
+            e.WebsiteUrl.OpenUrlInBrowser();
         }
         else
         {
@@ -1582,7 +1582,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         if (seas?.WebsiteUrl != null && seas.WebsiteUrl.HasValue())
         {
-            Helpers.OpenUrl(seas.WebsiteUrl);
+            seas.WebsiteUrl.OpenUrlInBrowser();
         }
         else
         {
@@ -1596,11 +1596,11 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             if (si.WebsiteUrl.HasValue())
             {
-                Helpers.OpenUrl(si.WebsiteUrl);
+                si.WebsiteUrl.OpenUrlInBrowser();
             }
             else if (si.CachedShow?.WebUrl.HasValue() ?? false)
             {
-                Helpers.OpenUrl(si.CachedShow?.WebUrl!);
+                si.CachedShow?.WebUrl!.OpenUrlInBrowser();
             }
         }
     }
@@ -2076,7 +2076,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 first = false;
             }
 
-            showRightClickMenu.Items.Add("Open: " + folder,(_, _) => Helpers.OpenFolder(folder));
+            showRightClickMenu.Items.Add("Open: " + folder,(_, _) => folder.OpenFolder());
         }
     }
 
@@ -2087,7 +2087,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         foreach (string folder in foldersList.Where(folder => !string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !alreadyAdded.Contains(folder)))
         {
             alreadyAdded.Add(folder); // don't show the same folder more than once
-            tsi.DropDownItems.Add("Open: " + folder, (_, _) => Helpers.OpenFolder(folder));
+            tsi.DropDownItems.Add("Open: " + folder, (_, _) => folder.OpenFolder());
         }
 
         if (tsi.DropDownItems.Count > 0)
@@ -4234,7 +4234,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     }
 
     private void visitSupportForumToolStripMenuItem_Click(object sender, EventArgs e)
-        => Helpers.OpenUrl("https://groups.google.com/forum/#!forum/tvrename");
+        => "https://groups.google.com/forum/#!forum/tvrename".OpenUrlInBrowser();
 
     public void Quit() => Close();
 
@@ -5400,7 +5400,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     }
 
     private void requestANewFeatureToolStripMenuItem_Click(object sender, EventArgs e)
-        => Helpers.OpenUrl("https://tvrename.featureupvote.com/");
+        => "https://tvrename.featureupvote.com/".OpenUrlInBrowser();
 }
 
 /// <summary>
@@ -5416,7 +5416,7 @@ public class SeasonGroupComparer : IComparer<OLVGroup>
     /// <param name="order">The ordering for column values</param>
     public SeasonGroupComparer(SortOrder order)
     {
-        this.sortOrder = order;
+        sortOrder = order;
     }
 
     /// <summary>

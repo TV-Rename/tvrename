@@ -12,16 +12,16 @@ public partial class ThanksForm : Form
 
     private void btnLicence_Click(object sender, EventArgs e)
     {
-        Helpers.OpenUrl("https://thetvdb.com/");
+        "https://thetvdb.com/".OpenUrlInBrowser();
     }
 
     private void BtnVisitTVMaze_Click(object sender, EventArgs e)
     {
-        Helpers.OpenUrl("https://www.tvmaze.com/");
+        "https://www.tvmaze.com/".OpenUrlInBrowser();
     }
 
     private void button1_Click(object sender, EventArgs e)
     {
-        Helpers.OpenUrl("https://www.themoviedb.org/");
+        "https://www.themoviedb.org/".OpenUrlInBrowser();
     }
 }

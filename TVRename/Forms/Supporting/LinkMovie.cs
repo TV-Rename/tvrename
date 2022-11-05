@@ -35,7 +35,7 @@ public partial class LinkMovie : Form
 
     private void lnkOpenLeftFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        Helpers.OpenFolderSelectFile(chosenFile.FullName);
+        chosenFile.FullName.OpenFolderSelectFile();
     }
 
     private void btnUseSelectedMovie_Click(object sender, EventArgs e)

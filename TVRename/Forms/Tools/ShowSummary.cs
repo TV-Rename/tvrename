@@ -451,7 +451,7 @@ public partial class ShowSummary : Form, IDialogParent
 
                     AddRcMenuItem(gridSummary.showRightClickMenu, "Open: " + folder, (_, _) =>
                     {
-                        Helpers.OpenFolder(folder);
+                        folder.OpenFolder();
                     });
                 }
             }
@@ -476,7 +476,7 @@ public partial class ShowSummary : Form, IDialogParent
 
                         AddRcMenuItem(gridSummary.showRightClickMenu, "Open: " + folder, (_, _) =>
                         {
-                            Helpers.OpenFolder(folder);
+                            folder.OpenFolder();
                         });
                     }
                 }

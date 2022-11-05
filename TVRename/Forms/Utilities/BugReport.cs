@@ -169,6 +169,6 @@ public partial class BugReport : Form
 
     private void linkForum_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        Helpers.OpenUrl("https://groups.google.com/forum/#!forum/tvrename");
+        "https://groups.google.com/forum/#!forum/tvrename".OpenUrlInBrowser();
     }
 }

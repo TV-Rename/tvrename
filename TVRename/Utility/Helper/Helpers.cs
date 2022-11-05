@@ -6,14 +6,10 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using NLog;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using Alphaleonis.Win32.Filesystem;
 
 // Helpful functions and classes
 
@@ -21,7 +17,7 @@ namespace TVRename;
 
 public static class Helpers
 {
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    #region DebugingInfo
 
     /// <summary>
     /// Gets a value indicating whether application is running under Mono.
@@ -33,21 +29,30 @@ public static class Helpers
 
     public static bool InDebug() => Debugger.IsAttached;
 
-    public static int Between(this int value, int min, int max) =>
-        value < min ? min :
-        value > max ? max :
-        value;
-
-    public static bool In<T>(this T? item, params T[] items)
+    /// <summary>
+    /// Gets the application display version from the current assemblies <see cref="AssemblyInformationalVersionAttribute"/>.
+    /// </summary>
+    /// <value>
+    /// The application display version.
+    /// </value>
+    public static string DisplayVersion
     {
-        if (items == null)
+        get
         {
-            throw new ArgumentNullException(nameof(items));
+            string v = Assembly.GetExecutingAssembly()
+                .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false)
+                .Cast<AssemblyInformationalVersionAttribute>().First().InformationalVersion;
+#if DEBUG
+            v += DebugText;
+#endif
+            return v;
         }
-
-        return items.Contains(item);
     }
 
+    public static string DebugText => " ** Debug Build **";
+    #endregion
+
+    #region PrettyPrint
     public static string PrettyPrint(this TVSettings.ScanType st)
     {
         return st switch
@@ -109,144 +114,15 @@ public static class Helpers
         };
     }
 
-    /// <summary>
-    /// Gets the application display version from the current assemblies <see cref="AssemblyInformationalVersionAttribute"/>.
-    /// </summary>
-    /// <value>
-    /// The application display version.
-    /// </value>
-    public static string DisplayVersion
-    {
-        get
-        {
-            string v = Assembly.GetExecutingAssembly()
-                .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false)
-                .Cast<AssemblyInformationalVersionAttribute>().First().InformationalVersion;
-#if DEBUG
-            v += DebugText;
-#endif
-            return v;
-        }
-    }
+    #endregion
 
-    public static string DebugText => " ** Debug Build **";
+    #region Converters
 
-    public static string Pad(this int i)
-    {
-        if (i.ToString().Length > 1)
-        {
-            return i.ToString();
-        }
+    public static int Between(this int value, int min, int max) =>
+        value < min ? min :
+        value > max ? max :
+        value;
 
-        return "0" + i;
-    }
-
-    public static string Pad(this int i, int size)
-    {
-        return i.ToString().Length >= size ? i.ToString() : i.ToString().PadLeft(size, '0');
-    }
-
-    public static bool OpenFolder(string? folder)
-    {
-        if (folder is null || !Directory.Exists(folder))
-        {
-            return false;
-        }
-
-        return SysOpen("explorer.exe", folder.EnsureEndsWithSeparator().InDoubleQuotes());
-    }
-
-    public static void OpenFolderSelectFile(string filename)
-    {
-        string args = $"/e, /select, {filename.InDoubleQuotes()}";
-
-        ProcessStartInfo info = new() { FileName = "explorer", Arguments = args };
-        Process.Start(info);
-    }
-
-    public static bool OpenUrl(string url) => OpenUrlInternal(url);
-
-    private static bool OpenUrlInternal(string url)
-    {
-        try
-        {
-            try
-            {
-                Process.Start(url);
-            }
-            catch (Exception e)
-            {
-                // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    //url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    Process.Start("xdg-open", url);
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    Process.Start("open", url);
-                }
-                else
-                {
-                    Logger.Error(e, $"Could not open URL: {url}");
-                    return false;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, $"Could not open URL: {url}");
-            return false;
-        }
-
-        return true;
-    }
-
-    public static void OpenFile(string filename) => OpenUrlInternal(filename);
-
-    public static void OpenFile(this FileInfo file) => OpenUrlInternal(file.FullName);
-
-    static bool SysOpen(string? what, string? arguments)
-    {
-        if (string.IsNullOrWhiteSpace(what))
-        {
-            return false;
-        }
-
-        try
-        {
-            if (arguments.HasValue())
-            {
-                Process.Start(what, arguments);
-            }
-            else
-            {
-                Process.Start(what);
-            }
-
-            return true;
-        }
-        catch (Win32Exception e)
-        {
-            Logger.Warn(e, $"Could not open {what}");
-            return false;
-        }
-        catch (System.IO.FileNotFoundException e)
-        {
-            Logger.Warn(e, $"Could not open {what}");
-            return false;
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, $"Could not open {what}");
-            return false;
-        }
-    }
-    
     public static int ToInt(this string? text, int def)
     {
         if (text is null)
@@ -313,4 +189,6 @@ public static class Helpers
 
         return value;
     }
+
+    #endregion
 }

@@ -23,7 +23,7 @@ public partial class CannotConnectForm : Form
 
     private void bnTVDB_Click(object sender, EventArgs e)
     {
-        Helpers.OpenUrl(GetCoreUrl(provider));
+        GetCoreUrl(provider).OpenUrlInBrowser();
     }
 
     private static string GetCoreUrl(TVDoc.ProviderType provider)
@@ -39,7 +39,7 @@ public partial class CannotConnectForm : Form
 
     private void bnAPICheck_Click(object sender, EventArgs e)
     {
-        Helpers.OpenUrl(GetIsDownUrl(provider));
+        GetIsDownUrl(provider).OpenUrlInBrowser();
     }
 
     private static string GetIsDownUrl(TVDoc.ProviderType provider)

@@ -164,7 +164,7 @@ public partial class SettingsReview : Form
                 possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
                 foreach (string? f in si.Locations)
                 {
-                    AddRcMenuItem("Visit " + f, (_, _) => Helpers.OpenFolder(f));
+                    AddRcMenuItem("Visit " + f, (_, _) => f.OpenFolder());
                 }
             }
             else if (mlastSelected is TvShowCheck tcheck)

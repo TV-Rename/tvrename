@@ -33,24 +33,24 @@ public class BrowserRequestHandler : IRequestHandler
         if (url.StartsWith(UI.EXPLORE_PROXY, StringComparison.InvariantCultureIgnoreCase))
         {
             string openlocation = System.Web.HttpUtility.UrlDecode(url.RemoveFirst(UI.EXPLORE_PROXY.Length));
-            if (Helpers.OpenFolder(openlocation))
+            if (openlocation.OpenFolder())
             {
                 return true;
             }
-            Helpers.OpenFolderSelectFile(openlocation);
+            openlocation.OpenFolderSelectFile();
             return true;
         }
 
         if (url.StartsWith(UI.WATCH_PROXY, StringComparison.InvariantCultureIgnoreCase))
         {
             string fileName = System.Web.HttpUtility.UrlDecode(url.RemoveFirst(UI.WATCH_PROXY.Length)).Replace('/', '\\');
-            Helpers.OpenFile(fileName);
+            fileName.OpenFile();
             return true;
         }
 
         if (url.IsHttpLink() || url.IsFileLink())
         {
-            Helpers.OpenUrl(url);
+            url.OpenUrlInBrowser();
             return true;
         }
         return false;

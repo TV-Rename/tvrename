@@ -370,4 +370,19 @@ public static class StringExtensions
     }
 
     public static string Concat(this IEnumerable<string> values) => string.Join(string.Empty, values);
+
+    public static string Pad(this int i)
+    {
+        if (i.ToString().Length > 1)
+        {
+            return i.ToString();
+        }
+
+        return "0" + i;
+    }
+
+    public static string Pad(this int i, int size)
+    {
+        return i.ToString().Length >= size ? i.ToString() : i.ToString().PadLeft(size, '0');
+    }
 }

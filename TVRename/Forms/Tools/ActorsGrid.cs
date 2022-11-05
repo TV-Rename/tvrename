@@ -389,7 +389,7 @@ public partial class ActorsGrid : Form
 
         public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
         {
-            Helpers.OpenUrl(who.ToImdbActorLink());
+            who.ToImdbActorLink().OpenUrlInBrowser();
         }
     }
 

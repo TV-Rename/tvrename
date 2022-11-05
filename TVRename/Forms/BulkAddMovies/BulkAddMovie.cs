@@ -173,7 +173,7 @@ public partial class BulkAddMovie : Form
     {
         if (lstFMMonitorFolders.SelectedIndex != -1)
         {
-            Helpers.OpenFolder(TVSettings.Instance.MovieLibraryFolders[lstFMMonitorFolders.SelectedIndex]);
+            TVSettings.Instance.MovieLibraryFolders[lstFMMonitorFolders.SelectedIndex].OpenFolder();
         }
     }
 
@@ -181,7 +181,7 @@ public partial class BulkAddMovie : Form
     {
         if (lstFMIgnoreFolders.SelectedIndex != -1)
         {
-            Helpers.OpenFolder(TVSettings.Instance.IgnoreFolders[lstFMIgnoreFolders.SelectedIndex]);
+            TVSettings.Instance.IgnoreFolders[lstFMIgnoreFolders.SelectedIndex].OpenFolder();
         }
     }
 
@@ -394,7 +394,7 @@ public partial class BulkAddMovie : Form
 
         if (lvFMNewShows.SelectedItems[0].Tag is PossibleNewMovie ai)
         {
-            Helpers.OpenFolder(ai.Directory.FullName);
+            ai.Directory.FullName.OpenFolder();
         }
     }
 
@@ -509,11 +509,11 @@ public partial class BulkAddMovie : Form
             switch (fme.SourceProvider)
             {
                 case TVDoc.ProviderType.TheTVDB:
-                    Helpers.OpenUrl(TheTVDB.API.WebsiteMovieUrl(fme.ProviderCode));
+                    TheTVDB.API.WebsiteMovieUrl(fme.ProviderCode).OpenUrlInBrowser();
                     break;
 
                 case TVDoc.ProviderType.TMDB:
-                    Helpers.OpenUrl(TMDB.API.WebsiteMovieUrl(fme.ProviderCode));
+                    TMDB.API.WebsiteMovieUrl(fme.ProviderCode).OpenUrlInBrowser();
                     break;
             }
         }

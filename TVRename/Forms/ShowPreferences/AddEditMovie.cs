@@ -402,7 +402,7 @@ public partial class AddEditMovie : Form
 
     private static void OpenInfoWindow(string page)
     {
-        Helpers.OpenUrl($"https://www.tvrename.com/manual/user{page}");
+        $"https://www.tvrename.com/manual/user{page}".OpenUrlInBrowser();
     }
 
     #endregion HelpWindows
@@ -593,7 +593,7 @@ public partial class AddEditMovie : Form
         {
             foreach (ListViewItem lvi in lvManualFolders.SelectedItems)
             {
-                Helpers.OpenFolder(lvi.Text);
+                lvi.Text.OpenFolder();
             }
         }
     }

@@ -71,17 +71,17 @@ public partial class UpdateNotification : Form
 
     private void bnReleaseNotes_Click(object sender, EventArgs e)
     {
-        Helpers.OpenUrl(newVersion.ReleaseNotesUrl);
+        newVersion.ReleaseNotesUrl.OpenUrlInBrowser();
     }
 
     private void btnDownloadNow_Click(object sender, EventArgs e)
     {
-        Helpers.OpenUrl(newVersion.DownloadUrl);
+        newVersion.DownloadUrl.OpenUrlInBrowser();
     }
 
     private void btnDownloadNowAndQuit_Click(object sender, EventArgs e)
     {
-        Helpers.OpenUrl(newVersion.DownloadUrl);
+        newVersion.DownloadUrl.OpenUrlInBrowser();
         DialogResult = DialogResult.Abort;
     }
 
@@ -98,7 +98,7 @@ public partial class UpdateNotification : Form
         if (url.IsWebLink())
         {
             e.Cancel = true;
-            Helpers.OpenUrl(e.Url.AbsoluteUri);
+            e.Url.AbsoluteUri.OpenUrlInBrowser();
         }
     }
 }

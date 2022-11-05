@@ -1479,7 +1479,7 @@ public partial class Preferences : Form
 
         if (rowsIndex.Length > 0)
         {
-            Helpers.OpenUrl((string)RSSGrid[rowsIndex[0], 0].Value);
+            ((string)RSSGrid[rowsIndex[0], 0].Value).OpenUrlInBrowser();
         }
     }
 
@@ -1883,7 +1883,7 @@ public partial class Preferences : Form
             return;
         }
 
-        Helpers.OpenFolder(TVSettings.Instance.DownloadFolders[n].Trim());
+        TVSettings.Instance.DownloadFolders[n].Trim().OpenFolder();
     }
 
     private void lbSearchFolders_KeyDown(object sender, KeyEventArgs e)
@@ -1985,7 +1985,7 @@ public partial class Preferences : Form
     {
         if (lstFMMonitorFolders.SelectedIndex != -1)
         {
-            Helpers.OpenFolder(TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex]);
+            TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex].OpenFolder();
         }
     }
 
@@ -1993,7 +1993,7 @@ public partial class Preferences : Form
     {
         if (lstMovieMonitorFolders.SelectedIndex != -1)
         {
-            Helpers.OpenFolder(TVSettings.Instance.MovieLibraryFolders[lstMovieMonitorFolders.SelectedIndex]);
+            TVSettings.Instance.MovieLibraryFolders[lstMovieMonitorFolders.SelectedIndex].OpenFolder();
         }
     }
 
@@ -2111,7 +2111,7 @@ public partial class Preferences : Form
     private void pbScanOptions_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-general-tab");
     private static void OpenInfoWindow(string page)
     {
-        Helpers.OpenUrl($"https://www.tvrename.com/manual/options{page}");
+        $"https://www.tvrename.com/manual/options{page}".OpenUrlInBrowser();
     }
 
     #endregion HelpWindows
@@ -2130,7 +2130,7 @@ public partial class Preferences : Form
 
     private void LlJackettLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        Helpers.OpenUrl(llJackettLink.Text);
+        llJackettLink.Text.OpenUrlInBrowser();
     }
 
     private void UpdateJackettLink()
@@ -2150,7 +2150,7 @@ public partial class Preferences : Form
 
     private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        Helpers.OpenUrl(llqBitTorrentLink.Text);
+        llqBitTorrentLink.Text.OpenUrlInBrowser();
     }
 
     private void QBitDetailsChanged(object sender, EventArgs e)

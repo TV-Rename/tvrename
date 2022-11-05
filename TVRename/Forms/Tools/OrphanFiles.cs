@@ -58,7 +58,7 @@ public partial class OrphanFiles : Form
         showRightClickMenu.Items.Clear();
 
         AddRcMenuItem("View on Source Provider...", (_, _) => TvSourceFor(iss.Show));
-        AddRcMenuItem("Open Folder", (_, _) => Helpers.OpenFolderSelectFile(iss.File.FullName));
+        AddRcMenuItem("Open Folder", (_, _) => iss.File.FullName.OpenFolderSelectFile());
         AddRcMenuItem("Episode Guide", (_, _) => MainWindow.GotoEpguideFor(iss.Show, true));
 
         Point pt = ((ListView)sender).PointToScreen(new Point(e.X, e.Y));
@@ -71,11 +71,11 @@ public partial class OrphanFiles : Form
         {
             if (si.WebsiteUrl.HasValue())
             {
-                Helpers.OpenUrl(si.WebsiteUrl!);
+                si.WebsiteUrl!.OpenUrlInBrowser();
             }
             else if (si.CachedShow?.WebUrl.HasValue() ?? false)
             {
-                Helpers.OpenUrl(si.CachedShow?.WebUrl!);
+                si.CachedShow?.WebUrl!.OpenUrlInBrowser();
             }
         }
     }

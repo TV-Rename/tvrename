@@ -99,7 +99,7 @@ public class ActionTDownload : ActionDownload
                 //Don't worry about this error, we'll retry below
             }
 
-            if (Helpers.OpenUrl(url))
+            if (url.OpenUrlInBrowser())
             {
                 return ActionOutcome.Success();
             }

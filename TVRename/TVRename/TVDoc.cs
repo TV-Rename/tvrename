@@ -510,7 +510,7 @@ public class TVDoc : IDisposable
             return;
         }
 
-        Helpers.OpenUrl(TVSettings.Instance.BTSearchURL(ep));
+        TVSettings.Instance.BTSearchURL(ep).OpenUrlInBrowser();
     }
 
     public static void SearchForEpisode(SearchEngine s, ProcessedEpisode? epi)
@@ -520,7 +520,7 @@ public class TVDoc : IDisposable
             return;
         }
 
-        Helpers.OpenUrl(CustomEpisodeName.NameForNoExt(epi, s.Url, true));
+        CustomEpisodeName.NameForNoExt(epi, s.Url, true).OpenUrlInBrowser();
     }
 
     public static void SearchForMovie(MovieConfiguration? ep)
@@ -530,7 +530,7 @@ public class TVDoc : IDisposable
             return;
         }
 
-        Helpers.OpenUrl(TVSettings.Instance.BTMovieSearchURL(ep));
+        TVSettings.Instance.BTMovieSearchURL(ep).OpenUrlInBrowser();
     }
 
     public static void SearchForMovie(SearchEngine s, MovieConfiguration? epi)
@@ -540,7 +540,7 @@ public class TVDoc : IDisposable
             return;
         }
 
-        Helpers.OpenUrl(CustomMovieName.NameFor(epi, s.Url, true, false));
+        CustomMovieName.NameFor(epi, s.Url, true, false).OpenUrlInBrowser();
     }
 
     // ReSharper disable once InconsistentNaming

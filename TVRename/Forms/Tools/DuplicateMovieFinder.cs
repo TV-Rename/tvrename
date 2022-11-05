@@ -150,7 +150,7 @@ public partial class DuplicateMovieFinder : Form
         {
             AddRcMenuItem("Visit " + f.FullName, (_, _) =>
             {
-                Helpers.OpenFolderSelectFile(f.FullName);
+                f.FullName.OpenFolderSelectFile();
                 Update(mlastSelected);
             });
         }

@@ -13,6 +13,6 @@ public partial class LicenceInfoForm : Form
 
     private void btnLicence_Click(object sender, EventArgs e)
     {
-        Helpers.OpenUrl("https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md");
+        "https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md".OpenUrlInBrowser();
     }
 }
