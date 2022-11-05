@@ -568,8 +568,8 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
 
         Logger.Info($"Splash Screen Updated with: {percent}/100 {text}");
-        splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateStatus(text); });
-        splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateProgress(percent); });
+        splashScreen.Invoke(delegate { splashScreen.UpdateStatus(text); });
+        splashScreen.Invoke(delegate { splashScreen.UpdateProgress(percent); });
     }
 
     private void ClearInfoWindows() => ClearInfoWindows(string.Empty);
@@ -804,20 +804,29 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void TriggerAppUpdateCheck()
     {
-        TVSettings.UpdateCheckMode updateCheckType = TVSettings.Instance.UpdateCheckType;
-        if (updateCheckType != TVSettings.UpdateCheckMode.Off)
+        switch (TVSettings.Instance.UpdateCheckType)
         {
-            bool checkUpdate = true;
-            if (updateCheckType == TVSettings.UpdateCheckMode.Interval)
+            case TVSettings.UpdateCheckMode.Off:
+                return;
+            case TVSettings.UpdateCheckMode.Interval:
             {
                 TimeSpan lastUpdate = mDoc.CurrentAppState.UpdateCheck.LastUpdate;
                 TimeSpan interval = TVSettings.Instance.UpdateCheckInterval;
-                checkUpdate = lastUpdate >= interval;
+                if (lastUpdate >= interval)
+                {
+                    UpdateTimer.Start();
+                }
+                return;
             }
-
-            if (checkUpdate)
+            case TVSettings.UpdateCheckMode.Everytime:
             {
                 UpdateTimer.Start();
+                return;
+            }
+            default:
+            {
+                UpdateTimer.Start();
+                return;
             }
         }
     }
@@ -4239,13 +4248,13 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         uiDisp.Invoke(() => NotifyUpdates(result, true,false));
     }
 
-    private void NotifyUpdates(ServerRelease? update, bool forceShowNoUpdateRequiredDialog, bool inSilentMode)
+    private void NotifyUpdates(ServerRelease? update, bool manuallyTriggered, bool inSilentMode)
     {
         btnUpdateAvailable.Visible = update is not null;
 
         if (update is null)
         {
-            if (forceShowNoUpdateRequiredDialog || (!inSilentMode && Environment.UserInteractive))
+            if (manuallyTriggered)
             {
                 MessageBox.Show(@"There is no update available please try again later.", @"No update available",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -4260,7 +4269,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        if (TVSettings.Instance.SuppressUpdateAvailablePopup && !forceShowNoUpdateRequiredDialog)
+        if (TVSettings.Instance.SuppressUpdateAvailablePopup && !manuallyTriggered)
         {
             return;
         }
