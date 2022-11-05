@@ -34,4 +34,18 @@ internal static class LinqHelper
 
     public static bool HasAny<T>(this IEnumerable<T>? source)
         => source is not null && source.Any();
+
+    public static void Swap<T>(
+        this IList<T> list,
+        int firstIndex,
+        int secondIndex
+    )
+    {
+        if (firstIndex == secondIndex)
+        {
+            return;
+        }
+
+        (list[firstIndex], list[secondIndex]) = (list[secondIndex], list[firstIndex]);
+    }
 }

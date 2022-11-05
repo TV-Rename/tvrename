@@ -273,7 +273,7 @@ public partial class AddEditSeasEpFinders : Form
         lvPreview.Items.Clear();
         if (string.IsNullOrEmpty(txtFolder.Text) || !Directory.Exists(txtFolder.Text))
         {
-            txtFolder.BackColor = Helpers.WarningColor();
+            txtFolder.BackColor = UiHelpers.WarningColor();
             return;
         }
 
@@ -382,7 +382,7 @@ public partial class AddEditSeasEpFinders : Form
         lvi.SubItems.Add(matchRex is null ? "-" : matchRex.Notes);
         if (!r)
         {
-            lvi.BackColor = Helpers.WarningColor();
+            lvi.BackColor = UiHelpers.WarningColor();
         }
 
         lvPreview.Items.Add(lvi);
@@ -513,7 +513,7 @@ public partial class AddEditSeasEpFinders : Form
         ListViewItem lvi = new()
         {
             Text = "Please wait as we download current torrent queue",
-            BackColor = Helpers.WarningColor()
+            BackColor = UiHelpers.WarningColor()
         };
 
         lvPreview.Items.Add(lvi);

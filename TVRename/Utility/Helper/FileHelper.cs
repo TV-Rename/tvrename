@@ -18,13 +18,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.WindowsAPICodePack.COMNative.Shell.PropertySystem;
 using Microsoft.WindowsAPICodePack.Win32Native.Shell;
+using NLog;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
 
 public static class FileHelper
 {
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     internal static void DeleteOrRecycleFolder(DirectoryInfo? di, TVSettings.TidySettings? tidyup)
     {
@@ -412,7 +413,7 @@ public static class FileHelper
                 $"Unable to use shell to access file as part of {operation} for {movieFile.FullName}. Platform is not supported: {pe.Message}");
         }
 
-        MediaInfoWrapper mw = new(movieFile.FullName);
+        MediaInfoWrapper mw = new(movieFile.FullName,Logger.AsILogger());
         int returnVal = meExtractMethod(mw);
 
         if (returnVal != 0)
@@ -867,5 +868,13 @@ public static class FileHelper
     {
         DirectoryInfo d = new(folderName);
         return d.Parent == null;
+    }
+
+    private static readonly DateTime WindowsStartDateTime = new(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+    public static DateTime GetMinWindowsTime(DateTime dateTime)
+    {
+        //Any cachedSeries before 1980 will get 1980 as the timestamp
+        return dateTime.CompareTo(WindowsStartDateTime) < 0 ? WindowsStartDateTime : dateTime;
     }
 }

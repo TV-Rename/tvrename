@@ -70,6 +70,12 @@ public static class StringExtensions
         return n.Trim();
     }
 
+    public static string InDoubleQuotes(this string? source)
+    {
+        StringBuilder sb = new();
+        sb.Append('"').Append(source).Append('"');
+        return sb.ToString();
+    }
     public static string RemoveDiacritics(this string stIn)
     {
         // From http://blogs.msdn.com/b/michkap/archive/2007/05/14/2629747.aspx

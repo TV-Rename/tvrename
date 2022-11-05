@@ -145,7 +145,7 @@ public class LocalCache : MediaCache, iTVSource
                             if (x.SrvLastUpdated < showUpdateTime.Value)
                             {
                                 LOGGER.Info(
-                                    $"Identified that show with TVMaze Id {showId} {x.Name} should be updated as update time is now {showUpdateTime.Value} and cache has {x.SrvLastUpdated}. ie {Helpers.FromUnixTime(showUpdateTime.Value).ToLocalTime()} to {Helpers.FromUnixTime(x.SrvLastUpdated).ToLocalTime()}.");
+                                    $"Identified that show with TVMaze Id {showId} {x.Name} should be updated as update time is now {showUpdateTime.Value} and cache has {x.SrvLastUpdated}. ie {showUpdateTime.Value.FromUnixTime().ToLocalTime()} to {x.SrvLastUpdated.FromUnixTime().ToLocalTime()}.");
 
                                 x.Dirty = true;
                             }

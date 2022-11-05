@@ -107,7 +107,7 @@ public partial class CustomNameDesigner : Form
 
             if (!ok || !ok1 || !ok2)
             {
-                lvi.BackColor = Helpers.WarningColor();
+                lvi.BackColor = UiHelpers.WarningColor();
             }
 
             lvTest.Items.Add(lvi);

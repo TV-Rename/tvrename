@@ -660,7 +660,7 @@ public partial class AddEditShow : Form
                 // ignored
             }
         }
-        txtFolder.BackColor = ok ? SystemColors.Window : Helpers.WarningColor();
+        txtFolder.BackColor = ok ? SystemColors.Window : UiHelpers.WarningColor();
     }
 
     private void chkCustomShowName_CheckedChanged(object sender, EventArgs e)

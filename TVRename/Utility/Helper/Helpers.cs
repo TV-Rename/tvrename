@@ -8,15 +8,11 @@
 
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 
 // Helpful functions and classes
@@ -26,13 +22,6 @@ namespace TVRename;
 public static class Helpers
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-    public static void Add(this ToolStripItemCollection items, string name, EventHandler command)
-    {
-        ToolStripMenuItem tsi = new(name.ToUiVersion());
-        tsi.Click += command;
-        items.Add(tsi);
-    }
 
     /// <summary>
     /// Gets a value indicating whether application is running under Mono.
@@ -120,49 +109,6 @@ public static class Helpers
         };
     }
 
-    public static void Swap<T>(
-        this IList<T> list,
-        int firstIndex,
-        int secondIndex
-    )
-    {
-        if (firstIndex == secondIndex)
-        {
-            return;
-        }
-
-        (list[firstIndex], list[secondIndex]) = (list[secondIndex], list[firstIndex]);
-    }
-
-    public static void SafeInvoke(this Control uiElement, System.Action updater, bool forceSynchronous)
-    {
-        if (uiElement is null)
-        {
-            throw new ArgumentNullException(nameof(uiElement));
-        }
-
-        if (uiElement.InvokeRequired)
-        {
-            if (forceSynchronous)
-            {
-                uiElement.Invoke((System.Action)delegate { SafeInvoke(uiElement, updater, true); });
-            }
-            else
-            {
-                uiElement.BeginInvoke((System.Action)delegate { SafeInvoke(uiElement, updater, false); });
-            }
-        }
-        else
-        {
-            if (uiElement.IsDisposed)
-            {
-                throw new ObjectDisposedException("Control is already disposed.");
-            }
-
-            updater();
-        }
-    }
-
     /// <summary>
     /// Gets the application display version from the current assemblies <see cref="AssemblyInformationalVersionAttribute"/>.
     /// </summary>
@@ -200,30 +146,6 @@ public static class Helpers
         return i.ToString().Length >= size ? i.ToString() : i.ToString().PadLeft(size, '0');
     }
 
-    public static string PrettyPrint(this DateTime? dt)
-    {
-        try
-        {
-            if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
-            {
-                return dt.Value.ToShortDateString();
-            }
-        }
-        catch (ArgumentOutOfRangeException)
-        {
-        }
-
-        return string.Empty;
-    }
-
-    public static long ToUnixTime(this DateTime date) =>
-        Convert.ToInt64((date.ToUniversalTime() - DateTime.UnixEpoch).TotalSeconds);
-
-    public static DateTime FromUnixTime(this double unixTime) => DateTime.UnixEpoch.AddSeconds(unixTime);
-    public static DateTime FromUnixTime(this long unixTime) => DateTime.UnixEpoch.AddSeconds(unixTime);
-
-    private static readonly DateTime WindowsStartDateTime = new(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
     public static bool OpenFolder(string? folder)
     {
         if (folder is null || !Directory.Exists(folder))
@@ -232,13 +154,6 @@ public static class Helpers
         }
 
         return SysOpen("explorer.exe", folder.EnsureEndsWithSeparator().InDoubleQuotes());
-    }
-
-    public static string InDoubleQuotes(this string? source)
-    {
-        StringBuilder sb = new();
-        sb.Append('"').Append(source).Append('"');
-        return sb.ToString();
     }
 
     public static void OpenFolderSelectFile(string filename)
@@ -331,24 +246,7 @@ public static class Helpers
             return false;
         }
     }
-
-    public static Color WarningColor() => Color.FromArgb(255, 210, 210);
-
-    public static T LongestShowName<T>(this IEnumerable<T> media) where T : MediaConfiguration
-    {
-        IEnumerable<T> mediaConfigurations = media as T[] ?? media.ToArray();
-        int longestName = mediaConfigurations.Select(configuration => configuration.ShowName.Length).Max();
-        return mediaConfigurations.First(config => config.ShowName.Length == longestName);
-    }
-
-    public static string TranslateColorToHtml(this Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
-
-    public static DateTime GetMinWindowsTime(DateTime dateTime)
-    {
-        //Any cachedSeries before 1980 will get 1980 as the timestamp
-        return dateTime.CompareTo(WindowsStartDateTime) < 0 ? WindowsStartDateTime : dateTime;
-    }
-
+    
     public static int ToInt(this string? text, int def)
     {
         if (text is null)

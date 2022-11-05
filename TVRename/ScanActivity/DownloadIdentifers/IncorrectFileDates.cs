@@ -29,7 +29,7 @@ internal sealed class IncorrectFileDates : DownloadIdentifier
             return null;
         }
 
-        DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
+        DateTime newUpdateTime = FileHelper.GetMinWindowsTime(updateTime.Value);
 
         DirectoryInfo di = new(si.AutoAddFolderBase);
         try
@@ -56,7 +56,7 @@ internal sealed class IncorrectFileDates : DownloadIdentifier
             return base.ProcessMovie(movie, file, forceRefresh);
         }
 
-        DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
+        DateTime newUpdateTime = FileHelper.GetMinWindowsTime(updateTime.Value);
 
         DirectoryInfo di = file.Directory;
         ItemList returnItems = new();
@@ -108,7 +108,7 @@ internal sealed class IncorrectFileDates : DownloadIdentifier
             return null;
         }
 
-        DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
+        DateTime newUpdateTime = FileHelper.GetMinWindowsTime(updateTime.Value);
 
         DirectoryInfo di = new(folder);
         try
@@ -135,7 +135,7 @@ internal sealed class IncorrectFileDates : DownloadIdentifier
             return null;
         }
 
-        DateTime newUpdateTime = Helpers.GetMinWindowsTime(episode.FirstAired.Value);
+        DateTime newUpdateTime = FileHelper.GetMinWindowsTime(episode.FirstAired.Value);
 
         try
         {

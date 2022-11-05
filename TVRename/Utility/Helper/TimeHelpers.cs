@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Sockets;
 using GuerrillaNtp;
 using Humanizer;
@@ -40,4 +40,20 @@ public static class TimeHelpers
     public static long UnixUtcNow() => UtcNow().ToUnixTime();
 
     public static DateTime LocalNow() => GetClock().Now.LocalDateTime;
+
+    public static string PrettyPrint(this DateTime? dt)
+    {
+        try
+        {
+            if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
+            {
+                return dt.Value.ToShortDateString();
+            }
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+        }
+
+        return string.Empty;
+    }
 }

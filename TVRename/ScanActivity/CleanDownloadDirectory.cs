@@ -162,7 +162,7 @@ internal class CleanDownloadDirectory : ScanActivity
         CachedSeriesInfo? s = si.CachedShow;
         if (s is null)
         {
-            throw new ArgumentNullException(nameof(matchingShows),$"s is null");
+            throw new ArgumentNullException(nameof(matchingShows),"s is null");
         }
 
         ProcessedEpisode pep = si.GetEpisode(seasF, epF);

@@ -84,7 +84,9 @@ public static class TimeZoneHelper
     }
 
     public static double Epoch(DateTime dt)
-    {
-        return dt.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds;
-    }
+        => dt.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds;
+    public static DateTime FromUnixTime(this long unixTime)
+        => DateTime.UnixEpoch.AddSeconds(unixTime);
+    public static long ToUnixTime(this DateTime date)
+        => Convert.ToInt64((date.ToUniversalTime() - DateTime.UnixEpoch).TotalSeconds);
 }

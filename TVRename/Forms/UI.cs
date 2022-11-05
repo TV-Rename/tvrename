@@ -529,7 +529,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             if (a.Outcome.Error)
             {
-                e.Item.BackColor = Helpers.WarningColor();
+                e.Item.BackColor = UiHelpers.WarningColor();
             }
         }
     }
