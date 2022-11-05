@@ -677,7 +677,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
 
         //Have to do something!!
-        return Helpers.FromUnixTime(0).ToUniversalTime();
+        return DateTime.UnixEpoch.ToUniversalTime();
     }
 
     private void UpgradeDirtyLocks()
