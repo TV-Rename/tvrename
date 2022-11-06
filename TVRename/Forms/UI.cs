@@ -5103,11 +5103,13 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void bulkAddMoviesToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Bulk Add TV Shows");
+        mDoc.PreventAutoScan("Bulk Add Movies");
+
         BulkAddMovieManager bam = new(mDoc);
         BulkAddMovie fm = new(mDoc, bam,this);
         fm.ShowDialog(this);
         FillMyMovies();
+
         mDoc.AllowAutoScan();
         LessBusy();
     }

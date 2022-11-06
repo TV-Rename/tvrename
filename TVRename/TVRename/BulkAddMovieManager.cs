@@ -28,7 +28,7 @@ public class BulkAddMovieManager
         mDoc = doc;
     }
 
-    private DirectoryInfo[]? GetValidDirectories(DirectoryInfo di)
+    private static DirectoryInfo[]? GetValidDirectories(DirectoryInfo di)
     {
         try
         {
@@ -142,7 +142,7 @@ public class BulkAddMovieManager
         return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Where(file => file.IsMovieFile()).ToList();
     }
 
-    private void CheckFolderForShows(DirectoryInfo di, CancellationToken token, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox)
+    private void CheckFolderForShows(DirectoryInfo di, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
         int percentComplete = (int)(100.0 / CurrentPhaseTotal * (1.0 * CurrentPhase + 1.0 * CurrentPhaseDirectory / CurrentPhaseTotalDirectory));
         bw.ReportProgress(percentComplete.Between(0,100), di.Name);
@@ -185,7 +185,7 @@ public class BulkAddMovieManager
 
         foreach (DirectoryInfo di2 in subDirs)
         {
-            CheckFolderForShows(di2, token, bw, fullLogging, showErrorMsgBox); // not a season folder.. recurse!
+            CheckFolderForShows(di2, bw, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
         } // for each directory
     }
 
@@ -212,7 +212,7 @@ public class BulkAddMovieManager
             if (found is null)
             {
                 MovieConfiguration newMovie = GenerateConfiguration(ai);
-                mDoc.Add(found.AsList(), true);
+                mDoc.Add(newMovie.AsList(), true);
                 mDoc.Stats().AutoAddedMovies++;
                 movies.Add(newMovie);
                 continue;
@@ -292,7 +292,7 @@ public class BulkAddMovieManager
         return found;
     }
 
-    public void CheckFolders(CancellationToken token, BackgroundWorker bw, bool detailedLogging, bool showErrorMsgBox)
+    public void CheckFolders(BackgroundWorker bw, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
     {
         // Check the  folder list, and build up a new "AddItems" list.
         // guessing what the shows actually are isn't done here.  That is done by
@@ -321,7 +321,7 @@ public class BulkAddMovieManager
                 Logger.Warn($"Not loading {folder} as it is both a movie folder and a tv folder");
                 continue;
             }
-            CheckFolderForShows(di, token, bw, detailedLogging, showErrorMsgBox);
+            CheckFolderForShows(di, bw, detailedLogging, showErrorMsgBox, token);
 
             if (token.IsCancellationRequested)
             {
