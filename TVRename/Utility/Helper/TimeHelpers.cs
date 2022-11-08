@@ -22,16 +22,18 @@ public static class TimeHelpers
                 Logger.Info($"Finished connecting to NTP Server at UTC (based on local clock) {DateTime.UtcNow}");
                 if (ClockInstance.CorrectionOffset > 20.Seconds())
                 {
-                    Logger.Warn($"Discrepancy for systemtime of {DateTime.UtcNow} to {ClockInstance.UtcNow.UtcDateTime}");
+                    Logger.Error($"Discrepancy for systemtime of {DateTime.UtcNow} to {ClockInstance.UtcNow.UtcDateTime}");
                 }
             }
         }
-        catch (NtpException)
+        catch (NtpException e)
         {
+            Logger.Error($"Could not connect to NTP clock: {e.Message}");
             return NtpClock.LocalFallback;
         }
-        catch (SocketException)
+        catch (SocketException e)
         {
+            Logger.Error($"Could not connect to NTP clock: {e.Message}");
             return NtpClock.LocalFallback;
         }
         return ClockInstance;

@@ -198,12 +198,10 @@ public class ProcessedEpisode : Episode
         DateTime? airsdt = GetAirDateDt(true);
         if (airsdt is null)
         {
-            return "";
+            return string.Empty;
         }
 
-        DateTime dt = (DateTime)airsdt;
-
-        TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
+        TimeSpan ts = airsdt.Value.Subtract(DateTime.Now); // how long...
         if (ts.TotalHours < 0)
         {
             return "Aired";
