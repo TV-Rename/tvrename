@@ -114,7 +114,7 @@ internal class JackettFinder : DownloadFinder
             newItemsForThisMissingEpisode.Remove(x);
         }
 
-        newItems.AddNullableRange(newItemsForThisMissingEpisode);
+        newItems.AddNullableRange(Rationalise(newItemsForThisMissingEpisode));
     }
 
     private static void FindMissingEpisode(MovieItemMissing action, ItemList toRemove, ItemList newItems)

@@ -7,6 +7,7 @@
 //
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TVRename;
 
@@ -50,6 +51,27 @@ public abstract class DownloadFinder : Finder
         string simpleShowName = pe.ShowName.CompareName();
 
         return FileHelper.SimplifyAndCheckFilename(rss.ShowName.HasValue() ? rss.ShowName : rss.Title, simpleShowName, true, false);
+    }
+
+    protected static IEnumerable<ActionTDownload> Rationalise(ItemList newItems)
+    {
+        List<ActionTDownload> goodTerms = newItems.DownloadTorrents.Where(NotContainsDudTerms).ToList();
+        int numberofGoodTerms = goodTerms.Select(NumberOfGoodTerms).Max();
+        return goodTerms.Where(x => NumberOfGoodTerms(x) == numberofGoodTerms);
+    }
+
+    private static int NumberOfGoodTerms(ActionTDownload actionTDownload)
+    {
+        string[] preferredTerms = TVSettings.Instance.PreferredRSSSearchTerms();
+
+        return actionTDownload.SourceName.NumberContains(preferredTerms);
+    }
+
+    private static bool NotContainsDudTerms(ActionTDownload actionTDownload)
+    {
+        string[] dudTerms = TVSettings.Instance.UnwantedRSSSearchTerms();
+
+        return !actionTDownload.SourceName.ContainsOneOf(dudTerms);
     }
 
     protected static IEnumerable<ActionTDownload> FindDuplicates(ItemList newItems)

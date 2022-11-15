@@ -64,12 +64,7 @@ internal class RSSFinder : DownloadFinder
                 toRemove.Add(action);
             }
 
-            foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
-            {
-                newItemsForThisMissingEpisode.Remove(x);
-            }
-
-            newItems.AddNullableRange(newItemsForThisMissingEpisode);
+            newItems.AddNullableRange(Rationalise(newItemsForThisMissingEpisode));
         }
         ActionList.Replace(toRemove, newItems);
     }

@@ -197,17 +197,7 @@ internal class JSONWebpageFinder : DownloadFinder
                 $"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.MissingEpisode.TheCachedSeries.Name}");
         }
 
-        RemoveDuplicates(newItemsForThisMissingEpisode);
-
-        newItems.AddNullableRange(newItemsForThisMissingEpisode);
-    }
-
-    private static void RemoveDuplicates(ItemList newItemsForThisMissingEpisode)
-    {
-        foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
-        {
-            newItemsForThisMissingEpisode.Remove(x);
-        }
+        newItems.AddNullableRange(Rationalise(newItemsForThisMissingEpisode));
     }
 
     private static long CalculateItemSizeBytes(JToken item)

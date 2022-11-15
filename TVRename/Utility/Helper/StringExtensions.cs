@@ -333,6 +333,7 @@ public static class StringExtensions
 
     public static bool ContainsOneOf(this string source, IEnumerable<string> terms) => terms.Any(source.Contains);
 
+    public static int NumberContains(this string source, IEnumerable<string> terms) => terms.Count(source.Contains);
     public static string ToCsv(this IEnumerable<string?> values) => string.Join(", ", values);
 
     public static string ToCsv(this IEnumerable<int> values) => string.Join(",", values);

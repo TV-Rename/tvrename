@@ -44,6 +44,21 @@ internal static class LinqHelper
     public static bool HasAny<T>(this IEnumerable<T>? source)
         => source is not null && source.Any();
 
+    public static IEnumerable<T> WithMax<T>(this IEnumerable<T>? source, Func<T, int> countFunction)
+    {
+        if (source is null)
+        {
+            return new List<T>();
+        }
+        IEnumerable<T> enumerable = source as T[] ?? source.ToArray();
+        if (!enumerable.Any())
+        {
+            return new List<T>();
+        }
+        int maxValue = enumerable.Select(countFunction).Max();
+        return enumerable.Where(x => countFunction(x) == maxValue);
+    }
+
     public static void Swap<T>(
         this IList<T> list,
         int firstIndex,
