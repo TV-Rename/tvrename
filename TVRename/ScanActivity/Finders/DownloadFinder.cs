@@ -34,98 +34,21 @@ public abstract class DownloadFinder : Finder
             return false;
         }
 
-        if (rss.Season != pe.AppropriateSeasonNumber)
-        {
-            return false;
-        }
-        if (rss.Episode != pe.AppropriateEpNum)
-        {
-            return false;
-        }
-
-        return true;
+        return rss.Season == pe.AppropriateSeasonNumber && rss.Episode == pe.AppropriateEpNum;
     }
 
     protected static bool RssMatch(RSSItem rss, MovieConfiguration pe)
     {
         string simpleShowName = pe.ShowName.CompareName();
-
         return FileHelper.SimplifyAndCheckFilename(rss.ShowName.HasValue() ? rss.ShowName : rss.Title, simpleShowName, true, false);
     }
 
     protected static IEnumerable<ActionTDownload> Rationalise(ItemList newItems)
-    {
-        List<ActionTDownload> goodTerms = newItems.DownloadTorrents.Where(NotContainsDudTerms).ToList();
-        int numberofGoodTerms = goodTerms.Select(NumberOfGoodTerms).Max();
-        return goodTerms.Where(x => NumberOfGoodTerms(x) == numberofGoodTerms);
-    }
+        => newItems.DownloadTorrents.Where(NotContainsUnwantedTerms).WithMax(NumberOfGoodTerms);
 
     private static int NumberOfGoodTerms(ActionTDownload actionTDownload)
-    {
-        string[] preferredTerms = TVSettings.Instance.PreferredRSSSearchTerms();
+        => actionTDownload.SourceName.NumberContains(TVSettings.Instance.PreferredRSSSearchTerms());
 
-        return actionTDownload.SourceName.NumberContains(preferredTerms);
-    }
-
-    private static bool NotContainsDudTerms(ActionTDownload actionTDownload)
-    {
-        string[] dudTerms = TVSettings.Instance.UnwantedRSSSearchTerms();
-
-        return !actionTDownload.SourceName.ContainsOneOf(dudTerms);
-    }
-
-    protected static IEnumerable<ActionTDownload> FindDuplicates(ItemList newItems)
-    {
-        //We now want to rationlise the newItems - just in case we've added duplicates
-        List<ActionTDownload> duplicateActionRss = new();
-        string[] dudTerms = TVSettings.Instance.UnwantedRSSSearchTerms();
-
-        foreach (Item x in newItems)
-        {
-            if (x is not ActionTDownload testActionRssOne)
-            {
-                continue;
-            }
-
-            if (testActionRssOne.SourceName.ContainsOneOf(dudTerms))
-            {
-                duplicateActionRss.Add(testActionRssOne);
-                if (TVSettings.Instance.DetailedRSSJSONLogging)
-                {
-                    LOGGER.Info(
-                        $"Removing {testActionRssOne.Produces} as contains a term in {dudTerms.ToCsv()}");
-                }
-
-                continue;
-            }
-
-            foreach (Item y in newItems)
-            {
-                if (y is not ActionTDownload testActionRssTwo)
-                {
-                    continue;
-                }
-
-                if (x.Equals(y))
-                {
-                    continue;
-                }
-
-                string[] preferredTerms = TVSettings.Instance.PreferredRSSSearchTerms();
-
-                if (testActionRssOne.SourceName.ContainsOneOf(preferredTerms) &&
-                    !testActionRssTwo.SourceName.ContainsOneOf(preferredTerms))
-                {
-                    duplicateActionRss.Add(testActionRssTwo);
-                    if (TVSettings.Instance.DetailedRSSJSONLogging)
-                    {
-                        LOGGER.Info(
-                            $"Removing {testActionRssTwo.Produces} as it is not as good a match as {testActionRssOne.Produces}");
-                    }
-                }
-            }
-        }
-
-        return duplicateActionRss;
-    }
+    private static bool NotContainsUnwantedTerms(ActionTDownload actionTDownload)
+        => !actionTDownload.SourceName.ContainsOneOf(TVSettings.Instance.UnwantedRSSSearchTerms());
 }

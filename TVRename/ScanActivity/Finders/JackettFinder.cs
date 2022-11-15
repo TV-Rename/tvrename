@@ -109,11 +109,6 @@ internal class JackettFinder : DownloadFinder
             toRemove.Add(action);
         }
 
-        foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
-        {
-            newItemsForThisMissingEpisode.Remove(x);
-        }
-
         newItems.AddNullableRange(Rationalise(newItemsForThisMissingEpisode));
     }
 
@@ -137,12 +132,7 @@ internal class JackettFinder : DownloadFinder
             toRemove.Add(action);
         }
 
-        foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
-        {
-            newItemsForThisMissingEpisode.Remove(x);
-        }
-
-        newItems.AddNullableRange(newItemsForThisMissingEpisode);
+        newItems.AddNullableRange(Rationalise(newItemsForThisMissingEpisode));
     }
 
     private static string IndexerUrl()
