@@ -10,6 +10,7 @@ public static class TimeHelpers
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private static NtpClock? ClockInstance;
+    private static bool AlreadyAlerted;
 
     private static NtpClock GetClock()
     {
@@ -25,19 +26,33 @@ public static class TimeHelpers
                     Logger.Error($"Discrepancy for systemtime of {DateTime.UtcNow} to {ClockInstance.UtcNow.UtcDateTime}");
                 }
             }
+            return ClockInstance;
         }
         catch (NtpException e)
         {
-            Logger.Error($"Could not connect to NTP clock: {e.Message}");
+            LogNtpConnectionIssue(e);
             return NtpClock.LocalFallback;
         }
         catch (SocketException e)
         {
-            Logger.Error($"Could not connect to NTP clock: {e.Message}");
+            LogNtpConnectionIssue(e);
             return NtpClock.LocalFallback;
         }
-        return ClockInstance;
     }
+
+    private static void LogNtpConnectionIssue(Exception e)
+    {
+        if (AlreadyAlerted)
+        {
+            Logger.Warn($"Could not connect to NTP clock: {e.Message}");
+        }
+        else
+        {
+            Logger.Error($"Could not connect to NTP clock: {e.Message}");
+            AlreadyAlerted = true;
+        }
+    }
+
     public static DateTime UtcNow() => GetClock().UtcNow.UtcDateTime;
     public static long UnixUtcNow() => UtcNow().ToUnixTime();
 
