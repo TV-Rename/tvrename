@@ -46,6 +46,11 @@ internal static class LinqHelper
 
     public static IEnumerable<T> WithMax<T>(this IEnumerable<T>? source, Func<T, int> countFunction)
     {
+        return WithTarget(source, countFunction, x => x.Max(), (y, z) => y == z);
+    }
+
+    private static IEnumerable<T> WithTarget<T,TX>(this IEnumerable<T>? source, Func<T, TX> countFunction,Func<IEnumerable<TX>, TX> groupFunction, Func<TX,TX,bool> comparisionOperator )
+    {
         if (source is null)
         {
             return new List<T>();
@@ -55,8 +60,8 @@ internal static class LinqHelper
         {
             return new List<T>();
         }
-        int maxValue = enumerable.Select(countFunction).Max();
-        return enumerable.Where(x => countFunction(x) == maxValue);
+        TX targetValue = groupFunction(enumerable.Select(countFunction));
+        return enumerable.Where(x => comparisionOperator( countFunction(x) ,targetValue));
     }
 
     public static void Swap<T>(
