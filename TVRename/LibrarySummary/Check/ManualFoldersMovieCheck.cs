@@ -10,9 +10,18 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
     public ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
     {
     }
-
+    
     protected override void FixInternal()
     {
+        if (Movie.UseManualLocations && Movie.ManualLocations.Count == 1 && !Movie.AutomaticFolderRoot.HasValue())
+        {
+            string manualLocation = Movie.ManualLocations.First();
+            if (TVSettings.Instance.MovieLibraryFolders.Any(root => manualLocation.StartsWith(root, StringComparison.Ordinal)))
+            {
+                Movie.AutomaticFolderRoot =
+                    TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(f => manualLocation.StartsWith(f, StringComparison.Ordinal)) ?? string.Empty;
+            }
+        }
         if (!Movie.AutomaticFolderRoot.HasValue())
         {
             throw new FixCheckException("Movie has no automatic folder root");
