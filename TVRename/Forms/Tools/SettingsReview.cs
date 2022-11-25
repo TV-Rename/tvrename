@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
+using TVRename.Forms.Tools;
 
 namespace TVRename.Forms;
 
@@ -43,7 +45,7 @@ public partial class SettingsReview : Form
 
     private void BwScan_DoWork(object sender, DoWorkEventArgs e)
     {
-        System.Threading.Thread.CurrentThread.Name ??= "SettingsReview Scan Thread"; // Can only set it once
+        Thread.CurrentThread.Name ??= "SettingsReview Scan Thread"; // Can only set it once
         BackgroundWorker bw = (BackgroundWorker)sender;
         int total = mDoc.FilmLibrary.Movies.Count() + mDoc.TvLibrary.Shows.Count();
         int current = 0;
@@ -177,28 +179,27 @@ public partial class SettingsReview : Form
             }
 
             possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
-            AddRcMenuItem("Fix Issue", (_, _) => Remedy(mlastSelected));
+            AddRcMenuItem("Fix Issue", (_, _) => Remedy(mlastSelected.AsList()));
         }
         else
         {
             AddRcMenuItem("Fix Issues", (_, _) =>
             {
-                foreach (SettingsCheck? selected in olvDuplicates.SelectedObjects.OfType<SettingsCheck>())
-                {
-                    Remedy(selected);
-                }
+                Remedy(olvDuplicates.SelectedObjects.OfType<SettingsCheck>());
                 mDoc.SetDirty();
             });
         }
     }
 
-    private void Remedy(SettingsCheck selected)
+    private void Remedy(IEnumerable<SettingsCheck> selectedItems)
     {
-        selected.Fix();
-        if (!selected.IsError)
-        {
-            olvDuplicates.RemoveObject(selected);
-            set.Remove(selected);
-        }
+        FixIssuesNotifier form = new(new RemedySettings(selectedItems,this));
+        form.ShowDialog();
+    }
+
+    internal void Remove(SettingsCheck selected)
+    {
+        olvDuplicates.RemoveObject(selected);
+        set.Remove(selected);
     }
 }

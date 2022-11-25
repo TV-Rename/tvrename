@@ -126,7 +126,13 @@
     <Compile Update="Forms\Tools\DuplicateMovieFinder.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\Tools\FixIssuesNotifier.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\Tools\MergedEpisodeFinder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\Notifier.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\Tools\OrphanFiles.cs">

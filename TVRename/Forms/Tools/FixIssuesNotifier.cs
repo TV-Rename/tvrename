@@ -3,22 +3,21 @@ using System.Threading;
 
 namespace TVRename.Forms.Tools;
 
-public class DoScanPartNotifier : Notifier
+public class FixIssuesNotifier : Notifier
 {
-    private readonly PostScanActivity activity;
+    private readonly LongOperation operation;
 
-    public DoScanPartNotifier(PostScanActivity activity)
+    public FixIssuesNotifier(LongOperation operation)
     {
-        this.activity = activity;
+        this.operation = operation;
         Start();
     }
-
     internal override void Do(BackgroundWorker backgroundWorker, CancellationTokenSource source)
     {
-        activity.Check(source.Token,
+        operation.Start(source.Token,
             (percent, message, lastUpdate) => ReportProgress(source,percent,message,lastUpdate)
         );
     }
 
-    internal override string ActionName() => activity.ActivityName();
+    internal override string ActionName() => "Fix Issues";
 }

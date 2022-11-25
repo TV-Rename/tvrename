@@ -8,11 +8,11 @@
 
 using NLog;
 using System;
-using System.Threading.Tasks;
+using TVRename.Forms.Tools;
 
 namespace TVRename;
 
-public abstract class PostScanActivity
+public abstract class PostScanActivity :LongOperation
 {
     protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
     protected readonly TVDoc MDoc;
@@ -33,6 +33,11 @@ public abstract class PostScanActivity
     protected abstract bool Active();
 
     protected abstract void DoCheck(System.Threading.CancellationToken token, PostScanProgressDelegate progress);
+
+    public override void Start(System.Threading.CancellationToken sourceToken, SetProgressDelegate? progress)
+    {
+        Check(sourceToken, progress);
+    }
 
     public void Check(System.Threading.CancellationToken token, SetProgressDelegate? progress) =>
         Check(token, progress, 0, 100);
@@ -57,7 +62,7 @@ public abstract class PostScanActivity
         {
             throw;
         }
-        catch (TaskCanceledException tce)
+        catch (System.Threading.Tasks.TaskCanceledException tce)
         {
             LOGGER.Warn($"Failed to run Scan for {ActivityName()} : {tce.Message}");
         }

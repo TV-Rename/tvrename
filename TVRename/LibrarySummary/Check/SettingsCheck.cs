@@ -5,7 +5,7 @@ namespace TVRename;
 
 internal abstract class SettingsCheck
 {
-    public readonly TVDoc Doc;
+    protected readonly TVDoc Doc;
 
     public abstract bool Check();
 
@@ -20,6 +20,12 @@ internal abstract class SettingsCheck
     public string? ErrorText { get; private set; }
 
     public bool IsError { get; private set; }
+
+    public void Cancel()
+    {
+        ErrorText = "Operation Cancelled";
+        IsError = true;
+    }
 
     public void Fix()
     {
