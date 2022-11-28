@@ -8,6 +8,7 @@
 
 using NLog;
 using System;
+using System.Threading;
 using TVRename.Forms.Tools;
 
 namespace TVRename;
@@ -32,17 +33,15 @@ public abstract class PostScanActivity :LongOperation
 
     protected abstract bool Active();
 
-    protected abstract void DoCheck(System.Threading.CancellationToken token, PostScanProgressDelegate progress);
+    protected abstract void DoCheck( PostScanProgressDelegate progress, CancellationToken token);
 
-    public override void Start(System.Threading.CancellationToken sourceToken, SetProgressDelegate? progress)
-    {
-        Check(sourceToken, progress);
-    }
+    public override void Start(SetProgressDelegate? progress, CancellationToken sourceToken)
+        => Check(progress, sourceToken);
 
-    public void Check(System.Threading.CancellationToken token, SetProgressDelegate? progress) =>
-        Check(token, progress, 0, 100);
+    public void Check(SetProgressDelegate? progress, CancellationToken token)
+        => Check(progress, 0, 100, token);
 
-    private void Check(System.Threading.CancellationToken token, SetProgressDelegate? progress, int startpct, int totPct)
+    private void Check(SetProgressDelegate? progress, int startpct, int totPct, CancellationToken token)
     {
         startPosition = startpct;
         endPosition = totPct;
@@ -55,7 +54,7 @@ public abstract class PostScanActivity :LongOperation
                 return;
             }
 
-            DoCheck(token, UpdateStatus);
+            DoCheck(UpdateStatus, token);
             LogActionListSummary();
         }
         catch (TVRenameOperationInterruptedException)

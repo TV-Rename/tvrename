@@ -2,6 +2,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace TVRename;
 
@@ -15,7 +16,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
 
     protected override bool Active() => true;
 
-    protected override void DoCheck(System.Threading.CancellationToken token, PostScanProgressDelegate progress)
+    protected override void DoCheck(PostScanProgressDelegate progress, CancellationToken token)
     {
         List<ShowConfiguration> libraryShows = MDoc.TvLibrary.GetSortedShowItems();
         List<MovieConfiguration> movieConfigurations = MDoc.FilmLibrary.GetSortedMovies();

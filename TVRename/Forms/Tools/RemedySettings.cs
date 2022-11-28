@@ -16,7 +16,7 @@ internal class RemedySettings : LongOperation
         this.parent = parent;
     }
 
-    public override void Start(CancellationToken sourceToken, SetProgressDelegate? progress)
+    public override void Start(SetProgressDelegate? progress, CancellationToken sourceToken)
     {
         int currentRecord = 0;
         int totalRecords = selectedItems.Count();
