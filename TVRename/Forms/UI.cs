@@ -5417,7 +5417,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         MoreBusy();
         mDoc.PreventAutoScan("YTS Recommendations Open");
-        YtsRecommendationView form = new(mDoc, this);
+        YtsRecommendationView form = new(mDoc, this, "1080p");
         form.ShowDialog(this);
         mDoc.AllowAutoScan();
         LessBusy();
