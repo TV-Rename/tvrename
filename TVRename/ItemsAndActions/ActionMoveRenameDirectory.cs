@@ -77,9 +77,10 @@ public class ActionMoveRenameDirectory : ActionFileOperation
                 return new ActionOutcome(e);
             }
 
-            try {
+            try
+            {
                 source.MoveTo(targetFolder, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting);
-                LOGGER.Info($"Moved whole directory {sourceFolder } to {targetFolder}");
+                LOGGER.Info($"Moved whole directory {sourceFolder} to {targetFolder}");
 
                 return ActionOutcome.Success();
             }
@@ -119,7 +120,7 @@ public class ActionMoveRenameDirectory : ActionFileOperation
             }
 
             source.MoveTo(targetFolder, MoveOptions.CopyAllowed);
-            LOGGER.Info($"Moved whole directory {sourceFolder } to {targetFolder}");
+            LOGGER.Info($"Moved whole directory {sourceFolder} to {targetFolder}");
             return ActionOutcome.Success();
         }
         catch (Exception e)

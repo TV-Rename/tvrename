@@ -52,7 +52,7 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
             MDoc.TvAddedOrEdited(true, false, false, Settings.Owner, addedTvShows);
             //add each new show into the shows being scanned
             Settings.Shows.AddRange(addedTvShows);
-            LOGGER.Info($"Added new shows called: {addedTvShows.Select(s => s.ShowName).ToCsv()}" );
+            LOGGER.Info($"Added new shows called: {addedTvShows.Select(s => s.ShowName).ToCsv()}");
         }
 
         List<MovieConfiguration> addedMovies = addedShowsUnique.OfType<MovieConfiguration>().Distinct().ToList();
@@ -90,7 +90,7 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
 
         foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToArray())
         {
-            LOGGER.Info($"Parsing {dirPath} for new shows" );
+            LOGGER.Info($"Parsing {dirPath} for new shows");
             if (!Directory.Exists(dirPath))
             {
                 continue;

@@ -48,7 +48,7 @@ internal class MissingXML : MissingActionListExporter
                 writer.WriteElement("id", missing.Show.TvdbCode);
                 writer.WriteElement("title", missing.Show.Name);
                 int? missingSeasonNumberAsInt = missing.SeasonNumberAsInt;
-                if (missingSeasonNumberAsInt!= null)
+                if (missingSeasonNumberAsInt != null)
                 {
                     writer.WriteElement("season", missingSeasonNumberAsInt.Value.Pad());
                 }

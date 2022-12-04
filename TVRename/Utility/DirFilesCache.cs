@@ -28,7 +28,7 @@ public class DirFilesCache
     {
         if (cache.ContainsKey(folder))
         {
-            return cache[folder] ;
+            return cache[folder];
         }
 
         DirectoryInfo di;

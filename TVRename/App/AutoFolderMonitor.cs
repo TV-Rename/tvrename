@@ -70,7 +70,7 @@ public sealed class AutoFolderMonitor : IDisposable
                 watcher.Created += watcher_Changed;
                 watcher.Renamed += watcher_Changed;
                 watchers.Add(watcher);
-                Logger.Info("Starting FileSystemWatcher for "+ efi);
+                Logger.Info("Starting FileSystemWatcher for " + efi);
             }
             catch (Exception ex)
             {

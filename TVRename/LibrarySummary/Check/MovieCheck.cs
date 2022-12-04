@@ -17,7 +17,7 @@ internal abstract class MovieCheck : SettingsCheck
         }
 
         Movie.CachedMovie.Dirty = true;
-        Doc.MoviesAddedOrEdited(false,true,true,null, Movie);
+        Doc.MoviesAddedOrEdited(false, true, true, null, Movie);
     }
 
     public override MediaConfiguration.MediaType Type() => MediaConfiguration.MediaType.movie;

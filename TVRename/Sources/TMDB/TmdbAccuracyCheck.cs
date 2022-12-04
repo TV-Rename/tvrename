@@ -24,7 +24,7 @@ internal class TmdbAccuracyCheck
         Logger.Info($"Accuracy Check for {si.Name} on TMDB");
         try
         {
-            CachedMovieInfo newSi = lc.DownloadMovieNow(si,false);
+            CachedMovieInfo newSi = lc.DownloadMovieNow(si, false);
 
             if (!Match(newSi, si))
             {
@@ -48,12 +48,12 @@ internal class TmdbAccuracyCheck
         Logger.Info($"Accuracy Check for {si.Name} on TMDB");
         try
         {
-            CachedSeriesInfo newSi = lc.DownloadSeriesNow(si,false);
+            CachedSeriesInfo newSi = lc.DownloadSeriesNow(si, false);
 
             if (!Match(newSi, si)) //NB - we use a match method as we can't rely on update time
             {
                 Issues.Add(
-                    $"{si.Name} ({si.Id()}) is not up to date: Local is { si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is { newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
+                    $"{si.Name} ({si.Id()}) is not up to date: Local is {si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is {newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
                 si.Dirty = true;
                 if (!ShowsToUpdate.Contains(si))
                 {

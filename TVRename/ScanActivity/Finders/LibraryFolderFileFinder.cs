@@ -143,7 +143,7 @@ internal class LibraryFolderFileFinder : FileFinder
                     TVSettings.Instance.UseFullPathNameToMatchLibraryFolders))
             {
                 matchedFiles.Add(testFile);
-                thisRound.Add(testFile,actionsForThisFile);
+                thisRound.Add(testFile, actionsForThisFile);
             }
         }
 
@@ -171,7 +171,7 @@ internal class LibraryFolderFileFinder : FileFinder
             }
 
             matchedFiles.Add(testFile);
-            thisRound.Add(testFile,actionsForThisFile);
+            thisRound.Add(testFile, actionsForThisFile);
 
             LOGGER.Info($"Found {me.Filename} at: {testFile}");
         }

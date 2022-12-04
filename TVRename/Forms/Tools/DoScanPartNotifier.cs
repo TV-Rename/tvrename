@@ -15,7 +15,7 @@ public class DoScanPartNotifier : Notifier
 
     internal override void Do(BackgroundWorker backgroundWorker, CancellationTokenSource source)
     {
-        activity.Check((percent, message, lastUpdate) => ReportProgress(source,percent,message,lastUpdate), source.Token);
+        activity.Check((percent, message, lastUpdate) => ReportProgress(source, percent, message, lastUpdate), source.Token);
     }
 
     internal override string ActionName() => activity.ActivityName();

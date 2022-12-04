@@ -28,7 +28,7 @@ public partial class YtsViewerView : Form
         quality = "1080p";
         minRating = 5;
 
-        olvRating.GroupKeyGetter = rowObject => (int) Math.Floor(((YtsViewerRow) rowObject).StarScore);
+        olvRating.GroupKeyGetter = rowObject => (int)Math.Floor(((YtsViewerRow)rowObject).StarScore);
         olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
 
         Scan();
@@ -47,7 +47,7 @@ public partial class YtsViewerView : Form
             ? recs.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.ImdbCode != x.ImdbCode)).ToList()
             : recs.ToList();
 
-        lvRecommendations.SetObjects(recommendationRows,true);
+        lvRecommendations.SetObjects(recommendationRows, true);
     }
 
     private void ClearGrid()
@@ -124,13 +124,13 @@ public partial class YtsViewerView : Form
         try
         {
             recs = YTS.API
-                    .GetMovies((BackgroundWorker)sender, quality,minRating)
-                    .Select(x=>new YtsViewerRow(x,mDoc))
+                    .GetMovies((BackgroundWorker)sender, quality, minRating)
+                    .Select(x => new YtsViewerRow(x, mDoc))
                     .ToList();
         }
         catch (Exception ex)
         {
-            Logger.Fatal(ex,"UNHANDLED error obtinaing recommendations from YTS");
+            Logger.Fatal(ex, "UNHANDLED error obtinaing recommendations from YTS");
         }
     }
 
@@ -180,11 +180,11 @@ public partial class YtsViewerView : Form
         rightClickMenu.Add("Add Movie to Library and Download", (_, _) =>
         {
             AddMovieToLibrary(lastSelected);
-            Download(lastSelected,quality);
+            Download(lastSelected, quality);
         });
 
         rightClickMenu.Add("Add Movie to Library", (_, _) => AddMovieToLibrary(lastSelected));
-        rightClickMenu.Add("Download Movie", (_, _) => Download(lastSelected,quality));
+        rightClickMenu.Add("Download Movie", (_, _) => Download(lastSelected, quality));
     }
 
     private void Download(YtsViewerRow lastSelected, string qualityToDownload)

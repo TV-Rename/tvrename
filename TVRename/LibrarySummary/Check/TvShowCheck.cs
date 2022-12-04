@@ -14,7 +14,7 @@ internal abstract class TvShowCheck : SettingsCheck
         if (Show.CachedShow != null)
         {
             Show.CachedShow.Dirty = true;
-            Doc.TvAddedOrEdited(false,true,true,null, Show);
+            Doc.TvAddedOrEdited(false, true, true, null, Show);
         }
     }
 

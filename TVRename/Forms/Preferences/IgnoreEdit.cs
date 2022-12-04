@@ -55,15 +55,15 @@ public partial class IgnoreEdit : Form
     private void bnRemove_Click(object sender, EventArgs e)
     {
         foreach (int i in lbItems.SelectedIndices)
-        foreach (IgnoreItem iitest in ignore)
-        {
-            string? s = lbItems.Items[i].ToString();
-            if (s is not null && s.Equals(iitest.FileAndPath))
+            foreach (IgnoreItem iitest in ignore)
             {
-                ignore.Remove(iitest);
-                break;
+                string? s = lbItems.Items[i].ToString();
+                if (s is not null && s.Equals(iitest.FileAndPath))
+                {
+                    ignore.Remove(iitest);
+                    break;
+                }
             }
-        }
 
         FillList();
     }

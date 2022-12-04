@@ -15,5 +15,5 @@ public static class UiExtensions
     }
 
     public static string ToUiVersion(this string? source)
-        => source.HasValue() ? source.Replace("&", "&&") :string.Empty;
+        => source.HasValue() ? source.Replace("&", "&&") : string.Empty;
 }

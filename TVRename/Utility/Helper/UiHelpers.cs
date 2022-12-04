@@ -19,7 +19,7 @@ public static class UiHelpers
 
     public static void Add(this ContextMenuStrip items, string name, EventHandler command)
     {
-        items.Items.Add(name,command);
+        items.Items.Add(name, command);
     }
 
     public static void AddSeparator(this ContextMenuStrip showRightClickMenu)

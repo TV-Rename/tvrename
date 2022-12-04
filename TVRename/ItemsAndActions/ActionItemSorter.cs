@@ -37,7 +37,7 @@ public class ActionItemSorter : System.Collections.Generic.IComparer<Item>
         {
             ShowItemMissing => 1,
             MovieItemMissing => 2,
-            ShowSeasonMissing =>3,
+            ShowSeasonMissing => 3,
             ActionCopyMoveRename => 4,
             ActionMoveRenameDirectory => 5,
             ActionTDownload => 6,
@@ -55,7 +55,7 @@ public class ActionItemSorter : System.Collections.Generic.IComparer<Item>
             ActionDateTouchMedia => 18,
             ActionDateTouchMovie => 19,
             ActionTRemove => 20,
-            ActionUnArchive =>21,
+            ActionUnArchive => 21,
             _ => throw new NotSupportedException()
         };
     }

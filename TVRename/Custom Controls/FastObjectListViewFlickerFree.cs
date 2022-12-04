@@ -1,5 +1,5 @@
-using System.Windows.Forms;
 using BrightIdeasSoftware;
+using System.Windows.Forms;
 
 namespace TVRename;
 

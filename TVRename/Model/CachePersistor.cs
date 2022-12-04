@@ -1,3 +1,4 @@
+using Alphaleonis.Win32.Filesystem;
 using NLog;
 using Polly;
 using System;
@@ -6,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
@@ -70,7 +70,7 @@ internal static class CachePersistor
             di.Create();
         }
 
-        Logger.Info($"Saving Cache to: {cacheFile.FullName}" );
+        Logger.Info($"Saving Cache to: {cacheFile.FullName}");
         try
         {
             RotateCacheFiles(cacheFile);
@@ -143,7 +143,7 @@ internal static class CachePersistor
 
     public static bool LoadTvCache<T>(FileInfo loadFrom, T cache) where T : MediaCache, iTVSource
     {
-        Logger.Info($"Loading Cache from: {loadFrom.FullName}" );
+        Logger.Info($"Loading Cache from: {loadFrom.FullName}");
         if (!loadFrom.Exists)
         {
             return true; // that's ok
@@ -170,7 +170,7 @@ internal static class CachePersistor
 
     public static bool LoadMovieCache<T>(FileInfo loadFrom, T cache) where T : MediaCache, iMovieSource
     {
-        Logger.Info($"Loading Cache from: {loadFrom.FullName}" );
+        Logger.Info($"Loading Cache from: {loadFrom.FullName}");
         if (!loadFrom.Exists)
         {
             return true; // that's ok
@@ -195,7 +195,7 @@ internal static class CachePersistor
         }
     }
 
-    private static bool ProcessMovieXml<T>(XElement x, T cache) where T:MediaCache, iMovieSource
+    private static bool ProcessMovieXml<T>(XElement x, T cache) where T : MediaCache, iMovieSource
     {
         try
         {
@@ -233,7 +233,7 @@ internal static class CachePersistor
         return true;
     }
 
-    private static bool ProcessSeriesXml<T>(XElement x, T cache) where T:MediaCache,iTVSource
+    private static bool ProcessSeriesXml<T>(XElement x, T cache) where T : MediaCache, iTVSource
     {
         // Will have one or more cachedSeries, and episodes
         // all wrapped in <Data> </Data>

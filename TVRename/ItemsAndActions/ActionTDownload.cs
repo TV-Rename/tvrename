@@ -122,7 +122,7 @@ public class ActionTDownload : ActionDownload
         }
 
         string saveTemp = SaveDownloadedData(r, SourceName);
-        FileInfo downloadedFile = new( saveTemp);
+        FileInfo downloadedFile = new(saveTemp);
         return downloadedFile;
     }
 

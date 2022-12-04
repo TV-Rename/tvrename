@@ -19,7 +19,7 @@ public partial class RecommendationView : Form
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private readonly List<ShowConfiguration> addedShows;
     private readonly List<MovieConfiguration> addedMovies;
-    private int trendingWeight=100;
+    private int trendingWeight = 100;
     private int topWeight = 100;
     private int relatedWeight = 100;
     private int similarWeight = 100;
@@ -36,9 +36,9 @@ public partial class RecommendationView : Form
         mDoc = doc;
         mainUi = main;
 
-        olvScore.MakeGroupies(new[] {0.1, 0.25, 0.5, 0.75 }, new[] { "0-10%","10-25%", "25-50%", "50-75%", "75%+" });
+        olvScore.MakeGroupies(new[] { 0.1, 0.25, 0.5, 0.75 }, new[] { "0-10%", "10-25%", "25-50%", "50-75%", "75%+" });
 
-        olvRating.GroupKeyGetter = rowObject => (int) Math.Floor(((RecommendationRow) rowObject).StarScore);
+        olvRating.GroupKeyGetter = rowObject => (int)Math.Floor(((RecommendationRow)rowObject).StarScore);
         olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
     }
 
@@ -92,10 +92,10 @@ public partial class RecommendationView : Form
                 : recs.Values.Where(x => mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != x.Key)).ToList()
             : recs.Values.ToList();
 
-        int maxRelated = recommendationRows.MaxOrDefault(x => x.Related.Count,0);
+        int maxRelated = recommendationRows.MaxOrDefault(x => x.Related.Count, 0);
         int maxSimilar = recommendationRows.MaxOrDefault(x => x.Similar.Count, 0);
 
-        lvRecommendations.SetObjects(recommendationRows.Select(x => new RecommendationRow(x, media, trendingWeight, topWeight, relatedWeight, similarWeight,maxRelated,maxSimilar)),true);
+        lvRecommendations.SetObjects(recommendationRows.Select(x => new RecommendationRow(x, media, trendingWeight, topWeight, relatedWeight, similarWeight, maxRelated, maxSimilar)), true);
     }
 
     private void ClearGrid()
@@ -205,7 +205,7 @@ public partial class RecommendationView : Form
         }
         catch (Exception ex)
         {
-            Logger.Fatal(ex,"UNHANDLED error obtinaing recommendations");
+            Logger.Fatal(ex, "UNHANDLED error obtinaing recommendations");
         }
     }
 

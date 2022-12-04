@@ -9,6 +9,7 @@
 // All the processing and work should be done in here, nothing in UI.cs
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
+using Alphaleonis.Win32.Filesystem;
 using NLog;
 using NodaTime.Extensions;
 using Polly;
@@ -19,9 +20,8 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using TVRename.Settings.AppState;
-using Alphaleonis.Win32.Filesystem;
 using TVRename.Forms;
+using TVRename.Settings.AppState;
 
 namespace TVRename;
 
@@ -298,21 +298,21 @@ public class TVDoc : IDisposable
 
         if (currentValue > 0 && valueFromCache > 0 && currentValue != valueFromCache)
         {
-            string baseMessage = $"Media:{type.PrettyPrint()}: {show.ShowName} ({show}) has inconsistent {provider.PrettyPrint()} Id: {currentValue } {valueFromCache}, updating to {valueFromCache}, {basedOnInformation} (Cached Value is {cachedData})."+Environment.NewLine
+            string baseMessage = $"Media:{type.PrettyPrint()}: {show.ShowName} ({show}) has inconsistent {provider.PrettyPrint()} Id: {currentValue} {valueFromCache}, updating to {valueFromCache}, {basedOnInformation} (Cached Value is {cachedData})." + Environment.NewLine
                 + $"    Config: {show}" + Environment.NewLine
                 + $"    Cache:  {cachedData}";
             switch (show.Media)
             {
                 case MediaConfiguration.MediaType.tv:
-                    Logger.Error(baseMessage+Environment.NewLine+
-                                 $"    TVDB:   {TheTVDB.LocalCache.Instance.GetSeries(show.TvdbId)}"+ Environment.NewLine+
-                                 $"    TMDB:   {TMDB.LocalCache.Instance.GetSeries(show.TmdbId)}"+ Environment.NewLine+
+                    Logger.Error(baseMessage + Environment.NewLine +
+                                 $"    TVDB:   {TheTVDB.LocalCache.Instance.GetSeries(show.TvdbId)}" + Environment.NewLine +
+                                 $"    TMDB:   {TMDB.LocalCache.Instance.GetSeries(show.TmdbId)}" + Environment.NewLine +
                                  $"    TVMaze: {TVmaze.LocalCache.Instance.GetSeries(show.TvMazeId)}");
                     FullyRefresh((ShowConfiguration)show);
                     break;
                 case MediaConfiguration.MediaType.movie:
-                    Logger.Error(baseMessage+Environment.NewLine+
-                                 $"    TVDB:   {TheTVDB.LocalCache.Instance.GetMovie(show.TvdbId)}"+ Environment.NewLine+
+                    Logger.Error(baseMessage + Environment.NewLine +
+                                 $"    TVDB:   {TheTVDB.LocalCache.Instance.GetMovie(show.TvdbId)}" + Environment.NewLine +
                                  $"    TMDB:   {TMDB.LocalCache.Instance.GetMovie(show.TmdbId)}");
                     FullyRefresh((MovieConfiguration)show);
                     break;
@@ -371,7 +371,7 @@ public class TVDoc : IDisposable
             List<Item> subsequentItems = doneActions.Select(a => a.Becomes()).OfType<Item>().ToList();
 
             // remove items from master list, unless it had an error
-            TheActionList.Replace(doneActions,subsequentItems);
+            TheActionList.Replace(doneActions, subsequentItems);
         }
         catch (Exception e)
         {
@@ -565,7 +565,7 @@ public class TVDoc : IDisposable
         }
         // backup old settings before writing new ones
         FileHelper.Rotate(PathManager.TVDocSettingsFile.FullName);
-        Logger.Info($"Saving Settings to {PathManager.TVDocSettingsFile.FullName}" );
+        Logger.Info($"Saving Settings to {PathManager.TVDocSettingsFile.FullName}");
 
         XmlWriterSettings settings = new()
         {
@@ -618,7 +618,7 @@ public class TVDoc : IDisposable
     // ReSharper disable once InconsistentNaming
     private bool LoadXMLSettings(FileInfo? from)
     {
-        Logger.Info($"Loading Settings from {from?.FullName}" );
+        Logger.Info($"Loading Settings from {from?.FullName}");
         if (from is null)
         {
             return true;
@@ -820,7 +820,7 @@ public class TVDoc : IDisposable
         forceMoviesRefresh.AddRange(movies);
         forceMoviesScan.AddRange(movies);
 
-        if (download && owner!=null)
+        if (download && owner != null)
         {
             if (!DoDownloadsFg(unattended, hidden, owner, movies))
             {
@@ -962,16 +962,16 @@ public class TVDoc : IDisposable
         List<IGrouping<(ShowConfiguration? Series, int? SeasonNumberAsInt), ShowItemMissing>> oldActions
             = TheActionList.MissingEpisodes.GroupBy(e => (e.Series, e.SeasonNumberAsInt)).ToList();
 
-        foreach (IGrouping<(ShowConfiguration? Series, int? SeasonNumberAsInt),ShowItemMissing> season in oldActions)
+        foreach (IGrouping<(ShowConfiguration? Series, int? SeasonNumberAsInt), ShowItemMissing> season in oldActions)
         {
             ShowConfiguration? configuration = season.Key.Series;
             int? seasonNum = season.Key.SeasonNumberAsInt;
 
-            if (configuration!= null && seasonNum != null)
+            if (configuration != null && seasonNum != null)
             {
                 if (configuration.SeasonEpisodes[seasonNum.Value].Count == season.Count() && season.Count() > 1)
                 {
-                    TheActionList.Replace(season, new ShowSeasonMissing(configuration,seasonNum.Value,season.First().TargetFolder,season.ToList()));
+                    TheActionList.Replace(season, new ShowSeasonMissing(configuration, seasonNum.Value, season.First().TargetFolder, season.ToList()));
                 }
             }
         }
@@ -1227,7 +1227,7 @@ public class TVDoc : IDisposable
 
         // process each folder for each movie...
         foreach (FileInfo? file in si.Locations
-                     .Where(s=>s.HasValue())
+                     .Where(s => s.HasValue())
                      .Select(s => new DirectoryInfo(s))
                      .Where(info => info.Exists)
                      .SelectMany(d => d.GetFiles())
@@ -1666,7 +1666,7 @@ public class TVDoc : IDisposable
     internal void TVDBServerAccuracyCheck(bool unattended, bool hidden, UI owner)
     {
         PreventAutoScan("TVDB Accuracy Check");
-        DoDownloadsFg(unattended,hidden,owner);
+        DoDownloadsFg(unattended, hidden, owner);
 
         IEnumerable<CachedSeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerTvAccuracyCheck();
         IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode, ProviderType.TheTVDB)).OfType<ShowConfiguration>();
@@ -1891,25 +1891,25 @@ public class TVDoc : IDisposable
                     continue;
 
                 case ActionCopyMoveRename i1:
-                {
-                    if (i1.From.RemoveExtension(true).StartsWith(i2.From.RemoveExtension(true), StringComparison.Ordinal))
                     {
-                        toRemove.Add(i1);
-                    }
+                        if (i1.From.RemoveExtension(true).StartsWith(i2.From.RemoveExtension(true), StringComparison.Ordinal))
+                        {
+                            toRemove.Add(i1);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
 
                 case { } ad:
-                {
-                    if (ad.Episode?.AppropriateEpNum == i2.Episode?.AppropriateEpNum &&
-                        ad.Episode?.AppropriateSeasonNumber == i2.Episode?.AppropriateSeasonNumber)
                     {
-                        toRemove.Add(a);
-                    }
+                        if (ad.Episode?.AppropriateEpNum == i2.Episode?.AppropriateEpNum &&
+                            ad.Episode?.AppropriateSeasonNumber == i2.Episode?.AppropriateSeasonNumber)
+                        {
+                            toRemove.Add(a);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
             }
         }
 
@@ -1921,10 +1921,10 @@ public class TVDoc : IDisposable
     {
         if (item is ShowSeasonMissing ssm)
         {
-            TheActionList.Replace(ssm.AsList(),ssm.OriginalItems);
+            TheActionList.Replace(ssm.AsList(), ssm.OriginalItems);
         }
     }
-    public void MovieFolderScan(UI ui,string downloadFolder)
+    public void MovieFolderScan(UI ui, string downloadFolder)
     {
         if (!Directory.Exists(downloadFolder))
         {
@@ -2004,7 +2004,7 @@ public class TVDoc : IDisposable
             {
                 FileFinder.CopySubsFolders(TheActionList, this);
             }
-            MoviesAddedOrEdited(true,false,false,ui,new List<MovieConfiguration>());
+            MoviesAddedOrEdited(true, false, false, ui, new List<MovieConfiguration>());
         }
         catch (UnauthorizedAccessException ex)
         {
@@ -2044,7 +2044,7 @@ public class TVDoc : IDisposable
             else
             {
                 FileInfo incumbent = GetExistingFile(chosenShow, folder);
-                if (string.Compare(incumbent.FullName,fi.FullName,StringComparison.OrdinalIgnoreCase)==0)
+                if (string.Compare(incumbent.FullName, fi.FullName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     fileCanBeDeleted = false;
                 }
@@ -2062,7 +2062,7 @@ public class TVDoc : IDisposable
         if (fileCanBeDeleted)
         {
             Logger.Info(
-                $"Removing {fi.FullName} as it matches { chosenShow.ShowName} and all existing versions are better quality");
+                $"Removing {fi.FullName} as it matches {chosenShow.ShowName} and all existing versions are better quality");
 
             TheActionList.Add(new ActionDeleteFile(fi, chosenShow, TVSettings.Instance.Tidyup));
         }
@@ -2094,7 +2094,7 @@ public class TVDoc : IDisposable
         TheActionList.Add(new ActionCopyMoveRename(fi, newFile, chosenShow, this));
 
         // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-        TheActionList.AddNullableRange(new DownloadIdentifiersController().ProcessMovie(chosenShow,fi));
+        TheActionList.AddNullableRange(new DownloadIdentifiersController().ProcessMovie(chosenShow, fi));
     }
 
     /// <summary>Asks user about whether to replace a file.</summary>
@@ -2111,9 +2111,9 @@ public class TVDoc : IDisposable
 
             case FileHelper.VideoComparison.cantTell:
             case FileHelper.VideoComparison.similar:
-            {
-                return ScanHelper.AskUserAboutFileReplacement(newFile, existingFile, chosenShow, owner, this, TheActionList);
-            }
+                {
+                    return ScanHelper.AskUserAboutFileReplacement(newFile, existingFile, chosenShow, owner, this, TheActionList);
+                }
             //the other cases of the files being the same or the existing file being better are not enough to save the file
             case FileHelper.VideoComparison.firstFileBetter:
             case FileHelper.VideoComparison.same:
@@ -2139,7 +2139,7 @@ public class TVDoc : IDisposable
             return true;
         }
 
-        List<string> bases = movieFiles.Select(fi=>fi.MovieFileNameBase()).Distinct().ToList();
+        List<string> bases = movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct().ToList();
         string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
 
         if (bases.Count == 1)
@@ -2212,7 +2212,7 @@ public class TVDoc : IDisposable
         //do an auto add
         MovieConfiguration? selectedShow = AutoAddMovieFile(fi, owner);
 
-        if (selectedShow != null && ContainsMedia(FilmLibrary,selectedShow))
+        if (selectedShow != null && ContainsMedia(FilmLibrary, selectedShow))
         {
             //if user selects existing movie then do a compare for that new file for the show
             MergeMovieFileIntoMovieConfig(fi, selectedShow, owner);
@@ -2221,7 +2221,7 @@ public class TVDoc : IDisposable
         else if (selectedShow != null && selectedShow.Locations.Any())
         {
             LinkFileToShow(fi, selectedShow, new DirectoryInfo(selectedShow.Locations.First()));
-            Add(selectedShow.AsList(),true);
+            Add(selectedShow.AsList(), true);
         }
         else
         {
@@ -2337,19 +2337,19 @@ public class TVDoc : IDisposable
         }
         else
         {
-            PreventAutoScan($"Do selected actions ({set.Lvr.Count})") ;
+            PreventAutoScan($"Do selected actions ({set.Lvr.Count})");
             DoActions(set.Lvr, set.Token.Token);
         }
         AllowAutoScan();
     }
 
-    public void ForceRefreshBeforeRescan(List<ShowConfiguration> shows,List<MovieConfiguration> movies, bool unattended, bool tvrMinimised, UI owner)
+    public void ForceRefreshBeforeRescan(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool tvrMinimised, UI owner)
     {
         RemoveActionsFromShows(shows);
         RemoveActionsFromMovies(movies);
 
-        ForceRefreshShows(shows,unattended,tvrMinimised,owner,false);
-        ForceRefreshMovies(movies,unattended,tvrMinimised,owner,false);
+        ForceRefreshShows(shows, unattended, tvrMinimised, owner, false);
+        ForceRefreshMovies(movies, unattended, tvrMinimised, owner, false);
     }
 
     private void RemoveActionsFromShows(IReadOnlyCollection<ShowConfiguration> shows)

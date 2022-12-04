@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,12 +19,10 @@ using TMDbLib.Objects.Find;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Movies;
 using TMDbLib.Objects.Search;
-using TMDbLib.Objects.Trending;
 using TMDbLib.Objects.TvShows;
 using TVRename.Forms;
 using static TVRename.TMDB.API;
 using Cast = TMDbLib.Objects.Movies.Cast;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename.TMDB;
 
@@ -389,7 +388,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         ? CachedMovieData[id.TmdbId]
         : DownloadMovieNow(id);
 
-    internal CachedMovieInfo DownloadMovieNow(ISeriesSpecifier id,bool saveToCache = true)
+    internal CachedMovieInfo DownloadMovieNow(ISeriesSpecifier id, bool saveToCache = true)
     {
         string imageLanguage = $"{id.LanguageToUse().Abbreviation},null";
         try
@@ -544,7 +543,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     private static DateTime? GetReleaseDateDetail(Movie downloadedMovie, string? country)
     {
         List<DateTime>? dates = downloadedMovie.ReleaseDates?.Results
-            .Where(rel => rel.Iso_3166_1.Equals(country,StringComparison.OrdinalIgnoreCase))
+            .Where(rel => rel.Iso_3166_1.Equals(country, StringComparison.OrdinalIgnoreCase))
             .SelectMany(rel => rel.ReleaseDates)
             .Select(d => d.ReleaseDate)
             .OrderBy(time => time).ToList();
@@ -562,7 +561,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         int id = ss.TmdbId > 0 ? ss.TmdbId : GetSeriesIdFromOtherCodes(ss) ?? 0;
 
         string imageLanguage = $"{ss.LanguageToUse().Abbreviation},null";
-        TvShow? downloadedSeries = Client.GetTvShowAsync(id, TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits, ss.LanguageToUse().Abbreviation,imageLanguage).Result;
+        TvShow? downloadedSeries = Client.GetTvShowAsync(id, TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits, ss.LanguageToUse().Abbreviation, imageLanguage).Result;
         if (downloadedSeries is null)
         {
             throw new MediaNotFoundException(ss, "TMDB no longer has this tv show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
@@ -578,7 +577,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             FirstAired = downloadedSeries.FirstAirDate,
             Genres = downloadedSeries.Genres.Select(genre => genre.Name).ToSafeList(),
             Overview = downloadedSeries.Overview,
-            Network = downloadedSeries.Networks.Select(n=>n.Name).ToPsv(),
+            Network = downloadedSeries.Networks.Select(n => n.Name).ToPsv(),
             Status = MapStatus(downloadedSeries.Status),
             ShowLanguage = downloadedSeries.OriginalLanguage,
             SiteRating = (float)downloadedSeries.VoteAverage,
@@ -626,7 +625,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     private static string? DecodeAverage(IReadOnlyCollection<int> times) =>
         times.Any()
-            ? times.Average().ToString("F0",System.Globalization.CultureInfo.CurrentCulture)
+            ? times.Average().ToString("F0", System.Globalization.CultureInfo.CurrentCulture)
             : null;
 
     private static void AddSeasons(ISeriesSpecifier ss, TvShow downloadedSeries, CachedSeriesInfo m)
@@ -688,7 +687,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                         Id = imageId++,
                         ImageUrl = OriginalImageUrl(image.FilePath),
                         ImageStyle = MediaImage.ImageType.poster,
-                        Subject =  MediaImage.ImageSubject.season,
+                        Subject = MediaImage.ImageSubject.season,
                         SeasonNumber = snum,
                         Rating = image.VoteAverage,
                         RatingCount = image.VoteCount,
@@ -900,7 +899,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         catch (HttpRequestException ex)
         {
-            LOGGER.LogHttpRequestException("Error searching on TMDB:",ex);
+            LOGGER.LogHttpRequestException("Error searching on TMDB:", ex);
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
         }
@@ -1030,7 +1029,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return returnValue;
     }
 
-    public CachedMovieInfo? LookupMovieByTvdb(int tvdbId,Locale locale)
+    public CachedMovieInfo? LookupMovieByTvdb(int tvdbId, Locale locale)
     {
         FindContainer? results = Client.FindAsync(FindExternalSource.TvDb, tvdbId.ToString()).Result;
         LOGGER.Info($"Got {results.MovieResults.Count:N0} results searching for {tvdbId}");
@@ -1062,7 +1061,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         Say($"TMDB Accuracy Check (TV) running for {FullShows().Count} shows.");
 
-        Parallel.ForEach(FullShows(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },si => {
+        Parallel.ForEach(FullShows(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, si =>
+        {
             Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
             check.ServerAccuracyCheck(si);
         });
@@ -1081,7 +1081,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         Say($"TmDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
 
-        Parallel.ForEach(FullMovies(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },si => {
+        Parallel.ForEach(FullMovies(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, si =>
+        {
             Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
             check.ServerAccuracyCheck(si);
         });
@@ -1137,7 +1138,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             }
             catch (Exception e)
             {
-                LOGGER.Error(e,"Error obtaining TMDB Recommendations:");
+                LOGGER.Error(e, "Error obtaining TMDB Recommendations:");
 
                 SayNothing();
                 throw new SourceConnectivityException();
@@ -1241,7 +1242,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             }
             catch (HttpRequestException ex)
             {
-                LOGGER.Error(ex,"Error obtaining TMDB Recommendations:");
+                LOGGER.Error(ex, "Error obtaining TMDB Recommendations:");
 
                 SayNothing();
                 LastErrorMessage = ex.LoggableDetails();

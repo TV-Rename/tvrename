@@ -58,7 +58,7 @@ public static class CustomSeasonName
     }
 
     public static string NameFor(ProcessedSeason s, string styleString) => NameFor(s, styleString, false);
-    public static string NameFor(ShowConfiguration si, int snum , string styleString)
+    public static string NameFor(ShowConfiguration si, int snum, string styleString)
     {
         ProcessedSeason s = si.AppropriateSeasons()[snum];
         return NameFor(s, styleString, false);

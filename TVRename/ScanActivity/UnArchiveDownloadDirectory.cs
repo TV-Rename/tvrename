@@ -1,7 +1,7 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
@@ -80,7 +80,7 @@ internal class UnArchiveDownloadDirectory : ScanActivity
 
         if (matchingShowsNoMovies.Any())
         {
-            MDoc.TheActionList.Add(new ActionUnArchive(fi,matchingShowsNoMovies.First()));
+            MDoc.TheActionList.Add(new ActionUnArchive(fi, matchingShowsNoMovies.First()));
             return;
         }
 
@@ -90,5 +90,5 @@ internal class UnArchiveDownloadDirectory : ScanActivity
         }
     }
 
-    private bool HasMissing(MovieConfiguration x, FileInfo fi) => FinderHelper.FileNeeded(fi,x,new DirFilesCache());
+    private bool HasMissing(MovieConfiguration x, FileInfo fi) => FinderHelper.FileNeeded(fi, x, new DirFilesCache());
 }

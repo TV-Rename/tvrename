@@ -1,6 +1,6 @@
-using System.Collections.Generic;
-using NLog;
 using Alphaleonis.Win32.Filesystem;
+using NLog;
+using System.Collections.Generic;
 
 namespace TVRename;
 

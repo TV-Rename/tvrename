@@ -52,7 +52,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
             $"Searched for {id} on {provider.PrettyPrint()} Movie Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
     }
 
-    public void AddMovie(MovieConfiguration newShow,bool showErrors)
+    public void AddMovie(MovieConfiguration newShow, bool showErrors)
     {
         if (Contains(newShow))
         {
@@ -91,7 +91,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
 
         foreach (MovieConfiguration toAdd in newMovie)
         {
-            AddMovie(toAdd,showErrors);
+            AddMovie(toAdd, showErrors);
         }
     }
 
@@ -112,7 +112,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
                     }
                 }
 
-                AddMovie(si,false);
+                AddMovie(si, false);
             }
         }
     }

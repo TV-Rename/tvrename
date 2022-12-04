@@ -34,7 +34,7 @@ public class CachedSeriesInfo : CachedMediaInfo
 
     public int? MinYear =>
         Episodes
-            .Where(e=>!e.IsSpecial(SeasonOrderType))
+            .Where(e => !e.IsSpecial(SeasonOrderType))
             .Select(e => e.GetAirDateDt())
             .Where(adt => adt.HasValue)
             .Select(adt => adt!.Value)
@@ -166,7 +166,7 @@ public class CachedSeriesInfo : CachedMediaInfo
         AirsDay = ChooseBetter(AirsDay, useNewDataOverOld, o.AirsDay);
         SeriesType = ChooseBetter(SeriesType, useNewDataOverOld, o.SeriesType);
         SeasonOrderType = o.SeasonOrderType;
-  
+
         bool useNewSeasons = o.seasons.HasAny() && useNewDataOverOld;
         if (!seasons.HasAny() || useNewSeasons)
         {
@@ -229,7 +229,7 @@ public class CachedSeriesInfo : CachedMediaInfo
     private void LoadImages(XElement seriesXml)
     {
         images = new ShowImages();
-        foreach (ShowImage s in seriesXml.Descendants("Images").Descendants("ShowImage").Select(xml => new ShowImage(IdCode(Source),Source, xml)))
+        foreach (ShowImage s in seriesXml.Descendants("Images").Descendants("ShowImage").Select(xml => new ShowImage(IdCode(Source), Source, xml)))
         {
             images.Add(s);
         }
@@ -360,9 +360,9 @@ public class CachedSeriesInfo : CachedMediaInfo
         writer.WriteEndElement(); // cachedSeries
     }
 
-    public string? GetSeriesFanartPath() => FanartUrl.HasValue() ? FanartUrl:  images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.background)?.ImageUrl;
+    public string? GetSeriesFanartPath() => FanartUrl.HasValue() ? FanartUrl : images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.background)?.ImageUrl;
 
-    public string? GetSeriesPosterPath() => PosterUrl.HasValue() ? PosterUrl :  images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.poster)?.ImageUrl;
+    public string? GetSeriesPosterPath() => PosterUrl.HasValue() ? PosterUrl : images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.poster)?.ImageUrl;
 
     public string? GetImage(TVSettings.FolderJpgIsType itemForFolderJpg) => images.GetImage(itemForFolderJpg, TargetLocale.LanguageToUse(Source))?.ImageUrl;
 
@@ -393,7 +393,7 @@ public class CachedSeriesInfo : CachedMediaInfo
 
     public void AddEpisode(Episode episode)
     {
-        sourceEpisodes.AddOrUpdate(episode.EpisodeId, episode,(_, _) => episode);
+        sourceEpisodes.AddOrUpdate(episode.EpisodeId, episode, (_, _) => episode);
         episode.SetSeriesSeason(this);
     }
 

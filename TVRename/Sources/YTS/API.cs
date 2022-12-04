@@ -21,74 +21,84 @@ public static class API
 
     public static IEnumerable<YtsMovie> GetMovies(BackgroundWorker sender, string resolution, int minRating)
     {
-        List<YtsMovie> downloadedMovies = new();
+        return HandleErrorsFrom<IEnumerable<YtsMovie>>("get movies", () => GetMoviesInternal(sender, resolution, minRating));
+    }
+
+    private static T HandleErrorsFrom<T>(string message, Func<T> handler)
+    {
         try
         {
-            bool morePages = true;
-            int page = 1;
-
-            while (morePages)
-            {
-                JObject updatesJson = HttpHelper.HttpGetRequestWithRetry(
-                    APIRoot +
-                    $"list_movies.json?quality={resolution}&limit=50&page={page}&minimum_rating={minRating}&with_rt_ratings=true",
-                    3, 2);
-
-                if (updatesJson["status"]?.ToString() is "ok" && !(updatesJson["data"]?["movies"] is null))
-                {
-                    JEnumerable<JObject>? x = updatesJson["data"]?["movies"]?.Children<JObject>();
-                    if (x != null)
-                    {
-                        foreach (YtsMovie movie in x.Cast<JObject>()
-                                     .Select(newMovie => new YtsMovie(newMovie))
-                                     .Where(movie => downloadedMovies.All(m => m.Id != movie.Id)))
-                        {
-                            downloadedMovies.Add(movie);
-                        }
-                    }
-
-                    page++;
-                    int totalEntries = updatesJson["data"]?["movie_count"]?.ToObject<int>() ?? throw new Exception();
-                    sender.ReportProgress(100 * page / (totalEntries / 50));
-                }
-                else
-                {
-                    morePages = false;
-                }
-            }
-
-            return downloadedMovies;
+            return handler();
         }
         catch (WebException ex)
         {
-            Logger.LogWebException("Could not get movies from YTS due to", ex);
+            Logger.LogWebException($"Could not {message} from YTS due to", ex);
             throw new SourceConnectivityException(ex.Message);
         }
         catch (System.IO.IOException iex)
         {
-            Logger.Error($"Could not get movies from YTS due to {iex.Message}");
+            Logger.Error($"Could not {message} from YTS due to {iex.Message}");
             throw new SourceConnectivityException(iex.Message);
         }
         catch (JsonReaderException jre)
         {
-            Logger.Error($"Could not get movies from YTS due to {jre.Message}");
+            Logger.Error($"Could not {message} from YTS due to {jre.Message}");
             throw new SourceConnectivityException(jre.Message);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
-            Logger.LogHttpRequestException("Could not get movies from YTS due to", wex);
+            Logger.LogHttpRequestException("Could not {message} from YTS due to", wex);
             throw new SourceConnectivityException(ex.Message);
         }
         catch (System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"Could not get movies from YTS due to {ex.Message}");
+            Logger.Warn($"Could not {message} from YTS due to {ex.Message}");
             throw new SourceConnectivityException(ex.Message);
         }
         catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"Could not get movies from YTS due to {ex.Message}");
+            Logger.Warn($"Could not {message} from YTS due to {ex.Message}");
             throw new SourceConnectivityException(ex.Message);
         }
+    }
+
+    private static IEnumerable<YtsMovie> GetMoviesInternal(BackgroundWorker sender, string resolution, int minRating)
+    {
+        List<YtsMovie> downloadedMovies = new();
+        bool morePages = true;
+        int page = 1;
+
+        while (morePages)
+        {
+            JObject updatesJson = HttpHelper.HttpGetRequestWithRetry(
+                APIRoot +
+                $"list_movies.json?quality={resolution}&limit=50&page={page}&minimum_rating={minRating}&with_rt_ratings=true",
+                3, 2);
+
+            if (updatesJson["status"]?.ToString() is "ok" && updatesJson["data"]?["movies"] is not null)
+            {
+                JEnumerable<JObject>? x = updatesJson["data"]?["movies"]?.Children<JObject>();
+                if (x != null)
+                {
+                    foreach (YtsMovie movie in x.Cast<JObject>()
+                                 .Select(newMovie => new YtsMovie(newMovie))
+                                 .Where(movie => downloadedMovies.All(m => m.Id != movie.Id)))
+                    {
+                        downloadedMovies.Add(movie);
+                    }
+                }
+
+                page++;
+                int totalEntries = updatesJson["data"]?["movie_count"]?.ToObject<int>() ?? throw new Exception();
+                sender.ReportProgress(100 * page / (totalEntries / 50));
+            }
+            else
+            {
+                morePages = false;
+            }
+        }
+
+        return downloadedMovies;
     }
 
     public static string GetMandatoryString(this JToken r, string key)
@@ -149,7 +159,7 @@ public static class API
         public string Size => result.GetMandatoryString("size");
     }
 
-    public static YtsMovie? GetMovieByIMDB(string? imdbCode)
+    public static YtsMovie? GetMovieByIMDBInternal(string? imdbCode)
     {
         JObject updatesJson =
             HttpHelper.HttpGetRequestWithRetry(APIRoot + $"movie_details.json?imdb_id={imdbCode}", 3, 2);
@@ -162,7 +172,7 @@ public static class API
         return null;
     }
 
-    public static IEnumerable<YtsMovie>? GetRelatedMovies(int ytsMovieId)
+    public static IEnumerable<YtsMovie>? GetRelatedMoviesInternal(int ytsMovieId)
     {
         JObject updatesJson =
             HttpHelper.HttpGetRequestWithRetry(APIRoot + $"movie_suggestions.json?movie_id={ytsMovieId}", 3, 2);

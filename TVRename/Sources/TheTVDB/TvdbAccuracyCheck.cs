@@ -26,7 +26,7 @@ internal class TvdbAccuracyCheck
         Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
         try
         {
-            CachedMovieInfo? newSi = lc.DownloadMovieNow(si,si.TargetLocale, false);
+            CachedMovieInfo? newSi = lc.DownloadMovieNow(si, si.TargetLocale, false);
 
             if (newSi is null)
             {
@@ -37,7 +37,7 @@ internal class TvdbAccuracyCheck
             if (!Match(newSi, si))
             {
                 Issues.Add(
-                    $"{si.Name} ({si.Id()}) is not up to date: Local is { si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is { newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
+                    $"{si.Name} ({si.Id()}) is not up to date: Local is {si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is {newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
                 si.Dirty = true;
                 if (!MoviesToUpdate.Contains(si))
                 {
@@ -118,7 +118,7 @@ internal class TvdbAccuracyCheck
 
                 EnsureUpdated(si);
             }
-            LocalCache.ReloadEpisodesV4(newSi, si.ActualLocale??new Locale(), newSi, si.SeasonOrder);
+            LocalCache.ReloadEpisodesV4(newSi, si.ActualLocale ?? new Locale(), newSi, si.SeasonOrder);
 
             foreach (Episode newEpisode in newSi.Episodes)
             {
@@ -163,8 +163,8 @@ internal class TvdbAccuracyCheck
 
     private int EpisodeAccuracyCheck(CachedSeriesInfo si, JToken t)
     {
-        long serverUpdateTime = t.GetMandatoryLong("lastUpdated",TVDoc.ProviderType.TheTVDB);
-        int epId = t.GetMandatoryInt("id",TVDoc.ProviderType.TheTVDB);
+        long serverUpdateTime = t.GetMandatoryLong("lastUpdated", TVDoc.ProviderType.TheTVDB);
+        int epId = t.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB);
 
         EpisodeAccuracyCheck(si, serverUpdateTime, epId);
 
@@ -261,15 +261,15 @@ internal class TvdbAccuracyCheck
                     case "movies":
                     case "translatedmovies":
                     case "movie-genres":
-                    {
-                        if (id != targetId)
                         {
+                            if (id != targetId)
+                            {
+                                continue;
+                            }
+
+                            Logger.Warn($"MOVIE: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
                             continue;
                         }
-
-                        Logger.Warn($"MOVIE: {time.FromUnixTime().ToLocalTime()}:{seriesResponse}");
-                        continue;
-                    }
                     case "episodes":
                     case "translatedepisodes":
                         {

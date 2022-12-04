@@ -1,5 +1,5 @@
-using System;
 using BrightIdeasSoftware;
+using System;
 
 namespace TVRename;
 

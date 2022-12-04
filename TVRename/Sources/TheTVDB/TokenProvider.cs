@@ -1,7 +1,7 @@
+using Humanizer;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
-using Humanizer;
 
 namespace TVRename.TheTVDB;
 

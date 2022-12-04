@@ -64,10 +64,10 @@ public static class XmlHelper
 
     public static void WriteElement(this XmlWriter writer, string elementName, double value)
     {
-        WriteElement(writer, elementName, value, null,null);
+        WriteElement(writer, elementName, value, null, null);
     }
 
-    public static void WriteElement(this XmlWriter writer, string elementName, double? value, string? format,IFormatProvider? provider)
+    public static void WriteElement(this XmlWriter writer, string elementName, double? value, string? format, IFormatProvider? provider)
     {
         if (!value.HasValue)
         {
@@ -80,7 +80,7 @@ public static class XmlHelper
         }
         else
         {
-            writer.WriteValue(value.Value.ToString(format,provider));
+            writer.WriteValue(value.Value.ToString(format, provider));
         }
         writer.WriteEndElement();
     }
@@ -218,7 +218,7 @@ public static class XmlHelper
         {
             return;
         }
-        if (e.Elements(elementName).Count()==1)
+        if (e.Elements(elementName).Count() == 1)
         {
             try
             {
@@ -235,7 +235,7 @@ public static class XmlHelper
         }
         else
         {
-            ReplaceElements(e,elementName,value.AsList());
+            ReplaceElements(e, elementName, value.AsList());
         }
     }
 
@@ -382,7 +382,7 @@ public static class XmlHelper
         return defaultValue;
     }
 
-    private static T? ExtractNumber<T>(this XElement xmlSettings, string elementName, Func<string,T> functionToExtract) where T:struct
+    private static T? ExtractNumber<T>(this XElement xmlSettings, string elementName, Func<string, T> functionToExtract) where T : struct
     {
         IEnumerable<XElement> xElements = xmlSettings.Descendants(elementName).ToList();
 

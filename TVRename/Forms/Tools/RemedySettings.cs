@@ -10,7 +10,7 @@ internal class RemedySettings : LongOperation
     private readonly IEnumerable<SettingsCheck> selectedItems;
     private readonly SettingsReview parent;
 
-    public RemedySettings(IEnumerable<SettingsCheck> selectedItems,SettingsReview parent)
+    public RemedySettings(IEnumerable<SettingsCheck> selectedItems, SettingsReview parent)
     {
         this.selectedItems = selectedItems;
         this.parent = parent;
@@ -36,7 +36,7 @@ internal class RemedySettings : LongOperation
                     parent.Remove(selected);
                 }
             }
-            int position = 100* currentRecord++ / (totalRecords + 1);
+            int position = 100 * currentRecord++ / (totalRecords + 1);
             progress?.Invoke(position, selected.CheckName, selected.MediaName);
         }
 

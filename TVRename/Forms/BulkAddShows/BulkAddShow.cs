@@ -35,7 +35,7 @@ public partial class BulkAddShow : Form
     private readonly BulkAddSeriesManager engine;
     private readonly UI mainUi;
 
-    public BulkAddShow(TVDoc doc, BulkAddSeriesManager bam,UI mainUi)
+    public BulkAddShow(TVDoc doc, BulkAddSeriesManager bam, UI mainUi)
     {
         mDoc = doc;
         engine = bam;

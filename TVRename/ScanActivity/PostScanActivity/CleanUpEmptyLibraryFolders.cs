@@ -28,7 +28,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
 
         foreach (ShowConfiguration si in libraryShows)
         {
-            progress(n++, totalRecords, si.ShowName,lastUpdate);
+            progress(n++, totalRecords, si.ShowName, lastUpdate);
 
             foreach (string folderName in si.AllProposedFolderLocations().SelectMany(folderLocation => folderLocation.Value))
             {
@@ -68,7 +68,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
         {
             progress(n++, totalRecords, folder, lastUpdate);
             DirectoryInfo directory = new(folder);
-            foreach (DirectoryInfo testDirectory in  directory.EnumerateDirectories(DirectoryEnumerationOptions.Recursive | DirectoryEnumerationOptions.ContinueOnException).ToList())
+            foreach (DirectoryInfo testDirectory in directory.EnumerateDirectories(DirectoryEnumerationOptions.Recursive | DirectoryEnumerationOptions.ContinueOnException).ToList())
             {
                 string? action = RemoveIfEmpty(testDirectory.FullName);
                 if (action.HasValue())
@@ -109,7 +109,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
         if (CanRemove(folderName))
         {
             //FileHelper.RemoveDirectory(folderName);
-            MDoc.TheActionList.Add(new ActionDeleteDirectory(new DirectoryInfo(folderName),mi,TVSettings.Instance.Tidyup));
+            MDoc.TheActionList.Add(new ActionDeleteDirectory(new DirectoryInfo(folderName), mi, TVSettings.Instance.Tidyup));
             return $"Removed {folderName}";
         }
 
@@ -120,7 +120,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
         if (CanRemove(folderName))
         {
             //FileHelper.RemoveDirectory(folderName);
-            MDoc.TheActionList.Add(new ActionDeleteDirectory(new DirectoryInfo(folderName),si,TVSettings.Instance.Tidyup));
+            MDoc.TheActionList.Add(new ActionDeleteDirectory(new DirectoryInfo(folderName), si, TVSettings.Instance.Tidyup));
             return $"Removed {folderName}";
         }
 
@@ -147,7 +147,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
                 return true;
             }
 
-            bool containsMovieFiles = d.GetFiles("*",System.IO.SearchOption.AllDirectories).Any(s => s.IsMovieOrUsefulFile());
+            bool containsMovieFiles = d.GetFiles("*", System.IO.SearchOption.AllDirectories).Any(s => s.IsMovieOrUsefulFile());
 
             if (!containsMovieFiles && noSubFolders)
             {

@@ -114,7 +114,7 @@ public class Episode
         return TimeZoneHelper.AdjustTzTimeToLocalTime(dt.Value, tz);
     }
 
-    public Episode(int seriesId, CachedSeriesInfo si) :this()
+    public Episode(int seriesId, CachedSeriesInfo si) : this()
     {
         internalSeries = si;
         SeriesId = seriesId;

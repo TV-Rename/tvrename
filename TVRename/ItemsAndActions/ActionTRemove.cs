@@ -61,5 +61,5 @@ internal class ActionTRemove : Action
         }
     }
 
-    public override string Produces => name.TorrentFile??string.Empty;
+    public override string Produces => name.TorrentFile ?? string.Empty;
 }

@@ -7,7 +7,7 @@ public class BEncodeLoader
     private static BTItem ReadString(System.IO.Stream sr, long length)
     {
         System.IO.BinaryReader br = new(sr);
-        return new BTString {Data = br.ReadBytes((int)length) };
+        return new BTString { Data = br.ReadBytes((int)length) };
     }
 
     private static BTItem ReadInt(System.IO.FileStream sr)
@@ -41,7 +41,7 @@ public class BEncodeLoader
     private BTItem ReadDictionary(System.IO.FileStream sr)
     {
         BTDictionary d = new();
-        for (;;)
+        for (; ; )
         {
             BTItem next = ReadNext(sr);
             if (next.Type == BTChunk.kListOrDictionaryEnd || next.Type == BTChunk.kBTEOF)
@@ -51,7 +51,7 @@ public class BEncodeLoader
 
             if (next.Type != BTChunk.kString)
             {
-                return new BTError {Message = "Didn't get string as first of pair in dictionary"};
+                return new BTError { Message = "Didn't get string as first of pair in dictionary" };
             }
 
             BTDictionaryItem di = new(((BTString)next).AsString(), ReadNext(sr));
@@ -62,7 +62,7 @@ public class BEncodeLoader
     private BTItem ReadList(System.IO.FileStream sr)
     {
         BTList ll = new();
-        for (;;)
+        for (; ; )
         {
             BTItem next = ReadNext(sr);
             if (next.Type == BTChunk.kListOrDictionaryEnd)
@@ -96,24 +96,24 @@ public class BEncodeLoader
                 return new BTListOrDictionaryEnd(); // end of list/dictionary/etc.
             // digits mean it is a string of the specified length
             case >= '0' and <= '9':
-            {
-                string r = Convert.ToString(c - '0');
-                while ((c = sr.ReadByte()) != ':')
                 {
-                    r += Convert.ToString(c - '0');
+                    string r = Convert.ToString(c - '0');
+                    while ((c = sr.ReadByte()) != ':')
+                    {
+                        r += Convert.ToString(c - '0');
+                    }
+
+                    return ReadString(sr, Convert.ToInt32(r));
                 }
-
-                return ReadString(sr, Convert.ToInt32(r));
-            }
             default:
-            {
-                BTError e = new()
                 {
-                    Message = $"Error: unknown BEncode item type: {c}"
-                };
+                    BTError e = new()
+                    {
+                        Message = $"Error: unknown BEncode item type: {c}"
+                    };
 
-                return e;
-            }
+                    return e;
+                }
         }
     }
 

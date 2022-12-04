@@ -1,18 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 using CefSharp;
 using CefSharp.WinForms;
 using Microsoft.Win32;
 using MscVersion;
 using NLog;
-using Alphaleonis.Win32.Filesystem;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace TVRename;
 
-public class CefWrapper{
+public class CefWrapper
+{
     //We are using the singleton design pattern
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
@@ -86,8 +87,8 @@ public class CefWrapper{
     private void SetArchitecturePaths(CefSettings settings)
     {
         architectureSpecificBrowserPath = Path.Combine(
-            AppDomain.CurrentDomain.SetupInformation.ApplicationBase,"runtimes",
-            "win-" + (Environment.Is64BitProcess ? "x64" : "x86"),"native",
+            AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "runtimes",
+            "win-" + (Environment.Is64BitProcess ? "x64" : "x86"), "native",
             "CefSharp.BrowserSubprocess.exe");
 
         if (File.Exists(architectureSpecificBrowserPath))
@@ -101,8 +102,8 @@ public class CefWrapper{
         }
 
         architectureSpecificLocalesDirPath = Path.Combine(
-            AppDomain.CurrentDomain.SetupInformation.ApplicationBase,"runtimes",
-            "win-" + (Environment.Is64BitProcess ? "x64" : "x86"),"native",
+            AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "runtimes",
+            "win-" + (Environment.Is64BitProcess ? "x64" : "x86"), "native",
             "locales");
 
         if (Directory.Exists(architectureSpecificLocalesDirPath))
@@ -116,8 +117,8 @@ public class CefWrapper{
         }
 
         architectureSpecificResourcesDirPath = Path.Combine(
-            AppDomain.CurrentDomain.SetupInformation.ApplicationBase,"runtimes",
-            "win-" + (Environment.Is64BitProcess ? "x64" : "x86"),"native");
+            AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "runtimes",
+            "win-" + (Environment.Is64BitProcess ? "x64" : "x86"), "native");
 
         if (Directory.Exists(architectureSpecificResourcesDirPath))
         {

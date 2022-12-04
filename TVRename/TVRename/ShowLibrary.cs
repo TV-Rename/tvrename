@@ -72,7 +72,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
         foreach (ShowConfiguration toAdd in newShow)
         {
-            AddShow(toAdd,showErrors);
+            AddShow(toAdd, showErrors);
         }
     }
 
@@ -512,7 +512,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             eis.RemoveAt(index); // remove old one
 
             foreach (int i in Enumerable.Range(1, numberOfNewParts))
-                // make numberOfNewParts new parts
+            // make numberOfNewParts new parts
             {
                 ProcessedEpisode pe2 =
                     new(ei, si, ProcessedEpisode.ProcessedEpisodeType.split)
@@ -813,7 +813,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
                 }
             }
 
-            AddShow(si,false);
+            AddShow(si, false);
         }
     }
 

@@ -188,32 +188,32 @@ public class qBitTorrent : IDownloadProvider
         switch (TVSettings.Instance.qBitTorrentAPIVersion)
         {
             case qBitTorrentAPIVersion.v1:
-            {
-                return path switch
                 {
-                    qBitTorrentAPIPath.settings => url + "query/preferences",
-                    qBitTorrentAPIPath.torrents => url + "query/torrents?filter=all",
-                    qBitTorrentAPIPath.torrentDetails => url + "query/propertiesFiles/",
-                    qBitTorrentAPIPath.addFile => url + "command/upload",
-                    qBitTorrentAPIPath.addUrl => url + "command/download",
-                    qBitTorrentAPIPath.delete => url + "command/delete",
-                    _ => throw new ArgumentOutOfRangeException(nameof(path), path, null)
-                };
-            }
+                    return path switch
+                    {
+                        qBitTorrentAPIPath.settings => url + "query/preferences",
+                        qBitTorrentAPIPath.torrents => url + "query/torrents?filter=all",
+                        qBitTorrentAPIPath.torrentDetails => url + "query/propertiesFiles/",
+                        qBitTorrentAPIPath.addFile => url + "command/upload",
+                        qBitTorrentAPIPath.addUrl => url + "command/download",
+                        qBitTorrentAPIPath.delete => url + "command/delete",
+                        _ => throw new ArgumentOutOfRangeException(nameof(path), path, null)
+                    };
+                }
 
             case qBitTorrentAPIVersion.v2:
-            {
-                return path switch
                 {
-                    qBitTorrentAPIPath.settings => url + "api/v2/app/preferences",
-                    qBitTorrentAPIPath.torrents => url + "api/v2/torrents/info?filter=all",
-                    qBitTorrentAPIPath.torrentDetails => url + "api/v2/torrents/files?hash=",
-                    qBitTorrentAPIPath.addFile => url + "api/v2/torrents/add",
-                    qBitTorrentAPIPath.addUrl => url + "api/v2/torrents/add",
-                    qBitTorrentAPIPath.delete => url + "api/v2/torrents/delete",
-                    _ => throw new ArgumentOutOfRangeException(nameof(path), path, null)
-                };
-            }
+                    return path switch
+                    {
+                        qBitTorrentAPIPath.settings => url + "api/v2/app/preferences",
+                        qBitTorrentAPIPath.torrents => url + "api/v2/torrents/info?filter=all",
+                        qBitTorrentAPIPath.torrentDetails => url + "api/v2/torrents/files?hash=",
+                        qBitTorrentAPIPath.addFile => url + "api/v2/torrents/add",
+                        qBitTorrentAPIPath.addUrl => url + "api/v2/torrents/add",
+                        qBitTorrentAPIPath.delete => url + "api/v2/torrents/delete",
+                        _ => throw new ArgumentOutOfRangeException(nameof(path), path, null)
+                    };
+                }
 
             case qBitTorrentAPIVersion.v0:
                 throw new NotSupportedException("Only qBitTorrent API v1 and v2 are supported");

@@ -2,7 +2,7 @@ namespace TVRename;
 
 internal class MovieFolderCheck : MovieCheck
 {
-    public MovieFolderCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc) {}
+    public MovieFolderCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc) { }
 
     protected override string MovieCheckName => "Use either manual or automatic folders";
 

@@ -54,7 +54,7 @@ public partial class LogViewer : Form
         string logFileName = ((SimpleLayout)target.FileName).FixedText;
         try
         {
-            System.Diagnostics.Process.Start("notepad.exe",logFileName);
+            System.Diagnostics.Process.Start("notepad.exe", logFileName);
         }
         catch (Win32Exception)
         {

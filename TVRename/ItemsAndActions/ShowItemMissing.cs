@@ -5,7 +5,7 @@ namespace TVRename;
 public class ShowItemMissing : ItemMissing
 {
     public ShowItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder)
-        : base(string.Empty,string.Empty,whereItShouldBeFolder)
+        : base(string.Empty, string.Empty, whereItShouldBeFolder)
     {
         Episode = pe;
         Filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe, null, whereItShouldBeFolder.Length));

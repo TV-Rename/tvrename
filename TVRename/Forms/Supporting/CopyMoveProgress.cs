@@ -30,14 +30,14 @@ public partial class CopyMoveProgress : Form
     public CopyMoveProgress(TVDoc engine, TVDoc.ActionSettings settings, System.Action doOnClose)
     {
         mDoc = engine.ActionManager;
-        mToDo =settings.DoAll ? engine.TheActionList: settings.Lvr;
+        mToDo = settings.DoAll ? engine.TheActionList : settings.Lvr;
         mDoOnClose = doOnClose;
         InitializeComponent();
         copyTimer.Start();
         diskSpaceTimer.Start();
     }
 
-    private static int Normalise(double x) => ((int)Math.Round(x)).Between(0,100);
+    private static int Normalise(double x) => ((int)Math.Round(x)).Between(0, 100);
 
     private void SetPercentages(double file, double group)
     {
@@ -45,7 +45,7 @@ public partial class CopyMoveProgress : Form
         txtTotal.Text = Normalise(group) + "% Done";
 
         // progress bars go 0 to MAX_PROGRESS_BAR
-        pbFile.Value = (pbFile.Maximum / 100 * Normalise(file)).Between(pbFile.Minimum,pbFile.Maximum);
+        pbFile.Value = (pbFile.Maximum / 100 * Normalise(file)).Between(pbFile.Minimum, pbFile.Maximum);
         pbGroup.Value = (pbGroup.Maximum / 100 * Normalise(group)).Between(pbGroup.Minimum, pbGroup.Maximum);
         pbFile.Update();
         pbGroup.Update();
@@ -197,7 +197,7 @@ public partial class CopyMoveProgress : Form
             }
         }
 
-        pbDiskSpace.Value = diskValue.Between(pbDiskSpace.Minimum,pbDiskSpace.Maximum);
+        pbDiskSpace.Value = diskValue.Between(pbDiskSpace.Minimum, pbDiskSpace.Maximum);
         txtDiskSpace.Text = diskText;
     }
 
@@ -258,7 +258,7 @@ public partial class CopyMoveProgress : Form
 
     private void CopyMoveProgress_SizeChanged(object sender, EventArgs e)
     {
-        if (sender is not Form {WindowState: FormWindowState.Minimized} childWindow)
+        if (sender is not Form { WindowState: FormWindowState.Minimized } childWindow)
         {
             return;
         }

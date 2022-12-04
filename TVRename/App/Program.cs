@@ -6,13 +6,13 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename.App;
 

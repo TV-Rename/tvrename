@@ -6,11 +6,11 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
@@ -330,7 +330,7 @@ internal abstract class FileFinder : Finder
             }
             catch (System.IO.IOException io)
             {
-                LOGGER.Warn(io,$"Could not access {action.SourceDirectory}, so not copying any subtitles from it.");
+                LOGGER.Warn(io, $"Could not access {action.SourceDirectory}, so not copying any subtitles from it.");
             }
             catch (UnauthorizedAccessException)
             {
@@ -385,7 +385,7 @@ internal abstract class FileFinder : Finder
 
     public static bool IsSubsFolder(DirectoryInfo folder)
     {
-        return TVSettings.Instance.SubsFolderNames.Any(x=>string.Equals(x,folder.Name,StringComparison.CurrentCultureIgnoreCase));
+        return TVSettings.Instance.SubsFolderNames.Any(x => string.Equals(x, folder.Name, StringComparison.CurrentCultureIgnoreCase));
     }
 
     protected void KeepTogether(ItemList actionlist, bool fromLibrary)
@@ -415,7 +415,7 @@ internal abstract class FileFinder : Finder
             string toname = action.To.RemoveExtension();
 
             //We have the arbitary >9 limit to make sure that a file with a short name does not drag a whole load of other files with it
-            FileInfo[] flist = basename.Length >9
+            FileInfo[] flist = basename.Length > 9
                 ? action.From.Directory.GetFiles(basename + "*.*")
                 : action.From.Directory.GetFiles(basename + ".*");
             foreach (FileInfo fi in flist)
@@ -646,7 +646,7 @@ internal abstract class FileFinder : Finder
     }
 
     private bool OtherActionsMatch(FileInfo matchedFile, Item me, bool useFullPath)
-        //This is used to check whether the selected file may match any other files we are looking for
+    //This is used to check whether the selected file may match any other files we are looking for
     {
         foreach (ShowItemMissing testMissingAction in ActionList.MissingEpisodes)
         {

@@ -17,7 +17,7 @@ internal static class LinqHelper
 
         return items.Contains(item);
     }
-    public static List<T> AsList<T>(this T? item) => item is null ? new List<T>() :new List<T> { item };
+    public static List<T> AsList<T>(this T? item) => item is null ? new List<T>() : new List<T> { item };
 
     public static Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP = 4)
     {
@@ -49,7 +49,7 @@ internal static class LinqHelper
         return WithTarget(source, countFunction, x => x.Max(), (y, z) => y == z);
     }
 
-    private static IEnumerable<T> WithTarget<T,TX>(this IEnumerable<T>? source, Func<T, TX> countFunction,Func<IEnumerable<TX>, TX> groupFunction, Func<TX,TX,bool> comparisionOperator )
+    private static IEnumerable<T> WithTarget<T, TX>(this IEnumerable<T>? source, Func<T, TX> countFunction, Func<IEnumerable<TX>, TX> groupFunction, Func<TX, TX, bool> comparisionOperator)
     {
         if (source is null)
         {
@@ -61,7 +61,7 @@ internal static class LinqHelper
             return new List<T>();
         }
         TX targetValue = groupFunction(enumerable.Select(countFunction));
-        return enumerable.Where(x => comparisionOperator( countFunction(x) ,targetValue));
+        return enumerable.Where(x => comparisionOperator(countFunction(x), targetValue));
     }
 
     public static void Swap<T>(

@@ -329,7 +329,7 @@ public partial class EditSeason : Form
             return;
         }
 
-        for (int index = lvSeenEpisodes.SelectedItems.Count-1; index >=0; index--)
+        for (int index = lvSeenEpisodes.SelectedItems.Count - 1; index >= 0; index--)
         {
             ProcessedEpisode pe = (ProcessedEpisode)lvSeenEpisodes.SelectedItems[index].Tag;
             episodesToRemoveFromSeen.Add(pe);

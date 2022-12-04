@@ -229,7 +229,7 @@ public class CustomEpisodeName
                 ? pe.Show.CustomNamingFormat
                 : styleString;
 
-            string showName = pe.Show.ShowName.Replace("[","\\[").Replace( "]", "\\]");
+            string showName = pe.Show.ShowName.Replace("[", "\\[").Replace("]", "\\]");
 
             string episodeName = pe.Name.Trim();
             if (urlEncode)

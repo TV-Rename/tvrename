@@ -1,7 +1,7 @@
+using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename.Forms.Tools;
 
@@ -129,7 +129,7 @@ public partial class QuickRename : Form, IDialogParent
 
                 if (bestShow != null && !mDoc.AlreadyContains(bestShow))
                 {
-                    mDoc.Add(bestShow.AsList(),true);
+                    mDoc.Add(bestShow.AsList(), true);
                     mDoc.TvAddedOrEdited(true, false, false, parent, bestShow);
 
                     Logger.Info($"Added new show called: {bestShow.ShowName}");

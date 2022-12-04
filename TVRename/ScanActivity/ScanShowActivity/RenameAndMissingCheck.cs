@@ -166,7 +166,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
                 string newName = TVSettings.Instance.FilenameFriendly(
                     TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
-                FileInfo? fileWorthAdding = CheckFile(folder, fi, actualFile, newName, ep, files,settings);
+                FileInfo? fileWorthAdding = CheckFile(folder, fi, actualFile, newName, ep, files, settings);
 
                 if (fileWorthAdding != null)
                 {
@@ -234,7 +234,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
             //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
             if (FileHelper.FileExistsCaseSensitive(files, newFile))
             {
-                if (newFile.Length == actualFile.Length && !MatchesSourceEpisode(ep,actualFile) && (newFile.IsThumb() || newFile.IsImageFile()))
+                if (newFile.Length == actualFile.Length && !MatchesSourceEpisode(ep, actualFile) && (newFile.IsThumb() || newFile.IsImageFile()))
                 {
                     //Thumbnail that already exists
                     LOGGER.Info(
@@ -298,7 +298,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
         return null;
     }
 
-    private static bool MatchesSourceEpisode(ProcessedEpisode episode,FileInfo actualFile)
+    private static bool MatchesSourceEpisode(ProcessedEpisode episode, FileInfo actualFile)
     {
         foreach (Episode ep in episode.SourceEpisodes)
         {

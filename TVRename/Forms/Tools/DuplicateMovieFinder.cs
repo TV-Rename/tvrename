@@ -189,10 +189,10 @@ public partial class DuplicateMovieFinder : Form
 
             case FileHelper.VideoComparison.cantTell:
             case FileHelper.VideoComparison.similar:
-            {
-                AskUserAboutFileReplacement(file1, file2, mlastSelectedMovie, ui);
-                return;
-            }
+                {
+                    AskUserAboutFileReplacement(file1, file2, mlastSelectedMovie, ui);
+                    return;
+                }
             //the other cases of the files being the same or the existing file being better are not enough to save the file
             case FileHelper.VideoComparison.firstFileBetter:
             case FileHelper.VideoComparison.same:

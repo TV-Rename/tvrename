@@ -6,9 +6,11 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using Alphaleonis.Win32.Filesystem;
 using BrightIdeasSoftware;
 using CefSharp.WinForms;
 using Humanizer;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using NLog;
 using System;
 using System.Collections;
@@ -32,8 +34,6 @@ using TVRename.Properties;
 using TVRename.Utility.Helper;
 using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
-using Alphaleonis.Win32.Filesystem;
-using Microsoft.WindowsAPICodePack.Taskbar;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using MessageBox = System.Windows.Forms.MessageBox;
 using SystemColors = System.Drawing.SystemColors;
@@ -141,31 +141,31 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         tmrPeriodicScan.Enabled = false;
 
-        UpdateSplashStatus(splash, "Filling Shows",55);
+        UpdateSplashStatus(splash, "Filling Shows", 55);
         mDoc.TvLibrary.GenDict();
         FillMyShows(true);
-        UpdateSplashStatus(splash, "Filling Movies",65);
+        UpdateSplashStatus(splash, "Filling Movies", 65);
         FillMyMovies();
         UpdateSearchButtons();
         SetScan(TVSettings.Instance.UIScanType);
         ClearInfoWindows();
-        UpdateSplashStatus(splash, "Updating WTW",75);
+        UpdateSplashStatus(splash, "Updating WTW", 75);
         mDoc.UpdateDenormalisations();
-        UpdateSplashStatus(splash, "Updating WTW",80);
+        UpdateSplashStatus(splash, "Updating WTW", 80);
         FillWhenToWatchList();
         SortSchedule(3);
-        UpdateSplashStatus(splash, "Write Upcoming",85);
+        UpdateSplashStatus(splash, "Write Upcoming", 85);
         mDoc.WriteUpcoming();
-        UpdateSplashStatus(splash, "Write Recent",88);
+        UpdateSplashStatus(splash, "Write Recent", 88);
         mDoc.WriteRecent();
-        UpdateSplashStatus(splash, "Setting Notifications",90);
+        UpdateSplashStatus(splash, "Setting Notifications", 90);
         ShowHideNotificationIcon();
 
-        UpdateSplashStatus(splash, "Creating Monitors",92);
+        UpdateSplashStatus(splash, "Creating Monitors", 92);
         mAutoFolderMonitor = new AutoFolderMonitor(mDoc, this, TVSettings.Instance.FolderMonitorDelaySeconds);
         if (TVSettings.Instance.MonitorFolders)
         {
-            UpdateSplashStatus(splash, "Starting Monitor",95);
+            UpdateSplashStatus(splash, "Starting Monitor", 95);
             mAutoFolderMonitor.Start();
         }
 
@@ -174,17 +174,18 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         SetupObjectListForScanResults();
 
-        if (TVSettings.Instance.RunOnStartUp()) {
-            UpdateSplashStatus(splash, "Running Auto-scan",100);
+        if (TVSettings.Instance.RunOnStartUp())
+        {
+            UpdateSplashStatus(splash, "Running Auto-scan", 100);
         }
 
         SetStartUpTab();
-        UpdateSplashStatus(splash, "Opening...",100);
+        UpdateSplashStatus(splash, "Opening...", 100);
     }
 
     private static void WaitForCefInitialised()
     {
-        WaitFor(() => CefSharp.Cef.IsInitialized, 10, "browser to initialise",true);
+        WaitFor(() => CefSharp.Cef.IsInitialized, 10, "browser to initialise", true);
     }
 
     private static void WaitFor(Func<bool> func, int maxSeconds, string textMessage, bool doLogging)
@@ -590,7 +591,8 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         SetHtmlBody(chrMovieTrailer, ShowHtmlHelper.CreateOldPage(defaultText));
     }
 
-    private void MoreBusy() {
+    private void MoreBusy()
+    {
         btnScan.Enabled = false;
         tbQuickScan.Enabled = false;
         tpRecentScan.Enabled = false;
@@ -656,7 +658,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (a.DoAll)
         {
             ActionAction(true, UNATTENDED, true);
-            WaitFor(() => bwAction.IsBusy == false,10000,"actions to execute", false);
+            WaitFor(() => bwAction.IsBusy == false, 10000, "actions to execute", false);
         }
 
         if (a.Save)
@@ -678,7 +680,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void WaitForScanToComplete()
     {
-        WaitFor(()=> bwScan.IsBusy == false, 10000, "scan to complete",false);
+        WaitFor(() => bwScan.IsBusy == false, 10000, "scan to complete", false);
     }
 
     // ReSharper disable once InconsistentNaming
@@ -808,25 +810,25 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             case TVSettings.UpdateCheckMode.Off:
                 return;
             case TVSettings.UpdateCheckMode.Interval:
-            {
-                TimeSpan lastUpdate = mDoc.CurrentAppState.UpdateCheck.LastUpdate;
-                TimeSpan interval = TVSettings.Instance.UpdateCheckInterval;
-                if (lastUpdate >= interval)
+                {
+                    TimeSpan lastUpdate = mDoc.CurrentAppState.UpdateCheck.LastUpdate;
+                    TimeSpan interval = TVSettings.Instance.UpdateCheckInterval;
+                    if (lastUpdate >= interval)
+                    {
+                        UpdateTimer.Start();
+                    }
+                    return;
+                }
+            case TVSettings.UpdateCheckMode.Everytime:
                 {
                     UpdateTimer.Start();
+                    return;
                 }
-                return;
-            }
-            case TVSettings.UpdateCheckMode.Everytime:
-            {
-                UpdateTimer.Start();
-                return;
-            }
             default:
-            {
-                UpdateTimer.Start();
-                return;
-            }
+                {
+                    UpdateTimer.Start();
+                    return;
+                }
         }
     }
 
@@ -1300,7 +1302,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         movieTree.EndUpdate();
         btnMovieFilter.BackColor =
             filter.IsEnabled
-                ?Color.LightGray
+                ? Color.LightGray
                 : Color.Transparent;
     }
 
@@ -1561,7 +1563,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         SetWeb(web,
             () =>
             {
-                web.Load(link??string.Empty);
+                web.Load(link ?? string.Empty);
             });
     }
 
@@ -2075,7 +2077,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 first = false;
             }
 
-            showRightClickMenu.Items.Add("Open: " + folder,(_, _) => folder.OpenFolder());
+            showRightClickMenu.Items.Add("Open: " + folder, (_, _) => folder.OpenFolder());
         }
     }
 
@@ -2148,7 +2150,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             showRightClickMenu.Add($"Quick {scanText}", (_, _) => RightMenuScan(sil, TVSettings.ScanType.FastSingleShow));
         }
 
-        if (sil.Count == 1 && si!= null)
+        if (sil.Count == 1 && si != null)
         {
             showRightClickMenu.Add("Edit TV Show", (_, _) => EditShow(si));
             showRightClickMenu.Add("Delete TV Show", (_, _) => DeleteShow(si));
@@ -2167,7 +2169,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 }
             }
 
-            if (ep != null )
+            if (ep != null)
             {
                 AddEpisodesMenu(ep);
             }
@@ -2243,7 +2245,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void IncludeSeason(ShowConfiguration si, int seasonNumber)
     {
         si.IgnoreSeasons.Remove(seasonNumber);
-        ShowAddedOrEdited(false, false, si,true);
+        ShowAddedOrEdited(false, false, si, true);
     }
 
     private void IgnoreSeason(ShowConfiguration si, int seasonNumber)
@@ -2524,7 +2526,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         BGDownloadTimer.Start();
 
         if (TVSettings.Instance.BGDownload && mDoc.DownloadsRemaining() == 0)
-            // only do auto-download if don't have stuff to do already
+        // only do auto-download if don't have stuff to do already
         {
             BackgroundDownloadNow();
         }
@@ -2865,7 +2867,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         DialogResult dr = aem.ShowDialog(this);
         if (dr == DialogResult.OK)
         {
-            mDoc.Add(mov.AsList(),false);
+            mDoc.Add(mov.AsList(), false);
             FillMyMovies(mov);
 
             mDoc.MoviesAddedOrEdited(true, false, WindowState == FormWindowState.Minimized, this, mov);
@@ -2894,12 +2896,12 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         DialogResult dr = aes.ShowDialog(this);
         if (dr == DialogResult.OK)
         {
-            mDoc.Add(si.AsList(),false);
+            mDoc.Add(si.AsList(), false);
 
-            ShowAddedOrEdited(false, false, si,false);
+            ShowAddedOrEdited(false, false, si, false);
             SelectShow(si);
             ShowAddedOrEdited(true, false, si, false);
-            Logger.Info($"Added new show called {si.ShowName}" );
+            Logger.Info($"Added new show called {si.ShowName}");
         }
         else
         {
@@ -2957,7 +2959,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         ShowAddedOrEdited(false, false, si, true);
     }
 
-    private void RemoveFromDisk(string folderName,MediaConfiguration si)
+    private void RemoveFromDisk(string folderName, MediaConfiguration si)
     {
         if (!Directory.Exists(folderName))
         {
@@ -2970,7 +2972,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        if (TVSettings.Instance.LibraryFolders.Any(x=>x.IsSubfolderOf(folderName)))
+        if (TVSettings.Instance.LibraryFolders.Any(x => x.IsSubfolderOf(folderName)))
         {
             Logger.Warn($"Did not remove {folderName} as it is a library folder");
             return;
@@ -2991,13 +2993,14 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             return;
         }
-        try {
+        try
+        {
             IEnumerable<string> videofilesThatWouldBeDeleted = Directory
                 .GetFiles(folderName, "*", System.IO.SearchOption.AllDirectories)
                 .Where(f => f.IsMovieFile())
-                .Select(s=>s.TrimStartString(folderName));
+                .Select(s => s.TrimStartString(folderName));
 
-            List<(ShowConfiguration,string)> showsthatmatchanyfiles =
+            List<(ShowConfiguration, string)> showsthatmatchanyfiles =
                 mDoc.TvLibrary.Shows
                     .Where(show => show != si)
                     .SelectMany(_ => videofilesThatWouldBeDeleted, (show, filename) => new { show, filename })
@@ -3022,7 +3025,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 }
             }
 
-            List<(MovieConfiguration,string)> moviesthatmatchanyfiles = mDoc.FilmLibrary.Movies
+            List<(MovieConfiguration, string)> moviesthatmatchanyfiles = mDoc.FilmLibrary.Movies
                 .Where(show => show != si)
                 .SelectMany(_ => videofilesThatWouldBeDeleted, (show, filename) => new { show, filename })
                 .Where(t => t.show.NameMatch(t.filename))
@@ -3079,7 +3082,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        if (TVSettings.Instance.DeleteMovieFromDisk && si.Format!= MovieConfiguration.MovieFolderFormat.multiPerDirectory)
+        if (TVSettings.Instance.DeleteMovieFromDisk && si.Format != MovieConfiguration.MovieFolderFormat.multiPerDirectory)
         {
             foreach (string directory in si.Locations)
             {
@@ -3174,7 +3177,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             FillMyMovies();
             SelectMovie(si);
 
-            Logger.Info($"Modified movie called {si.ShowName}" );
+            Logger.Info($"Modified movie called {si.ShowName}");
         }
 
         mDoc.AllowAutoScan();
@@ -3200,8 +3203,8 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         List<ShowConfiguration> shows = enumerable.Select(x => x.Series).OfType<ShowConfiguration>().ToList();
         List<MovieConfiguration> movies = enumerable.Select(x => x.Movie).OfType<MovieConfiguration>().ToList();
 
-        mDoc.ForceRefreshBeforeRescan(shows,movies, unattended, WindowState == FormWindowState.Minimized, this);
-        UiScan(shows,movies,unattended,TVSettings.ScanType.Incremental,MediaConfiguration.MediaType.both);
+        mDoc.ForceRefreshBeforeRescan(shows, movies, unattended, WindowState == FormWindowState.Minimized, this);
+        UiScan(shows, movies, unattended, TVSettings.ScanType.Incremental, MediaConfiguration.MediaType.both);
     }
 
     internal void ForceMovieRefresh(IEnumerable<MovieConfiguration>? sis, bool unattended)
@@ -3324,7 +3327,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             SetHtmlBody(chrMovieTrailer, ShowHtmlHelper.CreateOldPage("Not available for this Movie"));
         }
 
-        ResetRunBackGroundWorker(bwMovieHTMLGenerator,si);
+        ResetRunBackGroundWorker(bwMovieHTMLGenerator, si);
     }
 
     private void MyMoviesTree_MouseClick(object sender, MouseEventArgs e)
@@ -3610,7 +3613,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             movies ?? new List<MovieConfiguration>(), unattended, hidden, st, media, this, scanProgDlg, cts.Token);
         mDoc.SetScanSettings(scanSettings);
 
-        TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal,Handle);
+        TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, Handle);
         bwScan.RunWorkerAsync(scanSettings);
         ShowDialogAndWait(cts);
     }
@@ -3789,7 +3792,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         byte[] oldState = olvAction.SaveState();
         olvAction.BeginUpdate();
         Logger.Info("UI: Updating Actions: Adding Data");
-        olvAction.SetObjects(mDoc.TheActionList,true);
+        olvAction.SetObjects(mDoc.TheActionList, true);
         Logger.Info("UI: Updating Actions: Rebuilding Columns");
         olvAction.RebuildColumns();
         Logger.Info("UI: Updating Actions: Restoring State");
@@ -3822,11 +3825,11 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         TVDoc.ActionSettings sett = new(unattended: unattended, doAll: doAll,
             lvr: checkedNotSelected ? GetCheckedItems() : GetSelectedItems(), token: actionCancellationToken);
 
-        bool showUi = WindowState !=FormWindowState.Minimized && !mDoc.Args.Hide && Visible && Environment.UserInteractive;
+        bool showUi = WindowState != FormWindowState.Minimized && !mDoc.Args.Hide && Visible && Environment.UserInteractive;
         // If not /hide, show CopyMoveProgress dialog
         if (showUi)
         {
-            CopyMoveProgress cmp = new(mDoc,sett, () => actionCancellationToken.Cancel());
+            CopyMoveProgress cmp = new(mDoc, sett, () => actionCancellationToken.Cancel());
             ShowChild(cmp);
         }
 
@@ -3874,7 +3877,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         mDoc.PreventAutoScan("Bulk add TV Shows is open");
 
         BulkAddSeriesManager bam = new(mDoc);
-        BulkAddShow fm = new(mDoc, bam,this);
+        BulkAddShow fm = new(mDoc, bam, this);
         fm.ShowDialog(this);
         FillMyShows(true);
 
@@ -3976,7 +3979,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (episode != null)
         {
             showRightClickMenu.Add("Ignore Entire Season", (_, _) => IgnoreSelectedSeasons(lvr));
-            showRightClickMenu.Add("Force Refresh and Rescan Show", (_, _) => ForceRefreshAndRescanShows(lvr,false));
+            showRightClickMenu.Add("Force Refresh and Rescan Show", (_, _) => ForceRefreshAndRescanShows(lvr, false));
         }
         showRightClickMenu.Add("Remove Selected", (_, _) => ActionDeleteSelected());
 
@@ -4002,7 +4005,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             {
                 tsi.DropDownItems.Add(new ToolStripSeparator());
             }
-            tsi.DropDownItems.Add("Jackett Search",(_, _) => JackettFinder.SearchForEpisode(ep));
+            tsi.DropDownItems.Add("Jackett Search", (_, _) => JackettFinder.SearchForEpisode(ep));
         }
 
         showRightClickMenu.Items.Add(tsi);
@@ -4239,7 +4242,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
         ServerRelease? result = await tuv.ConfigureAwait(false);
 
-        uiDisp.Invoke(() => NotifyUpdates(result, true,false));
+        uiDisp.Invoke(() => NotifyUpdates(result, true, false));
     }
 
     private void NotifyUpdates(ServerRelease? update, bool manuallyTriggered, bool inSilentMode)
@@ -4296,7 +4299,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
         ServerRelease? result = await tuv.ConfigureAwait(false);
 
-        uiDisp.Invoke(() => NotifyUpdates(result, true,false));
+        uiDisp.Invoke(() => NotifyUpdates(result, true, false));
     }
 
     private void tmrPeriodicScan_Tick(object sender, EventArgs e) => RunAutoScan("Periodic Scan");
@@ -4496,7 +4499,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         internalCheckChange = true;
 
-        foreach(Item x in mDoc.TheActionList.Where(isValid))
+        foreach (Item x in mDoc.TheActionList.Where(isValid))
         {
             x.CheckedItem = checkedStatus;
         }
@@ -4800,7 +4803,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         olvAction.AlwaysGroupByColumn = null;
         olvAction.CustomSorter = delegate { olvAction.ListViewItemSorter = new ListViewActionItemSorter(); };
         olvAction.Sort(olvType, SortOrder.Ascending);
-        olvAction.BuildGroups(olvType, SortOrder.Ascending,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
+        olvAction.BuildGroups(olvType, SortOrder.Ascending, olvShowColumn, SortOrder.Ascending, olvSeason, SortOrder.Ascending);
         //olvAction.Sort();
         //olvAction.BuildGroups(olvType,SortOrder.Ascending);//(olvType, SortOrder.Ascending,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
         olvAction.ResetColumnFiltering();
@@ -4884,7 +4887,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
         }
-        e.Result = new HtmlUpdateSettings(s,html,chrSummary);
+        e.Result = new HtmlUpdateSettings(s, html, chrSummary);
     }
 
     private void ToolStripButton1_Click(object sender, EventArgs e)
@@ -5078,7 +5081,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             Logger.Error(exception, $"Error Occurred Creating Movie Summary for {si?.ShowName}");
         }
-        e.Result = new HtmlUpdateSettings(si,html,chrMovieInformation);
+        e.Result = new HtmlUpdateSettings(si, html, chrMovieInformation);
     }
 
     private void movieCollectionSummaryLogToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5100,7 +5103,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         mDoc.PreventAutoScan("Bulk Add Movies");
 
         BulkAddMovieManager bam = new(mDoc);
-        BulkAddMovie fm = new(mDoc, bam,this);
+        BulkAddMovie fm = new(mDoc, bam, this);
         fm.ShowDialog(this);
         FillMyMovies();
 
@@ -5363,7 +5366,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             e.ColumnToSort = new OLVColumn("RawEp", "EpisodeNumber");
         }
 
-        if (e.ColumnToSort==olvSeason)
+        if (e.ColumnToSort == olvSeason)
         {
             e.ColumnToSort = new OLVColumn("RawSe", "SeasonNumberAsInt");
         }

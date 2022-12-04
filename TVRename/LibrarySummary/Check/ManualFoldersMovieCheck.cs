@@ -1,7 +1,7 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
@@ -10,7 +10,7 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
     public ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
     {
     }
-    
+
     protected override void FixInternal()
     {
         if (Movie.UseManualLocations && Movie.ManualLocations.Count == 1 && !Movie.AutomaticFolderRoot.HasValue())
@@ -36,39 +36,39 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
                 Movie.UseManualLocations = false;
                 return;
             case 1:
-            {
-                DirectoryInfo source = new(Movie.ManualLocations.First());
-                if (!source.Exists)
                 {
-                    Movie.UseManualLocations = false;
+                    DirectoryInfo source = new(Movie.ManualLocations.First());
+                    if (!source.Exists)
+                    {
+                        Movie.UseManualLocations = false;
+                        Movie.UseAutomaticFolders = true;
+                        return;
+                    }
+
+                    if (!source.EnumerateFiles().Any() && !source.EnumerateDirectories().Any())
+                    {
+                        //directory has nothing in it
+                        FileHelper.RemoveDirectory(source.FullName);
+                        Movie.UseManualLocations = false;
+                        Movie.UseAutomaticFolders = true;
+                        return;
+                    }
+
+                    //try to copy/move files
+                    string automaticLocation = Movie.AutoFolderNameForMovie();
+
+                    if (source.FullName.Equals(automaticLocation, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        Movie.UseAutomaticFolders = true;
+                        Movie.UseManualLocations = false;
+                        return;
+                    }
+
+                    TryToMoveFiles(source, automaticLocation);
                     Movie.UseAutomaticFolders = true;
-                    return;
-                }
-
-                if (!source.EnumerateFiles().Any() && !source.EnumerateDirectories().Any())
-                {
-                    //directory has nothing in it
-                    FileHelper.RemoveDirectory(source.FullName);
                     Movie.UseManualLocations = false;
-                    Movie.UseAutomaticFolders = true;
-                    return;
+                    break;
                 }
-
-                //try to copy/move files
-                string automaticLocation = Movie.AutoFolderNameForMovie();
-
-                if (source.FullName.Equals(automaticLocation, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    Movie.UseAutomaticFolders = true;
-                    Movie.UseManualLocations = false;
-                    return;
-                }
-
-                TryToMoveFiles(source, automaticLocation);
-                Movie.UseAutomaticFolders = true;
-                Movie.UseManualLocations = false;
-                break;
-            }
         }
     }
 
@@ -141,7 +141,7 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
 
         fromDirectory.MoveTo(toDirectory);
 
-        LOGGER.Info($"Moved whole directory {fromDirectory.FullName } to {toDirectory}");
+        LOGGER.Info($"Moved whole directory {fromDirectory.FullName} to {toDirectory}");
     }
 
     protected override string FieldName => "Use manual folders";

@@ -146,7 +146,7 @@ public class BulkAddMovieManager
     private void CheckFolderForShows(DirectoryInfo di, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
         int percentComplete = (int)(100.0 / CurrentPhaseTotal * (1.0 * CurrentPhase + 1.0 * CurrentPhaseDirectory / CurrentPhaseTotalDirectory));
-        bw.ReportProgress(percentComplete.Between(0,100), di.Name);
+        bw.ReportProgress(percentComplete.Between(0, 100), di.Name);
 
         if (!di.Exists)
         {
@@ -163,7 +163,7 @@ public class BulkAddMovieManager
         {
             if (fullLogging)
             {
-                Logger.Info($"Rejecting {di.FullName} as it's on the ignore list." );
+                Logger.Info($"Rejecting {di.FullName} as it's on the ignore list.");
             }
 
             return;
@@ -192,9 +192,9 @@ public class BulkAddMovieManager
 
     public void AddAllToMyMovies(UI ui)
     {
-        List<MovieConfiguration> movies =  AddToLibrary(AddItems.Where(ai => ai.CodeKnown));
+        List<MovieConfiguration> movies = AddToLibrary(AddItems.Where(ai => ai.CodeKnown));
 
-        mDoc.MoviesAddedOrEdited(true,false,false,ui, movies);
+        mDoc.MoviesAddedOrEdited(true, false, false, ui, movies);
         AddItems.Clear();
     }
 
@@ -281,7 +281,7 @@ public class BulkAddMovieManager
             return found;
         }
 
-        bool inAutomaticFolder = isUnderLibraryFolder && found.AutoFolderNameForMovie().EnsureEndsWithSeparator().Equals(ai.Directory.FullName.EnsureEndsWithSeparator(),StringComparison.CurrentCulture );
+        bool inAutomaticFolder = isUnderLibraryFolder && found.AutoFolderNameForMovie().EnsureEndsWithSeparator().Equals(ai.Directory.FullName.EnsureEndsWithSeparator(), StringComparison.CurrentCulture);
         found.UseAutomaticFolders = inAutomaticFolder;
         found.UseManualLocations = !inAutomaticFolder;
 

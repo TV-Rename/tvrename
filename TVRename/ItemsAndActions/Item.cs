@@ -45,7 +45,7 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged // someth
     }
 
     public virtual string SeriesName => Movie?.ShowName ?? Episode?.Show.ShowName ?? string.Empty;
-    public virtual ShowConfiguration?  Series => Episode?.Show;
+    public virtual ShowConfiguration? Series => Episode?.Show;
     public virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;
 
     public virtual string EpisodeString => Episode?.EpNumsAsString() ?? string.Empty;
@@ -66,12 +66,15 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged // someth
     public virtual string SourceDetails => string.Empty;
 
     private string? errorTextValue;
-    public string? ErrorText {
+    public string? ErrorText
+    {
         get => errorTextValue;
-        protected internal set {
+        protected internal set
+        {
             errorTextValue = value;
             NotifyPropertyChanged();
-        } } // Human-readable error message, for when Error is true
+        }
+    } // Human-readable error message, for when Error is true
 
     public int CompareTo(object obj) => CompareTo(obj as Item);
 

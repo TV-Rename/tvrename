@@ -115,7 +115,7 @@ internal static class API
         try
         {
             JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?thetvdb=" + source.TvdbId, 3, 2);
-            int tvMazeId = r.GetMandatoryInt("id",TVDoc.ProviderType.TVmaze);
+            int tvMazeId = r.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
 
             source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
         }
@@ -136,7 +136,7 @@ internal static class API
                 try
                 {
                     JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?imdb=" + imdbCode, 3, 2);
-                    int tvMazeId = r.GetMandatoryInt("id",TVDoc.ProviderType.TVmaze);
+                    int tvMazeId = r.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
                     JToken externalsToken = GetChild(r, "externals");
                     JToken tvdbToken = GetChild(externalsToken, "thetvdb");
                     int tvdb = tvdbToken.Type == JTokenType.Null ? -1 : (int)tvdbToken;
@@ -262,7 +262,7 @@ internal static class API
                 string? child = (string?)GetChild(imageNode, "original");
                 if (child != null)
                 {
-                    downloadedSi.AddOrUpdateImage(GenerateImage(ss.TvMazeId, jsonSeason.GetMandatoryInt("number",TVDoc.ProviderType.TVmaze), child));
+                    downloadedSi.AddOrUpdateImage(GenerateImage(ss.TvMazeId, jsonSeason.GetMandatoryInt("number", TVDoc.ProviderType.TVmaze), child));
                 }
             }
         }
@@ -321,7 +321,7 @@ internal static class API
         {
             SeriesId = seriesId,
             ImageUrl = (string?)GetChild(GetChild(GetChild(imageJson, "resolutions"), "original"), "url"),
-            Id = imageJson.GetMandatoryInt("id",TVDoc.ProviderType.TVmaze),
+            Id = imageJson.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze),
             ImageStyle = MapImageType((string?)imageJson["type"]),
             Rating = (bool?)imageJson["main"] ?? false ? 10 : 1,
             RatingCount = 1,
@@ -364,7 +364,7 @@ internal static class API
     {
         JToken personToken = GetChild(jsonActor, "person");
         JToken actorImageNode = GetChild(personToken, "image");
-        int actorId = personToken.GetMandatoryInt("id",TVDoc.ProviderType.TVmaze);
+        int actorId = personToken.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
         string? actorImage = actorImageNode.HasValues ? (string?)actorImageNode["medium"] : null;
         string actorName = (string?)personToken["name"] ?? throw new SourceConsistencyException("No Actor Name", TVDoc.ProviderType.TVmaze);
         string? actorRole = (string?)GetChild(GetChild(jsonActor, "character"), "name");
@@ -374,8 +374,8 @@ internal static class API
 
     private static Season GenerateSeason(int seriesId, JToken json)
     {
-        int id = json.GetMandatoryInt("id",TVDoc.ProviderType.TVmaze);
-        int number = json.GetMandatoryInt("number",TVDoc.ProviderType.TVmaze);
+        int id = json.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
+        int number = json.GetMandatoryInt("number", TVDoc.ProviderType.TVmaze);
         string? url = (string?)json["url"];
         string? name = (string?)json["name"];
         string? description = (string?)json["summary"];
@@ -527,9 +527,9 @@ internal static class API
             Overview = System.Web.HttpUtility.HtmlDecode((string?)r["summary"])?.Trim(),
             Runtime = ((string?)r["runtime"])?.Trim(),
             Name = ((string?)r["name"])?.Trim() ?? string.Empty,
-            AiredEpNum = r.GetMandatoryInt("number",TVDoc.ProviderType.TVmaze),
-            SeasonId = r.GetMandatoryInt("season",TVDoc.ProviderType.TVmaze),
-            AiredSeasonNumber = r.GetMandatoryInt("season",TVDoc.ProviderType.TVmaze),
+            AiredEpNum = r.GetMandatoryInt("number", TVDoc.ProviderType.TVmaze),
+            SeasonId = r.GetMandatoryInt("season", TVDoc.ProviderType.TVmaze),
+            AiredSeasonNumber = r.GetMandatoryInt("season", TVDoc.ProviderType.TVmaze),
             Filename = GetUrl(r, "medium"),
             ReadDvdSeasonNum = 0,
             DvdEpNum = 0

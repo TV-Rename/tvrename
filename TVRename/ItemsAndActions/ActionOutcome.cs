@@ -4,9 +4,9 @@ namespace TVRename;
 
 public class ActionOutcome
 {
-    public static ActionOutcome NoOutcomeYet() => new() {Done = false, Error = false };
+    public static ActionOutcome NoOutcomeYet() => new() { Done = false, Error = false };
 
-    public static ActionOutcome Success() => new() {Done = true, Error = false };
+    public static ActionOutcome Success() => new() { Done = true, Error = false };
 
     private ActionOutcome()
     {

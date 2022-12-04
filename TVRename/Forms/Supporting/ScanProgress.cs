@@ -52,7 +52,7 @@ public partial class ScanProgress : Form
 
     private void UpdateProg()
     {
-        pbBulkAutoAdd.Value = pctAutoBulkAdd.Between(0,100);
+        pbBulkAutoAdd.Value = pctAutoBulkAdd.Between(0, 100);
         pbBulkAutoAdd.Update();
         pbMediaLib.Value = pctMediaLib.Between(0, 100);
         pbMediaLib.Update();
@@ -65,7 +65,8 @@ public partial class ScanProgress : Form
         pbDownloading.Value = pctuTorrent.Between(0, 100);
         pbDownloading.Update();
 
-        if (!finished){
+        if (!finished)
+        {
             Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressValue(
                 pbBulkAutoAdd.Value + pbMediaLib.Value + pbDownloadFolder.Value + pbLocalSearch.Value + pbRSS.Value + pbDownloading.Value
                 , 600

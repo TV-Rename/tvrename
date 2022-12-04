@@ -5,7 +5,7 @@ namespace TVRename;
 public class MovieItemMissing : ItemMissing
 {
     public MovieItemMissing(MovieConfiguration movie, string whereItShouldBeFolder)
-        :base (string.Empty,string.Empty,whereItShouldBeFolder)
+        : base(string.Empty, string.Empty, whereItShouldBeFolder)
     {
         Episode = null;
         Filename = TVSettings.Instance.FilenameFriendly(movie.ProposedFilename);

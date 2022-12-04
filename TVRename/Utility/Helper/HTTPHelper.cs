@@ -1,4 +1,5 @@
 using CloudFlareUtilities;
+using Humanizer;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -8,7 +9,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Humanizer;
 
 namespace TVRename;
 
@@ -132,9 +132,9 @@ public static class HttpHelper
             newClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(lang));
         }
 
-        Logger.Trace($"Obtaining {url}" );
+        Logger.Trace($"Obtaining {url}");
 
-        if (method == "POST" && postContent !=null)
+        if (method == "POST" && postContent != null)
         {
             StringContent content = new(postContent, Encoding.UTF8, "application/json");
 
@@ -159,7 +159,7 @@ public static class HttpHelper
         }
         catch (HttpRequestException hre)
         {
-            Logger.Fatal(hre,$"Could not obtain {url}");
+            Logger.Fatal(hre, $"Could not obtain {url}");
         }
 
         return () => Task.FromResult(string.Empty);
@@ -334,14 +334,14 @@ public static class HttpHelper
 
         if (retry)
         {
-            RetryOnException(3, 2.Seconds(), url, _ => true, Operation,null);
+            RetryOnException(3, 2.Seconds(), url, _ => true, Operation, null);
         }
         else
         {
             Operation();
         }
 
-        return JObject.Parse(response??string.Empty);
+        return JObject.Parse(response ?? string.Empty);
     }
 
     public static string GetHttpParameters(Dictionary<string, string?>? parameters)
@@ -459,7 +459,7 @@ public static class HttpHelper
                             || (exception is WebException wex && !wex.Is404())
                             || exception is System.IO.IOException
                             || (exception is HttpRequestException hre && !hre.Is404())
-                            || (exception is AggregateException ae && ae.InnerException != null  && RetryableWebException().Invoke(ae.InnerException));
+                            || (exception is AggregateException ae && ae.InnerException != null && RetryableWebException().Invoke(ae.InnerException));
     }
 
     public static JArray HttpGetArrayRequestWithRetry(string fullUrl, int times, int secondsGap)

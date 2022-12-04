@@ -106,7 +106,7 @@ public class ActionCopyMoveRename : ActionFileOperation
                 Debug.Assert(Operation == Op.copy);
 
                 // This step could be slow, so report progress
-                CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None ,true, CopyProgressCallback, null);
+                CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
                 if (copyResult.ErrorCode != 0)
                 {
                     throw new ActionFailedException(copyResult.ErrorMessage);
@@ -115,7 +115,7 @@ public class ActionCopyMoveRename : ActionFileOperation
 
             // Copying the temp file into the correct name is very quick, so no progress reporting
             File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
-            LOGGER.Info($"{Name} completed: {From.FullName} to {To.FullName } ");
+            LOGGER.Info($"{Name} completed: {From.FullName} to {To.FullName} ");
 
             UpdateStats(stats);
 
@@ -149,7 +149,7 @@ public class ActionCopyMoveRename : ActionFileOperation
         }
         catch (Exception e)
         {
-            LOGGER.Warn(e, $"Error occurred while {Name}: {From.FullName} to {To.FullName } ");
+            LOGGER.Warn(e, $"Error occurred while {Name}: {From.FullName} to {To.FullName} ");
             return new ActionOutcome(e);
         }
 
@@ -319,5 +319,5 @@ public class ActionCopyMoveRename : ActionFileOperation
     public override string SourceDetails => From.FullName;
 
     public DirectoryInfo SourceDirectory => From.Directory;
-    public string DestinationBaseName=> To.FileNameNoExt();
+    public string DestinationBaseName => To.FileNameNoExt();
 }

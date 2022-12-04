@@ -1,9 +1,9 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using Alphaleonis.Win32.Filesystem;
 using TVRename.Forms;
 
 namespace TVRename;

@@ -74,7 +74,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
     private void CheckSingleMovieFolder(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, DirFilesCache dfc, bool renCheck)
     {
         FileInfo[] files = dfc.GetFiles(folder);
-        FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).Where(f=>!f.IsSampleFile()).ToArray();
+        FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).Where(f => !f.IsSampleFile()).ToArray();
         List<string> bases = movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct().ToList();
         string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
 
@@ -88,10 +88,10 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
         {
             string baseString = bases[0];
             //All Seems OK
-            FileInfo matchingMovieFile = movieFiles.First(m => si.NameMatch(m,false));
+            FileInfo matchingMovieFile = movieFiles.First(m => si.NameMatch(m, false));
             FileInfo newFile = matchingMovieFile;
 
-            if (renCheck && !baseString.Equals(newBase,StringComparison.OrdinalIgnoreCase))
+            if (renCheck && !baseString.Equals(newBase, StringComparison.OrdinalIgnoreCase))
             {
                 //Do a tweak to filename (case insensitive ones are dealt with below; this is for changes that are around punctuation
                 PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
@@ -139,7 +139,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
         {
             foreach (string baseString in bases)
             {
-                 PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
             }
             return;
         }
@@ -147,13 +147,13 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
         if (bases.Any(si.NameMatch))
         {
             FileInfo? matchingFile = movieFiles
-                .FirstOrDefault(m => si.NameMatch(m,false));
+                .FirstOrDefault(m => si.NameMatch(m, false));
 
             if (matchingFile != null)
             {
                 Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, matchingFile));
                 FileIsCorrect(si, matchingFile.FullName);
-                LOGGER.Warn($"{matchingFile.Name} matches {newBase}, but other files [{movieFiles.Select(f=>f.Name).ToCsv()}] are present; please review.");
+                LOGGER.Warn($"{matchingFile.Name} matches {newBase}, but other files [{movieFiles.Select(f => f.Name).ToCsv()}] are present; please review.");
                 return;
             }
 
@@ -240,7 +240,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
 
     private static bool MatchesBase(string baseFileName, string newBase)
     {
-        if (baseFileName.CompareName().StartsWith(newBase.CompareName(),StringComparison.CurrentCultureIgnoreCase))
+        if (baseFileName.CompareName().StartsWith(newBase.CompareName(), StringComparison.CurrentCultureIgnoreCase))
         {
             return true;
         }
@@ -340,7 +340,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
             }
             else
             {
-                LOGGER.Info($"{si.Name} not considered missing as it {(dt.HasValue? $"is in the future ({dt.Value.ToString("d", System.Globalization.DateTimeFormatInfo.CurrentInfo)})": "has no airdate")} (and the settings)");
+                LOGGER.Info($"{si.Name} not considered missing as it {(dt.HasValue ? $"is in the future ({dt.Value.ToString("d", System.Globalization.DateTimeFormatInfo.CurrentInfo)})" : "has no airdate")} (and the settings)");
             }
         } // if doing missing check
     }

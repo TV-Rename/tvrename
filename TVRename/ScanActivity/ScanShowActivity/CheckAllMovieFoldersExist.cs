@@ -51,7 +51,7 @@ internal class CheckAllMovieFoldersExist : ScanMovieActivity
     private void CreateFolder(MovieConfiguration si, ICollection<string> ignoredLocations,
         string proposedFolderName, string subFolder, IDialogParent owner)
     {
-        CreateFolder(si,ignoredLocations,Path.Combine(proposedFolderName, subFolder),owner);
+        CreateFolder(si, ignoredLocations, Path.Combine(proposedFolderName, subFolder), owner);
     }
 
     private void CreateFolder(MovieConfiguration si, ICollection<string> ignoredLocations, string proposedFolderName, IDialogParent owner)

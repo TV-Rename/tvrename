@@ -282,7 +282,7 @@ internal static class FinderHelper
         return si.Locations
             .SelectMany(cache.GetFiles)
             .Where(fiTemp => fiTemp.IsMovieFile())
-            .Where(fiTemp => si.NameMatch(fiTemp,false));
+            .Where(fiTemp => si.NameMatch(fiTemp, false));
     }
 
     public static List<FileInfo> FindEpOnDisk(this DirFilesCache? dfc, ProcessedEpisode pe,
@@ -753,8 +753,8 @@ internal static class FinderHelper
         filehint = RemoveSceneTerms(filehint.CompareName()).RemoveBracketedYear().RemoveYearFromEnd();
         dirhint = RemoveSceneTerms(dirhint.CompareName()).RemoveBracketedYear().RemoveYearFromEnd();
 
-        string hint = filehint==dirhint ? filehint
-            : TVSettings.Instance.UseFullPathNameToMatchSearchFolders ? dirhint+ " " + filehint
+        string hint = filehint == dirhint ? filehint
+            : TVSettings.Instance.UseFullPathNameToMatchSearchFolders ? dirhint + " " + filehint
             : filehint;
 
         string refinedHint = hint.RemoveBracketedYear();

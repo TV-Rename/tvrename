@@ -338,7 +338,7 @@ public partial class ActorsGrid : Form
         }
         catch (Exception ex)
         {
-            Logger.Warn(ex,$"Failed to save {saveFile.FileName}.");
+            Logger.Warn(ex, $"Failed to save {saveFile.FileName}.");
         }
     }
 

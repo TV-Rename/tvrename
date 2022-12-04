@@ -363,7 +363,7 @@ public partial class AddEditMovie : Form
             return false;
         }
 
-        if (chkManualFolders.Checked && lvManualFolders.Items.Count==0)
+        if (chkManualFolders.Checked && lvManualFolders.Items.Count == 0)
         {
             MessageBox.Show("Please add manual season folders or disable manual/additional Folders"
                 , "TV Rename Add/Edit Movie",

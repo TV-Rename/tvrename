@@ -15,7 +15,7 @@ internal class CustomRegionMovieCheck : CustomMovieCheck
 
     protected override bool Field => Movie.UseCustomRegion;
 
-    protected override string CustomFieldValue => Movie.CustomRegionCode??string.Empty;
+    protected override string CustomFieldValue => Movie.CustomRegionCode ?? string.Empty;
 
-    protected override string DefaultFieldValue => Movie.Provider==TVDoc.ProviderType.TMDB?TVSettings.Instance.TMDBRegion.ThreeAbbreviation: string.Empty;
+    protected override string DefaultFieldValue => Movie.Provider == TVDoc.ProviderType.TMDB ? TVSettings.Instance.TMDBRegion.ThreeAbbreviation : string.Empty;
 }

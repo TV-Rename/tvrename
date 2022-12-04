@@ -103,7 +103,7 @@ internal class SearchFolderFileFinder : FileFinder
         return matchedFiles;
     }
 
-    private List<FileInfo> FindMatchedFiles(DirCache dirCache, ShowItemMissing me, Dictionary<FileInfo,ItemList> thisRound)
+    private List<FileInfo> FindMatchedFiles(DirCache dirCache, ShowItemMissing me, Dictionary<FileInfo, ItemList> thisRound)
     {
         List<FileInfo> matchedFiles = new();
 
@@ -120,7 +120,7 @@ internal class SearchFolderFileFinder : FileFinder
             }
 
             matchedFiles.Add(dce.TheFile);
-            thisRound.Add(dce.TheFile,actionsForThisFile);
+            thisRound.Add(dce.TheFile, actionsForThisFile);
         }
 
         return matchedFiles;

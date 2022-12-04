@@ -17,7 +17,7 @@ public partial class YtsRecommendationView : Form
     private readonly List<MovieConfiguration> addedMovies;
     string quality;
 
-    public YtsRecommendationView(TVDoc doc, UI main)
+    public YtsRecommendationView(TVDoc doc, UI main, string defaultQuality)
     {
         InitializeComponent();
         recs = new List<YtsRecommendationRow>();
@@ -25,9 +25,9 @@ public partial class YtsRecommendationView : Form
 
         mDoc = doc;
         mainUi = main;
-        quality = "1080p";
+        quality = defaultQuality;
 
-        olvRating.GroupKeyGetter = rowObject => (int) Math.Floor(((YtsRecommendationRow) rowObject).StarScore);
+        olvRating.GroupKeyGetter = rowObject => (int)Math.Floor(((YtsRecommendationRow)rowObject).StarScore);
         olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
 
         Scan();
@@ -46,7 +46,7 @@ public partial class YtsRecommendationView : Form
             ? recs.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.ImdbCode != x.ImdbCode)).ToList()
             : recs.ToList();
 
-        lvRecommendations.SetObjects(recommendationRows,true);
+        lvRecommendations.SetObjects(recommendationRows, true);
     }
 
     private void ClearGrid()
@@ -150,17 +150,17 @@ public partial class YtsRecommendationView : Form
                     }
                     else
                     {
-                        source.Add(relatedMovie.Id,new Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>(relatedMovie,new(new List<Tuple<API.YtsMovie, MovieConfiguration>> {new(ytsMovie,existingMovie)})));
+                        source.Add(relatedMovie.Id, new Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>(relatedMovie, new(new List<Tuple<API.YtsMovie, MovieConfiguration>> { new(ytsMovie, existingMovie) })));
                     }
                 }
-                ((BackgroundWorker) sender).ReportProgress(100 * page++ / inputMovies.Count);
+                ((BackgroundWorker)sender).ReportProgress(100 * page++ / inputMovies.Count);
             }
 
             recs = source.Select(m => new YtsRecommendationRow(m.Value.Item1, m.Value.Item2, mDoc)).ToList();
         }
         catch (Exception ex)
         {
-            Logger.Fatal(ex,"UNHANDLED error obtinaing recommendations from YTS");
+            Logger.Fatal(ex, "UNHANDLED error obtinaing recommendations from YTS");
         }
     }
 
@@ -210,11 +210,11 @@ public partial class YtsRecommendationView : Form
         rightClickMenu.Add("Add Movie to Library and Download", (_, _) =>
         {
             AddMovieToLibrary(lastSelected);
-            Download(lastSelected,quality);
+            Download(lastSelected, quality);
         });
 
         rightClickMenu.Add("Add Movie to Library", (_, _) => AddMovieToLibrary(lastSelected));
-        rightClickMenu.Add("Download Movie", (_, _) => Download(lastSelected,quality));
+        rightClickMenu.Add("Download Movie", (_, _) => Download(lastSelected, quality));
     }
 
     private static void Download(YtsRecommendationRow lastSelected, string qualityToDownload)

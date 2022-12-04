@@ -144,7 +144,7 @@ public partial class BugReport : Form
     {
         foreach (TVSettings.FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
         {
-            txt.AppendLine((s.Enabled ? "Enabled " : "Disabled ") + s.RegExpression.InDoubleQuotes() + 
+            txt.AppendLine((s.Enabled ? "Enabled " : "Disabled ") + s.RegExpression.InDoubleQuotes() +
                            (s.UseFullPath ? " (FullPath)" : string.Empty));
         }
     }

@@ -14,10 +14,10 @@ public partial class Notifier : Form
 
     protected void Start()
     {
-        bwDo.RunWorkerAsync(); 
+        bwDo.RunWorkerAsync();
     }
 
-    private void Update(int percent, string? message,string? lastUpdate)
+    private void Update(int percent, string? message, string? lastUpdate)
     {
         pbProgress.Value = percent.Between(0, 100);
         pbProgress.Update();

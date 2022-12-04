@@ -16,8 +16,8 @@ internal class CollectionMember
 
     public CollectionMember(string collectionName, CachedMovieInfo neededShowValue)
     {
-       CollectionName = collectionName;
-       Movie = neededShowValue;
+        CollectionName = collectionName;
+        Movie = neededShowValue;
     }
 
     public int? MovieYear => Movie.Year;

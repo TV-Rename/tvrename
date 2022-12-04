@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
+using System.Collections.Generic;
 
 namespace TVRename;
 

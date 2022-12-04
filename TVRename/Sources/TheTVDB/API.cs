@@ -1,3 +1,4 @@
+using Humanizer;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -6,7 +7,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Humanizer;
 
 namespace TVRename.TheTVDB;
 
@@ -179,7 +179,7 @@ internal static class API
 
         if (retry)
         {
-            HttpHelper.RetryOnException(3, 2.Seconds(), fullUrl, _ => true, Operation, () => {authToken?.EnsureValid(); });
+            HttpHelper.RetryOnException(3, 2.Seconds(), fullUrl, _ => true, Operation, () => { authToken?.EnsureValid(); });
         }
         else
         {
@@ -207,7 +207,7 @@ internal static class API
     public static JObject? GetShowUpdatesSince(long time, string lang, int page)
     {
         return TVSettings.Instance.TvdbVersion == ApiVersion.v4
-            ? GetShowUpdatesSinceV4(time,lang,page)
+            ? GetShowUpdatesSinceV4(time, lang, page)
             : GetShowUpdatesSinceV3(time, lang);
     }
 
@@ -245,10 +245,10 @@ internal static class API
 #pragma warning disable IDE0060 // Remove unused parameter
     internal static string BuildUrl(int apiKey, string lang)
 #pragma warning restore IDE0060 // Remove unused parameter
-        //would rather make this private to hide api key from outside world
-        //https://forum.kodi.tv/showthread.php?tid=323588
-        //says that we need a format like this:
-        //https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json
+    //would rather make this private to hide api key from outside world
+    //https://forum.kodi.tv/showthread.php?tid=323588
+    //says that we need a format like this:
+    //https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json
     {
         return $"{TokenProvider.TVDB_API_URL}/login?"
                + "{'apikey':'" + TokenProvider.TVDB_API_KEY + "','id':" + apiKey + "}"
@@ -281,17 +281,17 @@ internal static class API
         catch (WebException wex)
         {
             //no images for chosen language
-            Logger.LogWebException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}",wex);
+            Logger.LogWebException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}", wex);
         }
         catch (System.IO.IOException iox)
         {
             //no images for chosen language
-            Logger.LogIoException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}",iox);
+            Logger.LogIoException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}", iox);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             //no images for chosen language
-            Logger.LogHttpRequestException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}",wex);
+            Logger.LogHttpRequestException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}", wex);
         }
         return new List<string>();
     }
@@ -385,7 +385,7 @@ internal static class API
             }
             catch (System.IO.IOException ioe)
             {
-                Logger.LogIoException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {ioe.LoggableDetails()}",ioe);
+                Logger.LogIoException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {ioe.LoggableDetails()}", ioe);
             }
             catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
             {
@@ -405,19 +405,19 @@ internal static class API
     public static JObject GetSeriesV4(ISeriesSpecifier code, string requestedLanguageCode)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/extended";
-        return GetUrl(code, uri, requestedLanguageCode,MediaConfiguration.MediaType.tv);
+        return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.tv);
     }
 
     public static JObject GetSeasonV4(ISeriesSpecifier code, int seasonId, string requestLangCode)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
-        return GetUrl(code,uri, requestLangCode,MediaConfiguration.MediaType.tv);
+        return GetUrl(code, uri, requestLangCode, MediaConfiguration.MediaType.tv);
     }
 
     public static JObject GetSeriesEpisodesV4(ISeriesSpecifier code, string requestLangCode, ProcessedSeason.SeasonType type)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/episodes/{type.PrettyPrint()}";
-        return GetUrl(code,uri, requestLangCode,MediaConfiguration.MediaType.tv);
+        return GetUrl(code, uri, requestLangCode, MediaConfiguration.MediaType.tv);
     }
 
     public static JObject? GetEpisode(int episodeId, string requestLangCode)
@@ -462,7 +462,7 @@ internal static class API
     public static JObject GetEpisodeTranslationsV4(ISeriesSpecifier id, int episodeId, string requestedLanguageCode)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}/translations/{requestedLanguageCode}";
-        return GetUrl(id, uri, requestedLanguageCode,MediaConfiguration.MediaType.tv);
+        return GetUrl(id, uri, requestedLanguageCode, MediaConfiguration.MediaType.tv);
     }
 
     public static JObject GetMovieTranslationsV4(ISeriesSpecifier code, string requestedLanguageCode)
@@ -484,7 +484,7 @@ internal static class API
             {
                 Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404).");
 
-                if (TvdbIsUp() && code!=null)
+                if (TvdbIsUp() && code != null)
                 {
                     string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. {uri} Please Update";
                     throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
@@ -501,7 +501,7 @@ internal static class API
             {
                 Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404) via {uri}.");
 
-                if (TvdbIsUp() && code!=null)
+                if (TvdbIsUp() && code != null)
                 {
                     string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB via {uri}. Please Update";
                     throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
@@ -514,7 +514,7 @@ internal static class API
         }
         catch (System.IO.IOException ioe)
         {
-            Logger.LogIoException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got: {ioe.LoggableDetails()}",ioe);
+            Logger.LogIoException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got: {ioe.LoggableDetails()}", ioe);
             throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {ioe.Message}");
         }
     }
@@ -522,7 +522,7 @@ internal static class API
     public static JObject ImageTypesV4()
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/artwork/types";
-        return GetUrl(null,uri, "en",MediaConfiguration.MediaType.both);
+        return GetUrl(null, uri, "en", MediaConfiguration.MediaType.both);
     }
 
     public static string WebsiteMovieUrl(string? serSlug)

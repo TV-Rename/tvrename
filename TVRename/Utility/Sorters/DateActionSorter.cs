@@ -6,9 +6,9 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using BrightIdeasSoftware;
 using System;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 
 namespace TVRename;
 

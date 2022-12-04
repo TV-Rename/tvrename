@@ -714,7 +714,7 @@ public sealed class TVSettings
 
         writer.WriteElement("UnattendedMultiActionOutcome", (int)UnattendedMultiActionOutcome);
         writer.WriteElement("UserMultiActionOutcome", (int)UserMultiActionOutcome);
-        writer.WriteElement("DefMovieFolderFormat",(int)DefMovieFolderFormat);
+        writer.WriteElement("DefMovieFolderFormat", (int)DefMovieFolderFormat);
         writer.WriteElement("UnArchiveFilesInDownloadDirectory", UnArchiveFilesInDownloadDirectory);
 
         writer.WriteElement("SearchJackett", SearchJackett);
@@ -1080,7 +1080,7 @@ public sealed class TVSettings
         foreach (string s in VideoExtensionsArray
                      .Where(s => !string.IsNullOrWhiteSpace(s))
                      .Where(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase))
-                     .OrderByDescending(s=>s.Length))
+                     .OrderByDescending(s => s.Length))
         {
             return s;
         }
@@ -1090,7 +1090,7 @@ public sealed class TVSettings
             foreach (string s in OtherExtensionsArray
                          .Where(s => !string.IsNullOrWhiteSpace(s))
                          .Where(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase))
-                         .OrderByDescending(s=>s.Length))
+                         .OrderByDescending(s => s.Length))
             {
                 return s;
             }
@@ -1428,7 +1428,7 @@ public sealed class TVSettings
         OtherExtensionsString = xmlSettings.ExtractString("OtherExtensions", OtherExtensionsStringDEFAULT);
         subtitleExtensionsString = xmlSettings.ExtractString("SubtitleExtensions", subtitleExtensionsStringDEFAULT);
         ExportRSSMaxDays = xmlSettings.ExtractInt("ExportRSSMaxDays", 7).Between(0, 365);
-        ExportRSSMaxShows = xmlSettings.ExtractInt("ExportRSSMaxShows", 10).Between(0,10000);
+        ExportRSSMaxShows = xmlSettings.ExtractInt("ExportRSSMaxShows", 10).Between(0, 10000);
         ExportRSSDaysPast = xmlSettings.ExtractInt("ExportRSSDaysPast", 0).Between(0, 365);
         KeepTogether = xmlSettings.ExtractBool("KeepTogether", true);
         LeadingZeroOnSeason = xmlSettings.ExtractBool("LeadingZeroOnSeason", false);
@@ -1799,7 +1799,7 @@ public sealed class TVSettings
 
         if (value is null)
         {
-            throw new ArgumentNullException(nameof(value),value);
+            throw new ArgumentNullException(nameof(value), value);
         }
 
         int val = int.Parse(value);
@@ -1809,7 +1809,7 @@ public sealed class TVSettings
             return (T)Enum.Parse(typeof(T), value, true);
         }
 
-        throw new ArgumentException($"'{value}' cannot be mapped to type {typeof(T)}",nameof(value));
+        throw new ArgumentException($"'{value}' cannot be mapped to type {typeof(T)}", nameof(value));
     }
 
     private static ShowConfiguration.ShowAirStatus ConvertToShowAirStatus(string value)
@@ -1828,7 +1828,7 @@ public sealed class TVSettings
             "Partially aired" => ShowConfiguration.ShowAirStatus.partiallyAired,
             "PartiallyAired" => ShowConfiguration.ShowAirStatus.partiallyAired,
             "partiallyAired" => ShowConfiguration.ShowAirStatus.partiallyAired,
-            _ => throw new ArgumentOutOfRangeException(nameof(value),value)
+            _ => throw new ArgumentOutOfRangeException(nameof(value), value)
         };
     }
 
@@ -1894,7 +1894,7 @@ public sealed class TVSettings
     public string DefaultTVShowFolder(ShowConfiguration showConfiguration)
     {
         string style = DefaultTvShowFolderFormat;
-        string folderName = CustomTvShowName.DirectoryNameFor(showConfiguration,style);
+        string folderName = CustomTvShowName.DirectoryNameFor(showConfiguration, style);
         return DefaultTVShowFolder(folderName);
     }
     public string DefaultTVShowFolder(string baseHint)
@@ -1905,7 +1905,7 @@ public sealed class TVSettings
     public string DefaultTVShowFolder(CachedSeriesInfo showConfiguration)
     {
         string style = DefaultTvShowFolderFormat;
-        string folderName = CustomTvShowName.DirectoryNameFor(showConfiguration,style);
+        string folderName = CustomTvShowName.DirectoryNameFor(showConfiguration, style);
         return DefaultTVShowFolder(folderName);
     }
 

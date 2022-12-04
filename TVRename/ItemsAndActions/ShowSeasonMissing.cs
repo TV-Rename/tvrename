@@ -8,8 +8,8 @@ public class ShowSeasonMissing : ItemMissing
     private readonly int seasonNumber;
     private readonly ShowConfiguration show;
     public readonly List<ShowItemMissing> OriginalItems;
-    public ShowSeasonMissing(ShowConfiguration si,int snum, string whereItShouldBeFolder, List<ShowItemMissing> originalItems)
-        : base(string.Empty,string.Empty,whereItShouldBeFolder)
+    public ShowSeasonMissing(ShowConfiguration si, int snum, string whereItShouldBeFolder, List<ShowItemMissing> originalItems)
+        : base(string.Empty, string.Empty, whereItShouldBeFolder)
     {
         TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + Filename;
         seasonNumber = snum;
@@ -43,7 +43,7 @@ public class ShowSeasonMissing : ItemMissing
 
     public override string SeasonNumber => TVSettings.SeasonNameFor(seasonNumber);
 
-    public override string SeriesName => show.Name??string.Empty;
+    public override string SeriesName => show.Name ?? string.Empty;
 
     public override string ToString() => $"{Show.ShowName} Season:{SeasonNumber}";
 

@@ -103,7 +103,7 @@ public class CachedMovieInfo : CachedMediaInfo
 
         SrvLastUpdated = o.SrvLastUpdated;
 
-        MergeCommon(o,useNewDataOverOld);
+        MergeCommon(o, useNewDataOverOld);
         MovieType = ChooseBetter(MovieType, useNewDataOverOld, o.MovieType);
         CollectionName = ChooseBetter(CollectionName, useNewDataOverOld, o.CollectionName);
 

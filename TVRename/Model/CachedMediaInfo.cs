@@ -325,9 +325,9 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
         writer.WriteElement("runtime", Runtime, true);
         writer.WriteElement("seriesId", SeriesId, true);
         writer.WriteElement("status", Status);
-        writer.WriteElement("siteRating", SiteRating, "0.##",CultureInfo.CreateSpecificCulture("en-US"));
+        writer.WriteElement("siteRating", SiteRating, "0.##", CultureInfo.CreateSpecificCulture("en-US"));
         writer.WriteElement("siteRatingCount", SiteRatingVotes);
-        writer.WriteElement("slug", Slug,true);
+        writer.WriteElement("slug", Slug, true);
         writer.WriteElement("Popularity", Popularity, "0.##", CultureInfo.CreateSpecificCulture("en-US"));
 
         if (FirstAired != null && FirstAired > DateTime.Parse("1000-01-01"))

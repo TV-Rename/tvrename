@@ -79,7 +79,7 @@ public static class CustomMovieName
         string showname = urlEncode
             ? Uri.EscapeDataString(m.ShowName)
             : m.ShowName;
-                
+
         string name = styleString
             .ReplaceInsensitive("{CollectionFolder}", m.InCollection ? "{collectionName}\\" : string.Empty)
             .ReplaceInsensitive("{ShowName}", showname)

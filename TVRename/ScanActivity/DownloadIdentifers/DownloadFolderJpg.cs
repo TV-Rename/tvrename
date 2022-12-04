@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
+using System.Collections.Generic;
 
 namespace TVRename;
 
@@ -99,7 +99,7 @@ internal class DownloadFolderJpg : DownloadIdentifier
         FileInfo fi = FileHelper.FileInFolder(folder, DEFAULT_FILE_NAME);
 
         if (!doneFolderJpg.Contains(fi.FullName) && (!fi.Exists || forceRefresh))
-            // some folders may come up multiple times
+        // some folders may come up multiple times
         {
             string? bannerPath = TVSettings.Instance.SeasonSpecificFolderJPG()
                 ? si.CachedShow?.GetSeasonBannerPath(snum)

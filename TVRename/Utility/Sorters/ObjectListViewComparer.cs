@@ -6,9 +6,9 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using BrightIdeasSoftware;
 using System;
 using System.Collections.Generic;
-using BrightIdeasSoftware;
 
 namespace TVRename;
 
@@ -27,8 +27,8 @@ public abstract class ObjectListViewComparer<T> : IComparer<OLVListItem> where T
         {
             return 0;
         }
-        T? d1 = x!= null? GetValue(x,col) : default;
-        T? d2 = y!= null? GetValue(y,col) : default;
+        T? d1 = x != null ? GetValue(x, col) : default;
+        T? d2 = y != null ? GetValue(y, col) : default;
 
         if (d1 is null && d2 is null)
         {
@@ -53,5 +53,5 @@ public abstract class ObjectListViewComparer<T> : IComparer<OLVListItem> where T
 
     private static string GetDefault(OLVListItem p) => ((Item)p.RowObject).OrderKey;
 
-    protected abstract T? GetValue(OLVListItem x,int columnId);
+    protected abstract T? GetValue(OLVListItem x, int columnId);
 }

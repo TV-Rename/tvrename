@@ -7,13 +7,13 @@
 //
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
+using Humanizer;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using Humanizer;
 using TimeZoneConverter;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using Control = System.Windows.Forms.Control;
@@ -534,7 +534,7 @@ public partial class Preferences : Form
             "Download All" => TVSettings.DuplicateActionOutcome.DoAll,
             "Ignore" => TVSettings.DuplicateActionOutcome.IgnoreAll,
             "Choose Most Popular" => TVSettings.DuplicateActionOutcome.MostSeeders,
-            _ => throw new ArgumentOutOfRangeException(nameof(p0),$"ConvertToDupActEnum: p0 has invalid Text {p0.Text}")
+            _ => throw new ArgumentOutOfRangeException(nameof(p0), $"ConvertToDupActEnum: p0 has invalid Text {p0.Text}")
         };
     }
 
@@ -545,7 +545,7 @@ public partial class Preferences : Form
             "Single Movie per Folder" => MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile,
             "Many Movies per Folder" => MovieConfiguration.MovieFolderFormat.multiPerDirectory,
             "Bluray format" => MovieConfiguration.MovieFolderFormat.bluray,
-            "DVD format" => MovieConfiguration.MovieFolderFormat.dvd ,
+            "DVD format" => MovieConfiguration.MovieFolderFormat.dvd,
             _ => throw new ArgumentOutOfRangeException(nameof(p0), $"ConvertToMovieFormat: p0 has invalid Text {p0.Text}")
         };
     }
@@ -2015,7 +2015,7 @@ public partial class Preferences : Form
 
     private void FileIcon_DragOver(object sender, DragEventArgs e)
     {
-        e.Effect = e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) ?  DragDropEffects.Copy: DragDropEffects.None ;
+        e.Effect = e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
     }
 
     private void lstMovieMonitorFolders_DragDrop(object sender, DragEventArgs e)

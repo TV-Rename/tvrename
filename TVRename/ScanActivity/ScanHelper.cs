@@ -1,6 +1,6 @@
-using System;
-using NLog;
 using Alphaleonis.Win32.Filesystem;
+using NLog;
+using System;
 
 namespace TVRename;
 
@@ -31,7 +31,7 @@ public static class ScanHelper
                     return true;
 
                 case ChooseFile.ChooseFileDialogResult.right:
-                    UpgradeFile(newFile, pep, existingFile,doc,returnActions);
+                    UpgradeFile(newFile, pep, existingFile, doc, returnActions);
                     return false;
 
                 default:

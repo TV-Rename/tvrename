@@ -1,6 +1,6 @@
-using System;
 using Microsoft.Extensions.Logging;
 using NLog;
+using System;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 

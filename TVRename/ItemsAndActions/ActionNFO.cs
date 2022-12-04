@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,6 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
@@ -56,7 +56,7 @@ public abstract class ActionNfo : ActionWriteMetadata
             try
             {
                 Where.Delete(true);
-                return Go(stats,cancellationToken);
+                return Go(stats, cancellationToken);
             }
             catch (System.IO.IOException ex)
             {

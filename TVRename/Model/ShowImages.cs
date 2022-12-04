@@ -41,7 +41,7 @@ public class ShowImages : SafeList<ShowImage>
 
     private ShowImage? GetSeriesLangImage(Language l, MediaImage.ImageType type)
     {
-        IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type && i.Subject == MediaImage.ImageSubject.show && (i.LanguageCode == l.ThreeAbbreviation || i.LanguageCode ==l.Abbreviation));
+        IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type && i.Subject == MediaImage.ImageSubject.show && (i.LanguageCode == l.ThreeAbbreviation || i.LanguageCode == l.Abbreviation));
         return BestFrom(validImages);
     }
 

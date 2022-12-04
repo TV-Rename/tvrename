@@ -54,7 +54,7 @@ internal class ActionNfoShow : ActionNfo
         {
             string tmdbUrl = TMDB.LocalCache.EpisodeGuideUrl(SelectedShow);
             XElement episodeGuideNode = root.GetOrCreateElement("episodeguide");
-            episodeGuideNode.UpdateElement("url",tmdbUrl);
+            episodeGuideNode.UpdateElement("url", tmdbUrl);
         }
 
         if (cachedSeries is not null)

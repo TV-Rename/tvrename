@@ -8,17 +8,17 @@
 using Alphaleonis.Win32.Filesystem;
 using Humanizer;
 using MediaInfo;
+using Microsoft.WindowsAPICodePack.COMNative.Shell.PropertySystem;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using Microsoft.WindowsAPICodePack.Win32Native.Shell;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.WindowsAPICodePack.COMNative.Shell.PropertySystem;
-using Microsoft.WindowsAPICodePack.Win32Native.Shell;
-using NLog;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
@@ -106,7 +106,7 @@ public static class FileHelper
             return; // nope
         }
 
-        foreach (FileInfo fi in files.Where(x=>!CanDelete(x,settings)))
+        foreach (FileInfo fi in files.Where(x => !CanDelete(x, settings)))
         {
             Logger.Info($"Not Removing {di.FullName} as it contains {fi.Name} which does not have {settings.EmptyIgnoreExtensionsArray.ToCsv()} as extension or {settings.EmptyIgnoreWordsArray.ToCsv()} in the filename.");
             return;
@@ -308,7 +308,7 @@ public static class FileHelper
 
     public static bool IsArchiveFile(this FileInfo file) => file.IsFileOfType(".zip;.rar;.tar;.tar.gz;.gz;.7z");
     public static bool IsImageFile(this FileInfo file) => file.IsFileOfType(".jpg;.jpeg;.gif;.tbn");
-    private static bool IsFileOfType(this FileInfo file,string extensions)
+    private static bool IsFileOfType(this FileInfo file, string extensions)
     {
         return extensions.Split(';')
             .Where(s => !string.IsNullOrWhiteSpace(s))
@@ -354,9 +354,9 @@ public static class FileHelper
                 )
         {
             foreach (Match m in regexPatterns
-                         .Select(oldpattern =>  oldpattern.Replace(TOKEN, subExtension))
+                         .Select(oldpattern => oldpattern.Replace(TOKEN, subExtension))
                          .Select(regexPattern => Regex.Match(file.Name, regexPattern, RegexOptions.IgnoreCase))
-                         .Where(m=>m.Success)
+                         .Where(m => m.Success)
                     )
             {
                 return (true, m.Groups["ext"].ToString());
@@ -413,7 +413,7 @@ public static class FileHelper
                 $"Unable to use shell to access file as part of {operation} for {movieFile.FullName}. Platform is not supported: {pe.Message}");
         }
 
-        MediaInfoWrapper mw = new(movieFile.FullName,Logger.AsILogger());
+        MediaInfoWrapper mw = new(movieFile.FullName, Logger.AsILogger());
         int returnVal = meExtractMethod(mw);
 
         if (returnVal != 0)
@@ -642,7 +642,7 @@ public static class FileHelper
         try
         {
             Logger.Info($"Removing {folderName} as part of the library clean up");
-            foreach (string file in Directory.GetFiles(folderName,"*",System.IO.SearchOption.AllDirectories))
+            foreach (string file in Directory.GetFiles(folderName, "*", System.IO.SearchOption.AllDirectories))
             {
                 Logger.Info($"    Folder contains {file}");
             }

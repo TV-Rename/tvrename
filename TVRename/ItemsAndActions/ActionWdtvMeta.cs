@@ -12,9 +12,9 @@ using System.Threading;
 
 namespace TVRename;
 
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Xml;
-using Alphaleonis.Win32.Filesystem;
 
 public class ActionWdtvMeta : ActionWriteMetadata
 {

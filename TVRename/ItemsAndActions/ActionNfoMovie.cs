@@ -67,7 +67,7 @@ internal class ActionNfoMovie : ActionNfo
             UpdateId(root, "tmdb", "true", cachedSeries.TmdbCode);
 
             root.ReplaceElements("genre", Movie.Genres);
-            root.ReplaceElements("credits", cachedSeries.GetCrew().Where(c=>c.Department=="Writing").Select(c=>c.Name));
+            root.ReplaceElements("credits", cachedSeries.GetCrew().Where(c => c.Department == "Writing").Select(c => c.Name));
             root.ReplaceElements("director", cachedSeries.GetCrew().Where(c => c.Department == "Directing").Select(c => c.Name));
 
             ReplaceActors(root, Movie.Actors);

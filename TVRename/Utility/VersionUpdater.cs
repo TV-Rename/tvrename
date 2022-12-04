@@ -6,12 +6,12 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using Humanizer;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Humanizer;
 
 namespace TVRename;
 
@@ -30,7 +30,7 @@ public static class VersionUpdater
         }
         catch (ArgumentException e)
         {
-            Logger.Error(e,"Failed to establish if there are any new releases as could not parse internal version: " + Helpers.DisplayVersion);
+            Logger.Error(e, "Failed to establish if there are any new releases as could not parse internal version: " + Helpers.DisplayVersion);
             return null;
         }
 
@@ -109,7 +109,7 @@ public static class VersionUpdater
 
             if (latestBetaVersion is null)
             {
-                Logger.Error("Could not find latest beta version information from GitHub: " +  gitHubInfo);
+                Logger.Error("Could not find latest beta version information from GitHub: " + gitHubInfo);
                 return (latestVersion, null);
             }
         }

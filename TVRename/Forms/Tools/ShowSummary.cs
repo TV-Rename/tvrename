@@ -125,7 +125,7 @@ public partial class ShowSummary : Form, IDialogParent
         // Draw season
         for (int c = chkHideSpecials.Checked ? 1 : 0; c < maxSeason + 1; c++)
         {
-            grid1[0, c + 2] = new ColumnHeader(c==0?ProcessedSeason.UIFullSeasonWord(c):"S"+c.Pad(2))
+            grid1[0, c + 2] = new ColumnHeader(c == 0 ? ProcessedSeason.UIFullSeasonWord(c) : "S" + c.Pad(2))
             {
                 AutomaticSortEnabled = false,
                 ResizeEnabled = false
@@ -181,11 +181,11 @@ public partial class ShowSummary : Form, IDialogParent
             grid1[r + 1, 0] = new RowHeader(show.ShowName)
             {
                 ResizeEnabled = false,
-                View = new Cell { ForeColor = cellColour}
+                View = new Cell { ForeColor = cellColour }
             };
-            grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowConfiguration,mDoc));
+            grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowConfiguration, mDoc));
 
-            grid1[r + 1, 1]  = new RowHeader(show.ShowConfiguration.ShowStatus)
+            grid1[r + 1, 1] = new RowHeader(show.ShowConfiguration.ShowStatus)
             {
                 ResizeEnabled = false,
                 View = new Cell { ForeColor = cellColour }
@@ -316,7 +316,7 @@ public partial class ShowSummary : Form, IDialogParent
         private readonly ShowConfiguration show;
         private readonly TVDoc mDoc;
 
-        public ShowClickEvent(ShowSummary gridSummary, ShowConfiguration show,TVDoc doc)
+        public ShowClickEvent(ShowSummary gridSummary, ShowConfiguration show, TVDoc doc)
         {
             this.show = show;
             this.gridSummary = gridSummary;
@@ -354,10 +354,10 @@ public partial class ShowSummary : Form, IDialogParent
                 }
                 else
                 {
-                    gridSummary.rightClickMenu.Add( "Ignore Season", (_, _) =>
+                    gridSummary.rightClickMenu.Add("Ignore Season", (_, _) =>
                     {
                         processedSeason.Show.IgnoreSeasons.Add(processedSeason.SeasonNumber);
-                        mDoc.TvAddedOrEdited(false,false,false,null, processedSeason.Show);
+                        mDoc.TvAddedOrEdited(false, false, false, null, processedSeason.Show);
                         gridSummary.PopulateGrid();
                         gridSummary.MainWindow.FillMyShows();
                     });
@@ -502,7 +502,7 @@ public partial class ShowSummary : Form, IDialogParent
 
                     foreach (FileInfo fi in fl)
                     {
-                        gridSummary.rightClickMenu.Items.Add("Watch: " + fi.FullName,(_, _) => fi.OpenFile());
+                        gridSummary.rightClickMenu.Items.Add("Watch: " + fi.FullName, (_, _) => fi.OpenFile());
                     }
                 }
             }

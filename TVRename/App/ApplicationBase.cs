@@ -1,5 +1,6 @@
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.VisualBasic.ApplicationServices;
+using Microsoft.Win32;
 using NLog;
 using NLog.Config;
 using NLog.Layouts;
@@ -9,7 +10,6 @@ using System;
 using System.Reflection;
 //using System.Runtime.Remoting;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using TVRename.Forms;
 
 //using TVRename.Ipc;
@@ -108,7 +108,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
 
     /*  Triggered when the user is actually logging off or shutting down the system
      */
-    private void OnSessionEnded(object sender, SessionEndedEventArgs e )
+    private void OnSessionEnded(object sender, SessionEndedEventArgs e)
     {
         if (doc?.Dirty() ?? false)
         {
@@ -159,16 +159,16 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             }
 
             // Try loading settings file
-            AlertUser("Settings and library",10);
+            AlertUser("Settings and library", 10);
             createdDoc = new TVDoc(settingsFile, commandLineArgs);
 
             // Try loading TheTVDB cache file
             bool showIssues = !commandLineArgs.Unattended && !commandLineArgs.Hide;
-            AlertUser("Loading TVDB Cache",20);
+            AlertUser("Loading TVDB Cache", 20);
             TheTVDB.LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, showIssues);
-            AlertUser("Loading TVMaze Cache",30);
+            AlertUser("Loading TVMaze Cache", 30);
             TVmaze.LocalCache.Instance.Setup(tvMazeFile, PathManager.TVmazeFile, showIssues);
-            AlertUser("Loading TMDB Cache",40);
+            AlertUser("Loading TMDB Cache", 40);
             TMDB.LocalCache.Instance.Setup(tmdbFile, PathManager.TmdbFile, showIssues);
 
             if (recover)
@@ -203,7 +203,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         return createdDoc;
     }
 
-    private void AlertUser(string message,int percent)
+    private void AlertUser(string message, int percent)
     {
         Logger.Info($"Splash Screen Updated with: {percent}/100 {message}");
         // Update splash screen

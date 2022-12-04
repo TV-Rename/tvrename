@@ -236,11 +236,11 @@ public class BulkAddSeriesManager
                         //We have a match!
                         folderFormat = m.Groups["prefix"].Value + m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0", StringComparison.Ordinal) ? "{Season:2}" : "{Season}");
 
-                        Logger.Info($"Assuming {di.FullName} contains a show because pattern '{folderFormat}' is found in subdirectory { subDir.FullName}");
+                        Logger.Info($"Assuming {di.FullName} contains a show because pattern '{folderFormat}' is found in subdirectory {subDir.FullName}");
                     }
                     catch (Exception e)
                     {
-                        Logger.Error(e,$"Could not parse {regex} to tell whether {subDir.Name} is a subfolder - ignoring this regex.");
+                        Logger.Error(e, $"Could not parse {regex} to tell whether {subDir.Name} is a subfolder - ignoring this regex.");
                         continue;
                     }
                     return true;
@@ -323,7 +323,7 @@ public class BulkAddSeriesManager
         }
         catch (UnauthorizedAccessException)
         {
-            Logger.Info($"Can't access {di2.FullName}, so ignoring it" );
+            Logger.Info($"Can't access {di2.FullName}, so ignoring it");
             return (true, null);
         }
     }
@@ -434,7 +434,7 @@ public class BulkAddSeriesManager
             {
                 // need to add a new showitem
                 found = new ShowConfiguration(ai.ProviderCode, ai.Provider);
-                mDoc.Add(found.AsList(),true);
+                mDoc.Add(found.AsList(), true);
             }
 
             found.AutoAddFolderBase = ai.Folder.FullName;

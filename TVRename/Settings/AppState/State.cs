@@ -1,8 +1,8 @@
+using Alphaleonis.Win32.Filesystem;
 using NLog;
 using System;
 using System.Xml;
 using System.Xml.Serialization;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename.Settings.AppState;
 
@@ -26,7 +26,7 @@ public class State
             }
             catch (Exception ex)
             {
-                Logger.Warn(ex, $"Could not load app state file {path}" );
+                Logger.Warn(ex, $"Could not load app state file {path}");
                 return new State();
             }
         }

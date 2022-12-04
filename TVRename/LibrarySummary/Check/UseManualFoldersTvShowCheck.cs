@@ -16,7 +16,7 @@ internal class UseManualFoldersTvShowCheck : CustomTvShowCheck
         Show.ManualFolderLocations.Clear();
         Show.AutoAddType = ShowConfiguration.AutomaticFolderType.libraryDefaultFolderFormat;
     }
-    protected override string CustomFieldValue => Show.ManualFolderLocations.Values.SelectMany(x=>x).ToCsv();
+    protected override string CustomFieldValue => Show.ManualFolderLocations.Values.SelectMany(x => x).ToCsv();
 
     protected override string DefaultFieldValue => Show.AutoAddFolderBase;
 }

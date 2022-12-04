@@ -6,14 +6,14 @@ namespace TVRename;
 
 public static class CacheHelper
 {
-    public static void Tidy<T>(this T cache,IEnumerable<ShowConfiguration> libraryValues) where T:MediaCache,iTVSource
+    public static void Tidy<T>(this T cache, IEnumerable<ShowConfiguration> libraryValues) where T : MediaCache, iTVSource
     {
         // remove any shows from cache that aren't in My Shows
         List<ShowConfiguration> showConfigurations = libraryValues.ToList();
 
         lock (cache.SERIES_LOCK)
         {
-            List<int> removeList = cache.CachedShowData.Keys.Where(id => showConfigurations.All(si => cache.PrimaryKey( si) != id)).ToList();
+            List<int> removeList = cache.CachedShowData.Keys.Where(id => showConfigurations.All(si => cache.PrimaryKey(si) != id)).ToList();
 
             foreach (int i in removeList)
             {
@@ -38,7 +38,7 @@ public static class CacheHelper
         }
     }
 
-    public static void ForgetShow<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache,iTVSource
+    public static void ForgetShow<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache, iTVSource
     {
         cache.ForgetShow(cache.PrimaryKey(ss));
         if (cache.PrimaryKey(ss) <= 0)
@@ -70,7 +70,7 @@ public static class CacheHelper
         {
             cache.CachedShowData[cache.PrimaryKey(ss)] =
                 new CachedSeriesInfo(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale, cache.SourceProvider())
-                    { Dirty = true };
+                { Dirty = true };
         }
     }
 
@@ -80,7 +80,7 @@ public static class CacheHelper
         {
             cache.CachedMovieData[cache.PrimaryKey(ss)] =
                 new CachedMovieInfo(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale, cache.SourceProvider())
-                    { Dirty = true };
+                { Dirty = true };
         }
     }
 
@@ -139,7 +139,7 @@ public static class CacheHelper
         }
     }
 
-    public static void MarkPlaceHoldersDirty<T>(this T cache, IEnumerable<ISeriesSpecifier> ss) where T : MediaCache, iMovieSource,iTVSource
+    public static void MarkPlaceHoldersDirty<T>(this T cache, IEnumerable<ISeriesSpecifier> ss) where T : MediaCache, iMovieSource, iTVSource
     {
         foreach (ISeriesSpecifier downloadShow in ss)
         {
@@ -188,7 +188,7 @@ public static class CacheHelper
         }
     }
 
-    public static void MarkPlaceholdersDirty(this MediaCache cache) 
+    public static void MarkPlaceholdersDirty(this MediaCache cache)
     {
         lock (cache.MOVIE_LOCK)
         {
@@ -203,7 +203,7 @@ public static class CacheHelper
         {
             // anything with a srv_lastupdated of 0 should be marked as dirty
             // typically, this'll be placeholder cachedSeries
-            foreach (CachedSeriesInfo? ser in cache.CachedShowData.Values.Where(ser => ser.SrvLastUpdated == 0 || ser.Episodes.Count == 0 || ser.Episodes.Any(e=>e.Name.IsPlaceholderName() && e.HasAired())))
+            foreach (CachedSeriesInfo? ser in cache.CachedShowData.Values.Where(ser => ser.SrvLastUpdated == 0 || ser.Episodes.Count == 0 || ser.Episodes.Any(e => e.Name.IsPlaceholderName() && e.HasAired())))
             {
                 ser.Dirty = true;
 
@@ -239,7 +239,7 @@ public static class CacheHelper
 
         return matchingSeries;
     }
-        
+
     public static Dictionary<int, CachedMovieInfo> GetMoviesDictMatching<T>(this T cache, string testShowName) where T : MediaCache, iMovieSource
     {
         Dictionary<int, CachedMovieInfo> matchingSeries = new();
@@ -287,7 +287,7 @@ public static class CacheHelper
             _ => null
         };
     }
-    public static CachedMovieInfo? GetMovie<T>(this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch) where T:MediaCache,iMovieSource
+    public static CachedMovieInfo? GetMovie<T>(this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch) where T : MediaCache, iMovieSource
     {
         cache.Search(hint, showErrorMsgBox, MediaConfiguration.MediaType.movie, preferredLocale);
 

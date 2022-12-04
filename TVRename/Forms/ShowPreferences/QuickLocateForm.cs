@@ -29,7 +29,7 @@ public partial class QuickLocateForm : Form
         {
             cbDirectory.Items.Add(folder.TrimEnd(Path.DirectorySeparatorChar.ToString()));
         }
-        if (folders.Count>0)
+        if (folders.Count > 0)
         {
             cbDirectory.SelectedIndex = 0;
         }

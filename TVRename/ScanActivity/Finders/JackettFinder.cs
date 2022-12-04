@@ -62,7 +62,7 @@ internal class JackettFinder : DownloadFinder
                     case MovieItemMissing movieItemMissing:
                         FindMissingEpisode(movieItemMissing, toRemove, newItems);
                         break;
-                    //case ShowSeasonMissing seasonMissing:
+                        //case ShowSeasonMissing seasonMissing:
                         //TODO - FindMissingSeason(seasonMissing, toRemove, newItems);
                         //break;
                 }
@@ -191,7 +191,7 @@ internal class JackettFinder : DownloadFinder
     public static void SearchForSeason(ShowConfiguration series, int snum)
     {
         const string FORMAT = "{ShowName} S{Season:2}";
-        string searchTerm = CustomSeasonName.NameFor(series,snum, FORMAT);
+        string searchTerm = CustomSeasonName.NameFor(series, snum, FORMAT);
         SearchFor(searchTerm);
     }
 
@@ -199,7 +199,7 @@ internal class JackettFinder : DownloadFinder
     {
         string serverName = TVSettings.Instance.JackettServer;
         string serverPort = TVSettings.Instance.JackettPort;
-        string searchServer =  $"http://{serverName}:{serverPort}/";
+        string searchServer = $"http://{serverName}:{serverPort}/";
 
         string url = $"{searchServer}UI/Dashboard#search={WebUtility.UrlEncode(searchTerm)}&tracker=&category=";
 

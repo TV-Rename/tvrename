@@ -1,9 +1,9 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 // "PossibleNewMovie" represents a folder found by doing a Check in the 'Bulk Add Movie' dialog

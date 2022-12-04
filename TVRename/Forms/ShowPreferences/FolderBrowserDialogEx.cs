@@ -509,7 +509,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             // else we do nothing
 
             // Prep the edit box
-            Win32.RECT rcEdit = new ();
+            Win32.RECT rcEdit = new();
             IntPtr hEdit = Win32.GetDlgItem(hDlg, CtlIds.PATH_EDIT);
             if (hEdit != IntPtr.Zero)
             {

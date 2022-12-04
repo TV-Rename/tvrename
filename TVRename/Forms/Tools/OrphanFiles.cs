@@ -101,7 +101,7 @@ public partial class OrphanFiles : Form
             Dictionary<int, SafeList<string>> folders = show.AllFolderLocations(true);
 
             foreach (string showFolder in folders
-                         .SelectMany(x=>x.Value)
+                         .SelectMany(x => x.Value)
                          .Where(showFolder => !doneFolders.Contains(showFolder)))
             {
                 doneFolders.Add(showFolder);
@@ -191,13 +191,13 @@ public partial class OrphanFiles : Form
 
             //first column
             if (col.Index == 0)
-                //we have to manually take care of tree structure, checkbox and image
+            //we have to manually take care of tree structure, checkbox and image
             {
                 col.Width += 16 + 16 + olv.SmallImageSize.Width;
             }
             //last column
             else if (col.Index == olv.Columns.Count - 1)
-                //avoid "fill free space" issue
+            //avoid "fill free space" issue
             {
                 col.Width = colWidthBeforeAutoResize > colWidthAfterAutoResizeByContent ? colWidthBeforeAutoResize : colWidthAfterAutoResizeByContent;
             }

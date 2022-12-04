@@ -67,7 +67,7 @@ public static class CustomTvShowName
         return NameFor(m?.ShowName, m?.CachedShow, styleString, urlEncode, isfilename);
     }
 
-    public static string NameFor(string? showName,CachedSeriesInfo? si, string styleString, bool urlEncode, bool isfilename)
+    public static string NameFor(string? showName, CachedSeriesInfo? si, string styleString, bool urlEncode, bool isfilename)
     {
         string name = styleString;
 

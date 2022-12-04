@@ -24,7 +24,7 @@ public sealed class ItemList : SafeList<Item>
 
     public List<Action> Actions => this.OfType<Action>().ToList();
 
-    public List<Item> Checked => this.Where(i=>i.CheckedItem).ToList();
+    public List<Item> Checked => this.Where(i => i.CheckedItem).ToList();
 
     public List<ItemMissing> Missing => this.OfType<ItemMissing>().ToList();
 

@@ -1,9 +1,9 @@
+using Alphaleonis.Win32.Filesystem;
+using NLog;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Alphaleonis.Win32.Filesystem;
-using NLog;
 
 namespace TVRename;
 

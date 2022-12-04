@@ -54,7 +54,7 @@ public class ShowConfiguration : MediaConfiguration
     private string lastFiguredTz;
     public DateTime? BannersLastUpdatedOnDisk { get; set; }
     public ProcessedSeason.SeasonType Order =>
-        AlternateOrder? ProcessedSeason.SeasonType.alternate:
+        AlternateOrder ? ProcessedSeason.SeasonType.alternate :
         DvdOrder ? ProcessedSeason.SeasonType.dvd :
         ProcessedSeason.SeasonType.aired;
 

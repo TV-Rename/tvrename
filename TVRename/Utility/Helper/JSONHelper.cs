@@ -85,7 +85,7 @@ public static class JsonHelper
         }
         catch (NullReferenceException nre)
         {
-            Logger.Error(nre,$"Problem flattening {ja}");
+            Logger.Error(nre, $"Problem flattening {ja}");
             return string.Empty;
         }
     }

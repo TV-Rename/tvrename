@@ -35,7 +35,7 @@ public partial class CollectionsView : Form
 
             List<CollectionMember> incompleteCollectionMovies =
                 collectionMovies.Where(member => incompleteCollections.Contains(member.CollectionName)).ToList();
-            olvCollections.SetObjects(incompleteCollectionMovies,true);
+            olvCollections.SetObjects(incompleteCollectionMovies, true);
 
             return;
         }
@@ -91,7 +91,7 @@ public partial class CollectionsView : Form
             Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collectionId, TVSettings.Instance.TMDBLanguage.Abbreviation);
             foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
             {
-                CollectionMember c = new( collectionName,neededShow.Value);
+                CollectionMember c = new(collectionName, neededShow.Value);
 
                 c.IsInLibrary = mDoc.FilmLibrary.Movies.Any(configuration => configuration.TmdbCode == c.TmdbCode);
                 collectionMovies.Add(c);
@@ -204,6 +204,6 @@ public partial class CollectionsView : Form
 
     private void CollectionsView_FormClosing(object sender, FormClosingEventArgs e)
     {
-        mDoc.MoviesAddedOrEdited(true, false,false , mainUi, allAdded);
+        mDoc.MoviesAddedOrEdited(true, false, false, mainUi, allAdded);
     }
 }

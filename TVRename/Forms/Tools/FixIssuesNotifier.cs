@@ -14,7 +14,7 @@ public class FixIssuesNotifier : Notifier
     }
     internal override void Do(BackgroundWorker backgroundWorker, CancellationTokenSource source)
     {
-        operation.Start((percent, message, lastUpdate) => ReportProgress(source,percent,message,lastUpdate), source.Token);
+        operation.Start((percent, message, lastUpdate) => ReportProgress(source, percent, message, lastUpdate), source.Token);
     }
 
     internal override string ActionName() => "Fix Issues";

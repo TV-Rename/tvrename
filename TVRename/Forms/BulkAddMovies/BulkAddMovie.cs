@@ -618,7 +618,7 @@ public partial class BulkAddMovie : Form
     {
         lvFMNewShows.Update();
 
-        pbProgress.Value = e.ProgressPercentage.Between(0,100);
+        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
         lblStatusLabel.Text = (e.UserState as PossibleNewMovie)?.RefinedHint.ToUiVersion();
         UpdateListItem(e.UserState as PossibleNewMovie, false);
     }

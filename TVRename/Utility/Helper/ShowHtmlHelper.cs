@@ -88,7 +88,7 @@ internal static class ShowHtmlHelper
         StringBuilder sb = new();
         DirFilesCache dfc = new();
         sb.AppendLine(HTMLHeader(10, col));
-        sb.AppendMovie(si, col, includeDirectoryLinks,dfc);
+        sb.AppendMovie(si, col, includeDirectoryLinks, dfc);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
@@ -113,7 +113,7 @@ internal static class ShowHtmlHelper
         string imdbLink = si.ImdbCode.ToImdbLink();
 
         string ytsButton = si.YtsUrl.HasValue() ? CreateButton(si.YtsUrl, "<i class=\"fab fa-facebook\"></i>", "YTS") : string.Empty;
-        
+
         sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                   <div class=""row"">
                    <div class=""col-md-4"">
@@ -157,7 +157,7 @@ internal static class ShowHtmlHelper
         DirFilesCache dfc = new();
         StringBuilder sb = new();
         sb.AppendLine(HTMLHeader(10, col));
-        sb.AppendMovie(null, movie, col, false,dfc);
+        sb.AppendMovie(null, movie, col, false, dfc);
         if (recommendation != null)
         {
             sb.AppendRecommendation(recommendation, col);
@@ -350,7 +350,7 @@ internal static class ShowHtmlHelper
                 </div>");
     }
 
-    private static void AppendSeasonImages(this StringBuilder sb, Color backgroundColour,ProcessedSeason season)
+    private static void AppendSeasonImages(this StringBuilder sb, Color backgroundColour, ProcessedSeason season)
     {
         CachedSeriesInfo? ser = season.Show.CachedShow;
 
@@ -558,7 +558,7 @@ internal static class ShowHtmlHelper
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeText}{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>");
-        if(ser.GetCrew().Any() || ser.GetActors().Any() )
+        if (ser.GetCrew().Any() || ser.GetActors().Any())
         {
             sb.AppendLine($@"<div class=""accordion accordion-flush"" id=""accordionCastCrew"">
   <div class=""accordion-item"" style=""background-color:#F0F0F0"">
@@ -647,7 +647,7 @@ internal static class ShowHtmlHelper
         {
             return;
         }
-        AppendMovie(sb, si, ser, backgroundColour, includeDirectoryLinks,dfc);
+        AppendMovie(sb, si, ser, backgroundColour, includeDirectoryLinks, dfc);
     }
 
     // ReSharper disable once FunctionComplexityOverflow
@@ -665,7 +665,7 @@ internal static class ShowHtmlHelper
         string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(ser.TmdbCode) : string.Empty;
         string? mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
 
-        string urlFilename = includeDirectoryLinks && (si !=null) ? Uri.EscapeDataString(dfc.FindMovieOnDisk(si).FirstOrDefault()?.FullName ?? string.Empty) : string.Empty;
+        string urlFilename = includeDirectoryLinks && (si != null) ? Uri.EscapeDataString(dfc.FindMovieOnDisk(si).FirstOrDefault()?.FullName ?? string.Empty) : string.Empty;
         string explorerButton = includeDirectoryLinks ? CreateExploreButton(urlFilename) : string.Empty;
         string viewButton = includeDirectoryLinks ? CreateWatchButton(urlFilename) : string.Empty;
         string facebookButton = ser.FacebookId.HasValue() ? CreateButton($"https://facebook.com/{ser.FacebookId}", "<i class=\"fab fa-facebook\"></i>", "Facebook") : string.Empty;
@@ -824,7 +824,7 @@ internal static class ShowHtmlHelper
         return EditTvSeriesUrl(si, si.Source);
     }
 
-    private static string? EditTvSeriesUrl(CachedSeriesInfo si,TVDoc.ProviderType source)
+    private static string? EditTvSeriesUrl(CachedSeriesInfo si, TVDoc.ProviderType source)
     {
         switch (source)
         {
@@ -856,7 +856,7 @@ internal static class ShowHtmlHelper
             case TVDoc.ProviderType.libraryDefault:
                 return EditTvSeriesUrl(si, TVSettings.Instance.DefaultProvider);
             default:
-                throw new ArgumentOutOfRangeException(nameof(source),$"TV Url asked tobe created for {source.PrettyPrint()}");
+                throw new ArgumentOutOfRangeException(nameof(source), $"TV Url asked tobe created for {source.PrettyPrint()}");
         }
     }
 
@@ -1275,7 +1275,7 @@ internal static class ShowHtmlHelper
         string tvdbButton = CreateButton(tvdbEpisodeUrl, "TVDB.com", "View on TVDB");
         string tvMazeButton = CreateButton(ep.Show.Provider == TVDoc.ProviderType.TVmaze ? ep.LinkUrl : null, "TVmaze.com", "View on TV maze");
         string imdbButton = CreateButton(imdbLink, "IMDB.com", "View on IMDB");
-        string tmdbButton = ep.Show.Provider == TVDoc.ProviderType.TMDB ? CreateButton(ep.WebsiteUrl, "TMDB.com", "View on TMDB.com"):string.Empty;
+        string tmdbButton = ep.Show.Provider == TVDoc.ProviderType.TMDB ? CreateButton(ep.WebsiteUrl, "TMDB.com", "View on TMDB.com") : string.Empty;
 
         sb.AppendLine($@"
                 <div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
@@ -1361,7 +1361,7 @@ internal static class ShowHtmlHelper
         }
         catch (Exception e)
         {
-            Logger.Error(e,$"Could not display date from {ei.Show.Name} S{ei.AppropriateSeasonNumber}E{ei.AppropriateEpNum}");
+            Logger.Error(e, $"Could not display date from {ei.Show.Name} S{ei.AppropriateSeasonNumber}E{ei.AppropriateEpNum}");
         }
         return string.Empty;
     }
@@ -1786,7 +1786,7 @@ internal static class ShowHtmlHelper
 
         string siteRating = PrettyPrint(ser?.SiteRating);
         string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si.TvdbCode) : string.Empty;
-        string tmdbLink = si.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(si.TmdbCode)   : string.Empty;
+        string tmdbLink = si.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(si.TmdbCode) : string.Empty;
         string? mazeLink = ser?.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
         string facebookButton = ser?.FacebookId.HasValue() ?? false ? $"https://facebook.com/{ser.FacebookId}" : string.Empty;
         string instagramButton = ser?.InstagramId.HasValue() ?? false ? $"https://instagram.com/{ser.InstagramId}" : string.Empty;

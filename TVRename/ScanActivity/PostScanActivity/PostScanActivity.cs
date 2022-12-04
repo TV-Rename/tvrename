@@ -13,7 +13,7 @@ using TVRename.Forms.Tools;
 
 namespace TVRename;
 
-public abstract class PostScanActivity :LongOperation
+public abstract class PostScanActivity : LongOperation
 {
     protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
     protected readonly TVDoc MDoc;
@@ -21,7 +21,7 @@ public abstract class PostScanActivity :LongOperation
     private int startPosition;
     private int endPosition;
 
-    protected delegate void PostScanProgressDelegate(int percent,int total, string message,string lastUpdate);
+    protected delegate void PostScanProgressDelegate(int percent, int total, string message, string lastUpdate);
     protected PostScanActivity(TVDoc doc)
     {
         MDoc = doc;
@@ -33,7 +33,7 @@ public abstract class PostScanActivity :LongOperation
 
     protected abstract bool Active();
 
-    protected abstract void DoCheck( PostScanProgressDelegate progress, CancellationToken token);
+    protected abstract void DoCheck(PostScanProgressDelegate progress, CancellationToken token);
 
     public override void Start(SetProgressDelegate? progress, CancellationToken sourceToken)
         => Check(progress, sourceToken);
@@ -46,7 +46,7 @@ public abstract class PostScanActivity :LongOperation
         startPosition = startpct;
         endPosition = totPct;
         progressDelegate = progress;
-        progressDelegate?.Invoke(startpct, string.Empty,string.Empty);
+        progressDelegate?.Invoke(startpct, string.Empty, string.Empty);
         try
         {
             if (!Active())
@@ -75,7 +75,7 @@ public abstract class PostScanActivity :LongOperation
         }
     }
 
-    private void UpdateStatus(int recordNumber, int totalRecords, string message,string lastAction)
+    private void UpdateStatus(int recordNumber, int totalRecords, string message, string lastAction)
     {
         int position = (endPosition - startPosition) * recordNumber / (totalRecords + 1);
         progressDelegate?.Invoke(startPosition + position, message, lastAction);

@@ -74,8 +74,8 @@ public class ActionEngine
                 return;
             }
 
-            Logger.Trace($"Triggering Action: {action.Name} - {action.Produces} - {action}" );
-            action.Outcome = action.Go(mStats,info.Token);
+            Logger.Trace($"Triggering Action: {action.Name} - {action.Produces} - {action}");
+            action.Outcome = action.Go(mStats, info.Token);
             if (action.Outcome.Error)
             {
                 action.ErrorText = action.Outcome.LastError?.Message ?? string.Empty;
@@ -105,7 +105,8 @@ public class ActionEngine
 
     private void WaitForAllActionThreadsAndTidyUp()
     {
-        actionWorkers?.ForEach(t => {
+        actionWorkers?.ForEach(t =>
+        {
             if (t.Item1.IsAlive)
             {
                 t.Item1.Join();
@@ -182,7 +183,7 @@ public class ActionEngine
             {
                 actionWorkers = new SafeList<(Thread, CancellationTokenSource)>();
 
-                ExecuteQueues(queues,args.Token);
+                ExecuteQueues(queues, args.Token);
 
                 WaitForAllActionThreadsAndTidyUp();
             }
@@ -213,7 +214,7 @@ public class ActionEngine
     {
         if (actionWorkers is not null)
         {
-            foreach ((Thread,CancellationTokenSource) t in actionWorkers)
+            foreach ((Thread, CancellationTokenSource) t in actionWorkers)
             {
                 t.Item2.Cancel();
             }
@@ -274,7 +275,7 @@ public class ActionEngine
                 if (!act.Outcome.Done)
                 {
                     CancellationTokenSource cts = new();
-                    StartThread(new ProcessActionInfo(currentQueue, act,cts.Token),cts);
+                    StartThread(new ProcessActionInfo(currentQueue, act, cts.Token), cts);
                 }
             }
         }
@@ -299,7 +300,7 @@ public class ActionEngine
                 return;
             }
 
-            actionWorkers.Add((t,cancellationTokenSource));
+            actionWorkers.Add((t, cancellationTokenSource));
             actionStarting = true; // set to false in thread after it has the semaphore
             t.Start(pai);
         }
@@ -393,7 +394,7 @@ public class ActionEngine
                 return 0;
 
             default:
-                Logger.Fatal($"No action type found for {action.GetType()}, Please follow up with a developer." );
+                Logger.Fatal($"No action type found for {action.GetType()}, Please follow up with a developer.");
                 // put it in this queue by default
                 return 3;
         }

@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,7 +15,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using NLog;
 using TVRename.Forms;
 using TVRename.Forms.ShowPreferences;
 
@@ -581,11 +581,11 @@ public partial class AddEditShow : Form
         }
         catch (SEHException ex)
         {
-            Logger.Error(ex,"Could not load Folder Selection Dialog:");
+            Logger.Error(ex, "Could not load Folder Selection Dialog:");
         }
         catch (InvalidOperationException ex)
         {
-            Logger.Error(ex,"Could not load Folder Selection Dialog:");
+            Logger.Error(ex, "Could not load Folder Selection Dialog:");
         }
     }
 
@@ -824,7 +824,7 @@ public partial class AddEditShow : Form
         HasChanged = true;
         CachedSeriesInfo? cachedSeriesInfo = codeFinderForm.SelectedShow();
 
-        if (addingNewShow && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation && cachedSeriesInfo!=null)
+        if (addingNewShow && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation && cachedSeriesInfo != null)
         {
             txtBaseFolder.Text =
                 TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator()

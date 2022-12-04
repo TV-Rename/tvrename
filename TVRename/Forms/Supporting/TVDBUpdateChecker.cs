@@ -12,7 +12,7 @@ namespace TVRename.Forms.Supporting
         {
             InitializeComponent();
 
-            comboBoxShow.DataSource = doc.TvLibrary.GetSortedShowItems().Where(s=>s.Provider==TVDoc.ProviderType.TheTVDB).ToArray();
+            comboBoxShow.DataSource = doc.TvLibrary.GetSortedShowItems().Where(s => s.Provider == TVDoc.ProviderType.TheTVDB).ToArray();
             comboBoxShow.DisplayMember = "Name";
         }
 

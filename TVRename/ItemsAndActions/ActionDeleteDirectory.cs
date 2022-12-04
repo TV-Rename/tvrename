@@ -6,9 +6,9 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Threading;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
@@ -75,7 +75,7 @@ public class ActionDeleteDirectory : ActionDelete
                 DeleteOrRecycleFolder(toRemove);
                 if (Tidyup is { DeleteEmpty: true })
                 {
-                    LOGGER.Info($"Testing {toRemove.Parent.FullName } to see whether it should be tidied up");
+                    LOGGER.Info($"Testing {toRemove.Parent.FullName} to see whether it should be tidied up");
                     DoTidyUp(toRemove.Parent);
                 }
             }

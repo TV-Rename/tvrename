@@ -1,7 +1,7 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
@@ -162,7 +162,7 @@ internal class CleanDownloadDirectory : ScanActivity
         CachedSeriesInfo? s = si.CachedShow;
         if (s is null)
         {
-            throw new ArgumentNullException(nameof(matchingShows),"s is null");
+            throw new ArgumentNullException(nameof(matchingShows), "s is null");
         }
 
         ProcessedEpisode pep = si.GetEpisode(seasF, epF);
@@ -216,7 +216,7 @@ internal class CleanDownloadDirectory : ScanActivity
         }
     }
 
-    private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi,  IDialogParent owner)
+    private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, IDialogParent owner)
     {
         List<ShowConfiguration> matchingShowsAll = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
         List<ShowConfiguration> matchingShows = FinderHelper.RemoveShortShows(matchingShowsAll);
@@ -241,7 +241,7 @@ internal class CleanDownloadDirectory : ScanActivity
 
         foreach (ShowConfiguration si in matchingShows)
         {
-            (bool? x,ProcessedEpisode? matchingEpisode) = CanFileBeDeletedForShow(unattended, fi, owner, si, matchingShows);
+            (bool? x, ProcessedEpisode? matchingEpisode) = CanFileBeDeletedForShow(unattended, fi, owner, si, matchingShows);
             if (x is false)
             {
                 fileCanBeDeleted = false;
@@ -296,7 +296,7 @@ internal class CleanDownloadDirectory : ScanActivity
         if (!si.SeasonEpisodes.ContainsKey(seasF))
         {
             LogError(fi, seasF, epF, re, si, "season");
-            return (false,null);
+            return (false, null);
         }
 
         ProcessedEpisode? firstMatchingEpisode = si.SeasonEpisodes[seasF].FirstOrDefault(ep => ep.AppropriateEpNum == epF);
@@ -304,7 +304,7 @@ internal class CleanDownloadDirectory : ScanActivity
         if (firstMatchingEpisode == null)
         {
             LogError(fi, seasF, epF, re, si, "episode");
-            return (false,null);
+            return (false, null);
         }
 
         List<FileInfo> encumbants = dfc.FindEpOnDisk(firstMatchingEpisode, false);
@@ -313,7 +313,7 @@ internal class CleanDownloadDirectory : ScanActivity
         {
             //File is needed as there are no files for that cachedSeries/episode
             CopyFutureDatedFile(fi, firstMatchingEpisode, MDoc);
-            return (false,firstMatchingEpisode);
+            return (false, firstMatchingEpisode);
         }
         else
         {
@@ -333,7 +333,7 @@ internal class CleanDownloadDirectory : ScanActivity
                     fileCanBeDeleted = false;
                 }
             }
-            return (fileCanBeDeleted,firstMatchingEpisode);
+            return (fileCanBeDeleted, firstMatchingEpisode);
         }
     }
 
@@ -426,7 +426,7 @@ internal class CleanDownloadDirectory : ScanActivity
                     }
                     else
                     {
-                        ScanHelper.UpgradeFile(newFile, pep, existingFile,MDoc,returnActions);
+                        ScanHelper.UpgradeFile(newFile, pep, existingFile, MDoc, returnActions);
                     }
                 }
                 else
@@ -449,7 +449,7 @@ internal class CleanDownloadDirectory : ScanActivity
                 {
                     if (matchingShows.Count <= 1)
                     {
-                        return ScanHelper.AskUserAboutFileReplacement(newFile, existingFile, pep, owner,MDoc,returnActions);
+                        return ScanHelper.AskUserAboutFileReplacement(newFile, existingFile, pep, owner, MDoc, returnActions);
                     }
 
                     LOGGER.Warn(

@@ -132,7 +132,7 @@ public partial class SettingsReview : Form
         btnRefresh.Visible = false;
         pbProgress.Visible = true;
         lblStatus.Visible = true;
-        Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.Normal,mainUi.Handle);
+        Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.Normal, mainUi.Handle);
         bwScan.RunWorkerAsync();
     }
 
@@ -186,7 +186,7 @@ public partial class SettingsReview : Form
 
     private void Remedy(IEnumerable<SettingsCheck> selectedItems)
     {
-        FixIssuesNotifier form = new(new RemedySettings(selectedItems,this));
+        FixIssuesNotifier form = new(new RemedySettings(selectedItems, this));
         form.ShowDialog();
     }
 

@@ -90,6 +90,6 @@ internal static class CachePersistorMapping
     private static int ExtractAndParse(XElement r, string key)
     {
         string value = r.ExtractString(key);
-        return int.TryParse(value, out int intValue) ? intValue : -1 ;
+        return int.TryParse(value, out int intValue) ? intValue : -1;
     }
 }

@@ -1,8 +1,8 @@
-using System;
-using System.Net.Sockets;
 using GuerrillaNtp;
 using Humanizer;
 using NLog;
+using System;
+using System.Net.Sockets;
 
 namespace TVRename;
 

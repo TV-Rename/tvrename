@@ -38,7 +38,7 @@ public class DirCache : List<DirCacheEntry>
         DirectoryInfo di = new(folder);
         try
         {
-            n = di.GetFiles()?.Length??0;
+            n = di.GetFiles()?.Length ?? 0;
         }
         catch (NotSupportedException)
         {
