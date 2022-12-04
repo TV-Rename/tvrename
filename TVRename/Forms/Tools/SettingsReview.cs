@@ -31,16 +31,9 @@ public partial class SettingsReview : Form
         olvDuplicates.Sort(olvCheck);
     }
 
-    private void AddRcMenuItem(string label, EventHandler command)
+    private void rightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
     {
-        ToolStripMenuItem tsi = new(label.ToUiVersion());
-        tsi.Click += command;
-        possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
-    }
-
-    private void PossibleMergedEpisodeRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-    {
-        possibleMergedEpisodeRightClickMenu.Close();
+        rightClickMenu.Close();
     }
 
     private void BwScan_DoWork(object sender, DoWorkEventArgs e)
@@ -150,7 +143,7 @@ public partial class SettingsReview : Form
             return;
         }
 
-        possibleMergedEpisodeRightClickMenu.Items.Clear();
+        rightClickMenu.Items.Clear();
         if (olvDuplicates.SelectedObjects.Count == 1)
         {
             SettingsCheck mlastSelected = (SettingsCheck)e.Model;
@@ -158,32 +151,32 @@ public partial class SettingsReview : Form
             if (mlastSelected is MovieCheck mcheck)
             {
                 MovieConfiguration si = mcheck.Movie;
-                AddRcMenuItem("Force Refresh",
+                rightClickMenu.Add("Force Refresh",
                     (_, _) => mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false));
 
-                AddRcMenuItem("Edit Movie", (_, _) => mainUi.EditMovie(si));
+                rightClickMenu.Add("Edit Movie", (_, _) => mainUi.EditMovie(si));
 
-                possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
+                rightClickMenu.AddSeparator();
                 foreach (string? f in si.Locations)
                 {
-                    AddRcMenuItem("Visit " + f, (_, _) => f.OpenFolder());
+                    rightClickMenu.Add("Visit " + f, (_, _) => f.OpenFolder());
                 }
             }
             else if (mlastSelected is TvShowCheck tcheck)
             {
                 ShowConfiguration si = tcheck.Show;
-                AddRcMenuItem("Force Refresh",
+                rightClickMenu.Add("Force Refresh",
                     (_, _) => mainUi.ForceRefresh(new List<ShowConfiguration> { si }, false));
 
-                AddRcMenuItem("Edit TV Show", (_, _) => mainUi.EditShow(si));
+                rightClickMenu.Add("Edit TV Show", (_, _) => mainUi.EditShow(si));
             }
 
-            possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
-            AddRcMenuItem("Fix Issue", (_, _) => Remedy(mlastSelected.AsList()));
+            rightClickMenu.AddSeparator();
+            rightClickMenu.Add("Fix Issue", (_, _) => Remedy(mlastSelected.AsList()));
         }
         else
         {
-            AddRcMenuItem("Fix Issues", (_, _) =>
+            rightClickMenu.Add("Fix Issues", (_, _) =>
             {
                 Remedy(olvDuplicates.SelectedObjects.OfType<SettingsCheck>());
                 mDoc.SetDirty();

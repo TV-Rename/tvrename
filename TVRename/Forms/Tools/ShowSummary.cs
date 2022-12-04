@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using TVRename.Forms;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using ContentAlignment = DevAge.Drawing.ContentAlignment;
 using Directory = System.IO.Directory;
@@ -288,7 +289,7 @@ public partial class ShowSummary : Form, IDialogParent
 
     private void showRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
     {
-        showRightClickMenu.Close();
+        rightClickMenu.Close();
     }
 
     private delegate void ShowChildConsumer(Form childForm);
@@ -337,13 +338,13 @@ public partial class ShowSummary : Form, IDialogParent
                 return;
             }
 
-            gridSummary.showRightClickMenu.Items.Clear();
+            gridSummary.rightClickMenu.Items.Clear();
 
             if (processedSeason != null)
             {
                 if (processedSeason.Show.IgnoreSeasons.Contains(processedSeason.SeasonNumber))
                 {
-                    AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Ignoring Season", (_, _) =>
+                    gridSummary.rightClickMenu.Add("Stop Ignoring Season", (_, _) =>
                     {
                         processedSeason.Show.IgnoreSeasons.Remove(processedSeason.SeasonNumber);
                         mDoc.TvAddedOrEdited(false, false, false, null, processedSeason.Show);
@@ -353,7 +354,7 @@ public partial class ShowSummary : Form, IDialogParent
                 }
                 else
                 {
-                    AddRcMenuItem(gridSummary.showRightClickMenu, "Ignore Season", (_, _) =>
+                    gridSummary.rightClickMenu.Add( "Ignore Season", (_, _) =>
                     {
                         processedSeason.Show.IgnoreSeasons.Add(processedSeason.SeasonNumber);
                         mDoc.TvAddedOrEdited(false,false,false,null, processedSeason.Show);
@@ -365,7 +366,7 @@ public partial class ShowSummary : Form, IDialogParent
 
             if (show.DoMissingCheck)
             {
-                AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Checking TV Show", (_, _) =>
+                gridSummary.rightClickMenu.Add("Stop Checking TV Show", (_, _) =>
                 {
                     show.DoMissingCheck = false;
                     mDoc.TvAddedOrEdited(false, false, false, null, show);
@@ -375,7 +376,7 @@ public partial class ShowSummary : Form, IDialogParent
             }
             else
             {
-                AddRcMenuItem(gridSummary.showRightClickMenu, "Start Checking TV Show", (_, _) =>
+                gridSummary.rightClickMenu.Add("Start Checking TV Show", (_, _) =>
                 {
                     show.DoMissingCheck = true;
                     mDoc.TvAddedOrEdited(false, false, false, null, show);
@@ -384,19 +385,19 @@ public partial class ShowSummary : Form, IDialogParent
                 });
             }
 
-            GenerateSeparator(gridSummary.showRightClickMenu);
+            gridSummary.rightClickMenu.AddSeparator();
 
             if (processedSeason is null)
             {
-                AddRcMenuItem(gridSummary.showRightClickMenu, "Force Refresh", (_, _) =>
+                gridSummary.rightClickMenu.Add("Force Refresh", (_, _) =>
                 {
                     gridSummary.MainWindow.ForceRefresh(show, false);
                 });
 
-                GenerateSeparator(gridSummary.showRightClickMenu);
+                gridSummary.rightClickMenu.AddSeparator();
             }
 
-            AddRcMenuItem(gridSummary.showRightClickMenu, "Visit Source",
+            gridSummary.rightClickMenu.Add("Visit Source",
                 (_, _) =>
                 {
                     if (processedSeason is null)
@@ -425,7 +426,7 @@ public partial class ShowSummary : Form, IDialogParent
             }
 
             Point pt = new(e.X, e.Y);
-            gridSummary.showRightClickMenu.Show(sender.Grid.PointToScreen(pt));
+            gridSummary.rightClickMenu.Show(sender.Grid.PointToScreen(pt));
         }
 
         private void GenerateOpenMenu(ProcessedSeason seas, ICollection<string> added)
@@ -445,11 +446,11 @@ public partial class ShowSummary : Form, IDialogParent
                     added.Add(folder); // don't show the same folder more than once
                     if (first)
                     {
-                        GenerateSeparator(gridSummary.showRightClickMenu);
+                        gridSummary.rightClickMenu.AddSeparator();
                         first = false;
                     }
 
-                    AddRcMenuItem(gridSummary.showRightClickMenu, "Open: " + folder, (_, _) =>
+                    gridSummary.rightClickMenu.Add("Open: " + folder, (_, _) =>
                     {
                         folder.OpenFolder();
                     });
@@ -470,11 +471,11 @@ public partial class ShowSummary : Form, IDialogParent
                         added.Add(folder); // don't show the same folder more than once
                         if (first)
                         {
-                            GenerateSeparator(gridSummary.showRightClickMenu);
+                            gridSummary.rightClickMenu.AddSeparator();
                             first = false;
                         }
 
-                        AddRcMenuItem(gridSummary.showRightClickMenu, "Open: " + folder, (_, _) =>
+                        gridSummary.rightClickMenu.Add("Open: " + folder, (_, _) =>
                         {
                             folder.OpenFolder();
                         });
@@ -495,29 +496,16 @@ public partial class ShowSummary : Form, IDialogParent
                 {
                     if (first)
                     {
-                        GenerateSeparator(gridSummary.showRightClickMenu);
+                        gridSummary.rightClickMenu.AddSeparator();
                         first = false;
                     }
 
                     foreach (FileInfo fi in fl)
                     {
-                        gridSummary.showRightClickMenu.Items.Add("Watch: " + fi.FullName,(_, _) => fi.OpenFile());
+                        gridSummary.rightClickMenu.Items.Add("Watch: " + fi.FullName,(_, _) => fi.OpenFile());
                     }
                 }
             }
-        }
-
-        private static void AddRcMenuItem(ContextMenuStrip showRightClickMenu, string name, EventHandler command)
-        {
-            ToolStripMenuItem tsi = new(name.ToUiVersion());
-            tsi.Click += command;
-            showRightClickMenu.Items.Add(tsi);
-        }
-
-        private static void GenerateSeparator(ContextMenuStrip showRightClickMenu)
-        {
-            ToolStripSeparator tss = new();
-            showRightClickMenu.Items.Add(tss);
         }
     }
 

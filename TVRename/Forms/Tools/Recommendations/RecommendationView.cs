@@ -181,16 +181,9 @@ public partial class RecommendationView : Form
         addedMovies.Add(found);
     }
 
-    private void AddRcMenuItem(string label, EventHandler command)
+    private void rightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
     {
-        ToolStripMenuItem tsi = new(label.ToUiVersion());
-        tsi.Click += command;
-        possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
-    }
-
-    private void PossibleMergedEpisodeRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-    {
-        possibleMergedEpisodeRightClickMenu.Close();
+        rightClickMenu.Close();
     }
 
     private void BwScan_DoWork(object sender, DoWorkEventArgs e)
@@ -257,17 +250,17 @@ public partial class RecommendationView : Form
 
         RecommendationRow lastSelected = (RecommendationRow)e.Model;
 
-        possibleMergedEpisodeRightClickMenu.Items.Clear();
+        rightClickMenu.Items.Clear();
 
         switch (media)
         {
             case MediaConfiguration.MediaType.movie:
-                AddRcMenuItem("Add Movie to Library", (_, _) => AddMovieToLibrary(lastSelected.Key, lastSelected.Name));
+                rightClickMenu.Add("Add Movie to Library", (_, _) => AddMovieToLibrary(lastSelected.Key, lastSelected.Name));
                 break;
             case MediaConfiguration.MediaType.tv:
                 if (lastSelected.Series != null)
                 {
-                    AddRcMenuItem("Add TV show to Library",
+                    rightClickMenu.Add("Add TV show to Library",
                         (_, _) => AddTvToLibrary(lastSelected.Key, lastSelected.Series));
                 }
                 break;

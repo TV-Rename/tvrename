@@ -1,6 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Globalization;
 using System.Xml.Linq;
+using TVRename.Forms;
 
 namespace TVRename;
 

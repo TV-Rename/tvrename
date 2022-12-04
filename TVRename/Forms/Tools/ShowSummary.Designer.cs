@@ -33,7 +33,7 @@ namespace TVRename
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShowSummary));
             this.grid1 = new SourceGrid.Grid();
-            this.showRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.rightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.chkHideIgnored = new System.Windows.Forms.CheckBox();
             this.chkHideSpecials = new System.Windows.Forms.CheckBox();
             this.chkHideComplete = new System.Windows.Forms.CheckBox();
@@ -75,10 +75,10 @@ namespace TVRename
             // 
             // showRightClickMenu
             // 
-            this.showRightClickMenu.Name = "showRightClickMenu";
-            this.showRightClickMenu.ShowImageMargin = false;
-            this.showRightClickMenu.Size = new System.Drawing.Size(36, 4);
-            this.showRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.showRightClickMenu_ItemClicked);
+            this.rightClickMenu.Name = "rightClickMenu";
+            this.rightClickMenu.ShowImageMargin = false;
+            this.rightClickMenu.Size = new System.Drawing.Size(36, 4);
+            this.rightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.showRightClickMenu_ItemClicked);
             // 
             // chkHideIgnored
             // 
@@ -308,7 +308,7 @@ namespace TVRename
         #endregion
 
         private SourceGrid.Grid grid1;
-        private System.Windows.Forms.ContextMenuStrip showRightClickMenu;
+        private System.Windows.Forms.ContextMenuStrip rightClickMenu;
         private System.Windows.Forms.CheckBox chkHideIgnored;
         private System.Windows.Forms.CheckBox chkHideSpecials;
         private System.Windows.Forms.CheckBox chkHideComplete;

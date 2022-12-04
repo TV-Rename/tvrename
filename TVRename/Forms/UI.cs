@@ -24,7 +24,6 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using TVRename.Forms;
 using TVRename.Forms.Supporting;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
@@ -40,7 +39,7 @@ using MessageBox = System.Windows.Forms.MessageBox;
 using SystemColors = System.Drawing.SystemColors;
 using Timer = System.Windows.Forms.Timer;
 
-namespace TVRename;
+namespace TVRename.Forms;
 
 ///  <summary>
 ///  Summary for UI
@@ -1963,12 +1962,12 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void RightClickOnMyShows(ShowConfiguration si, Point pt)
     {
-        BuildRightClickMenu(pt, null, new List<ShowConfiguration> { si }, null);
+        BuildshowRightClickMenu(pt, null, new List<ShowConfiguration> { si }, null);
     }
 
     private void RightClickOnMyShows(ProcessedSeason seas, Point pt)
     {
-        BuildRightClickMenu(pt, null, new List<ShowConfiguration> { seas.Show }, seas);
+        BuildshowRightClickMenu(pt, null, new List<ShowConfiguration> { seas.Show }, seas);
     }
 
     private void WtwRightClickOnShow(List<ProcessedEpisode> eps, Point pt)
@@ -1982,29 +1981,29 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         List<ShowConfiguration> sis = eps.Select(e => e.Show).ToList();
 
-        BuildRightClickMenu(pt, ep, sis, ep?.AppropriateProcessedSeason);
+        BuildshowRightClickMenu(pt, ep, sis, ep?.AppropriateProcessedSeason);
     }
 
     private void MenuGuideAndTvdb(ProcessedEpisode? ep, ShowConfiguration si, ProcessedSeason? seas)
     {
         if (ep != null)
         {
-            AddRcMenuItem("Episode Guide", (_, _) => GotoEpguideFor(ep, true));
+            showRightClickMenu.Add("Episode Guide", (_, _) => GotoEpguideFor(ep, true));
             string label = $"Visit {ep.Show.Provider.PrettyPrint()}...";
-            AddRcMenuItem(label, (_, _) => TvSourceFor(ep));
+            showRightClickMenu.Add(label, (_, _) => TvSourceFor(ep));
         }
         else if (seas != null)
         {
-            AddRcMenuItem("Episode Guide", (_, _) => GotoEpguideFor(seas.Show, true));
+            showRightClickMenu.Add("Episode Guide", (_, _) => GotoEpguideFor(seas.Show, true));
             string label = $"Visit {seas.Show.Provider.PrettyPrint()}...";
-            AddRcMenuItem(label, (_, _) => TvSourceFor(seas));
+            showRightClickMenu.Add(label, (_, _) => TvSourceFor(seas));
         }
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         else
         {
-            AddRcMenuItem("Episode Guide", (_, _) => GotoEpguideFor(si, true));
+            showRightClickMenu.Add("Episode Guide", (_, _) => GotoEpguideFor(si, true));
             string label = $"Visit {si.Provider.PrettyPrint()}...";
-            AddRcMenuItem(label, (_, _) => TvSourceFor(si));
+            showRightClickMenu.Add(label, (_, _) => TvSourceFor(si));
         }
     }
 
@@ -2072,7 +2071,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
             if (first)
             {
-                showRightClickMenu.Items.Add(new ToolStripSeparator());
+                showRightClickMenu.AddSeparator();
                 first = false;
             }
 
@@ -2092,7 +2091,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         if (tsi.DropDownItems.Count > 0)
         {
-            showRightClickMenu.Items.Add(new ToolStripSeparator());
+            showRightClickMenu.AddSeparator();
             showRightClickMenu.Items.Add(tsi);
         }
     }
@@ -2101,18 +2100,18 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         showRightClickMenu.Items.Clear();
 
-        showRightClickMenu.Items.Add("Force Refresh", (_, _) => ForceMovieRefresh(si, false));
-        showRightClickMenu.Items.Add("Update Images", (_, _) => UpdateImages(new List<MovieConfiguration> { si }));
+        showRightClickMenu.Add("Force Refresh", (_, _) => ForceMovieRefresh(si, false));
+        showRightClickMenu.Add("Update Images", (_, _) => UpdateImages(new List<MovieConfiguration> { si }));
 
-        showRightClickMenu.Items.Add(new ToolStripSeparator());
+        showRightClickMenu.AddSeparator();
 
-        showRightClickMenu.Items.Add("Edit Movie", (_, _) => EditMovie(si));
-        showRightClickMenu.Items.Add("Delete Movie", (_, _) => DeleteMovie(si));
+        showRightClickMenu.Add("Edit Movie", (_, _) => EditMovie(si));
+        showRightClickMenu.Add("Delete Movie", (_, _) => DeleteMovie(si));
 
-        showRightClickMenu.Items.Add(new ToolStripSeparator());
+        showRightClickMenu.AddSeparator();
 
-        showRightClickMenu.Items.Add($"Scan {si.ShowName.InDoubleQuotes()}", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.SingleShow));
-        showRightClickMenu.Items.Add($"Quick Scan {si.ShowName.InDoubleQuotes()}", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.FastSingleShow));
+        showRightClickMenu.Add($"Scan {si.ShowName.InDoubleQuotes()}", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.SingleShow));
+        showRightClickMenu.Add($"Quick Scan {si.ShowName.InDoubleQuotes()}", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.FastSingleShow));
 
         if (si.Locations.Any())
         {
@@ -2123,7 +2122,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         showRightClickMenu.Show(pt);
     }
 
-    private void BuildRightClickMenu(Point pt, ProcessedEpisode? ep, List<ShowConfiguration> sil, ProcessedSeason? seas)
+    private void BuildshowRightClickMenu(Point pt, ProcessedEpisode? ep, List<ShowConfiguration> sil, ProcessedSeason? seas)
     {
         showRightClickMenu.Items.Clear();
 
@@ -2137,34 +2136,34 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         if (sil.Any())
         {
-            showRightClickMenu.Items.Add("Force Refresh", (_, _) => ForceRefresh(sil, false));
-            showRightClickMenu.Items.Add("Update Images", (_, _) => UpdateImages(sil));
-            showRightClickMenu.Items.Add(new ToolStripSeparator());
+            showRightClickMenu.Add("Force Refresh", (_, _) => ForceRefresh(sil, false));
+            showRightClickMenu.Add("Update Images", (_, _) => UpdateImages(sil));
+            showRightClickMenu.AddSeparator();
 
             string scanText = si is null || sil.Count > 1
                 ? "Scan Multiple Shows"
                 : "Scan " + si.ShowName.InDoubleQuotes();
 
-            showRightClickMenu.Items.Add(scanText, (_, _) => RightMenuScan(sil, TVSettings.ScanType.SingleShow));
-            showRightClickMenu.Items.Add($"Quick {scanText}", (_, _) => RightMenuScan(sil, TVSettings.ScanType.FastSingleShow));
+            showRightClickMenu.Add(scanText, (_, _) => RightMenuScan(sil, TVSettings.ScanType.SingleShow));
+            showRightClickMenu.Add($"Quick {scanText}", (_, _) => RightMenuScan(sil, TVSettings.ScanType.FastSingleShow));
         }
 
         if (sil.Count == 1 && si!= null)
         {
-            showRightClickMenu.Items.Add("Edit TV Show", (_, _) => EditShow(si));
-            showRightClickMenu.Items.Add("Delete TV Show", (_, _) => DeleteShow(si));
+            showRightClickMenu.Add("Edit TV Show", (_, _) => EditShow(si));
+            showRightClickMenu.Add("Delete TV Show", (_, _) => DeleteShow(si));
 
             if (seas != null)
             {
                 string uiFullSeasonWord = ProcessedSeason.UIFullSeasonWord(seas.SeasonNumber);
-                showRightClickMenu.Items.Add("Edit " + uiFullSeasonWord, (_, _) => EditSeason(si, seas.SeasonNumber));
+                showRightClickMenu.Add("Edit " + uiFullSeasonWord, (_, _) => EditSeason(si, seas.SeasonNumber));
                 if (si.IgnoreSeasons.Contains(seas.SeasonNumber))
                 {
-                    showRightClickMenu.Items.Add("Include " + uiFullSeasonWord, (_, _) => IncludeSeason(si, seas.SeasonNumber));
+                    showRightClickMenu.Add("Include " + uiFullSeasonWord, (_, _) => IncludeSeason(si, seas.SeasonNumber));
                 }
                 else
                 {
-                    showRightClickMenu.Items.Add("Ignore " + uiFullSeasonWord, (_, _) => IgnoreSeason(si, seas.SeasonNumber));
+                    showRightClickMenu.Add("Ignore " + uiFullSeasonWord, (_, _) => IgnoreSeason(si, seas.SeasonNumber));
                 }
             }
 
@@ -2182,7 +2181,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         if (ep != null)
         {
-            showRightClickMenu.Items.Add(new ToolStripSeparator());
+            showRightClickMenu.AddSeparator();
             MenuSearchFor(ep);
         }
 
@@ -2194,7 +2193,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, ep);
         if (fl.Any())
         {
-            showRightClickMenu.Items.Add(new ToolStripSeparator());
+            showRightClickMenu.AddSeparator();
 
             foreach (FileInfo fi in fl)
             {
@@ -2227,7 +2226,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         if (tsis.DropDownItems.Count > 0)
         {
-            showRightClickMenu.Items.Add(new ToolStripSeparator());
+            showRightClickMenu.AddSeparator();
             showRightClickMenu.Items.Add(tsis);
         }
     }
@@ -3898,7 +3897,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             {
                 return;
             }
-            GenerateActionRightClickMenu(pt, lvr, action.Episode.Show, action.Episode, null);
+            GenerateActionshowRightClickMenu(pt, lvr, action.Episode.Show, action.Episode, null);
         }
         else if (action?.Movie != null && lvr.Count == 1)
         {
@@ -3907,7 +3906,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             {
                 return;
             }
-            GenerateActionRightClickMenu(pt, lvr, null, null, action.Movie);
+            GenerateActionshowRightClickMenu(pt, lvr, null, null, action.Movie);
         }
         else
         {
@@ -3915,11 +3914,11 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             {
                 return;
             }
-            GenerateActionRightClickMenu(pt, lvr, null, null, null);
+            GenerateActionshowRightClickMenu(pt, lvr, null, null, null);
         }
     }
 
-    private void GenerateActionRightClickMenu(Point pt, ItemList lvr, ShowConfiguration? si, ProcessedEpisode? episode, MovieConfiguration? movie)
+    private void GenerateActionshowRightClickMenu(Point pt, ItemList lvr, ShowConfiguration? si, ProcessedEpisode? episode, MovieConfiguration? movie)
     {
         if (lvr.Count == 0)
         {
@@ -3933,53 +3932,53 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         // Action related items
         if (lvr.Count > lvr.Missing.ToList().Count) // not just missing selected
         {
-            AddRcMenuItem("Action Selected", (_, _) => ActionAction(false, false, false));
+            showRightClickMenu.Add("Action Selected", (_, _) => ActionAction(false, false, false));
         }
         if (lvr.CopyMove.Any() || lvr.DownloadTorrents.Any() || lvr.Downloading.Any())
         {
-            showRightClickMenu.Items.Add(new ToolStripSeparator());
-            AddRcMenuItem("Revert to Missing", (_, _) => Revert());
+            showRightClickMenu.AddSeparator();
+            showRightClickMenu.Add("Revert to Missing", (_, _) => Revert());
         }
 
         if (lvr.MissingSeasons.HasAny())
         {
-            AddRcMenuItem("Revert to Missing Episodes", (_, _) => RevertSeasons());
+            showRightClickMenu.Add("Revert to Missing Episodes", (_, _) => RevertSeasons());
         }
 
         if (lvr.Count == lvr.MissingEpisodes.ToList().Count + lvr.MissingMovies.ToList().Count) // only missing items selected?
         {
             if (lvr.Count == 1) // only one selected
             {
-                AddRcMenuItem("Browse For...", (_, _) => BrowseForMissingItem((ItemMissing)lvr[0]));
+                showRightClickMenu.Add("Browse For...", (_, _) => BrowseForMissingItem((ItemMissing)lvr[0]));
             }
             if (episode != null)
             {
-                showRightClickMenu.Items.Add(new ToolStripSeparator());
+                showRightClickMenu.AddSeparator();
                 MenuSearchFor(episode);
             }
             if (movie != null)
             {
-                showRightClickMenu.Items.Add(new ToolStripSeparator());
+                showRightClickMenu.AddSeparator();
                 MenuSearchFor(movie);
             }
         }
 
         if (si is not null)
         {
-            showRightClickMenu.Items.Add(new ToolStripSeparator());
+            showRightClickMenu.AddSeparator();
             MenuGuideAndTvdb(episode, si, seas);
         }
 
         MenuFolders(lvr, si, episode?.AppropriateProcessedSeason, episode);
 
-        showRightClickMenu.Items.Add(new ToolStripSeparator());
-        AddRcMenuItem("Ignore Selected", (_, _) => IgnoreSelected());
+        showRightClickMenu.AddSeparator();
+        showRightClickMenu.Add("Ignore Selected", (_, _) => IgnoreSelected());
         if (episode != null)
         {
-            AddRcMenuItem("Ignore Entire Season", (_, _) => IgnoreSelectedSeasons(lvr));
-            AddRcMenuItem("Force Refresh and Rescan Show", (_, _) => ForceRefreshAndRescanShows(lvr,false));
+            showRightClickMenu.Add("Ignore Entire Season", (_, _) => IgnoreSelectedSeasons(lvr));
+            showRightClickMenu.Add("Force Refresh and Rescan Show", (_, _) => ForceRefreshAndRescanShows(lvr,false));
         }
-        AddRcMenuItem("Remove Selected", (_, _) => ActionDeleteSelected());
+        showRightClickMenu.Add("Remove Selected", (_, _) => ActionDeleteSelected());
 
         showRightClickMenu.Show(pt);
     }
@@ -4029,11 +4028,6 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
 
         showRightClickMenu.Items.Add(tsi);
-    }
-
-    private void AddRcMenuItem(string name, EventHandler command)
-    {
-        showRightClickMenu.Items.Add(name,command);
     }
 
     private void lvAction_SelectedIndexChanged(object sender, EventArgs e)
@@ -4949,15 +4943,15 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
         if (action?.Episode != null && lvr.Count == 1)
         {
-            GenerateActionRightClickMenu(pt, lvr, action.Episode.Show, action.Episode, null);
+            GenerateActionshowRightClickMenu(pt, lvr, action.Episode.Show, action.Episode, null);
         }
         else if (action?.Movie != null && lvr.Count == 1)
         {
-            GenerateActionRightClickMenu(pt, lvr, null, null, action.Movie);
+            GenerateActionshowRightClickMenu(pt, lvr, null, null, action.Movie);
         }
         else
         {
-            GenerateActionRightClickMenu(pt, lvr, null, null, null);
+            GenerateActionshowRightClickMenu(pt, lvr, null, null, null);
         }
     }
 
@@ -5403,6 +5397,35 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void requestANewFeatureToolStripMenuItem_Click(object sender, EventArgs e)
         => "https://tvrename.featureupvote.com/".OpenUrlInBrowser();
+
+    private void yTSMoviePreviewToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        MoreBusy();
+        mDoc.PreventAutoScan("YTS Preview Open");
+        YtsViewerView form = new(mDoc, this);
+        form.ShowDialog(this);
+        mDoc.AllowAutoScan();
+        LessBusy();
+        FillMyShows(true);
+        FillWhenToWatchList();
+    }
+
+    private void yTSMovieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        MoreBusy();
+        mDoc.PreventAutoScan("YTS Recommendations Open");
+        YtsRecommendationView form = new(mDoc, this);
+        form.ShowDialog(this);
+        mDoc.AllowAutoScan();
+        LessBusy();
+        FillMyShows(true);
+        FillWhenToWatchList();
+    }
+
+    internal static void SetHtmlBody(ChromiumWebBrowser chrRecommendationPreview, object value)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 /// <summary>

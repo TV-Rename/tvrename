@@ -70,16 +70,9 @@ public partial class CollectionsView : Form
         }
     }
 
-    private void AddRcMenuItem(string label, EventHandler command)
+    private void rightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
     {
-        ToolStripMenuItem tsi = new(label.ToUiVersion());
-        tsi.Click += command;
-        possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
-    }
-
-    private void PossibleMergedEpisodeRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-    {
-        possibleMergedEpisodeRightClickMenu.Close();
+        rightClickMenu.Close();
     }
 
     private void BwScan_DoWork(object sender, DoWorkEventArgs e)
@@ -149,7 +142,7 @@ public partial class CollectionsView : Form
 
         CollectionMember mlastSelected = (CollectionMember)e.Model;
 
-        possibleMergedEpisodeRightClickMenu.Items.Clear();
+        rightClickMenu.Items.Clear();
 
         if (mlastSelected.IsInLibrary)
         {
@@ -157,16 +150,14 @@ public partial class CollectionsView : Form
             MovieConfiguration? si = mDoc.FilmLibrary.GetMovie(mlastSelected.TmdbCode, providerToUse);
             if (si != null)
             {
-                AddRcMenuItem("Force Refresh", (_, _) => mainUi.ForceMovieRefresh(si, false));
-                AddRcMenuItem("Edit Movie", (_, _) => mainUi.EditMovie(si));
+                rightClickMenu.Add("Force Refresh", (_, _) => mainUi.ForceMovieRefresh(si, false));
+                rightClickMenu.Add("Edit Movie", (_, _) => mainUi.EditMovie(si));
             }
         }
         else
         {
-            AddRcMenuItem("Add to Library...", (_, _) => AddToLibrary(mlastSelected.Movie));
+            rightClickMenu.Add("Add to Library...", (_, _) => AddToLibrary(mlastSelected.Movie));
         }
-
-        //possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
     }
 
     private void AddToLibrary(CachedMovieInfo si)

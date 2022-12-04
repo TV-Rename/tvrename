@@ -32,7 +32,7 @@ namespace TVRename.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CollectionsView));
             this.btnClose = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.possibleMergedEpisodeRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.rightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.bwScan = new System.ComponentModel.BackgroundWorker();
             this.lblStatus = new System.Windows.Forms.Label();
@@ -45,7 +45,7 @@ namespace TVRename.Forms
             this.olvMovieYear = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.chkRemoveCompleted = new System.Windows.Forms.CheckBox();
             this.chkRemoveFuture = new System.Windows.Forms.CheckBox();
-            this.possibleMergedEpisodeRightClickMenu.SuspendLayout();
+            this.rightClickMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvCollections)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,14 +69,14 @@ namespace TVRename.Forms
             this.label1.TabIndex = 7;
             this.label1.Text = "Options:";
             // 
-            // possibleMergedEpisodeRightClickMenu
+            // rightClickMenu
             // 
-            this.possibleMergedEpisodeRightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1});
-            this.possibleMergedEpisodeRightClickMenu.Name = "menuSearchSites";
-            this.possibleMergedEpisodeRightClickMenu.ShowImageMargin = false;
-            this.possibleMergedEpisodeRightClickMenu.Size = new System.Drawing.Size(156, 26);
-            this.possibleMergedEpisodeRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.PossibleMergedEpisodeRightClickMenu_ItemClicked);
+            this.rightClickMenu.Name = "menuSearchSites";
+            this.rightClickMenu.ShowImageMargin = false;
+            this.rightClickMenu.Size = new System.Drawing.Size(156, 26);
+            this.rightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.rightClickMenu_ItemClicked);
             // 
             // toolStripMenuItem1
             // 
@@ -137,7 +137,7 @@ namespace TVRename.Forms
             this.olvMovieName,
             this.olvInLibrary,
             this.olvMovieYear});
-            this.olvCollections.ContextMenuStrip = this.possibleMergedEpisodeRightClickMenu;
+            this.olvCollections.ContextMenuStrip = this.rightClickMenu;
             this.olvCollections.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvCollections.FullRowSelect = true;
             this.olvCollections.HideSelection = false;
@@ -223,7 +223,7 @@ namespace TVRename.Forms
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Movie Collections";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CollectionsView_FormClosing);
-            this.possibleMergedEpisodeRightClickMenu.ResumeLayout(false);
+            this.rightClickMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvCollections)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -233,7 +233,7 @@ namespace TVRename.Forms
         #endregion
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ContextMenuStrip possibleMergedEpisodeRightClickMenu;
+        private System.Windows.Forms.ContextMenuStrip rightClickMenu;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.ComponentModel.BackgroundWorker bwScan;
         private System.Windows.Forms.Label lblStatus;

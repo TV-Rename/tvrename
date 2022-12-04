@@ -70,6 +70,12 @@
     <Compile Update="Custom Controls\CodeFinder.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Forms\Tools\YTSRecomendations\YtsRecommendationView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\YTSRecomendations\YtsViewerView.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\app.ico" />
@@ -159,6 +165,11 @@
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Forms\Tools\YTSRecomendations\YtsRecommendationView.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="106.0.29" />

@@ -15,6 +15,7 @@ using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using TVRename.Forms;
 
 // ReSharper disable RedundantDefaultMemberInitializer
 // ReSharper disable InconsistentNaming

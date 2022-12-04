@@ -55,14 +55,14 @@ public partial class OrphanFiles : Form
             return;
         }
 
-        showRightClickMenu.Items.Clear();
+        rightClickMenu.Items.Clear();
 
-        AddRcMenuItem("View on Source Provider...", (_, _) => TvSourceFor(iss.Show));
-        AddRcMenuItem("Open Folder", (_, _) => iss.File.FullName.OpenFolderSelectFile());
-        AddRcMenuItem("Episode Guide", (_, _) => MainWindow.GotoEpguideFor(iss.Show, true));
+        rightClickMenu.Add("View on Source Provider...", (_, _) => TvSourceFor(iss.Show));
+        rightClickMenu.Add("Open Folder", (_, _) => iss.File.FullName.OpenFolderSelectFile());
+        rightClickMenu.Add("Episode Guide", (_, _) => MainWindow.GotoEpguideFor(iss.Show, true));
 
         Point pt = ((ListView)sender).PointToScreen(new Point(e.X, e.Y));
-        showRightClickMenu.Show(pt);
+        rightClickMenu.Show(pt);
     }
 
     private static void TvSourceFor(ShowConfiguration? si)
@@ -78,13 +78,6 @@ public partial class OrphanFiles : Form
                 si.CachedShow?.WebUrl!.OpenUrlInBrowser();
             }
         }
-    }
-
-    private void AddRcMenuItem(string name, EventHandler command)
-    {
-        ToolStripMenuItem tsi = new(name.ToUiVersion());
-        tsi.Click += command;
-        showRightClickMenu.Items.Add(tsi);
     }
 
     private void BwRescan_DoWork(object sender, DoWorkEventArgs e)

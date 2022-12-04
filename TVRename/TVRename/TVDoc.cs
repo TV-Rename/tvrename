@@ -21,6 +21,7 @@ using System.Xml;
 using System.Xml.Linq;
 using TVRename.Settings.AppState;
 using Alphaleonis.Win32.Filesystem;
+using TVRename.Forms;
 
 namespace TVRename;
 

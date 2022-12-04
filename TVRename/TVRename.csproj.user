@@ -141,10 +141,10 @@
     <Compile Update="Forms\Tools\QuickRename.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\Tools\RecommendationView.cs">
+    <Compile Update="Forms\Tools\Recommendations\RecommendationView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\Tools\RecommendationViewPreferences.cs">
+    <Compile Update="Forms\Tools\Recommendations\RecommendationViewPreferences.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\Tools\SettingsReview.cs">
@@ -207,6 +207,15 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\Supporting\CopyMoveProgress.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Tools\OrphanFiles.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Tools\ShowSummary.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Tools\YTSRecomendations\YtsViewerView.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\UI.resx">

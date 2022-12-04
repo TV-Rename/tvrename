@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using NLog;
+using TVRename.Forms;
 using TVRename.Forms.ShowPreferences;
 
 namespace TVRename;

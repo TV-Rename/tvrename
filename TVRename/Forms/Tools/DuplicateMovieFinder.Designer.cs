@@ -32,7 +32,7 @@ namespace TVRename.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DuplicateMovieFinder));
             this.btnClose = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.possibleMergedEpisodeRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.rightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.bwScan = new System.ComponentModel.BackgroundWorker();
             this.lblStatus = new System.Windows.Forms.Label();
@@ -45,7 +45,7 @@ namespace TVRename.Forms
             this.olvSample = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvDeleted = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.possibleMergedEpisodeRightClickMenu.SuspendLayout();
+            this.rightClickMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvDuplicates)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,14 +69,14 @@ namespace TVRename.Forms
             this.label1.TabIndex = 7;
             this.label1.Text = "Checks Performed:";
             // 
-            // possibleMergedEpisodeRightClickMenu
+            // rightClickMenu
             // 
-            this.possibleMergedEpisodeRightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1});
-            this.possibleMergedEpisodeRightClickMenu.Name = "menuSearchSites";
-            this.possibleMergedEpisodeRightClickMenu.ShowImageMargin = false;
-            this.possibleMergedEpisodeRightClickMenu.Size = new System.Drawing.Size(156, 26);
-            this.possibleMergedEpisodeRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.PossibleMergedEpisodeRightClickMenu_ItemClicked);
+            this.rightClickMenu.Name = "menuSearchSites";
+            this.rightClickMenu.ShowImageMargin = false;
+            this.rightClickMenu.Size = new System.Drawing.Size(156, 26);
+            this.rightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.rightClickMenu_ItemClicked);
             // 
             // toolStripMenuItem1
             // 
@@ -141,7 +141,7 @@ namespace TVRename.Forms
             this.olvDoublePart,
             this.olvSample,
             this.olvDeleted});
-            this.olvDuplicates.ContextMenuStrip = this.possibleMergedEpisodeRightClickMenu;
+            this.olvDuplicates.ContextMenuStrip = this.rightClickMenu;
             this.olvDuplicates.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvDuplicates.FullRowSelect = true;
             this.olvDuplicates.HideSelection = false;
@@ -212,7 +212,7 @@ namespace TVRename.Forms
             this.Name = "DuplicateMovieFinder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Duplicate Movies";
-            this.possibleMergedEpisodeRightClickMenu.ResumeLayout(false);
+            this.rightClickMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvDuplicates)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -222,7 +222,7 @@ namespace TVRename.Forms
         #endregion
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ContextMenuStrip possibleMergedEpisodeRightClickMenu;
+        private System.Windows.Forms.ContextMenuStrip rightClickMenu;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.ComponentModel.BackgroundWorker bwScan;
         private System.Windows.Forms.Label lblStatus;

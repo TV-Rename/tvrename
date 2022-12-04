@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace TVRename;
+namespace TVRename.Forms;
 
 public static class UiHelpers
 {
@@ -15,6 +15,17 @@ public static class UiHelpers
         ToolStripMenuItem tsi = new(name.ToUiVersion());
         tsi.Click += command;
         items.Add(tsi);
+    }
+
+    public static void Add(this ContextMenuStrip items, string name, EventHandler command)
+    {
+        items.Items.Add(name,command);
+    }
+
+    public static void AddSeparator(this ContextMenuStrip showRightClickMenu)
+    {
+        ToolStripSeparator tss = new();
+        showRightClickMenu.Items.Add(tss);
     }
 
     public static void SafeInvoke(this Control uiElement, System.Action updater, bool forceSynchronous)

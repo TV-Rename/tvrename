@@ -43,13 +43,13 @@ namespace TVRename.Forms
             this.chkFilesizeTest = new System.Windows.Forms.CheckBox();
             this.btnClose = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.possibleMergedEpisodeRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.rightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.bwScan = new System.ComponentModel.BackgroundWorker();
             this.lblStatus = new System.Windows.Forms.Label();
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.possibleMergedEpisodeRightClickMenu.SuspendLayout();
+            this.rightClickMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvMergedEpisodes
@@ -176,14 +176,14 @@ namespace TVRename.Forms
             this.label1.TabIndex = 7;
             this.label1.Text = "Checks Performed:";
             // 
-            // possibleMergedEpisodeRightClickMenu
+            // rightClickMenu
             // 
-            this.possibleMergedEpisodeRightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1});
-            this.possibleMergedEpisodeRightClickMenu.Name = "menuSearchSites";
-            this.possibleMergedEpisodeRightClickMenu.ShowImageMargin = false;
-            this.possibleMergedEpisodeRightClickMenu.Size = new System.Drawing.Size(156, 26);
-            this.possibleMergedEpisodeRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.PossibleMergedEpisodeRightClickMenu_ItemClicked);
+            this.rightClickMenu.Name = "menuSearchSites";
+            this.rightClickMenu.ShowImageMargin = false;
+            this.rightClickMenu.Size = new System.Drawing.Size(156, 26);
+            this.rightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.rightClickMenu_ItemClicked);
             // 
             // toolStripMenuItem1
             // 
@@ -251,7 +251,7 @@ namespace TVRename.Forms
             this.Name = "MergedEpisodeFinder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Merged Episode Finder";
-            this.possibleMergedEpisodeRightClickMenu.ResumeLayout(false);
+            this.rightClickMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -272,7 +272,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.ColumnHeader airDate;
         private System.Windows.Forms.ColumnHeader episodeNames;
         private System.Windows.Forms.ColumnHeader name;
-        private System.Windows.Forms.ContextMenuStrip possibleMergedEpisodeRightClickMenu;
+        private System.Windows.Forms.ContextMenuStrip rightClickMenu;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.ComponentModel.BackgroundWorker bwScan;
         private System.Windows.Forms.Label lblStatus;

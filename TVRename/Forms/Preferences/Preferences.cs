@@ -18,7 +18,7 @@ using TimeZoneConverter;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using Control = System.Windows.Forms.Control;
 
-namespace TVRename;
+namespace TVRename.Forms;
 
 /// <summary>
 /// Summary for Preferences

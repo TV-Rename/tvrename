@@ -10,6 +10,8 @@ using System.Reflection;
 //using System.Runtime.Remoting;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using TVRename.Forms;
+
 //using TVRename.Ipc;
 
 namespace TVRename.App;

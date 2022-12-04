@@ -185,4 +185,11 @@ public class MovieLibrary : SafeList<MovieConfiguration>
             .Where(c => c.CollectionName == movieConfiguration.CachedMovie?.CollectionName)
             .Count(c => c.FirstAired <= movieConfiguration.CachedMovie?.FirstAired);
     }
+
+    public MovieConfiguration? GetMovieFromImdb(string imdbCode)
+    {
+        {
+            return Movies.FirstOrDefault(m => m.ImdbCode == imdbCode);
+        }
+    }
 }

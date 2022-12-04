@@ -122,26 +122,19 @@ public partial class MergedEpisodeFinder : Form
 
         Point pt = lvMergedEpisodes.PointToScreen(new Point(e.X, e.Y));
 
-        possibleMergedEpisodeRightClickMenu.Items.Clear();
+        rightClickMenu.Items.Clear();
 
-        AddRcMenuItem("Episode Guide", (_, _) => GotoEpGuide(si, mlastSelected));
-        AddRcMenuItem("Force Refresh", (_, _) => mainUi.ForceRefresh(si, false));
-        AddRcMenuItem("Edit TV Show", (_, _) => mainUi.EditShow(si));
+        rightClickMenu.Add("Episode Guide", (_, _) => GotoEpGuide(si, mlastSelected));
+        rightClickMenu.Add("Force Refresh", (_, _) => mainUi.ForceRefresh(si, false));
+        rightClickMenu.Add("Edit TV Show", (_, _) => mainUi.EditShow(si));
 
-        AddRcMenuItem("Edit " + ProcessedSeason.UIFullSeasonWord(mlastSelected!.SeasonNumber),
+        rightClickMenu.Add("Edit " + ProcessedSeason.UIFullSeasonWord(mlastSelected!.SeasonNumber),
             (_, _) => mainUi.EditSeason(si, mlastSelected.SeasonNumber));
 
-        possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
-        AddRcMenuItem("Add Rule", (_, _) => AddRule(mlastSelected, si, mLastClicked));
+        rightClickMenu.AddSeparator();
+        rightClickMenu.Add("Add Rule", (_, _) => AddRule(mlastSelected, si, mLastClicked));
 
-        possibleMergedEpisodeRightClickMenu.Show(pt);
-    }
-
-    private void AddRcMenuItem(string label, EventHandler command)
-    {
-        ToolStripMenuItem tsi = new(label.ToUiVersion());
-        tsi.Click += command;
-        possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
+        rightClickMenu.Show(pt);
     }
 
     private void AddRule(PossibleMergedEpisode selected, ShowConfiguration si, ListViewItem lastClicked)
@@ -171,9 +164,9 @@ public partial class MergedEpisodeFinder : Form
         Close();
     }
 
-    private void PossibleMergedEpisodeRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+    private void rightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
     {
-        possibleMergedEpisodeRightClickMenu.Close();
+        rightClickMenu.Close();
     }
 
     private void BwScan_DoWork(object sender, DoWorkEventArgs e)

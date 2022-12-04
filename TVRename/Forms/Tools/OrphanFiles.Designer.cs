@@ -42,7 +42,7 @@ namespace TVRename.Forms.Tools
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.showRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.rightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.bwRescan = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.olvFileIssues)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -179,9 +179,9 @@ namespace TVRename.Forms.Tools
             // 
             // showRightClickMenu
             // 
-            this.showRightClickMenu.Name = "menuSearchSites";
-            this.showRightClickMenu.ShowImageMargin = false;
-            this.showRightClickMenu.Size = new System.Drawing.Size(36, 4);
+            this.rightClickMenu.Name = "menuSearchSites";
+            this.rightClickMenu.ShowImageMargin = false;
+            this.rightClickMenu.Size = new System.Drawing.Size(36, 4);
             // 
             // bwRescan
             // 
@@ -218,7 +218,7 @@ namespace TVRename.Forms.Tools
         private BrightIdeasSoftware.OLVColumn olvFileDirectory;
         private BrightIdeasSoftware.OLVColumn olvSeason;
         private BrightIdeasSoftware.OLVColumn olvEpisodeNumber;
-        private System.Windows.Forms.ContextMenuStrip showRightClickMenu;
+        private System.Windows.Forms.ContextMenuStrip rightClickMenu;
         private BrightIdeasSoftware.OLVColumn olvMessage;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnRefresh;

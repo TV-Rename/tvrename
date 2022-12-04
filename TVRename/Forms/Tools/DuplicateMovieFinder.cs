@@ -30,16 +30,9 @@ public partial class DuplicateMovieFinder : Form
         olvDuplicates.SetObjects(dupMovies, true);
     }
 
-    private void AddRcMenuItem(string label, EventHandler command)
+    private void rightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
     {
-        ToolStripMenuItem tsi = new(label.ToUiVersion());
-        tsi.Click += command;
-        possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
-    }
-
-    private void PossibleMergedEpisodeRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-    {
-        possibleMergedEpisodeRightClickMenu.Close();
+        rightClickMenu.Close();
     }
 
     private void BwScan_DoWork(object sender, DoWorkEventArgs e)
@@ -126,29 +119,29 @@ public partial class DuplicateMovieFinder : Form
         DuplicateMovie mlastSelected = (DuplicateMovie)e.Model;
         MovieConfiguration si = mlastSelected.Movie;
 
-        possibleMergedEpisodeRightClickMenu.Items.Clear();
+        rightClickMenu.Items.Clear();
 
-        AddRcMenuItem("Force Refresh", (_, _) =>
+        rightClickMenu.Add("Force Refresh", (_, _) =>
         {
             mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false);
             Update(mlastSelected);
         });
-        AddRcMenuItem("Update", (_, _) =>
+        rightClickMenu.Add("Update", (_, _) =>
         {
             Update(mlastSelected);
         });
-        AddRcMenuItem("Edit Movie", (_, _) =>
+        rightClickMenu.Add("Edit Movie", (_, _) =>
         {
             mainUi.EditMovie(si);
             Update(mlastSelected);
         });
-        AddRcMenuItem("Choose Best", (_, _) => MergeItems(mlastSelected, mainUi));
+        rightClickMenu.Add("Choose Best", (_, _) => MergeItems(mlastSelected, mainUi));
 
-        possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
+        rightClickMenu.AddSeparator();
 
         foreach (FileInfo? f in mlastSelected.Files)
         {
-            AddRcMenuItem("Visit " + f.FullName, (_, _) =>
+            rightClickMenu.Add("Visit " + f.FullName, (_, _) =>
             {
                 f.FullName.OpenFolderSelectFile();
                 Update(mlastSelected);

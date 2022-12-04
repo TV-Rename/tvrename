@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using TVRename.Forms;
 using TVRename.Properties;
+using TVRename.YTS;
 
 namespace TVRename;
 
@@ -91,7 +92,65 @@ internal static class ShowHtmlHelper
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
+    public static string GetMovieHtmlOverview(this API.YtsMovie si)
+    {
+        Color col = Color.FromName("ButtonFace");
+        StringBuilder sb = new();
+        sb.AppendLine(HTMLHeader(10, col));
+        sb.AppendMovie(si, col);
+        sb.AppendLine(HTMLFooter());
+        return sb.ToString();
+    }
 
+    private static void AppendMovie(this StringBuilder sb, API.YtsMovie si, Color backgroundColour)
+    {
+        string poster = CreatePosterHtml(si);
+        string yearRange = si.Year;
+        string stars = StarRating(si.StarScore / 2);
+        string genreIcons = string.Join("&nbsp;", si.Genres.Select(GenreIconHtml));
+        string siteRating = PrettyPrint(si.StarScore);
+        string runTimeHtml = string.IsNullOrWhiteSpace(si.Runtime) ? string.Empty : $"<br/> {si.Runtime} min";
+        string imdbLink = si.ImdbCode.ToImdbLink();
+
+        string ytsButton = si.YtsUrl.HasValue() ? CreateButton(si.YtsUrl, "<i class=\"fab fa-facebook\"></i>", "YTS") : string.Empty;
+        
+        sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                   <div class=""col-md-4"">
+                    {poster}
+                   </div>
+                   <div class=""col-md-8 d-flex flex-column"">
+                    <div class=""row"">
+                     <div class=""col-md-8""> <h1>{si.Name}</h1></div>
+                     <div class=""col-md-4 text-right""><h6>{yearRange}</h6>
+                        <small class=""text-muted"">{si.Language}</small>
+                        <small class=""text-muted"">{runTimeHtml}</small></div>
+                    </div>
+                    <div><p class=""lead"">{si.Overview}</p></div>
+			        <div></div>");
+        sb.AppendLine($@"<div><br/></div>
+		            <div>
+   		             {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
+                     {ytsButton}
+			        </div>
+		            <div>
+                        &nbsp;
+			        </div>
+		            <div class=""row align-items-bottom flex-grow-1"">
+                     <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}</div>
+                     <div class=""col-md-4 align-self-end text-center"">{si.ContentRating}</div>
+                     <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{si.Genres.ToCsv()}</div>
+                    </div>
+                   </div>
+                  </div>
+                 </div>");
+
+        sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row trailer"">
+<iframe  height=""400"" src=""{si.TrailerUrl}"" />
+                  </div>
+                 </div>");
+    }
     public static string GetMovieHtmlOverview(this CachedMovieInfo movie, RecommendationRow? recommendation)
     {
         Color col = Color.FromName("ButtonFace");
@@ -900,6 +959,21 @@ internal static class ShowHtmlHelper
             url = TheTVDB.API.GetImageURL(url);
         }
         if (url.HasValue() && url.IsWebLink())
+        {
+            return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{ser.Name} Movie Poster\">";
+        }
+
+        return string.Empty;
+    }
+
+    public static string CreatePosterHtml(API.YtsMovie ser)
+    {
+        string? url = ser.PosterUrl;
+        if (url is null)
+        {
+            return string.Empty;
+        }
+        if (url.IsWebLink())
         {
             return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{ser.Name} Movie Poster\">";
         }
