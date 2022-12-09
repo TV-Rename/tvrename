@@ -466,7 +466,7 @@ internal class CleanDownloadDirectory : ScanActivity
                 break;
 
             default:
-                throw new NotSupportedException($"newResult = {newResult} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
+                throw new NotSupportedException($"newResult = {newResult} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
         return null;
     }
@@ -535,7 +535,7 @@ internal class CleanDownloadDirectory : ScanActivity
                 break;
 
             default:
-                throw new NotSupportedException($"newResult = {newResult} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
+                throw new NotSupportedException($"newResult = {newResult} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
         return null;
     }

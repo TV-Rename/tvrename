@@ -199,7 +199,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
                     break;
 
                 default:
-                    throw new NotSupportedException($"whatToDo = {whatToDo} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
+                    throw new NotSupportedException($"whatToDo = {whatToDo} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
             }
         } while (goAgain);
     }

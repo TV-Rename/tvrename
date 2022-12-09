@@ -154,7 +154,7 @@ public static class API
         return downloadedMovies;
     }
 
-    private static YtsMovie? GetMovieByIMDBInternal(string? imdbCode)
+    private static YtsMovie? GetMovieByImdbInternal(string? imdbCode)
     {
         JObject updatesJson =
             HttpHelper.HttpGetRequestWithRetry(APIRoot + $"movie_details.json?imdb_id={imdbCode}", 3, 2);
@@ -180,9 +180,9 @@ public static class API
         return null;
     }
 
-    internal static YtsMovie? GetMovieByIMDB(string? imdbCode)
+    internal static YtsMovie? GetMovieByImdb(string? imdbCode)
     {
-        return HandleErrorsFrom($"get IMDB {imdbCode} movie", () => GetMovieByIMDBInternal(imdbCode));
+        return HandleErrorsFrom($"get IMDB {imdbCode} movie", () => GetMovieByImdbInternal(imdbCode));
     }
     internal static IEnumerable<YtsMovie>? GetRelatedMovies(int id)
     {
@@ -190,6 +190,6 @@ public static class API
     }
     internal static IEnumerable<YtsMovie> GetMovies(BackgroundWorker sender, string resolution, int minRating)
     {
-        return HandleErrorsFrom<IEnumerable<YtsMovie>>("get movies", () => GetMoviesInternal(sender, resolution, minRating));
+        return HandleErrorsFrom("get movies", () => GetMoviesInternal(sender, resolution, minRating));
     }
 }

@@ -200,7 +200,7 @@ public partial class RecommendationView : Form
                 MediaConfiguration.MediaType.movie => TMDB.LocalCache.Instance
                     .GetRecommendations((BackgroundWorker)sender, movies.ToList(), languageCode)
                     .Result,
-                _ => throw new NotSupportedException($"media = {media} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}")
+                _ => throw new NotSupportedException($"media = {media} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}")
             };
         }
         catch (Exception ex)

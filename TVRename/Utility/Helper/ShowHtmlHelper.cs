@@ -782,7 +782,7 @@ internal static class ShowHtmlHelper
 
             case TVDoc.ProviderType.libraryDefault:
             default:
-                throw new NotSupportedException($"si.Provider = {si.Provider} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
+                throw new NotSupportedException($"si.Provider = {si.Provider} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
     }
 
@@ -966,19 +966,19 @@ internal static class ShowHtmlHelper
         return string.Empty;
     }
 
-    public static string CreatePosterHtml(API.YtsMovie ser)
+    private static string CreatePosterHtml(API.YtsMovie ser)
     {
         string? url = ser.PosterUrl;
         if (url is null)
         {
             return string.Empty;
         }
-        if (url.IsWebLink())
+        if (!url.IsWebLink())
         {
-            return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{ser.Name} Movie Poster\">";
+            return string.Empty;
         }
 
-        return string.Empty;
+        return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{ser.Name} Movie Poster\">";
     }
 
     private static string CreatePosterHtml(CachedSeriesInfo ser)
@@ -1210,12 +1210,10 @@ internal static class ShowHtmlHelper
 
         if (afl.ContainsKey(s.SeasonNumber))
         {
-            foreach (string folder in afl[s.SeasonNumber])
+            SafeList<string> folders = afl[s.SeasonNumber];
+            foreach (string folder in folders.Where(Directory.Exists))
             {
-                if (Directory.Exists(folder))
-                {
-                    return folder;
-                }
+                return folder;
             }
         }
 
@@ -1533,12 +1531,12 @@ internal static class ShowHtmlHelper
             return HALF_STAR;
         }
 
-        if (f > 1)
+        if (f <= 1)
         {
-            return STAR + StarRating(f - 1);
+            return STAR;
         }
 
-        return STAR;
+        return STAR + StarRating(f - 1);
     }
 
     // ReSharper disable once InconsistentNaming
@@ -1556,14 +1554,11 @@ internal static class ShowHtmlHelper
     }
 
     private static string HexColour(this Color c)
-    {
-        return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
-    }
+        => "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
 
     // ReSharper disable once InconsistentNaming
-    internal static string HTMLFooter()
-    {
-        return @"
+    internal static string HTMLFooter() =>
+        @"
                 </div>
                  <script src=""https://code.jquery.com/jquery-3.6.0.min.js"" integrity=""sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="" crossorigin=""anonymous""></script>
 				<script src=""https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"" integrity=""sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"" crossorigin=""anonymous""></script>
@@ -1571,7 +1566,6 @@ internal static class ShowHtmlHelper
                      </body>
                 </html>
                 ";
-    }
 
     public static string GetShowHtmlOverviewOffline(this ShowConfiguration si)
     {

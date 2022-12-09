@@ -1195,7 +1195,7 @@ public sealed class TVSettings
             KeepTogetherModes.All => true,
             KeepTogetherModes.Just => KeepTogetherExtensionsArray.Contains(fileExtension),
             KeepTogetherModes.AllBut => !KeepTogetherExtensionsArray.Contains(fileExtension),
-            _ => throw new NotSupportedException($"keepTogetherMode = {keepTogetherMode} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}")
+            _ => throw new NotSupportedException($"keepTogetherMode = {keepTogetherMode} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}")
         };
     }
 

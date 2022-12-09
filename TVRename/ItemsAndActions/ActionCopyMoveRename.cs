@@ -199,7 +199,7 @@ public class ActionCopyMoveRename : ActionFileOperation
                 break;
 
             default:
-                throw new NotSupportedException($"Operation = {Operation} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
+                throw new NotSupportedException($"Operation = {Operation} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
     }
 

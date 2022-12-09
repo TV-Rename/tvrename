@@ -218,7 +218,7 @@ public class qBitTorrent : IDownloadProvider
             case qBitTorrentAPIVersion.v0:
                 throw new NotSupportedException("Only qBitTorrent API v1 and v2 are supported");
             default:
-                throw new NotSupportedException($"TVSettings.Instance.qBitTorrentAPIVersion = {TVSettings.Instance.qBitTorrentAPIVersion} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
+                throw new NotSupportedException($"TVSettings.Instance.qBitTorrentAPIVersion = {TVSettings.Instance.qBitTorrentAPIVersion} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
     }
 

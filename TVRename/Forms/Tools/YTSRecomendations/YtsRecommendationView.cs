@@ -129,7 +129,7 @@ public partial class YtsRecommendationView : Form
         {
             foreach (MovieConfiguration existingMovie in inputMovies)
             {
-                API.YtsMovie? ytsMovie = API.GetMovieByIMDB(existingMovie.ImdbCode);
+                API.YtsMovie? ytsMovie = API.GetMovieByImdb(existingMovie.ImdbCode);
                 if (ytsMovie is null)
                 {
                     continue;

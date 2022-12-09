@@ -1309,7 +1309,7 @@ public class TVDoc : IDisposable
                     break;
 
                 default:
-                    throw new NotSupportedException($"duplicateActionOutcome = {duplicateActionOutcome} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
+                    throw new NotSupportedException($"duplicateActionOutcome = {duplicateActionOutcome} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
             }
         }
     }
@@ -2120,7 +2120,7 @@ public class TVDoc : IDisposable
                 return null;
 
             default:
-                throw new NotSupportedException($"result = {result} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
+                throw new NotSupportedException($"result = {result} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
     }
 

@@ -1798,7 +1798,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                 break;
 
             default:
-                throw new NotSupportedException($"TVSettings.Instance.WTWDoubleClick = {TVSettings.Instance.WTWDoubleClick} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
+                throw new NotSupportedException($"TVSettings.Instance.WTWDoubleClick = {TVSettings.Instance.WTWDoubleClick} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
     }
 
@@ -2327,7 +2327,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
         else
         {
-            throw new NotSupportedException($"tabControl1.SelectedTab = {tabControl1.SelectedTab} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()?.ToString()}");
+            throw new NotSupportedException($"tabControl1.SelectedTab = {tabControl1.SelectedTab} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
     }
 
