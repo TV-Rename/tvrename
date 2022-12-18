@@ -16,6 +16,7 @@ public partial class YtsRecommendationView : Form
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private readonly List<MovieConfiguration> addedMovies;
     string quality;
+    private DateTime scanStartTime;
 
     public YtsRecommendationView(TVDoc doc, UI main, string defaultQuality)
     {
@@ -121,16 +122,19 @@ public partial class YtsRecommendationView : Form
     {
         System.Threading.Thread.CurrentThread.Name ??= "Recommendations Scan Thread"; // Can only set it once
 
-        Dictionary<int, Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>> source = new();
+        RecommendationMovieStructure source = new();
         int page = 0;
         List<MovieConfiguration> inputMovies = mDoc.FilmLibrary.Movies.Where(m => m.ImdbCode != null && !m.ImdbCode.IsNullOrWhitespace()).ToList();
+        scanStartTime = DateTime.Now;
 
         try
         {
             foreach (MovieConfiguration existingMovie in inputMovies)
             {
+                page++;
+
                 API.YtsMovie? ytsMovie = API.GetMovieByImdb(existingMovie.ImdbCode);
-                if (ytsMovie is null)
+                if (ytsMovie is null || ytsMovie.Id==0)
                 {
                     continue;
                 }
@@ -144,19 +148,13 @@ public partial class YtsRecommendationView : Form
                 //File these away
                 foreach (API.YtsMovie relatedMovie in relatedMovies)
                 {
-                    if (source.ContainsKey(relatedMovie.Id))
-                    {
-                        source[relatedMovie.Id].Item2.Add(Tuple.Create(ytsMovie, existingMovie));
-                    }
-                    else
-                    {
-                        source.Add(relatedMovie.Id, new Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>(relatedMovie, new(new List<Tuple<API.YtsMovie, MovieConfiguration>> { new(ytsMovie, existingMovie) })));
-                    }
+                    source.Add(relatedMovie,existingMovie, ytsMovie);
                 }
-                ((BackgroundWorker)sender).ReportProgress(100 * page++ / inputMovies.Count);
+
+                ((BackgroundWorker)sender).ReportProgress(100 * page / inputMovies.Count,existingMovie.Name);
             }
 
-            recs = source.Select(m => new YtsRecommendationRow(m.Value.Item1, m.Value.Item2, mDoc)).ToList();
+            recs = source.AsRecommendationRows(mDoc);
         }
         catch (Exception ex)
         {
@@ -164,10 +162,31 @@ public partial class YtsRecommendationView : Form
         }
     }
 
+    private class RecommendationMovieStructure : Dictionary<int, Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>>
+    {
+        internal void Add(API.YtsMovie relatedMovie, MovieConfiguration existingMovie, API.YtsMovie ytsMovie)
+        {
+            if (ContainsKey(relatedMovie.Id))
+            {
+                this[relatedMovie.Id].Item2.Add(Tuple.Create(ytsMovie, existingMovie));
+            }
+            else
+            {
+                Add(relatedMovie.Id, new Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>(relatedMovie, new(new List<Tuple<API.YtsMovie, MovieConfiguration>> { new(ytsMovie, existingMovie) })));
+            }
+        }
+
+        public List<YtsRecommendationRow> AsRecommendationRows(TVDoc mDoc)
+        {
+            return this.Select(m => new YtsRecommendationRow(m.Value.Item1, m.Value.Item2, mDoc)).ToList();
+        }
+    }
+
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
+        DateTime completionDateTime = scanStartTime.Add((DateTime.Now - scanStartTime) / (pbProgress.Value+1) * 100) ;
+        lblStatus.Text = $"{e.UserState?.ToString()?.ToUiVersion()} ETC={completionDateTime}";
     }
 
     private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

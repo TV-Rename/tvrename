@@ -633,14 +633,20 @@ internal static class FinderHelper
 
     private static bool LookForSeries(string test, IEnumerable<MediaConfiguration> shows)
     {
-        return shows.Any(si => si.NameMatch(test));
+        return GetMatchingSeries(test,shows).Any();
+    }
+    private static IEnumerable<MediaConfiguration> GetMatchingSeries(string test, IEnumerable<MediaConfiguration> shows)
+    {
+        return shows.Where(si => si.NameMatch(test));
     }
 
     private static bool LookForMovies(string test, IEnumerable<MediaConfiguration> shows)
-    {
-        return shows.Any(si => si.NameMatch(test));
-    }
+        => GetMatchingMovies(test,shows).Any();
 
+    private static IEnumerable<MediaConfiguration> GetMatchingMovies(string test, IEnumerable<MediaConfiguration> shows)
+    {
+        return shows.Where(si => si.NameMatch(test));
+    }
     // ReSharper disable once UnusedMember.Local
 #pragma warning disable IDE0051 // Remove unused private members
     private static bool LookForMovie(FileSystemInfo test, IEnumerable<MovieConfiguration> shows)
@@ -771,14 +777,14 @@ internal static class FinderHelper
         //if hint doesn't match existing added shows
         if (LookForSeries(refinedHint, addedShows))
         {
-            Logger.Info($"Ignoring {hint}({refinedHint}) as it matches shows already being added.");
+            Logger.Info($"Ignoring {hint}({refinedHint}) as it matches shows already being added. ({GetMatchingSeries(refinedHint, addedShows).Select(s => s.Name).ToCsv()}) already being added.");
             return;
         }
 
         if (LookForMovies(refinedHint, addedShows))
         {
             Logger.Info(
-                $"Ignoring {hint}({refinedHint}) as it matches existing movies already being added: {addedShows.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
+                $"Ignoring {hint}({refinedHint}) as it matches existing movies ({GetMatchingMovies(refinedHint,addedShows).Select(s => s.Name).ToCsv()}) already being added.");
 
             return;
         }
@@ -786,14 +792,14 @@ internal static class FinderHelper
         //if hint doesn't match existing added shows
         if (LookForSeries(refinedHint, doc.TvLibrary.Shows))
         {
-            Logger.Warn($"Ignoring {hint}({refinedHint}) as it matches shows already in the library.");
+            Logger.Warn($"Ignoring {hint}({refinedHint}) as it matches shows ({GetMatchingSeries(refinedHint,doc.TvLibrary.Shows).Select(s=>s.Name).ToCsv()}) already in the library.");
             return;
         }
 
         if (LookForMovies(refinedHint, doc.FilmLibrary.Movies))
         {
             Logger.Warn(
-                $"Ignoring {hint}({refinedHint}) as it matches existing movies already in the library: {doc.FilmLibrary.Movies.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
+                $"Ignoring {hint}({refinedHint}) as it matches existing movies ({GetMatchingMovies(refinedHint, doc.FilmLibrary.Movies).Select(s => s.Name).ToCsv()}) already in the library.");
 
             return;
         }
@@ -979,7 +985,7 @@ internal static class FinderHelper
             return matchAtStart.OrderByDescending(s => s.ShowName.Length).First();
         }
 
-        IEnumerable<MovieConfiguration> otherMatchingShows = FindMatchingShows(filename, showItems);
+        IEnumerable<MovieConfiguration> otherMatchingShows = FindMatchingMovies(filename, showItems);
         return otherMatchingShows.OrderByDescending(s => s.ShowName.Length).FirstOrDefault();
     }
 
@@ -993,7 +999,7 @@ internal static class FinderHelper
         return sil.Where(item => item.NameMatch(filename));
     }
 
-    public static IEnumerable<MovieConfiguration> FindMatchingShows(string filename, IEnumerable<MovieConfiguration> sil)
+    public static IEnumerable<MovieConfiguration> FindMatchingMovies(string filename, IEnumerable<MovieConfiguration> sil)
     {
         return sil.Where(item => item.NameMatch(filename));
     }
