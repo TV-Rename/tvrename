@@ -84,7 +84,7 @@ public static class CustomTvShowName
 
         name = name.ReplaceInsensitive("{ShowName}", showname);
         name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
-        name = name.ReplaceInsensitive("{ShowNameLower}", showname.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
+        name = name.ReplaceInsensitive("{ShowNameLower}", showName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
         name = name.ReplaceYear(showName);
         name = name.ReplaceInsensitive("{ContentRating}", si?.ContentRating);
         name = name.ReplaceInsensitive("{Year}", si?.Year);

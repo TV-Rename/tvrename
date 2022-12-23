@@ -84,7 +84,7 @@ public static class CustomMovieName
             .ReplaceInsensitive("{CollectionFolder}", m.InCollection ? "{collectionName}\\" : string.Empty)
             .ReplaceInsensitive("{ShowName}", showname)
             .ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower())
-            .ReplaceInsensitive("{ShowNameLower}", showname.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"))
+            .ReplaceInsensitive("{ShowNameLower}", m.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"))
             .ReplaceYear(m)
             .ReplaceInsensitive("{ContentRating}", m.CachedMovie?.ContentRating)
             .ReplaceInsensitive("{Year}", m.CachedMovie?.Year.ToString())
