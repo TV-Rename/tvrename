@@ -856,7 +856,7 @@ internal static class ShowHtmlHelper
             case TVDoc.ProviderType.libraryDefault:
                 return EditTvSeriesUrl(si, TVSettings.Instance.DefaultProvider);
             default:
-                throw new ArgumentOutOfRangeException(nameof(source), $"TV Url asked tobe created for {source.PrettyPrint()}");
+                throw new ArgumentOutOfRangeException(nameof(source), $"TV Url asked to be created for {source.PrettyPrint()}");
         }
     }
 

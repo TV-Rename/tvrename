@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using Microsoft.WindowsAPICodePack.PortableDevices.CommandSystem.Object;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -102,10 +103,10 @@ public class CustomEpisodeName
 
         if (string.IsNullOrEmpty(extension))
         {
-            return r.Substring(0, Math.Min(maxFilenameLength, r.Length));
+            return r[..Math.Min(maxFilenameLength, r.Length)];
         }
 
-        return r.Substring(0, Math.Min(r.Length, maxFilenameLength)) + extension;
+        return r[..Math.Min(r.Length, maxFilenameLength)] + extension;
     }
 
     public string GetTargetEpisodeName(ShowConfiguration show, Episode ep)
@@ -143,7 +144,7 @@ public class CustomEpisodeName
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(show.Order), $"Custom Episode Name asked to be created for {show.Order.PrettyPrint()}");
         }
         string? seasonName = show.CachedShow?.Season(seasonNumber)?.SeasonName;
 
