@@ -3223,11 +3223,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        foreach (ShowConfiguration si in sis)
-        {
-            //update images for the showitem
-            mDoc.ForceUpdateImages(si);
-        }
+        mDoc.UpdateImagesScan(sis);
 
         tabControl1.SelectTab(tbAllInOne);
         FillActionList();
@@ -3240,11 +3236,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             return;
         }
 
-        foreach (MovieConfiguration si in sis)
-        {
-            //update images for the showitem
-            mDoc.ForceUpdateImages(si);
-        }
+        mDoc.UpdateMovieImagesScan(sis);
 
         tabControl1.SelectTab(tbAllInOne);
         FillActionList();
@@ -5339,8 +5331,17 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void cleanLibraryFoldersToolStripMenuItem_Click(object sender, EventArgs e)
     {
+        PartialScan(new CleanUpEmptyLibraryFolders(mDoc));
+    }
+
+    private void forceRefreshKodiTVShowNFOFIlesToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        PartialScan(new ForceRefreshDownloadIdentifier(new DownloadKodiMetaData(),mDoc,"Refresh all tvshow.nfo"));
+    }
+    private void PartialScan(PostScanActivity activity)
+    {
         mDoc.TheActionList.Clear();
-        DoScanPartNotifier f = new(new CleanUpEmptyLibraryFolders(mDoc));
+        DoScanPartNotifier f = new(activity);
         f.ShowDialog();
         FillActionList();
         FocusOnScanResults();
@@ -5424,15 +5425,10 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         FillMyShows(true);
         FillWhenToWatchList();
     }
-
-    internal static void SetHtmlBody(ChromiumWebBrowser chrRecommendationPreview, object value)
-    {
-        throw new NotImplementedException();
-    }
 }
 
 /// <summary>
-/// This comparer sort list view specificallly for sesaons so that they appear in the season order
+/// This comparer sort list view specifically for sesaons so that they appear in the season order
 /// OLVGroups have a "SortValue" property,
 /// which is used if present. Otherwise, the titles of the groups will be compared.
 /// </summary>

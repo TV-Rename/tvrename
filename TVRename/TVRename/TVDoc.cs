@@ -1168,9 +1168,6 @@ public class TVDoc : IDisposable
 
     public void ForceUpdateImages(ShowConfiguration si)
     {
-        TheActionList.Clear();
-
-        Logger.Info("*******************************");
         Logger.Info("Force Update Images: " + si.ShowName);
 
         Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
@@ -1213,16 +1210,12 @@ public class TVDoc : IDisposable
                         snum));
             }
         } // for each season of this show
-
-        RemoveIgnored();
     }
 
     public void ForceUpdateImages(MovieConfiguration si)
     {
-        TheActionList.Clear();
         downloadIdentifiers.Reset();
 
-        Logger.Info("*******************************");
         Logger.Info("Force Update Images: " + si.ShowName);
 
         // process each folder for each movie...
@@ -1240,8 +1233,6 @@ public class TVDoc : IDisposable
 
             SetDirty();
         }
-
-        RemoveIgnored();
     }
 
     private void RemoveDuplicateDownloads(bool unattended, UI owner)
@@ -2362,5 +2353,28 @@ public class TVDoc : IDisposable
     {
         List<Item> selectedActions = TheActionList.Where(a => movie.Any(s => a.Movie == s)).ToList();
         TheActionList.Remove(selectedActions);
+    }
+
+    public void UpdateImagesScan(IReadOnlyCollection<ShowConfiguration> sis)
+    {
+        TheActionList.Clear();
+        foreach (ShowConfiguration si in sis)
+        {
+            //update images for the showitem
+            ForceUpdateImages(si);
+        }
+
+        RemoveIgnored();
+    }
+    public void UpdateMovieImagesScan(IReadOnlyCollection<MovieConfiguration> sis)
+    {
+        TheActionList.Clear();
+        foreach (MovieConfiguration si in sis)
+        {
+            //update images for the showitem
+            ForceUpdateImages(si);
+        }
+
+        RemoveIgnored();
     }
 }

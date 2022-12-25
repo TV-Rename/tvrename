@@ -1,6 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Globalization;
 using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
 using TVRename.Forms;
 
 namespace TVRename;
@@ -38,31 +39,13 @@ internal class ActionNfoShow : ActionNfo
             UpdateRatings(root, showRating.Value.ToString(CultureInfo.InvariantCulture), cachedSeries!.SiteRatingVotes);
         }
 
-        if (SelectedShow?.Provider == TVDoc.ProviderType.TheTVDB)
-        {
-            //https://forum.kodi.tv/showthread.php?tid=323588
-            //says that we need a format like this:
-            //<episodeguide><url post="yes" cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json</url></episodeguide>
-
-            XElement episodeGuideNode = root.GetOrCreateElement("episodeguide");
-            XElement urlNode = episodeGuideNode.GetOrCreateElement("url");
-            urlNode.UpdateAttribute("post", "yes");
-            urlNode.UpdateAttribute("cache", "auth.json");
-            urlNode.SetValue(TheTVDB.API.BuildUrl(SelectedShow.TvdbCode, SelectedShow.LanguageToUse().Abbreviation));
-        }
-        else if (SelectedShow?.Provider == TVDoc.ProviderType.TMDB)
-        {
-            string tmdbUrl = TMDB.LocalCache.EpisodeGuideUrl(SelectedShow);
-            XElement episodeGuideNode = root.GetOrCreateElement("episodeguide");
-            episodeGuideNode.UpdateElement("url", tmdbUrl);
-        }
-
         if (cachedSeries is not null)
         {
             root.UpdateElement("originaltitle", SelectedShow!.ShowName);
             root.UpdateElement("sorttitle", UI.GenerateShowUiName(SelectedShow));
             root.ReplaceElements("studio", cachedSeries.Networks);
             root.UpdateElement("id", cachedSeries.TvdbCode);
+            root.UpdateElement("episodeguide", GenerateEpisdeGuideJson(cachedSeries));
             root.UpdateElement("runtime", cachedSeries.Runtime, true);
             root.UpdateElement("mpaa", cachedSeries.ContentRating, true);
             root.UpdateElement("premiered", cachedSeries.FirstAired);
@@ -89,5 +72,34 @@ internal class ActionNfoShow : ActionNfo
         }
         doc.Save(Where.FullName);
         return ActionOutcome.Success();
+    }
+
+    private string GenerateEpisdeGuideJson(CachedSeriesInfo cachedSeries)
+    {
+        JObject ids = new();
+        AddId(ids, "tvmaze", cachedSeries.TvMazeCode);
+        AddId(ids, "tvrage", cachedSeries.TvRageCode);
+        AddId(ids, "tvdb", cachedSeries.TvdbCode);
+        AddId(ids,"tmdb",cachedSeries.TmdbCode);
+        AddId(ids, "imdb", cachedSeries.ImdbCode);
+        return ids.ToString();
+    }
+
+    private void AddId(JObject json, string key, string? id)
+    {
+        if (id is null || !id.HasValue())
+        {
+            return;
+        }
+        json.Add(key,id);
+    }
+
+    private void AddId(JObject json, string key, int? id)
+    {
+        if (id is null or 0)
+        {
+            return;
+        }
+        AddId(json,key,id.ToString());
     }
 }

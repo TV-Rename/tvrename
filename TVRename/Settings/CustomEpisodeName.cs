@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using Microsoft.WindowsAPICodePack.PortableDevices.CommandSystem.Object;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -144,7 +143,7 @@ public class CustomEpisodeName
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException(nameof(show.Order), $"Custom Episode Name asked to be created for {show.Order.PrettyPrint()}");
+                throw new ArgumentOutOfRangeException($"Custom Episode Name asked to be created for {show.Order.PrettyPrint()}");
         }
         string? seasonName = show.CachedShow?.Season(seasonNumber)?.SeasonName;
 

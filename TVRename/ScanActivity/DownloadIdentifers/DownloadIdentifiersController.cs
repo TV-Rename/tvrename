@@ -16,6 +16,11 @@ internal class DownloadIdentifiersController
 {
     private readonly List<DownloadIdentifier> identifiers;
 
+    public DownloadIdentifiersController(DownloadIdentifier action)
+    {
+        identifiers = action.AsList();
+    }
+
     public DownloadIdentifiersController()
     {
         identifiers = new List<DownloadIdentifier>
