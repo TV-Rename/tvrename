@@ -33,19 +33,11 @@ internal class ActionNfoShow : ActionNfo
         CachedSeriesInfo? cachedSeries = SelectedShow!.CachedShow;
         root.UpdateElement("title", SelectedShow.ShowName);
 
-        float? showRating = cachedSeries?.SiteRating;
-        if (showRating.HasValue)
-        {
-            UpdateRatings(root, showRating.Value.ToString(CultureInfo.InvariantCulture), cachedSeries!.SiteRatingVotes);
-        }
-
         if (cachedSeries is not null)
         {
             root.UpdateElement("originaltitle", SelectedShow!.ShowName);
             root.UpdateElement("sorttitle", UI.GenerateShowUiName(SelectedShow));
-            root.ReplaceElements("studio", cachedSeries.Networks);
-            root.UpdateElement("id", cachedSeries.TvdbCode);
-            root.UpdateElement("episodeguide", GenerateEpisdeGuideJson(cachedSeries));
+            root.UpdateElement("episodeguide", GenerateEpisodeGuideJson(cachedSeries));
             root.UpdateElement("runtime", cachedSeries.Runtime, true);
             root.UpdateElement("mpaa", cachedSeries.ContentRating, true);
             root.UpdateElement("premiered", cachedSeries.FirstAired);
@@ -54,12 +46,13 @@ internal class ActionNfoShow : ActionNfo
             root.UpdateElement("plot", cachedSeries.Overview);
             root.UpdateElement("trailer", cachedSeries.TrailerUrl);
 
+            root.ReplaceElements("studio", cachedSeries.Networks);
+            root.ReplaceElements("genre", SelectedShow.Genres);
+
             UpdateId(root, "tvdb", SelectedShow.Provider == TVDoc.ProviderType.TheTVDB ? "true" : "false", SelectedShow.TvdbCode);
             UpdateId(root, "tmdb", SelectedShow.Provider == TVDoc.ProviderType.TMDB ? "true" : "false", SelectedShow.TmdbCode);
             UpdateId(root, "tvmaze", SelectedShow.Provider == TVDoc.ProviderType.TVmaze ? "true" : "false", SelectedShow.TvMazeId);
             UpdateId(root, "imdb", "false", SelectedShow.ImdbCode);
-
-            root.ReplaceElements("genre", SelectedShow.Genres);
 
             ReplaceActors(root, SelectedShow.Actors);
 
@@ -69,12 +62,18 @@ internal class ActionNfoShow : ActionNfo
             ReplaceThumbs(root, "clearlogo", cachedSeries.Images(MediaImage.ImageType.clearLogo));
 
             ReplaceFanart(root, cachedSeries.Images(MediaImage.ImageType.background));
+
+            float showRating = cachedSeries.SiteRating;
+            if (showRating > 0)
+            {
+                UpdateRatings(root, showRating.ToString(CultureInfo.InvariantCulture), cachedSeries.SiteRatingVotes);
+            }
         }
         doc.Save(Where.FullName);
         return ActionOutcome.Success();
     }
 
-    private string GenerateEpisdeGuideJson(CachedSeriesInfo cachedSeries)
+    private static string GenerateEpisodeGuideJson(CachedMediaInfo cachedSeries)
     {
         JObject ids = new();
         AddId(ids, "tvmaze", cachedSeries.TvMazeCode);
@@ -85,7 +84,7 @@ internal class ActionNfoShow : ActionNfo
         return ids.ToString();
     }
 
-    private void AddId(JObject json, string key, string? id)
+    private static void AddId(JObject json, string key, string? id)
     {
         if (id is null || !id.HasValue())
         {
@@ -94,9 +93,9 @@ internal class ActionNfoShow : ActionNfo
         json.Add(key,id);
     }
 
-    private void AddId(JObject json, string key, int? id)
+    private static void AddId(JObject json, string key, int? id)
     {
-        if (id is null or 0)
+        if (id is null or 0 or -1)
         {
             return;
         }
