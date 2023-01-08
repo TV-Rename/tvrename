@@ -317,4 +317,16 @@ public class MovieConfiguration : MediaConfiguration
     public IEnumerable<string> AutomaticLocations() => AllFolderLocations(false, false).Values.SelectMany(x => x);
 
     public bool IsDvdBluRay() => Format is MovieFolderFormat.bluray or MovieFolderFormat.dvd;
+
+    public List<FileInfo> MovieFiles()
+    {
+        return Locations
+            .Where(location => location.HasValue())
+            .Select(location => new DirectoryInfo(location))
+            .Where(dir => dir.Exists)
+            .SelectMany(dir => dir.GetFiles())
+            .Where(f => f.IsMovieFile())
+            .Distinct()
+            .ToList();
+    }
 }

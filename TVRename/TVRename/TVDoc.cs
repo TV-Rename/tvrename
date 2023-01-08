@@ -1219,14 +1219,7 @@ public class TVDoc : IDisposable
         Logger.Info("Force Update Images: " + si.ShowName);
 
         // process each folder for each movie...
-        foreach (FileInfo? file in si.Locations
-                     .Where(s => s.HasValue())
-                     .Select(s => new DirectoryInfo(s))
-                     .Where(info => info.Exists)
-                     .SelectMany(d => d.GetFiles())
-                     .Where(f => f.IsMovieFile())
-                     .Distinct()
-                     .ToList())
+        foreach (FileInfo? file in si.MovieFiles())
         {
             TheActionList.Add(
                 downloadIdentifiers.ForceUpdateMovie(DownloadIdentifier.DownloadType.downloadImage, si, file));

@@ -28,6 +28,7 @@ public abstract class ActionNfo : ActionWriteMetadata
     protected ActionNfo(FileInfo where, MovieConfiguration mc) : base(where, mc)
     {
     }
+    #endregion Action Members
 
     public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
@@ -264,8 +265,6 @@ public abstract class ActionNfo : ActionWriteMetadata
         }
         UpdateId(root, idType, defaultState, idValue.ToString());
     }
-
-    #endregion Action Members
 
     #region Item Members
 

@@ -53,13 +53,8 @@ public partial class DuplicateMovieFinder : Form
 
     private void ProcessMovie(MovieConfiguration movie)
     {
-        List<FileInfo> files = movie.Locations
-            .Select(s => new DirectoryInfo(s))
-            .Where(info => info.Exists)
-            .SelectMany(d => d.GetFiles())
-            .Where(f => f.IsMovieFile())
+        List<FileInfo> files = movie.MovieFiles()
             .Where(fiTemp => movie.NameMatch(fiTemp, false))
-            .Distinct()
             .ToList();
 
         if (files.Count > 1)
