@@ -62,9 +62,9 @@ internal class ActionNfoMovie : ActionNfo
             root.UpdateElement("set", cachedSeries.CollectionName);
             root.UpdateElement("trailer", cachedSeries.TrailerUrl);
 
-            UpdateId(root, "tvdb", "false", cachedSeries.TvdbCode);
-            UpdateId(root, "imdb", "false", cachedSeries.Imdb);
-            UpdateId(root, "tmdb", "true", cachedSeries.TmdbCode);
+            UpdateId(root, "tvdb", Movie.Provider ==TVDoc.ProviderType.TheTVDB, cachedSeries.TvdbCode);
+            UpdateId(root, "imdb", false, cachedSeries.Imdb);
+            UpdateId(root, "tmdb", Movie.Provider == TVDoc.ProviderType.TMDB ,  cachedSeries.TmdbCode);
 
             root.ReplaceElements("genre", Movie.Genres);
             root.ReplaceElements("credits", cachedSeries.GetCrew().Where(c => c.Department == "Writing").Select(c => c.Name));

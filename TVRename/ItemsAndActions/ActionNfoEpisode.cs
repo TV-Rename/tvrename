@@ -62,8 +62,8 @@ internal class ActionNfoEpisode : ActionNfo
         root.UpdateElement("plot", episode.Overview, true);
         root.ReplaceElements("studio", episode.TheCachedSeries.Networks);
 
-        UpdateId(root, "tvdb", "true", episode.EpisodeId);
-        UpdateId(root, "imdb", "false", episode.ImdbCode);
+        UpdateId(root, "tvdb", true, episode.EpisodeId);
+        UpdateId(root, "imdb", false, episode.ImdbCode);
 
         string? showRating = episode.EpisodeRating;
         if (showRating != null)

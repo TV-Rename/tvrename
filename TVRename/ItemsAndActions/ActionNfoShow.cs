@@ -49,10 +49,10 @@ internal class ActionNfoShow : ActionNfo
             root.ReplaceElements("studio", cachedSeries.Networks);
             root.ReplaceElements("genre", SelectedShow.Genres);
 
-            UpdateId(root, "tvdb", SelectedShow.Provider == TVDoc.ProviderType.TheTVDB ? "true" : "false", SelectedShow.TvdbCode);
-            UpdateId(root, "tmdb", SelectedShow.Provider == TVDoc.ProviderType.TMDB ? "true" : "false", SelectedShow.TmdbCode);
-            UpdateId(root, "tvmaze", SelectedShow.Provider == TVDoc.ProviderType.TVmaze ? "true" : "false", SelectedShow.TvMazeId);
-            UpdateId(root, "imdb", "false", SelectedShow.ImdbCode);
+            UpdateId(root, "tvdb", SelectedShow.Provider == TVDoc.ProviderType.TheTVDB , SelectedShow.TvdbCode);
+            UpdateId(root, "tmdb", SelectedShow.Provider == TVDoc.ProviderType.TMDB , SelectedShow.TmdbCode);
+            UpdateId(root, "tvmaze", SelectedShow.Provider == TVDoc.ProviderType.TVmaze, SelectedShow.TvMazeId);
+            UpdateId(root, "imdb", false, SelectedShow.ImdbCode);
 
             ReplaceActors(root, SelectedShow.Actors);
 

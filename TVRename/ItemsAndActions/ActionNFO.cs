@@ -115,6 +115,10 @@ public abstract class ActionNfo : ActionWriteMetadata
 
     protected static void UpdateRatings(XElement root, string rating, int votes)
     {
+        if (!rating.HasValue() ||  rating == "0" || votes == 0)
+        {
+            return;
+        }
         XElement ratingsNode = root.GetOrCreateElement("ratings");
 
         XElement ratingNode = ratingsNode.GetOrCreateElement("rating", "name", "tvdb");
@@ -127,7 +131,7 @@ public abstract class ActionNfo : ActionWriteMetadata
         ratingNode.UpdateElement("votes", votes, true);
     }
 
-    protected static void UpdateId(XElement root, string idType, string defaultState, string? idValue)
+    protected static void UpdateId(XElement root, string idType, bool defaultState, string? idValue)
     {
         if (idValue is null)
         {
@@ -145,7 +149,7 @@ public abstract class ActionNfo : ActionWriteMetadata
         if (needToUpdate)
         {
             xElements.Single().Value = idValue;
-            xElements.Single().UpdateAttribute(NODE_ATTRIBUTE_DEFAULT, defaultState);
+            xElements.Single().UpdateAttribute(NODE_ATTRIBUTE_DEFAULT, defaultState.ToString());
         }
         else
         {
@@ -201,7 +205,7 @@ public abstract class ActionNfo : ActionWriteMetadata
             }
 
             List<XElement> elemsToRemove = root.Elements("thumb")
-                .Where(x => x.Attribute("aspect")?.ToString().Equals(aspectAttributeName) ?? false).ToList();
+                .Where(x => x.Attribute("aspect")?.Value.Equals(aspectAttributeName) ?? false).ToList();
 
             foreach (XElement oldActor in elemsToRemove)
             {
@@ -212,7 +216,10 @@ public abstract class ActionNfo : ActionWriteMetadata
             {
                 XElement tAdd = new("thumb");
                 tAdd.Add(new XAttribute("aspect", aspectAttributeName));
-                tAdd.Add(new XAttribute("preview", m.ThumbnailUrl ?? string.Empty));
+                if (m.ThumbnailUrl.HasValue())
+                {
+                    tAdd.Add(new XAttribute("preview", m.ThumbnailUrl ?? string.Empty));
+                }
                 tAdd.Value = m.ImageUrl!;
                 root.Add(tAdd);
             }
@@ -249,8 +256,12 @@ public abstract class ActionNfo : ActionWriteMetadata
         }
     }
 
-    protected static void UpdateId(XElement root, string idType, string defaultState, int idValue)
+    protected static void UpdateId(XElement root, string idType, bool defaultState, int idValue)
     {
+        if (idValue < 0)
+        {
+            return;
+        }
         UpdateId(root, idType, defaultState, idValue.ToString());
     }
 
