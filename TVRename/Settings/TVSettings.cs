@@ -174,6 +174,7 @@ public sealed class TVSettings
     public int ExportRSSMaxDays = 7;
     public int ExportRSSMaxShows = 10;
     public int ExportRSSDaysPast = 0;
+    public int? MinRSSSeeders;
     public bool ExportRenamingXML = false;
     public string ExportRenamingXMLTo = string.Empty;
     public bool ExportWTWRSS = false;
@@ -558,6 +559,7 @@ public sealed class TVSettings
         writer.WriteElement("ExportRSSMaxDays", ExportRSSMaxDays);
         writer.WriteElement("ExportRSSMaxShows", ExportRSSMaxShows);
         writer.WriteElement("ExportRSSDaysPast", ExportRSSDaysPast);
+        writer.WriteElement("MinRSSSeeders", MinRSSSeeders);
         writer.WriteElement("KeepTogether", KeepTogether);
         writer.WriteElement("KeepTogetherType", (int)keepTogetherMode);
         writer.WriteElement("UIScanType", (int)UIScanType);
@@ -1430,6 +1432,7 @@ public sealed class TVSettings
         ExportRSSMaxDays = xmlSettings.ExtractInt("ExportRSSMaxDays", 7).Between(0, 365);
         ExportRSSMaxShows = xmlSettings.ExtractInt("ExportRSSMaxShows", 10).Between(0, 10000);
         ExportRSSDaysPast = xmlSettings.ExtractInt("ExportRSSDaysPast", 0).Between(0, 365);
+        MinRSSSeeders = xmlSettings.ExtractInt("MinRSSSeeders", 10).Between(0, 10000);
         KeepTogether = xmlSettings.ExtractBool("KeepTogether", true);
         LeadingZeroOnSeason = xmlSettings.ExtractBool("LeadingZeroOnSeason", false);
         ShowAccessibilityOptions = xmlSettings.ExtractBool("ShowAccessibilityOptions", false);

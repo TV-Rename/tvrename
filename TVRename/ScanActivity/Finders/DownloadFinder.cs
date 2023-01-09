@@ -43,8 +43,11 @@ public abstract class DownloadFinder : Finder
         return FileHelper.SimplifyAndCheckFilename(rss.ShowName.HasValue() ? rss.ShowName : rss.Title, simpleShowName, true, false);
     }
 
-    protected static IEnumerable<ActionTDownload> Rationalise(ItemList newItems)
-        => newItems.DownloadTorrents.Where(NotContainsUnwantedTerms).WithMax(NumberOfGoodTerms);
+    protected static IEnumerable<ActionTDownload> Rationalize(ItemList newItems)
+        => newItems.DownloadTorrents.Where(HasEnoughSeeders).Where(NotContainsUnwantedTerms).WithMax(NumberOfGoodTerms);
+
+    private static bool HasEnoughSeeders(ActionTDownload arg)
+        => arg.Seeders is null || TVSettings.Instance.MinRSSSeeders is null || arg.Seeders.Value >= TVSettings.Instance.MinRSSSeeders;
 
     private static int NumberOfGoodTerms(ActionTDownload actionTDownload)
         => actionTDownload.SourceName.NumberContains(TVSettings.Instance.PreferredRSSSearchTerms());

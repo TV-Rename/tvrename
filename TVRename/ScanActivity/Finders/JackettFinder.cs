@@ -109,7 +109,7 @@ internal class JackettFinder : DownloadFinder
             toRemove.Add(action);
         }
 
-        newItems.AddNullableRange(Rationalise(newItemsForThisMissingEpisode));
+        newItems.AddNullableRange(Rationalize(newItemsForThisMissingEpisode));
     }
 
     private static void FindMissingEpisode(MovieItemMissing action, ItemList toRemove, ItemList newItems)
@@ -132,7 +132,7 @@ internal class JackettFinder : DownloadFinder
             toRemove.Add(action);
         }
 
-        newItems.AddNullableRange(Rationalise(newItemsForThisMissingEpisode));
+        newItems.AddNullableRange(Rationalize(newItemsForThisMissingEpisode));
     }
 
     private static string IndexerUrl()

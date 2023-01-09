@@ -452,6 +452,8 @@ namespace TVRename.Forms
             this.txtSubtitleExtensions = new System.Windows.Forms.TextBox();
             this.chkRetainLanguageSpecificSubtitles = new System.Windows.Forms.CheckBox();
             this.tpJackett = new System.Windows.Forms.TabPage();
+            this.label99 = new System.Windows.Forms.Label();
+            this.txtMinRSSSeeders = new System.Windows.Forms.TextBox();
             this.label97 = new System.Windows.Forms.Label();
             this.tbUnwantedRSSTerms = new System.Windows.Forms.TextBox();
             this.chkSearchJackettButton = new System.Windows.Forms.CheckBox();
@@ -513,10 +515,10 @@ namespace TVRename.Forms
             this.txtMissingXML = new System.Windows.Forms.TextBox();
             this.tbAppUpdate = new System.Windows.Forms.TabPage();
             this.pbuUpdates = new System.Windows.Forms.PictureBox();
+            this.chkUpdateCheckEnabled = new System.Windows.Forms.CheckBox();
             this.label92 = new System.Windows.Forms.Label();
             this.grpUpdateIntervalOption = new System.Windows.Forms.GroupBox();
             this.chkNoPopupOnUpdate = new System.Windows.Forms.CheckBox();
-            this.chkUpdateCheckEnabled = new System.Windows.Forms.CheckBox();
             this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
@@ -2634,6 +2636,7 @@ namespace TVRename.Forms
             this.tbPercentBetter.Name = "tbPercentBetter";
             this.tbPercentBetter.Size = new System.Drawing.Size(32, 23);
             this.tbPercentBetter.TabIndex = 37;
+            this.tbPercentBetter.TextChanged += new System.EventHandler(this.EnsureInteger);
             this.tbPercentBetter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // tbPriorityOverrideTerms
@@ -3841,6 +3844,7 @@ namespace TVRename.Forms
             this.txtExportRSSDaysPast.Name = "txtExportRSSDaysPast";
             this.txtExportRSSDaysPast.Size = new System.Drawing.Size(32, 23);
             this.txtExportRSSDaysPast.TabIndex = 20;
+            this.txtExportRSSDaysPast.TextChanged += new System.EventHandler(this.EnsureInteger);
             this.txtExportRSSDaysPast.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // bnBrowseWTWXML
@@ -3948,6 +3952,7 @@ namespace TVRename.Forms
             this.txtExportRSSMaxDays.Name = "txtExportRSSMaxDays";
             this.txtExportRSSMaxDays.Size = new System.Drawing.Size(32, 23);
             this.txtExportRSSMaxDays.TabIndex = 6;
+            this.txtExportRSSMaxDays.TextChanged += new System.EventHandler(this.EnsureInteger);
             this.txtExportRSSMaxDays.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // txtExportRSSMaxShows
@@ -3957,6 +3962,7 @@ namespace TVRename.Forms
             this.txtExportRSSMaxShows.Name = "txtExportRSSMaxShows";
             this.txtExportRSSMaxShows.Size = new System.Drawing.Size(32, 23);
             this.txtExportRSSMaxShows.TabIndex = 4;
+            this.txtExportRSSMaxShows.TextChanged += new System.EventHandler(this.EnsureInteger);
             this.txtExportRSSMaxShows.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // tbFilesAndFolders
@@ -4050,6 +4056,7 @@ namespace TVRename.Forms
             this.txtMaxSampleSize.Name = "txtMaxSampleSize";
             this.txtMaxSampleSize.Size = new System.Drawing.Size(61, 23);
             this.txtMaxSampleSize.TabIndex = 14;
+            this.txtMaxSampleSize.TextChanged += new System.EventHandler(this.EnsureInteger);
             this.txtMaxSampleSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // txtVideoExtensions
@@ -4302,6 +4309,7 @@ namespace TVRename.Forms
             this.txtWTWDays.Name = "txtWTWDays";
             this.txtWTWDays.Size = new System.Drawing.Size(32, 23);
             this.txtWTWDays.TabIndex = 1;
+            this.txtWTWDays.TextChanged += new System.EventHandler(this.EnsureInteger);
             this.txtWTWDays.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // cbMode
@@ -4601,6 +4609,7 @@ namespace TVRename.Forms
             this.txtParallelDownloads.Name = "txtParallelDownloads";
             this.txtParallelDownloads.Size = new System.Drawing.Size(32, 23);
             this.txtParallelDownloads.TabIndex = 51;
+            this.txtParallelDownloads.TextChanged += new System.EventHandler(this.EnsureInteger);
             this.txtParallelDownloads.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // label21
@@ -4707,6 +4716,7 @@ namespace TVRename.Forms
             this.tbPercentDirty.Name = "tbPercentDirty";
             this.tbPercentDirty.Size = new System.Drawing.Size(32, 23);
             this.tbPercentDirty.TabIndex = 24;
+            this.tbPercentDirty.TextChanged += new System.EventHandler(this.EnsureInteger);
             this.tbPercentDirty.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // label10
@@ -5720,6 +5730,8 @@ namespace TVRename.Forms
             // 
             // tpJackett
             // 
+            this.tpJackett.Controls.Add(this.label99);
+            this.tpJackett.Controls.Add(this.txtMinRSSSeeders);
             this.tpJackett.Controls.Add(this.label97);
             this.tpJackett.Controls.Add(this.tbUnwantedRSSTerms);
             this.tpJackett.Controls.Add(this.chkSearchJackettButton);
@@ -5742,6 +5754,26 @@ namespace TVRename.Forms
             this.tpJackett.TabIndex = 17;
             this.tpJackett.Text = "Jackett Search";
             this.tpJackett.UseVisualStyleBackColor = true;
+            // 
+            // label99
+            // 
+            this.label99.AutoSize = true;
+            this.label99.Location = new System.Drawing.Point(9, 175);
+            this.label99.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label99.Name = "label99";
+            this.label99.Size = new System.Drawing.Size(74, 15);
+            this.label99.TabIndex = 51;
+            this.label99.Text = "Min Seeders:";
+            // 
+            // txtMinRSSSeeders
+            // 
+            this.txtMinRSSSeeders.Location = new System.Drawing.Point(420, 171);
+            this.txtMinRSSSeeders.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.txtMinRSSSeeders.Name = "txtMinRSSSeeders";
+            this.txtMinRSSSeeders.Size = new System.Drawing.Size(32, 23);
+            this.txtMinRSSSeeders.TabIndex = 52;
+            this.txtMinRSSSeeders.TextChanged += new System.EventHandler(this.EnsureInteger);
+            this.txtMinRSSSeeders.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // label97
             // 
@@ -5766,7 +5798,7 @@ namespace TVRename.Forms
             // chkSearchJackettButton
             // 
             this.chkSearchJackettButton.AutoSize = true;
-            this.chkSearchJackettButton.Location = new System.Drawing.Point(265, 253);
+            this.chkSearchJackettButton.Location = new System.Drawing.Point(265, 282);
             this.chkSearchJackettButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.chkSearchJackettButton.Name = "chkSearchJackettButton";
             this.chkSearchJackettButton.Size = new System.Drawing.Size(177, 19);
@@ -5787,7 +5819,7 @@ namespace TVRename.Forms
             "Download All",
             "Ignore",
             "Use First"});
-            this.cmbSupervisedDuplicateAction.Location = new System.Drawing.Point(190, 202);
+            this.cmbSupervisedDuplicateAction.Location = new System.Drawing.Point(190, 231);
             this.cmbSupervisedDuplicateAction.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cmbSupervisedDuplicateAction.Name = "cmbSupervisedDuplicateAction";
             this.cmbSupervisedDuplicateAction.Size = new System.Drawing.Size(262, 23);
@@ -5797,7 +5829,7 @@ namespace TVRename.Forms
             // label77
             // 
             this.label77.AutoSize = true;
-            this.label77.Location = new System.Drawing.Point(8, 205);
+            this.label77.Location = new System.Drawing.Point(8, 234);
             this.label77.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label77.Name = "label77";
             this.label77.Size = new System.Drawing.Size(158, 15);
@@ -5817,7 +5849,7 @@ namespace TVRename.Forms
             "Download All",
             "Ignore",
             "Use First"});
-            this.cmbUnattendedDuplicateAction.Location = new System.Drawing.Point(190, 171);
+            this.cmbUnattendedDuplicateAction.Location = new System.Drawing.Point(190, 200);
             this.cmbUnattendedDuplicateAction.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cmbUnattendedDuplicateAction.Name = "cmbUnattendedDuplicateAction";
             this.cmbUnattendedDuplicateAction.Size = new System.Drawing.Size(262, 23);
@@ -5827,7 +5859,7 @@ namespace TVRename.Forms
             // label76
             // 
             this.label76.AutoSize = true;
-            this.label76.Location = new System.Drawing.Point(8, 174);
+            this.label76.Location = new System.Drawing.Point(8, 203);
             this.label76.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label76.Name = "label76";
             this.label76.Size = new System.Drawing.Size(163, 15);
@@ -5875,7 +5907,7 @@ namespace TVRename.Forms
             // cbSearchJackett
             // 
             this.cbSearchJackett.AutoSize = true;
-            this.cbSearchJackett.Location = new System.Drawing.Point(9, 253);
+            this.cbSearchJackett.Location = new System.Drawing.Point(9, 282);
             this.cbSearchJackett.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbSearchJackett.Name = "cbSearchJackett";
             this.cbSearchJackett.Size = new System.Drawing.Size(186, 19);
@@ -5901,7 +5933,7 @@ namespace TVRename.Forms
             this.groupBox22.Controls.Add(this.txtJackettPort);
             this.groupBox22.Controls.Add(this.label75);
             this.groupBox22.Controls.Add(this.txtJackettServer);
-            this.groupBox22.Location = new System.Drawing.Point(7, 279);
+            this.groupBox22.Location = new System.Drawing.Point(7, 308);
             this.groupBox22.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox22.Name = "groupBox22";
             this.groupBox22.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -6498,6 +6530,19 @@ namespace TVRename.Forms
             this.pbuUpdates.TabStop = false;
             this.pbuUpdates.Click += new System.EventHandler(this.pbuUpdates_Click);
             // 
+            // chkUpdateCheckEnabled
+            // 
+            this.chkUpdateCheckEnabled.AutoSize = true;
+            this.chkUpdateCheckEnabled.BackColor = System.Drawing.Color.White;
+            this.chkUpdateCheckEnabled.Location = new System.Drawing.Point(13, 70);
+            this.chkUpdateCheckEnabled.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.chkUpdateCheckEnabled.Name = "chkUpdateCheckEnabled";
+            this.chkUpdateCheckEnabled.Size = new System.Drawing.Size(123, 19);
+            this.chkUpdateCheckEnabled.TabIndex = 0;
+            this.chkUpdateCheckEnabled.Text = "Check for Updates";
+            this.chkUpdateCheckEnabled.UseVisualStyleBackColor = false;
+            this.chkUpdateCheckEnabled.CheckedChanged += new System.EventHandler(this.chkUpdateCheckEnabled_CheckedChanged);
+            // 
             // label92
             // 
             this.label92.AutoSize = true;
@@ -6534,19 +6579,6 @@ namespace TVRename.Forms
             this.chkNoPopupOnUpdate.TabIndex = 2;
             this.chkNoPopupOnUpdate.Text = "No dialog when an update is available";
             this.chkNoPopupOnUpdate.UseVisualStyleBackColor = true;
-            // 
-            // chkUpdateCheckEnabled
-            // 
-            this.chkUpdateCheckEnabled.AutoSize = true;
-            this.chkUpdateCheckEnabled.BackColor = System.Drawing.Color.White;
-            this.chkUpdateCheckEnabled.Location = new System.Drawing.Point(13, 70);
-            this.chkUpdateCheckEnabled.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkUpdateCheckEnabled.Name = "chkUpdateCheckEnabled";
-            this.chkUpdateCheckEnabled.Size = new System.Drawing.Size(123, 19);
-            this.chkUpdateCheckEnabled.TabIndex = 0;
-            this.chkUpdateCheckEnabled.Text = "Check for Updates";
-            this.chkUpdateCheckEnabled.UseVisualStyleBackColor = false;
-            this.chkUpdateCheckEnabled.CheckedChanged += new System.EventHandler(this.chkUpdateCheckEnabled_CheckedChanged);
             // 
             // cboUpdateCheckInterval
             // 
@@ -7229,5 +7261,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.DomainUpDown upDownScanSeconds;
         private System.Windows.Forms.CheckBox chkRestrictMissingExportsToFullScans;
         private System.Windows.Forms.CheckBox chkGroupMissingEpisodesIntoSeasons;
+        private System.Windows.Forms.Label label99;
+        private System.Windows.Forms.TextBox txtMinRSSSeeders;
     }
 }

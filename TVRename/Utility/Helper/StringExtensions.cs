@@ -331,6 +331,8 @@ public static class StringExtensions
         return builder.ToString();
     }
 
+    public static string IntegerCharactersOnly(this string source)
+        => new(source.Where(char.IsDigit).ToArray());
     public static bool ContainsOneOf(this string source, IEnumerable<string> terms) => terms.Any(source.Contains);
 
     public static int NumberContains(this string source, IEnumerable<string> terms) => terms.Count(source.Contains);

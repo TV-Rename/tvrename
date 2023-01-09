@@ -307,6 +307,7 @@ public partial class Preferences : Form
         s.ExportRSSMaxDays = txtExportRSSMaxDays.Text.ToInt(7);
         s.ExportRSSMaxShows = txtExportRSSMaxShows.Text.ToInt(10);
         s.ExportRSSDaysPast = txtExportRSSDaysPast.Text.ToInt(0);
+        s.MinRSSSeeders = txtMinRSSSeeders.Text.ToInt(10);
         s.KeepTogether = cbKeepTogether.Checked;
         s.LeadingZeroOnSeason = cbLeadingZero.Checked;
         s.ShowInTaskbar = chkShowInTaskbar.Checked;
@@ -824,6 +825,7 @@ public partial class Preferences : Form
         txtExportRSSMaxDays.Text = s.ExportRSSMaxDays.ToString();
         txtExportRSSMaxShows.Text = s.ExportRSSMaxShows.ToString();
         txtExportRSSDaysPast.Text = s.ExportRSSDaysPast.ToString();
+        txtMinRSSSeeders.Text = s.MinRSSSeeders.ToString();
         cbUseColoursOnWtw.Checked = s.UseColoursOnWtw;
 
         cbTimeZone.Text = s.DefaultShowTimezoneName;
@@ -2317,5 +2319,15 @@ public partial class Preferences : Form
         cntfw = new CustomNameTagsFloatingWindow(t);
         cntfw.Show(this);
         Focus();
+    }
+
+    private void EnsureInteger(object sender, EventArgs e)
+    {
+        if (sender is not TextBox t)
+        {
+            return;
+        }
+
+        t.Text = t.Text.IntegerCharactersOnly();
     }
 }
