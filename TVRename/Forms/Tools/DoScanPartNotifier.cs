@@ -13,10 +13,10 @@ public class DoScanPartNotifier : Notifier
         Start();
     }
 
-    internal override void Do(BackgroundWorker backgroundWorker, CancellationTokenSource source)
+    protected override void Do(BackgroundWorker backgroundWorker, CancellationTokenSource source)
     {
         activity.Check((percent, message, lastUpdate) => ReportProgress(source, percent, message, lastUpdate), source.Token);
     }
 
-    internal override string ActionName() => activity.ActivityName();
+    protected override string ActionName() => activity.ActivityName();
 }

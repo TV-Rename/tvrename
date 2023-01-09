@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace TVRename.Forms.Tools;
 
-public partial class Notifier : Form
+public abstract partial class Notifier : Form
 {
     protected Notifier()
     {
@@ -38,10 +38,9 @@ public partial class Notifier : Form
         Do(backgroundWorker, source);
     }
 
-    internal virtual void Do(BackgroundWorker backgroundWorker, CancellationTokenSource cancellationTokenSource)
-        => throw new NotImplementedException();
+    protected abstract void Do(BackgroundWorker backgroundWorker, CancellationTokenSource cancellationTokenSource);
 
-    internal virtual string ActionName() => throw new NotImplementedException();
+    protected abstract string ActionName();
 
     protected void ReportProgress(CancellationTokenSource source, int percent, string message, string lastUpdate)
     {

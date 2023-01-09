@@ -12,10 +12,11 @@ public class FixIssuesNotifier : Notifier
         this.operation = operation;
         Start();
     }
-    internal override void Do(BackgroundWorker backgroundWorker, CancellationTokenSource source)
+
+    protected override void Do(BackgroundWorker backgroundWorker, CancellationTokenSource source)
     {
         operation.Start((percent, message, lastUpdate) => ReportProgress(source, percent, message, lastUpdate), source.Token);
     }
 
-    internal override string ActionName() => "Fix Issues";
+    protected override string ActionName() => "Fix Issues";
 }
