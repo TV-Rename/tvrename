@@ -529,7 +529,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             updatesResponses.Add(jsonUpdateResponse);
             pageNumber++;
             long maxTime = GetUpdateTime(jsonUpdateResponse);
-            LOGGER.Info($"Obtained {numberOfResponses} responses from lastupdated query #{pageNumber} - until {maxTime.FromUnixTime().ToLocalTime()} ({maxTime})");
+            LOGGER.Info($"Obtained {numberOfResponses} responses from lastupdated query({fromEpochTime.FromUnixTime().ToLocalTime()}) #{pageNumber} - until {maxTime.FromUnixTime().ToLocalTime()} ({maxTime})");
 
             if (!MoreFrom(jsonUpdateResponse))
             {
