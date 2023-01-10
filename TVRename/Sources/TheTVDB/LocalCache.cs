@@ -2245,6 +2245,28 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             LastErrorMessage = ex.LoggableDetails();
             throw new SourceConnectivityException();
         }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            if (wex.Is404())
+            {
+                LOGGER.Warn($"Show with Id {code.TvdbId} is no longer available from TVDB (got a 404).");
+
+                if (API.TvdbIsUp() && code.TvdbId >0)
+                {
+                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. Please Update";
+                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
+                        TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
+                }
+            }
+
+            LOGGER.LogHttpRequestException(
+                $"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
+                wex);
+
+            SayNothing();
+            LastErrorMessage = wex.LoggableDetails();
+            throw new SourceConnectivityException();
+        }
     }
 
     private JObject DownloadMovieTranslationsJsonV4(ISeriesSpecifier code, Locale locale, bool showErrorMsgBox)

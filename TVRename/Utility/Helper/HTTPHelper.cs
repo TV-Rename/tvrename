@@ -161,6 +161,10 @@ public static class HttpHelper
         {
             Logger.Fatal(hre, $"Could not obtain {url}");
         }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException hre)
+        {
+            Logger.Fatal(hre, $"Could not obtain {url}");
+        }
 
         return () => Task.FromResult(string.Empty);
     }
