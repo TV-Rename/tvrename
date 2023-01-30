@@ -125,6 +125,10 @@ public class ActionUnArchive : ActionFileOperation
         {
             return new ActionOutcome(e);
         }
+        catch (ArchiveException e)
+        {
+            return new ActionOutcome(e);
+        }
     }
     private static IArchive GetArchive(FileInfo archive)
     {

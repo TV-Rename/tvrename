@@ -1086,7 +1086,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         //Now deal with obtaining any episodes for the cachedSeries
         //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
         //We push the results into a bag to use later
-        //If there is a problem with the while method then we can be proactive by using /cachedSeries/{id}/episodes/summary to get the total
+        //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
         List<JObject> episodeResponses = new();
 
         int pageNumber = 1;
@@ -2365,8 +2365,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (WebException ex)
         {
-            if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse
-                { StatusCode: HttpStatusCode.NotFound })
+            if (ex is { Status: WebExceptionStatus.ProtocolError, Response: HttpWebResponse
+                    { StatusCode: HttpStatusCode.NotFound }
+                })
             {
                 return false;
             }
