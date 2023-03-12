@@ -14,6 +14,7 @@ internal static class API
 {
     //As a safety measure we check that no more than 52 calls are made
     private const int MAX_NUMBER_OF_CALLS = 50;
+    static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
     public static IEnumerable<ChangesListItem> GetChangesMovies(this TMDbClient client, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
         => GetChanges(client.GetMoviesChangesAsync, latestUpdateTime, cts);
@@ -44,14 +45,17 @@ internal static class API
                         throw new TaskCanceledException("Manual Cancellation");
                     }
                     SearchContainer<ChangesListItem> response = changeMethod(currentPage, time, null, cts).Result;
-                    numberOfCallsMade++;
+                    
                     maxPage = response.TotalPages;
                     updatesResponses.AddRange(response.Results);
+                    LOGGER.Info(                    $"Obtained {response.Results.Count} responses from TMDB lastupdated query #{numberOfCallsMade} ({currentPage}/{maxPage})");
                     if (numberOfCallsMade > MAX_NUMBER_OF_CALLS)
                     {
                         throw new TooManyCallsException();
                     }
                 }
+
+                numberOfCallsMade++;
             }
             return updatesResponses;
         }
@@ -81,22 +85,8 @@ internal static class API
     {
     }
 
-    public static string WebsiteShowUrl(CachedSeriesInfo ser)
-    {
-        return WebsiteShowUrl(ser.TmdbCode);
-    }
-
-    public static string WebsiteShowUrl(ShowConfiguration si)
-    {
-        return WebsiteShowUrl(si.TmdbCode);
-    }
-
-    public static string WebsiteShowUrl(int seriesId)
-    {
-        return $"https://www.themoviedb.org/tv/{seriesId}";
-    }
-    public static string WebsiteMovieUrl(int seriesId)
-    {
-        return $"https://www.themoviedb.org/movie/{seriesId}";
-    }
+    public static string WebsiteShowUrl(CachedSeriesInfo ser) => WebsiteShowUrl(ser.TmdbCode);
+    public static string WebsiteShowUrl(ShowConfiguration si) => WebsiteShowUrl(si.TmdbCode);
+    public static string WebsiteShowUrl(int seriesId) => $"https://www.themoviedb.org/tv/{seriesId}";
+    public static string WebsiteMovieUrl(int seriesId) => $"https://www.themoviedb.org/movie/{seriesId}";
 }

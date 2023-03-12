@@ -423,7 +423,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             if (numberOfResponses is null)
             {
                 throw new SourceConsistencyException(
-                    $"No UpnumberOfResponses is null: {fromEpochTime}:{numberOfCallsMade}:{jsonUpdateResponse}",
+                    $"NumberOfResponses is null: {fromEpochTime}:{numberOfCallsMade}:{jsonUpdateResponse}",
                     TVDoc.ProviderType.TheTVDB);
             }
 
