@@ -48,7 +48,7 @@ internal static class API
                     
                     maxPage = response.TotalPages;
                     updatesResponses.AddRange(response.Results);
-                    LOGGER.Info(                    $"Obtained {response.Results.Count} responses from TMDB lastupdated query #{numberOfCallsMade} ({currentPage}/{maxPage})");
+                    LOGGER.Info(                    $"Obtained {response.Results.Count} responses from TMDB lastupdated query #{numberOfCallsMade} {time.ToLocalTime} ({currentPage}/{maxPage})");
                     if (numberOfCallsMade > MAX_NUMBER_OF_CALLS)
                     {
                         throw new TooManyCallsException();
