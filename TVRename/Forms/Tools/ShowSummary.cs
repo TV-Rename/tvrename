@@ -45,13 +45,16 @@ public partial class ShowSummary : Form, IDialogParent
 
     private void InitializeCmbShowStatus()
     {
-        cmbShowStatus.Items.Clear();
-        foreach (string s in mDoc.TvLibrary.ShowStatuses)
+       
+        if (mDoc.TvLibrary.ShowStatuses.HasAny())
         {
-            cmbShowStatus.Items.Add(s);
+            cmbShowStatus.Items.Clear();
+            foreach (string s in mDoc.TvLibrary.ShowStatuses)
+            {
+                cmbShowStatus.Items.Add(s);
+            }
+            cmbShowStatus.SelectedIndex = 0;
         }
-
-        cmbShowStatus.SelectedIndex = 0;
     }
 
     private void GenerateData(BackgroundWorker bw)
