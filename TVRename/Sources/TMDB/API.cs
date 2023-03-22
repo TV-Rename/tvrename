@@ -12,8 +12,8 @@ namespace TVRename.TMDB;
 // ReSharper disable once InconsistentNaming
 internal static class API
 {
-    //As a safety measure we check that no more than 52 calls are made
-    private const int MAX_NUMBER_OF_CALLS = 50;
+    //As a safety measure we check that no more than 26 fortnights are made
+    private const int MAX_NUMBER_OF_CALLS = 26;
     static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
     public static IEnumerable<ChangesListItem> GetChangesMovies(this TMDbClient client, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
@@ -38,24 +38,23 @@ internal static class API
                 )
             {
                 int maxPage = 1;
-                for (int currentPage = 0; currentPage <= maxPage; currentPage++)
+                for (int currentPage = 1; currentPage <= maxPage; currentPage++)
                 {
                     if (cts.IsCancellationRequested)
                     {
                         throw new TaskCanceledException("Manual Cancellation");
                     }
                     SearchContainer<ChangesListItem> response = changeMethod(currentPage, time, null, cts).Result;
-                    
-                    maxPage = response.TotalPages;
                     updatesResponses.AddRange(response.Results);
-                    LOGGER.Info(                    $"Obtained {response.Results.Count} responses from TMDB lastupdated query #{numberOfCallsMade} {time.ToLocalTime()} ({currentPage}/{maxPage})");
-                    if (numberOfCallsMade > MAX_NUMBER_OF_CALLS)
-                    {
-                        throw new TooManyCallsException();
-                    }
+
+                    maxPage = response.TotalPages;
+                    LOGGER.Info($"Obtained {response.Results.Count} responses from TMDB lastupdated query #{numberOfCallsMade} {time.ToLocalTime()} [Page {response.Page}] ({currentPage}/{maxPage})");
                 }
 
-                numberOfCallsMade++;
+                if (numberOfCallsMade++ > MAX_NUMBER_OF_CALLS)
+                {
+                    throw new TooManyCallsException();
+                }
             }
             return updatesResponses;
         }
