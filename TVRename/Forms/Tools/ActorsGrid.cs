@@ -15,6 +15,7 @@ using System.Windows.Forms;
 namespace TVRename;
 
 using SourceGrid.Cells;
+using TVRename.Forms;
 
 /// <summary>
 /// Summary for ActorsGrid
@@ -325,20 +326,18 @@ public partial class ActorsGrid : Form
     private void bnSave_Click(object sender, EventArgs e)
     {
         saveFile.Filter = "PNG Files (*.png)|*.png|All Files (*.*)|*.*";
-        if (saveFile.ShowDialog(this) != DialogResult.OK)
+        if (UiHelpers.ShowDialogAndOK(saveFile,this))
         {
-            return;
-        }
-
-        try
-        {
-            SourceGrid.Exporter.Image image = new();
-            Bitmap b = image.Export(grid1, grid1.CompleteRange);
-            b.Save(saveFile.FileName, System.Drawing.Imaging.ImageFormat.Png);
-        }
-        catch (Exception ex)
-        {
-            Logger.Warn(ex, $"Failed to save {saveFile.FileName}.");
+            try
+            {
+                SourceGrid.Exporter.Image image = new();
+                Bitmap b = image.Export(grid1, grid1.CompleteRange);
+                b.Save(saveFile.FileName, System.Drawing.Imaging.ImageFormat.Png);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex, $"Failed to save {saveFile.FileName}.");
+            }
         }
     }
 

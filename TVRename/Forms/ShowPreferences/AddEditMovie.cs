@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using TVRename.Forms;
 
 namespace TVRename;
 
@@ -570,7 +571,7 @@ public partial class AddEditMovie : Form
             folderBrowser.SelectedPath = cbDirectory.Text;
         }
 
-        if (folderBrowser.ShowDialog(this) == DialogResult.OK)
+        if (UiHelpers.ShowDialogAndOK(folderBrowser,this))
         {
             txtFolder.Text = folderBrowser.SelectedPath;
         }

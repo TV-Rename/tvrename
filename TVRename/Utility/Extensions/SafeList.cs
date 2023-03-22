@@ -142,12 +142,16 @@ public class SafeList<T> : IList<T>
         }
     }
 
-    public IEnumerator GetEnumerator()
+    public IEnumerator<T> GetEnumerator()
     {
         lock (@lock)
         {
             return new SafeEnumerator<T>(inner.GetEnumerator(), @lock);
         }
+    }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 
     public int IndexOf(T item)

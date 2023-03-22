@@ -1957,10 +1957,9 @@ public class TVDoc : IDisposable
                 {
                     //ask user about which show
                     LinkMovie askUser = new(existingMatchingShows, fi);
-                    DialogResult decision = askUser.ShowDialog(ui);
 
                     //if user cancelled then move on
-                    if (decision != DialogResult.OK)
+                    if (!UiHelpers.ShowDialogAndOK(askUser,ui))
                     {
                         Logger.Info($"User chose to ignore {filePath}");
                         continue;

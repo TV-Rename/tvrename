@@ -7,6 +7,7 @@
 //
 using Alphaleonis.Win32.Filesystem;
 using System.Windows.Forms;
+using TVRename.Forms;
 
 namespace TVRename;
 
@@ -66,7 +67,7 @@ public partial class MissingFolderAction : Form
     private void bnBrowse_Click(object sender, System.EventArgs e)
     {
         folderBrowser.SelectedPath = FolderName;
-        if (folderBrowser.ShowDialog(this) == DialogResult.OK)
+        if (UiHelpers.ShowDialogAndOK(folderBrowser,this))
         {
             Result = FaResult.kfaDifferentFolder;
             FolderName = folderBrowser.SelectedPath;

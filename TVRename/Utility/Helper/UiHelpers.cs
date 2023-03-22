@@ -1,11 +1,16 @@
+using DaveChambers.FolderBrowserDialogEx;
+using NLog;
 using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace TVRename.Forms;
 
 public static class UiHelpers
 {
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     public static Color WarningColor() => Color.FromArgb(255, 210, 210);
 
     public static string TranslateColorToHtml(this Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
@@ -15,6 +20,41 @@ public static class UiHelpers
         ToolStripMenuItem tsi = new(name.ToUiVersion());
         tsi.Click += command;
         items.Add(tsi);
+    }
+    public static bool ShowDialogAndOK(FolderBrowserDialogEx d, IWin32Window owner)
+    {
+        return ShowDialogAndOK(() => d.ShowDialog(owner));
+    }
+
+    private static bool ShowDialogAndOK(Func<DialogResult> function)
+    {
+        try
+        {
+            return function() == DialogResult.OK;
+        }
+        catch (Win32Exception ex)
+        {
+            Logger.Error(ex, $"Could not load Dialog:");
+        }
+        catch (SEHException ex)
+        {
+            Logger.Error(ex, $"Could not load Dialog:");
+        }
+        catch (InvalidOperationException ex)
+        {
+            Logger.Error(ex, $"Could not load Dialog:");
+        }
+        return false;
+
+    }
+
+    public static bool ShowDialogAndOK(CommonDialog d, IWin32Window owner)
+    {
+        return ShowDialogAndOK(() => d.ShowDialog(owner));
+    }
+    public static bool ShowDialogAndOK(Form d, IWin32Window owner)
+    {
+        return ShowDialogAndOK(() => d.ShowDialog(owner));
     }
 
     public static void Add(this ContextMenuStrip items, string name, EventHandler command)

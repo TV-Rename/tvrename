@@ -2267,12 +2267,10 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                               .Replace(".", "*.") +
                           "|All Files (*.*)|*.*";
 
-        if (openFile.ShowDialog(this) != DialogResult.OK)
+        if (UiHelpers.ShowDialogAndOK(openFile,this))
         {
-            return;
+            ManuallyAddFileForItem(mi, openFile.FileName);
         }
-
-        ManuallyAddFileForItem(mi, openFile.FileName);
     }
 
     private void ManuallyAddFileForItem(ItemMissing mi, string fileName)
@@ -4187,8 +4185,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void btnFilter_Click(object sender, EventArgs e)
     {
         Filters filters = new(mDoc);
-        DialogResult res = filters.ShowDialog(this);
-        if (res == DialogResult.OK)
+        if (UiHelpers.ShowDialogAndOK(filters,this))
         {
             FillMyShows(true);
         }
@@ -5148,9 +5145,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void btnMovieFilter_Click(object sender, EventArgs e)
     {
-        MovieFilters filters = new(mDoc);
-        DialogResult res = filters.ShowDialog(this);
-        if (res == DialogResult.OK)
+        if(UiHelpers.ShowDialogAndOK(new MovieFilters(mDoc),this))
         {
             FillMyMovies();
         }
@@ -5251,12 +5246,10 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         MovieConfiguration? m = CurrentlySelectedMovie();
 
-        AddEditSearchEngine aese = new(TVDoc.GetMovieSearchers(), m);
         MoreBusy();
         mDoc.PreventAutoScan("Search Engines are open");
 
-        DialogResult dr = aese.ShowDialog(this);
-        if (dr == DialogResult.OK)
+        if (UiHelpers.ShowDialogAndOK(new AddEditSearchEngine(TVDoc.GetMovieSearchers(), m),this))
         {
             mDoc.SetDirty();
             UpdateSearchButtons();

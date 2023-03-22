@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -39,7 +38,6 @@ public partial class AddEditShow : Form
     private readonly ProcessedEpisode? sampleEpisode;
     private readonly bool addingNewShow;
     private readonly TVDoc mDoc;
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public AddEditShow(ShowConfiguration si, TVDoc doc)
     {
@@ -489,9 +487,11 @@ public partial class AddEditShow : Form
     {
         string slist = txtIgnoreSeasons.Text;
         selectedShow.IgnoreSeasons.Clear();
-        foreach (Match match in Regex.Matches(slist, "\\b[0-9]+\\b"))
+        foreach (object matcho in Regex.Matches(slist, "\\b[0-9]+\\b"))
         {
-            selectedShow.IgnoreSeasons.Add(int.Parse(match.Value));
+            if (matcho is Match match){
+                selectedShow.IgnoreSeasons.Add(int.Parse(match.Value));
+            }
         }
 
         selectedShow.ManualFolderLocations.Clear();
@@ -572,20 +572,9 @@ public partial class AddEditShow : Form
             folderBrowser.SelectedPath = txtBaseFolder.Text;
         }
 
-        try
+        if (UiHelpers.ShowDialogAndOK(folderBrowser, this))
         {
-            if (folderBrowser.ShowDialog(this) == DialogResult.OK)
-            {
-                txtBaseFolder.Text = folderBrowser.SelectedPath;
-            }
-        }
-        catch (SEHException ex)
-        {
-            Logger.Error(ex, "Could not load Folder Selection Dialog:");
-        }
-        catch (InvalidOperationException ex)
-        {
-            Logger.Error(ex, "Could not load Folder Selection Dialog:");
+            txtBaseFolder.Text = folderBrowser.SelectedPath;
         }
     }
 
@@ -633,7 +622,7 @@ public partial class AddEditShow : Form
             folderBrowser.SelectedPath = txtBaseFolder.Text;
         }
 
-        if (folderBrowser.ShowDialog(this) == DialogResult.OK)
+        if (UiHelpers.ShowDialogAndOK(folderBrowser,this))
         {
             txtFolder.Text = folderBrowser.SelectedPath;
         }
