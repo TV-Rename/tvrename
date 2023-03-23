@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using TMDbLib.Objects.TvShows;
 
 namespace TVRename;
 
@@ -62,9 +63,9 @@ internal class JackettFinder : DownloadFinder
                     case MovieItemMissing movieItemMissing:
                         FindMissingEpisode(movieItemMissing, toRemove, newItems);
                         break;
-                        //case ShowSeasonMissing seasonMissing:
-                        //TODO - FindMissingSeason(seasonMissing, toRemove, newItems);
-                        //break;
+                    case ShowSeasonMissing seasonMissing:
+                        FindMissingSeason(seasonMissing, toRemove, newItems);
+                        break;
                 }
             }
         }
@@ -143,6 +144,50 @@ internal class JackettFinder : DownloadFinder
             newItems.AddNullableRange(bestDownloads);
             toRemove.Add(action);
         }
+    }
+
+    private static void FindMissingSeason(ShowSeasonMissing action, ItemList toRemove, ItemList newItems)
+    {
+        string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.Series , action.SeasonNumberAsInt) : NormalJackettUrl(action.Series, action.SeasonNumberAsInt);
+
+        RssItemList rssList = new();
+        rssList.DownloadRSS(url, false, "Jackett");
+        ItemList newItemsForThisMissingEpisode = new();
+
+        foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, action.Series, action.SeasonNumberAsInt??0 )))
+        {
+            if (TVSettings.Instance.DetailedRSSJSONLogging)
+            {
+                LOGGER.Info(
+                    $"Adding {rss.URL} from RSS feed as it appears to be match for {action.Show.ShowName} S{action.SeasonNumber}");
+            }
+            ItemDownloading becomes = new(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.Series, action.SeasonNumberAsInt, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
+            newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, becomes));
+        }
+
+        System.Collections.Generic.IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
+
+        if (bestDownloads.HasAny())
+        {
+            newItems.AddNullableRange(bestDownloads);
+            toRemove.Add(action);
+        }
+    }
+    private static string NormalJackettUrl(ShowConfiguration series, int? seasonNumberAsInt)
+    {
+        string apikey = TVSettings.Instance.JackettAPIKey;
+        string simpleShowName = WebUtility.UrlEncode(series.ShowName.CompareName());
+
+        return
+            $"{IndexerUrl()}api?t=tvsearch&q={simpleShowName}&tvdbid={series.TvdbCode}&season={seasonNumberAsInt}&apikey={apikey}";
+    }
+
+    private static string TextJackettUrl(ShowConfiguration series, int? seasonNumberAsInt)
+    {
+        string apikey = TVSettings.Instance.JackettAPIKey;
+        const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
+        string text = WebUtility.UrlEncode(CustomSeasonName.NameFor(series,seasonNumberAsInt??0, FORMAT));
+        return $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
     }
 
     private static string IndexerUrl()

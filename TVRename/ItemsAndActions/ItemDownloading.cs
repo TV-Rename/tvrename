@@ -7,6 +7,7 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
+using CefSharp;
 using System;
 
 namespace TVRename;
@@ -22,6 +23,9 @@ public class ItemDownloading : Item
     public override string? DestinationFolder => TargetFolder;
     public override string? DestinationFile => entry.FileIdentifier;
     public override string SourceDetails => entry.RemainingText ?? string.Empty;
+
+    private readonly ShowConfiguration? internalShow;
+    private readonly int? internalSeasonNumber;
 
     public override int IconNumber { get; }
     public override string? TargetFolder => string.IsNullOrEmpty(entry.Destination) ? null : new FileInfo(entry.Destination).DirectoryName;
@@ -50,6 +54,22 @@ public class ItemDownloading : Item
         Episode = null;
         Movie = mc;
     }
+
+    public ItemDownloading(IDownloadInformation dl, ShowConfiguration series, int? seasonNumberAsInt, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing me)
+        : this(dl, desiredLocationNoExt, tApp, me)
+    {
+        Episode=null;
+        Movie = null;
+        internalShow = series;
+        internalSeasonNumber = seasonNumberAsInt;
+    }
+
+    public override string SeriesName => internalShow?.Name ?? base.SeriesName;
+    public override string SeasonNumber => internalSeasonNumber is null
+        ? base.SeasonNumber
+        : TVSettings.SeasonNameFor(internalSeasonNumber.Value);
+    public override int? SeasonNumberAsInt => internalSeasonNumber ?? base.SeasonNumberAsInt;
+    public override ShowConfiguration? Series => internalShow ?? base.Series;
 
     #region Item Members
 

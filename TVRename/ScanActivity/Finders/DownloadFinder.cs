@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,6 +41,11 @@ public abstract class DownloadFinder : Finder
     protected static bool RssMatch(RSSItem rss, MovieConfiguration pe)
     {
         string simpleShowName = pe.ShowName.CompareName();
+        return FileHelper.SimplifyAndCheckFilename(rss.ShowName.HasValue() ? rss.ShowName : rss.Title, simpleShowName, true, false);
+    }
+    protected static bool RssMatch(RSSItem rss, ShowConfiguration series, int seasonNumberAsInt)
+    {
+        string simpleShowName = $"{series.ShowName.CompareName()} S{seasonNumberAsInt}";
         return FileHelper.SimplifyAndCheckFilename(rss.ShowName.HasValue() ? rss.ShowName : rss.Title, simpleShowName, true, false);
     }
 

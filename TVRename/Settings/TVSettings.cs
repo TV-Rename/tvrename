@@ -41,10 +41,7 @@ public sealed class TVSettings
                 lock (syncRoot)
                 {
                     // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
-                    if (instance is null)
-                    {
-                        instance = new TVSettings();
-                    }
+                    instance ??= new TVSettings();
                 }
             }
 
