@@ -181,8 +181,6 @@ internal class JSONWebpageFinder : DownloadFinder
 
                     newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes, seeders, itemUrl,
                         action.TheFileNoExt, pe, action, $"JSON WebPage: {TVSettings.Instance.SearchJSONURL}{imdbId}", becomes));
-
-                    toRemove.Add(action);
                 }
                 else
                 {
@@ -197,7 +195,13 @@ internal class JSONWebpageFinder : DownloadFinder
                 $"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.MissingEpisode.TheCachedSeries.Name}");
         }
 
-        newItems.AddNullableRange(Rationalize(newItemsForThisMissingEpisode));
+        System.Collections.Generic.IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
+
+        if (bestDownloads.HasAny())
+        {
+            newItems.AddNullableRange(bestDownloads);
+            toRemove.Add(action);
+        }
     }
 
     private static long CalculateItemSizeBytes(JToken item)

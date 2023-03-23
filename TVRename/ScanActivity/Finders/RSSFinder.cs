@@ -61,10 +61,15 @@ internal class RSSFinder : DownloadFinder
 
                 ItemDownloading eventualItem = new(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MissingEpisode, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
                 newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, eventualItem));
-                toRemove.Add(action);
             }
 
-            newItems.AddNullableRange(Rationalize(newItemsForThisMissingEpisode));
+            System.Collections.Generic.IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
+
+            if (bestDownloads.HasAny())
+            {
+                newItems.AddNullableRange(bestDownloads);
+                toRemove.Add(action);
+            }
         }
         ActionList.Replace(toRemove, newItems);
     }

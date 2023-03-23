@@ -106,10 +106,15 @@ internal class JackettFinder : DownloadFinder
 
             ItemDownloading becomes = new(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MissingEpisode, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
             newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, becomes));
-            toRemove.Add(action);
         }
 
-        newItems.AddNullableRange(Rationalize(newItemsForThisMissingEpisode));
+        System.Collections.Generic.IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
+
+        if (bestDownloads.HasAny())
+        {
+            newItems.AddNullableRange(bestDownloads);
+            toRemove.Add(action);
+        }
     }
 
     private static void FindMissingEpisode(MovieItemMissing action, ItemList toRemove, ItemList newItems)
@@ -129,10 +134,15 @@ internal class JackettFinder : DownloadFinder
             }
             ItemDownloading becomes = new(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MovieConfig, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
             newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, becomes));
-            toRemove.Add(action);
         }
 
-        newItems.AddNullableRange(Rationalize(newItemsForThisMissingEpisode));
+        System.Collections.Generic.IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
+
+        if (bestDownloads.HasAny())
+        {
+            newItems.AddNullableRange(bestDownloads);
+            toRemove.Add(action);
+        }
     }
 
     private static string IndexerUrl()
