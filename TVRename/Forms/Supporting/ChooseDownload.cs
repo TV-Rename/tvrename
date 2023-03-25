@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace TVRename.Forms.Supporting;
 
 public partial class ChooseDownload : Form
 {
+    readonly IEnumerable<ActionTDownload> allOptions;
+
     public ChooseDownload(ItemMissing im, IEnumerable<ActionTDownload> options)
     {
         InitializeComponent();
@@ -22,6 +25,8 @@ public partial class ChooseDownload : Form
         olvChooseDownload.SetObjects(options);
         SetButtonVisibility();
         olvChooseDownload.Sort(olvSeeders, SortOrder.Descending);
+
+        allOptions = options.SelectMany(x => x.AlsoAvailable.DownloadTorrents).Distinct();
     }
 
     public ActionTDownload? UserChosenAction
@@ -60,5 +65,12 @@ public partial class ChooseDownload : Form
     private void olvChooseDownload_DoubleClick(object sender, System.EventArgs e)
     {
         Ok();
+    }
+
+    private void btnSeeAll_Click(object sender, System.EventArgs e)
+    {
+        olvChooseDownload.SetObjects(allOptions);
+        SetButtonVisibility();
+        olvChooseDownload.Sort(olvSeeders, SortOrder.Descending);
     }
 }

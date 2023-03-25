@@ -412,8 +412,7 @@ internal static class FinderHelper
             Logger.Error($"Error in SimplifyFilename for {filename} and {showNameHint}, got {returnFilename} with error {ex.Message}");
         }
 
-        foreach (Match m in Regex.Matches(showNameHint, "(?:^|[^a-z]|\\b)([0-9]{3,})")
-                ) // find >= 3 digit numbers in show name
+        foreach (Match m in Regex.Matches(showNameHint, "(?:^|[^a-z]|\\b)([0-9]{3,})").Cast<Match>()) // find >= 3 digit numbers in show name
         {
             if (m.Groups.Count > 1) // just in case
             {

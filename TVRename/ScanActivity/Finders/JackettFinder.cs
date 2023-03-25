@@ -109,13 +109,7 @@ internal class JackettFinder : DownloadFinder
             newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, becomes));
         }
 
-        System.Collections.Generic.IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
-
-        if (bestDownloads.HasAny())
-        {
-            newItems.AddNullableRange(bestDownloads);
-            toRemove.Add(action);
-        }
+        Replace(action, toRemove, newItems, newItemsForThisMissingEpisode);
     }
 
     private static void FindMissingEpisode(MovieItemMissing action, ItemList toRemove, ItemList newItems)
@@ -137,13 +131,7 @@ internal class JackettFinder : DownloadFinder
             newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, becomes));
         }
 
-        System.Collections.Generic.IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
-
-        if (bestDownloads.HasAny())
-        {
-            newItems.AddNullableRange(bestDownloads);
-            toRemove.Add(action);
-        }
+        Replace(action, toRemove, newItems, newItemsForThisMissingEpisode);
     }
 
     private static void FindMissingSeason(ShowSeasonMissing action, ItemList toRemove, ItemList newItems)
@@ -165,13 +153,7 @@ internal class JackettFinder : DownloadFinder
             newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, becomes));
         }
 
-        System.Collections.Generic.IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
-
-        if (bestDownloads.HasAny())
-        {
-            newItems.AddNullableRange(bestDownloads);
-            toRemove.Add(action);
-        }
+        Replace(action, toRemove, newItems, newItemsForThisMissingEpisode);
     }
     private static string NormalJackettUrl(ShowConfiguration series, int? seasonNumberAsInt)
     {

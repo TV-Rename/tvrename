@@ -60,4 +60,19 @@ public abstract class DownloadFinder : Finder
 
     private static bool NotContainsUnwantedTerms(ActionTDownload actionTDownload)
         => !actionTDownload.SourceName.ContainsOneOf(TVSettings.Instance.UnwantedRSSSearchTerms());
+
+    protected static void Replace(ItemMissing action, ItemList toRemove, ItemList newItems, ItemList newItemsForThisMissingEpisode)
+    {
+        IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
+
+        if (bestDownloads.HasAny())
+        {
+            foreach (ActionTDownload x in bestDownloads)
+            {
+                x.AlsoAvailable = newItemsForThisMissingEpisode;
+            }
+            newItems.AddNullableRange(bestDownloads);
+            toRemove.Add(action);
+        }
+    }
 }

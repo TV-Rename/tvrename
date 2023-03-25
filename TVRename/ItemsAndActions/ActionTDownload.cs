@@ -11,6 +11,7 @@ namespace TVRename;
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Collections;
 
 // ReSharper disable once InconsistentNaming
 public class ActionTDownload : ActionDownload
@@ -22,6 +23,7 @@ public class ActionTDownload : ActionDownload
     private readonly string url;
     public readonly long sizeBytes;
     public readonly int? Seeders;
+    public ItemList AlsoAvailable = new();
 
     // ReSharper disable once NotAccessedField.Global - Used as a property in the Choose Download Grid
     public readonly string UpstreamSource;

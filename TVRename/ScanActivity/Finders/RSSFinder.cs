@@ -63,13 +63,7 @@ internal class RSSFinder : DownloadFinder
                 newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, eventualItem));
             }
 
-            System.Collections.Generic.IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
-
-            if (bestDownloads.HasAny())
-            {
-                newItems.AddNullableRange(bestDownloads);
-                toRemove.Add(action);
-            }
+            Replace(action, toRemove, newItems, newItemsForThisMissingEpisode);
         }
         ActionList.Replace(toRemove, newItems);
     }

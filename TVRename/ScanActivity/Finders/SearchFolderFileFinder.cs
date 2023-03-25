@@ -45,20 +45,26 @@ internal class SearchFolderFileFinder : FileFinder
             UpdateStatus(currentItem++, totalN, action.Filename);
 
             Dictionary<FileInfo, ItemList> thisRound = new();
-
-            if (action is ShowItemMissing showMissingAction)
+            try
             {
-                List<FileInfo> matchedFiles = FindMatchedFiles(dirCache, showMissingAction, thisRound);
+                if (action is ShowItemMissing showMissingAction)
+                {
+                    List<FileInfo> matchedFiles = FindMatchedFiles(dirCache, showMissingAction, thisRound);
 
-                ProcessMissingItem(newList, toRemove, showMissingAction, thisRound, matchedFiles,
-                    TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
+                    ProcessMissingItem(newList, toRemove, showMissingAction, thisRound, matchedFiles,
+                        TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
+                }
+                else if (action is MovieItemMissing movieMissingAction)
+                {
+                    List<FileInfo> matchedFiles = FindMatchedFiles(dirCache, movieMissingAction, thisRound);
+
+                    ProcessMissingItem(newList, toRemove, movieMissingAction, thisRound, matchedFiles,
+                        TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
+                }
             }
-            else if (action is MovieItemMissing movieMissingAction)
+            catch (System.Exception e)
             {
-                List<FileInfo> matchedFiles = FindMatchedFiles(dirCache, movieMissingAction, thisRound);
-
-                ProcessMissingItem(newList, toRemove, movieMissingAction, thisRound, matchedFiles,
-                    TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
+                LOGGER.Fatal(e, $"Error occured finding {action?.SourceDetails}");
             }
         }
 

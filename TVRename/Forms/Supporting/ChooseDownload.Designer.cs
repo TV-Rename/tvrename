@@ -34,13 +34,14 @@ namespace TVRename.Forms.Supporting
             this.btnCancel = new System.Windows.Forms.Button();
             this.bnCancelAll = new System.Windows.Forms.Button();
             this.olvChooseDownload = new TVRename.ObjectListViewFlickerFree();
-            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvSize = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvSeeders = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvName = new BrightIdeasSoftware.OLVColumn();
+            this.olvSize = new BrightIdeasSoftware.OLVColumn();
+            this.olvSeeders = new BrightIdeasSoftware.OLVColumn();
+            this.olvSource = new BrightIdeasSoftware.OLVColumn();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblEpisodeName = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnSeeAll = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvChooseDownload)).BeginInit();
@@ -56,12 +57,13 @@ namespace TVRename.Forms.Supporting
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(511, 546);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 630);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -69,18 +71,21 @@ namespace TVRename.Forms.Supporting
             this.flowLayoutPanel1.Controls.Add(this.btnOK);
             this.flowLayoutPanel1.Controls.Add(this.btnCancel);
             this.flowLayoutPanel1.Controls.Add(this.bnCancelAll);
+            this.flowLayoutPanel1.Controls.Add(this.btnSeeAll);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 514);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(4, 593);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(505, 29);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(588, 34);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(427, 3);
+            this.btnOK.Location = new System.Drawing.Point(496, 3);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 23);
+            this.btnOK.Size = new System.Drawing.Size(88, 27);
             this.btnOK.TabIndex = 0;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -89,9 +94,10 @@ namespace TVRename.Forms.Supporting
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(346, 3);
+            this.btnCancel.Location = new System.Drawing.Point(400, 3);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.Size = new System.Drawing.Size(88, 27);
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -99,9 +105,10 @@ namespace TVRename.Forms.Supporting
             // bnCancelAll
             // 
             this.bnCancelAll.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancelAll.Location = new System.Drawing.Point(265, 3);
+            this.bnCancelAll.Location = new System.Drawing.Point(304, 3);
+            this.bnCancelAll.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.bnCancelAll.Name = "bnCancelAll";
-            this.bnCancelAll.Size = new System.Drawing.Size(75, 23);
+            this.bnCancelAll.Size = new System.Drawing.Size(88, 27);
             this.bnCancelAll.TabIndex = 4;
             this.bnCancelAll.Text = "Cancel All";
             this.bnCancelAll.UseVisualStyleBackColor = true;
@@ -120,18 +127,17 @@ namespace TVRename.Forms.Supporting
             this.olvSize,
             this.olvSeeders,
             this.olvSource});
-            this.olvChooseDownload.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvChooseDownload.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvChooseDownload.FullRowSelect = true;
             this.olvChooseDownload.HasCollapsibleGroups = false;
-            this.olvChooseDownload.HideSelection = false;
-            this.olvChooseDownload.Location = new System.Drawing.Point(3, 38);
+            this.olvChooseDownload.Location = new System.Drawing.Point(4, 43);
+            this.olvChooseDownload.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.olvChooseDownload.MultiSelect = false;
             this.olvChooseDownload.Name = "olvChooseDownload";
             this.olvChooseDownload.ShowCommandMenuOnRightClick = true;
             this.olvChooseDownload.ShowGroups = false;
             this.olvChooseDownload.ShowItemToolTips = true;
-            this.olvChooseDownload.Size = new System.Drawing.Size(505, 470);
+            this.olvChooseDownload.Size = new System.Drawing.Size(588, 544);
             this.olvChooseDownload.SortGroupItemsByPrimaryColumn = false;
             this.olvChooseDownload.TabIndex = 1;
             this.olvChooseDownload.UseCompatibleStateImageBehavior = false;
@@ -145,39 +151,43 @@ namespace TVRename.Forms.Supporting
             // 
             this.olvName.AspectName = "SourceName";
             this.olvName.Text = "Name";
-            this.olvName.Width = 300;
+            this.olvName.Width = 350;
             // 
             // olvSize
             // 
             this.olvSize.AspectName = "sizeBytes";
             this.olvSize.Text = "Size";
+            this.olvSize.Width = 70;
             // 
             // olvSeeders
             // 
             this.olvSeeders.AspectName = "Seeders";
             this.olvSeeders.Text = "Seeders";
+            this.olvSeeders.Width = 70;
             // 
             // olvSource
             // 
             this.olvSource.AspectName = "UpstreamSource";
             this.olvSource.Text = "Source";
-            this.olvSource.Width = 400;
+            this.olvSource.Width = 467;
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.lblEpisodeName);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Location = new System.Drawing.Point(4, 3);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(505, 29);
+            this.panel1.Size = new System.Drawing.Size(588, 34);
             this.panel1.TabIndex = 2;
             // 
             // lblEpisodeName
             // 
             this.lblEpisodeName.AutoSize = true;
-            this.lblEpisodeName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblEpisodeName.Location = new System.Drawing.Point(103, 10);
+            this.lblEpisodeName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.lblEpisodeName.Location = new System.Drawing.Point(120, 12);
+            this.lblEpisodeName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblEpisodeName.Name = "lblEpisodeName";
             this.lblEpisodeName.Size = new System.Drawing.Size(88, 13);
             this.lblEpisodeName.TabIndex = 1;
@@ -186,22 +196,35 @@ namespace TVRename.Forms.Supporting
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 10);
+            this.label1.Location = new System.Drawing.Point(5, 12);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 13);
+            this.label1.Size = new System.Drawing.Size(98, 15);
             this.label1.TabIndex = 0;
             this.label1.Text = "Selected Episode:";
+            // 
+            // btnSeeAll
+            // 
+            this.btnSeeAll.Location = new System.Drawing.Point(208, 3);
+            this.btnSeeAll.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnSeeAll.Name = "btnSeeAll";
+            this.btnSeeAll.Size = new System.Drawing.Size(88, 27);
+            this.btnSeeAll.TabIndex = 5;
+            this.btnSeeAll.Text = "See All";
+            this.btnSeeAll.UseVisualStyleBackColor = true;
+            this.btnSeeAll.Click += new System.EventHandler(this.btnSeeAll_Click);
             // 
             // ChooseDownload
             // 
             this.AcceptButton = this.btnOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(511, 546);
+            this.ClientSize = new System.Drawing.Size(596, 630);
             this.ControlBox = false;
             this.Controls.Add(this.tableLayoutPanel1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ChooseDownload";
@@ -232,5 +255,6 @@ namespace TVRename.Forms.Supporting
         private BrightIdeasSoftware.OLVColumn olvSeeders;
         private BrightIdeasSoftware.OLVColumn olvSource;
         private System.Windows.Forms.Button bnCancelAll;
+        private System.Windows.Forms.Button btnSeeAll;
     }
 }
