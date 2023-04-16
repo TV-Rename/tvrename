@@ -239,6 +239,14 @@ public abstract class MediaConfiguration : ISeriesSpecifier
             AliasNames.Add(alias);
         }
     }
+    internal void CheckHintExists(string hint)
+    {
+        if (AliasNames.Contains(hint))
+        {
+            return;
+        }
+        AliasNames.Add(hint);
+    }
 
     public bool NameMatch(FileSystemInfo file, bool useFullPath) => NameMatch(useFullPath ? file.FullName : file.Name);
 

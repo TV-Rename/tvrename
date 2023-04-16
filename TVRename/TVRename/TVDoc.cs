@@ -2369,4 +2369,22 @@ public class TVDoc : IDisposable
 
         RemoveIgnored();
     }
+
+    internal void AddAlias(MediaConfiguration configuration, string hint)
+    {
+        SetDirty();
+        if (configuration is ShowConfiguration sc)
+        {
+            TvLibrary.AddAlias(sc, hint);
+        }
+        else if (configuration is MovieConfiguration mc)
+        {
+            FilmLibrary.AddAlias(mc, hint);
+        }
+        else
+        {
+            Logger.Error($"Asked to add {hint} as alias to {configuration}, but can't work out type for it");
+        }
+
+    }
 }

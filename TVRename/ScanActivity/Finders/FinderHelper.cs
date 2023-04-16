@@ -722,10 +722,10 @@ internal static class FinderHelper
         return refinedHint;
     }
 
-    public static IEnumerable<MediaConfiguration> FindMedia(IEnumerable<FileInfo> possibleShows,
+    public static IEnumerable<PossibleMedia> FindMedia(IEnumerable<FileInfo> possibleShows,
         TVDoc doc, IDialogParent owner)
     {
-        List<MediaConfiguration> addedShows = new();
+        List<PossibleMedia> addedShows = new();
         try
         {
             foreach (FileInfo file in possibleShows)
@@ -741,7 +741,7 @@ internal static class FinderHelper
         }
     }
 
-    private static void FindMedia(FileInfo file, List<MediaConfiguration> addedShows, TVDoc doc, IDialogParent owner)
+    private static void FindMedia(FileInfo file, List<PossibleMedia> addedShows, TVDoc doc, IDialogParent owner)
     {
         //If the hint contains certain terms then we'll ignore it
         if (TVSettings.Instance.IgnoredAutoAddHints.Contains(file.RemoveExtension()))
@@ -774,16 +774,17 @@ internal static class FinderHelper
         }
 
         //if hint doesn't match existing added shows
-        if (LookForSeries(refinedHint, addedShows))
+        IEnumerable<MediaConfiguration> showConfigurations = addedShows.Select(x => x.Configuration);
+        if (LookForSeries(refinedHint, showConfigurations))
         {
-            Logger.Info($"Ignoring {hint}({refinedHint}) as it matches shows already being added. ({GetMatchingSeries(refinedHint, addedShows).Select(s => s.Name).ToCsv()}) already being added.");
+            Logger.Info($"Ignoring {hint}({refinedHint}) as it matches shows already being added. ({GetMatchingSeries(refinedHint, showConfigurations).Select(s => s.Name).ToCsv()}) already being added.");
             return;
         }
 
-        if (LookForMovies(refinedHint, addedShows))
+        if (LookForMovies(refinedHint, showConfigurations))
         {
             Logger.Info(
-                $"Ignoring {hint}({refinedHint}) as it matches existing movies ({GetMatchingMovies(refinedHint,addedShows).Select(s => s.Name).ToCsv()}) already being added.");
+                $"Ignoring {hint}({refinedHint}) as it matches existing movies ({GetMatchingMovies(refinedHint, showConfigurations).Select(s => s.Name).ToCsv()}) already being added.");
 
             return;
         }
@@ -845,7 +846,7 @@ internal static class FinderHelper
                     newMovie.AliasNames.Add(hint);
                 }
 
-                addedShows.Add(newMovie);
+                addedShows.Add(new PossibleMedia(newMovie,refinedHint));
                 doc.Stats().AutoAddedMovies++;
                 return;
             }
@@ -859,7 +860,7 @@ internal static class FinderHelper
         {
             // no need to popup dialog
             Logger.Info($"Auto Adding New Show for '{refinedHint}' : {askForMatch.ShowConfiguration.CachedShow?.Name}");
-            addedShows.Add(askForMatch.ShowConfiguration);
+            addedShows.Add(new PossibleMedia(askForMatch.ShowConfiguration,refinedHint));
             doc.Stats().AutoAddedShows++;
         }
         else if (askForMatch.SingleMovieFound && !askForMatch.SingleTvShowFound &&
@@ -867,7 +868,7 @@ internal static class FinderHelper
         {
             // no need to popup dialog
             Logger.Info($"Auto Adding New Movie for '{refinedHint}' : {askForMatch.MovieConfiguration.CachedMovie?.Name}");
-            addedShows.Add(askForMatch.MovieConfiguration);
+            addedShows.Add(new PossibleMedia(askForMatch.MovieConfiguration, refinedHint));
             doc.Stats().AutoAddedMovies++;
         }
         else
@@ -881,12 +882,12 @@ internal static class FinderHelper
                 //If added add show to the collection
                 if (askForMatch.ShowConfiguration.Code > 0)
                 {
-                    addedShows.Add(askForMatch.ShowConfiguration);
+                    addedShows.Add(new PossibleMedia(askForMatch.ShowConfiguration,refinedHint));
                     doc.Stats().AutoAddedShows++;
                 }
                 else if (askForMatch.MovieConfiguration.Code > 0)
                 {
-                    addedShows.Add(askForMatch.MovieConfiguration);
+                    addedShows.Add(new PossibleMedia(askForMatch.MovieConfiguration,refinedHint));
                     doc.Stats().AutoAddedMovies++;
                 }
             }

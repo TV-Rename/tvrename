@@ -840,4 +840,25 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     }
 
     public ShowConfiguration? GetShowItem(ISeriesSpecifier ai) => GetShowItem(ai.Id(), ai.Provider);
+
+    internal void AddAlias(ShowConfiguration sc, string hint)
+    {
+        if (Contains(sc))
+        {
+            sc.CheckHintExists(hint);
+        }
+
+        List<ShowConfiguration> matchingShows = Shows.Where(configuration => configuration.AnyIdsMatch(sc)).ToList();
+        if (matchingShows.Any())
+        {
+            if (matchingShows.Count == 1)
+            {
+                matchingShows.First().CheckHintExists(hint);
+            }
+            else
+            {
+                Logger.Warn($"Asked to add {hint} to {sc.Name}, butmultple shows match {matchingShows.Select(x => x.Name).ToCsv()}");
+            }
+        }
+    }
 }

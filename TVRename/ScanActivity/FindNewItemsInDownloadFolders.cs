@@ -42,10 +42,10 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
         }
 
         IEnumerable<FileInfo> possibleShowNames = GetPossibleFiles();
-        IEnumerable<MediaConfiguration> addedShows = FinderHelper.FindMedia(possibleShowNames, MDoc, Settings.Owner);
-        List<MediaConfiguration> addedShowsUnique = RemoveExistingAndDups(addedShows);
+        IEnumerable<PossibleMedia> addedShows = FinderHelper.FindMedia(possibleShowNames, MDoc, Settings.Owner);
+        List<PossibleMedia> addedShowsUnique = RemoveExistingAndDups(addedShows);
 
-        List<ShowConfiguration> addedTvShows = addedShowsUnique.OfType<ShowConfiguration>().Distinct().ToList();
+        List<ShowConfiguration> addedTvShows = addedShowsUnique.Select(x=>x.Configuration).OfType<ShowConfiguration>().Distinct().ToList();
         if (addedTvShows.Any())
         {
             MDoc.Add(addedTvShows, true);
@@ -55,7 +55,7 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
             LOGGER.Info($"Added new shows called: {addedTvShows.Select(s => s.ShowName).ToCsv()}");
         }
 
-        List<MovieConfiguration> addedMovies = addedShowsUnique.OfType<MovieConfiguration>().Distinct().ToList();
+        List<MovieConfiguration> addedMovies = addedShowsUnique.Select(x => x.Configuration).OfType<MovieConfiguration>().Distinct().ToList();
         if (addedMovies.Any())
         {
             MDoc.Add(addedMovies, true);
@@ -65,16 +65,21 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
         }
     }
 
-    private List<MediaConfiguration> RemoveExistingAndDups(IEnumerable<MediaConfiguration> addedShows)
+    private List<PossibleMedia> RemoveExistingAndDups(IEnumerable<PossibleMedia> addedShows)
     {
-        List<MediaConfiguration> returnList = new();
-        foreach (MediaConfiguration testMedia in addedShows)
+        List<PossibleMedia> returnList = new();
+        foreach (PossibleMedia testMedia in addedShows)
         {
-            if (MDoc.AlreadyContains(testMedia))
+            if (MDoc.AlreadyContains(testMedia.Configuration))
             {
+                if (testMedia.hint.Length > 3)
+                {
+                    LOGGER.Info($"Library alrady contains {testMedia.Configuration.Name}, so adding alias {testMedia.hint} as a new alias");
+                    MDoc.AddAlias(testMedia.Configuration, testMedia.hint);
+                }
                 continue;
             }
-            if (TVDoc.ContainsMedia(returnList, testMedia))
+            if (TVDoc.ContainsMedia(returnList.Select(x=>x.Configuration), testMedia.Configuration))
             {
                 continue;
             }
@@ -84,7 +89,7 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
         return returnList;
     }
 
-    private IEnumerable<FileInfo> GetPossibleFiles()
+    private static IEnumerable<FileInfo> GetPossibleFiles()
     {
         List<FileInfo> possibleShowNames = new();
 

@@ -191,7 +191,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
         Aliases = new SafeList<string>();
         foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
         {
-            Aliases.Add(aliasXml.Value);
+            AddAlias(aliasXml.Value);
         }
     }
 

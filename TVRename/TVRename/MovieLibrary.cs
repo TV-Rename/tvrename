@@ -192,4 +192,25 @@ public class MovieLibrary : SafeList<MovieConfiguration>
             return Movies.FirstOrDefault(m => m.ImdbCode == imdbCode);
         }
     }
+
+    internal void AddAlias(MovieConfiguration mc, string hint)
+    {
+        if (Contains(mc))
+        {
+            mc.CheckHintExists(hint);
+        }
+
+        List<MovieConfiguration> matchingShows = Movies.Where(configuration => configuration.AnyIdsMatch(mc)).ToList();
+        if (matchingShows.Any())
+        {
+            if (matchingShows.Count == 1)
+            {
+                matchingShows.First().CheckHintExists(hint);
+            }
+            else
+            {
+                Logger.Warn($"Asked to add {hint} to {mc.Name}, butmultple shows match {matchingShows.Select(x => x.Name).ToCsv()}");
+            }
+        }
+    }
 }
