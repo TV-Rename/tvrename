@@ -18,7 +18,6 @@ using TVRename.Forms;
 using TVRename.Forms.ShowPreferences;
 
 namespace TVRename;
-
 /// <summary>
 /// Summary for AddEditShow
 ///
@@ -28,7 +27,7 @@ namespace TVRename;
 ///          the designers will not be able to interact properly with localized
 ///          resources associated with this form.
 /// </summary>
-public partial class AddEditShow : Form
+public partial class AddEditShow : Form, CodeWindow
 {
     private readonly ShowConfiguration selectedShow;
     private readonly CodeFinder codeFinderForm;
@@ -46,7 +45,7 @@ public partial class AddEditShow : Form
         sampleProcessedSeason = si.GetFirstAvailableSeason();
         sampleEpisode = si.GetFirstAvailableEpisode();
         addingNewShow = si.TvdbCode == -1 && si.TmdbCode == -1 && si.TVmazeCode == -1;
-        codeFinderForm = new TvCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider) { Dock = DockStyle.Fill };
+        codeFinderForm = new TvCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider, this) { Dock = DockStyle.Fill };
 
         InitializeComponent();
         HasChanged = false;
@@ -134,6 +133,8 @@ public partial class AddEditShow : Form
         return
             $"{TVSettings.Instance.SeasonFolderFormat}-({CustomSeasonName.NameFor(sampleProcessedSeason, TVSettings.Instance.SeasonFolderFormat)})";
     }
+
+    public Language? SelectedLanguage() => Languages.Instance.GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString());
 
     private void PopulateAliasses()
     {

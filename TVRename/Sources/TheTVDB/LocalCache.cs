@@ -410,22 +410,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 moreUpdates = false;
             }
 
-            JObject? jsonUpdateResponse =
-                GetUpdatesJson(fromEpochTime, numberOfCallsMade);
-
-            if (jsonUpdateResponse is null)
-            {
+            JObject jsonUpdateResponse =
+                GetUpdatesJson(fromEpochTime, numberOfCallsMade) ??
                 throw new SourceConsistencyException(
                     $"No Updates available: {fromEpochTime}:{numberOfCallsMade}", TVDoc.ProviderType.TheTVDB);
-            }
-
-            int? numberOfResponses = GetNumResponses(jsonUpdateResponse, requestedTime);
-            if (numberOfResponses is null)
-            {
-                throw new SourceConsistencyException(
+            
+            int? numberOfResponses = GetNumResponses(jsonUpdateResponse, requestedTime) ?? throw new SourceConsistencyException(
                     $"NumberOfResponses is null: {fromEpochTime}:{numberOfCallsMade}:{jsonUpdateResponse}",
                     TVDoc.ProviderType.TheTVDB);
-            }
 
             long maxUpdateTime;
 
@@ -510,21 +502,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 throw new UpdateCancelledException();
             }
 
-            JObject? jsonUpdateResponse = GetUpdatesJson(fromEpochTime, pageNumber);
+            JObject? jsonUpdateResponse = GetUpdatesJson(fromEpochTime, pageNumber) ?? throw new SourceConsistencyException( $"No Updates available: {fromEpochTime}:{pageNumber} ({LastErrorMessage})", TVDoc.ProviderType.TheTVDB);
 
-            if (jsonUpdateResponse is null)
-            {
-                throw new SourceConsistencyException(
-                    $"No Updates available: {fromEpochTime}:{pageNumber} ({LastErrorMessage})", TVDoc.ProviderType.TheTVDB);
-            }
-
-            int? numberOfResponses = GetNumResponses(jsonUpdateResponse, GetRequestedTime(fromEpochTime));
-            if (numberOfResponses is null)
-            {
-                throw new SourceConsistencyException(
-                    $"NumberOfResponses is null: {fromEpochTime}:{pageNumber}:{jsonUpdateResponse}",
-                    TVDoc.ProviderType.TheTVDB);
-            }
+            int numberOfResponses = GetNumResponses(jsonUpdateResponse, GetRequestedTime(fromEpochTime))?? throw new SourceConsistencyException(                    $"NumberOfResponses is null: {fromEpochTime}:{pageNumber}:{jsonUpdateResponse}",                    TVDoc.ProviderType.TheTVDB);
 
             updatesResponses.Add(jsonUpdateResponse);
             pageNumber++;
@@ -714,13 +694,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private void ProcessUpdate(JObject jsonResponse, CancellationToken cts)
     {
         // if updatetime > localtime for item, then remove it, so it will be downloaded later
-        JToken? jToken = jsonResponse["data"];
-
-        if (jToken is null)
-        {
-            throw new SourceConsistencyException($"Could not get data element from {jsonResponse}",
-                TVDoc.ProviderType.TheTVDB);
-        }
+        JToken jToken = jsonResponse["data"] ?? throw new SourceConsistencyException($"Could not get data element from {jsonResponse}", TVDoc.ProviderType.TheTVDB);
 
         try
         {
@@ -1101,13 +1075,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
                 try
                 {
-                    JToken? jToken = jsonEpisodeResponse?["data"];
-
-                    if (jToken is null)
-                    {
-                        throw new SourceConsistencyException($"Data element not found in {jsonEpisodeResponse}",
+                    JToken jToken = (jsonEpisodeResponse?["data"]) ?? throw new SourceConsistencyException($"Data element not found in {jsonEpisodeResponse}",
                             TVDoc.ProviderType.TheTVDB);
-                    }
 
                     episodeResponses.Add(jsonEpisodeResponse!);
 
@@ -1116,14 +1085,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
                     if (TVSettings.TVDBPagingMethod == PagingMethod.proper)
                     {
-                        JToken? x = jsonEpisodeResponse?["links"]?["next"];
-
-                        if (x is null)
-                        {
-                            throw new SourceConsistencyException(
+                        JToken? x = (jsonEpisodeResponse?["links"]?["next"]) ?? throw new SourceConsistencyException(
                                 $"links/next element not found in {jsonEpisodeResponse}",
                                 TVDoc.ProviderType.TheTVDB);
-                        }
 
                         moreResponses = !string.IsNullOrWhiteSpace(x.ToString());
                         LOGGER.Info(
@@ -1815,12 +1779,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private static CachedMovieInfo GenerateCoreMovieInfoV4(JObject r, Locale locale)
     {
-        JToken? dataNode = r["data"];
-        if (dataNode is null)
-        {
-            throw new SourceConsistencyException($"Data element not found in {r}", TVDoc.ProviderType.TheTVDB);
-        }
-
+        JToken dataNode = r["data"] ?? throw new SourceConsistencyException($"Data element not found in {r}", TVDoc.ProviderType.TheTVDB);
         JToken? collectionNode = GetCollectionNodeV4(dataNode);
 
         return new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
@@ -1968,12 +1927,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private static CachedSeriesInfo GenerateCoreSeriesInfoV4(JObject r, Locale locale, ProcessedSeason.SeasonType st)
     {
-        JToken? jToken = r["data"];
-        if (jToken is null)
-        {
-            throw new SourceConsistencyException($"Data element not found in {r}", TVDoc.ProviderType.TheTVDB);
-        }
+        JToken? jToken = r["data"]?? throw new SourceConsistencyException($"Data element not found in {r}", TVDoc.ProviderType.TheTVDB);
         LOGGER.Info($"Update obtained for {GetName(r)} at {GetUnixTime(jToken, "lastUpdated")} based on {jToken["lastUpdated"]}");
+
         return new CachedSeriesInfo(locale, TVDoc.ProviderType.TheTVDB)
         {
             Name = GetName(r),
@@ -2114,11 +2070,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return Languages.Instance.FallbackLanguage;
         }
 
-        string? code = ((JArray)languageOptions).First?.ToString();
-
-        if (code.HasValue())
+        foreach (var x in (JArray)languageOptions)
         {
-            return Languages.Instance.GetLanguageFromThreeCode(code) ?? Languages.Instance.FallbackLanguage;
+            string? langCode =x.ToString();
+
+            if (langCode.HasValue())
+            {
+                var y = Languages.Instance.GetLanguageFromThreeCode(langCode);
+                if (y != null) return y;
+            }
         }
 
         return Languages.Instance.FallbackLanguage;
@@ -2156,27 +2116,19 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             throw new ArgumentNullException(nameof(locale));
         }
 
-        JObject? seriesData = (JObject?)jsonResponse["data"];
-        if (seriesData is null)
-        {
-            throw new SourceConsistencyException($"Data element not found in {jsonResponse}",
-                TVDoc.ProviderType.TheTVDB);
-        }
+        JObject? seriesData = (JObject?)jsonResponse["data"] ?? throw new SourceConsistencyException($"Data element not found in {jsonResponse}",TVDoc.ProviderType.TheTVDB);
 
-        CachedSeriesInfo si;
         if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
         {
             JObject seriesDataDefaultLang =
                 (JObject?)jsonDefaultLangResponse["data"] ?? throw new InvalidOperationException();
 
-            si = new CachedSeriesInfo(seriesData, seriesDataDefaultLang, locale, TVDoc.ProviderType.TheTVDB);
+            return new CachedSeriesInfo(seriesData, seriesDataDefaultLang, locale, TVDoc.ProviderType.TheTVDB);
         }
         else
         {
-            si = new CachedSeriesInfo(seriesData, locale, false, TVDoc.ProviderType.TheTVDB);
+            return new CachedSeriesInfo(seriesData, locale, false, TVDoc.ProviderType.TheTVDB);
         }
-
-        return si;
     }
 
     private (JObject jsonResponse, JObject jsonDefaultLangResponse) DownloadSeriesJsonWithTranslations(ISeriesSpecifier code,
@@ -2399,12 +2351,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             JObject jsonActorsResponse = API.GetSeriesActors(code) ?? throw new SourceConnectivityException();
 
             si.ClearActors();
-            JToken? jsonActors = jsonActorsResponse["data"];
-            if (jsonActors is null)
-            {
-                throw new SourceConsistencyException($"Data element not found in {jsonActorsResponse}",
+            JToken? jsonActors = jsonActorsResponse["data"] ?? throw new SourceConsistencyException($"Data element not found in {jsonActorsResponse}",
                     TVDoc.ProviderType.TheTVDB);
-            }
 
             foreach (JToken jsonActor in jsonActors)
             {
@@ -2479,12 +2427,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         foreach (JObject response in bannerResponses)
         {
-            JToken? jToken = response["data"];
-            if (jToken is null)
-            {
-                throw new SourceConsistencyException($"Data element not found in {response}",
-                    TVDoc.ProviderType.TheTVDB);
-            }
+            JToken jToken = response["data"] ?? throw new SourceConsistencyException($"Data element not found in {response}", TVDoc.ProviderType.TheTVDB);
 
             try
             {
@@ -2971,12 +2914,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             foreach (JObject epResponse in episodeResponses)
             {
-                JToken? episodeDatas = epResponse["data"];
-                if (episodeDatas is null)
-                {
-                    throw new SourceConsistencyException($"Could not get data element from {epResponse}",
-                        TVDoc.ProviderType.TheTVDB);
-                }
+                JToken episodeDatas = epResponse["data"] ?? throw new SourceConsistencyException($"Could not get data element from {epResponse}",                        TVDoc.ProviderType.TheTVDB);
 
                 foreach (JToken episodeData in episodeDatas)
                 {
@@ -3000,12 +2938,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             foreach (JObject epResponse in episodeDefaultLangResponses)
             {
-                JToken? episodeDatas = epResponse["data"];
-                if (episodeDatas is null)
-                {
-                    throw new SourceConsistencyException($"Could not get data element from {epResponse}",
-                        TVDoc.ProviderType.TheTVDB);
-                }
+                JToken episodeDatas = epResponse["data"]?? throw new SourceConsistencyException($"Could not get data element from {epResponse}",                        TVDoc.ProviderType.TheTVDB);
 
                 foreach (JToken episodeData in episodeDatas)
                 {
@@ -3434,13 +3367,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private void ProcessSearchResult(JObject jsonResponse, Locale locale)
     {
-        JToken? jToken = jsonResponse["data"];
-        if (jToken is null)
-        {
-            throw new SourceConsistencyException($"Could not get data element from {jsonResponse}",
+        JToken jToken = jsonResponse["data"] ?? throw new SourceConsistencyException($"Could not get data element from {jsonResponse}",
                 TVDoc.ProviderType.TheTVDB);
-        }
-
         try
         {
             IEnumerable<CachedSeriesInfo> cachedSeriesInfos = TVSettings.Instance.TvdbVersion == ApiVersion.v4

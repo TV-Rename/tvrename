@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-public partial class AutoAddMedia : Form
+public partial class AutoAddMedia : Form, CodeWindow
 {
     private readonly TvCodeFinder tvCodeFinder;
     private readonly MovieCodeFinder movieCodeFinder;
@@ -24,8 +24,8 @@ public partial class AutoAddMedia : Form
 
         lblFileName.Text = "Filename: " + file.FullName;
 
-        tvCodeFinder = new TvCodeFinder("", TVDoc.ProviderType.libraryDefault) { Dock = DockStyle.Fill };
-        movieCodeFinder = new MovieCodeFinder("", TVDoc.ProviderType.libraryDefault) { Dock = DockStyle.Fill };
+        tvCodeFinder = new TvCodeFinder("", TVDoc.ProviderType.libraryDefault,this) { Dock = DockStyle.Fill };
+        movieCodeFinder = new MovieCodeFinder("", TVDoc.ProviderType.libraryDefault,this) { Dock = DockStyle.Fill };
 
         tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
         movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
@@ -108,6 +108,7 @@ public partial class AutoAddMedia : Form
 
     public ShowConfiguration ShowConfiguration { get; }
     public MovieConfiguration MovieConfiguration { get; }
+    public Language? SelectedLanguage() => null;
 
     private void SetShowItem()
     {

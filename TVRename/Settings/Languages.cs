@@ -41,24 +41,24 @@ public class Languages : SafeList<Language>
         Add(new Language(123, "ca", "cat", "Catalan (Spain)", "català", "ca-ES", true));
         Add(new Language(28, "cs", "ces", "Czech", "čeština", "cs-CZ", true));
         Add(new Language(10, "da", "dan", "Danish", "dansk", "da-DK", true));
-        Add(new Language(14, "de", "deu", "German (Austrian)", "Deutsch", "de-AT", false));
-        Add(new Language(14, "de", "deu", "German (Swiss)", "Deutsch", "de-CH", false));
+        Add(new Language(14, "de", "deu", "German (Austrian)", "Deutsch (Austrian)", "de-AT", false));
+        Add(new Language(14, "de", "deu", "German (Swiss)", "Deutsch (Swiss)", "de-CH", false));
         Add(new Language(14, "de", "deu", "German", "Deutsch", "de-DE", true));
         Add(new Language(20, "el", "ell", "Greek", "ελληνική γλώσσα", "el-GR", true));
-        Add(new Language(7, "en", "eng", "English (Australian)", "English", "en-AU", false));
-        Add(new Language(7, "en", "eng", "English (Canadian)", "English", "en-CA", false));
+        Add(new Language(7, "en", "eng", "English (Australian)", "English (Australian)", "en-AU", false));
+        Add(new Language(7, "en", "eng", "English (Canadian)", "English (Canadian)", "en-CA", false));
         Add(new Language(7, "en", "eng", "English", "English", "en-GB", true));
-        Add(new Language(7, "en", "eng", "English (Ireland)", "English", "en-IE", false));
-        Add(new Language(7, "en", "eng", "English (New Zealand)", "English", "en-NZ", false));
-        Add(new Language(7, "en", "eng", "English (United States)", "English", "en-US", false));
+        Add(new Language(7, "en", "eng", "English (Ireland)", "English (Ireland)", "en-IE", false));
+        Add(new Language(7, "en", "eng", "English (New Zealand)", "English (New Zealand)", "en-NZ", false));
+        Add(new Language(7, "en", "eng", "English (United States)", "English (United States)", "en-US", false));
         Add(new Language(134, "eo", "epo", "Esperanto ", "Esperanto", "eo-EO", true));
         Add(new Language(16, "es", "spa", "Spanish", "español", "es-ES", true));
-        Add(new Language(16, "es", "spa", "Spanish (Mexico)", "español", "es-MX", false));
+        Add(new Language(16, "es", "spa", "Spanish (Mexico)", "español (Mexico)", "es-MX", false));
         Add(new Language(135, "et", "est", "Estonian ", "eesti", "et-EE", true));
         Add(new Language(136, "eu", "eus", "Basque (Spain)", "euskara", "eu-ES", true));
         Add(new Language(139, "fa", "fas", "Farsi", "فارسی", "fa-IR", true));
         Add(new Language(11, "fi", "fin", "Finnish", "suomi", "fi-FI", true));
-        Add(new Language(17, "fr", "fra", "French (Canada)", "français", "fr-CA", false));
+        Add(new Language(17, "fr", "fra", "French (Canada)", "français (Canada)", "fr-CA", false));
         Add(new Language(17, "fr", "fra", "French", "français", "fr-FR", true));
         Add(new Language(145, "gl", "glg", "Galician (Spain)", "galego", "gl-ES", true));
         Add(new Language(24, "he", "heb", "Hebrew (Israel)", "עברית", "he-IL", true));
@@ -73,9 +73,9 @@ public class Languages : SafeList<Language>
         Add(new Language(32, "ko", "kor", "Korean", "한국어", "ko-KR", true));
         Add(new Language(184, "lt", "lit", "Lithuanian", "lietuvių kalba", "lt-LT", true));
         Add(new Language(181, "lv", "lav", "Latvian", "latviešu valoda", "lv-LV", true));
-        Add(new Language(189, "ml", "mal", "Malayalam (India)", "മലയാളം", "ml-IN", false));
+        Add(new Language(189, "ml", "mal", "Malayalam (India)", "മലയാളം (India)", "ml-IN", false));
         Add(new Language(189, "ml", "mal", "Malay (Malaysia)", "മലയാളം", "ms-MY", true));
-        Add(new Language(189, "ml", "mal", "Malay (Singapore)", "മലയാളം", "ms-SG", false));
+        Add(new Language(189, "ml", "mal", "Malay (Singapore)", "മലയാളം (Singapore)", "ms-SG", false));
         Add(new Language(13, "nl", "nld", "Dutch (Netherlands)", "Nederlands", "nl-NL", true));
         Add(new Language(9, "no", "nor", "Norwegian", "Norsk bokmål", "no-NO", true));
         Add(new Language(18, "pl", "pol", "Polish", "język polski", "pl-PL", true));
@@ -97,8 +97,8 @@ public class Languages : SafeList<Language>
         Add(new Language(250, "uk", "ukr", "Ukrainian", "українська мова", "uk-UA", true));
         Add(new Language(254, "vi", "vie", "Vietnamese", "Tiếng Việt", "vi-VN", true));
         Add(new Language(27, "zh", "zho", "Chinese", "大陆简体", "zh-CN", true));
-        Add(new Language(27, "zh", "zho", "Chinese (Hong Kong)", "大陆简体", "zh-HK", false));
-        Add(new Language(27, "zh", "zho", "Chinese (Taiwan)", "大陆简体", "zh-TW", false));
+        Add(new Language(27, "zh", "zho", "Chinese (Hong Kong)", "大陆简体 (Hong Kong)", "zh-HK", false));
+        Add(new Language(27, "zh", "zho", "Chinese (Taiwan)", "大陆简体 (Taiwan)", "zh-TW", false));
         Add(new Language(262, "zu", "zul", "Zulu (South Africa)", "isiZulu", "zu-ZA", true));
     }
 
@@ -109,7 +109,7 @@ public class Languages : SafeList<Language>
 
     public Language? GetLanguageFromLocalName(string? language)
     {
-        return this.SingleOrDefault(l => l.LocalName == language && l.IsPrimary);
+        return this.SingleOrDefault(l => l.LocalName == language);
     }
 
     // ReSharper disable once UnusedMember.Global

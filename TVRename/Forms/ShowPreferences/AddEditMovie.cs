@@ -24,7 +24,7 @@ namespace TVRename;
 ///          the designers will not be able to interact properly with localized
 ///          resources associated with this form.
 /// </summary>
-public partial class AddEditMovie : Form
+public partial class AddEditMovie : Form, CodeWindow
 {
     private readonly MovieConfiguration selectedShow;
     private readonly CodeFinder codeFinderForm;
@@ -37,7 +37,7 @@ public partial class AddEditMovie : Form
         selectedShow = si;
         mDoc = doc;
         codeFinderForm =
-            new MovieCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider) { Dock = DockStyle.Fill };
+            new MovieCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider,this) { Dock = DockStyle.Fill };
 
         InitializeComponent();
         HasChanged = false;
@@ -99,6 +99,7 @@ public partial class AddEditMovie : Form
         SetMovieFolderType(si);
     }
 
+    public Language? SelectedLanguage() => Languages.Instance.GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString());
     protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
     {
         base.ScaleControl(factor, specified);

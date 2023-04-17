@@ -28,7 +28,8 @@ public abstract partial class CodeFinder : UserControl
 
     private const string DEFAULT_MESSAGE = "Enter the show's name, and click \"Search\"";
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-    protected CodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source)
+    private readonly CodeWindow parent;
+    protected CodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source, CodeWindow parent)
     {
         Type = type;
         Source = source;
@@ -38,6 +39,7 @@ public abstract partial class CodeFinder : UserControl
         InitializeComponent();
 
         txtFindThis.Text = initialHint;
+        this.parent = parent;
 
         if (!initialHint.HasValue())
         {
@@ -241,9 +243,8 @@ public abstract partial class CodeFinder : UserControl
 
         try
         {
-            //TODO - make search multi language and use custom language specified
-
-            GetSourceInstance(Source).Search(txtFindThis.Text, showErrorMsgBox, Type, new Locale());
+            Language toUse = parent.SelectedLanguage() ?? GetSourceLanguage(Source);
+            GetSourceInstance(Source).Search(txtFindThis.Text, showErrorMsgBox, Type, new Locale(toUse));
         }
         catch (SourceConnectivityException scx)
         {
@@ -292,6 +293,17 @@ public abstract partial class CodeFinder : UserControl
         };
     }
 
+    private Language GetSourceLanguage(TVDoc.ProviderType source)
+    {
+        return source switch
+        {
+            TVDoc.ProviderType.TMDB => TVSettings.Instance.TMDBLanguage,
+            TVDoc.ProviderType.TheTVDB => TVSettings.Instance.PreferredTVDBLanguage,
+            TVDoc.ProviderType.TVmaze => Languages.Instance.FallbackLanguage,
+            TVDoc.ProviderType.libraryDefault => GetSourceLanguage(DefaultType),
+            _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
+        };
+    }
     private void lvMatches_SelectedIndexChanged(object sender, EventArgs e)
     {
         hasChanged = true;

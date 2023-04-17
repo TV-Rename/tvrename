@@ -13,7 +13,7 @@ namespace TVRename;
 using System;
 using System.Windows.Forms;
 
-public partial class BulkAddEditMovie : Form
+public partial class BulkAddEditMovie : Form, CodeWindow
 {
     public int Code;
     public TVDoc.ProviderType Provider;
@@ -22,7 +22,7 @@ public partial class BulkAddEditMovie : Form
 
     public BulkAddEditMovie(PossibleNewMovie hint)
     {
-        codeFinderControl = new MovieCodeFinder(string.Empty, TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
+        codeFinderControl = new MovieCodeFinder(string.Empty, TVSettings.Instance.DefaultMovieProvider,this) { Dock = DockStyle.Fill };
         InitializeComponent();
 
         codeFinderControl.SelectionChanged += CodeChanged;
@@ -78,4 +78,6 @@ public partial class BulkAddEditMovie : Form
         Provider = codeFinderControl.Source;
         Close();
     }
+
+    public Language? SelectedLanguage() => null;
 }

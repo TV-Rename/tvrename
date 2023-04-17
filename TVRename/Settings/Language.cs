@@ -10,7 +10,7 @@ namespace TVRename;
 
 public class Language
 {
-    public Language(int tvdbid, string abbreviation, string threeAbbreviation, string localName, string? englishName, string isoDialectAbbreviation, bool isPrimary)
+    public Language(int tvdbid, string abbreviation, string threeAbbreviation, string englishName, string localName, string isoDialectAbbreviation, bool isPrimary)
     {
         TvdbId = tvdbid;
         Abbreviation = abbreviation;
@@ -30,5 +30,5 @@ public class Language
 
     public bool IsPrimary { get; set; }
     public string LocalName { get; set; }
-    public string? EnglishName { get; set; }
+    public string EnglishName { get; set; }
 }

@@ -13,16 +13,16 @@ namespace TVRename;
 using System;
 using System.Windows.Forms;
 
-public partial class BulkAddEditShow : Form
+public partial class BulkAddEditShow : Form, CodeWindow
 {
     public int Code;
 
     private readonly CodeFinder codeFinderControl;
     public TVDoc.ProviderType ProviderType => codeFinderControl.Source;
-
+    public Language? SelectedLanguage() => null;
     public BulkAddEditShow(PossibleNewTvShow hint)
     {
-        codeFinderControl = new TvCodeFinder(string.Empty, TVSettings.Instance.DefaultProvider) { Dock = DockStyle.Fill };
+        codeFinderControl = new TvCodeFinder(string.Empty, TVSettings.Instance.DefaultProvider,this) { Dock = DockStyle.Fill };
         InitializeComponent();
 
         codeFinderControl.SelectionChanged += CodeChanged;

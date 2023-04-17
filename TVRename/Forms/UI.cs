@@ -1075,44 +1075,42 @@ public partial class UI : Form, IRemoteActions, IDialogParent
             NewLineOnAttributes = true
         };
 
-        using (XmlWriter writer = XmlWriter.Create(PathManager.UILayoutFile.FullName, settings))
-        {
-            writer.WriteStartDocument();
-            writer.WriteStartElement("TVRename");
-            writer.WriteAttributeToXml("Version", "2.1");
-            writer.WriteStartElement("Layout");
-            writer.WriteStartElement("Window");
+        using XmlWriter writer = XmlWriter.Create(PathManager.UILayoutFile.FullName, settings);
+        writer.WriteStartDocument();
+        writer.WriteStartElement("TVRename");
+        writer.WriteAttributeToXml("Version", "2.1");
+        writer.WriteStartElement("Layout");
+        writer.WriteStartElement("Window");
 
-            writer.WriteStartElement("Size");
-            writer.WriteAttributeToXml("Width", mLastNonMaximizedSize.Width);
-            writer.WriteAttributeToXml("Height", mLastNonMaximizedSize.Height);
-            writer.WriteEndElement(); // size
+        writer.WriteStartElement("Size");
+        writer.WriteAttributeToXml("Width", mLastNonMaximizedSize.Width);
+        writer.WriteAttributeToXml("Height", mLastNonMaximizedSize.Height);
+        writer.WriteEndElement(); // size
 
-            writer.WriteStartElement("Location");
-            writer.WriteAttributeToXml("X", mLastNonMaximizedLocation.X);
-            writer.WriteAttributeToXml("Y", mLastNonMaximizedLocation.Y);
-            writer.WriteEndElement(); // Location
+        writer.WriteStartElement("Location");
+        writer.WriteAttributeToXml("X", mLastNonMaximizedLocation.X);
+        writer.WriteAttributeToXml("Y", mLastNonMaximizedLocation.Y);
+        writer.WriteEndElement(); // Location
 
-            writer.WriteElement("Maximized", WindowState == FormWindowState.Maximized);
+        writer.WriteElement("Maximized", WindowState == FormWindowState.Maximized);
 
-            writer.WriteEndElement(); // window
+        writer.WriteEndElement(); // window
 
-            WriteColWidthsXml("WhenToWatch", writer);
-            WriteColWidthsXml("AllInOne", writer);
+        WriteColWidthsXml("WhenToWatch", writer);
+        WriteColWidthsXml("AllInOne", writer);
 
-            writer.WriteStartElement("Splitter");
-            writer.WriteAttributeToXml("Distance", splitContainer1.SplitterDistance);
-            writer.WriteAttributeToXml("HTMLCollapsed", splitContainer1.Panel2Collapsed);
-            writer.WriteEndElement(); // splitter
+        writer.WriteStartElement("Splitter");
+        writer.WriteAttributeToXml("Distance", splitContainer1.SplitterDistance);
+        writer.WriteAttributeToXml("HTMLCollapsed", splitContainer1.Panel2Collapsed);
+        writer.WriteEndElement(); // splitter
 
-            writer.WriteStartElement("ActionLayout");
-            writer.WriteAttributeToXml("State", Convert.ToBase64String(olvAction.SaveState()));
-            writer.WriteEndElement(); // ActionLayout
+        writer.WriteStartElement("ActionLayout");
+        writer.WriteAttributeToXml("State", Convert.ToBase64String(olvAction.SaveState()));
+        writer.WriteEndElement(); // ActionLayout
 
-            writer.WriteEndElement(); // Layout
-            writer.WriteEndElement(); // tvrename
-            writer.WriteEndDocument();
-        }
+        writer.WriteEndElement(); // Layout
+        writer.WriteEndElement(); // tvrename
+        writer.WriteEndDocument();
 
         return true;
     }
