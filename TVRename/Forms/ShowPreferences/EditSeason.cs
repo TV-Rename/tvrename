@@ -46,8 +46,8 @@ public partial class EditSeason : Form
         show = si;
         mSeasonNumber = seasonNumber;
 
-        workingRuleSet = si.SeasonRules.ContainsKey(seasonNumber)
-            ? new List<ShowRule>(si.SeasonRules[seasonNumber])
+        workingRuleSet = si.SeasonRules.TryGetValue(seasonNumber, out List<ShowRule>? rule)
+            ? new List<ShowRule>(rule)
             : new List<ShowRule>();
 
         txtShowName.Text = si.ShowName.ToUiVersion();

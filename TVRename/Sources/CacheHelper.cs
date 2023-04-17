@@ -89,9 +89,9 @@ public static class CacheHelper
         int id = cache.PrimaryKey(si);
         lock (cache.MOVIE_LOCK)
         {
-            if (cache.CachedMovieData.ContainsKey(id))
+            if (cache.CachedMovieData.TryGetValue(id, out CachedMovieInfo? oldMovieInfo))
             {
-                cache.CachedMovieData[id].Merge(si);
+                oldMovieInfo.Merge(si);
             }
             else
             {
@@ -105,9 +105,9 @@ public static class CacheHelper
         int id = cache.PrimaryKey(si);
         lock (cache.SERIES_LOCK)
         {
-            if (cache.CachedShowData.ContainsKey(id))
+            if (cache.CachedShowData.TryGetValue(id, out CachedSeriesInfo? oldSeriesInfo))
             {
-                cache.CachedShowData[id].Merge(si);
+                oldSeriesInfo.Merge(si);
             }
             else
             {

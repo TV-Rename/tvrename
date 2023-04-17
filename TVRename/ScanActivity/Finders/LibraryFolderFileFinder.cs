@@ -67,7 +67,7 @@ internal class LibraryFolderFileFinder : FileFinder
         ActionList.Replace(toRemove, newList);
     }
 
-    private void FindMovie(MovieItemMissing mim, DirFilesCache dfc, ItemList newList, ItemList toRemove)
+    private static void FindMovie(MovieItemMissing mim, DirFilesCache dfc, ItemList newList, ItemList toRemove)
     {
         if (!mim.MovieConfig.UseAutomaticFolders)
         {
@@ -79,7 +79,7 @@ internal class LibraryFolderFileFinder : FileFinder
         TestShouldMove(targetFolderLater, targetFolder, dfc, newList, toRemove, mim);
     }
 
-    private void TestShouldMove(string sourceFolder, string targetFolder, DirFilesCache dfc, ItemList newList, ItemList toRemove, MovieItemMissing mim)
+    private static void TestShouldMove(string sourceFolder, string targetFolder, DirFilesCache dfc, ItemList newList, ItemList toRemove, MovieItemMissing mim)
     {
         if (sourceFolder == targetFolder)
         {

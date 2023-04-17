@@ -64,7 +64,7 @@ internal class SearchFolderFileFinder : FileFinder
             }
             catch (System.Exception e)
             {
-                LOGGER.Fatal(e, $"Error occured finding {action?.SourceDetails}");
+                LOGGER.Fatal(e, $"Error occured finding {action.SourceDetails}");
             }
         }
 

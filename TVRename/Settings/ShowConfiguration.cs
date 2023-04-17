@@ -141,9 +141,9 @@ public class ShowConfiguration : MediaConfiguration
 
     public ProcessedSeason GetOrAddAiredSeason(int num, int seasonId)
     {
-        if (airedSeasons.ContainsKey(num))
+        if (airedSeasons.TryGetValue(num, out ProcessedSeason? airedSeason))
         {
-            return airedSeasons[num];
+            return airedSeason;
         }
 
         ProcessedSeason s = new(this, num, seasonId, ProcessedSeason.SeasonType.aired);
@@ -154,9 +154,9 @@ public class ShowConfiguration : MediaConfiguration
 
     public ProcessedSeason GetOrAddDvdSeason(int num, int seasonId)
     {
-        if (dvdSeasons.ContainsKey(num))
+        if (dvdSeasons.TryGetValue(num, out ProcessedSeason? dvdSeason))
         {
-            return dvdSeasons[num];
+            return dvdSeason;
         }
 
         ProcessedSeason s = new(this, num, seasonId, ProcessedSeason.SeasonType.dvd);
@@ -592,7 +592,7 @@ public class ShowConfiguration : MediaConfiguration
 
     public List<ShowRule>? RulesForSeason(int n)
     {
-        return SeasonRules.ContainsKey(n) ? SeasonRules[n] : null;
+        return SeasonRules.TryGetValue(n, out List<ShowRule>? rule) ? rule : null;
     }
 
     private string AutoFolderNameForSeason(ProcessedSeason? s)
@@ -821,8 +821,7 @@ public class ShowConfiguration : MediaConfiguration
 
     public ProcessedSeason? GetSeason(int snum)
     {
-        ConcurrentDictionary<int, ProcessedSeason> ssn = AppropriateSeasons();
-        return ssn.ContainsKey(snum) ? ssn[snum] : null;
+        return AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? season) ? season : null;
     }
 
     public void AddSeasonRule(int snum, ShowRule sr)

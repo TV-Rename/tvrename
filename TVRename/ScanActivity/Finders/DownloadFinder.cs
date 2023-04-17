@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -65,13 +64,14 @@ public abstract class DownloadFinder : Finder
     {
         IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
 
-        if (bestDownloads.HasAny())
+        IEnumerable<ActionTDownload> actionTDownloads = bestDownloads.ToList();
+        if (actionTDownloads.HasAny())
         {
-            foreach (ActionTDownload x in bestDownloads)
+            foreach (ActionTDownload x in actionTDownloads)
             {
                 x.AlsoAvailable = newItemsForThisMissingEpisode;
             }
-            newItems.AddNullableRange(bestDownloads);
+            newItems.AddNullableRange(actionTDownloads);
             toRemove.Add(action);
         }
     }

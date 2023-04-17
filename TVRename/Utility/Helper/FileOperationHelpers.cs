@@ -75,7 +75,7 @@ public static class FileOperationExtensions
 
     public static void OpenFile(this FileInfo file) => OpenUrlInternal(file.FullName);
 
-    static bool SysOpen(this string? what, string? arguments)
+    private static bool SysOpen(this string? what, string? arguments)
     {
         if (string.IsNullOrWhiteSpace(what))
         {

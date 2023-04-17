@@ -178,10 +178,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
             if (missCheck && fi.IsMovieFile())
             {
                 // first pass of missing check is to tally up the episodes we do have
-                if (!localEps.ContainsKey(epNum))
-                {
-                    localEps[epNum] = actualFile;
-                }
+                localEps.TryAdd(epNum, actualFile);
 
                 if (epNum > maxEpNumFound)
                 {

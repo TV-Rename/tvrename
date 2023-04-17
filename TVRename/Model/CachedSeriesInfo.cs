@@ -244,9 +244,9 @@ public class CachedSeriesInfo : CachedMediaInfo
         BannerString = (string?)r["banner"];
         FirstAired = JsonHelper.ParseFirstAired((string?)r["firstAired"]);
 
-        if (r.ContainsKey("genre"))
+        if (r.TryGetValue("genre", out JToken? value))
         {
-            Genres = r["genre"]?.Select(x => x.Value<string>()?.Trim()).OfType<string>().Distinct().ToSafeList() ?? new SafeList<string>();
+            Genres = value.Select(x => x.Value<string>()?.Trim()).OfType<string>().Distinct().ToSafeList();
         }
 
         TvdbCode = r.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB);
@@ -307,7 +307,7 @@ public class CachedSeriesInfo : CachedMediaInfo
 
         if (!Aliases.HasAny())
         {
-            JToken? aliasesToken = backupLanguageR["aliases"] ?? throw new SourceConsistencyException($"Can not find aliases in {backupLanguageR}", TVDoc.ProviderType.TheTVDB);
+            JToken aliasesToken = backupLanguageR["aliases"] ?? throw new SourceConsistencyException($"Can not find aliases in {backupLanguageR}", TVDoc.ProviderType.TheTVDB);
 
             Aliases = aliasesToken.Select(x => x.Value<string>()).OfType<string>().ToSafeList();
         }

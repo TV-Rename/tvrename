@@ -4,8 +4,8 @@ namespace TVRename.Forms;
 
 internal class CollectionMember
 {
-    public string CollectionName;
-    public CachedMovieInfo Movie;
+    public readonly string CollectionName;
+    public readonly CachedMovieInfo Movie;
 
     // ReSharper disable once UnusedMember.Global - Used by UI component
     public string MovieName => Movie.Name;

@@ -234,7 +234,7 @@ public partial class AddEditSeasEpFinders : Form
             folderBrowser.SelectedPath = txtFolder.Text;
         }
 
-        if (UiHelpers.ShowDialogAndOK(folderBrowser,this))
+        if (UiHelpers.ShowDialogAndOk(folderBrowser,this))
         {
             txtFolder.Text = folderBrowser.SelectedPath;
         }

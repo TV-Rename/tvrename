@@ -393,9 +393,9 @@ internal static class API
     {
         CachedSeriesInfo returnValue = GenerateCoreSeriesInfo(r);
 
-        if (r.ContainsKey("genres"))
+        if (r.TryGetValue("genres", out JToken? genres))
         {
-            returnValue.Genres = r["genres"]?.Select(x => x.Value<string>()?.Trim()).OfType<string>().Distinct().ToSafeList() ?? new SafeList<string>();
+            returnValue.Genres = genres.Select(x => x.Value<string>()?.Trim()).OfType<string>().Distinct().ToSafeList();
         }
 
         List<string> typesToTransferToGenres = new() { "Animation", "Reality", "Documentary", "News", "Sports" };
@@ -543,22 +543,12 @@ internal static class API
 
     private static JToken GetChild(JToken json, string key)
     {
-        JToken? token = json[key];
-        if (token is null)
-        {
-            throw new SourceConsistencyException($"Could not get '{key}' element from {json}", TVDoc.ProviderType.TVmaze);
-        }
-
-        return token;
+        return json[key] ?? throw new SourceConsistencyException($"Could not get '{key}' element from {json}", TVDoc.ProviderType.TVmaze);
     }
 
     private static string? GetUrl(JObject r, string typeKey)
     {
-        JToken? x = r["image"];
-        if (x is null)
-        {
-            throw new SourceConsistencyException($"Could not get 'image' element from {r}", TVDoc.ProviderType.TVmaze);
-        }
+        JToken x = r["image"]?? throw new SourceConsistencyException($"Could not get 'image' element from {r}", TVDoc.ProviderType.TVmaze);
 
         if (x.HasValues)
         {

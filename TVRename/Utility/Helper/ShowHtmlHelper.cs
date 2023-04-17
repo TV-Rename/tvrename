@@ -1208,9 +1208,8 @@ internal static class ShowHtmlHelper
     {
         Dictionary<int, SafeList<string>> afl = si.AllExistngFolderLocations();
 
-        if (afl.ContainsKey(s.SeasonNumber))
+        if (afl.TryGetValue(s.SeasonNumber, out SafeList<string>? folders))
         {
-            SafeList<string> folders = afl[s.SeasonNumber];
             foreach (string folder in folders.Where(Directory.Exists))
             {
                 return folder;

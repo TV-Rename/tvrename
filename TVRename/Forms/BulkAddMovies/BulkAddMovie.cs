@@ -131,7 +131,7 @@ public partial class BulkAddMovie : Form
             searchFolderBrowser.SelectedPath = TVSettings.Instance.MovieLibraryFolders[n];
         }
 
-        if (UiHelpers.ShowDialogAndOK(searchFolderBrowser,this))
+        if (UiHelpers.ShowDialogAndOk(searchFolderBrowser,this))
         {
             if (Directory.Exists(searchFolderBrowser.SelectedPath))
             {
@@ -157,7 +157,7 @@ public partial class BulkAddMovie : Form
             ignoreFolderBrowser.SelectedPath = TVSettings.Instance.IgnoreFolders[lstFMIgnoreFolders.SelectedIndex];
         }
 
-        if (UiHelpers.ShowDialogAndOK(ignoreFolderBrowser,this))
+        if (UiHelpers.ShowDialogAndOk(ignoreFolderBrowser,this))
         {
             TVSettings.Instance.IgnoreFolders.Add(ignoreFolderBrowser.SelectedPath.ToLower());
             mDoc.SetDirty();

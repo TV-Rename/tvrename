@@ -32,7 +32,7 @@ public partial class ScanProgress : Form
     private int pctuTorrent;
     private string? msg;
     private string? lastUpdate;
-    private UI ui;
+    private readonly UI ui;
 
     public ScanProgress(UI ui, bool autoBulkAdd, bool mediaLib, bool downloadFolder, bool searchLocal,
         bool downloading, bool rss)

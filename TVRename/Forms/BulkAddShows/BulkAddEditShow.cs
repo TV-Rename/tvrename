@@ -13,7 +13,7 @@ namespace TVRename;
 using System;
 using System.Windows.Forms;
 
-public partial class BulkAddEditShow : Form, CodeWindow
+public partial class BulkAddEditShow : Form, ICodeWindow
 {
     public int Code;
 

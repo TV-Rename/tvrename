@@ -2025,18 +2025,18 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (ep != null)
         {
             Dictionary<int, SafeList<string>> afl = ep.Show.AllExistngFolderLocations();
-            if (afl.ContainsKey(ep.AppropriateSeasonNumber))
+            if (afl.TryGetValue(ep.AppropriateSeasonNumber, out SafeList<string>? folder))
             {
-                AddFolders(afl[ep.AppropriateSeasonNumber], added);
+                AddFolders(folder, added);
             }
         }
         else if (seas != null)
         {
             Dictionary<int, SafeList<string>>? folders = si?.AllExistngFolderLocations();
 
-            if (folders?.ContainsKey(seas.SeasonNumber) == true)
+            if (folders?.TryGetValue(seas.SeasonNumber, out SafeList<string>? folder) is true)
             {
-                AddFolders(folders[seas.SeasonNumber], added);
+                AddFolders(folder, added);
             }
         }
 
@@ -2207,9 +2207,9 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         ToolStripMenuItem tsis = new("Watch Episodes");
 
         // for each episode in season, find it on disk
-        if (si.SeasonEpisodes.ContainsKey(seas.SeasonNumber))
+        if (si.SeasonEpisodes.TryGetValue(seas.SeasonNumber, out List<ProcessedEpisode>? episodes))
         {
-            foreach (ProcessedEpisode epds in si.SeasonEpisodes[seas.SeasonNumber])
+            foreach (ProcessedEpisode epds in episodes)
             {
                 List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, epds);
                 if (fl.Count <= 0)
@@ -2265,7 +2265,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                               .Replace(".", "*.") +
                           "|All Files (*.*)|*.*";
 
-        if (UiHelpers.ShowDialogAndOK(openFile,this))
+        if (UiHelpers.ShowDialogAndOk(openFile,this))
         {
             ManuallyAddFileForItem(mi, openFile.FileName);
         }
@@ -4132,11 +4132,11 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     {
         foreach (Item i in GetSelectedItems())
         {
-            if (i?.Episode != null)
+            if (i.Episode != null)
             {
                 TVDoc.SearchForEpisode(i.Episode);
             }
-            if (i?.Movie != null)
+            if (i.Movie != null)
             {
                 TVDoc.SearchForMovie(i.Movie);
             }
@@ -4183,7 +4183,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
     private void btnFilter_Click(object sender, EventArgs e)
     {
         Filters filters = new(mDoc);
-        if (UiHelpers.ShowDialogAndOK(filters,this))
+        if (UiHelpers.ShowDialogAndOk(filters,this))
         {
             FillMyShows(true);
         }
@@ -4957,7 +4957,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         {
             foreach (Item i in GetSelectedItems())
             {
-                if (i?.Episode != null)
+                if (i.Episode != null)
                 {
                     JackettFinder.SearchForEpisode(i.Episode);
                 }
@@ -4966,7 +4966,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
                     JackettFinder.SearchForSeason(ssm.Series, ssm.SeasonNumberAsInt.Value);
                 }
 
-                if (i?.Movie != null)
+                if (i.Movie != null)
                 {
                     JackettFinder.SearchForMovie(i.Movie);
                 }
@@ -5143,7 +5143,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
 
     private void btnMovieFilter_Click(object sender, EventArgs e)
     {
-        if(UiHelpers.ShowDialogAndOK(new MovieFilters(mDoc),this))
+        if(UiHelpers.ShowDialogAndOk(new MovieFilters(mDoc),this))
         {
             FillMyMovies();
         }
@@ -5247,7 +5247,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         MoreBusy();
         mDoc.PreventAutoScan("Search Engines are open");
 
-        if (UiHelpers.ShowDialogAndOK(new AddEditSearchEngine(TVDoc.GetMovieSearchers(), m),this))
+        if (UiHelpers.ShowDialogAndOk(new AddEditSearchEngine(TVDoc.GetMovieSearchers(), m),this))
         {
             mDoc.SetDirty();
             UpdateSearchButtons();

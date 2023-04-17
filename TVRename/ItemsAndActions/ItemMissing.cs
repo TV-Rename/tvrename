@@ -15,18 +15,18 @@ public abstract class ItemMissing : Item
 {
     public string TheFileNoExt;
     public string Filename;
-    protected string Folder;
+    private readonly string folder;
 
     protected ItemMissing(string theFileNoExt, string filename, string folder)
     {
         TheFileNoExt = theFileNoExt;
         Filename = filename;
-        Folder = folder;
+        this.folder = folder;
     }
 
     public override string DestinationFile => Filename;
     public override string ScanListViewGroup => "lvgActionMissing";
-    public override string DestinationFolder => Folder;
+    public override string DestinationFolder => folder;
     public override string TargetFolder
     {
         get

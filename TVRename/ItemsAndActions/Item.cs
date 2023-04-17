@@ -54,7 +54,7 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged // someth
     public int? EpisodeNumber => Episode?.AppropriateEpNum;
     public virtual int? SeasonNumberAsInt => Episode?.AppropriateSeasonNumber;
 
-    public virtual string OrderKey => SeasonNumberAsInt?.Pad(2) + "-" +
+    public string OrderKey => SeasonNumberAsInt?.Pad(2) + "-" +
                                       Episode?.AppropriateEpNum.Pad(4) + "-" + AirDateString;
 
     public virtual string AirDateString => Episode?.GetAirDateDt(true).PrettyPrint() ?? Movie?.CachedMovie?.FirstAired.PrettyPrint() ?? string.Empty;

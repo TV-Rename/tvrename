@@ -14,7 +14,7 @@ internal static class API
 {
     //As a safety measure we check that no more than 26 fortnights are made
     private const int MAX_NUMBER_OF_CALLS = 26;
-    static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
     public static IEnumerable<ChangesListItem> GetChangesMovies(this TMDbClient client, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
         => GetChanges(client.GetMoviesChangesAsync, latestUpdateTime, cts);
@@ -48,7 +48,7 @@ internal static class API
                     updatesResponses.AddRange(response.Results);
 
                     maxPage = response.TotalPages;
-                    LOGGER.Info($"Obtained {response.Results.Count} responses from TMDB lastupdated query #{numberOfCallsMade} {time.ToLocalTime()} [Page {response.Page}] ({currentPage}/{maxPage})");
+                    Logger.Info($"Obtained {response.Results.Count} responses from TMDB lastupdated query #{numberOfCallsMade} {time.ToLocalTime()} [Page {response.Page}] ({currentPage}/{maxPage})");
                 }
 
                 if (numberOfCallsMade++ > MAX_NUMBER_OF_CALLS)

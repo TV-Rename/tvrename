@@ -774,7 +774,8 @@ internal static class FinderHelper
         }
 
         //if hint doesn't match existing added shows
-        IEnumerable<MediaConfiguration> showConfigurations = addedShows.Select(x => x.Configuration);
+        List<MediaConfiguration> showConfigurations = addedShows.Select(x => x.Configuration).ToList();
+
         if (LookForSeries(refinedHint, showConfigurations))
         {
             Logger.Info($"Ignoring {hint}({refinedHint}) as it matches shows already being added. ({GetMatchingSeries(refinedHint, showConfigurations).Select(s => s.Name).ToCsv()}) already being added.");
@@ -964,11 +965,11 @@ internal static class FinderHelper
 
         if (matchAtStart.Any())
         {
-            return matchAtStart.OrderByDescending(s => s.ShowName.Length).First();
+            return matchAtStart.MaxBy(s => s.ShowName.Length);
         }
 
         IEnumerable<ShowConfiguration> otherMatchingShows = FindMatchingShows(filename, showItems);
-        return otherMatchingShows.OrderByDescending(s => s.ShowName.Length).FirstOrDefault();
+        return otherMatchingShows.MaxBy(s => s.ShowName.Length);
     }
 
     public static MovieConfiguration? FindBestMatchingShow(string filename, IEnumerable<MovieConfiguration> shows)
@@ -982,11 +983,11 @@ internal static class FinderHelper
 
         if (matchAtStart.Any())
         {
-            return matchAtStart.OrderByDescending(s => s.ShowName.Length).First();
+            return matchAtStart.MaxBy(s => s.ShowName.Length);
         }
 
         IEnumerable<MovieConfiguration> otherMatchingShows = FindMatchingMovies(filename, showItems);
-        return otherMatchingShows.OrderByDescending(s => s.ShowName.Length).FirstOrDefault();
+        return otherMatchingShows.MaxBy(s => s.ShowName.Length);
     }
 
     public static IEnumerable<ShowConfiguration> FindMatchingShows(FileInfo fi, IEnumerable<ShowConfiguration> sil)

@@ -46,9 +46,9 @@ internal class CheckAllFoldersExist : ScanShowActivity
 
             SafeList<string> folders = new();
 
-            if (flocs.ContainsKey(snum))
+            if (flocs.TryGetValue(snum, out SafeList<string>? floc))
             {
-                folders = flocs[snum];
+                folders = floc;
             }
 
             if (si.SeasonEpisodes[snum].All(episode => !MightWeProcess(episode, folders)))

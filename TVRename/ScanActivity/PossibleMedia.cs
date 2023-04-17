@@ -11,12 +11,12 @@ namespace TVRename
     internal class PossibleMedia
     {
         internal readonly MediaConfiguration Configuration;
-        internal readonly string hint;
+        internal readonly string Hint;
 
         public PossibleMedia(MediaConfiguration configuration, string hint)
         {
             Configuration = configuration;
-            this.hint = hint;
+            Hint = hint;
         }
     }
 }

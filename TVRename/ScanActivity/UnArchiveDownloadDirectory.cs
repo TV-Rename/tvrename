@@ -90,5 +90,5 @@ internal class UnArchiveDownloadDirectory : ScanActivity
         }
     }
 
-    private bool HasMissing(MovieConfiguration x, FileInfo fi) => FinderHelper.FileNeeded(fi, x, new DirFilesCache());
+    private static bool HasMissing(MovieConfiguration x, FileInfo fi) => FinderHelper.FileNeeded(fi, x, new DirFilesCache());
 }

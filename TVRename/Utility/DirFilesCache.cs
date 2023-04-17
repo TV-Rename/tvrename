@@ -26,9 +26,9 @@ public class DirFilesCache
 
     private FileInfo[] Get(string folder, bool includeSubs)
     {
-        if (cache.ContainsKey(folder))
+        if (cache.TryGetValue(folder, out FileInfo[]? value))
         {
-            return cache[folder];
+            return value;
         }
 
         DirectoryInfo di;
@@ -38,13 +38,13 @@ public class DirFilesCache
         }
         catch
         {
-            cache[folder] = new FileInfo[] { };
-            return new FileInfo[] { };
+            cache[folder] = Array.Empty<FileInfo>();
+            return Array.Empty<FileInfo>();
         }
         if (!di.Exists)
         {
-            cache[folder] = new FileInfo[] { };
-            return new FileInfo[] { };
+            cache[folder] = Array.Empty<FileInfo>();
+            return Array.Empty<FileInfo>();
         }
 
         try
@@ -56,12 +56,12 @@ public class DirFilesCache
         catch (System.IO.IOException)
         {
             Logger.Warn("IOException occurred trying to access " + folder);
-            return new FileInfo[] { };
+            return Array.Empty<FileInfo>();
         }
         catch (UnauthorizedAccessException)
         {
             Logger.Warn("UnauthorizedAccessException occurred trying to access " + folder);
-            return new FileInfo[] { };
+            return Array.Empty<FileInfo>();
         }
     }
 }

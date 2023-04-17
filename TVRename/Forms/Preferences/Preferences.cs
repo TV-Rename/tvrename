@@ -10,7 +10,6 @@ using DaveChambers.FolderBrowserDialogEx;
 using Humanizer;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -1658,7 +1657,7 @@ public partial class Preferences : Form
             colorDialog.Color = Color.Black;
         }
 
-        if (UiHelpers.ShowDialogAndOK(colorDialog,this))
+        if (UiHelpers.ShowDialogAndOk(colorDialog,this))
         {
             txtShowStatusColor.Text = colorDialog.Color.TranslateColorToHtml();
             txtShowStatusColor.ForeColor = colorDialog.Color;
@@ -1975,7 +1974,7 @@ public partial class Preferences : Form
             searchFolderBrowser.SelectedPath = TVSettings.Instance.LibraryFolders[n];
         }
 
-        if (UiHelpers.ShowDialogAndOK(searchFolderBrowser,this) && Directory.Exists(searchFolderBrowser.SelectedPath))
+        if (UiHelpers.ShowDialogAndOk(searchFolderBrowser,this) && Directory.Exists(searchFolderBrowser.SelectedPath))
         {
             TVSettings.Instance.LibraryFolders.Add(searchFolderBrowser.SelectedPath);
             mDoc.SetDirty();
@@ -2211,7 +2210,7 @@ public partial class Preferences : Form
         saveFile.FileName = txt.Text;
         saveFile.DefaultExt = defaultExt;
         saveFile.FilterIndex = filterIndex;
-        if (UiHelpers.ShowDialogAndOK(saveFile,this))
+        if (UiHelpers.ShowDialogAndOk(saveFile,this))
         {
             txt.Text = saveFile.FileName;
         }
@@ -2231,7 +2230,7 @@ public partial class Preferences : Form
     {
         openFile.FileName = txt.Text;
         openFile.Filter = filter;
-        if (UiHelpers.ShowDialogAndOK(openFile,this))
+        if (UiHelpers.ShowDialogAndOk(openFile,this))
         {
             txt.Text = openFile.FileName;
         }
@@ -2255,7 +2254,7 @@ public partial class Preferences : Form
             searchFolderBrowser.SelectedPath = TVSettings.Instance.MovieLibraryFolders[n];
         }
 
-        if (UiHelpers.ShowDialogAndOK(searchFolderBrowser,this) && Directory.Exists(searchFolderBrowser.SelectedPath))
+        if (UiHelpers.ShowDialogAndOk(searchFolderBrowser,this) && Directory.Exists(searchFolderBrowser.SelectedPath))
         {
             TVSettings.Instance.MovieLibraryFolders.Add(searchFolderBrowser.SelectedPath);
             mDoc.SetDirty();

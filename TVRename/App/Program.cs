@@ -56,7 +56,7 @@ public static class Program
                 }
                 else
                 {
-                    Logger.Fatal(e, $"UNHANDLED ERROR - Application.ThreadException");
+                    Logger.Fatal(e, "UNHANDLED ERROR - Application.ThreadException");
                 }
 
                 Environment.Exit(1);

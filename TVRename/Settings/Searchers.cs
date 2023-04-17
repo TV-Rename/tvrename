@@ -76,7 +76,7 @@ public class Searchers : List<SearchEngine>
         }
     }
 
-    private SearchEngine? GenerateSearchEngine(XElement x)
+    private static SearchEngine? GenerateSearchEngine(XElement x)
     {
         string? url = x.Attribute("URL")?.Value.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
         string? url2 = x.Attribute("URL2")?.Value;

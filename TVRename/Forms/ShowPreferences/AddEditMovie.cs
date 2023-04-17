@@ -24,7 +24,7 @@ namespace TVRename;
 ///          the designers will not be able to interact properly with localized
 ///          resources associated with this form.
 /// </summary>
-public partial class AddEditMovie : Form, CodeWindow
+public partial class AddEditMovie : Form, ICodeWindow
 {
     private readonly MovieConfiguration selectedShow;
     private readonly CodeFinder codeFinderForm;
@@ -572,7 +572,7 @@ public partial class AddEditMovie : Form, CodeWindow
             folderBrowser.SelectedPath = cbDirectory.Text;
         }
 
-        if (UiHelpers.ShowDialogAndOK(folderBrowser,this))
+        if (UiHelpers.ShowDialogAndOk(folderBrowser,this))
         {
             txtFolder.Text = folderBrowser.SelectedPath;
         }

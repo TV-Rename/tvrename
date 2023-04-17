@@ -72,10 +72,10 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
         {
             if (MDoc.AlreadyContains(testMedia.Configuration))
             {
-                if (testMedia.hint.Length > 3)
+                if (testMedia.Hint.Length > 3)
                 {
-                    LOGGER.Info($"Library alrady contains {testMedia.Configuration.Name}, so adding alias {testMedia.hint} as a new alias");
-                    MDoc.AddAlias(testMedia.Configuration, testMedia.hint);
+                    LOGGER.Info($"Library alrady contains {testMedia.Configuration.Name}, so adding alias {testMedia.Hint} as a new alias");
+                    MDoc.AddAlias(testMedia.Configuration, testMedia.Hint);
                 }
                 continue;
             }

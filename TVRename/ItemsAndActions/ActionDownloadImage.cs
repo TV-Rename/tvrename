@@ -30,7 +30,7 @@ public class ActionDownloadImage : ActionDownload
     public ActionDownloadImage(MediaConfiguration si, ProcessedEpisode? pe, FileInfo dest, string path, bool shrink)
     {
         Episode = pe;
-        this.Si = si;
+        Si = si;
         destination = dest;
         this.path = path;
         shrinkLargeMede8ErImage = shrink;

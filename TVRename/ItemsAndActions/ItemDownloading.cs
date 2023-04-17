@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using CefSharp;
 using System;
 
 namespace TVRename;

@@ -28,8 +28,8 @@ public abstract partial class CodeFinder : UserControl
 
     private const string DEFAULT_MESSAGE = "Enter the show's name, and click \"Search\"";
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-    private readonly CodeWindow parent;
-    protected CodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source, CodeWindow parent)
+    private readonly ICodeWindow parent;
+    protected CodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source, ICodeWindow parent)
     {
         Type = type;
         Source = source;

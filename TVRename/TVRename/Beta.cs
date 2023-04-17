@@ -26,7 +26,7 @@ internal static class Beta
         output.AppendLine("##################################################");
         output.AppendLine("File Quality FINDER - Start");
         output.AppendLine("##################################################");
-        output.AppendLine($"Width,   Height,   Length,    ShowName,   FileName");
+        output.AppendLine("Width,   Height,   Length,    ShowName,   FileName");
         output.AppendLine("##################################################");
         Logger.Info(output.ToString());
 

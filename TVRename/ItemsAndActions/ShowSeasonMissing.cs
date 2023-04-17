@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace TVRename;
@@ -13,7 +13,7 @@ public class ShowSeasonMissing : ItemMissing
     {
         TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + Filename;
         seasonNumber = snum;
-        this.OriginalItems = originalItems;
+        OriginalItems = originalItems;
         show = si;
     }
 

@@ -10,7 +10,7 @@ internal class TvShowSubdiretoryFormatCheck : TvShowCheck
 
     public override bool Check() => Show.AutoAddType != DefaultShowFormat();
 
-    private ShowConfiguration.AutomaticFolderType DefaultShowFormat()
+    private static ShowConfiguration.AutomaticFolderType DefaultShowFormat()
     {
         if (TVSettings.Instance.DefShowUseBase)
         {

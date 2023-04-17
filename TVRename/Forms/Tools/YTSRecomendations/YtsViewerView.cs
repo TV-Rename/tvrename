@@ -187,7 +187,7 @@ public partial class YtsViewerView : Form
         rightClickMenu.Add("Download Movie", (_, _) => Download(lastSelected, quality));
     }
 
-    private void Download(YtsViewerRow lastSelected, string qualityToDownload)
+    private static void Download(YtsViewerRow lastSelected, string qualityToDownload)
     {
         string? url = lastSelected.Downloads.FirstOrDefault(d => d.Quality == qualityToDownload)?.Url
                      ?? lastSelected.Downloads.FirstOrDefault()?.Url;
@@ -197,15 +197,14 @@ public partial class YtsViewerView : Form
 
     private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
     {
-        if ((e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject is not YtsViewerRow rr)
+        object? rowObject = (e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject;
+        if (rowObject is YtsViewerRow rr)
         {
-            return;
+            UI.SetHtmlBody(chrRecommendationPreview,
+                rr.Movie != null
+                    ? rr.Movie.GetMovieHtmlOverview(false)
+                    : rr.YtsMovie.GetMovieHtmlOverview());
         }
-
-        UI.SetHtmlBody(chrRecommendationPreview,
-            rr.Movie != null
-                ? rr.Movie.GetMovieHtmlOverview(false)
-                : rr.YtsMovie.GetMovieHtmlOverview());
     }
     private void this_FormClosing(object sender, FormClosingEventArgs e)
     {

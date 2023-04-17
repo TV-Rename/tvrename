@@ -1665,6 +1665,7 @@ public class TVDoc : IDisposable
     }
 
     // ReSharper disable once UnusedMember.Local
+#pragma warning disable IDE0051
     private void ReviewAliases()
     {
         foreach (MovieConfiguration? mov in FilmLibrary.Movies)
@@ -1689,6 +1690,7 @@ public class TVDoc : IDisposable
             }
         }
     }
+#pragma warning restore IDE0051
 
     // ReSharper disable once InconsistentNaming
     internal void TMDBServerAccuracyCheck(bool unattended, bool hidden, UI owner)
@@ -1825,7 +1827,7 @@ public class TVDoc : IDisposable
         ItemList remove = new();
         foreach (Item action in TheActionList)
         {
-            if (action?.Episode?.AppropriateSeasonNumber != snum)
+            if (action.Episode?.AppropriateSeasonNumber != snum)
             {
                 continue;
             }
@@ -1959,7 +1961,7 @@ public class TVDoc : IDisposable
                     LinkMovie askUser = new(existingMatchingShows, fi);
 
                     //if user cancelled then move on
-                    if (!UiHelpers.ShowDialogAndOK(askUser,ui))
+                    if (!UiHelpers.ShowDialogAndOk(askUser,ui))
                     {
                         Logger.Info($"User chose to ignore {filePath}");
                         continue;
@@ -2053,12 +2055,7 @@ public class TVDoc : IDisposable
 
     private static FileInfo GetExistingFile(MovieConfiguration chosenShow, DirectoryInfo folder)
     {
-        List<FileInfo>? videoFiles = folder.GetFiles().Where(fiTemp => fiTemp.IsMovieFile()).ToList();
-
-        if (videoFiles is null)
-        {
-            throw new System.IO.FileNotFoundException();
-        }
+        List<FileInfo> videoFiles = folder.GetFiles().Where(fiTemp => fiTemp.IsMovieFile()).ToList() ?? throw new System.IO.FileNotFoundException();
 
         if (videoFiles.Count != 1)
         {
@@ -2385,6 +2382,5 @@ public class TVDoc : IDisposable
         {
             Logger.Error($"Asked to add {hint} as alias to {configuration}, but can't work out type for it");
         }
-
     }
 }

@@ -6,7 +6,7 @@ namespace TVRename;
 
 public class TvCodeFinder : CodeFinder
 {
-    public TvCodeFinder(string? initialHint, TVDoc.ProviderType source, CodeWindow parent) : base(initialHint, MediaConfiguration.MediaType.tv, source,parent)
+    public TvCodeFinder(string? initialHint, TVDoc.ProviderType source, ICodeWindow parent) : base(initialHint, MediaConfiguration.MediaType.tv, source,parent)
     {
         lvMatches.Columns.Clear();
         lvMatches.Columns.Add(new ColumnHeader { Text = "Code", Width = 44 });

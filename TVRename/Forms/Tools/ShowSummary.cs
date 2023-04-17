@@ -45,7 +45,6 @@ public partial class ShowSummary : Form, IDialogParent
 
     private void InitializeCmbShowStatus()
     {
-       
         if (mDoc.TvLibrary.ShowStatuses.HasAny())
         {
             cmbShowStatus.Items.Clear();

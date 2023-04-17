@@ -11,7 +11,6 @@ namespace TVRename;
 
 using Alphaleonis.Win32.Filesystem;
 using System;
-using System.Collections;
 
 // ReSharper disable once InconsistentNaming
 public class ActionTDownload : ActionDownload

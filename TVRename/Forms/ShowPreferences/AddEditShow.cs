@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -27,7 +26,7 @@ namespace TVRename;
 ///          the designers will not be able to interact properly with localized
 ///          resources associated with this form.
 /// </summary>
-public partial class AddEditShow : Form, CodeWindow
+public partial class AddEditShow : Form, ICodeWindow
 {
     private readonly ShowConfiguration selectedShow;
     private readonly CodeFinder codeFinderForm;
@@ -573,7 +572,7 @@ public partial class AddEditShow : Form, CodeWindow
             folderBrowser.SelectedPath = txtBaseFolder.Text;
         }
 
-        if (UiHelpers.ShowDialogAndOK(folderBrowser, this))
+        if (UiHelpers.ShowDialogAndOk(folderBrowser, this))
         {
             txtBaseFolder.Text = folderBrowser.SelectedPath;
         }
@@ -623,7 +622,7 @@ public partial class AddEditShow : Form, CodeWindow
             folderBrowser.SelectedPath = txtBaseFolder.Text;
         }
 
-        if (UiHelpers.ShowDialogAndOK(folderBrowser,this))
+        if (UiHelpers.ShowDialogAndOk(folderBrowser,this))
         {
             txtFolder.Text = folderBrowser.SelectedPath;
         }

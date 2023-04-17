@@ -6,7 +6,7 @@ namespace TVRename.Forms.Supporting;
 
 public partial class ChooseDownload : Form
 {
-    readonly IEnumerable<ActionTDownload> allOptions;
+    private readonly IEnumerable<ActionTDownload> allOptions;
 
     public ChooseDownload(ItemMissing im, IEnumerable<ActionTDownload> options)
     {
@@ -22,11 +22,13 @@ public partial class ChooseDownload : Form
 
             return $"{(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}";
         };
-        olvChooseDownload.SetObjects(options);
+
+        IEnumerable<ActionTDownload> actionTDownloads = options.ToList();
+        olvChooseDownload.SetObjects(actionTDownloads);
         SetButtonVisibility();
         olvChooseDownload.Sort(olvSeeders, SortOrder.Descending);
 
-        allOptions = options.SelectMany(x => x.AlsoAvailable.DownloadTorrents).Distinct();
+        allOptions = actionTDownloads.SelectMany(x => x.AlsoAvailable.DownloadTorrents).Distinct();
     }
 
     public ActionTDownload? UserChosenAction

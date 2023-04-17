@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-public partial class AutoAddMedia : Form, CodeWindow
+public partial class AutoAddMedia : Form, ICodeWindow
 {
     private readonly TvCodeFinder tvCodeFinder;
     private readonly MovieCodeFinder movieCodeFinder;

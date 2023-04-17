@@ -53,7 +53,7 @@ internal class UpcomingTXT : UpcomingExporter
         return FormattedLine(niceName, ei.TheCachedSeries.Networks.ToCsv(), startTime.ToString("ddd, d MMM"), startTime.ToString("HH:mm"));
     }
 
-    private string FormattedLine(string niceName, string network, string day, string time)
+    private static string FormattedLine(string niceName, string network, string day, string time)
     {
         return $"{day,-15} {time,-10} {network.First(15),-15} {niceName.First(80),-80}";
     }
