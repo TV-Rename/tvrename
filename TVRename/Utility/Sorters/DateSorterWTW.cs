@@ -25,7 +25,7 @@ public class DateSorterWtw : ListViewItemDateSorter
         }
         catch
         {
-            return DateTime.Now;
+            return null;
         }
     }
 }

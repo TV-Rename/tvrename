@@ -24,13 +24,13 @@ public class DateActionSorter : ListViewItemDateSorter
         {
             if (lvi is OLVListItem olvi)
             {
-                return ((Item)olvi.RowObject).AirDate ?? DateTime.Now;
+                return ((Item)olvi.RowObject).AirDate;
             }
-            return DateTime.Now;
+            return null;
         }
         catch
         {
-            return DateTime.Now;
+            return null;
         }
     }
 }
