@@ -60,7 +60,7 @@ internal class JackettFinder : DownloadFinder
                         FindMissingEpisode(showItemMissing, toRemove, newItems);
                         break;
                     case MovieItemMissing movieItemMissing:
-                        FindMissingEpisode(movieItemMissing, toRemove, newItems);
+                        FindMissingMovie(movieItemMissing, toRemove, newItems);
                         break;
                     case ShowSeasonMissing seasonMissing:
                         FindMissingSeason(seasonMissing, toRemove, newItems);
@@ -111,7 +111,7 @@ internal class JackettFinder : DownloadFinder
         Replace(action, toRemove, newItems, newItemsForThisMissingEpisode);
     }
 
-    private static void FindMissingEpisode(MovieItemMissing action, ItemList toRemove, ItemList newItems)
+    private static void FindMissingMovie(MovieItemMissing action, ItemList toRemove, ItemList newItems)
     {
         string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.MovieConfig) : NormalJackettUrl(action.MovieConfig);
 

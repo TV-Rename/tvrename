@@ -21,20 +21,26 @@ public abstract class DownloadFinder : Finder
 
     protected static bool RssMatch(RSSItem rss, ProcessedEpisode pe)
     {
+        return rss.Season == pe.AppropriateSeasonNumber && rss.Episode == pe.AppropriateEpNum && RssNameMatch(rss,pe);
+    }
+
+    private static bool RssNameMatch(RSSItem rss, ProcessedEpisode pe)
+    {
         string simpleShowName = pe.Show.ShowName.CompareName();
         string simpleSeriesName = pe.TheCachedSeries.Name.CompareName();
 
-        if (!FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false) &&
-            !(
-                string.IsNullOrEmpty(rss.ShowName) &&
-                FileHelper.SimplifyAndCheckFilename(rss.Title, simpleSeriesName, true, false)
-            )
-           )
+        string nameFromRss = string.IsNullOrEmpty(rss.ShowName) ? rss.Title : rss.ShowName;
+
+        if (FileHelper.SimplifyAndCheckFilename(nameFromRss, simpleShowName, true, false))
         {
-            return false;
+            return true;
+        }
+        if (FileHelper.SimplifyAndCheckFilename(nameFromRss, simpleSeriesName, true, false))
+        {
+            return true;
         }
 
-        return rss.Season == pe.AppropriateSeasonNumber && rss.Episode == pe.AppropriateEpNum;
+        return false;
     }
 
     protected static bool RssMatch(RSSItem rss, MovieConfiguration pe)
