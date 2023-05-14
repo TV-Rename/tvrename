@@ -1558,7 +1558,7 @@ public sealed class TVSettings
         AutoAddIgnoreSuffixes = xmlSettings.ExtractString("AutoAddIgnoreSuffixes", "1080p;720p;2160p");
         PriorityReplaceTerms = xmlSettings.ExtractString("PriorityReplaceTerms", "PROPER;REPACK;RERIP");
         mode = xmlSettings.ExtractEnum("BetaMode", BetaMode.ProductionOnly);
-        TvdbVersion = xmlSettings.ExtractEnum("TvdbVersion", TheTVDB.ApiVersion.v3);
+        TvdbVersion = TheTVDB.ApiVersion.v4;
         upgradeDirtyPercent = xmlSettings.ExtractFloat("PercentDirtyUpgrade", 20);
         replaceMargin = xmlSettings.ExtractFloat("PercentBetter", 10);
         defaultSeasonWord = xmlSettings.ExtractString("BaseSeasonName", "Season");
