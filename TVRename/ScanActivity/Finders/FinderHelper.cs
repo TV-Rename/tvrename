@@ -23,14 +23,10 @@ internal static class FinderHelper
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowConfiguration? si, out TVSettings.FilenameProcessorRE? re)
-    {
-        return FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs, out re);
-    }
+        => FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs, out re);
 
     public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowConfiguration? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
-    {
-        return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, si, rexps, out re);
-    }
+        => FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, si, rexps, out re);
 
     public static bool FindSeasEp(FileInfo? fi, out int seas, out int ep, out int maxEp, ShowConfiguration? si,
         IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
@@ -425,7 +421,7 @@ internal static class FinderHelper
         return returnFilename;
     }
 
-    public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
+    private static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
         ShowConfiguration? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? rex)
     {
         string showNameHint = si != null ? si.ShowName : string.Empty;
@@ -589,7 +585,7 @@ internal static class FinderHelper
                && currentlyMatchedTvShow.IdFor(p) > 0;
     }
 
-    public static string RemoveSe(string hint)
+    private static string RemoveSe(string hint)
     {
         foreach (TVSettings.FilenameProcessorRE re in TVSettings.Instance.FNPRegexs.Where(re => re.Enabled))
         {
@@ -631,13 +627,10 @@ internal static class FinderHelper
     }
 
     private static bool LookForSeries(string test, IEnumerable<MediaConfiguration> shows)
-    {
-        return GetMatchingSeries(test,shows).Any();
-    }
+        => GetMatchingSeries(test,shows).Any();
+
     private static IEnumerable<MediaConfiguration> GetMatchingSeries(string test, IEnumerable<MediaConfiguration> shows)
-    {
-        return shows.Where(si => si.NameMatch(test));
-    }
+        => shows.Where(si => si.NameMatch(test));
 
     private static bool LookForMovies(string test, IEnumerable<MediaConfiguration> shows)
         => GetMatchingMovies(test,shows).Any();
@@ -972,7 +965,7 @@ internal static class FinderHelper
         return otherMatchingShows.MaxBy(s => s.ShowName.Length);
     }
 
-    public static MovieConfiguration? FindBestMatchingShow(string filename, IEnumerable<MovieConfiguration> shows)
+    private static MovieConfiguration? FindBestMatchingShow(string filename, IEnumerable<MovieConfiguration> shows)
     {
         IEnumerable<MovieConfiguration> showItems = shows as MovieConfiguration[] ?? shows.ToArray();
 
@@ -991,19 +984,13 @@ internal static class FinderHelper
     }
 
     public static IEnumerable<ShowConfiguration> FindMatchingShows(FileInfo fi, IEnumerable<ShowConfiguration> sil)
-    {
-        return FindMatchingShows(fi.Name, sil);
-    }
+        => FindMatchingShows(fi.Name, sil);
 
     public static IEnumerable<ShowConfiguration> FindMatchingShows(string filename, IEnumerable<ShowConfiguration> sil)
-    {
-        return sil.Where(item => item.NameMatch(filename));
-    }
+        => sil.Where(item => item.NameMatch(filename));
 
-    public static IEnumerable<MovieConfiguration> FindMatchingMovies(string filename, IEnumerable<MovieConfiguration> sil)
-    {
-        return sil.Where(item => item.NameMatch(filename));
-    }
+    private static IEnumerable<MovieConfiguration> FindMatchingMovies(string filename, IEnumerable<MovieConfiguration> sil)
+        => sil.Where(item => item.NameMatch(filename));
 
     public static FileInfo GenerateTargetName(ItemMissing mi, FileInfo from)
     {
