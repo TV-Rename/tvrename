@@ -68,4 +68,11 @@ public static class EnumerableExtensions
         IEnumerable<T> enumerable = enumeration.ToList();
         return enumerable.Any() ? enumerable.Min(selector) : defaultValue;
     }
+
+    public static TProp? MinOrNull<TItem, TProp>(this IEnumerable<TItem> @this, Func<TItem, TProp> selector)
+    {
+        IEnumerable<TItem> list = @this.ToList();
+
+        return list.Any() ? list.Min(selector) : default;
+    }
 }

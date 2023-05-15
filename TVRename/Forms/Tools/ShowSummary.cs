@@ -113,16 +113,16 @@ public partial class ShowSummary : Form, IDialogParent
         grid1[0, 0] = new ColumnHeader("Show")
         {
             AutomaticSortEnabled = false,
-            ResizeEnabled = false
+            ResizeEnabled = false,
+            View = topleftTitleModel
         };
-        grid1[0, 0].View = topleftTitleModel;
 
         grid1[0, 1] = new ColumnHeader("Status")
         {
             AutomaticSortEnabled = false,
-            ResizeEnabled = false
+            ResizeEnabled = false,
+            View = topleftTitleModel
         };
-        grid1[0, 1].View = topleftTitleModel;
 
         // Draw season
         for (int c = chkHideSpecials.Checked ? 1 : 0; c < maxSeason + 1; c++)
@@ -130,9 +130,9 @@ public partial class ShowSummary : Form, IDialogParent
             grid1[0, c + 2] = new ColumnHeader(c == 0 ? ProcessedSeason.UIFullSeasonWord(c) : "S" + c.Pad(2))
             {
                 AutomaticSortEnabled = false,
-                ResizeEnabled = false
+                ResizeEnabled = false,
+                View = colTitleModel
             };
-            grid1[0, c + 2].View = colTitleModel;
 
             grid1.Columns[c + 2].AutoSizeMode = SourceGrid.AutoSizeMode.EnableAutoSize;
         }

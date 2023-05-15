@@ -396,11 +396,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             Movie downloadedMovie = Client.GetMovieAsync(id.TmdbId, id.LanguageToUse().Abbreviation, imageLanguage,
                     MovieMethods.ExternalIds | MovieMethods.Images | MovieMethods.AlternativeTitles |
                     MovieMethods.ReleaseDates | MovieMethods.Changes | MovieMethods.Videos | MovieMethods.Credits)
-                .Result;
-            if (downloadedMovie is null)
-            {
-                throw new MediaNotFoundException(id, "TMDB no longer has this movie", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
-            }
+                .Result ?? throw new MediaNotFoundException(id, "TMDB no longer has this movie", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
+
             CachedMovieInfo m = GenerateCachedMovieInfo(id, downloadedMovie);
 
             if (saveToCache)
@@ -431,15 +428,20 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     private static CachedMovieInfo GenerateCachedMovieInfo(ISeriesSpecifier id, Movie downloadedMovie)
     {
+        DateTime? downloadedMovieReleaseDate = TVSettings.Instance.UseGlobalReleaseDate
+            ? GetEarliestReleaseDateDetail(downloadedMovie)
+              ?? downloadedMovie.ReleaseDate
+            : GetReleaseDateDetail(downloadedMovie, id.RegionToUse().Abbreviation)
+              ?? GetReleaseDateDetail(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation)
+              ?? downloadedMovie.ReleaseDate;
+
         CachedMovieInfo m = new(id.TargetLocale, TVDoc.ProviderType.TMDB)
         {
             Imdb = downloadedMovie.ExternalIds?.ImdbId,
             TmdbCode = downloadedMovie.Id,
             Name = downloadedMovie.Title,
             Runtime = downloadedMovie.Runtime.ToString(),
-            FirstAired = GetReleaseDateDetail(downloadedMovie, id.RegionToUse().Abbreviation) ??
-                         GetReleaseDateDetail(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ??
-                         downloadedMovie.ReleaseDate,
+            FirstAired = downloadedMovieReleaseDate,
             Genres = downloadedMovie.Genres.Select(genre => genre.Name).ToSafeList(),
             Overview = downloadedMovie.Overview,
             Network = downloadedMovie.ProductionCompanies.Select(y => y.Name).ToPsv(),
@@ -542,18 +544,17 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     private static DateTime? GetReleaseDateDetail(Movie downloadedMovie, string? country)
     {
-        List<DateTime>? dates = downloadedMovie.ReleaseDates?.Results
+        return downloadedMovie.ReleaseDates?.Results
             .Where(rel => rel.Iso_3166_1.Equals(country, StringComparison.OrdinalIgnoreCase))
             .SelectMany(rel => rel.ReleaseDates)
-            .Select(d => d.ReleaseDate)
-            .OrderBy(time => time).ToList();
+            .MinOrNull(d => d.ReleaseDate);
+    }
 
-        if (dates?.Any() ?? false)
-        {
-            return dates.First();
-        }
-
-        return null;
+    private static DateTime? GetEarliestReleaseDateDetail(Movie downloadedMovie)
+    {
+        return downloadedMovie.ReleaseDates?.Results
+            .SelectMany(rel => rel.ReleaseDates)
+            .MinOrNull(d => d.ReleaseDate);
     }
 
     internal CachedSeriesInfo DownloadSeriesNow(ISeriesSpecifier ss, bool saveToCache = true)
@@ -561,11 +562,9 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         int id = ss.TmdbId > 0 ? ss.TmdbId : GetSeriesIdFromOtherCodes(ss) ?? 0;
 
         string imageLanguage = $"{ss.LanguageToUse().Abbreviation},null";
-        TvShow? downloadedSeries = Client.GetTvShowAsync(id, TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits, ss.LanguageToUse().Abbreviation, imageLanguage).Result;
-        if (downloadedSeries is null)
-        {
-            throw new MediaNotFoundException(ss, "TMDB no longer has this tv show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
-        }
+        TvShow downloadedSeries = Client.GetTvShowAsync(id, TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits, ss.LanguageToUse().Abbreviation, imageLanguage).Result
+                                   ?? throw new MediaNotFoundException(ss, "TMDB no longer has this tv show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
+
         CachedSeriesInfo m = new(ss.TargetLocale, TVDoc.ProviderType.TMDB)
         {
             Imdb = downloadedSeries.ExternalIds?.ImdbId,

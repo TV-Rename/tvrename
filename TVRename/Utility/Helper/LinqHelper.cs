@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,7 +42,7 @@ internal static class LinqHelper
                 .Select(AwaitPartition));
     }
 
-    public static bool HasAny<T>(this IEnumerable<T>? source)
+    public static bool HasAny<T>([NotNullWhen(true)] this IEnumerable<T>? source)
         => source is not null && source.Any();
 
     public static IEnumerable<T> WithMax<T>(this IEnumerable<T>? source, Func<T, int> countFunction)

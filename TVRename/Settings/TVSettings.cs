@@ -357,6 +357,8 @@ public sealed class TVSettings
 
     public string qBitTorrentProtocol => qBitTorrentUseHTTPS ? "https" : "http";
 
+    public bool UseGlobalReleaseDate = false;
+
     public int FolderMonitorDelaySeconds = 1;
 
     public string SubsFolderNamesString = "subs;subtitle;vobsubs;sub;vobsub;subtitle";
@@ -633,6 +635,7 @@ public sealed class TVSettings
         writer.WriteElement("DoBulkAddInScan", DoBulkAddInScan);
         writer.WriteElement("DeleteShowFromDisk", DeleteShowFromDisk);
         writer.WriteElement("DeleteMovieFromDisk", DeleteMovieFromDisk);
+        writer.WriteElement("UseGlobalReleaseDate", UseGlobalReleaseDate);
         writer.WriteElement("FileNameCaseSensitiveMatch", FileNameCaseSensitiveMatch);
         writer.WriteElement("CopySubsFolders", CopySubsFolders);
         writer.WriteElement("SABAPIKey", SABAPIKey);
@@ -1546,6 +1549,7 @@ public sealed class TVSettings
         FileNameCaseSensitiveMatch = xmlSettings.ExtractBool("FileNameCaseSensitiveMatch", false);
         CopySubsFolders = xmlSettings.ExtractBool("CopySubsFolders", true);
         DeleteMovieFromDisk = xmlSettings.ExtractBool("DeleteMovieFromDisk", false);
+        UseGlobalReleaseDate = xmlSettings.ExtractBool("UseGlobalReleaseDate", false);
         EpJPGs = xmlSettings.ExtractBool("EpJPGs", false);
         SeriesJpg = xmlSettings.ExtractBool("SeriesJpg", false);
         Mede8erXML = xmlSettings.ExtractBool("Mede8erXML", false);

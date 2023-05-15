@@ -1480,16 +1480,22 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private static CachedMovieInfo GenerateCachedMovieInfo(JObject r, Locale locale)
     {
+        Language languageToUse = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB);
+        DateTime? releaseDate = TVSettings.Instance.UseGlobalReleaseDate
+        ? GetReleaseDate(r, "global")
+          ?? GetFirstReleaseDate(r)
+        : GetReleaseDate(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
+          ?? GetReleaseDate(r, "global");
+
         CachedMovieInfo si = new(locale, TVDoc.ProviderType.TheTVDB)
         {
-            FirstAired = GetReleaseDate(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation) ??
-                         GetReleaseDate(r, "global"),
+            FirstAired = releaseDate,
             TvdbCode = r.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB),
             Imdb = GetExternalId(r, "IMDB"),
             Runtime = ((string?)r["runtime"])?.Trim(),
-            Name = GetTranslation(locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), "name", r) ?? string.Empty,
-            TagLine = GetTranslation(locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), "tagline", r),
-            Overview = GetTranslation(locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), "overview", r),
+            Name = GetTranslation(languageToUse, "name", r) ?? string.Empty,
+            TagLine = GetTranslation(languageToUse, "tagline", r),
+            Overview = GetTranslation(languageToUse, "overview", r),
             TrailerUrl = r["trailers"]?.FirstOrDefault()?["url"]?.ToString(),
             Genres = r["genres"]?.Select(x => x["name"]?.ToString()).OfType<string>().ToSafeList() ?? new SafeList<string>(),
             IsSearchResultOnly = false,
@@ -1716,7 +1722,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 x["country"]?.ToString() == region && x["type"]?.ToString() == "release_date")?["date"]?.ToString();
         return ParseDate(date);
     }
-
+    private static DateTime? GetFirstReleaseDate(JObject json)
+    {
+        string? date =
+            json["release_dates"]?.FirstOrDefault(x =>
+                x["type"]?.ToString() == "release_date")?["date"]?.ToString();
+        return ParseDate(date);
+    }
+    
     private static DateTime? ParseDate(string? date)
     {
         try
@@ -1733,12 +1746,34 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return null;
         }
     }
+    
+    private static DateTime? GetFirstReleaseDateV4(JObject json)
+    {
+        List<string?>? dates = json["data"]?["releases"]?.Select(x=>x["date"]?.ToString()).ToList();
+
+        try
+        {
+            if (!dates.HasAny())
+            {
+                return null;
+            }
+            
+            return dates.Where(x=>x.HasValue()).MinOrNull(x => DateTime.ParseExact(x!, "yyyy-MM-dd", CultureInfo.InvariantCulture));
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
     private static DateTime? GetReleaseDateV4(JObject json, string? region)
     {
-        string? date = region is null
-            ? json["data"]?["releases"]?.FirstOrDefault()?["date"]?.ToString()
-            : json["data"]?["releases"]?.FirstOrDefault(x => x["country"]?.ToString() == region)?["date"]?.ToString();
+        if (region is null)
+        {
+            return GetFirstReleaseDateV4(json);
+        }
+
+        string? date = json["data"]?["releases"]?.FirstOrDefault(x => x["country"]?.ToString() == region)?["date"]?.ToString();
 
         try
         {
@@ -1776,10 +1811,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         JToken dataNode = r["data"] ?? throw new SourceConsistencyException($"Data element not found in {r}", TVDoc.ProviderType.TheTVDB);
         JToken? collectionNode = GetCollectionNodeV4(dataNode);
+        DateTime? firstAired = TVSettings.Instance.UseGlobalReleaseDate
+        ? GetFirstReleaseDateV4(r)
+          ?? GetReleaseDateV4(r, "global")
+        : GetReleaseDateV4(r, locale);
 
         return new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
         {
-            FirstAired = GetReleaseDateV4(r, locale),
+            FirstAired = firstAired,
             TvdbCode = dataNode.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB),
             Slug = ((string?)dataNode["slug"])?.Trim(),
             Imdb = GetExternalIdV4(r, "IMDB"),
@@ -1813,24 +1852,18 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return dt.ToUnixTime();
     }
 
-    private static JToken? GetCollectionNodeV4(JToken? r)
-    {
-        return r?["lists"]?.FirstOrDefault(x => (bool?)x["isOfficial"] is true);
-    }
+    private static JToken? GetCollectionNodeV4(JToken? r) =>
+        r?["lists"]?.FirstOrDefault(x => (bool?)x["isOfficial"] is true);
 
-    private static DateTime? GetReleaseDateV4(JObject r, Locale locale)
-    {
-        return GetReleaseDateV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
-               ?? GetReleaseDateV4(r, "global")
-               ?? GetReleaseDateV4(r, (string?)null);
-    }
+    private static DateTime? GetReleaseDateV4(JObject r, Locale locale) =>
+        GetReleaseDateV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
+        ?? GetReleaseDateV4(r, "global")
+        ?? GetReleaseDateV4(r, (string?)null);
 
-    private static string? GetContentRatingV4(JObject r, Locale locale)
-    {
-        return GetContentRatingV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
-               ?? GetContentRatingV4(r, Regions.Instance.FallbackRegion.ThreeAbbreviation)
-               ?? GetContentRatingV4(r, "usa");
-    }
+    private static string? GetContentRatingV4(JObject r, Locale locale) =>
+        GetContentRatingV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
+        ?? GetContentRatingV4(r, Regions.Instance.FallbackRegion.ThreeAbbreviation)
+        ?? GetContentRatingV4(r, "usa");
 
     private static string? GetTrailerUrl(JObject r, Locale locale)
     {
@@ -3557,7 +3590,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         string languageCode = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation;
         JToken? languageValue = languagesArray[languageCode];
-        if (languageValue == null || languageValue.Type != JTokenType.String)
+        if (languageValue is not { Type: JTokenType.String })
         {
             return null;
         }
