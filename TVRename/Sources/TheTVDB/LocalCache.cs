@@ -965,7 +965,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         try
         {
-            return API.GetMovieV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
+            return API.GetMovieV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code());
         }
         catch (System.IO.IOException ioex)
         {
@@ -1008,7 +1008,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         try
         {
-            return API.GetSeriesV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
+            return API.GetSeriesV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code());
         }
         catch (System.IO.IOException e)
         {
@@ -1072,14 +1072,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private JObject DownloadMovieTranslationsJsonV4(ISeriesSpecifier code, Locale locale, bool showErrorMsgBox)
     {
         return HandleWebErrorsFor(
-            () => API.GetMovieTranslationsV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation),
+            () => API.GetMovieTranslationsV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code()),
         $"obtaining translations for {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}", showErrorMsgBox);
     }
 
     private JObject DownloadSeriesTranslationsJsonV4(ISeriesSpecifier code, Locale locale, bool showErrorMsgBox)
     {
         return HandleWebErrorsFor(
-            () => API.GetSeriesTranslationsV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation),
+            () => API.GetSeriesTranslationsV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code()),
             $"obtaining translations for {code.TvdbId} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}", showErrorMsgBox);
     }
 
@@ -1239,7 +1239,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private static void ReloadEpisode(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order, Season s)
     {
         JObject seasonInfo = API.GetSeasonEpisodesV4(si, s.SeasonId,
-            locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
+            locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code());
 
         JToken? episodeData = seasonInfo["data"]?["episodes"];
 
@@ -1275,7 +1275,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             (Episode newEp, Language? bestLanguage) = API.GenerateCoreEpisodeV4(x, code.TvdbId, si, locale, order);
             if (bestLanguage != null)
             {
-                newEp.AddTranslations(API.GetEpisodeTranslationsV4(code, newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
+                newEp.AddTranslations(API.GetEpisodeTranslationsV4(code, newEp.EpisodeId, bestLanguage.TVDBV4Code()));
             }
 
             si.AddEpisode(newEp);
@@ -1536,7 +1536,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         JObject? jsonSearchDefaultLangResponse = null;
         try
         {
-            jsonSearchResponse = API.SearchV4(text, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation,
+            jsonSearchResponse = API.SearchV4(text, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code(),
                 type);
         }
         catch (WebException ex)

@@ -118,7 +118,7 @@ public class Languages : SafeList<Language>
         return this.SingleOrDefault(l => l.TvdbId == languageId && l.IsPrimary);
     }
 
-    public Language? LanguageFromDialectCode(string iso)
+    public Language? GetLanguageFromDialectCode(string iso)
     {
         return this.SingleOrDefault(l => l.ISODialectAbbreviation == iso);
     }

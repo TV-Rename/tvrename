@@ -1630,7 +1630,7 @@ public sealed class TVSettings
         AutoSaveOnExit = xmlSettings.ExtractBool("AutoSaveOnExit", false);
         UnArchiveFilesInDownloadDirectory = xmlSettings.ExtractBool("UnArchiveFilesInDownloadDirectory", false);
 
-        TMDBLanguage = Languages.Instance.LanguageFromDialectCode(xmlSettings.ExtractString("TMDBLanguage")) ?? Languages.Instance.FallbackLanguage;
+        TMDBLanguage = Languages.Instance.GetLanguageFromDialectCode(xmlSettings.ExtractString("TMDBLanguage")) ?? Languages.Instance.FallbackLanguage;
         TMDBRegion = Regions.Instance.RegionFromCode(xmlSettings.ExtractString("TMDBRegion")) ?? Regions.Instance.FallbackRegion;
         TMDBPercentDirty = xmlSettings.ExtractFloat("TMDBPercentDirty", 20);
         IncludeMoviesQuickRecent = xmlSettings.ExtractBool("IncludeMoviesQuickRecent", false);

@@ -1,7 +1,3 @@
-using Humanizer;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,6 +6,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Humanizer;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace TVRename.TheTVDB;
 
@@ -298,7 +298,7 @@ internal static class API
             x.AiredEpNum = episodeJson["number"]?.ToObject<int?>() ?? 0;
         }
 
-        return (x, API.GetAppropriateLanguage(episodeJson["nameTranslations"], locale));
+        return (x, GetAppropriateLanguage(episodeJson["nameTranslations"], locale));
     }
     private static string Translate(string? originalName, string? transName)
     {
@@ -528,6 +528,8 @@ internal static class API
         return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
     }
 
+    // ReSharper disable once InconsistentNaming
+    internal static string TVDBV4Code(this Language l) => l.ISODialectAbbreviation == "pt-BR" ? "pt" : l.ThreeAbbreviation;
     public static JObject GetMovieV4(ISeriesSpecifier code, string requestedLanguageCode)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/extended";
@@ -817,7 +819,7 @@ internal static class API
             return null;
         }
 
-        string languageCode = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation;
+        string languageCode = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code();
         JToken? languageValue = languagesArray[languageCode];
         if (languageValue is not { Type: JTokenType.String })
         {
@@ -965,8 +967,8 @@ internal static class API
         new()
         {
             Id = imageJson.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB),
-            ImageUrl = API.GetImageURL((string?)imageJson["image"]),
-            ThumbnailUrl = API.GetImageURL((string?)imageJson["thumbnail"]),
+            ImageUrl = GetImageURL((string?)imageJson["image"]),
+            ThumbnailUrl = GetImageURL((string?)imageJson["thumbnail"]),
             LanguageCode = (string?)imageJson["language"],
             Rating = imageJson.GetMandatoryInt("score", TVDoc.ProviderType.TheTVDB),
             MovieId = si.TvdbCode,
@@ -998,8 +1000,8 @@ internal static class API
         return new ShowImage
         {
             Id = imageJson.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB),
-            ImageUrl = API.GetImageURL((string?)imageJson["image"]),
-            ThumbnailUrl = API.GetImageURL((string?)imageJson["thumbnail"]),
+            ImageUrl = GetImageURL((string?)imageJson["image"]),
+            ThumbnailUrl = GetImageURL((string?)imageJson["thumbnail"]),
             LanguageCode = (string?)imageJson["language"],
             Rating = imageJson.GetMandatoryInt("score", TVDoc.ProviderType.TheTVDB),
             ImageStyle = MapBannerTvdbV4ApiCode(imageCodeType),
@@ -1095,8 +1097,8 @@ internal static class API
             Name = dataNode["name"]?.ToString() ?? string.Empty,
             TrailerUrl = GetTrailerUrl(r, locale),
             IsSearchResultOnly = false,
-            PosterUrl = API.GetImageURL(GetArtworkV4(r, 14)),
-            FanartUrl = API.GetImageURL(GetArtworkV4(r, 15)),
+            PosterUrl = GetImageURL(GetArtworkV4(r, 14)),
+            FanartUrl = GetImageURL(GetArtworkV4(r, 15)),
             OfficialUrl = GetExternalIdV4(r, "Official Website"),
             FacebookId = GetExternalIdV4(r, "Facebook"),
             InstagramId = GetExternalIdV4(r, "Instagram"),
@@ -1148,7 +1150,7 @@ internal static class API
     {
         return trailersNode
             ?.FirstOrDefault(x =>
-                x["language"]?.ToString() == language.ThreeAbbreviation)
+                x["language"]?.ToString() == language.TVDBV4Code())
             ?["url"]
             ?.ToString();
     }
@@ -1161,7 +1163,7 @@ internal static class API
             return;
         }
 
-        List<JToken> languageNodes = aliasNode.Where(x => x["language"]?.ToString() == lang.ThreeAbbreviation).ToList();
+        List<JToken> languageNodes = aliasNode.Where(x => x["language"]?.ToString() == lang.TVDBV4Code()).ToList();
         if (languageNodes.Any())
         {
             foreach (JToken? x in languageNodes)
@@ -1171,7 +1173,7 @@ internal static class API
             return;
         }
 
-        languageNodes = aliasNode.Where(x => x["language"]?.ToString() == TVSettings.Instance.PreferredTVDBLanguage.ThreeAbbreviation).ToList();
+        languageNodes = aliasNode.Where(x => x["language"]?.ToString() == TVSettings.Instance.PreferredTVDBLanguage.TVDBV4Code()).ToList();
         if (languageNodes.Any())
         {
             foreach (JToken? x in languageNodes)
@@ -1192,7 +1194,7 @@ internal static class API
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string name = actorJson["personName"]?.ToString() ?? string.Empty;
-                string image = API.GetImageURL(actorJson["image"]?.ToObject<string?>());
+                string image = GetImageURL(actorJson["image"]?.ToObject<string?>());
                 string? role = actorJson["name"]?.ToString();
                 int? sort = actorJson["sort"]?.ToString().ToInt();
                 si.AddActor(new Actor(id, image, name, role, sort));
@@ -1282,7 +1284,7 @@ internal static class API
             {
                 int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                 string name = actorJson["personName"]?.ToString() ?? string.Empty;
-                string image = API.GetImageURL(actorJson["image"]?.ToObject<string?>());
+                string image = GetImageURL(actorJson["image"]?.ToObject<string?>());
                 string? role = actorJson["name"]?.ToString();
                 int? sort = actorJson["sort"]?.ToString().ToInt();
                 si.AddActor(new Actor(id, image, name, role, sort));
@@ -1334,7 +1336,7 @@ internal static class API
         };
     }
 
-    internal static Language? GetAppropriateLanguage(JToken? languageOptions, Locale preferredLocale)
+    private static Language? GetAppropriateLanguage(JToken? languageOptions, Locale preferredLocale)
     {
         if (languageOptions == null)
         {
@@ -1342,17 +1344,26 @@ internal static class API
         }
 
         if (((JArray)languageOptions).ContainsTyped(preferredLocale.LanguageToUse(TVDoc.ProviderType.TheTVDB)
-                .ThreeAbbreviation))
+                .TVDBV4Code()))
         {
             return preferredLocale.LanguageToUse(TVDoc.ProviderType.TheTVDB);
         }
 
         if (((JArray)languageOptions).Count == 1)
         {
-            return Languages.Instance.GetLanguageFromThreeCode(((JArray)languageOptions).Single().ToString()) ?? Languages.Instance.FallbackLanguage;
+            string languageCode = ((JArray)languageOptions).Single().ToString();
+
+            if (languageCode == "pt")
+            {
+                return Languages.Instance.GetLanguageFromDialectCode("pt-BR");
+            }
+
+            return Languages.Instance.GetLanguageFromThreeCode(languageCode)
+                   ?? Languages.Instance.GetLanguageFromCode(languageCode)
+                   ?? Languages.Instance.FallbackLanguage;
         }
 
-        if (((JArray)languageOptions).ContainsTyped(TVSettings.Instance.PreferredTVDBLanguage.ThreeAbbreviation))
+        if (((JArray)languageOptions).ContainsTyped(TVSettings.Instance.PreferredTVDBLanguage.TVDBV4Code()))
         {
             return TVSettings.Instance.PreferredTVDBLanguage;
         }
@@ -1362,7 +1373,7 @@ internal static class API
             return null;
         }
 
-        if (((JArray)languageOptions).ContainsTyped(Languages.Instance.FallbackLanguage.ThreeAbbreviation))
+        if (((JArray)languageOptions).ContainsTyped(Languages.Instance.FallbackLanguage.TVDBV4Code()))
         {
             return Languages.Instance.FallbackLanguage;
         }
