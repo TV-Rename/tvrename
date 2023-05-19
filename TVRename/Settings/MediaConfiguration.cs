@@ -276,14 +276,20 @@ public abstract class MediaConfiguration : ISeriesSpecifier
 
             case TVDoc.ProviderType.TVmaze:
                 TVmazeCode = code;
+                TvdbCode = -1;
+                TmdbCode = -1;
                 break;
 
             case TVDoc.ProviderType.TheTVDB:
                 TvdbCode = code;
+                TmdbCode = -1;
+                TVmazeCode = -1;
                 break;
 
             case TVDoc.ProviderType.TMDB:
                 TmdbCode = code;
+                TvdbCode = -1;
+                TVmazeCode = -1;
                 break;
 
             default:

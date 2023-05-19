@@ -112,7 +112,6 @@ public class Languages : SafeList<Language>
         return this.SingleOrDefault(l => l.LocalName == language);
     }
 
-    // ReSharper disable once UnusedMember.Global
     public Language? GetLanguageFromId(int languageId)
     {
         return this.SingleOrDefault(l => l.TvdbId == languageId && l.IsPrimary);
