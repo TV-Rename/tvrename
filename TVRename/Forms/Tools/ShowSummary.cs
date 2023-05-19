@@ -97,12 +97,9 @@ public partial class ShowSummary : Form, IDialogParent
 
         int maxSeason = GetMaxSeason(showList);
 
-        int cols = maxSeason + 3;
-        int rows = showList.Count + 1;
-
         // Draw Header
-        grid1.ColumnsCount = cols;
-        grid1.RowsCount = rows;
+        grid1.ColumnsCount = maxSeason + 3;
+        grid1.RowsCount = showList.Count + 1;
         grid1.FixedColumns = 2;
         grid1.FixedRows = 1;
         grid1.Selection.EnableMultiSelection = false;
@@ -141,7 +138,7 @@ public partial class ShowSummary : Form, IDialogParent
 
         // Draw Shows
 
-        int r = 0;
+        int row = 1;
         foreach (ShowSummaryData show in showList)
         {
             //Ignore shows with no missing episodes
@@ -180,14 +177,14 @@ public partial class ShowSummary : Form, IDialogParent
                 cellColour = TVSettings.Instance.ShowStatusColors.GetColour(show.ShowConfiguration);
             }
 
-            grid1[r + 1, 0] = new RowHeader(show.ShowName)
+            grid1[row, 0] = new RowHeader(show.ShowName)
             {
                 ResizeEnabled = false,
                 View = new Cell { ForeColor = cellColour }
             };
-            grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowConfiguration, mDoc));
+            grid1[row, 0].AddController(new ShowClickEvent(this, show.ShowConfiguration, mDoc));
 
-            grid1[r + 1, 1] = new RowHeader(show.ShowConfiguration.ShowStatus)
+            grid1[row, 1] = new RowHeader(show.ShowConfiguration.ShowStatus)
             {
                 ResizeEnabled = false,
                 View = new Cell { ForeColor = cellColour }
@@ -209,7 +206,7 @@ public partial class ShowSummary : Form, IDialogParent
                     continue;
                 }
 
-                grid1[r + 1, seasonData.SeasonNumber + 2] =
+                grid1[row, seasonData.SeasonNumber + 2] =
                     new SourceGrid.Cells.Cell(output.Details, typeof(string))
                     {
                         View = new Cell
@@ -221,9 +218,9 @@ public partial class ShowSummary : Form, IDialogParent
                         Editor = { EditableMode = EditableMode.None }
                     };
 
-                grid1[r + 1, seasonData.SeasonNumber + 2].AddController(new ShowClickEvent(this, show.ShowConfiguration, seasonData.ProcessedSeason, mDoc));
+                grid1[row, seasonData.SeasonNumber + 2].AddController(new ShowClickEvent(this, show.ShowConfiguration, seasonData.ProcessedSeason, mDoc));
             }
-            r++;
+            row++;
         }
         grid1.AutoSizeCells();
     }
