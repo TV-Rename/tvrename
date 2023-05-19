@@ -229,7 +229,7 @@ public class CachedSeriesInfo : CachedMediaInfo
     private void LoadImages(XElement seriesXml)
     {
         images = new ShowImages();
-        foreach (ShowImage s in seriesXml.Descendants("Images").Descendants("ShowImage").Select(xml => new ShowImage(IdCode(Source), Source, xml)))
+        foreach (ShowImage s in seriesXml.Descendants("Images").Descendants("ShowImage").Select(xml => new ShowImage(Source, xml)))
         {
             images.Add(s);
         }

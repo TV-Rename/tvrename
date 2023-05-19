@@ -7,13 +7,11 @@ namespace TVRename;
 public class ShowImage : MediaImage
 {
     public int? SeasonId;
-    public int SeriesId;
     public TVDoc.ProviderType SeriesSource;
     public int? SeasonNumber;
 
-    public ShowImage(int seriesId, TVDoc.ProviderType source, XElement r) : base(r)
+    public ShowImage(TVDoc.ProviderType source, XElement r) : base(r)
     {
-        SeriesId = r.ExtractInt("SeriesId") ?? seriesId; // thetvdb cachedSeries id
         SeasonId = r.ExtractInt("SeasonId");
         SeasonNumber = r.ExtractInt("SeasonNumber");
         SeriesSource = source;
@@ -27,13 +25,12 @@ public class ShowImage : MediaImage
     {
         writer.WriteStartElement("ShowImage");
         WriteCoreXml(writer);
-        writer.WriteElement("SeriesId", SeriesId);
         writer.WriteElement("SeasonId", SeasonId);
         writer.WriteElement("SeasonNumber", SeasonNumber);
         writer.WriteEndElement(); //ShowImage
     }
 
-    internal static ShowImage GenerateFromLegacyBannerXml(int seriesId, XElement r, TVDoc.ProviderType source)
+    internal static ShowImage GenerateFromLegacyBannerXml(XElement r, TVDoc.ProviderType source)
     {
         // <Banner>
         //        <id>708811</id>
@@ -52,7 +49,6 @@ public class ShowImage : MediaImage
         ShowImage legacy = new()
         {
             Id = r.ExtractInt("id") ?? -1,
-            SeriesId = r.ExtractInt("seriesid") ?? seriesId,
             SeasonId = r.ExtractInt("seasonid", -1),
             ImageUrl = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("BannerPath")),
             SeriesSource = source,
@@ -79,7 +75,7 @@ public class ShowImage : MediaImage
                 "season" => ImageSubject.season,
                 "series" => ImageSubject.season,
                 "seasonwide" => ImageSubject.show,
-                _ => throw new ArgumentException()
+                _ => throw new ArgumentException($"The provided image type {v} string is invalid (ImageSubject).", nameof(v))
             };
         }
 
@@ -92,7 +88,7 @@ public class ShowImage : MediaImage
                 "season" => ImageType.poster,
                 "series" => ImageType.wideBanner,
                 "seasonwide" => ImageType.wideBanner,
-                _ => throw new ArgumentException()
+                _ => throw new ArgumentException($"The provided image type {v} string is invalid (ImageType).", nameof(v))
             };
         }
     }

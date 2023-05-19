@@ -4558,7 +4558,7 @@ namespace TVRename.Forms
             // 
             this.cbTVDBVersion.DropDownStyle = (global::System.Windows.Forms.ComboBoxStyle.DropDownList);
             this.cbTVDBVersion.FormattingEnabled = (true);
-            this.cbTVDBVersion.Items.AddRange(new global::System.Object[] { "v3", "v4" });
+            this.cbTVDBVersion.Items.AddRange(new global::System.Object[] { "v4" });
             this.cbTVDBVersion.Location = (new global::System.Drawing.Point(135, 83));
             this.cbTVDBVersion.Margin = (new global::System.Windows.Forms.Padding(4, 3, 4, 3));
             this.cbTVDBVersion.Name = ("cbTVDBVersion");

@@ -327,7 +327,7 @@ internal static class CachePersistor
             int seriesId = bannersXml.ExtractInt("SeriesId") ?? -1;
 
             localCache.GetSeries(seriesId)?.AddBanners(bannersXml.Descendants("Banners").Descendants("Banner")
-                .Select(banner => ShowImage.GenerateFromLegacyBannerXml(seriesId, banner, localCache.SourceProvider())));
+                .Select(banner => ShowImage.GenerateFromLegacyBannerXml(banner, localCache.SourceProvider())));
         }
     }
 }

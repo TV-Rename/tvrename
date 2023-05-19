@@ -262,20 +262,20 @@ internal static class API
                 string? child = (string?)GetChild(imageNode, "original");
                 if (child != null)
                 {
-                    downloadedSi.AddOrUpdateImage(GenerateImage(ss.TvMazeId, jsonSeason.GetMandatoryInt("number", TVDoc.ProviderType.TVmaze), child));
+                    downloadedSi.AddOrUpdateImage(GenerateImage(jsonSeason.GetMandatoryInt("number", TVDoc.ProviderType.TVmaze), child));
                 }
             }
         }
 
         foreach (JToken imageJson in GetChild(jToken, "images"))
         {
-            downloadedSi.AddOrUpdateImage(GenerateImage(ss.TvMazeId, imageJson));
+            downloadedSi.AddOrUpdateImage(GenerateImage(imageJson));
         }
 
         downloadedSi.ClearActors();
         foreach (JToken jsonActor in GetChild(jToken, "cast"))
         {
-            downloadedSi.AddActor(GenerateActor(ss.TvMazeId, jsonActor));
+            downloadedSi.AddActor(GenerateActor(jsonActor));
         }
 
         return downloadedSi;
@@ -315,11 +315,10 @@ internal static class API
             .ToList();
     }
 
-    private static ShowImage GenerateImage(int seriesId, JToken imageJson)
+    private static ShowImage GenerateImage(JToken imageJson)
     {
         ShowImage newBanner = new()
         {
-            SeriesId = seriesId,
             ImageUrl = (string?)GetChild(GetChild(GetChild(imageJson, "resolutions"), "original"), "url"),
             Id = imageJson.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze),
             ImageStyle = MapImageType((string?)imageJson["type"]),
@@ -343,11 +342,9 @@ internal static class API
         };
     }
 
-    private static ShowImage GenerateImage(int seriesId, int seasonNumber, string url)
-    {
-        ShowImage newBanner = new()
+    private static ShowImage GenerateImage(int seasonNumber, string url) =>
+        new()
         {
-            SeriesId = seriesId,
             ImageUrl = url,
             ImageStyle = MediaImage.ImageType.poster,
             Subject = MediaImage.ImageSubject.season,
@@ -357,10 +354,7 @@ internal static class API
             SeriesSource = TVDoc.ProviderType.TVmaze,
         };
 
-        return newBanner;
-    }
-
-    private static Actor GenerateActor(int seriesId, JToken jsonActor)
+    private static Actor GenerateActor(JToken jsonActor)
     {
         JToken personToken = GetChild(jsonActor, "person");
         JToken actorImageNode = GetChild(personToken, "image");
@@ -369,7 +363,7 @@ internal static class API
         string actorName = (string?)personToken["name"] ?? throw new SourceConsistencyException("No Actor Name", TVDoc.ProviderType.TVmaze);
         string? actorRole = (string?)GetChild(GetChild(jsonActor, "character"), "name");
         int? actorSortOrder = (int?)personToken["id"];
-        return new Actor(actorId, actorImage, actorName, actorRole, seriesId, actorSortOrder);
+        return new Actor(actorId, actorImage, actorName, actorRole, actorSortOrder);
     }
 
     private static Season GenerateSeason(int seriesId, JToken json)

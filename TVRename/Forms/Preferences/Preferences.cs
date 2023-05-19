@@ -453,7 +453,6 @@ public partial class Preferences : Form
 
         s.PreferredTVDBLanguage = Languages.Instance.GetLanguageFromLocalName(cbTVDBLanguages.Text) ?? s.PreferredTVDBLanguage;
 
-        s.TvdbVersion = cbTVDBVersion.Text == "v3" ? TheTVDB.ApiVersion.v3 : TheTVDB.ApiVersion.v4;
         s.WTWDoubleClick = rbWTWScan.Checked
             ? TVSettings.WTWDoubleClickAction.Scan
             : TVSettings.WTWDoubleClickAction.Search;

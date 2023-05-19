@@ -481,7 +481,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             {
                 if (s is not null)
                 {
-                    m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character, s.CastId,
+                    m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character,
                         s.Order));
                 }
             }
@@ -605,7 +605,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         foreach (TMDbLib.Objects.TvShows.Cast? s in downloadedSeries.Credits.Cast)
         {
-            m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character, 0, s.Order));
+            m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character, s.Order));
         }
         foreach (TMDbLib.Objects.General.Crew? s in downloadedSeries.Credits.Crew)
         {
@@ -692,7 +692,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                         RatingCount = image.VoteCount,
                         SeasonId = downloadedSeason.Id ?? 0,
                         LanguageCode = image.Iso_639_1,
-                        SeriesId = downloadedSeries.Id,
                         SeriesSource = TVDoc.ProviderType.TMDB,
                     };
 
@@ -711,7 +710,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             {
                 ShowImage newBanner = new()
                 {
-                    SeriesId = downloadedSeries.Id,
                     SeriesSource = TVDoc.ProviderType.TMDB,
                     Id = imageId++,
                     ImageUrl = OriginalImageUrl(image.FilePath),
@@ -732,7 +730,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             {
                 ShowImage newBanner = new()
                 {
-                    SeriesId = downloadedSeries.Id,
                     SeriesSource = TVDoc.ProviderType.TMDB,
                     Id = imageId++,
                     ImageUrl = PosterImageUrl(image.FilePath),

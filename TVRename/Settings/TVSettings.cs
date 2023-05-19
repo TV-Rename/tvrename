@@ -405,7 +405,7 @@ public sealed class TVSettings
     public string SABAPIKey = string.Empty;
     public bool CheckSABnzbd = false;
     public Language PreferredTVDBLanguage;
-    public TheTVDB.ApiVersion TvdbVersion = TheTVDB.ApiVersion.v3;
+    public readonly TheTVDB.ApiVersion TvdbVersion = TheTVDB.ApiVersion.v4;
     public WTWDoubleClickAction WTWDoubleClick = WTWDoubleClickAction.Scan;
 
     public readonly TidySettings Tidyup = new();
@@ -658,7 +658,6 @@ public sealed class TVSettings
         writer.WriteElement("EmptyMaxSizeCheck", Tidyup.EmptyMaxSizeCheck);
         writer.WriteElement("EmptyMaxSizeMB", Tidyup.EmptyMaxSizeMB);
         writer.WriteElement("BetaMode", (int)mode);
-        writer.WriteElement("TvdbVersion", (int)TvdbVersion);
         writer.WriteElement("PercentDirtyUpgrade", upgradeDirtyPercent);
         writer.WriteElement("PercentBetter", replaceMargin);
         writer.WriteElement("BaseSeasonName", defaultSeasonWord);
@@ -1562,7 +1561,6 @@ public sealed class TVSettings
         AutoAddIgnoreSuffixes = xmlSettings.ExtractString("AutoAddIgnoreSuffixes", "1080p;720p;2160p");
         PriorityReplaceTerms = xmlSettings.ExtractString("PriorityReplaceTerms", "PROPER;REPACK;RERIP");
         mode = xmlSettings.ExtractEnum("BetaMode", BetaMode.ProductionOnly);
-        TvdbVersion = TheTVDB.ApiVersion.v4;
         upgradeDirtyPercent = xmlSettings.ExtractFloat("PercentDirtyUpgrade", 20);
         replaceMargin = xmlSettings.ExtractFloat("PercentBetter", 10);
         defaultSeasonWord = xmlSettings.ExtractString("BaseSeasonName", "Season");

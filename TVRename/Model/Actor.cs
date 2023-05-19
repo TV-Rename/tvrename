@@ -18,16 +18,14 @@ public class Actor
     public string? ActorImage { get; }
     public string ActorName { get; }
     public string? ActorRole { get; }
-    public int ActorSeriesId { get; }
     public int ActorSortOrder { get; }
 
-    public Actor(int actorId, string? actorImage, string actorName, string? actorRole, int actorSeriesId, int? actorSortOrder)
+    public Actor(int actorId, string? actorImage, string actorName, string? actorRole, int? actorSortOrder)
     {
         ActorId = actorId;
         ActorImage = actorImage;
         ActorName = actorName;
         ActorRole = actorRole;
-        ActorSeriesId = actorSeriesId;
 
         if (actorSortOrder.HasValue)
         {
@@ -45,7 +43,7 @@ public class Actor
         ActorImage = r.ExtractString("Image");
         ActorName = r.ExtractString("Name");
         ActorRole = r.ExtractString("Role");
-        ActorSeriesId = r.ExtractInt("SeriesId", -1);
+        r.ExtractInt("SeriesId", -1);
         ActorSortOrder = r.ExtractInt("SortOrder", -1);
     }
 
@@ -61,7 +59,7 @@ public class Actor
         writer.WriteElement("Image", ActorImage, true);
         writer.WriteElement("Name", ActorName, true);
         writer.WriteElement("Role", ActorRole, true);
-        writer.WriteElement("SeriesId", ActorSeriesId, true);
+        //writer.WriteElement("SeriesId", ActorSeriesId, true);
         writer.WriteElement("SortOrder", ActorSortOrder);
         writer.WriteEndElement();
     }

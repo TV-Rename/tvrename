@@ -53,61 +53,7 @@ internal class TvdbAccuracyCheck
     public void ServerAccuracyCheck(CachedSeriesInfo si)
     {
         Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
-        if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
-        {
-            ServerAccuracyCheckV4(si);
-            return;
-        }
-        try
-        {
-            CachedSeriesInfo newSi = lc.DownloadSeriesInfo(si, new Locale(), false);
-            if (newSi.SrvLastUpdated != si.SrvLastUpdated)
-            {
-                Issues.Add(
-                    $"{si.Name} ({si.Id()}) is not up to date: Local is {si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is {newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
 
-                EnsureUpdated(si);
-            }
-
-            List<JObject>? eps = lc.GetEpisodes(si.TvdbId, new Locale());
-            List<int> serverEpIds = new();
-
-            if (eps != null)
-            {
-                foreach (JObject epJson in eps)
-                {
-                    JToken? episodeToUse = epJson["data"];
-                    if (episodeToUse != null)
-                    {
-                        foreach (JToken t in episodeToUse.Children())
-                        {
-                            int epId = EpisodeAccuracyCheck(si, t);
-                            serverEpIds.Add(epId);
-                        }
-                    }
-                    else
-                    {
-                        throw new SourceConsistencyException($"Could not load 'data' from {epJson}",
-                            TVDoc.ProviderType.TheTVDB);
-                    }
-                }
-            }
-
-            //Look for episodes that are local, but not on server
-            FindOrphanEpisodes(si, serverEpIds);
-        }
-        catch (SourceConnectivityException)
-        {
-            Issues.Add($"Failed to compare {si.Name} as we could not download the cachedSeries details.");
-        }
-        catch (MediaNotFoundException)
-        {
-            Issues.Add($"Failed to compare {si.Name} as it no longer exists on TVDB {si.TvdbId}.");
-        }
-    }
-
-    public void ServerAccuracyCheckV4(CachedSeriesInfo si)
-    {
         try
         {
             CachedSeriesInfo newSi = lc.DownloadSeriesInfo(si, new Locale(), false);
@@ -159,16 +105,6 @@ internal class TvdbAccuracyCheck
         {
             ShowsToUpdate.Add(si);
         }
-    }
-
-    private int EpisodeAccuracyCheck(CachedSeriesInfo si, JToken t)
-    {
-        long serverUpdateTime = t.GetMandatoryLong("lastUpdated", TVDoc.ProviderType.TheTVDB);
-        int epId = t.GetMandatoryInt("id", TVDoc.ProviderType.TheTVDB);
-
-        EpisodeAccuracyCheck(si, serverUpdateTime, epId);
-
-        return epId;
     }
 
     private void EpisodeAccuracyCheck(CachedSeriesInfo si, long serverUpdateTime, int epId)
