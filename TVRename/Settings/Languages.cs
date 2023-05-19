@@ -100,6 +100,7 @@ public class Languages : SafeList<Language>
         Add(new Language(27, "zh", "zho", "Chinese (Hong Kong)", "大陆简体 (Hong Kong)", "zh-HK", false));
         Add(new Language(27, "zh", "zho", "Chinese (Taiwan)", "大陆简体 (Taiwan)", "zh-TW", false));
         Add(new Language(262, "zu", "zul", "Zulu (South Africa)", "isiZulu", "zu-ZA", true));
+        Add(new Language(999, "af", "afr", "Afrikaans", "Afrikaans", "af-ZA", true));
     }
 
     public Language? GetLanguageFromCode(string? languageAbbreviation)
