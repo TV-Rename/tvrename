@@ -29,7 +29,6 @@ using System.Xml.Linq;
 using TVRename.Forms.Supporting;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
-using TVRename.Ipc;
 using TVRename.Properties;
 using TVRename.Utility.Helper;
 using Control = System.Windows.Forms.Control;
@@ -50,7 +49,7 @@ namespace TVRename.Forms;
 ///           resources associated with this form.
 ///  </summary>
 // ReSharper disable once InconsistentNaming
-public partial class UI : Form, IRemoteActions, IDialogParent
+public partial class UI : Form, IDialogParent
 {
     public const string EXPLORE_PROXY = "https://www.tvrename.com/EXPLOREPROXY";
     public const string WATCH_PROXY = "https://www.tvrename.com/WATCHPROXY";
@@ -534,17 +533,17 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         }
     }
 
-    /*private void ReceiveArgs(string[] args)
+    private void ReceiveArgs(string[] args)
     {
         // Send command-line arguments to already running instance
 
         // Parse command line arguments
-        CommandLineArgs localArgs = new(new ReadOnlyCollection<string>(args));
+        CommandLineArgs localArgs = new(new List<string>(args));
 
         bool previousRenameBehavior = TVSettings.Instance.RenameCheck;
-        // Temporarily override behavior for renaming folders
+        // Temporarily override behaviour for renaming folders
         TVSettings.Instance.RenameCheck = localArgs.RenameCheck;
-        // Temporarily override behavior for missing folders
+        // Temporarily override behaviour for missing folders
         mDoc.Args.TemporarilyUse(localArgs);
 
         ProcessArgs(localArgs);
@@ -552,7 +551,7 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         //Revert the settings
         TVSettings.Instance.RenameCheck = previousRenameBehavior;
         mDoc.Args.RevertFromTempUse();
-    }*/
+    }
 
     private void ScanAndAction(TVSettings.ScanType type)
     {
@@ -618,6 +617,11 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         if (a.Hide)
         {
             WindowState = FormWindowState.Minimized;
+        }
+
+        if (a.Focus)
+        {
+            FocusWindow();
         }
 
         if (a.QuickUpdate)
@@ -5415,6 +5419,14 @@ public partial class UI : Form, IRemoteActions, IDialogParent
         LessBusy();
         FillMyShows(true);
         FillWhenToWatchList();
+    }
+
+    public void ProcessReceivedArgs(string[] args)
+    {
+        Invoke((MethodInvoker)delegate
+        {
+            ReceiveArgs(args);
+        });
     }
 }
 

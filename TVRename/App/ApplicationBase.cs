@@ -24,6 +24,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private TVDoc? doc;
+    private UI? ui;
 
     /// <summary>
     /// Initializes the splash screen.
@@ -66,7 +67,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         RegisterForSystemEvents();
 
         // Show user interface
-        UI ui = new(doc, (TVRenameSplash)SplashScreen, !parameters.Unattended && !parameters.Hide && Environment.UserInteractive);
+        ui = new(doc, (TVRenameSplash)SplashScreen, !parameters.Unattended && !parameters.Hide && Environment.UserInteractive);
         ui.Text = ui.Text + " " + Helpers.DisplayVersion;
 
         // Bind IPC actions to the form, this allows another instance to trigger form actions
@@ -335,6 +336,18 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         catch
         {
             Logger.Error("Failed to setup logging with papertrail");
+        }
+    }
+
+    public void ProcessReceivedArgs(string[] args)
+    {
+        if (ui is null)
+        {
+            Logger.Warn($"Cannot pass {args.ToCsv()} to running instance Main FOrm 'ui' is not created yet.");
+        }
+        else
+        {
+            ui.ProcessReceivedArgs(args);
         }
     }
 }

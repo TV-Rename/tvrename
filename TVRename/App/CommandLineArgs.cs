@@ -21,6 +21,7 @@ public class CommandLineArgs
     }
 
     public bool Hide { get; }
+    public bool Focus { get; }
     public MissingFolderBehavior MissingFolder { get; private set; }
     public bool RenameCheck { get; }
     public bool Quit { get; }
@@ -46,6 +47,7 @@ public class CommandLineArgs
     public CommandLineArgs(IReadOnlyCollection<string> args)
     {
         Hide = args.Contains("/hide", StringComparer.OrdinalIgnoreCase);
+        Focus = args.Contains("/focus", StringComparer.OrdinalIgnoreCase);
         RenameCheck = !args.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase);
         Quit = args.Contains("/quit", StringComparer.OrdinalIgnoreCase);
         ForceRecover = args.Contains("/recover", StringComparer.OrdinalIgnoreCase);

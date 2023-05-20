@@ -22,6 +22,7 @@ namespace TVRename.App;
 public static class Program
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+    private static ApplicationBase? TvRename;
 
     /// <summary>
     /// Defines the entry point of the application.
@@ -85,31 +86,17 @@ public static class Program
             }
             return;
         }
+
+        SingleInstanceService singleInstanceService = new(OnArgumentsReceived);
+
         // Check if an application instance is already running
         Mutex mutex = new(true, "TVRename", out bool newInstance);
 
-        if (!newInstance)
+        if (!singleInstanceService.IsFirstInstance() || !newInstance)
         {
             // Already running
-            Logger.Warn("An instance is already running");
-
-            // Create an IPC channel to the existing instance
-            //RemoteClient.Proxy();
-
-            // Transparent proxy to the existing instance
-            //RemoteClient ipc = new();
-
-            // If already running and no command line arguments then bring instance to the foreground and quit
-            //if (args.Length == 0)
-            {
-                //ipc.FocusWindow();
-            }
-            //else
-            {
-                //Logger.Warn($"Sending {args.ToCsv()} to the running instance.");
-                //ipc.SendArgs(args);
-            }
-
+            Logger.Warn("An instance is already running, exiting");
+            singleInstanceService.SendArgumentsToExistingInstance();
             return;
         }
 
@@ -117,9 +104,9 @@ public static class Program
         {
             Logger.Info("Starting new instance");
 
-            ApplicationBase s = new();
+            TvRename = new ApplicationBase();
 
-            s.Run(args);
+            TvRename.Run(args);
 
             GC.KeepAlive(mutex);
         }
@@ -143,6 +130,19 @@ public static class Program
         }
 
         Logger.Info("Application exiting");
+    }
+
+    private static void OnArgumentsReceived(string[] args)
+    {
+        if (TvRename is null)
+        {
+            Logger.Warn($"Cannot pass {args.ToCsv()} to running instance ApplicationBase 's' is not created yet.");
+        }
+        else
+        {
+            Logger.Info($"Received {args.ToCsv()}, sending to the application.");
+            TvRename.ProcessReceivedArgs(args);
+        }
     }
 
     private static Assembly? OnAssemblyResolve(object? sender, ResolveEventArgs args)
