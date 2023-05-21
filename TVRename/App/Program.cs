@@ -96,7 +96,7 @@ public static class Program
         {
             // Already running
             Logger.Warn("An instance is already running, exiting");
-            singleInstanceService.SendArgumentsToExistingInstance();
+            SingleInstanceService.SendArgumentsToExistingInstance();
             return;
         }
 

@@ -126,6 +126,11 @@ public class BEncodeLoader
         {
             sr = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read);
         }
+        catch (System.IO.IOException e)
+        {
+            Logger.Warn(e.Message);
+            return null;
+        }
         catch (Exception e)
         {
             Logger.Error(e);

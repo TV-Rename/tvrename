@@ -11,10 +11,11 @@ namespace TVRename.App;
 
 internal class SingleInstanceService
 {
-    private const string localHost = "127.0.0.1";
-    private const int localPort = 19191;
+    private const string LOCAL_HOST = "127.0.0.1";
+    private const int LOCAL_PORT = 19191;
     private readonly Action<string[]> onArgumentsReceived;
     private static readonly NLog.Logger Log = NLog.LogManager.GetCurrentClassLogger();
+    // ReSharper disable once NotAccessedField.Local
     private Semaphore? semaphore;
     private readonly string semaphoreName = $"Global\\{Environment.MachineName}-myAppName{Assembly.GetExecutingAssembly().GetName().Version}-sid{Process.GetCurrentProcess().SessionId}";
 
@@ -37,14 +38,11 @@ internal class SingleInstanceService
         }
     }
 
-    public void SendArgumentsToExistingInstance()
-    {
-        Task.Run(SendArguments);
-    }
+    public static void SendArgumentsToExistingInstance() => Task.Run(SendArguments);
 
     private void ListenForArguments()
     {
-        TcpListener tcpListener = new(IPAddress.Parse(localHost), localPort);
+        TcpListener tcpListener = new(IPAddress.Parse(LOCAL_HOST), LOCAL_PORT);
         try
         {
             tcpListener.Start();
@@ -85,7 +83,7 @@ internal class SingleInstanceService
     {
         try
         {
-            using TcpClient tcpClient = new(localHost, localPort);
+            using TcpClient tcpClient = new(LOCAL_HOST, LOCAL_PORT);
             using NetworkStream networkStream = tcpClient.GetStream();
             string[] commandLineArgs = Environment.GetCommandLineArgs();
             string message = commandLineArgs.Length > 1

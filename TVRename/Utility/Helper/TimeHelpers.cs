@@ -20,10 +20,10 @@ public static class TimeHelpers
             {
                 Logger.Info($"Connected to NTP Server at UTC (based on local clock) {DateTime.UtcNow}");
                 ClockInstance = NtpClient.Default.Query();
-                Logger.Info($"Finished connecting to NTP Server at UTC (based on local clock) {DateTime.UtcNow}");
+                Logger.Info($"Finished connecting to NTP Server at UTC (based on local clock) {DateTime.UtcNow} - Offset = {ClockInstance.CorrectionOffset}");
                 if (ClockInstance.CorrectionOffset > 20.Seconds())
                 {
-                    Logger.Error($"Discrepancy for systemtime of {DateTime.UtcNow} to {ClockInstance.UtcNow.UtcDateTime}");
+                    Logger.Warn($"Discrepancy for systemtime of {DateTime.UtcNow} to {ClockInstance.UtcNow.UtcDateTime}");
                 }
             }
             return ClockInstance;
