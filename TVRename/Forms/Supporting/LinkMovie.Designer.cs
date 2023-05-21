@@ -28,130 +28,140 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnUseSelectedMovie = new System.Windows.Forms.Button();
-            this.btnNotAMovie = new System.Windows.Forms.Button();
-            this.btnNewMovie = new System.Windows.Forms.Button();
-            this.lnkOpenFolder = new System.Windows.Forms.LinkLabel();
-            this.lblNameRight = new System.Windows.Forms.Label();
-            this.txtNameLeft = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.lblSourceFileName = new System.Windows.Forms.Label();
-            this.cbShows = new System.Windows.Forms.ComboBox();
-            this.SuspendLayout();
+            btnUseSelectedMovie = new System.Windows.Forms.Button();
+            btnNotAMovie = new System.Windows.Forms.Button();
+            btnNewMovie = new System.Windows.Forms.Button();
+            lnkOpenFolder = new System.Windows.Forms.LinkLabel();
+            lblNameRight = new System.Windows.Forms.Label();
+            txtNameLeft = new System.Windows.Forms.Label();
+            label10 = new System.Windows.Forms.Label();
+            lblSourceFileName = new System.Windows.Forms.Label();
+            cbShows = new System.Windows.Forms.ComboBox();
+            SuspendLayout();
             // 
             // btnUseSelectedMovie
             // 
-            this.btnUseSelectedMovie.Location = new System.Drawing.Point(311, 50);
-            this.btnUseSelectedMovie.Name = "btnUseSelectedMovie";
-            this.btnUseSelectedMovie.Size = new System.Drawing.Size(75, 46);
-            this.btnUseSelectedMovie.TabIndex = 0;
-            this.btnUseSelectedMovie.Text = "Use";
-            this.btnUseSelectedMovie.UseVisualStyleBackColor = true;
-            this.btnUseSelectedMovie.Click += new System.EventHandler(this.btnUseSelectedMovie_Click);
+            btnUseSelectedMovie.Location = new System.Drawing.Point(363, 58);
+            btnUseSelectedMovie.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnUseSelectedMovie.Name = "btnUseSelectedMovie";
+            btnUseSelectedMovie.Size = new System.Drawing.Size(88, 53);
+            btnUseSelectedMovie.TabIndex = 0;
+            btnUseSelectedMovie.Text = "Use";
+            btnUseSelectedMovie.UseVisualStyleBackColor = true;
+            btnUseSelectedMovie.Click += btnUseSelectedMovie_Click;
             // 
             // btnNotAMovie
             // 
-            this.btnNotAMovie.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNotAMovie.Location = new System.Drawing.Point(276, 154);
-            this.btnNotAMovie.Name = "btnNotAMovie";
-            this.btnNotAMovie.Size = new System.Drawing.Size(110, 23);
-            this.btnNotAMovie.TabIndex = 2;
-            this.btnNotAMovie.Text = "Not A Movie";
-            this.btnNotAMovie.UseVisualStyleBackColor = true;
-            this.btnNotAMovie.Click += new System.EventHandler(this.Ignore_Click);
+            btnNotAMovie.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            btnNotAMovie.Location = new System.Drawing.Point(322, 178);
+            btnNotAMovie.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnNotAMovie.Name = "btnNotAMovie";
+            btnNotAMovie.Size = new System.Drawing.Size(128, 27);
+            btnNotAMovie.TabIndex = 2;
+            btnNotAMovie.Text = "Not A Movie";
+            btnNotAMovie.UseVisualStyleBackColor = true;
+            btnNotAMovie.Click += Ignore_Click;
             // 
             // btnNewMovie
             // 
-            this.btnNewMovie.Location = new System.Drawing.Point(311, 102);
-            this.btnNewMovie.Name = "btnNewMovie";
-            this.btnNewMovie.Size = new System.Drawing.Size(75, 46);
-            this.btnNewMovie.TabIndex = 3;
-            this.btnNewMovie.Text = "New Movie";
-            this.btnNewMovie.UseVisualStyleBackColor = true;
-            this.btnNewMovie.Click += new System.EventHandler(this.btnNewMovie_Click);
+            btnNewMovie.Location = new System.Drawing.Point(363, 118);
+            btnNewMovie.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnNewMovie.Name = "btnNewMovie";
+            btnNewMovie.Size = new System.Drawing.Size(88, 53);
+            btnNewMovie.TabIndex = 3;
+            btnNewMovie.Text = "New Movie";
+            btnNewMovie.UseVisualStyleBackColor = true;
+            btnNewMovie.Click += btnNewMovie_Click;
             // 
             // lnkOpenFolder
             // 
-            this.lnkOpenFolder.AutoSize = true;
-            this.lnkOpenFolder.Location = new System.Drawing.Point(17, 162);
-            this.lnkOpenFolder.Name = "lnkOpenFolder";
-            this.lnkOpenFolder.Size = new System.Drawing.Size(118, 13);
-            this.lnkOpenFolder.TabIndex = 5;
-            this.lnkOpenFolder.TabStop = true;
-            this.lnkOpenFolder.Text = "Open Containing Folder";
-            this.lnkOpenFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkOpenLeftFolder_LinkClicked);
+            lnkOpenFolder.AutoSize = true;
+            lnkOpenFolder.Location = new System.Drawing.Point(20, 187);
+            lnkOpenFolder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lnkOpenFolder.Name = "lnkOpenFolder";
+            lnkOpenFolder.Size = new System.Drawing.Size(134, 15);
+            lnkOpenFolder.TabIndex = 5;
+            lnkOpenFolder.TabStop = true;
+            lnkOpenFolder.Text = "Open Containing Folder";
+            lnkOpenFolder.LinkClicked += lnkOpenLeftFolder_LinkClicked;
             // 
             // lblNameRight
             // 
-            this.lblNameRight.AutoSize = true;
-            this.lblNameRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNameRight.Location = new System.Drawing.Point(11, 162);
-            this.lblNameRight.Name = "lblNameRight";
-            this.lblNameRight.Size = new System.Drawing.Size(0, 13);
-            this.lblNameRight.TabIndex = 14;
+            lblNameRight.AutoSize = true;
+            lblNameRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            lblNameRight.Location = new System.Drawing.Point(13, 187);
+            lblNameRight.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblNameRight.Name = "lblNameRight";
+            lblNameRight.Size = new System.Drawing.Size(0, 13);
+            lblNameRight.TabIndex = 14;
             // 
             // txtNameLeft
             // 
-            this.txtNameLeft.AutoSize = true;
-            this.txtNameLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtNameLeft.Location = new System.Drawing.Point(11, 33);
-            this.txtNameLeft.Name = "txtNameLeft";
-            this.txtNameLeft.Size = new System.Drawing.Size(0, 13);
-            this.txtNameLeft.TabIndex = 12;
+            txtNameLeft.AutoSize = true;
+            txtNameLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            txtNameLeft.Location = new System.Drawing.Point(13, 38);
+            txtNameLeft.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            txtNameLeft.Name = "txtNameLeft";
+            txtNameLeft.Size = new System.Drawing.Size(0, 13);
+            txtNameLeft.TabIndex = 12;
             // 
             // label10
             // 
-            this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(11, 9);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(70, 13);
-            this.label10.TabIndex = 16;
-            this.label10.Text = "Reviewing:";
+            label10.AutoSize = true;
+            label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            label10.Location = new System.Drawing.Point(13, 10);
+            label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size(70, 13);
+            label10.TabIndex = 16;
+            label10.Text = "Reviewing:";
             // 
             // lblSourceFileName
             // 
-            this.lblSourceFileName.AutoSize = true;
-            this.lblSourceFileName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSourceFileName.Location = new System.Drawing.Point(29, 22);
-            this.lblSourceFileName.Name = "lblSourceFileName";
-            this.lblSourceFileName.Size = new System.Drawing.Size(0, 13);
-            this.lblSourceFileName.TabIndex = 17;
+            lblSourceFileName.AutoSize = true;
+            lblSourceFileName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            lblSourceFileName.Location = new System.Drawing.Point(34, 25);
+            lblSourceFileName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblSourceFileName.Name = "lblSourceFileName";
+            lblSourceFileName.Size = new System.Drawing.Size(0, 13);
+            lblSourceFileName.TabIndex = 17;
             // 
             // cbShows
             // 
-            this.cbShows.FormattingEnabled = true;
-            this.cbShows.Location = new System.Drawing.Point(32, 59);
-            this.cbShows.Name = "cbShows";
-            this.cbShows.Size = new System.Drawing.Size(273, 21);
-            this.cbShows.TabIndex = 18;
+            cbShows.FormattingEnabled = true;
+            cbShows.Location = new System.Drawing.Point(37, 68);
+            cbShows.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cbShows.Name = "cbShows";
+            cbShows.Size = new System.Drawing.Size(318, 23);
+            cbShows.TabIndex = 18;
             // 
             // LinkMovie
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.btnNotAMovie;
-            this.ClientSize = new System.Drawing.Size(390, 193);
-            this.ControlBox = false;
-            this.Controls.Add(this.cbShows);
-            this.Controls.Add(this.lblSourceFileName);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.lblNameRight);
-            this.Controls.Add(this.txtNameLeft);
-            this.Controls.Add(this.lnkOpenFolder);
-            this.Controls.Add(this.btnNewMovie);
-            this.Controls.Add(this.btnNotAMovie);
-            this.Controls.Add(this.btnUseSelectedMovie);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "LinkMovie";
-            this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Choose Movie";
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            CancelButton = btnNotAMovie;
+            ClientSize = new System.Drawing.Size(455, 223);
+            ControlBox = false;
+            Controls.Add(cbShows);
+            Controls.Add(lblSourceFileName);
+            Controls.Add(label10);
+            Controls.Add(lblNameRight);
+            Controls.Add(txtNameLeft);
+            Controls.Add(lnkOpenFolder);
+            Controls.Add(btnNewMovie);
+            Controls.Add(btnNotAMovie);
+            Controls.Add(btnUseSelectedMovie);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "LinkMovie";
+            ShowIcon = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "Choose Movie";
+            Load += LinkMovie_Load;
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
