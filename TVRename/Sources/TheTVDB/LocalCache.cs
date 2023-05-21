@@ -314,7 +314,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             LOGGER.Warn(
                 $"Not updating as update time is 0. Need to do a Full Refresh on {Series.Values.Count(info => !info.IsSearchResultOnly)} shows. {LatestUpdateTime}");
 
-            return GetUpdatesManually(); // that's it for now
+            return GetUpdatesManually(); 
         }
 
         if (updateFromEpochTime == 0)
@@ -328,7 +328,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             SayNothing();
             LOGGER.Warn("Last update from TVDB was more than 10 weeks ago, so doing a full refresh.");
-            return GetUpdatesManually(); // that's it for now
+            return GetUpdatesManually(); 
         }
 
         try
@@ -376,6 +376,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private bool GetUpdatesManually()
     {
+        long time = DateTime.UtcNow.ToUnixTime();
         IEnumerable<CachedSeriesInfo> seriesToUpdate = ServerTvAccuracyCheck();
         foreach (CachedSeriesInfo s in seriesToUpdate)
         {
@@ -389,7 +390,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             this.ForgetMovie(s);
             s.Dirty = true;
         }
-
+        LatestUpdateTime.RegisterServerUpdate(time);
         return true;
     }
 
