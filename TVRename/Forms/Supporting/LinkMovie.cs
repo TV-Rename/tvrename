@@ -56,9 +56,4 @@ public partial class LinkMovie : Form
         DialogResult = DialogResult.OK;
         Close();
     }
-
-    private void LinkMovie_Load(object sender, EventArgs e)
-    {
-
-    }
 }

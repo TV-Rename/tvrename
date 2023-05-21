@@ -159,7 +159,6 @@ namespace TVRename
             ShowIcon = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Choose Movie";
-            Load += LinkMovie_Load;
             ResumeLayout(false);
             PerformLayout();
         }
