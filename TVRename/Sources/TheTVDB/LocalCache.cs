@@ -286,7 +286,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    public override bool GetUpdates(IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
+    public override bool GetUpdates(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TheTVDB cache");
         AddPlaceholders(ss);
@@ -311,11 +311,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         if (updateFromEpochTime == 0 && Series.Values.Any(info => !info.IsSearchResultOnly))
         {
             SayNothing();
-            LOGGER.Error(
+            LOGGER.Warn(
                 $"Not updating as update time is 0. Need to do a Full Refresh on {Series.Values.Count(info => !info.IsSearchResultOnly)} shows. {LatestUpdateTime}");
 
-            ForgetEverything();
-            return true; // that's it for now
+            return GetUpdatesManually(); // that's it for now
         }
 
         if (updateFromEpochTime == 0)
@@ -323,6 +322,13 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             SayNothing();
             LOGGER.Info("We have no shows yet to get TVDB updates for. Not getting latest updates.");
             return true; // that's it for now
+        }
+
+        if (DateTime.UtcNow - updateFromEpochTime.FromUnixTime() > 10.Weeks())
+        {
+            SayNothing();
+            LOGGER.Warn("Last update from TVDB was more than 10 weeks ago, so doing a full refresh.");
+            return GetUpdatesManually(); // that's it for now
         }
 
         try
@@ -364,6 +370,25 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         UpgradeDirtyLocks();
 
         SayNothing();
+
+        return true;
+    }
+
+    private bool GetUpdatesManually()
+    {
+        IEnumerable<CachedSeriesInfo> seriesToUpdate = ServerTvAccuracyCheck();
+        foreach (CachedSeriesInfo s in seriesToUpdate)
+        {
+            this.ForgetShow(s);
+            s.Dirty = true;
+        }
+       
+        IEnumerable<CachedMovieInfo> moviesToUpdate = Instance.ServerMovieAccuracyCheck();
+        foreach (CachedMovieInfo s in moviesToUpdate)
+        {
+            this.ForgetMovie(s);
+            s.Dirty = true;
+        }
 
         return true;
     }

@@ -152,5 +152,5 @@ public abstract class MediaCache
     public abstract int PrimaryKey(ISeriesSpecifier ss);
     public abstract string CacheSourceName();
     public abstract void ReConnect(bool b);
-    public abstract bool GetUpdates(IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts);
+    public abstract bool GetUpdates(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts);
 }

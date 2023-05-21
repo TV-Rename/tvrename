@@ -252,7 +252,7 @@ public class CacheUpdater : IDisposable
 
             if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TVmaze))
             {
-                if (!TVmaze.LocalCache.Instance.GetUpdates(downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TVmaze), showErrorMsgBox,
+                if (!TVmaze.LocalCache.Instance.GetUpdates(downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TVmaze).ToList(), showErrorMsgBox,
                         cts))
                 {
                     DownloadDone = true;
@@ -263,7 +263,7 @@ public class CacheUpdater : IDisposable
 
             if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
             {
-                if (!TheTVDB.LocalCache.Instance.GetUpdates(downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB), showErrorMsgBox,
+                if (!TheTVDB.LocalCache.Instance.GetUpdates(downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB).ToList(), showErrorMsgBox,
                         cts))
                 {
                     DownloadDone = true;
@@ -274,7 +274,7 @@ public class CacheUpdater : IDisposable
 
             if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TMDB))
             {
-                if (!TMDB.LocalCache.Instance.GetUpdates(downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TMDB), showErrorMsgBox,
+                if (!TMDB.LocalCache.Instance.GetUpdates(downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TMDB).ToList(), showErrorMsgBox,
                         cts))
                 {
                     DownloadDone = true;
