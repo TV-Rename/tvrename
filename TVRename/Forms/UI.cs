@@ -5423,6 +5423,11 @@ public partial class UI : Form, IDialogParent
 
     public void ProcessReceivedArgs(string[] args)
     {
+        if (!IsHandleCreated)
+        {
+            Logger.Warn($"Could not pass the parameters {args.ToCsv()} to the running instance as the handle for the window has not been created.");
+            return;
+        }
         Invoke((MethodInvoker)delegate
         {
             ReceiveArgs(args);

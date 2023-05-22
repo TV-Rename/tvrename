@@ -209,6 +209,9 @@
     <EmbeddedResource Update="Forms\Supporting\CopyMoveProgress.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Supporting\Filters.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Forms\Tools\OrphanFiles.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
