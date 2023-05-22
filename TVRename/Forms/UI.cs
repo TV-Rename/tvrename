@@ -4263,6 +4263,12 @@ public partial class UI : Form, IDialogParent
         }
 
         UpdateNotification unForm = new(update);
+
+        if (IsDisposed || !IsHandleCreated)
+        {
+            Logger.Warn("Could not tell the user about the new update as the UI has closed");
+            return;
+        }
         unForm.ShowDialog(this);
         if (unForm.DialogResult != DialogResult.Abort)
         {
@@ -4271,6 +4277,7 @@ public partial class UI : Form, IDialogParent
 
         //User has decided to download and quit
         Logger.Info("Downloading New Release and Quiting");
+
         //We need to quit!
         Close();
     }
