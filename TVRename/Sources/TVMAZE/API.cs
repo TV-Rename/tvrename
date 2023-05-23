@@ -125,44 +125,54 @@ internal static class API
         }
         catch (AggregateException ex1) when (ex1.InnerException is HttpRequestException wex)
         {
-            if (wex.Is404())
+            if (!wex.Is404())
             {
-                string? tvdBimbd = TheTVDB.LocalCache.Instance.GetSeries(source.TvdbId)?.Imdb;
-                if (!source.ImdbCode.HasValue() && !tvdBimbd.HasValue())
-                {
-                    throw new MediaNotFoundException(source, $"Cant find a show with TVDB Id {source.TvdbId} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
-                }
-                string? imdbCode = source.ImdbCode ?? tvdBimbd;
-                try
-                {
-                    JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?imdb=" + imdbCode, 3, 2);
-                    int tvMazeId = r.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
-                    JToken externalsToken = GetChild(r, "externals");
-                    JToken tvdbToken = GetChild(externalsToken, "thetvdb");
-                    int tvdb = tvdbToken.Type == JTokenType.Null ? -1 : (int)tvdbToken;
-                    Logger.Error($"TVMaze Data issue: {tvMazeId} has the wrong TVDB Id based on {imdbCode}. Should be {source}, currently is {tvdb}.");
-
-                    source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
-                    return;
-                }
-                catch (HttpRequestException wex2)
-                {
-                    if (wex2.Is404() && TvMazeIsUp())
-                    {
-                        throw new MediaNotFoundException(source, $"Please add show with imdb={imdbCode} and tvdb={source.TvdbId} to tvMaze, or use TVDB as the source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
-                    }
-                    throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={source.TvdbId} {wex.Message}");
-                }
-                catch (AggregateException ex2) when (ex2.InnerException is HttpRequestException wex2)
-                {
-                    if (wex2.Is404() && TvMazeIsUp())
-                    {
-                        throw new MediaNotFoundException(source, $"Please add show with imdb={imdbCode} and tvdb={source.TvdbId} to tvMaze, or use TVDB as the source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
-                    }
-                    throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={source.TvdbId} {wex.Message}");
-                }
+                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}");
             }
-            throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}");
+
+            string? tvdBimbd = TheTVDB.LocalCache.Instance.GetSeries(source.TvdbId)?.Imdb;
+            if (!source.ImdbCode.HasValue() && !tvdBimbd.HasValue())
+            {
+                throw new MediaNotFoundException(source, $"Cant find a show with TVDB Id {source.TvdbId} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+            }
+            string? imdbCode = source.ImdbCode ?? tvdBimbd;
+            try
+            {
+                JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?imdb=" + imdbCode, 3, 2);
+                int tvMazeId = r.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
+                JToken externalsToken = GetChild(r, "externals");
+                JToken tvdbToken = GetChild(externalsToken, "thetvdb");
+                int tvdb = tvdbToken.Type == JTokenType.Null ? -1 : (int)tvdbToken;
+
+                if (source.TvdbId > 0)
+                {
+                    Logger.Error(
+                        $"TVMaze Data issue: {tvMazeId} has the wrong TVDB Id based on {imdbCode}. Should be {source.TvdbId}, currently is {tvdb}. [{source}]");
+                }
+
+                source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
+            }
+            catch (HttpRequestException wex2)
+            {
+                RaiseException(wex2, imdbCode);
+            }
+            catch (AggregateException ex2) when (ex2.InnerException is HttpRequestException wex2)
+            {
+                RaiseException(wex2, imdbCode);
+            }
+        }
+
+        void RaiseException(HttpRequestException wex2, string? imdbCode)
+        {
+            if (wex2.Is404() && TvMazeIsUp())
+            {
+                throw new MediaNotFoundException(source,
+                    $"Please add show with imdb={imdbCode} and tvdb={source.TvdbId} to tvMaze, or use TVDB as the source for that show.",
+                    TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+            }
+
+            throw new SourceConnectivityException(
+                $"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={source.TvdbId} {wex2.Message}");
         }
     }
 
