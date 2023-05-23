@@ -840,46 +840,45 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         Say(GenerateMessage(code.TvdbId, episodesToo, bannersToo));
 
-        CachedSeriesInfo? si;
         try
         {
-            si = DownloadSeriesInfo(code, locale, showErrorMsgBox);
+            CachedSeriesInfo? si = DownloadSeriesInfo(code, locale, showErrorMsgBox);
+            this.AddSeriesToCache(si);
+            lock (SERIES_LOCK)
+            {
+                si = GetSeries(code.TvdbId);
+            }
+
+            //Now deal with obtaining any episodes for the cachedSeries (we then group them into seasons)
+            //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
+            //We push the results into a bag to use later
+            //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
+
+            if (si != null)
+            {
+                ProcessedSeason.SeasonType st = code is ShowConfiguration sc
+                    ? sc.Order
+                    : ProcessedSeason.SeasonType.aired;
+
+                if (episodesToo || forceReload)
+                {
+                    ReloadEpisodesV4(code, locale, si, st);
+                }
+                else
+                {
+                    //The Series has changed, so we need to check for any new episodes
+                    CheckForNewEpisodes(code, locale, si, st);
+                }
+            }
+
+            HaveReloaded(code.TvdbId);
         }
         catch (SourceConnectivityException)
         {
             SayNothing();
             return null;
         }
-        this.AddSeriesToCache(si);
-        lock (SERIES_LOCK)
-        {
-            si = GetSeries(code.TvdbId);
-        }
-
-        //Now deal with obtaining any episodes for the cachedSeries (we then group them into seasons)
-        //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
-        //We push the results into a bag to use later
-        //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
-
-        if (si != null)
-        {
-            ProcessedSeason.SeasonType st = code is ShowConfiguration sc
-                ? sc.Order
-                : ProcessedSeason.SeasonType.aired;
-
-            if (episodesToo || forceReload)
-            {
-                ReloadEpisodesV4(code, locale, si, st);
-            }
-            else 
-            {
-                //The Series has changed, so we need to check for any new episodes
-                CheckForNewEpisodes(code, locale, si, st);
-            }
-        }
-
-        HaveReloaded(code.TvdbId);
-
+        
         Series.TryGetValue(code.TvdbId, out CachedSeriesInfo? returnValue);
         SayNothing();
         return returnValue;
@@ -919,10 +918,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
                     GenerateAddEpisodeV4(code, locale, si, x.jsonData, st);
                 });
-        }
-        catch (SourceConnectivityException sce)
-        {
-            LOGGER.Error(sce);
         }
         catch (SourceConsistencyException sce)
         {
@@ -1247,10 +1242,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             {
                 ReloadEpisode(code, locale, si, order, s);
             }
-            catch (SourceConnectivityException sce)
-            {
-                LOGGER.Error(sce);
-            }
             catch (SourceConsistencyException sce)
             {
                 LOGGER.Error(sce);
@@ -1313,7 +1304,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (SourceConnectivityException sce1)
         {
-            LOGGER.Error(sce1);
+            LOGGER.Warn(sce1);
         }
         catch (SourceConsistencyException sce1)
         {
