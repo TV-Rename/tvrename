@@ -117,6 +117,10 @@ public static class VersionUpdater
         {
             Logger.LogWebException("Failed to contact GitHub to identify new releases", wex);
         }
+        catch (HttpRequestException wex)
+        {
+            Logger.LogHttpRequestException("Failed to contact GitHub to identify new releases", wex);
+        }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             Logger.LogHttpRequestException("Failed to contact GitHub to identify new releases", wex);

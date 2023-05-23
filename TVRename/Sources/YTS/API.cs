@@ -30,6 +30,11 @@ public static class API
             Logger.LogWebException($"Could not {message} from YTS due to", ex);
             throw new SourceConnectivityException(ex.Message);
         }
+        catch (HttpRequestException wex)
+        {
+            Logger.LogHttpRequestException("Could not {message} from YTS due to", wex);
+            throw new SourceConnectivityException(wex.Message);
+        }
         catch (System.IO.IOException iex)
         {
             Logger.Error($"Could not {message} from YTS due to {iex.Message}");

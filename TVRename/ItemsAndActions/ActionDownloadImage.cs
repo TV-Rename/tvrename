@@ -96,7 +96,7 @@ public class ActionDownloadImage : ActionDownload
         {
             byte[]? theData = Si.Provider == TVDoc.ProviderType.TheTVDB
                 ? TheTVDB.LocalCache.Instance.GetTvdbDownload(path)
-                : HttpHelper.Download(path, false);
+                : HttpHelper.Download(path);
 
             if (theData is null || theData.Length == 0)
             {

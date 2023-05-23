@@ -58,16 +58,12 @@ internal static class API
         return url.StartsWith("banners/", StringComparison.Ordinal) ? mirr + url : mirr + "banners/" + url;
     }
 
-    public static byte[] GetTvdbDownload(string url, bool forceReload)
+    public static byte[] GetTvdbDownload(string url)
     {
         string theUrl = GetImageURL(url);
 
         HttpClient wc = new();
 
-        if (forceReload)
-        {
-            //TODO wc. = new HttpRequestCachePolicy(HttpRequestCacheLevel.Reload);
-        }
         Task<byte[]> task = Task.Run(async () => await wc.GetByteArrayAsync(url));
 
         byte[] r = task.Result;
@@ -370,6 +366,11 @@ internal static class API
             //no images for chosen language
             Logger.LogWebException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}", wex);
         }
+        catch (HttpRequestException hex)
+        {
+            //no images for chosen language
+            Logger.LogHttpRequestException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}", hex);
+        }
         catch (IOException iox)
         {
             //no images for chosen language
@@ -381,12 +382,6 @@ internal static class API
             Logger.LogHttpRequestException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}", wex);
         }
         return new List<string>();
-    }
-
-    public static JObject? SearchTvShow(string text, string defaultLanguageCode)
-    {
-        string uri = TokenProvider.TVDB_API_URL + "/search/series";
-        return JsonHttpGetRequest(uri, new Dictionary<string, string?> { { "name", text } }, TokenProvider, defaultLanguageCode, false);
     }
 
     public static JObject? SearchV4(string text, string defaultLanguageCode, MediaConfiguration.MediaType media)
@@ -432,6 +427,19 @@ internal static class API
 
             return false;
         }
+        catch (HttpRequestException hex)
+        {
+            //we expect an Unauthorised response - so we know the site is up
+
+            return hex.StatusCode switch
+            {
+                HttpStatusCode.Unauthorized => true,
+                HttpStatusCode.Forbidden => true,
+                HttpStatusCode.NotFound => false,
+                HttpStatusCode.OK => true,
+                _ => false
+            };
+        }
         catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
         {
             //we expect an Unauthorised response - so we know the site is up
@@ -469,6 +477,10 @@ internal static class API
             catch (WebException webEx)
             {
                 Logger.LogWebException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}:", webEx);
+            }
+            catch (HttpRequestException hex)
+            {
+                Logger.LogHttpRequestException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}:", hex);
             }
             catch (IOException ioe)
             {
@@ -584,6 +596,23 @@ internal static class API
 
             Logger.LogWebException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", webEx);
             throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {webEx.Message}");
+        }
+        catch (HttpRequestException wex)
+        {
+            if (wex.Is404())
+            {
+                Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404) via {uri}.");
+
+                if (TvdbIsUp() && code != null)
+                {
+                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB via {uri}. Please Update";
+                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
+                        TVDoc.ProviderType.TheTVDB, type);
+                }
+            }
+
+            Logger.LogHttpRequestException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", wex);
+            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {wex.Message}");
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {

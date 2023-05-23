@@ -33,6 +33,11 @@ internal static class API
             Logger.LogWebException("Could not get updates from TV Maze due to", ex);
             throw new SourceConnectivityException(ex.Message);
         }
+        catch (HttpRequestException wex)
+        {
+            Logger.LogHttpRequestException("Could not get updates from TV Maze due to", wex);
+            throw new SourceConnectivityException(wex.Message);
+        }
         catch (System.IO.IOException iex)
         {
             Logger.Error($"Could not get updates from TV Maze due to {iex.Message}");
@@ -71,6 +76,11 @@ internal static class API
         catch (WebException wex)
         {
             Logger.LogWebException($"Could not search for show '{searchText}' from TV Maze due to", wex);
+            throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
+        }
+        catch (HttpRequestException wex)
+        {
+            Logger.LogHttpRequestException($"Could not search for show '{searchText}' from TV Maze due to", wex);
             throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
         }
         catch (System.IO.IOException wex)
@@ -183,6 +193,10 @@ internal static class API
             return HttpHelper.HttpGetRequestWithRetry(APIRoot + "/singlesearch/shows?q=girls", 5, 1).HasValues;
         }
         catch (WebException)
+        {
+            return false;
+        }
+        catch (HttpRequestException)
         {
             return false;
         }

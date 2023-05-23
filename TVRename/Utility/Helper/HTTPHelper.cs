@@ -119,7 +119,7 @@ public static class HttpHelper
         if (!contentType.IsNullOrWhitespace())
         {
             newClient.DefaultRequestHeaders.Accept
-                .Add(new MediaTypeWithQualityHeaderValue(contentType!));
+                .Add(new MediaTypeWithQualityHeaderValue(contentType));
         }
 
         if (!token.IsNullOrWhitespace())
@@ -248,15 +248,9 @@ public static class HttpHelper
 
     public static bool Is404(this HttpRequestException ex) => ex.StatusCode is HttpStatusCode.NotFound;
 
-    public static byte[] Download(string url, bool forceReload)
+    public static byte[] Download(string url)
     {
         HttpClient wc = new();
-
-        if (forceReload)
-        {
-            //TODO wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.Reload);
-        }
-
         return wc.GetByteArrayAsync(url).Result;
     }
 

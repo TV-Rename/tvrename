@@ -207,7 +207,7 @@ public static class StringExtensions
         return char.ToUpper(str[0]) + str.RemoveFirstCharacter().ToLower();
     }
 
-    public static bool IsNullOrWhitespace(this string? text) => string.IsNullOrWhiteSpace(text);
+    public static bool IsNullOrWhitespace([NotNullWhen(false)]  this string? text) => string.IsNullOrWhiteSpace(text);
 
     public static string RemoveLastCharacter(this string instr)
     {

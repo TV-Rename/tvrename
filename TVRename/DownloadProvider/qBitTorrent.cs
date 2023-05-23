@@ -316,6 +316,13 @@ public class qBitTorrent : IDownloadProvider
 
             throw;
         }
+        catch (HttpRequestException wex)
+        {
+            Logger.Warn(
+                $"Could not connect to {url} to download {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
+
+            throw;
+        }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             Logger.Warn(
