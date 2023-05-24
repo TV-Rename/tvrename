@@ -46,6 +46,7 @@ internal class MissingXML : MissingActionListExporter
                 writer.WriteStartElement("MissingItem");
 
                 writer.WriteElement("id", missing.Show.TvdbCode);
+                writer.WriteElement("imdbCode", missing.Show.ImdbCode);
                 writer.WriteElement("title", missing.Show.Name);
                 int? missingSeasonNumberAsInt = missing.SeasonNumberAsInt;
                 if (missingSeasonNumberAsInt != null)
@@ -60,6 +61,7 @@ internal class MissingXML : MissingActionListExporter
                 writer.WriteStartElement("MissingItem");
 
                 writer.WriteElement("id", missing.MissingEpisode.Show.TvdbCode);
+                writer.WriteElement("imdbCode", missing.MissingEpisode.Show.ImdbCode);
                 writer.WriteElement("title", missing.MissingEpisode.TheCachedSeries.Name);
                 writer.WriteElement("season", missing.MissingEpisode.AppropriateSeasonNumber.Pad());
                 writer.WriteElement("episode", missing.MissingEpisode.AppropriateEpNum.Pad());
