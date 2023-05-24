@@ -39,13 +39,26 @@ public static class CustomMovieName
 
     public static string DirectoryNameFor(MovieConfiguration? m, string styleString)
     {
-        if (styleString.StartsWith("{collectionFolder}", StringComparison.OrdinalIgnoreCase))
+        const string COLLECTION_TAG = "{collectionFolder}";
+
+        if (styleString.Equals(COLLECTION_TAG, StringComparison.OrdinalIgnoreCase))
         {
             if (m?.InCollection ?? false)
             {
-                return m.CachedMovie?.CollectionName + "\\" + NameFor(m, styleString.RemoveFirst("{collectionFolder}/".Length), false, false);
+                return m.CachedMovie?.CollectionName + "\\";
             }
-            return NameFor(m, styleString.RemoveFirst("{collectionFolder}/".Length), false, false);
+
+            return string.Empty;
+        }
+
+        const string COLLECTION_TAGFOLDER = COLLECTION_TAG + "/";
+        if (styleString.StartsWith(COLLECTION_TAGFOLDER, StringComparison.OrdinalIgnoreCase))
+        {
+            if (m?.InCollection ?? false)
+            {
+                return m.CachedMovie?.CollectionName + "\\" + NameFor(m, styleString.RemoveFirst(COLLECTION_TAGFOLDER.Length), false, false);
+            }
+            return NameFor(m, styleString.RemoveFirst(COLLECTION_TAGFOLDER.Length), false, false);
         }
         return NameFor(m, styleString, false, false);
     }
