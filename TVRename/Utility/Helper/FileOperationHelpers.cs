@@ -57,14 +57,14 @@ public static class FileOperationExtensions
                 }
                 else
                 {
-                    Logger.Error(e, $"Could not open URL: {url}");
+                    Logger.Warn($"Could not open URL: {url} - {e.Message}");
                     return false;
                 }
             }
         }
         catch (Exception e)
         {
-            Logger.Error(e, $"Could not open URL: {url}");
+            Logger.Warn( $"Could not open URL: {url} - {e.Message}");
             return false;
         }
 

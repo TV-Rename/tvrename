@@ -54,13 +54,18 @@ internal static class CachePersistor
             .Handle<Exception>()
             .Retry(3, (exception, retryCount) =>
             {
-                Logger.Error(exception, $"Retry {retryCount}/3 to save {cacheFile.FullName}.");
+                Logger.Warn(exception, $"Retry {retryCount}/3 to save {cacheFile.FullName}.");
             });
 
-        retryPolicy.Execute(() =>
+        try
         {
-            SaveCacheInternal(series, movies, cacheFile, timestamp);
-        });
+            retryPolicy.Execute(() => { SaveCacheInternal(series, movies, cacheFile, timestamp); });
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Complete failure to save {cacheFile.FullName}. {e.Message}");
+            //todo - put up user box to ask them to fix disk if out of space
+        }
     }
     private static void SaveCacheInternal(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp)
     {
@@ -79,9 +84,13 @@ internal static class CachePersistor
         {
             Logger.Warn(e, $"Failed to rotate files for Cache to {cacheFile.FullName}");
         }
+        catch (System.IO.IOException e)
+        {
+            Logger.Warn(e, $"Failed to rotate files for Cache to {cacheFile.FullName}");
+        }
         catch (Exception e)
         {
-            Logger.Error(e, $"Failed to rotate files for Cache to {cacheFile.FullName}");
+            Logger.Warn(e, $"Failed to rotate files for Cache to {cacheFile.FullName}");
         }
         try
         {
@@ -89,7 +98,7 @@ internal static class CachePersistor
         }
         catch (Exception e)
         {
-            Logger.Error(e, $"Failed to save Cache to {cacheFile.FullName}");
+            Logger.Warn(e, $"Failed to save Cache to {cacheFile.FullName}");
             throw;
         }
     }

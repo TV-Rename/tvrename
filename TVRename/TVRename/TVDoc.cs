@@ -547,14 +547,24 @@ public class TVDoc : IDisposable
     // ReSharper disable once InconsistentNaming
     public void WriteXMLSettings()
     {
-        Policy retryPolicy = Policy
-            .Handle<Exception>()
-            .Retry(3, (exception, retryCount) =>
-            {
-                Logger.Error(exception, $"Retry {retryCount}/3 to save {PathManager.TVDocSettingsFile.FullName}.");
-            });
+        try
+        {
+            Policy retryPolicy = Policy
+                .Handle<Exception>()
+                .Retry(3,
+                    (exception, retryCount) =>
+                    {
+                        Logger.Warn(exception,
+                            $"Retry {retryCount}/3 to save {PathManager.TVDocSettingsFile.FullName}.");
+                    });
 
-        retryPolicy.Execute(WriteXmlSettingsInternal);
+            retryPolicy.Execute(WriteXmlSettingsInternal);
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Complete failure to save {PathManager.TVDocSettingsFile.FullName}. {e.Message}");
+            //todo - put up user box to ask them to fix disk if out of space
+        }
     }
     private void WriteXmlSettingsInternal()
     {
