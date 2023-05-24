@@ -70,18 +70,6 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         ui = new(doc, (TVRenameSplash)SplashScreen, !parameters.Unattended && !parameters.Hide && Environment.UserInteractive);
         ui.Text = ui.Text + " " + Helpers.DisplayVersion;
 
-        // Bind IPC actions to the form, this allows another instance to trigger form actions
-        /*
-        try
-        {
-            RemoteClient.Bind(ui);
-        }
-        catch (RemotingException ex)
-        {
-            Logger.Warn(
-                $"Could not create IPC Port: {ex.Message} : TV Rename will not be able to accept incoming commands");
-        }
-*/
         MainForm = ui;
     }
 
