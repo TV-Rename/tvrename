@@ -305,83 +305,18 @@ internal static class API
             return transName;
         }
 
-        if (transName.HasValue() && transName.IsPlaceholderName() && originalName.HasValue() && !originalName.IsPlaceholderName())
-        {
-            //issue
-        }
-
         if (originalName.HasValue() && !originalName.IsPlaceholderName())
         {
             return originalName;
         }
 
+        if (transName.HasValue() && transName.IsPlaceholderName() && originalName.HasValue() && !originalName.IsPlaceholderName())
+        {
+            //issue
+            return originalName;
+        }
+
         return transName ?? originalName ?? string.Empty;
-    }
-
-    public static JObject? GetSeriesActors(int seriesId)
-    {
-        string url = $"{TokenProvider.TVDB_API_URL}/series/{seriesId}/actors";
-        return JsonHttpGetRequest(url, null, TokenProvider, false);
-    }
-
-    // ReSharper disable once UnusedParameter.Global
-#pragma warning disable IDE0060 // Remove unused parameter
-    internal static string BuildUrl(int apiKey, string lang)
-#pragma warning restore IDE0060 // Remove unused parameter
-    //would rather make this private to hide api key from outside world
-    //https://forum.kodi.tv/showthread.php?tid=323588
-    //says that we need a format like this:
-    //https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json
-    {
-        return $"{TokenProvider.TVDB_API_URL}/login?"
-               + "{'apikey':'" + TokenProvider.TVDB_API_KEY + "','id':" + apiKey + "}"
-               + "|Content-Type=application/json";
-    }
-
-    public static IEnumerable<string> GetImageTypes(int code, string requestedLanguageCode)
-    {
-        string uriImages = $"{TokenProvider.TVDB_API_URL}/series/{code}/images";
-
-        try
-        {
-            JObject? jsonEpisodeSearchResponse = JsonHttpGetRequest(
-                uriImages, null, TokenProvider,
-                requestedLanguageCode, false);
-
-            if (jsonEpisodeSearchResponse?["data"] is JObject a)
-            {
-                List<string> imageTypes = new();
-                foreach (KeyValuePair<string, JToken?> imageType in a)
-                {
-                    if ((int?)imageType.Value > 0)
-                    {
-                        imageTypes.Add(imageType.Key);
-                    }
-                }
-                return imageTypes;
-            }
-        }
-        catch (WebException wex)
-        {
-            //no images for chosen language
-            Logger.LogWebException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}", wex);
-        }
-        catch (HttpRequestException hex)
-        {
-            //no images for chosen language
-            Logger.LogHttpRequestException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}", hex);
-        }
-        catch (IOException iox)
-        {
-            //no images for chosen language
-            Logger.LogIoException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}", iox);
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            //no images for chosen language
-            Logger.LogHttpRequestException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}", wex);
-        }
-        return new List<string>();
     }
 
     public static JObject? SearchV4(string text, string defaultLanguageCode, MediaConfiguration.MediaType media)
@@ -455,52 +390,6 @@ internal static class API
         }
         return jsonResponse?.HasValues ?? false;
     }
-
-    public static List<JObject> GetImages(int code, string languageCode, IEnumerable<string> imageTypes)
-    {
-        string uriImagesQuery = $"{TokenProvider.TVDB_API_URL}/series/{code}/images/query";
-        List<JObject> returnList = new();
-        foreach (string imageType in imageTypes)
-        {
-            try
-            {
-                JObject? jsonImageResponse = JsonHttpGetRequest(
-                    uriImagesQuery,
-                    new Dictionary<string, string?> { { "keyType", imageType } }, TokenProvider,
-                    languageCode, false);
-
-                if (jsonImageResponse != null)
-                {
-                    returnList.Add(jsonImageResponse);
-                }
-            }
-            catch (WebException webEx)
-            {
-                Logger.LogWebException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}:", webEx);
-            }
-            catch (HttpRequestException hex)
-            {
-                Logger.LogHttpRequestException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}:", hex);
-            }
-            catch (IOException ioe)
-            {
-                Logger.LogIoException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {ioe.LoggableDetails()}", ioe);
-            }
-            catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-            {
-                Logger.LogHttpRequestException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}:", wex);
-            }
-        }
-
-        return returnList;
-    }
-
-    public static JObject? GetSeries(int code, string requestedLanguageCode)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/series/{code}";
-        return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
-    }
-
     public static JObject GetSeriesV4(ISeriesSpecifier code, string requestedLanguageCode)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/extended";
@@ -532,12 +421,6 @@ internal static class API
             TokenProvider.Reset();
         }
         TokenProvider.EnsureValid();
-    }
-
-    public static JObject? GetMovie(int code, string requestedLanguageCode)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code}";
-        return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
     }
 
     // ReSharper disable once InconsistentNaming

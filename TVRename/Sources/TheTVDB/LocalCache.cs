@@ -16,7 +16,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TVRename.Forms.Utilities;
 using File = Alphaleonis.Win32.Filesystem.File;
@@ -414,7 +413,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         //open file stream
         using System.IO.StreamWriter file = File.CreateText(PathManager.AuditLogFile($"-{updateFromEpochTime}-{i}"));
-        JsonSerializer serializer = new();
+        Newtonsoft.Json.JsonSerializer serializer = new();
         //serialize object directly into file stream
         serializer.Serialize(file, response);
     }
