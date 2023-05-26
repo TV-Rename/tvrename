@@ -4591,7 +4591,7 @@ public partial class UI : Form, IDialogParent
             float y = tabBounds.Value.Y + INDENT;
             g.DrawImage(bit, x, y);
 
-            Rectangle textarea = new(tabBounds.Value.X, tabBounds.Value.Y + INDENT + bit.Height, tabBounds.Value.Width, tabBounds.Value.Height - (INDENT + bit.Height));
+            Rectangle textarea = tabBounds.Value with { Y = tabBounds.Value.Y + INDENT + bit.Height, Height = tabBounds.Value.Height - (INDENT + bit.Height) };
             g.DrawString(tabPage.Text, tabPage.Font, new SolidBrush(ForeColor), textarea, stringFlags);
         }
     }

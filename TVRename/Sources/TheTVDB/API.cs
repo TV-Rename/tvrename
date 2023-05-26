@@ -900,7 +900,7 @@ internal static class API
             return;
         }
 
-        foreach (ShowImage mi in r["data"]?["artworks"]!.Select(imageJson => ConvertJsonToImage(imageJson))!)
+        foreach (ShowImage mi in r["data"]?["artworks"]!.Select(ConvertJsonToImage)!)
         {
             si.AddOrUpdateImage(mi);
         }
