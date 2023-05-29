@@ -16,6 +16,8 @@ using System.Windows.Forms;
 
 namespace TVRename.App;
 
+// understanding comments
+
 /// <summary>
 /// Application entry point.
 /// </summary>
