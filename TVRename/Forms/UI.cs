@@ -2269,7 +2269,7 @@ public partial class UI : Form, IDialogParent
                               .Replace(".", "*.") +
                           "|All Files (*.*)|*.*";
 
-        if (UiHelpers.ShowDialogAndOk(openFile,this))
+        if (UiHelpers.ShowDialogAndOk(openFile, this))
         {
             ManuallyAddFileForItem(mi, openFile.FileName);
         }
@@ -4187,7 +4187,7 @@ public partial class UI : Form, IDialogParent
     private void btnFilter_Click(object sender, EventArgs e)
     {
         Filters filters = new(mDoc);
-        if (UiHelpers.ShowDialogAndOk(filters,this))
+        if (UiHelpers.ShowDialogAndOk(filters, this))
         {
             FillMyShows(true);
         }
@@ -5154,7 +5154,7 @@ public partial class UI : Form, IDialogParent
 
     private void btnMovieFilter_Click(object sender, EventArgs e)
     {
-        if(UiHelpers.ShowDialogAndOk(new MovieFilters(mDoc),this))
+        if (UiHelpers.ShowDialogAndOk(new MovieFilters(mDoc), this))
         {
             FillMyMovies();
         }
@@ -5258,7 +5258,7 @@ public partial class UI : Form, IDialogParent
         MoreBusy();
         mDoc.PreventAutoScan("Search Engines are open");
 
-        if (UiHelpers.ShowDialogAndOk(new AddEditSearchEngine(TVDoc.GetMovieSearchers(), m),this))
+        if (UiHelpers.ShowDialogAndOk(new AddEditSearchEngine(TVDoc.GetMovieSearchers(), m), this))
         {
             mDoc.SetDirty();
             UpdateSearchButtons();
@@ -5338,7 +5338,7 @@ public partial class UI : Form, IDialogParent
 
     private void forceRefreshKodiTVShowNFOFIlesToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        PartialScan(new ForceRefreshDownloadIdentifier(new DownloadKodiMetaData(),mDoc,"Refresh all tvshow.nfo"));
+        PartialScan(new ForceRefreshDownloadIdentifier(new DownloadKodiMetaData(), mDoc, "Refresh all tvshow.nfo"));
     }
     private void PartialScan(PostScanActivity activity)
     {
@@ -5439,6 +5439,60 @@ public partial class UI : Form, IDialogParent
         {
             ReceiveArgs(args);
         });
+    }
+
+    private bool darkTheme = false;
+    private void changeThemeToolStripMenuItem_Click(Object sender, EventArgs e)
+    {
+        if (darkTheme)
+        {
+            this.SetColourScheme(Color.LightGray, Color.DarkSlateGray, Color.DarkRed);
+        }
+        else
+        {
+            this.SetColourScheme(Color.Black, Color.White, Color.DarkRed);
+        }
+
+        darkTheme = !darkTheme;
+    }
+
+    private void SetColourScheme(Color fore, Color back, Color highlight)
+    {
+        UpdateColorControls(this, fore, back, highlight);
+    }
+
+    public void UpdateColorControls(Control myControl, Color fore, Color back, Color highlight)
+    {
+        myControl.BackColor = back;
+        myControl.ForeColor = fore;
+
+        if (myControl is DataGridView myDgv)
+        {
+            myDgv.ColumnHeadersDefaultCellStyle.BackColor = back;
+            myDgv.ColumnHeadersDefaultCellStyle.ForeColor = fore;
+        }
+        else if (myControl is ObjectListView olv)
+        {
+            olv.SelectedBackColor = highlight;
+            var hss = new BrightIdeasSoftware.HeaderStateStyle();
+            hss.ForeColor = fore;
+            hss.BackColor = back;
+
+            var hfs = new HeaderFormatStyle();
+            hfs.Hot = hss;
+            hfs.Normal = hss;
+
+            olv.HeaderFormatStyle = hfs;
+        } else if (myControl is ProgressBar pb)
+        {
+            pb.ForeColor = highlight;
+        }
+        // Any other non-standard controls should be implemented here aswell...
+
+        foreach (Control subC in myControl.Controls)
+        {
+            UpdateColorControls(subC, fore, back, highlight);
+        }
     }
 }
 
