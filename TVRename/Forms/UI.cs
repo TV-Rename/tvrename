@@ -5474,18 +5474,28 @@ public partial class UI : Form, IDialogParent
         else if (myControl is ObjectListView olv)
         {
             olv.SelectedBackColor = highlight;
-            var hss = new BrightIdeasSoftware.HeaderStateStyle();
-            hss.ForeColor = fore;
-            hss.BackColor = back;
+            HeaderStateStyle hss = new()
+            {
+                ForeColor = fore,
+                BackColor = back
+            };
 
-            var hfs = new HeaderFormatStyle();
-            hfs.Hot = hss;
-            hfs.Normal = hss;
+            HeaderFormatStyle hfs = new ()
+            {
+                Hot = hss,
+                Normal = hss,
+                Pressed = hss
+            };
 
             olv.HeaderFormatStyle = hfs;
-        } else if (myControl is ProgressBar pb)
+        }
+        else if (myControl is ProgressBar pb)
         {
             pb.ForeColor = highlight;
+        }
+        else if (myControl is TabControl tc)
+        {
+            tc.BackColor = back;
         }
         // Any other non-standard controls should be implemented here aswell...
 

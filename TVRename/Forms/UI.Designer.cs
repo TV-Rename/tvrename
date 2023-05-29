@@ -93,7 +93,6 @@ namespace TVRename.Forms
             cleanLibraryFoldersToolStripMenuItem = new ToolStripMenuItem();
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem = new ToolStripMenuItem();
             viewToolStripMenuItem = new ToolStripMenuItem();
-            changeThemeToolStripMenuItem = new ToolStripMenuItem();
             statisticsToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator5 = new ToolStripSeparator();
             showSummaryToolStripMenuItem = new ToolStripMenuItem();
@@ -596,42 +595,35 @@ namespace TVRename.Forms
             // 
             // viewToolStripMenuItem
             // 
-            viewToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeThemeToolStripMenuItem, statisticsToolStripMenuItem, toolStripSeparator5, showSummaryToolStripMenuItem, movieCollectionSummaryLogToolStripMenuItem, actorsToolStripMenuItem });
+            viewToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { statisticsToolStripMenuItem, toolStripSeparator5, showSummaryToolStripMenuItem, movieCollectionSummaryLogToolStripMenuItem, actorsToolStripMenuItem });
             viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             viewToolStripMenuItem.Text = "View";
-            // 
-            // changeThemeToolStripMenuItem
-            // 
-            changeThemeToolStripMenuItem.Name = "changeThemeToolStripMenuItem";
-            changeThemeToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            changeThemeToolStripMenuItem.Text = "Change Theme";
-            changeThemeToolStripMenuItem.Click += changeThemeToolStripMenuItem_Click;
             // 
             // statisticsToolStripMenuItem
             // 
             statisticsToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("statisticsToolStripMenuItem.Image");
             statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
-            statisticsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            statisticsToolStripMenuItem.Size = new System.Drawing.Size(231, 26);
             statisticsToolStripMenuItem.Text = "&Statistics...";
             statisticsToolStripMenuItem.Click += statisticsToolStripMenuItem_Click;
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new System.Drawing.Size(224, 6);
+            toolStripSeparator5.Size = new System.Drawing.Size(228, 6);
             // 
             // showSummaryToolStripMenuItem
             // 
             showSummaryToolStripMenuItem.Name = "showSummaryToolStripMenuItem";
-            showSummaryToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            showSummaryToolStripMenuItem.Size = new System.Drawing.Size(231, 26);
             showSummaryToolStripMenuItem.Text = "TV Show Summary...";
             showSummaryToolStripMenuItem.Click += showSummaryToolStripMenuItem_Click;
             // 
             // movieCollectionSummaryLogToolStripMenuItem
             // 
             movieCollectionSummaryLogToolStripMenuItem.Name = "movieCollectionSummaryLogToolStripMenuItem";
-            movieCollectionSummaryLogToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            movieCollectionSummaryLogToolStripMenuItem.Size = new System.Drawing.Size(231, 26);
             movieCollectionSummaryLogToolStripMenuItem.Text = "Movie Collection Summary...";
             movieCollectionSummaryLogToolStripMenuItem.Click += movieCollectionSummaryLogToolStripMenuItem_Click;
             // 
@@ -639,7 +631,7 @@ namespace TVRename.Forms
             // 
             actorsToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("actorsToolStripMenuItem.Image");
             actorsToolStripMenuItem.Name = "actorsToolStripMenuItem";
-            actorsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            actorsToolStripMenuItem.Size = new System.Drawing.Size(231, 26);
             actorsToolStripMenuItem.Text = "TV Show &Actors Grid...";
             actorsToolStripMenuItem.Click += actorsToolStripMenuItem_Click;
             // 
