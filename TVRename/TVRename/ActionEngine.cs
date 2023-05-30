@@ -386,6 +386,7 @@ public class ActionEngine
             case ActionDeleteFile:
             case ActionDeleteDirectory:
             case ActionMoveRenameDirectory:
+            case ChangeLibraryAction:
                 return 1;
 
             case ActionDateTouch:

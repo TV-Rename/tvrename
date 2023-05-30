@@ -512,6 +512,7 @@ public partial class UI : Form, IDialogParent
             "lvgActionCopy" => "C-Copy",
             "lvgActionMove" => "D-Move",
             "lvgActionUnpack" => "K-Unpack",
+            "lvgActionOther" => "L-Other",
             _ => "UNKNOWN"
         };
     }
@@ -5480,7 +5481,7 @@ public partial class UI : Form, IDialogParent
                 BackColor = back
             };
 
-            HeaderFormatStyle hfs = new ()
+            HeaderFormatStyle hfs = new()
             {
                 Hot = hss,
                 Normal = hss,
@@ -5503,6 +5504,11 @@ public partial class UI : Form, IDialogParent
         {
             UpdateColorControls(subC, fore, back, highlight);
         }
+    }
+
+    private void removeShowsWithNoFoldersToolStripMenuItem_Click(Object sender, EventArgs e)
+    {
+        PartialScan(new RemoveShowsWithNoFolders(mDoc));
     }
 }
 
