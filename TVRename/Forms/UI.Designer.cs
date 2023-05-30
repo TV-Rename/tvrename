@@ -2634,6 +2634,5 @@ namespace TVRename.Forms
         private ToolStripMenuItem yTSMoviePreviewToolStripMenuItem;
         private ToolStripMenuItem yTSMovieRecommendationsToolStripMenuItem;
         private ToolStripMenuItem forceRefreshKodiTVShowNFOFIlesToolStripMenuItem;
-        private ToolStripMenuItem changeThemeToolStripMenuItem;
     }
 }
