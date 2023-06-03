@@ -167,6 +167,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         catch (SourceConnectivityException ex)
         {
+            LOGGER.Warn(ex.Message);
             LastErrorMessage = ex.Message;
             return false;
         }
@@ -218,6 +219,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         catch (SourceConnectivityException ex)
         {
+            LOGGER.Warn(ex.Message);
             LastErrorMessage = ex.Message;
             return false;
         }
@@ -324,6 +326,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         catch (SourceConnectivityException ex)
         {
+            LOGGER.Warn(ex.Message);
             LastErrorMessage = ex.Message;
             return false;
         }

@@ -201,6 +201,10 @@ public class CacheUpdater : IDisposable
         {
             Logger.Error(sce, sce.Message);
         }
+        catch (SourceConnectivityException sce)
+        {
+            Logger.Warn(sce.Message);
+        }
         catch (TaskCanceledException tce)
         {
             Logger.Warn(tce.Message);

@@ -104,6 +104,7 @@ public class LocalCache : MediaCache, iTVSource
         }
         catch (SourceConnectivityException conex)
         {
+            LOGGER.Warn(conex.Message);
             LastErrorMessage = conex.Message;
             return true;
         }
@@ -167,7 +168,7 @@ public class LocalCache : MediaCache, iTVSource
         catch (SourceConnectivityException conex)
         {
             LastErrorMessage = conex.Message;
-            LOGGER.Warn(conex);
+            LOGGER.Warn(conex.Message);
             return false;
         }
         catch (SourceConsistencyException sce)

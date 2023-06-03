@@ -90,7 +90,15 @@ public static class StringExtensions
                 sb.Append(t);
             }
         }
-        return sb.ToString().Normalize(NormalizationForm.FormC);
+
+        try
+        {
+            return sb.ToString().Normalize(NormalizationForm.FormC);
+        }
+        catch (ArgumentException)
+        {
+            return sb.ToString();
+        }
     }
 
     public static string RemovePattern(this string baseText, string pattern)

@@ -373,9 +373,17 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             SayNothing();
             return false;
         }
+        catch (SourceConnectivityException conex)
+        {
+            LOGGER.Warn(conex.Message);
+            LastErrorMessage = conex.Message;
+            SayNothing();
+            return false;
+        }
         catch (SourceConsistencyException sce)
         {
             LOGGER.Error(sce);
+            LastErrorMessage = sce.Message;
             SayNothing();
             return false;
         }
@@ -437,7 +445,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 throw new UpdateCancelledException();
             }
 
-            JObject jsonUpdateResponse = GetUpdatesJson(fromEpochTime, pageNumber) ?? throw new SourceConsistencyException( $"No Updates available: {fromEpochTime}:{pageNumber} ({LastErrorMessage})", TVDoc.ProviderType.TheTVDB);
+            JObject jsonUpdateResponse = GetUpdatesJson(fromEpochTime, pageNumber) ?? throw new SourceConnectivityException( $"No Updates available from TVDB: {fromEpochTime}:{pageNumber} ({LastErrorMessage})");
 
             int numberOfResponses = GetNumResponses(jsonUpdateResponse, GetRequestedTime(fromEpochTime))?? throw new SourceConsistencyException(                    $"NumberOfResponses is null: {fromEpochTime}:{pageNumber}:{jsonUpdateResponse}",                    TVDoc.ProviderType.TheTVDB);
 
@@ -922,7 +930,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 return;
             }
 
-            IEnumerable<(int? id, JToken jsonData)> availableEpisodes = episodeData.Select(x => (x["id"]?.ToObject<int>(), x)).Where(x => x.Item1.HasValue);
+            IEnumerable<(int? id, JToken jsonData)> availableEpisodes =
+                episodeData.Select(x => (x["id"]?.ToObject<int>(), x)).Where(x => x.Item1.HasValue);
+
             List<(int? id, JToken jsonData)> neededEpisodes =
                 availableEpisodes
                     .Where(x => x.id.HasValue && si.Episodes.All(e => e.EpisodeId != x.id))
@@ -946,6 +956,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         catch (SourceConsistencyException sce)
         {
             LOGGER.Error(sce);
+        }
+        catch (SourceConnectivityException sce)
+        {
+            LOGGER.Warn(sce.Message);
         }
         catch (MediaNotFoundException mnfe)
         {
@@ -1324,6 +1338,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             {
                 LOGGER.Error(sce);
             }
+            catch (SourceConnectivityException sce)
+            {
+                LOGGER.Warn(sce.Message);
+            }
             catch (MediaNotFoundException mnfe)
             {
                 LOGGER.Error($"Season Issue: {mnfe.Message}");
@@ -1382,11 +1400,13 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (SourceConnectivityException sce1)
         {
-            LOGGER.Warn(sce1);
+            LOGGER.Warn(sce1.Message);
+            si.Dirty = true;
         }
         catch (SourceConsistencyException sce1)
         {
             LOGGER.Error(sce1);
+            si.Dirty = true;
         }
     }
 
@@ -1529,6 +1549,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         catch (SourceConnectivityException conex)
         {
             LastErrorMessage = conex.Message;
+            LOGGER.Warn(LastErrorMessage);
             return false;
         }
         catch (SourceConsistencyException sce)

@@ -35,32 +35,16 @@ public class DirCache : List<DirCacheEntry>
             return n;
         }
 
-        DirectoryInfo di = new(folder);
-        try
-        {
-            n = di.GetFiles()?.Length ?? 0;
-        }
-        catch (NotSupportedException)
-        {
-        }
-        catch (UnauthorizedAccessException)
-        {
-        }
-        catch (System.IO.DirectoryNotFoundException)
-        {
-        }
-        catch (System.IO.IOException)
-        {
-        }
-
-        if (!subFolders)
-        {
-            return n;
-        }
-
         DirectoryInfo[] dirs = Array.Empty<DirectoryInfo>();
         try
         {
+            DirectoryInfo di = new(folder);
+            n = di.GetFiles()?.Length ?? 0;
+            if (!subFolders)
+            {
+                return n;
+            }
+            
             dirs = di.GetDirectories()!;
         }
         catch (NotSupportedException)
