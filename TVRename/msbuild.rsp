@@ -1,0 +1,3 @@
+/p:configuration=Release
+/t:Publish
+/p:PublishProfile=./Properties/PublishProfiles/FolderProfile.pubxml
