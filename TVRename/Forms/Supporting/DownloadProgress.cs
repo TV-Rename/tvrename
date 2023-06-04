@@ -9,6 +9,7 @@
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using TVRename.Forms;
 
 namespace TVRename;
 
@@ -48,7 +49,7 @@ public partial class DownloadProgress : Form
     {
         if (mDoc.DownloadDone)
         {
-            Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.NoProgress, ParentForm?.Handle ?? Handle);
+            UiHelpers.SetProgressStateNone(ParentForm?.Handle ?? Handle);
             Close();
         }
         else
@@ -63,7 +64,7 @@ public partial class DownloadProgress : Form
         newTimer.Stop();
         DialogResult = DialogResult.Abort;
         token.Cancel();
-        Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.NoProgress, ParentForm?.Handle ?? Handle);
+        UiHelpers.SetProgressStateNone(ParentForm?.Handle ?? Handle);
         Close();
     }
 
@@ -79,6 +80,6 @@ public partial class DownloadProgress : Form
             TVmaze.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ??
             TMDB.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ?? string.Empty;
         pbProgressBar.Value = mDoc.DownloadPct;
-        Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressValue(mDoc.DownloadPct, 100, ParentForm?.Handle ?? Handle);
+        UiHelpers.SetProgress(mDoc.DownloadPct,ParentForm?.Handle ?? Handle);
     }
 }

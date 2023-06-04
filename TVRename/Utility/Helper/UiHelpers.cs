@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Microsoft.WindowsAPICodePack.Taskbar;
 
 namespace TVRename.Forms;
 
@@ -93,6 +94,42 @@ public static class UiHelpers
             }
 
             updater();
+        }
+    }
+
+    public static void SetProgressStateNone(IntPtr uiHandle)
+    {
+        try
+        {
+            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, uiHandle);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+    }
+
+    public static void SetProgress(int pct, IntPtr uiHandle)
+    {
+        try
+        {
+            TaskbarManager.Instance.SetProgressValue(pct, 100, uiHandle);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+    }
+
+    public static void SetProgressStateNormal(IntPtr uiHandle)
+    {
+        try
+        {
+            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, uiHandle);
+        }
+        catch (Exception)
+        {
+            // ignored
         }
     }
 }

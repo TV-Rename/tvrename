@@ -10,7 +10,6 @@ using Alphaleonis.Win32.Filesystem;
 using BrightIdeasSoftware;
 using CefSharp.WinForms;
 using Humanizer;
-using Microsoft.WindowsAPICodePack.Taskbar;
 using NLog;
 using System;
 using System.Collections;
@@ -3609,7 +3608,7 @@ public partial class UI : Form, IDialogParent
             movies ?? new List<MovieConfiguration>(), unattended, hidden, st, media, this, scanProgDlg, cts.Token);
         mDoc.SetScanSettings(scanSettings);
 
-        TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, Handle);
+        UiHelpers.SetProgressStateNormal(Handle);
         bwScan.RunWorkerAsync(scanSettings);
         ShowDialogAndWait(cts);
     }
@@ -3647,7 +3646,7 @@ public partial class UI : Form, IDialogParent
     {
         if (!IsDisposed)
         {
-            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, Handle);
+            UiHelpers.SetProgressStateNone(Handle);
         }
         AskUserAboutShowProblems(lastScanUnattended);
         LessBusy(); //Note this is set in UiScan()
@@ -3657,7 +3656,7 @@ public partial class UI : Form, IDialogParent
             FillMyShows(true); // scanning can download more info to be displayed in my shows
             FillMyMovies();
             FillActionList();
-            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, Handle);
+            UiHelpers.SetProgressStateNone(Handle);
         }
         offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
     }
@@ -5042,7 +5041,7 @@ public partial class UI : Form, IDialogParent
         {
             Invoke((MethodInvoker)delegate
             {
-                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, Handle);
+                UiHelpers.SetProgressStateNormal(Handle);
                 new DownloadProgress(cu, cts).Show(this);
             });
         }

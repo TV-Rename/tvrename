@@ -105,12 +105,12 @@ public partial class SettingsReview : Form
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
         lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
 
-        Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressValue(e.ProgressPercentage.Between(0, 100), 100, mainUi.Handle);
+        UiHelpers.SetProgress(e.ProgressPercentage.Between(0, 100), mainUi.Handle);
     }
 
     private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
-        Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.NoProgress, mainUi.Handle);
+        UiHelpers.SetProgressStateNone(mainUi.Handle);
         btnRefresh.Visible = true;
         pbProgress.Visible = false;
         lblStatus.Visible = false;
@@ -132,7 +132,7 @@ public partial class SettingsReview : Form
         btnRefresh.Visible = false;
         pbProgress.Visible = true;
         lblStatus.Visible = true;
-        Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.Normal, mainUi.Handle);
+        UiHelpers.SetProgressStateNormal(mainUi.Handle);
         bwScan.RunWorkerAsync();
     }
 

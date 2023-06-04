@@ -67,9 +67,8 @@ public partial class ScanProgress : Form
 
         if (!finished)
         {
-            Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance.SetProgressValue(
-                pbBulkAutoAdd.Value + pbMediaLib.Value + pbDownloadFolder.Value + pbLocalSearch.Value + pbRSS.Value + pbDownloading.Value
-                , 600
+            UiHelpers.SetProgress(
+                (pbBulkAutoAdd.Value + pbMediaLib.Value + pbDownloadFolder.Value + pbLocalSearch.Value + pbRSS.Value + pbDownloading.Value)/6
                 , ui.Handle);
         }
         lblMessage.Text = msg?.ToUiVersion();
