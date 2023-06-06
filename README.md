@@ -1,6 +1,6 @@
 # TV Rename
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/ad1fea1cdca5468fb3d6c237db26eb23)](https://www.codacy.com/gh/TV-Rename/tvrename/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=TV-Rename/tvrename&amp;utm_campaign=Badge_Grade)
-[![CodeFactor](https://www.codefactor.io/repository/github/tv-rename/tvrename/badge)](https://www.codefactor.io/repository/github/tv-rename/tvrename)  [![BCH compliance](https://bettercodehub.com/edge/badge/TV-Rename/tvrename?branch=master)](https://bettercodehub.com/) [![AppveyorBuild](https://ci.appveyor.com/api/projects/status/github/TV-Rename/tvrename?svg=true)](https://ci.appveyor.com/project/MarkSummerville/tvrename)
+[![CodeFactor](https://www.codefactor.io/repository/github/tv-rename/tvrename/badge)](https://www.codefactor.io/repository/github/tv-rename/tvrename)  [![AppveyorBuild](https://ci.appveyor.com/api/projects/status/github/TV-Rename/tvrename?svg=true)](https://ci.appveyor.com/project/MarkSummerville/tvrename)
 
 ### Organise your TV and movie files with ease
 
