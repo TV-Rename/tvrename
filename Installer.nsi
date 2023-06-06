@@ -55,12 +55,12 @@ Section "Install"
 
     Delete "$INSTDIR\Ionic.Utils.Zip.dll" ; Remove old dependency
 
-    File "TVRename\publish\net6.0-windows\TVRename.exe"
-    File "TVRename\publish\net6.0-windows\*.dll"
-    File "TVRename\publish\net6.0-windows\*.json"
-    File "TVRename\publish\net6.0-windows\TVRename.dll.config"
+    File "TVRename\bin\Release\net6.0-windows\TVRename.exe"
+    File "TVRename\bin\Release\net6.0-windows\*.dll"
+    File "TVRename\bin\Release\net6.0-windows\*.json"
+    File "TVRename\bin\Release\net6.0-windows\TVRename.dll.config"
     
-    File "TVRename\publish\net6.0-windows\NLog.config"
+    File "TVRename\bin\Release\net6.0-windows\NLog.config"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
