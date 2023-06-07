@@ -57,8 +57,6 @@ public partial class UI : Form, IDialogParent
 
     public delegate void ScanTypeDelegate(TVSettings.ScanType type);
 
-    public delegate void ArgumentDelegate(string[] args);
-
     public readonly ScanTypeDelegate ScanAndDo;
 
     #endregion Delegates
@@ -527,12 +525,9 @@ public partial class UI : Form, IDialogParent
 
     private void olv1_FormatRow(object sender, FormatRowEventArgs e)
     {
-        if (e.Model is Action a)
+        if (e.Model is Action a && a.Outcome.Error)
         {
-            if (a.Outcome.Error)
-            {
-                e.Item.BackColor = UiHelpers.WarningColor();
-            }
+            e.Item.BackColor = UiHelpers.WarningColor();
         }
     }
 
@@ -1221,7 +1216,8 @@ public partial class UI : Form, IDialogParent
     }
 
     internal void FillMyShows() => FillMyShows(false);
-    internal void FillMyShows(bool updateSelectedNode)
+
+    private void FillMyShows(bool updateSelectedNode)
     {
         ProcessedSeason? currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
         ShowConfiguration? currentSi = TreeNodeToShowItem(MyShowTree.SelectedNode);
@@ -4227,8 +4223,6 @@ public partial class UI : Form, IDialogParent
     private void visitSupportForumToolStripMenuItem_Click(object sender, EventArgs e)
         => "https://groups.google.com/forum/#!forum/tvrename".OpenUrlInBrowser();
 
-    public void Quit() => Close();
-
     private async void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
     {
         Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
@@ -5444,16 +5438,18 @@ public partial class UI : Form, IDialogParent
         });
     }
 
+    // ReSharper disable once RedundantDefaultMemberInitializer
     private bool darkTheme = false;
-    private void changeThemeToolStripMenuItem_Click(Object sender, EventArgs e)
+    // ReSharper disable once UnusedMember.Local
+    private void ChangeTheme()
     {
         if (darkTheme)
         {
-            this.SetColourScheme(Color.LightGray, Color.DarkSlateGray, Color.DarkRed);
+            SetColourScheme(Color.LightGray, Color.DarkSlateGray, Color.DarkRed);
         }
         else
         {
-            this.SetColourScheme(Color.Black, Color.White, Color.DarkRed);
+            SetColourScheme(Color.Black, Color.White, Color.DarkRed);
         }
 
         darkTheme = !darkTheme;
@@ -5461,54 +5457,9 @@ public partial class UI : Form, IDialogParent
 
     private void SetColourScheme(Color fore, Color back, Color highlight)
     {
-        UpdateColorControls(this, fore, back, highlight);
+        this.UpdateColorControls(fore, back, highlight);
     }
-
-    public void UpdateColorControls(Control myControl, Color fore, Color back, Color highlight)
-    {
-        myControl.BackColor = back;
-        myControl.ForeColor = fore;
-
-        if (myControl is DataGridView myDgv)
-        {
-            myDgv.ColumnHeadersDefaultCellStyle.BackColor = back;
-            myDgv.ColumnHeadersDefaultCellStyle.ForeColor = fore;
-        }
-        else if (myControl is ObjectListView olv)
-        {
-            olv.SelectedBackColor = highlight;
-            HeaderStateStyle hss = new()
-            {
-                ForeColor = fore,
-                BackColor = back
-            };
-
-            HeaderFormatStyle hfs = new()
-            {
-                Hot = hss,
-                Normal = hss,
-                Pressed = hss
-            };
-
-            olv.HeaderFormatStyle = hfs;
-        }
-        else if (myControl is ProgressBar pb)
-        {
-            pb.ForeColor = highlight;
-        }
-        else if (myControl is TabControl tc)
-        {
-            tc.BackColor = back;
-        }
-        // Any other non-standard controls should be implemented here aswell...
-
-        foreach (Control subC in myControl.Controls)
-        {
-            UpdateColorControls(subC, fore, back, highlight);
-        }
-    }
-
-    private void removeShowsWithNoFoldersToolStripMenuItem_Click(Object sender, EventArgs e)
+    private void removeShowsWithNoFoldersToolStripMenuItem_Click(object sender, EventArgs e)
     {
         PartialScan(new RemoveShowsWithNoFolders(mDoc));
     }

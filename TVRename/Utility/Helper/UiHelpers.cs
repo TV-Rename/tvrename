@@ -1,4 +1,5 @@
 using DaveChambers.FolderBrowserDialogEx;
+using BrightIdeasSoftware;
 using NLog;
 using System;
 using System.ComponentModel;
@@ -130,6 +131,50 @@ public static class UiHelpers
         catch (Exception)
         {
             // ignored
+        }
+    }
+
+    public static void UpdateColorControls(this Control myControl, Color fore, Color back, Color highlight)
+    {
+        myControl.BackColor = back;
+        myControl.ForeColor = fore;
+
+        if (myControl is DataGridView myDgv)
+        {
+            myDgv.ColumnHeadersDefaultCellStyle.BackColor = back;
+            myDgv.ColumnHeadersDefaultCellStyle.ForeColor = fore;
+        }
+        else if (myControl is ObjectListView olv)
+        {
+            olv.SelectedBackColor = highlight;
+            HeaderStateStyle hss = new()
+            {
+                ForeColor = fore,
+                BackColor = back
+            };
+
+            HeaderFormatStyle hfs = new()
+            {
+                Hot = hss,
+                Normal = hss,
+                Pressed = hss
+            };
+
+            olv.HeaderFormatStyle = hfs;
+        }
+        else if (myControl is ProgressBar pb)
+        {
+            pb.ForeColor = highlight;
+        }
+        else if (myControl is TabControl tc)
+        {
+            tc.BackColor = back;
+        }
+        // Any other non-standard controls should be implemented here aswell...
+
+        foreach (Control subC in myControl.Controls)
+        {
+            UpdateColorControls(subC, fore, back, highlight);
         }
     }
 }
