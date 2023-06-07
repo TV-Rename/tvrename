@@ -22,7 +22,7 @@ public class ActionDownloadImage : ActionDownload
     private readonly FileInfo destination;
     protected readonly MediaConfiguration Si;
     private readonly bool shrinkLargeMede8ErImage;
-
+    public override QueueName Queue() => QueueName.download;
     public ActionDownloadImage(MediaConfiguration si, ProcessedEpisode? pe, FileInfo dest, string path) : this(si, pe, dest, path, false)
     {
     }

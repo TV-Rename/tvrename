@@ -76,4 +76,9 @@ public sealed class ItemList : SafeList<Item>
             Remove(toRemove);
         }
     }
+
+    public IEnumerable<Action> GetActionsForQueue(Action.QueueName queueType)
+    {
+        return Actions.Where(a=>a.Queue()==queueType);
+    }
 }

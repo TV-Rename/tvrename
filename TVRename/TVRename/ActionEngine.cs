@@ -172,7 +172,7 @@ public class ActionEngine
                 throw new ArgumentException(message);
             }
 
-            ActionQueue[] queues = ActionProcessorMakeQueues(args.TheList);
+            List<ActionQueue> queues = ActionProcessorMakeQueues(args.TheList);
 
             foreach (ActionQueue queue in queues)
             {
@@ -193,7 +193,7 @@ public class ActionEngine
                 WaitForAllActionThreadsAndTidyUp();
             }
             WaitForAllActionThreadsAndTidyUp();
-            args.TheList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
+            args.TheList.RemoveAll(x => x is Action { Outcome: { Done: true, Error: false } });
 
             foreach (Action slia in args.TheList.Actions)
             {
@@ -221,7 +221,7 @@ public class ActionEngine
         }
     }
 
-    private void ExecuteQueues(ActionQueue[] queues, CancellationToken token)
+    private void ExecuteQueues(List<ActionQueue> queues, CancellationToken token)
     {
         while (true)
         {
@@ -336,7 +336,7 @@ public class ActionEngine
         }
     }
 
-    private static ActionQueue[] ActionProcessorMakeQueues(ItemList theList)
+    private static List<ActionQueue> ActionProcessorMakeQueues(ItemList theList)
     {
         // Take a single list
         // Return an array of "ActionQueue" items.
@@ -347,58 +347,33 @@ public class ActionEngine
         //     - #2 NFO Generator list
         //     - #3 Downloads (rss torrent, thumbnail, folder.jpg) across Settings.ParallelDownloads lists
         // We can discard any non-action items, as there is nothing to do for them
-
-        ActionQueue[] queues = new ActionQueue[4];
-        queues[0] = new ActionQueue("Move/Copy", 1); // cross-filesystem moves (slow ones)
-        queues[1] = new ActionQueue("Rename/Delete", 1); // local rename/moves
-        queues[2] = new ActionQueue("Write Metadata", 4); // writing KODI NFO files, etc.
-        queues[3] = new ActionQueue("Download",
-            TVSettings.Instance.ParallelDownloads); // downloading torrents, banners, thumbnails
-
-        foreach (Item sli in theList)
-        {
-            if (sli is not Action action)
-            {
-                continue; // skip non-actions
-            }
-
-            queues[GetQueueId(action)].Actions.Add(action);
-        }
-        return queues;
+        return EnumerableExtensions.GetAllItems<Action.QueueName>().Select(q => CreateQueue(q, theList)).ToList();
     }
 
-    private static int GetQueueId(Action action)
+    private static ActionQueue CreateQueue(Action.QueueName queue, ItemList theList)
+        => new(GetName(queue), GetParallelLimit(queue), theList.GetActionsForQueue(queue)); 
+
+    private static string GetName(Action.QueueName queue)
     {
-        switch (action)
+        return queue switch
         {
-            // base interface that all metadata actions are derived from
-            case ActionWriteMetadata:
-                return 2;
-
-            case ActionDownloadImage:
-            case ActionTDownload:
-            case ActionTRemove:
-                return 3;
-
-            case ActionCopyMoveRename rename:
-                return rename.QuickOperation() ? 1 : 0;
-
-            case ActionDeleteFile:
-            case ActionDeleteDirectory:
-            case ActionMoveRenameDirectory:
-            case ChangeLibraryAction:
-                return 1;
-
-            case ActionDateTouch:
-            case ActionUnArchive:
-                // add them after the slow move/renames (ie last)
-                return 0;
-
-            default:
-                Logger.Fatal($"No action type found for {action.GetType()}, Please follow up with a developer.");
-                // put it in this queue by default
-                return 3;
-        }
+            Action.QueueName.download => "Download", // downloading torrents, banners, thumbnails
+            Action.QueueName.writeMetadata => "Write Metadata", // writing KODI NFO files, etc.
+            Action.QueueName.slowFileOperation => "Move/Copy", // cross-filesystem moves (slow ones)
+            Action.QueueName.quickFileOperation => "Rename/Delete", // local rename/moves
+            _ => throw new ArgumentOutOfRangeException(nameof(queue), queue, null)
+        };
+    }
+    private static int GetParallelLimit(Action.QueueName queue)
+    {
+        return queue switch
+        {
+            Action.QueueName.download => TVSettings.Instance.ParallelDownloads,
+            Action.QueueName.writeMetadata => 4,
+            Action.QueueName.slowFileOperation => 1,
+            Action.QueueName.quickFileOperation => 1,
+            _ => throw new ArgumentOutOfRangeException(nameof(queue), queue, null)
+        };
     }
 
     #region Nested type: ProcessActionInfo

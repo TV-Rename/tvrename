@@ -27,6 +27,7 @@ public abstract class ActionWriteMetadata : ActionDownload
         Movie = mc;
     }
 
+    public override QueueName Queue() => QueueName.writeMetadata;
     public override string Produces => Where.FullName;
 
     public override string ProgressText => Where.Name;

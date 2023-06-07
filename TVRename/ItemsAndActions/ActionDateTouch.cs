@@ -33,4 +33,7 @@ public abstract class ActionDateTouch : ActionFileMetaData
         UpdateTime.CompareTo(DateTime.MaxValue) != 0 ? UpdateTime.ToShortDateString() : string.Empty;
 
     public override DateTime? AirDate => UpdateTime;
+
+    public override QueueName Queue() => QueueName.slowFileOperation;
+    public override int Order => 10;
 }

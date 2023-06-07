@@ -23,7 +23,7 @@ public class ActionUnArchive : ActionFileOperation
 {
     private readonly FileInfo archiveFile;
     private readonly MediaConfiguration show; // if for an entire show, rather than specific episode
-
+    public override QueueName Queue() => QueueName.slowFileOperation;
     public override string SeriesName => show.ShowName;
     public override string SeasonNumber => string.Empty;
     public override int? SeasonNumberAsInt => null;

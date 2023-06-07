@@ -25,6 +25,10 @@ public class ActionCopyMoveRename : ActionFileOperation
     public readonly FileInfo To;
     private readonly TVDoc doc;
 
+    public override QueueName Queue() => QuickOperation()
+        ? QueueName.quickFileOperation
+        : QueueName.slowFileOperation;
+
     public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode? ep, bool doTidyup, ItemMissing? undoItem, TVDoc tvDoc)
     {
         Tidyup = doTidyup ? TVSettings.Instance.Tidyup : null;

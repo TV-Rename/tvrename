@@ -26,6 +26,8 @@ public abstract class Action : Item // Something we can do
     {
         CheckedItem = true;
     }
+
+    public virtual int Order => 0;
     public abstract string ProgressText { get; } // shortish text to display to user while task is running
 
     private double percent;
@@ -58,5 +60,15 @@ public abstract class Action : Item // Something we can do
     public void ResetOutcome()
     {
         internalOutcome = null;
+    }
+
+    public abstract QueueName Queue();
+
+    public enum QueueName
+    {
+        slowFileOperation,
+        quickFileOperation,
+        writeMetadata,
+        download
     }
 }

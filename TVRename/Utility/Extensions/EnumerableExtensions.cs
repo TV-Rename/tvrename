@@ -14,6 +14,17 @@ namespace TVRename;
 
 public static class EnumerableExtensions
 {
+    /// <summary>
+    /// Gets all items for an enum type.
+    /// </summary>
+    public static IEnumerable<T> GetAllItems<T>() where T : struct
+    {
+        foreach (object item in Enum.GetValues(typeof(T)))
+        {
+            yield return (T)item;
+        }
+    }
+
     public static void AddNullableRange<T>(this List<T> source, IEnumerable<T>? items)
     {
         if (items != null)

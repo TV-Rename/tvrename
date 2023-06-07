@@ -6,13 +6,14 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace TVRename;
 
 public class ActionQueue
 {
-    public readonly List<Action> Actions = new(); // The contents of this queue
+    public readonly List<Action> Actions; // The contents of this queue
     public readonly Semaphore Sem;
 
     private readonly int parallelThreadLimit; // Number of tasks in the queue than can be run at once
@@ -23,12 +24,13 @@ public class ActionQueue
 
     public Action NextAction() => Actions[actionPosition++];
 
-    public ActionQueue(string name, int parallelLimit)
+    public ActionQueue(string name, int parallelLimit, IEnumerable<Action> actions)
     {
         queueName = name;
         parallelThreadLimit = parallelLimit;
         actionPosition = 0;
         Sem = new Semaphore(parallelLimit, parallelLimit, name); // allow up to numWorkers working at once
+        Actions = actions.OrderBy(a=>a.Order).ToList();
     }
 
     public override string ToString() => $"'{queueName}' worker, with {parallelThreadLimit} threads.";

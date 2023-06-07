@@ -27,6 +27,7 @@ public class ActionMoveRenameDirectory : ActionFileOperation
     public override string ScanListViewGroup => "lvgActionMove";
 
     public override int IconNumber => 4;
+    public override QueueName Queue() => QueueName.quickFileOperation;
 
     public override IgnoreItem? Ignore => null;
 

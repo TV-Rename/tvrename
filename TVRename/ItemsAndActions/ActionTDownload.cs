@@ -28,7 +28,7 @@ public class ActionTDownload : ActionDownload
     public readonly string UpstreamSource;
 
     private readonly ItemDownloading becomes;
-
+    public override QueueName Queue() => QueueName.download;
     public ActionTDownload(string name, long sizeBytes, int? seeders, string url, string toWhereNoExt, ProcessedEpisode? pe, ItemMissing me, string upstreamSource, ItemDownloading becomes)
     {
         Episode = pe;

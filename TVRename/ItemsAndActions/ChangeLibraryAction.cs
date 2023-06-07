@@ -19,6 +19,7 @@ internal abstract class ChangeLibraryAction : Action
     public override string DestinationFolder => Produces;
     public override string DestinationFile => Produces;
     public override string ProgressText => Produces;
+    public override QueueName Queue() => QueueName.writeMetadata;
 }
 
 internal class RemoveMovie : ChangeLibraryAction
