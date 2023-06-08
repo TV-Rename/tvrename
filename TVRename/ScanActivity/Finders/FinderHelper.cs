@@ -91,24 +91,11 @@ internal static class FinderHelper
             @"\D 0*(?<sequencenumber>\d+) \D",
         };
 
-        foreach (string regex in regexes)
-        {
-            Match betterMatch = Regex.Match(matchText,regex);
-
-            if (!betterMatch.Success)
-            {
-                continue;
-            }
-
-            string sequenceNumberText = betterMatch.Groups["sequencenumber"].Value;
-            int sequenceNumber = int.Parse(sequenceNumberText);
-            if (sequenceNumber == pe.OverallNumber)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return regexes
+            .Select(regex => Regex.Match(matchText, regex))
+            .Where(betterMatch => betterMatch.Success)
+            .Any(betterMatch => int.Parse(betterMatch.Groups["sequencenumber"].Value) == pe.OverallNumber)
+            ;
     }
 
     public static bool FindSeasEpDateCheck(string? filename, out int seas, out int ep, ShowConfiguration? si)
