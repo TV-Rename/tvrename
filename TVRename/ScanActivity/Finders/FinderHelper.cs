@@ -84,18 +84,31 @@ internal static class FinderHelper
             return false;
         }
 
-        string num = pe.OverallNumber.ToString();
-        string matchText = "X" + filename + "X"; // need to pad to let it match non-numbers at start and end
-
-        Match betterMatch = Regex.Match(matchText, @"(E|e|Ep|ep|episode|Episode) ?0*(?<sequencenumber>\d+)\D");
-
-        if (betterMatch.Success)
+        string matchText = "X " + filename + " X"; // need to pad to let it match non-numbers at start and end
+        string[] regexes =
         {
-            int sequenceNUm = int.Parse(betterMatch.Groups["sequencenumber"].Value);
-            return sequenceNUm == pe.OverallNumber;
+            @"(E|e|Ep|ep|episode|Episode) ?0*(?<sequencenumber>\d+)\D",
+            @"\D 0*(?<sequencenumber>\d+) \D",
+        };
+
+        foreach (string regex in regexes)
+        {
+            Match betterMatch = Regex.Match(matchText,regex);
+
+            if (!betterMatch.Success)
+            {
+                continue;
+            }
+
+            string sequenceNumberText = betterMatch.Groups["sequencenumber"].Value;
+            int sequenceNumber = int.Parse(sequenceNumberText);
+            if (sequenceNumber == pe.OverallNumber)
+            {
+                return true;
+            }
         }
 
-        return Regex.Match(matchText, @"\D0*" + num + @"\D").Success;
+        return false;
     }
 
     public static bool FindSeasEpDateCheck(string? filename, out int seas, out int ep, ShowConfiguration? si)
