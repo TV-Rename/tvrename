@@ -427,6 +427,14 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             LastErrorMessage = ex.LoggableDetails();
             throw new SourceConnectivityException();
         }
+        catch (TaskCanceledException ex)
+        {
+            LOGGER.Warn(ex, $"Error obtaining TMDB Movie for {id} in {id.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:");
+
+            SayNothing();
+            LastErrorMessage = ex.LoggableDetails();
+            throw new SourceConnectivityException();
+        }
     }
 
     private static CachedMovieInfo GenerateCachedMovieInfo(ISeriesSpecifier id, Movie downloadedMovie)
@@ -562,12 +570,52 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     internal CachedSeriesInfo DownloadSeriesNow(ISeriesSpecifier ss, bool saveToCache = true)
     {
-        int id = ss.TmdbId > 0 ? ss.TmdbId : GetSeriesIdFromOtherCodes(ss) ?? 0;
+        try
+        {
+            int id = ss.TmdbId > 0 ? ss.TmdbId : GetSeriesIdFromOtherCodes(ss) ?? 0;
+            string imageLanguage = $"{ss.LanguageToUse().Abbreviation},null";
 
-        string imageLanguage = $"{ss.LanguageToUse().Abbreviation},null";
-        TvShow downloadedSeries = Client.GetTvShowAsync(id, TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits, ss.LanguageToUse().Abbreviation, imageLanguage).Result
-                                   ?? throw new MediaNotFoundException(ss, "TMDB no longer has this tv show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
+            TvShow downloadedSeries = Client.GetTvShowAsync(id, TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits, ss.LanguageToUse().Abbreviation, imageLanguage).Result
+                                      ?? throw new MediaNotFoundException(ss, "TMDB no longer has this tv show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
 
+            CachedSeriesInfo m = GenerateTvShow(ss, downloadedSeries);
+
+            if (saveToCache)
+            {
+                this.AddSeriesToCache(m);
+            }
+
+            return m;
+        }
+        catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
+        {
+            LOGGER.LogHttpRequestException(
+                $"Error obtaining TMDB Show for {id} in {ss.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:", ex);
+
+            SayNothing();
+            LastErrorMessage = ex.LoggableDetails();
+            throw new SourceConnectivityException();
+        }
+        catch (HttpRequestException ex)
+        {
+            LOGGER.Error(ex, $"Error obtaining TMDB Show for {id} in {ss.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:");
+
+            SayNothing();
+            LastErrorMessage = ex.LoggableDetails();
+            throw new SourceConnectivityException();
+        }
+        catch (TaskCanceledException ex)
+        {
+            LOGGER.Warn(ex, $"Error obtaining TMDB Show for {id} in {ss.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:");
+
+            SayNothing();
+            LastErrorMessage = ex.LoggableDetails();
+            throw new SourceConnectivityException();
+        }
+    }
+
+    private static CachedSeriesInfo GenerateTvShow(ISeriesSpecifier ss, TvShow downloadedSeries)
+    {
         CachedSeriesInfo m = new(ss.TargetLocale, TVDoc.ProviderType.TMDB)
         {
             Imdb = downloadedSeries.ExternalIds?.ImdbId,
@@ -591,7 +639,10 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             InstagramId = downloadedSeries.ExternalIds?.InstagramId,
             FacebookId = downloadedSeries.ExternalIds?.InstagramId,
             FanartUrl = OriginalImageUrl(downloadedSeries.BackdropPath),
-            ContentRating = GetCertification(downloadedSeries, ss.TargetLocale.RegionToUse(TVDoc.ProviderType.TMDB).Abbreviation) ?? GetCertification(downloadedSeries, TVSettings.Instance.TMDBRegion.Abbreviation) ?? GetCertification(downloadedSeries, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
+            ContentRating =
+                GetCertification(downloadedSeries, ss.TargetLocale.RegionToUse(TVDoc.ProviderType.TMDB).Abbreviation) ??
+                GetCertification(downloadedSeries, TVSettings.Instance.TMDBRegion.Abbreviation) ??
+                GetCertification(downloadedSeries, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
             OfficialUrl = downloadedSeries.Homepage,
             SeriesType = downloadedSeries.Type,
             SeasonOrderType = ss.SeasonOrder,
@@ -606,22 +657,19 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         {
             m.AddAlias(s);
         }
+
         foreach (TMDbLib.Objects.TvShows.Cast? s in downloadedSeries.Credits.Cast)
         {
             m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character, s.Order));
         }
+
         foreach (TMDbLib.Objects.General.Crew? s in downloadedSeries.Credits.Crew)
         {
             m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Job, s.Department, s.CreditId));
         }
+
         AddShowImages(downloadedSeries, m);
         AddSeasons(ss, downloadedSeries, m);
-
-        if (saveToCache)
-        {
-            this.AddSeriesToCache(m);
-        }
-
         return m;
     }
 
@@ -899,6 +947,13 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         catch (HttpRequestException ex)
         {
             LOGGER.LogHttpRequestException("Error searching on TMDB:", ex);
+            SayNothing();
+            LastErrorMessage = ex.LoggableDetails();
+        }
+        catch (TaskCanceledException ex)
+        {
+            LOGGER.Warn(ex, "Error searching on TMDB:");
+
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
         }
@@ -1242,6 +1297,14 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             catch (HttpRequestException ex)
             {
                 LOGGER.Error(ex, "Error obtaining TMDB Recommendations:");
+
+                SayNothing();
+                LastErrorMessage = ex.LoggableDetails();
+                throw new SourceConnectivityException();
+            }
+            catch (TaskCanceledException ex)
+            {
+                LOGGER.Warn(ex, "Error obtaining TMDB Recommendations:");
 
                 SayNothing();
                 LastErrorMessage = ex.LoggableDetails();
