@@ -186,7 +186,7 @@ public partial class YtsRecommendationView : Form
     {
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
         DateTime completionDateTime = scanStartTime.Add((DateTime.Now - scanStartTime) / (pbProgress.Value+1) * 100) ;
-        lblStatus.Text = $"{e.UserState?.ToString()?.ToUiVersion()} ETC={completionDateTime}";
+        lblStatus.Text = $"ETC={completionDateTime} {e.UserState?.ToString()?.ToUiVersion()}";
     }
 
     private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

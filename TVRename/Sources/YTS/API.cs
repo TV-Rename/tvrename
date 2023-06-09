@@ -62,14 +62,12 @@ public static class API
         }
     }
 
-    public static string GetMandatoryString(this JToken r, string key)
-    {
-        return (string?)r[key] ?? throw new Exception($"Could not get data element '{key}' from {r}");
-    }
-    public static string? GetString(this JToken r, string key)
-    {
-        return (string?)r[key];
-    }
+    private static string GetMandatoryString(this JToken r, string key)
+        => (string?)r[key] ?? throw new Exception($"Could not get data element '{key}' from {r}");
+
+    private static string? GetString(this JToken r, string key)
+        => (string?)r[key];
+
     public class YtsMovie
     {
         private readonly JObject result;
@@ -148,7 +146,7 @@ public static class API
 
                 page++;
                 int totalEntries = updatesJson["data"]?["movie_count"]?.ToObject<int>() ?? throw new Exception();
-                sender.ReportProgress(100 * page / (totalEntries / 50));
+                sender.ReportProgress(100 * page / (totalEntries / 50),$"Page {page}");
             }
             else
             {

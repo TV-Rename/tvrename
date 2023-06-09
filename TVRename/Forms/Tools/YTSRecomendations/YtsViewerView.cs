@@ -16,6 +16,7 @@ public partial class YtsViewerView : Form
     private readonly List<MovieConfiguration> addedMovies;
     string quality;
     int minRating;
+    private DateTime scanStartTime;
 
     public YtsViewerView(TVDoc doc, UI main)
     {
@@ -121,6 +122,7 @@ public partial class YtsViewerView : Form
     private void BwScan_DoWork(object sender, DoWorkEventArgs e)
     {
         System.Threading.Thread.CurrentThread.Name ??= "Recommendations Scan Thread"; // Can only set it once
+        scanStartTime = DateTime.Now;
         try
         {
             recs = YTS.API
@@ -137,7 +139,8 @@ public partial class YtsViewerView : Form
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
+        DateTime completionDateTime = scanStartTime.Add((DateTime.Now - scanStartTime) / (pbProgress.Value + 1) * 100);
+        lblStatus.Text = $"ETC={completionDateTime} {e.UserState?.ToString()?.ToUiVersion()}";
     }
 
     private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
