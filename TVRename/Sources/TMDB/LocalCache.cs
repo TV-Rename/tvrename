@@ -590,7 +590,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
         {
             LOGGER.LogHttpRequestException(
-                $"Error obtaining TMDB Show for {id} in {ss.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:", ex);
+                $"Error obtaining TMDB Show for {ss} in {ss.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:", ex);
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
@@ -598,7 +598,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         catch (HttpRequestException ex)
         {
-            LOGGER.Error(ex, $"Error obtaining TMDB Show for {id} in {ss.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:");
+            LOGGER.Error(ex, $"Error obtaining TMDB Show for {ss} in {ss.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:");
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
@@ -606,7 +606,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         catch (TaskCanceledException ex)
         {
-            LOGGER.Warn(ex, $"Error obtaining TMDB Show for {id} in {ss.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:");
+            LOGGER.Warn(ex, $"Error obtaining TMDB Show for {ss} in {ss.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:");
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
