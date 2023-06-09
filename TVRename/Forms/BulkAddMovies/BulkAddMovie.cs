@@ -478,7 +478,7 @@ public partial class BulkAddMovie : Form
 
     private void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
     {
-        int numberToAdd = engine.AddItems.Count(ai => !ai.CodeUnknown);
+        int numberToAdd = engine.AddItems.Count(ai => ai.CodeKnown);
         if (numberToAdd > 0)
         {
             DialogResult res = MessageBox.Show($"Add {numberToAdd} identified movies to \"My Movies\"?", "Bulk Add Movies", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);

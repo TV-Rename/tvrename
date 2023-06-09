@@ -29,7 +29,7 @@ public class PossibleNewMovie : ISeriesSpecifier
     public bool CodeKnown => !CodeUnknown;
     public bool CodeUnknown => ProviderCode <= 0;
 
-    public string CodeString => CodeUnknown ? "<Unknown>" : $"{ProviderCode} ({SourceProvider.PrettyPrint()})";
+    public string CodeString => CodeKnown ? $"{ProviderCode} ({SourceProvider.PrettyPrint()})" : "<Unknown>";
 
     public PossibleNewMovie(FileInfo possibleMovieFile, bool andGuess, bool showErrorMsgBox)
     {

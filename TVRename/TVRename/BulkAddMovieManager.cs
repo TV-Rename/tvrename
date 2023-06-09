@@ -201,13 +201,8 @@ public class BulkAddMovieManager
     private List<MovieConfiguration> AddToLibrary(IEnumerable<PossibleNewMovie> ais)
     {
         List<MovieConfiguration> movies = new();
-        foreach (PossibleNewMovie ai in ais)
+        foreach (PossibleNewMovie ai in ais.Where(a=>a.CodeKnown))
         {
-            if (ai.CodeUnknown)
-            {
-                continue;
-            }
-
             // see if there is a matching show item
             MovieConfiguration? found = mDoc.FilmLibrary.GetMovie(ai);
             if (found is null)
