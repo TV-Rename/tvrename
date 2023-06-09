@@ -60,6 +60,7 @@ public class PossibleNewMovie : ISeriesSpecifier
         if (tmdbCode.HasValue)
         {
             SetId(tmdbCode.Value, TVDoc.ProviderType.TMDB);
+            Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TMDB = {tmdbId} which validated to {tmdbCode}");
             return;
         }
 
@@ -86,6 +87,7 @@ public class PossibleNewMovie : ISeriesSpecifier
             {
                 SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
                 imdbCodeInternal = imdbToTest;
+                Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on IMDB = {imdbToTest} which we looked up to get {s.TmdbCode}");
                 return;
             }
         }
@@ -95,6 +97,7 @@ public class PossibleNewMovie : ISeriesSpecifier
         if (ser != null)
         {
             SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
+            Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on Name = {RefinedHint} which we looked up to get {ser.TmdbCode}");
             return;
         }
 
@@ -103,6 +106,7 @@ public class PossibleNewMovie : ISeriesSpecifier
         if (ser != null)
         {
             SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
+            Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on Name = {RefinedHint}({PossibleYear}) which we looked up to get {ser.TmdbCode}");
             return;
         }
 
@@ -113,6 +117,7 @@ public class PossibleNewMovie : ISeriesSpecifier
             CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, preferredLocale);
             if (s2 != null)
             {
+                Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TVDB = {tvdbId}({PossibleYear}) which we looked up to get {s2.TmdbCode}");
                 SetId(s2.TmdbCode, TVDoc.ProviderType.TMDB);
             }
             else
@@ -121,6 +126,7 @@ public class PossibleNewMovie : ISeriesSpecifier
                 CachedMovieInfo? s3 = TheTVDB.LocalCache.Instance.GetMovieAndDownload(this, preferredLocale, showErrorMsgBox);
                 if (s3 != null)
                 {
+                    Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TVDB(s3) = {tvdbId}({PossibleYear}) which we looked up to get {s3.TmdbCode}");
                     SetId(s3.TvdbCode, TVDoc.ProviderType.TheTVDB);
                 }
             }
