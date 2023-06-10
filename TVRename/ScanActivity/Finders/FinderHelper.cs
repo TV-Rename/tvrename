@@ -84,15 +84,17 @@ internal static class FinderHelper
             return false;
         }
 
-        string matchText = "X " + filename + " X"; // need to pad to let it match non-numbers at start and end
         string[] regexes =
         {
-            @"(E|e|Ep|ep|episode|Episode) ?0*(?<sequencenumber>\d+)\D",
-            @"\D 0*(?<sequencenumber>\d+) \D",
+            @"\s(E|e|Ep|ep|episode|Episode) ?0*(?<sequencenumber>\d+)\D",
+            @"^(E|e|Ep|ep|episode|Episode) ?0*(?<sequencenumber>\d+)\D",
+            @"\D\s0*(?<sequencenumber>\d+)\s\D",
+            @"\D\s0*(?<sequencenumber>\d+)v\d+\s\D",
+            @"^0*(?<sequencenumber>\d+)\s\D",
         };
 
         return regexes
-            .Select(regex => Regex.Match(matchText, regex))
+            .Select(regex => Regex.Match(filename, regex))
             .Where(betterMatch => betterMatch.Success)
             .Any(betterMatch => int.Parse(betterMatch.Groups["sequencenumber"].Value) == pe.OverallNumber)
             ;
