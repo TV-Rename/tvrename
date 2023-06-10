@@ -4,6 +4,8 @@ namespace TVRename;
 
 public class Languages : SafeList<Language>
 {
+    #region Singleton pattern
+
     //We are using the singleton design pattern
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
@@ -30,7 +32,7 @@ public class Languages : SafeList<Language>
         }
     }
 
-    public Language FallbackLanguage => GetLanguageFromCode("en")!;
+    #endregion
 
     private Languages()
     {
@@ -105,27 +107,18 @@ public class Languages : SafeList<Language>
     }
 
     public Language? GetLanguageFromCode(string? languageAbbreviation)
-    {
-        return this.SingleOrDefault(l => l.Abbreviation == languageAbbreviation && l.IsPrimary);
-    }
+        => this.SingleOrDefault(l => l.Abbreviation == languageAbbreviation && l.IsPrimary);
 
     public Language? GetLanguageFromLocalName(string? language)
-    {
-        return this.SingleOrDefault(l => l.LocalName == language);
-    }
+        => this.SingleOrDefault(l => l.LocalName == language);
 
     public Language? GetLanguageFromId(int languageId)
-    {
-        return this.SingleOrDefault(l => l.TvdbId == languageId && l.IsPrimary);
-    }
+        => this.SingleOrDefault(l => l.TvdbId == languageId && l.IsPrimary);
 
     public Language? GetLanguageFromDialectCode(string iso)
-    {
-        return this.SingleOrDefault(l => l.ISODialectAbbreviation == iso);
-    }
+        => this.SingleOrDefault(l => l.ISODialectAbbreviation == iso);
 
     public Language? GetLanguageFromThreeCode(string threeLetterIsoCode)
-    {
-        return this.SingleOrDefault(l => l.ThreeAbbreviation == threeLetterIsoCode && l.IsPrimary);
-    }
+        => this.SingleOrDefault(l => l.ThreeAbbreviation == threeLetterIsoCode && l.IsPrimary);
+    public Language FallbackLanguage => GetLanguageFromCode("en")!;
 }
