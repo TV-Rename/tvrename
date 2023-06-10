@@ -424,8 +424,11 @@ internal static class API
     }
 
     // ReSharper disable once InconsistentNaming
-    internal static string TVDBV4Code(this Language l) => l.ISODialectAbbreviation == "pt-BR" ? "pt" :
-        l.ISODialectAbbreviation == "zh-TW" ? "zhtw" : l.ThreeAbbreviation;
+    internal static string TVDBV4Code(this Language l) =>
+        l.ISODialectAbbreviation == "pt-BR" ? "pt" :
+        l.ISODialectAbbreviation == "zh-TW" ? "zhtw" :
+        l.ISODialectAbbreviation == "zh-YU" ? "yue" :
+        l.ThreeAbbreviation;
     public static JObject GetMovieV4(ISeriesSpecifier code, string requestedLanguageCode)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/extended";
@@ -1274,8 +1277,12 @@ internal static class API
             {
                 return Languages.Instance.GetLanguageFromDialectCode("zh-TW");
             }
+            if (languageCode == "yue")
+            {
+                return Languages.Instance.GetLanguageFromDialectCode("zh-YU");
+            }
             Language? onlyLanguage = Languages.Instance.GetLanguageFromThreeCode(languageCode)
-                   ?? Languages.Instance.GetLanguageFromCode(languageCode);
+                                     ?? Languages.Instance.GetLanguageFromCode(languageCode);
 
             if (onlyLanguage != null)
             {

@@ -99,6 +99,7 @@ public class Languages : SafeList<Language>
         Add(new Language(27, "zh", "zho", "Chinese", "大陆简体", "zh-CN", true));
         Add(new Language(27, "zh", "zho", "Chinese (Hong Kong)", "大陆简体 (Hong Kong)", "zh-HK", false));
         Add(new Language(27, "zh", "zho", "Chinese (Taiwan)", "大陆简体 (Taiwan)", "zh-TW", false));
+        Add(new Language(27, "zh", "yue", "Chinese (Cantonese)", "大陆简体 (Cantonese)", "zh-YU", false));
         Add(new Language(262, "zu", "zul", "Zulu (South Africa)", "isiZulu", "zu-ZA", true));
         Add(new Language(999, "af", "afr", "Afrikaans", "Afrikaans", "af-ZA", true));
     }
