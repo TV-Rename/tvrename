@@ -1,7 +1,9 @@
-using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
 
@@ -212,86 +214,95 @@ internal class RenameAndMissingCheck : ScanShowActivity
     }
     private FileInfo? CheckFile(string folder, FileInfo fi, FileInfo actualFile, string newName, ProcessedEpisode ep, IEnumerable<FileInfo> files, TVDoc.ScanSettings settings)
     {
-        if (TVSettings.Instance.RetainLanguageSpecificSubtitles)
+        try
         {
-            (bool isSubtitleFile, string subtitleExtension) = fi.IsLanguageSpecificSubtitle();
-
-            if (isSubtitleFile && actualFile.Name != newName)
+            if (TVSettings.Instance.RetainLanguageSpecificSubtitles)
             {
-                newName = TVSettings.Instance.FilenameFriendly(
-                    TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension, folder.Length));
-            }
-        }
+                (bool isSubtitleFile, string subtitleExtension) = fi.IsLanguageSpecificSubtitle();
 
-        FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
-
-        if (!string.Equals(newFile.FullName, actualFile.FullName, TVSettings.Instance.FileNameComparisonType))
-        {
-            //Check that the file does not already exist
-            //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
-            if (FileHelper.FileExistsCaseSensitive(files, newFile))
-            {
-                if (newFile.Length == actualFile.Length && !MatchesSourceEpisode(ep, actualFile) && (newFile.IsThumb() || newFile.IsImageFile()))
+                if (isSubtitleFile && actualFile.Name != newName)
                 {
-                    //Thumbnail that already exists
-                    LOGGER.Info(
-                        $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists. They are the same size, so removing one.");
-                    Doc.TheActionList.Add(new ActionDeleteFile(actualFile, ep, TVSettings.Instance.Tidyup));
+                    newName = TVSettings.Instance.FilenameFriendly(
+                        TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension, folder.Length));
                 }
-                else if (MatchesSourceEpisode(ep, actualFile) && actualFile.IsThumb() && actualFile.IsImageFile())
+            }
+
+            FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
+
+            if (!string.Equals(newFile.FullName, actualFile.FullName, TVSettings.Instance.FileNameComparisonType))
+            {
+                //Check that the file does not already exist
+                //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
+                if (FileHelper.FileExistsCaseSensitive(files, newFile))
                 {
-                    //The actual file matches a needed thumbnail
+                    if (newFile.Length == actualFile.Length && !MatchesSourceEpisode(ep, actualFile) &&
+                        (newFile.IsThumb() || newFile.IsImageFile()))
+                    {
+                        //Thumbnail that already exists
+                        LOGGER.Info(
+                            $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists. They are the same size, so removing one.");
+
+                        Doc.TheActionList.Add(new ActionDeleteFile(actualFile, ep, TVSettings.Instance.Tidyup));
+                    }
+                    else if (MatchesSourceEpisode(ep, actualFile) && actualFile.IsThumb() && actualFile.IsImageFile())
+                    {
+                        //The actual file matches a needed thumbnail
+                    }
+                    else
+                    {
+                        LOGGER.Warn(
+                            $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
+
+                        if (!settings.Unattended && TVSettings.Instance.ChooseWhenMultipleEpisodesMatch)
+                        {
+                            bool? result = ScanHelper.AskUserAboutFileReplacement(actualFile, newFile, ep,
+                                settings.Owner,
+                                Doc, Doc.TheActionList);
+
+                            if (result is true)
+                            {
+                                Doc.TheActionList.Add(new ActionDeleteFile(actualFile, ep, TVSettings.Instance.Tidyup));
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    LOGGER.Warn(
-                        $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
+                    LOGGER.Info($"Identified that {actualFile.FullName} should be renamed to {newName}.");
+                    Doc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
+                        newFile, ep, false, null, Doc));
 
-                    if (!settings.Unattended && TVSettings.Instance.ChooseWhenMultipleEpisodesMatch)
+                    //The following section informs the DownloadIdentifers that we already plan to
+                    //copy a file in the appropriate place and they do not need to worry about downloading
+                    //one for that purpose
+                    downloadIdentifiers.NotifyComplete(newFile);
+
+                    if (newFile.IsMovieFile())
                     {
-                        bool? result = ScanHelper.AskUserAboutFileReplacement(actualFile, newFile, ep, settings.Owner,
-                            Doc, Doc.TheActionList);
-
-                        if (result is true)
-                        {
-                            Doc.TheActionList.Add(new ActionDeleteFile(actualFile, ep, TVSettings.Instance.Tidyup));
-                        }
+                        return newFile;
                     }
                 }
             }
             else
             {
-                LOGGER.Info($"Identified that {actualFile.FullName} should be renamed to {newName}.");
-                Doc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
-                    newFile, ep, false, null, Doc));
-
-                //The following section informs the DownloadIdentifers that we already plan to
-                //copy a file in the appropriate place and they do not need to worry about downloading
-                //one for that purpose
-                downloadIdentifiers.NotifyComplete(newFile);
-
-                if (newFile.IsMovieFile())
+                if (actualFile.IsMovieFile())
                 {
-                    return newFile;
+                    //File is correct name
+                    LOGGER.Debug($"Identified that {actualFile.FullName} is in the right place. Marking it as 'seen'.");
+                    //Record this episode as seen
+
+                    TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(ep);
+                    if (TVSettings.Instance.IgnorePreviouslySeen)
+                    {
+                        Doc.SetDirty();
+                    }
                 }
             }
         }
-        else
+        catch (FileNotFoundException fnfe)
         {
-            if (actualFile.IsMovieFile())
-            {
-                //File is correct name
-                LOGGER.Debug($"Identified that {actualFile.FullName} is in the right place. Marking it as 'seen'.");
-                //Record this episode as seen
-
-                TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(ep);
-                if (TVSettings.Instance.IgnorePreviouslySeen)
-                {
-                    Doc.SetDirty();
-                }
-            }
+            LOGGER.Warn( $"Could not find file so aborting scan for it. Possibly it was removed half way through the scan - {fnfe.Message}");
         }
-
         return null;
     }
 
