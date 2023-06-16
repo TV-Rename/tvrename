@@ -271,9 +271,13 @@ public class PossibleNewMovie : ISeriesSpecifier
         {
             Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any Ids inside, got {xe.Message}");
         }
+        catch (OperationCanceledException xe)
+        {
+            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any Ids inside, got {xe.Message}");
+        }
         catch (Exception e)
         {
-            Logger.Error(e, $"Could not parse {file.FullName} to try and see whether there is any Ids inside.");
+            Logger.Error($"Could not parse {file.FullName} to try and see whether there is any Ids inside. Got a {e.Message}");
         }
 
         return null;

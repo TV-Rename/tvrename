@@ -658,7 +658,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     {
         // only scan "recent" shows
         int days = TVSettings.Instance.WTWRecentDays;
-        return si.ActiveSeasons.Clone().Select(pair => pair.Value).SelectMany(eis => eis).Any(ei => ei.WithinDays(days));
+        return si.ActiveSeasons.ToList().Select(pair => pair.Value).SelectMany(eis => eis).Any(ei => ei.WithinDays(days));
     }
 
     public List<ProcessedEpisode> NextNShows(int nShows, int nDaysPast, int nDaysFuture)

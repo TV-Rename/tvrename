@@ -53,11 +53,6 @@ public static class EnumerableExtensions
         return listToClone.Select(item => (T)item.Clone()).ToList();
     }
 
-    public static IList<T> Clone<T>(this IEnumerable<T> listToClone)
-    {
-        return listToClone.Select(item => item).ToList();
-    }
-
     public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
     {
         foreach (T item in source) { action(item); }
