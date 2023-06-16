@@ -55,7 +55,7 @@ public class CachedMovieInfo : CachedMediaInfo
         {
             LOGGER.Error(e, GenerateErrorMessage());
             // ReSharper disable once PossibleIntendedRethrow
-            throw e;
+            throw;
         }
     }
 

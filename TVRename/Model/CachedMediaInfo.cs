@@ -424,7 +424,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
         {
             LOGGER.Error(e, GenerateErrorMessage());
             // ReSharper disable once PossibleIntendedRethrow
-            throw e;
+            throw;
         }
     }
 
