@@ -37,11 +37,9 @@ public class SafeEnumerator<T> : IEnumerator<T>
         Monitor.Exit(@lock);
     }
 
-    /// <remarks>
     /// we just delegate actual implementation
     /// to the inner enumerator, that actually iterates
     /// over some collection
-    /// </remarks>
     public bool MoveNext() => inner.MoveNext();
 
     public void Reset() => inner.Reset();

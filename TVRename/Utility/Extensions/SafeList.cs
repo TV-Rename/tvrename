@@ -63,11 +63,9 @@ public class SafeList<T> : IList<T>
         }
     }
 
-    /// <remarks>
-    /// To be actually thread-safe, our collection must be locked on all other operations
-    /// </remarks>
     public void Add(T item)
     {
+        /// To be actually thread-safe, our collection must be locked on all other operations
         if (item is null)
         {
             return;
