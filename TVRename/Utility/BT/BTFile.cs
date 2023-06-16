@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TVRename;
 
@@ -41,11 +42,9 @@ public class BTFile
             // multiple file torrent
             BTList fileList = (BTList)bti;
 
-            foreach (BTItem it in fileList.Items)
+            foreach (BTItem? thePath in fileList.Items.OfType<BTDictionary>()
+                         .Select(file => file.GetItem("path")))
             {
-                BTDictionary file = (BTDictionary)it;
-                BTItem? thePath = file.GetItem("path");
-
                 if (thePath?.Type != BTChunk.kList)
                 {
                     return null;

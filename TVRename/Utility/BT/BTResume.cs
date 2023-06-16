@@ -1,6 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using NLog;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TVRename;
 
@@ -169,9 +170,8 @@ public class BTResume : BTCore
     private static string? GetTargetSaveLocation(BTList targetList, int c)
     {
         // see if there is a target for this (the c'th) file
-        foreach (BTItem t in targetList.Items)
+        foreach (BTList l in targetList.Items.OfType<BTList>())
         {
-            BTList l = (BTList)t;
             BTInteger n = (BTInteger)l.Items[0];
             BTString dest = (BTString)l.Items[1];
             if (n.Value == c)
