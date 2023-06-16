@@ -530,12 +530,12 @@ public static class FileHelper
         // need terminating slash, otherwise "c:\abc def" will match "c:\abc"
         if (!thisOne.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
         {
-            thisOne += System.IO.Path.DirectorySeparatorChar.ToString();
+            thisOne += System.IO.Path.DirectorySeparatorChar;
         }
 
         if (!ofThat.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
         {
-            ofThat += System.IO.Path.DirectorySeparatorChar.ToString();
+            ofThat += System.IO.Path.DirectorySeparatorChar;
         }
 
         int l = ofThat.Length;

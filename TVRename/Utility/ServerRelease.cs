@@ -27,7 +27,7 @@ public class ServerRelease : Release
         sb.AppendLine("************************");
         sb.AppendLine("* New Update Available *");
         sb.AppendLine("************************");
-        sb.AppendLine($"A new version is available: {ToString()} since {ReleaseDate}");
+        sb.AppendLine($"A new version is available: {this} since {ReleaseDate}");
         sb.AppendLine($"please download from {DownloadUrl}");
         sb.AppendLine($"full notes available from {ReleaseNotesUrl}");
         sb.AppendLine(ReleaseNotesText);

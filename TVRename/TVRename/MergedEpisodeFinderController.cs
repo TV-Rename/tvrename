@@ -75,7 +75,7 @@ internal static class MergedEpisodeFinderController
         foreach (ProcessedEpisode comparePep in seasonEpisodes.Where(comparePep => EpisodesMatch(pep, comparePep)))
         {
             // Tell user about this possibility
-            output.AppendLine($"{si.ShowName} - Season: {seasonId} - {pep.FirstAired.ToString()} - {pep.AiredEpNum}({pep.Name}) - {comparePep.AiredEpNum}({comparePep.Name})");
+            output.AppendLine($"{si.ShowName} - Season: {seasonId} - {pep.FirstAired} - {pep.AiredEpNum}({pep.Name}) - {comparePep.AiredEpNum}({comparePep.Name})");
 
             //do the 'name' test
             string root = StringExtensions.GetCommonStartString(pep.Name, comparePep.Name);

@@ -31,4 +31,5 @@ public class Language
     public bool IsPrimary { get; set; }
     public string LocalName { get; set; }
     public string EnglishName { get; set; }
+    public override string ToString() => $"{LocalName} ({EnglishName} - '{ISODialectAbbreviation}')";
 }

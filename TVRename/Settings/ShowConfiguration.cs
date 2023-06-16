@@ -610,7 +610,7 @@ public class ShowConfiguration : MediaConfiguration
 
         if (!r.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
         {
-            r += System.IO.Path.DirectorySeparatorChar.ToString();
+            r += System.IO.Path.DirectorySeparatorChar;
         }
 
         if (AutoAddType == AutomaticFolderType.none)

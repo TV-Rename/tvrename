@@ -209,7 +209,7 @@ public partial class AddEditShow : Form, ICodeWindow
                 txtIgnoreSeasons.Text += " ";
             }
 
-            txtIgnoreSeasons.Text += i.ToString();
+            txtIgnoreSeasons.Text += i;
             first = false;
         }
     }
