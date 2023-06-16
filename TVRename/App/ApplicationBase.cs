@@ -7,8 +7,6 @@ using NLog.Layouts;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
 using System;
-using System.Reflection;
-//using System.Runtime.Remoting;
 using System.Windows.Forms;
 using TVRename.Forms;
 
@@ -86,6 +84,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         SystemEvents.EventsThreadShutdown -= OnEventsThreadShutdown;
         SystemEvents.SessionEnded -= OnSessionEnded;
     }
+
     /* Notifies you when the thread that is distributing the events from the SystemEvents class is
      * shutting down so that we can unregister events on the SystemEvents class
      */
@@ -152,7 +151,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             createdDoc = new TVDoc(settingsFile, commandLineArgs);
 
             // Try loading TheTVDB cache file
-            bool showIssues = !commandLineArgs.Unattended && !commandLineArgs.Hide;
+            bool showIssues = commandLineArgs is { Unattended: false, Hide: false };
             AlertUser("Loading TVDB Cache", 20);
             TheTVDB.LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, showIssues);
             AlertUser("Loading TVMaze Cache", 30);
