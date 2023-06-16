@@ -87,10 +87,10 @@ internal class SABnzbdFinder : DownloadingFinder
         string? responseText;
         try
         {
-            HttpClient client = new();
-
+            using HttpClient client = new();
             using HttpResponseMessage response = client.GetAsync(theUrl).Result;
             using HttpContent content = response.Content;
+
             responseText = content.ReadAsStringAsync().Result;
         }
         catch (Exception e)

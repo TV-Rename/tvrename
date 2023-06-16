@@ -46,7 +46,7 @@ public static class HttpHelper
             try
             {
                 // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
-                HttpClient client = new(new ClearanceHandler());
+                using HttpClient client = new(new ClearanceHandler());
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
                 return TaskObtainStringFromUrl(url, client);
@@ -78,7 +78,7 @@ public static class HttpHelper
             try
             {
                 // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
-                HttpClient cloudflareclient = new(new ClearanceHandler());
+                using HttpClient cloudflareclient = new(new ClearanceHandler());
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
                 Task<byte[]> task = Task.Run(async () => await cloudflareclient.GetByteArrayAsync(url));
@@ -113,7 +113,7 @@ public static class HttpHelper
     public static string HttpRequest(string method, string url, string? postContent,
         string? contentType, string? token, string? lang)
     {
-        HttpClient newClient = new();
+        using HttpClient newClient = new();
         Uri newClientBaseAddress = new(url);
         newClient.BaseAddress = newClientBaseAddress;
         if (!contentType.IsNullOrWhitespace())
@@ -250,7 +250,7 @@ public static class HttpHelper
 
     public static byte[] Download(string url)
     {
-        HttpClient wc = new();
+        using HttpClient wc = new();
         return wc.GetByteArrayAsync(url).Result;
     }
 

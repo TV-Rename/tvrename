@@ -36,7 +36,7 @@ public partial class UpdateNotification : Form
 
     private void UpdateWithMarkdown()
     {
-        HttpClient client = new();
+        using HttpClient client = new();
         try
         {
             JsonObject request = new()
@@ -50,7 +50,7 @@ public partial class UpdateNotification : Form
                 .Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
 
             HttpResponseMessage response = client.PostAsJsonAsync(GITHUB_CONVERSION_URL, request).Result;
-            System.IO.StreamReader reader = new(response.Content.ReadAsStream());
+            using System.IO.StreamReader reader = new(response.Content.ReadAsStream());
             string result = reader.ReadToEnd();
 
             const string HTML_HEAD =

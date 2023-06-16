@@ -62,7 +62,7 @@ internal static class API
     {
         string theUrl = GetImageURL(url);
 
-        HttpClient wc = new();
+        using HttpClient wc = new();
 
         Task<byte[]> task = Task.Run(async () => await wc.GetByteArrayAsync(url));
 
