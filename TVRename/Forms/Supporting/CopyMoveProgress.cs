@@ -188,7 +188,7 @@ public partial class CopyMoveProgress : Form
         DirectoryInfo? toUncRoot = !string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\", StringComparison.Ordinal) ? new DirectoryInfo(folder).Root : null;
         if (toUncRoot != null)
         {
-            FileSystemProperties driveStats = FileHelper.GetProperties(toUncRoot.ToString());
+            FileSystemProperties driveStats = FileHelper.GetFileSystemProperties(toUncRoot.ToString());
             long? availableBytes = driveStats.AvailableBytes;
             long? totalBytes = driveStats.TotalBytes;
             if (availableBytes.HasValue && totalBytes.HasValue)

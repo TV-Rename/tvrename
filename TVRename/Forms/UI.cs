@@ -850,8 +850,8 @@ public partial class UI : Form, IDialogParent
 
         filterButton.Click += handler;
         textBox.Controls.Add(filterButton);
-        // Send EM_SETMARGINS to prevent text from disappearing underneath the button
-        NativeMethods.SendMessage(textBox.Handle, 0xd3, (IntPtr)2, (IntPtr)(filterButton.Width << 16));
+
+        UiHelpers.StopTextDisappearing(textBox, filterButton);
     }
 
     private void UpdateVisibilityFromSettings()
@@ -4215,8 +4215,7 @@ public partial class UI : Form, IDialogParent
             int clientSizeHeight = (tb.ClientSize.Height - 16) / 2;
             filterButton.Location = new Point(tb.ClientSize.Width - filterButton.Width, clientSizeHeight + 1);
 
-            // Send EM_SETMARGINS to prevent text from disappearing underneath the button
-            NativeMethods.SendMessage(tb.Handle, 0xd3, (IntPtr)2, (IntPtr)(filterButton.Width << 16));
+            UiHelpers.StopTextDisappearing(tb, filterButton);
         }
     }
 

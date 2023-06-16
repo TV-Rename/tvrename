@@ -177,4 +177,9 @@ public static class UiHelpers
             UpdateColorControls(subC, fore, back, highlight);
         }
     }
+
+    public static void StopTextDisappearing(TextBox tb, Control filterButton)
+    {
+        NativeMethods.StopTextDisappearing(tb, filterButton);
+    }
 }
