@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using NLog;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -14,6 +15,7 @@ namespace TVRename;
 
 public abstract class Item : IComparable<Item>, INotifyPropertyChanged // something shown in the list on the Scan tab (not always an Action)
 {
+    protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
     public abstract string? TargetFolder { get; } // return a list of folders for right-click menu
     public abstract string ScanListViewGroup { get; } // which group name for the listview
     public abstract int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none

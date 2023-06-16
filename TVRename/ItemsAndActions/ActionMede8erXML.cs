@@ -48,7 +48,7 @@ public class ActionMede8erXML : ActionWriteMetadata
             }
             else if (Movie != null)// show overview (Series.xml)
             {
-                //WriteMovieXml(); TODO Mede8er support for movies
+                WriteMovieXml(); 
             }
 
             return ActionOutcome.Success();
@@ -57,6 +57,12 @@ public class ActionMede8erXML : ActionWriteMetadata
         {
             return new ActionOutcome(e);
         }
+    }
+
+    private void WriteMovieXml()
+    {
+        //TODO Mede8er support for movies
+        LOGGER.Info($"Movies not currently supported for Mede8er (please contact support with the definition - {Movie?.Name}");
     }
 
     private void WriteEpisodeXml()
