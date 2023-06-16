@@ -13,7 +13,6 @@ namespace TVRename;
 public abstract class ActionFileOperation : Action
 {
     protected TVSettings.TidySettings? Tidyup;
-    protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
     protected void DeleteOrRecycleFile(FileInfo? file)
     {

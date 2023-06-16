@@ -136,7 +136,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
         lock (SERIES_LOCK)
         {
-            if (Series.ContainsKey(s.TmdbId) && !Series[s.TmdbId].Dirty)
+            if (Series.TryGetValue(s.TmdbId,out CachedSeriesInfo? si) && !si.Dirty)
             {
                 return true;
             }
@@ -195,7 +195,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
         lock (MOVIE_LOCK)
         {
-            if (Movies.ContainsKey(id.TmdbId) && !Movies[id.TmdbId].Dirty)
+            if (Movies.TryGetValue(id.TmdbId, out CachedMovieInfo? movie) && !movie.Dirty)
             {
                 return true;
             }
@@ -367,13 +367,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
         lock (SERIES_LOCK)
         {
-            if (!Series.ContainsKey(e.SeriesId))
+            if (!Series.TryGetValue(e.SeriesId, out CachedSeriesInfo? ser))
             {
                 throw new SourceConsistencyException(
                     $"Can't find the cachedSeries to add the episode to (TVMaze). EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}", TVDoc.ProviderType.TMDB);
             }
-
-            CachedSeriesInfo ser = Series[e.SeriesId];
 
             ser.AddEpisode(e);
         }

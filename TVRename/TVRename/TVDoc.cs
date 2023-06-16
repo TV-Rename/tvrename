@@ -1194,7 +1194,7 @@ public class TVDoc : IDisposable
         // process each folder for each season...
         foreach (int snum in si.GetSeasonKeys())
         {
-            if (si.IgnoreSeasons.Contains(snum) || !allFolders.ContainsKey(snum))
+            if (si.IgnoreSeasons.Contains(snum) || !allFolders.TryGetValue(snum, out SafeList<string>? folders))
             {
                 continue; // ignore/skip this season
             }
@@ -1209,8 +1209,7 @@ public class TVDoc : IDisposable
                 continue;
             }
 
-            // all the folders for this particular season
-            SafeList<string> folders = allFolders[snum];
+            // SafeList<string> folders =all the folders for this particular season
 
             foreach (string folder in folders)
             {

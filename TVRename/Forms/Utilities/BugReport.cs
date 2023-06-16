@@ -86,17 +86,17 @@ public partial class BugReport : Form
                     continue; // skip specials
                 }
 
-                if (!si.AllExistngFolderLocations().ContainsKey(snum))
-                {
-                    continue; // skip non seen seasons
-                }
-
                 if (snum == 0 && TVSettings.Instance.IgnoreAllSpecials)
                 {
                     continue;
                 }
 
-                foreach (string folder in si.AllExistngFolderLocations()[snum])
+                if (!si.AllExistngFolderLocations().TryGetValue(snum, out SafeList<string>? folders))
+                {
+                    continue; // skip non seen seasons
+                }
+
+                foreach (string folder in folders)
                 {
                     txt.AppendLine(si + " : " + si.ShowName + " : S" + snum);
                     txt.AppendLine("Folder: " + folder);

@@ -105,7 +105,7 @@ public abstract class MediaCache
         }
         lock (SERIES_LOCK)
         {
-            return HasSeries(id.Value) ? Series[id.Value] : null;
+            return Series.TryGetValue(id.Value, out CachedSeriesInfo? si) ? si : null;
         }
     }
 
@@ -134,7 +134,7 @@ public abstract class MediaCache
 
         lock (MOVIE_LOCK)
         {
-            return HasMovie(id.Value) ? Movies[id.Value] : null;
+            return Movies.TryGetValue(id.Value, out CachedMovieInfo? mi) ? mi : null;
         }
     }
 

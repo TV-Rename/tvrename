@@ -293,13 +293,13 @@ internal class CleanDownloadDirectory : ScanActivity
     {
         FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE? re);
 
-        if (!si.SeasonEpisodes.ContainsKey(seasF))
+        if (!si.SeasonEpisodes.TryGetValue(seasF, out List<ProcessedEpisode>? seasonEpisodes))
         {
             LogError(fi, seasF, epF, re, si, "season");
             return (false, null);
         }
 
-        ProcessedEpisode? firstMatchingEpisode = si.SeasonEpisodes[seasF].FirstOrDefault(ep => ep.AppropriateEpNum == epF);
+        ProcessedEpisode? firstMatchingEpisode = seasonEpisodes.FirstOrDefault(ep => ep.AppropriateEpNum == epF);
 
         if (firstMatchingEpisode == null)
         {
@@ -572,7 +572,7 @@ internal class CleanDownloadDirectory : ScanActivity
         }
 
         Dictionary<int, SafeList<string>> foldersLocations = si.AllProposedFolderLocations();
-        if (!foldersLocations.ContainsKey(seasF))
+        if (!foldersLocations.TryGetValue(seasF, out SafeList<string>? folders))
         {
             LOGGER.Info(
                 $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, but can't tell where to copy it. Not copying across.");
@@ -581,8 +581,6 @@ internal class CleanDownloadDirectory : ScanActivity
 
         LOGGER.Info(
             $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, that it's not already present and airs in the future. Copying across.");
-
-        SafeList<string> folders = si.AllProposedFolderLocations()[seasF];
 
         foreach (string folder in folders)
         {

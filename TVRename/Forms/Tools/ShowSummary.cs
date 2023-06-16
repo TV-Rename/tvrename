@@ -432,13 +432,13 @@ public partial class ShowSummary : Form, IDialogParent
         {
             Dictionary<int, SafeList<string>> afl = show.AllExistngFolderLocations();
 
-            if (!afl.ContainsKey(seas.SeasonNumber))
+            if (!afl.TryGetValue(seas.SeasonNumber, out SafeList<string>?  seasonData))
             {
                 return;
             }
 
             bool first = true;
-            foreach (string folder in afl[seas.SeasonNumber].OrderBy(s => s))
+            foreach (string folder in seasonData.OrderBy(s => s))
             {
                 if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
                 {

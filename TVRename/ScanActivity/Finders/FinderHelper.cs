@@ -302,36 +302,35 @@ internal static class FinderHelper
 
         Dictionary<int, SafeList<string>> dirs = si.AllFolderLocationsEpCheck(checkDirectoryExist);
 
-        if (!dirs.ContainsKey(snum))
+        if (!dirs.TryGetValue(snum, out SafeList<string>? folders))
         {
             return ret;
         }
 
-        foreach (string folder in dirs[snum])
+        foreach (FileInfo fiTemp in folders
+                     .Select(folder => cache.GetFiles(folder))
+                     .SelectMany(files => files.Where(IsMovieFile)))
         {
-            FileInfo[] files = cache.GetFiles(folder);
-
-            foreach (FileInfo fiTemp in files.Where(fiTemp => fiTemp.IsMovieFile()))
+            if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, out int _, si))
             {
-                if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, out int _, si))
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                if (seasFound == -1)
-                {
-                    seasFound = seasWanted;
-                }
+            if (seasFound == -1)
+            {
+                seasFound = seasWanted;
+            }
 
-                if (seasFound == seasWanted && epFound == epWanted)
-                {
-                    ret.Add(fiTemp);
-                }
+            if (seasFound == seasWanted && epFound == epWanted)
+            {
+                ret.Add(fiTemp);
             }
         }
 
         return ret;
     }
+
+    private static bool IsMovieFile(FileInfo f) => f.IsMovieFile();
 
     private static bool EpisodeNeeded(ShowConfiguration si, DirFilesCache dfc, int seasF, int epF,
         FileSystemInfo fi)

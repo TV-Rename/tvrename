@@ -81,7 +81,7 @@ public class LocalCache : MediaCache, iTVSource
 
         lock (SERIES_LOCK)
         {
-            if (Series.ContainsKey(s.TvMazeId) && !Series[s.TvMazeId].Dirty)
+            if (Series.TryGetValue(s.TmdbId, out CachedSeriesInfo? si) && !si.Dirty)
             {
                 return true;
             }
@@ -248,14 +248,12 @@ public class LocalCache : MediaCache, iTVSource
     {
         lock (SERIES_LOCK)
         {
-            if (!Series.ContainsKey(e.SeriesId))
+            if (!Series.TryGetValue(e.SeriesId, out CachedSeriesInfo? ser))
             {
                 throw new SourceConsistencyException(
                     $"Can't find the cachedSeries to add the episode to (TVMaze). EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}",
                     TVDoc.ProviderType.TVmaze);
             }
-
-            CachedSeriesInfo ser = Series[e.SeriesId];
 
             ser.AddEpisode(e);
         }

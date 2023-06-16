@@ -57,14 +57,12 @@ internal class RenameAndMissingCheck : ScanShowActivity
                 return;
             }
 
-            if (!allFolders.ContainsKey(snum))
+            if (!allFolders.TryGetValue(snum, out SafeList<string>? folders))
             {
                 continue;
             }
 
             // all the folders for this particular season
-            SafeList<string> folders = allFolders[snum];
-
             CheckSeason(si, dfc, settings, snum, folders, timeForBannerUpdate);
         } // for each season of this show
     }
@@ -125,12 +123,10 @@ internal class RenameAndMissingCheck : ScanShowActivity
         Dictionary<int, FileInfo> localEps = new();
         int maxEpNumFound = 0;
 
-        if (!si.SeasonEpisodes.ContainsKey(snum))
+        if (!si.SeasonEpisodes.TryGetValue(snum, out List<ProcessedEpisode>? eps))
         {
             return;
         }
-
-        List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
 
         foreach (FileInfo fi in files)
         {
@@ -195,7 +191,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
         DateTime today = TimeHelpers.LocalNow();
         foreach (ProcessedEpisode episode in eps)
         {
-            if (!localEps.ContainsKey(episode.AppropriateEpNum)) // not here locally
+            if (!localEps.TryGetValue(episode.AppropriateEpNum, out FileInfo? filo)) // not here locally
             {
                 AddMissingIfNeeded(si, snum, folder, missCheck, episode, today);
             }
@@ -207,7 +203,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
                 }
 
                 // do NFO and thumbnail checks if required
-                FileInfo filo = localEps[episode.AppropriateEpNum]; // filename (or future filename) of the file
+                //FileInfo filo is the filename (or future filename) of the file
                 Doc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(episode, filo));
             }
         } // up to date check, for each episode

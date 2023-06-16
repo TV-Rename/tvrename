@@ -1443,9 +1443,8 @@ public partial class UI : Form, IDialogParent
 
         if (TVSettings.Instance.OfflineMode || TVSettings.Instance.ShowBasicShowDetails)
         {
-            if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
+            if (snum >= 0 && si.AppropriateSeasons().TryGetValue( snum, out ProcessedSeason? s))
             {
-                ProcessedSeason s = si.AppropriateSeasons()[snum];
                 SetHtmlBody(chrInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
                 SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
             }
@@ -1461,16 +1460,15 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
+        if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? se))
         {
-            ProcessedSeason s = si.AppropriateSeasons()[snum];
-            SetHtmlBody(chrImages, s.GetSeasonImagesOverview());
-            SetHtmlBody(chrInformation, si.GetSeasonHtmlOverview(s, false));
-            SetHtmlBody(chrSummary, si.GetSeasonSummaryHtmlOverview(s, false));
+            SetHtmlBody(chrImages, se.GetSeasonImagesOverview());
+            SetHtmlBody(chrInformation, si.GetSeasonHtmlOverview(se, false));
+            SetHtmlBody(chrSummary, si.GetSeasonSummaryHtmlOverview(se, false));
             UpdateTvTrailer(si);
 
-            ResetRunBackGroundWorker(bwSeasonHTMLGenerator, s);
-            ResetRunBackGroundWorker(bwSeasonSummaryHTMLGenerator, s);
+            ResetRunBackGroundWorker(bwSeasonHTMLGenerator, se);
+            ResetRunBackGroundWorker(bwSeasonSummaryHTMLGenerator, se);
         }
         else
         {

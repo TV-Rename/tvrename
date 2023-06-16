@@ -842,14 +842,12 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         lock (SERIES_LOCK)
         {
-            if (!Series.ContainsKey(e.SeriesId))
+            if (!Series.TryGetValue(e.SeriesId, out CachedSeriesInfo? ser))
             {
                 throw new SourceConsistencyException(
                     $"Can't find the cachedSeries to add the episode to (TheTVDB). EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}",
                     TVDoc.ProviderType.TheTVDB);
             }
-
-            CachedSeriesInfo ser = Series[e.SeriesId];
 
             ser.AddEpisode(e);
         }
@@ -1286,9 +1284,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private string GenerateMessage(int code, bool episodesToo, bool bannersToo)
     {
         string txt;
-        if (Series.ContainsKey(code))
+        if (Series.TryGetValue(code, out CachedSeriesInfo? si))
         {
-            txt = Series[code].Name.HasValue() ? Series[code].Name : "Code " + code;
+            txt = si.Name.HasValue() ? si.Name : "Code " + code;
         }
         else
         {
@@ -1406,7 +1404,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return true;
         }
 
-        if (!Series.ContainsKey(series.TvdbId))
+        if (!Series.TryGetValue(series.TvdbId,out CachedSeriesInfo? cachedSeriesInfo))
         {
             return false; // shouldn't happen
         }
@@ -1414,7 +1412,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         Episode? ep = FindEpisodeById(episodeId);
         string eptxt = EpisodeDescription(order, episodeId, ep);
 
-        CachedSeriesInfo cachedSeriesInfo = Series[series.TvdbId];
         Say($"{cachedSeriesInfo.Name} ({eptxt}) in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
 
         JObject jsonEpisodeResponse;
@@ -1499,7 +1496,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         lock (MOVIE_LOCK)
         {
-            if (Movies.ContainsKey(id.TvdbId) && !Movies[id.TvdbId].Dirty)
+            if (Movies.TryGetValue(id.TvdbId, out CachedMovieInfo? movie) && !movie.Dirty)
             {
                 return true;
             }

@@ -181,9 +181,8 @@ public class ShowConfiguration : MediaConfiguration
 
     private bool HasAnyAirdates(int snum)
     {
-        ConcurrentDictionary<int, ProcessedSeason> seasonsToUse = AppropriateSeasons();
-
-        return seasonsToUse.ContainsKey(snum) && seasonsToUse[snum].Episodes.Values.Any(e => e.FirstAired != null);
+        return AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? season)
+               && season.Episodes.Values.Any(e => e.FirstAired != null);
     }
 
     //todo use this function MS_SI_CHANGE
@@ -196,14 +195,9 @@ public class ShowConfiguration : MediaConfiguration
 
     internal ProcessedEpisode GetEpisode(int seasF, int epF)
     {
-        if (!SeasonEpisodes.ContainsKey(seasF))
+        if (SeasonEpisodes.TryGetValue(seasF, out List<ProcessedEpisode>? season))
         {
-            throw new EpisodeNotFoundException();
-        }
-
-        foreach (ProcessedEpisode pep in SeasonEpisodes[seasF])
-        {
-            if (pep.AppropriateEpNum == epF)
+            foreach (ProcessedEpisode pep in season.Where(pep => pep.AppropriateEpNum == epF))
             {
                 return pep;
             }

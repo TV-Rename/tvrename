@@ -248,13 +248,11 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
     public static List<ProcessedEpisode>? GenerateEpisodes(ShowConfiguration si, int snum, bool applyRules)
     {
-        if (!si.AppropriateSeasons().ContainsKey(snum))
+        if (!si.AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? seas))
         {
             Logger.Error($"Asked to update season {snum} of {si.ShowName}, but it does not exist");
             return null;
         }
-
-        ProcessedSeason seas = si.AppropriateSeasons()[snum];
 
         List<ProcessedEpisode> eis = seas.Episodes.Values.Select(e => new ProcessedEpisode(e, si)).ToList();
 
