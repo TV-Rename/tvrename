@@ -976,27 +976,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             throw new SourceConnectivityException();
         }
 
-        CachedSeriesInfo si;
-        if (true)
+        ProcessedSeason.SeasonType st = code is ShowConfiguration showConfig
+            ? showConfig.Order
+            : ProcessedSeason.SeasonType.aired;
+
+        (CachedSeriesInfo si, Language? languageCodeToUse) = API.GenerateSeriesInfoV4(DownloadSeriesJson(code, locale), locale, st);
+        if (languageCodeToUse != null)
         {
-            ProcessedSeason.SeasonType st = code is ShowConfiguration showConfig
-                ? showConfig.Order
-                : ProcessedSeason.SeasonType.aired;
-
-            (si, Language? languageCodeToUse) = API.GenerateSeriesInfoV4(DownloadSeriesJson(code, locale), locale, st);
-            if (languageCodeToUse != null)
-            {
-                si.AddTranslations(DownloadSeriesTranslationsJsonV4(code, new Locale(languageCodeToUse), showErrorMsgBox));
-            }
-        }
-
-        if (si is null)
-        {
-            LOGGER.Error(
-                $"Error obtaining cachedSeries {code} - no cound not generate a cachedSeries from the responses");
-
-            SayNothing();
-            throw new SourceConnectivityException();
+            si.AddTranslations(DownloadSeriesTranslationsJsonV4(code, new Locale(languageCodeToUse), showErrorMsgBox));
         }
 
         return si;
