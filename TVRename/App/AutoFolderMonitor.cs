@@ -17,8 +17,9 @@ public sealed class AutoFolderMonitor : IDisposable
     {
         mDoc = doc;
         mainForm = ui;
+        double interval = (double)intervalSeconds * 1000;
 
-        mScanDelayTimer = new System.Timers.Timer(intervalSeconds * 1000);
+        mScanDelayTimer = new System.Timers.Timer(interval);
         mScanDelayTimer.Elapsed += mScanDelayTimer_Elapsed;
         mScanDelayTimer.Stop();
     }

@@ -240,7 +240,7 @@ public class ProcessedEpisode : Episode
         return ts?.TotalHours < 0;
     }
 
-    public bool WithinDays(int days)
+    public bool WithinLastDays(int days)
     {
         DateTime? dt = GetAirDateDt(true);
         if (dt is null || dt.Value.CompareTo(DateTime.MaxValue) == 0)
@@ -248,8 +248,10 @@ public class ProcessedEpisode : Episode
             return false;
         }
 
-        TimeSpan ts = dt.Value.Subtract(DateTime.Now);
-        return ts.TotalHours >= -24 * days && ts.TotalHours <= 0;
+        DateTime now = DateTime.Now;
+        DateTime limit = now.AddDays(-days);
+        
+        return limit <= dt && dt <= now;
     }
 
     public bool IsInFuture(bool def)
@@ -285,5 +287,11 @@ public class ProcessedEpisode : Episode
     public bool NotOnDvd()
     {
         return DvdEpNum == 0 && DvdChapter is null && string.IsNullOrWhiteSpace(DvdDiscId) && DvdSeasonNumber == 0;
+    }
+
+    public bool HasAiredDate()
+    {
+        DateTime? dt = GetAirDateDt(true);
+        return dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0;
     }
 }

@@ -622,11 +622,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             int totaleps = kvp.Value.Episodes.Count;
             int totaldirty = kvp.Value.Episodes.Count(episode => episode.Dirty);
 
-            float percentDirty = 100;
-            if (totaldirty > 0 || totaleps > 0)
-            {
-                percentDirty = 100 * totaldirty / (float)totaleps;
-            }
+            float percentDirty = totaleps > 0
+                ? (float)totaldirty * 100 / totaleps
+                : 100; 
 
             if (totaleps > 0 && percentDirty >= TVSettings.Instance.PercentDirtyUpgrade()) // 10%
             {

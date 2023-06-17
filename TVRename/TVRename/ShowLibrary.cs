@@ -658,7 +658,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     {
         // only scan "recent" shows
         int days = TVSettings.Instance.WTWRecentDays;
-        return si.ActiveSeasons.ToList().Select(pair => pair.Value).SelectMany(eis => eis).Any(ei => ei.WithinDays(days));
+        return si.ActiveSeasons.ToList().Select(pair => pair.Value).SelectMany(eis => eis).Any(ei => ei.WithinLastDays(days));
     }
 
     public List<ProcessedEpisode> NextNShows(int nShows, int nDaysPast, int nDaysFuture)
@@ -753,7 +753,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         return nextAfterThat;
     }
 
-    public IEnumerable<ProcessedEpisode> GetRecentAndFutureEps(int days)
+    public IEnumerable<ProcessedEpisode> GetRecentAndFutureEps(int recentDays)
     {
         List<ProcessedEpisode> returnList = new();
 
@@ -764,31 +764,31 @@ public class ShowLibrary : SafeList<ShowConfiguration>
                 continue;
             }
 
+            DateTime now = DateTime.Now;
+            DateTime limit = now.AddDays(-recentDays);
+
             foreach (List<ProcessedEpisode> eis in si.ActiveSeasons.Select(p => p.Value))
             {
                 bool nextToAirFound = false;
 
-                foreach (ProcessedEpisode ei in eis)
+                foreach (ProcessedEpisode ei in eis
+                             .Where(ei=>ei.HasAiredDate())
+                             .Where(ei=>ei.GetAirDateDt(true)>=limit)
+                             .OrderBy(ei=>ei.GetAirDateDt(true)))
                 {
                     DateTime? dt = ei.GetAirDateDt(true);
-                    if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
+                    
+                    if (dt>now && !nextToAirFound)
                     {
-                        TimeSpan ts = dt.Value.Subtract(DateTime.Now);
-                        if (ts.TotalHours >= -24 * days) // in the future (or fairly recent)
-                        {
-                            if (ts.TotalHours >= 0 && !nextToAirFound)
-                            {
-                                nextToAirFound = true;
-                                ei.NextToAir = true;
-                            }
-                            else
-                            {
-                                ei.NextToAir = false;
-                            }
-
-                            returnList.Add(ei);
-                        }
+                        nextToAirFound = true;
+                        ei.NextToAir = true;
                     }
+                    else
+                    {
+                        ei.NextToAir = false;
+                    }
+
+                    returnList.Add(ei);
                 }
             }
         }
@@ -826,7 +826,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             {
                 foreach (ProcessedEpisode ei in kvp.Value)
                 {
-                    if (ei.WithinDays(days))
+                    if (ei.WithinLastDays(days))
                     {
                         episodes.Add(ei);
                     }
