@@ -52,9 +52,7 @@ internal class UpcomingXML : UpcomingExporter
                 writer.WriteElement("EpisodeName", ei.Name);
 
                 writer.WriteStartElement("available");
-                DateTime? airdt = ei.GetAirDateDt(true);
-
-                if (airdt.HasValue && airdt.Value.CompareTo(TimeHelpers.LocalNow()) < 0) // has aired
+                if (ei.HasAired())
                 {
                     List<FileInfo> fl = dfc.FindEpOnDisk(ei);
                     if (fl.Any())

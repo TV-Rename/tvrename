@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -69,17 +68,9 @@ internal class RemoveShowsWithNoFolders : PostScanActivity
         }
     }
 
-    private bool IsReleased(MovieConfiguration mc)
-    {
-        DateTime? dt = mc.CachedMovie?.FirstAired;
+    private bool IsReleased(MovieConfiguration mc) => mc.CachedMovie?.IsReleased() ?? false;
 
-        return dt.HasValue && dt.Value.CompareTo(DateTime.Now) < 0;
-    }
-
-    private bool HasAiredEpisode(ShowConfiguration sc)
-    {
-        return sc.GetFirstAvailableEpisode()?.HasAired() ?? false;
-    }
+    private bool HasAiredEpisode(ShowConfiguration sc) => sc.GetFirstAvailableEpisode()?.HasAired() ?? false;
 
     private bool NotExist(string folderName) => !Directory.Exists(folderName);
 }

@@ -78,7 +78,7 @@ public static class HttpHelper
             try
             {
                 // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
-                using HttpClient cloudflareclient = new(new ClearanceHandler());
+                HttpClient cloudflareclient = new(new ClearanceHandler());
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
                 Task<byte[]> task = Task.Run(async () => await cloudflareclient.GetByteArrayAsync(url));
@@ -453,12 +453,14 @@ public static class HttpHelper
 
     private static Func<Exception, bool> RetryableWebException()
     {
-        return exception => exception is TaskCanceledException
-                            || (exception is WebException wex && !wex.Is404())
-                            || exception is System.IO.IOException
-                            || (exception is HttpRequestException hre && !hre.Is404())
-                            || (exception is AggregateException ae && ae.InnerException != null && RetryableWebException().Invoke(ae.InnerException));
+        return exception => exception.IsRetryable();
     }
+
+    private static bool IsRetryable(this Exception e) => e is TaskCanceledException
+                                                  || (e is WebException wex && !wex.Is404())
+                                                  || e is System.IO.IOException
+                                                  || (e is HttpRequestException hre && !hre.Is404())
+                                                  || (e is AggregateException { InnerException: not null } ae && ae.InnerException.IsRetryable());
 
     public static JArray HttpGetArrayRequestWithRetry(string fullUrl, int times, int secondsGap)
     {

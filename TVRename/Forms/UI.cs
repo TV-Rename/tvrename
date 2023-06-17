@@ -1671,7 +1671,7 @@ public partial class UI : Form, IDialogParent
         lvi.SubItems.Add(pe.Name);
 
         // icon..
-        int? iconNumbers = ChooseWtwIcon(dfc, pe, dt);
+        int? iconNumbers = ChooseWtwIcon(dfc, pe);
         if (iconNumbers != null)
         {
             lvi.ImageIndex = iconNumbers.Value;
@@ -2774,7 +2774,7 @@ public partial class UI : Form, IDialogParent
         return !pe.NextToAir ? "later" : "futureEps";
     }
 
-    private static int? ChooseWtwIcon(DirFilesCache dfc, ProcessedEpisode pe, DateTime airdt)
+    private static int? ChooseWtwIcon(DirFilesCache dfc, ProcessedEpisode pe)
     {
         List<FileInfo> fl = dfc.FindEpOnDisk(pe);
         bool appropriateFileNameFound = !TVSettings.Instance.RenameCheck
@@ -2791,7 +2791,7 @@ public partial class UI : Form, IDialogParent
             return 9; //tick
         }
 
-        if (airdt.CompareTo(DateTime.Now) < 0) // has aired
+        if (pe.HasAired())
         {
             if (pe.Show.DoMissingCheck)
             {

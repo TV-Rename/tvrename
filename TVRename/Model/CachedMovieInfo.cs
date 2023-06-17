@@ -149,4 +149,9 @@ public class CachedMovieInfo : CachedMediaInfo
     {
         return Images(type).Where(x => x.Subject == subject);
     }
+
+    public bool IsReleased()
+    {
+        return FirstAired.HasValue && FirstAired.Value.CompareTo(DateTime.Now) < 0;
+    }
 }

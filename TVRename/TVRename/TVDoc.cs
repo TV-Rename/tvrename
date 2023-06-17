@@ -1334,20 +1334,8 @@ public class TVDoc : IDisposable
         {
             List<FileInfo> fl = dfc.FindEpOnDisk(pe);
             bool foundOnDisk = fl.Any(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase));
-            bool alreadyAired;
 
-            DateTime? airDate = pe.GetAirDateDt(true);
-
-            if (airDate.HasValue)
-            {
-                alreadyAired = airDate.Value.CompareTo(DateTime.Now) < 0;
-            }
-            else
-            {
-                alreadyAired = true;
-            }
-
-            if (!foundOnDisk && alreadyAired && pe.Show.DoMissingCheck)
+            if (!foundOnDisk && pe.HasAired() && pe.Show.DoMissingCheck)
             {
                 missing.Add(pe);
             }
@@ -2256,7 +2244,7 @@ public class TVDoc : IDisposable
         }
 
         //popup dialog
-        AutoAddMedia askForMatch = new(refinedHint, file, true);
+        using AutoAddMedia askForMatch = new(refinedHint, file, true);
 
         Logger.Info($"Auto Adding New Show/Movie by asking about for '{refinedHint}'");
         owner.ShowChildDialog(askForMatch);
@@ -2286,7 +2274,6 @@ public class TVDoc : IDisposable
                 break;
         }
 
-        askForMatch.Dispose();
         return null;
     }
 

@@ -847,7 +847,7 @@ internal static class FinderHelper
         }
 
         //popup dialog
-        AutoAddMedia askForMatch = new(refinedHint, file, assumeMovie);
+        using AutoAddMedia askForMatch = new(refinedHint, file, assumeMovie);
 
         if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound &&
             TVSettings.Instance.AutomateAutoAddWhenOneShowFound)
@@ -900,8 +900,6 @@ internal static class FinderHelper
                 Logger.Info($"Cancelled Auto adding new show/movie {hint}");
             }
         }
-
-        askForMatch.Dispose();
     }
 
     public static string RemoveDownloadFolders(string hint)

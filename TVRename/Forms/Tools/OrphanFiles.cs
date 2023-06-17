@@ -128,18 +128,18 @@ public partial class OrphanFiles : Form
         {
             issues.Add(new FileIssue(show, file, "File does not match a Filename Processor"));
         }
-        else if (folders.ContainsKey(seasonNumber) && !folders[seasonNumber].Contains(showFolder))
+        else if (folders.TryGetValue(seasonNumber, out SafeList<string>? seasonFolders) && !seasonFolders.Contains(showFolder))
         {
             issues.Add(new FileIssue(show, file, "File is in the wrong series folder", seasonNumber,
                 episodeNumber));
         }
         else
         {
-            if (!show.SeasonEpisodes.ContainsKey(seasonNumber))
+            if (!show.SeasonEpisodes.TryGetValue(seasonNumber, out List<ProcessedEpisode>? episodes))
             {
                 issues.Add(new FileIssue(show, file, "Season not found", seasonNumber));
             }
-            else if (!HasEpisode(show.SeasonEpisodes[seasonNumber], episodeNumber))
+            else if (!HasEpisode(episodes, episodeNumber))
             {
                 issues.Add(new FileIssue(show, file, "Episode not found", seasonNumber, episodeNumber));
             }
