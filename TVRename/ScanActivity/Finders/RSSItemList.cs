@@ -9,6 +9,7 @@
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -38,7 +39,8 @@ internal class RssItemList : List<RSSItem>
                 return false;
             }
 
-            XElement x = XElement.Load(new System.IO.StringReader(response));
+            using StringReader stringReader = new(response);
+            XElement x = XElement.Load(stringReader);
 
             if (x.Name.LocalName != "rss")
             {

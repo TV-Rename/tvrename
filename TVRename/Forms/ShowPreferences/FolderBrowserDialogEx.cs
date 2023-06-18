@@ -12,15 +12,18 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
+// ReSharper disable ConvertToConstant.Local
+// ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 // ReSharper disable MemberCanBePrivate.Global
-// ReSharper disable All
 
 namespace DaveChambers.FolderBrowserDialogEx
 {
     public class FolderBrowserDialogEx
     {
+        [UsedImplicitly]
         internal class Win32
         {
             // Constants for sending and receiving messages in BrowseCallBackProc
@@ -81,7 +84,7 @@ namespace DaveChambers.FolderBrowserDialogEx
                 public IntPtr pidlRoot;
 
                 //public IntPtr pszDisplayName;
-                public string? pszDisplayName;
+                public readonly string? pszDisplayName;
 
                 //[MarshalAs(UnmanagedType.LPTStr)]
                 public string? lpszTitle;
@@ -89,7 +92,7 @@ namespace DaveChambers.FolderBrowserDialogEx
                 public uint ulFlags;
                 public BrowseCallbackProc? lpfn;
                 public IntPtr lParam;
-                public int iImage;
+                public readonly int iImage;
 
                 public BROWSEINFO(int iImage, IntPtr hwndOwner) : this()
                 {
@@ -191,10 +194,10 @@ namespace DaveChambers.FolderBrowserDialogEx
             public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 
             [StructLayout(LayoutKind.Sequential)]
-            public struct POINT
+            public readonly struct POINT
             {
-                public int X;
-                public int Y;
+                public readonly int X;
+                public readonly int Y;
 
                 public POINT(int x, int y)
                 {
@@ -202,35 +205,32 @@ namespace DaveChambers.FolderBrowserDialogEx
                     Y = y;
                 }
 
-                public static implicit operator Point(POINT p)
-                {
-                    return new Point(p.X, p.Y);
-                }
+                public static implicit operator Point(POINT p) => new(p.X, p.Y);
 
-                public static implicit operator POINT(Point p)
-                {
-                    return new POINT(p.X, p.Y);
-                }
+                public static implicit operator POINT(Point p) => new(p.X, p.Y);
             }
 
             [DllImport("user32.dll")]
             public static extern bool ScreenToClient(IntPtr hWnd, ref POINT lpPoint);
 
-            public static bool ScreenToClient(IntPtr hWnd, ref RECT rc)
+            public static void ScreenToClient(IntPtr hWnd, ref RECT rc)
             {
                 POINT pt1 = new(rc.Left, rc.Top);
                 if (!ScreenToClient(hWnd, ref pt1))
-                    return false;
+                {
+                    return;
+                }
+
                 POINT pt2 = new(rc.Right, rc.Bottom);
                 if (!ScreenToClient(hWnd, ref pt2))
-                    return false;
+                {
+                    return;
+                }
 
                 rc.Left = pt1.X;
                 rc.Top = pt1.Y;
                 rc.Right = pt2.X;
                 rc.Bottom = pt2.Y;
-
-                return true;
             }
 
             public static readonly int GWL_WNDPROC = -4;
@@ -264,14 +264,14 @@ namespace DaveChambers.FolderBrowserDialogEx
             public struct SHFILEINFO
             {
                 public IntPtr hIcon;
-                public int iIcon;
-                public uint dwAttributes;
+                public readonly int iIcon;
+                public readonly uint dwAttributes;
 
                 [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-                public string szDisplayName;
+                public readonly string szDisplayName;
 
                 [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
-                public string szTypeName;
+                public readonly string szTypeName;
             }
 
             //[DllImport("shell32.dll", CharSet = CharSet.Auto)]
@@ -319,17 +319,17 @@ namespace DaveChambers.FolderBrowserDialogEx
 
         #region Fields that mimic the same-named fields in FolderBrowserDialog
 
-        public Environment.SpecialFolder RootFolder { get; set; }
+        public Environment.SpecialFolder RootFolder { get; }
         public string SelectedPath { get; set; }
-        public bool ShowNewFolderButton { get; set; }
-        public FormStartPosition StartPosition { get; set; }
+        public bool ShowNewFolderButton { get; }
+        public FormStartPosition StartPosition { get; init; }
 
         #endregion Fields that mimic the same-named fields in FolderBrowserDialog
 
         // Fields specific to CustomFolderBrowserDialog
-        public string Title { get; set; }
+        public string Title { get; init; }
 
-        public bool ShowEditbox { get; set; }
+        public bool ShowEditbox { get; init; }
 
         // These are the control IDs used in the dialog
         private struct CtlIds
@@ -349,14 +349,14 @@ namespace DaveChambers.FolderBrowserDialogEx
         public struct InitData
         {
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]   // Titles shouldn't too long, should they?
-            public string Title;
+            public readonly string Title;
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Win32.MAX_PATH)]
-            public string InitialPath;
+            public readonly string InitialPath;
 
-            public bool ShowEditbox;
-            public bool ShowNewFolderButton;
-            public FormStartPosition StartPosition;
+            public readonly bool ShowEditbox;
+            public readonly bool ShowNewFolderButton;
+            public readonly FormStartPosition StartPosition;
             public IntPtr hParent;
 
             public InitData(FolderBrowserDialogEx dlg, IntPtr hParent)
@@ -429,10 +429,10 @@ namespace DaveChambers.FolderBrowserDialogEx
                 // remove context help button from dialog caption
                 int lStyle = Win32.GetWindowLong(hDlg, Win32.GWL_STYLE);
                 lStyle &= ~Win32.DS_CONTEXTHELP;
-                int windowLong = Win32.SetWindowLong(hDlg, Win32.GWL_STYLE, lStyle);
+                Win32.SetWindowLong(hDlg, Win32.GWL_STYLE, lStyle);
                 lStyle = Win32.GetWindowLong(hDlg, Win32.GWL_EXSTYLE);
                 lStyle &= ~Win32.WS_EX_CONTEXTHELP;
-                int l = Win32.SetWindowLong(hDlg, Win32.GWL_EXSTYLE, lStyle);
+                Win32.SetWindowLong(hDlg, Win32.GWL_EXSTYLE, lStyle);
 
                 _adjustUi(hDlg, lpData);
             }

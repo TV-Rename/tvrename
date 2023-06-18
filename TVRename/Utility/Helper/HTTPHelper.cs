@@ -75,10 +75,11 @@ public static class HttpHelper
     {
         if (useCloudflareProtection)
         {
+            HttpClient cloudflareclient;
             try
             {
                 // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
-                HttpClient cloudflareclient = new(new ClearanceHandler());
+                cloudflareclient = new HttpClient(new ClearanceHandler());
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
                 Task<byte[]> task = Task.Run(async () => await cloudflareclient.GetByteArrayAsync(url));
@@ -92,6 +93,10 @@ public static class HttpHelper
             {
                 // Looks like we ran into a timeout. Too many clearance attempts?
                 // Maybe you should increase client.Timeout as each attempt will take about five seconds.
+            }
+            finally
+            {
+                cloudflareclient.Dispose();
             }
         }
         else

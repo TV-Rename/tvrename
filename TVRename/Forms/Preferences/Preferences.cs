@@ -1812,8 +1812,8 @@ public partial class Preferences : Form
 
         Graphics g = e.Graphics;
 
-        g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(tcTabs.BackColor),
-            e.Bounds);
+        using SolidBrush backColor = new (tcTabs.BackColor);
+        g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : backColor, e.Bounds);
 
         // Get the item from the collection.
         TabPage tabPage = tcTabs.TabPages[e.Index];

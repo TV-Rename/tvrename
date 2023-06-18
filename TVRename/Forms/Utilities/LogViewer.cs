@@ -26,7 +26,7 @@ public partial class LogViewer : Form
 
     private void Form1_Load(object sender, EventArgs e)
     {
-        RichTextBoxTarget target = new()
+        using RichTextBoxTarget target = new()
         {
             Name = "UI Target",
             Layout = "${date:format=HH\\:MM\\:ss} ${level:uppercase=true} ${message}",
