@@ -48,7 +48,7 @@ public class CefWrapper
     {
         try
         {
-            CefSettings settings = new()
+            using CefSettings settings = new()
             {
                 CachePath = PathManager.CefCachePath,
                 UserDataPath = PathManager.CefCachePath,

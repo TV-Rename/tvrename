@@ -367,7 +367,7 @@ public class TVDoc : IDisposable
             }
 
             ActionManager.DoActions(theList, token);
-            List<Action> doneActions = TheActionList.Actions.Where(a => a.Outcome.Done && !a.Outcome.Error).ToList();
+            List<Action> doneActions = TheActionList.Actions.Where(a => a.Outcome is { Done: true, Error: false }).ToList();
             List<Item> subsequentItems = doneActions.Select(a => a.Becomes()).OfType<Item>().ToList();
 
             // remove items from master list, unless it had an error
@@ -390,7 +390,7 @@ public class TVDoc : IDisposable
     private bool DoDownloadsFGNow(bool unattended, bool tvrMinimised, UI owner, List<ISeriesSpecifier> passedShows)
     {
         bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
-        bool showMsgBox = !unattended && !Args.Unattended && !Args.Hide && Environment.UserInteractive;
+        bool showMsgBox = !unattended && Args is { Unattended: false, Hide: false } && Environment.UserInteractive;
 
         ForceRefreshIdentifiedMedia();
         bool returnValue = cacheManager.DoDownloadsFg(showProgress, showMsgBox, passedShows, owner);
@@ -1040,17 +1040,6 @@ public class TVDoc : IDisposable
         }
 
         public bool AnyMediaToUpdate => Shows.Any() || Movies.Any();
-
-        public bool Equals(ScanSettings? other) =>
-            other != null &&
-            Shows == other.Shows &&
-            Movies == other.Movies &&
-            Unattended == other.Unattended &&
-            Hidden == other.Hidden &&
-            Type == other.Type &&
-            Token == other.Token &&
-            Owner == other.Owner &&
-            Media == other.Media;
 
         public void UpdateShowsAndMovies(List<ShowConfiguration> shows, List<MovieConfiguration> movies)
         {

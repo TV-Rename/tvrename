@@ -26,7 +26,7 @@ public class ItemDownloading : Item
     private readonly ShowConfiguration? internalShow;
     private readonly int? internalSeasonNumber;
 
-    public override int IconNumber { get; }
+    public sealed override int IconNumber { get; }
     public override string? TargetFolder => string.IsNullOrEmpty(entry.Destination) ? null : new FileInfo(entry.Destination).DirectoryName;
 
     private ItemDownloading(IDownloadInformation dl, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing undoItem)

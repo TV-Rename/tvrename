@@ -246,7 +246,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         try
         {
             LoggingConfiguration config = LogManager.Configuration;
-            SyslogTarget semaText = new()
+            using SyslogTarget semaText = new()
             {
                 MessageCreation =
                 {
@@ -302,7 +302,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         try
         {
             LoggingConfiguration config = LogManager.Configuration;
-            SyslogTarget papertrail = new()
+            using SyslogTarget papertrail = new()
             {
                 MessageCreation = { Facility = Facility.Local7 },
                 MessageSend =

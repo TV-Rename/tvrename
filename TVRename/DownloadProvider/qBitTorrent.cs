@@ -256,7 +256,7 @@ public class qBitTorrent : IDownloadProvider
         try
         {
             using HttpClient client = new();
-            MultipartFormDataContent m = new();
+            using MultipartFormDataContent m = new();
             m.AddFile("torrents", torrentName, "application/x-bittorrent");
             HttpResponseMessage response = client.PostAsync(url, m).Result;
             if (!response.IsSuccessStatusCode)
@@ -293,7 +293,7 @@ public class qBitTorrent : IDownloadProvider
         {
             using HttpClient client = new();
             Dictionary<string, string> values = new() { { "urls", torrentUrl } };
-            FormUrlEncodedContent content = new(values);
+            using FormUrlEncodedContent content = new(values);
             HttpResponseMessage response = client.PostAsync(url, content).Result;
             if (!response.IsSuccessStatusCode)
             {
