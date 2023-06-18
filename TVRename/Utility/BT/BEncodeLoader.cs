@@ -6,7 +6,7 @@ public class BEncodeLoader
 {
     private static BTItem ReadString(System.IO.Stream sr, long length)
     {
-        System.IO.BinaryReader br = new(sr);
+        using System.IO.BinaryReader br = new(sr);
         return new BTString { Data = br.ReadBytes((int)length) };
     }
 
