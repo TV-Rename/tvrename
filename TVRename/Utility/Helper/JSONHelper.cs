@@ -73,21 +73,9 @@ public static class JsonHelper
             return string.Empty;
         }
 
-        try
-        {
-            string[]? values = ja2.ToObject<string[]>();
-            if (values is null)
-            {
-                return string.Empty;
-            }
+        string[]? values = ja2.ToObject<string[]>();
 
-            return string.Join(delimiter, values);
-        }
-        catch (NullReferenceException nre)
-        {
-            Logger.Error(nre, $"Problem flattening {ja}");
-            return string.Empty;
-        }
+        return values is null ? string.Empty : string.Join(delimiter, values);
     }
 
     public static int ExtractStringToInt(this JObject r, string key)

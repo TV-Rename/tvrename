@@ -89,11 +89,6 @@ public static class VersionUpdater
 
                     (latestBetaVersion, latestVersion) = UpdateLatest(testVersion, latestBetaVersion, latestVersion);
                 }
-                catch (NullReferenceException ex)
-                {
-                    Logger.Error("Looks like the JSON payload from GitHub has changed");
-                    Logger.Debug(ex, gitHubReleaseJson.ToString());
-                }
                 catch (ArgumentOutOfRangeException ex)
                 {
                     Logger.Debug("Generally happens because the release did not have an exe attached");

@@ -75,7 +75,7 @@ public static class HttpHelper
     {
         if (useCloudflareProtection)
         {
-            HttpClient cloudflareclient;
+            HttpClient? cloudflareclient;
             try
             {
                 // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
@@ -96,7 +96,7 @@ public static class HttpHelper
             }
             finally
             {
-                cloudflareclient.Dispose();
+                cloudflareclient?.Dispose();
             }
         }
         else

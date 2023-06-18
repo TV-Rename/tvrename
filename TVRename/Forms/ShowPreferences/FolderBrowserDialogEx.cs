@@ -429,10 +429,10 @@ namespace DaveChambers.FolderBrowserDialogEx
                 // remove context help button from dialog caption
                 int lStyle = Win32.GetWindowLong(hDlg, Win32.GWL_STYLE);
                 lStyle &= ~Win32.DS_CONTEXTHELP;
-                Win32.SetWindowLong(hDlg, Win32.GWL_STYLE, lStyle);
+                {int _ = Win32.SetWindowLong(hDlg, Win32.GWL_STYLE, lStyle);}
                 lStyle = Win32.GetWindowLong(hDlg, Win32.GWL_EXSTYLE);
                 lStyle &= ~Win32.WS_EX_CONTEXTHELP;
-                Win32.SetWindowLong(hDlg, Win32.GWL_EXSTYLE, lStyle);
+                int _2 = Win32.SetWindowLong(hDlg, Win32.GWL_EXSTYLE, lStyle);
 
                 _adjustUi(hDlg, lpData);
             }

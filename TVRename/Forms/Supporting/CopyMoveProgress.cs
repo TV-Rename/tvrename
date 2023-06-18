@@ -94,14 +94,7 @@ public partial class CopyMoveProgress : Form
 
         if (top >= 0)
         {
-            try
-            {
-                lvProgress.TopItem = lvProgress.Items[top];
-            }
-            catch (NullReferenceException)
-            {
-                //Ignore this as we're done
-            }
+            lvProgress.TopItem = lvProgress.Items[top];
         }
 
         lvProgress.EndUpdate();

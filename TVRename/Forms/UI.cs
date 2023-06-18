@@ -1535,11 +1535,6 @@ public partial class UI : Form, IDialogParent
             //Fail gracefully - no RHS episode guide is not too big of a problem.
             Logger.Warn(ex, "Could not update UI for the show/cachedSeries/movie information pane");
         }
-        catch (NullReferenceException ex)
-        {
-            //Fail gracefully - no RHS episode guide is not too big of a problem.
-            Logger.Warn(ex, "Could not update UI for the show/cachedSeries/movie information pane");
-        }
         catch (Exception ex)
         {
             //Fail gracefully - no RHS episode guide is not too big of a problem.
