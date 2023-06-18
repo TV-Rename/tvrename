@@ -41,10 +41,7 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged // someth
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    protected static IgnoreItem? GenerateIgnore(string? file)
-    {
-        return file.HasValue() ? new IgnoreItem(file) : null;
-    }
+    protected static IgnoreItem? GenerateIgnore(string? file) => file.HasValue() ? new IgnoreItem(file) : null;
 
     public virtual string SeriesName => Movie?.ShowName ?? Episode?.Show.ShowName ?? string.Empty;
     public virtual ShowConfiguration? Series => Episode?.Show;
@@ -79,6 +76,8 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged // someth
     } // Human-readable error message, for when Error is true
 
     public int CompareTo(object obj) => CompareTo(obj as Item);
+
+    public override bool Equals(object? obj) => obj is Item i && SameAs(i);
 
     public abstract bool CheckedItem
     {
