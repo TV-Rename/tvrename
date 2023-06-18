@@ -12,11 +12,10 @@ public static class ScanHelper
     {
         try
         {
-            ChooseFile question = new(existingFile, newFile);
+            using ChooseFile question = new(existingFile, newFile);
 
             owner.ShowChildDialog(question);
             ChooseFile.ChooseFileDialogResult result = question.Answer;
-            question.Dispose();
 
             switch (result)
             {
@@ -50,11 +49,10 @@ public static class ScanHelper
     {
         try
         {
-            ChooseFile question = new(existingFile, newFile);
+            using ChooseFile question = new(existingFile, newFile);
 
             owner.ShowChildDialog(question);
             ChooseFile.ChooseFileDialogResult result = question.Answer;
-            question.Dispose();
 
             switch (result)
             {

@@ -5304,11 +5304,10 @@ public partial class UI : Form, IDialogParent
         Invoke((MethodInvoker)delegate
         {
             // Running on the UI thread
-            ChooseDownload form = new(epGroupKey, actions);
+            using ChooseDownload form = new(epGroupKey, actions);
             ShowChildDialog(form);
             dr = form.DialogResult;
             userChosenAction = form.UserChosenAction;
-            form.Dispose();
         });
 
         return (dr, userChosenAction);

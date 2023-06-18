@@ -204,11 +204,10 @@ public partial class DuplicateMovieFinder : Form
     {
         try
         {
-            ChooseFile question = new(file1, file2);
+            using ChooseFile question = new(file1, file2);
 
             owner.ShowChildDialog(question);
             ChooseFile.ChooseFileDialogResult result = question.Answer;
-            question.Dispose();
 
             switch (result)
             {

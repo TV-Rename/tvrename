@@ -107,11 +107,10 @@ public class CacheUpdater : IDisposable
         Logger.Warn(message);
         if (showErrorMsgBox)
         {
-            CannotConnectForm ccform = new("Error while downloading", message, FindProviderWithError());
+            using CannotConnectForm ccform = new("Error while downloading", message, FindProviderWithError());
 
             owner.ShowChildDialog(ccform);
             DialogResult ccresult = ccform.DialogResult;
-            ccform.Dispose();
             switch (ccresult)
             {
                 case DialogResult.Retry:

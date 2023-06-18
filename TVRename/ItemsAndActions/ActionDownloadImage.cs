@@ -77,7 +77,7 @@ public class ActionDownloadImage : ActionDownload
         Bitmap bmPhoto = new(destWidth, destHeight, PixelFormat.Format24bppRgb);
         bmPhoto.SetResolution(imgPhoto.HorizontalResolution, imgPhoto.VerticalResolution);
 
-        Graphics grPhoto = Graphics.FromImage(bmPhoto);
+        using Graphics grPhoto = Graphics.FromImage(bmPhoto);
         grPhoto.Clear(Color.Black);
         grPhoto.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
@@ -86,7 +86,6 @@ public class ActionDownloadImage : ActionDownload
             new Rectangle(0, 0, sourceWidth, sourceHeight),
             GraphicsUnit.Pixel);
 
-        grPhoto.Dispose();
         return bmPhoto;
     }
 

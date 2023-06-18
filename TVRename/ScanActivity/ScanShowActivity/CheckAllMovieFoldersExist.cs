@@ -102,12 +102,11 @@ internal class CheckAllMovieFoldersExist : ScanMovieActivity
             if (whatToDo == FaResult.kfaNotSet)
             {
                 // no command line guidance, so ask the user
-                MissingFolderAction mfa = new(si.ShowName, "", folder);
+                using MissingFolderAction mfa = new(si.ShowName, "", folder);
 
                 owner.ShowChildDialog(mfa);
                 whatToDo = mfa.Result;
                 otherFolder = mfa.FolderName;
-                mfa.Dispose();
             }
 
             switch (whatToDo)

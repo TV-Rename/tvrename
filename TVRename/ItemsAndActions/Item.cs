@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 
 namespace TVRename;
 
-public abstract class Item : IComparable<Item>, INotifyPropertyChanged // something shown in the list on the Scan tab (not always an Action)
+public abstract class Item : IComparable<Item>, INotifyPropertyChanged, IEquatable<Item> // something shown in the list on the Scan tab (not always an Action)
 {
     protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
     public abstract string? TargetFolder { get; } // return a list of folders for right-click menu
@@ -78,6 +78,23 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged // someth
     public int CompareTo(object obj) => CompareTo(obj as Item);
 
     public override bool Equals(object? obj) => obj is Item i && SameAs(i);
+
+    public bool Equals(Item? other)
+    {
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return SameAs(other);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(Episode, Movie, DestinationFolder, DestinationFile);
 
     public abstract bool CheckedItem
     {

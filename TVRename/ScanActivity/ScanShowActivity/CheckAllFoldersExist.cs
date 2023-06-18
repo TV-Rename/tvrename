@@ -156,12 +156,11 @@ internal class CheckAllFoldersExist : ScanShowActivity
             if (whatToDo == FaResult.kfaNotSet)
             {
                 // no command line guidance, so ask the user
-                MissingFolderAction mfa = new(si.ShowName, snum + " of " + si.MaxSeason(), folder);
+                using MissingFolderAction mfa = new(si.ShowName, snum + " of " + si.MaxSeason(), folder);
 
                 owner.ShowChildDialog(mfa);
                 whatToDo = mfa.Result;
                 otherFolder = mfa.FolderName;
-                mfa.Dispose();
             }
 
             switch (whatToDo)

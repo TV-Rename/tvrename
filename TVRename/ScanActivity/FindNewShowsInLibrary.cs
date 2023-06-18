@@ -73,12 +73,11 @@ internal class FindNewShowsInLibrary : ScanActivity
             return;
         }
 
-        BulkAddEditShow ed = new(folder);
+        using BulkAddEditShow ed = new(folder);
 
         owner.ShowChildDialog(ed);
         DialogResult x = ed.DialogResult;
         int code = ed.Code;
-        ed.Dispose();
 
         if (x != DialogResult.OK || code == -1)
         {
