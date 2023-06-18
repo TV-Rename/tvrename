@@ -34,65 +34,64 @@ internal class UpcomingXML : UpcomingExporter
             NewLineOnAttributes = true,
             Encoding = System.Text.Encoding.ASCII
         };
-        using (XmlWriter writer = XmlWriter.Create(str, settings))
+
+        using XmlWriter writer = XmlWriter.Create(str, settings);
+        writer.WriteStartDocument();
+        writer.WriteStartElement("WhenToWatch");
+
+        foreach (ProcessedEpisode ei in elist)
         {
-            writer.WriteStartDocument();
-            writer.WriteStartElement("WhenToWatch");
+            writer.WriteStartElement("item");
+            writer.WriteElement("ShowTvdbId", ei.Show.TvdbCode);
+            writer.WriteElement("ShowTMDBId", ei.Show.TmdbCode);
+            writer.WriteElement("ShowTvMazeId", ei.Show.TVmazeCode);
+            writer.WriteElement("ShowIMDB", ei.Show.ImdbCode);
+            writer.WriteElement("SeriesName", ei.Show.Name);
+            writer.WriteElement("SeasonNumber", ei.AppropriateSeasonNumber.Pad());
+            writer.WriteElement("EpisodeNumber", ei.AppropriateEpNum.Pad());
+            writer.WriteElement("EpisodeName", ei.Name);
 
-            foreach (ProcessedEpisode ei in elist)
+            writer.WriteStartElement("available");
+            if (ei.HasAired())
             {
-                writer.WriteStartElement("item");
-                writer.WriteElement("ShowTvdbId", ei.Show.TvdbCode);
-                writer.WriteElement("ShowTMDBId", ei.Show.TmdbCode);
-                writer.WriteElement("ShowTvMazeId", ei.Show.TVmazeCode);
-                writer.WriteElement("ShowIMDB", ei.Show.ImdbCode);
-                writer.WriteElement("SeriesName", ei.Show.Name);
-                writer.WriteElement("SeasonNumber", ei.AppropriateSeasonNumber.Pad());
-                writer.WriteElement("EpisodeNumber", ei.AppropriateEpNum.Pad());
-                writer.WriteElement("EpisodeName", ei.Name);
-
-                writer.WriteStartElement("available");
-                if (ei.HasAired())
+                List<FileInfo> fl = dfc.FindEpOnDisk(ei);
+                if (fl.Any())
                 {
-                    List<FileInfo> fl = dfc.FindEpOnDisk(ei);
-                    if (fl.Any())
-                    {
-                        writer.WriteValue("true");
-                    }
-                    else if (ei.Show.DoMissingCheck)
-                    {
-                        writer.WriteValue("false");
-                    }
-                    else
-                    {
-                        writer.WriteValue("no missing check");
-                    }
+                    writer.WriteValue("true");
+                }
+                else if (ei.Show.DoMissingCheck)
+                {
+                    writer.WriteValue("false");
                 }
                 else
                 {
-                    writer.WriteValue("future");
+                    writer.WriteValue("no missing check");
                 }
-
-                writer.WriteEndElement();
-                writer.WriteElement("Overview", ei.Overview);
-
-                writer.WriteStartElement("FirstAired");
-                DateTime? dt = ei.GetAirDateDt(true);
-                if (dt != null)
-                {
-                    writer.WriteValue(dt.Value.ToString("F"));
-                }
-
-                writer.WriteEndElement();
-
-                writer.WriteElement("Rating", ei.EpisodeRating);
-                writer.WriteElement("filename", ei.ThumbnailUrl());
-
-                writer.WriteEndElement(); // item
             }
+            else
+            {
+                writer.WriteValue("future");
+            }
+
             writer.WriteEndElement();
-            writer.WriteEndDocument();
+            writer.WriteElement("Overview", ei.Overview);
+
+            writer.WriteStartElement("FirstAired");
+            DateTime? dt = ei.GetAirDateDt(true);
+            if (dt != null)
+            {
+                writer.WriteValue(dt.Value.ToString("F"));
+            }
+
+            writer.WriteEndElement();
+
+            writer.WriteElement("Rating", ei.EpisodeRating);
+            writer.WriteElement("filename", ei.ThumbnailUrl());
+
+            writer.WriteEndElement(); // item
         }
+        writer.WriteEndElement();
+        writer.WriteEndDocument();
         return true;
     }
 }

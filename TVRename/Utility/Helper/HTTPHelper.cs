@@ -460,7 +460,7 @@ public static class HttpHelper
                                                   || (e is WebException wex && !wex.Is404())
                                                   || e is System.IO.IOException
                                                   || (e is HttpRequestException hre && !hre.Is404())
-                                                  || (e is AggregateException { InnerException: not null } ae && ae.InnerException.IsRetryable());
+                                                  || (e is AggregateException ae && ae.InnerException != null && ae.InnerException.IsRetryable());
 
     public static JArray HttpGetArrayRequestWithRetry(string fullUrl, int times, int secondsGap)
     {
