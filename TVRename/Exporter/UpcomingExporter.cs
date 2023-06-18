@@ -30,15 +30,13 @@ internal abstract class UpcomingExporter : Exporter
             // windows explorer tends to lose explorer windows on shares when slept/resumed, too, so its not
             // just me :P
 
-            using (System.IO.MemoryStream ms = new())
-            {
-                List<ProcessedEpisode> lpe = doc.TvLibrary.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
-                    TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
+            List<ProcessedEpisode> lpe = doc.TvLibrary.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
+                TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
 
-                if (Generate(ms, lpe))
-                {
-                    return Encoding.ASCII.GetString(ms.ToArray());
-                }
+            using System.IO.MemoryStream ms = new();
+            if (Generate(ms, lpe))
+            {
+                return Encoding.ASCII.GetString(ms.ToArray());
             }
 
             LOGGER.Error($"Failed to generate records to put into Export file at: {Location()}");

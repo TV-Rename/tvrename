@@ -8,6 +8,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -24,6 +25,7 @@ namespace DaveChambers.FolderBrowserDialogEx
     public class FolderBrowserDialogEx
     {
         [UsedImplicitly]
+        [SuppressMessage("ReSharper", "IdentifierTypo")]
         internal class Win32
         {
             // Constants for sending and receiving messages in BrowseCallBackProc
@@ -427,13 +429,8 @@ namespace DaveChambers.FolderBrowserDialogEx
             if (msg == Win32.BFFM_INITIALIZED)
             {
                 // remove context help button from dialog caption
-                int lStyle = Win32.GetWindowLong(hDlg, Win32.GWL_STYLE);
-                lStyle &= ~Win32.DS_CONTEXTHELP;
-                {int _ = Win32.SetWindowLong(hDlg, Win32.GWL_STYLE, lStyle);}
-                lStyle = Win32.GetWindowLong(hDlg, Win32.GWL_EXSTYLE);
-                lStyle &= ~Win32.WS_EX_CONTEXTHELP;
-                int _2 = Win32.SetWindowLong(hDlg, Win32.GWL_EXSTYLE, lStyle);
-
+                UpdateWindowLong(hDlg, Win32.GWL_STYLE, Win32.DS_CONTEXTHELP);
+                UpdateWindowLong(hDlg, Win32.GWL_EXSTYLE, Win32.WS_EX_CONTEXTHELP);
                 _adjustUi(hDlg, lpData);
             }
             else if (msg == Win32.BFFM_SELCHANGED)
@@ -468,6 +465,13 @@ namespace DaveChambers.FolderBrowserDialogEx
             }
 
             return 0;
+        }
+
+        private static void UpdateWindowLong(IntPtr hDlg, int nIndex, int offset)
+        {
+            int lStyle = Win32.GetWindowLong(hDlg, nIndex);
+            lStyle &= ~offset;
+            int _ = Win32.SetWindowLong(hDlg, nIndex, lStyle);
         }
 
         private static void _adjustUi(IntPtr hDlg, IntPtr lpData)

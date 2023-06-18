@@ -1822,7 +1822,7 @@ public partial class Preferences : Form
         Rectangle tabBounds = tcTabs.GetTabRect(e.Index);
 
         // Draw string. Center the text.
-        StringFormat stringFlags = new()
+        using StringFormat stringFlags = new()
         {
             Alignment = StringAlignment.Near,
             LineAlignment = StringAlignment.Center

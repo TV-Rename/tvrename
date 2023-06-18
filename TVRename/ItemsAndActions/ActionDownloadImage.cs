@@ -124,7 +124,8 @@ public class ActionDownloadImage : ActionDownload
         try
         {
             // shrink images down to a maximum size of 156x232
-            Image im = new Bitmap(new System.IO.MemoryStream(theData));
+            using System.IO.MemoryStream memoryStream = new(theData);
+            Image im = new Bitmap(memoryStream);
             if (Episode is null)
             {
                 if (im.Width > 156 || im.Height > 232)

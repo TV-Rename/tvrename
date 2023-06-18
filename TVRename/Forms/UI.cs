@@ -4563,7 +4563,7 @@ public partial class UI : Form, IDialogParent
         Rectangle? tabBounds = tabCtrl?.GetTabRect(e.Index);
 
         // Draw string. Center the text.
-        StringFormat stringFlags = new()
+        using StringFormat stringFlags = new()
         {
             Alignment = StringAlignment.Center,
             LineAlignment = StringAlignment.Center
