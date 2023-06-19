@@ -12,10 +12,10 @@ using System.Threading;
 
 namespace TVRename;
 
-public class ActionDeleteDirectory : ActionDelete
+public class ActionDeleteDirectory : ActionDelete, IEquatable<ActionDeleteDirectory>
 {
     private readonly DirectoryInfo toRemove;
-    protected readonly ShowConfiguration? SelectedShow; // if for an entire show, rather than specific episode
+    private readonly ShowConfiguration? selectedShow; // if for an entire show, rather than specific episode
 
     public ActionDeleteDirectory(DirectoryInfo remove)
     {
@@ -49,15 +49,18 @@ public class ActionDeleteDirectory : ActionDelete
         Episode = null;
         Movie = null;
         toRemove = remove;
-        SelectedShow = si;
+        selectedShow = si;
     }
 
     public override string ProgressText => toRemove.Name;
     public override string Produces => toRemove.FullName;
     public override IgnoreItem Ignore => new(toRemove.FullName);
     public override string TargetFolder => toRemove.Parent.FullName;
+    public override string SeriesName => Episode?.Show.ShowName ?? selectedShow?.ShowName ?? Movie?.ShowName ?? toRemove.Name;
 
-    public override string SeriesName => Episode?.Show.ShowName ?? SelectedShow?.ShowName ?? Movie?.ShowName ?? toRemove.Name;
+    public bool SameSource(ActionDeleteDirectory o) => FileHelper.Same(toRemove, o.toRemove);
+
+    public bool IsFor(string folderName) => string.Equals(folderName, toRemove.FullName, StringComparison.OrdinalIgnoreCase);
 
     public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
@@ -107,7 +110,40 @@ public class ActionDeleteDirectory : ActionDelete
         return string.Compare(toRemove.FullName, cmr.toRemove.FullName, StringComparison.Ordinal);
     }
 
-    public bool SameSource(ActionDeleteDirectory o) => FileHelper.Same(toRemove, o.toRemove);
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+        {
+            return false;
+        }
 
-    public bool IsFor(string folderName) => string.Equals(folderName, toRemove.FullName, StringComparison.OrdinalIgnoreCase);
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+
+        if (obj.GetType() != this.GetType())
+        {
+            return false;
+        }
+
+        return Equals((ActionDeleteDirectory)obj);
+    }
+
+    public bool Equals(ActionDeleteDirectory? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return base.Equals(other) && toRemove.Equals(other.toRemove) && Equals(selectedShow, other.selectedShow);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), toRemove, selectedShow);
 }

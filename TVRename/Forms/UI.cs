@@ -466,7 +466,7 @@ public partial class UI : Form, IDialogParent
                 return HeaderName("Remove", mDoc.TheActionList.Count(action => action is ActionDeleteFile or ActionDeleteDirectory));
 
             case "L-Other":
-                return HeaderName("Remove from library", mDoc.TheActionList.Count(action => action is ChangeLibraryAction));
+                return HeaderName("Remove from library", mDoc.TheActionList.Count(action => action is ActionChangeLibrary));
 
             case "B-Rename":
                 // ReSharper disable once MergeSequentialPatterns (I think it's clearer this way)

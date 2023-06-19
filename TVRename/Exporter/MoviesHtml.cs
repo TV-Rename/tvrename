@@ -17,24 +17,22 @@ internal class MoviesHtml : MoviesExporter
     protected override string Name() => "Movies HTML Exporter";
     protected override void Do()
     {
-        using (System.IO.StreamWriter file = new(Location()))
+        using System.IO.StreamWriter file = new(Location());
+        file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
+        foreach (MovieConfiguration si in Shows)
         {
-            file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
-            foreach (MovieConfiguration si in Shows)
+            try
             {
-                try
-                {
-                    file.WriteLine(CreateHtml(si));
-                }
-                catch (Exception ex)
-                {
-                    LOGGER.Error(ex,
-                        $"Skipped adding {si.ShowName} to the output HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
-                }
+                file.WriteLine(CreateHtml(si));
             }
-
-            file.WriteLine(ShowHtmlHelper.HTMLFooter());
+            catch (Exception ex)
+            {
+                LOGGER.Error(ex,
+                    $"Skipped adding {si.ShowName} to the output HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
+            }
         }
+
+        file.WriteLine(ShowHtmlHelper.HTMLFooter());
     }
 
     private static string CreateHtml(MovieConfiguration si)

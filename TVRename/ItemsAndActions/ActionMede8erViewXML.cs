@@ -74,7 +74,7 @@ public class ActionMede8erViewXML : ActionWriteMetadata, IEquatable<ActionMede8e
 
     public bool Equals(ActionMede8erViewXML? other)
     {
-        if (ReferenceEquals(null, other))
+        if (other is null)
         {
             return false;
         }
@@ -89,7 +89,7 @@ public class ActionMede8erViewXML : ActionWriteMetadata, IEquatable<ActionMede8e
 
     public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(null, obj))
+        if (obj is null)
         {
             return false;
         }

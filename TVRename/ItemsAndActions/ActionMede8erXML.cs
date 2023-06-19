@@ -268,7 +268,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
 
     public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(null, obj))
+        if (obj is null)
         {
             return false;
         }
@@ -278,7 +278,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
             return true;
         }
 
-        if (obj.GetType() != this.GetType())
+        if (obj.GetType() != GetType())
         {
             return false;
         }

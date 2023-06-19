@@ -43,7 +43,7 @@ public abstract class ActionWriteMetadata : ActionDownload, IEquatable<ActionWri
 
     public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(null, obj))
+        if (obj is null)
         {
             return false;
         }
@@ -63,7 +63,7 @@ public abstract class ActionWriteMetadata : ActionDownload, IEquatable<ActionWri
 
     public bool Equals(ActionWriteMetadata? other)
     {
-        if (ReferenceEquals(null, other))
+        if (other is null)
         {
             return false;
         }

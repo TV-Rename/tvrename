@@ -56,6 +56,8 @@ public class ActionItemSorter : System.Collections.Generic.IComparer<Item>
             ActionDateTouchMovie => 19,
             ActionTRemove => 20,
             ActionUnArchive => 21,
+            ActionChangeLibraryRemoveMovie =>22,
+            ActionChangeLibraryRemoveShow =>23,
             _ => throw new NotSupportedException()
         };
     }

@@ -3,11 +3,11 @@ using System;
 
 namespace TVRename;
 
-internal abstract class ChangeLibraryAction : Action
+internal abstract class ActionChangeLibrary : Action
 {
     protected readonly TVDoc Doc;
 
-    protected ChangeLibraryAction(TVDoc doc)
+    protected ActionChangeLibrary(TVDoc doc)
     {
         Doc = doc;
     }
@@ -22,9 +22,9 @@ internal abstract class ChangeLibraryAction : Action
     public override QueueName Queue() => QueueName.writeMetadata;
 }
 
-internal class RemoveMovie : ChangeLibraryAction, IEquatable<RemoveMovie>
+internal class ActionChangeLibraryRemoveMovie : ActionChangeLibrary, IEquatable<ActionChangeLibraryRemoveMovie>
 {
-    public RemoveMovie(MovieConfiguration si, TVDoc doc) : base(doc)
+    public ActionChangeLibraryRemoveMovie(MovieConfiguration si, TVDoc doc) : base(doc)
     {
         Movie = si;
     }
@@ -45,7 +45,7 @@ internal class RemoveMovie : ChangeLibraryAction, IEquatable<RemoveMovie>
     #region EqualMethods
     public override int CompareTo(Item? o)
     {
-        if (o is not RemoveMovie r)
+        if (o is not ActionChangeLibraryRemoveMovie r)
         {
             return -1;
         }
@@ -54,12 +54,12 @@ internal class RemoveMovie : ChangeLibraryAction, IEquatable<RemoveMovie>
     }
 
     public override bool SameAs(Item o) =>
-        o is RemoveMovie cmr && Movie == cmr.Movie;
+        o is ActionChangeLibraryRemoveMovie cmr && Movie == cmr.Movie;
    
-    public override bool Equals(object? obj) => obj is RemoveMovie rs && Equals(rs);
-    public bool Equals(RemoveMovie? other)
+    public override bool Equals(object? obj) => obj is ActionChangeLibraryRemoveMovie rs && Equals(rs);
+    public bool Equals(ActionChangeLibraryRemoveMovie? other)
     {
-        if (ReferenceEquals(null, other))
+        if (other is null)
         {
             return false;
         }
@@ -71,11 +71,11 @@ internal class RemoveMovie : ChangeLibraryAction, IEquatable<RemoveMovie>
     #endregion
 }
 
-internal class RemoveShow : ChangeLibraryAction, IEquatable<RemoveShow>
+internal class ActionChangeLibraryRemoveShow : ActionChangeLibrary, IEquatable<ActionChangeLibraryRemoveShow>
 {
     private readonly ShowConfiguration si;
 
-    public RemoveShow(ShowConfiguration si, TVDoc doc) : base(doc)
+    public ActionChangeLibraryRemoveShow(ShowConfiguration si, TVDoc doc) : base(doc)
     {
         this.si = si;
     }
@@ -95,7 +95,7 @@ internal class RemoveShow : ChangeLibraryAction, IEquatable<RemoveShow>
     #region EqualMethods
     public override int CompareTo(Item? o)
     {
-        if (o is not RemoveShow r)
+        if (o is not ActionChangeLibraryRemoveShow r)
         {
             return -1;
         }
@@ -104,13 +104,13 @@ internal class RemoveShow : ChangeLibraryAction, IEquatable<RemoveShow>
     }
 
     public override bool SameAs(Item o) =>
-        o is RemoveShow cmr && si == cmr.si;
+        o is ActionChangeLibraryRemoveShow cmr && si == cmr.si;
 
-    public override bool Equals(object? obj) => obj is RemoveShow rs && Equals(rs);
+    public override bool Equals(object? obj) => obj is ActionChangeLibraryRemoveShow rs && Equals(rs);
 
-    public bool Equals(RemoveShow? other)
+    public bool Equals(ActionChangeLibraryRemoveShow? other)
     {
-        if (ReferenceEquals(null, other))
+        if (other is null)
         {
             return false;
         }

@@ -45,7 +45,7 @@ internal class RemoveShowsWithNoFolders : PostScanActivity
             if (removeThisShow)
             {
                 lastUpdate = $"{si.Name} has no folders that exist, removing";
-                MDoc.TheActionList.Add(new RemoveShow(si,MDoc));
+                MDoc.TheActionList.Add(new ActionChangeLibraryRemoveShow(si,MDoc));
             }
         }
     
@@ -63,7 +63,7 @@ internal class RemoveShowsWithNoFolders : PostScanActivity
             if (removeThisShow)
             {
                 lastUpdate = $"{si.Name} has no folders that exist, removing";
-                MDoc.TheActionList.Add(new RemoveMovie(si, MDoc));
+                MDoc.TheActionList.Add(new ActionChangeLibraryRemoveMovie(si, MDoc));
             }
         }
     }

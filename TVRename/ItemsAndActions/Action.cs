@@ -30,16 +30,14 @@ public abstract class Action : Item // Something we can do
     public virtual int Order => 0;
     public abstract string ProgressText { get; } // shortish text to display to user while task is running
 
-    private double percent;
-
+    private ActionOutcome? internalOutcome;
     public ActionOutcome Outcome
     {
         get => internalOutcome ?? ActionOutcome.NoOutcomeYet();
         set => internalOutcome = value;
     }
 
-    private ActionOutcome? internalOutcome;
-
+    private double percent;
     public double PercentDone // 0.0 to 100.0
     {
         get => Outcome.Done ? 100.0 : percent;
