@@ -75,8 +75,6 @@ public class CefWrapper
             $"https://aka.ms/vs/16/release/{urlToDownload}".OpenUrlInBrowser();
         }
         CheckForBrowserDependencies(false);
-
-        Cef.EnableHighDPISupport();
     }
 
     public static void Shutdown()
