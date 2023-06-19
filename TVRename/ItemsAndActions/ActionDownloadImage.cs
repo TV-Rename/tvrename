@@ -125,15 +125,15 @@ public class ActionDownloadImage : ActionDownload
         {
             // shrink images down to a maximum size of 156x232
             using System.IO.MemoryStream memoryStream = new(theData);
-            Image im = new Bitmap(memoryStream);
+            using Image im = new Bitmap(memoryStream);
             if (Episode is null)
             {
                 if (im.Width > 156 || im.Height > 232)
                 {
-                    im = MaxSize(im, 156, 232);
+                    using Image newImage = MaxSize(im, 156, 232);
 
                     using System.IO.MemoryStream m = new();
-                    im.Save(m, ImageFormat.Jpeg);
+                    newImage.Save(m, ImageFormat.Jpeg);
                     theData = m.ToArray();
                 }
             }
@@ -141,10 +141,10 @@ public class ActionDownloadImage : ActionDownload
             {
                 if (im.Width > 232 || im.Height > 156)
                 {
-                    im = MaxSize(im, 232, 156);
+                    using Image newImage =  MaxSize(im, 232, 156);
 
                     using System.IO.MemoryStream m = new();
-                    im.Save(m, ImageFormat.Jpeg);
+                    newImage.Save(m, ImageFormat.Jpeg);
                     theData = m.ToArray();
                 }
             }

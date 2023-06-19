@@ -4552,7 +4552,8 @@ public partial class UI : Form, IDialogParent
 
         TabControl? tabCtrl = sender as TabControl;
 
-        g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(BackColor), e.Bounds);
+        using SolidBrush back = new (BackColor);
+        g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : back, e.Bounds);
 
         // Get the item from the collection.
         TabPage? tabPage = tabCtrl?.TabPages[e.Index];
@@ -4584,7 +4585,9 @@ public partial class UI : Form, IDialogParent
             g.DrawImage(bit, x, y);
 
             Rectangle textarea = tabBounds.Value with { Y = tabBounds.Value.Y + INDENT + bit.Height, Height = tabBounds.Value.Height - (INDENT + bit.Height) };
-            g.DrawString(tabPage.Text, tabPage.Font, new SolidBrush(ForeColor), textarea, stringFlags);
+
+            using SolidBrush fore = new (ForeColor);
+            g.DrawString(tabPage.Text, tabPage.Font, fore, textarea, stringFlags);
         }
     }
 

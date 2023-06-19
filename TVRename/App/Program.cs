@@ -87,21 +87,22 @@ public static class Program
             return;
         }
 
-        SingleInstanceService singleInstanceService = new(OnArgumentsReceived);
-
-        // Check if an application instance is already running
-        Mutex mutex = new(true, "TVRename", out bool newInstance);
-
-        if (!singleInstanceService.IsFirstInstance() || !newInstance)
-        {
-            // Already running
-            Logger.Warn("An instance is already running, exiting");
-            SingleInstanceService.SendArgumentsToExistingInstance();
-            return;
-        }
-
+        Mutex? mutex = null;
         try
         {
+            SingleInstanceService singleInstanceService = new(OnArgumentsReceived);
+
+            // Check if an application instance is already running
+            mutex = new Mutex(true, "TVRename", out bool newInstance);
+
+            if (!singleInstanceService.IsFirstInstance() || !newInstance)
+            {
+                // Already running
+                Logger.Warn("An instance is already running, exiting");
+                SingleInstanceService.SendArgumentsToExistingInstance();
+                return;
+            }
+
             Logger.Info("Starting new instance");
 
             TvRename = new ApplicationBase();
@@ -127,6 +128,10 @@ public static class Program
             new ShowException(ex).ShowDialog();
 
             Environment.Exit(1);
+        }
+        finally
+        {
+            mutex?.Dispose();
         }
 
         Logger.Info("Application exiting");

@@ -1828,7 +1828,8 @@ public partial class Preferences : Form
             LineAlignment = StringAlignment.Center
         };
 
-        g.DrawString(tabPage.Text, tcTabs.Font, new SolidBrush(tcTabs.ForeColor), tabBounds, stringFlags);
+        using SolidBrush fore = new SolidBrush(tcTabs.ForeColor);
+        g.DrawString(tabPage.Text, tcTabs.Font, fore, tabBounds, stringFlags);
     }
 
     #region Folder Add & Remove

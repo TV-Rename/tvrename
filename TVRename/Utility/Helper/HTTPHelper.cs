@@ -136,7 +136,7 @@ public static class HttpHelper
 
         if (method == "POST" && postContent != null)
         {
-            StringContent content = new(postContent, Encoding.UTF8, "application/json");
+            using StringContent content = new(postContent, Encoding.UTF8, "application/json");
 
             //POST the object to the specified URI
             HttpResponseMessage response = newClient.PostAsync(newClientBaseAddress, content).Result;
