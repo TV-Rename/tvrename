@@ -15,7 +15,7 @@ using System;
 using System.Xml;
 
 // ReSharper disable once InconsistentNaming
-public class ActionMede8erViewXML : ActionWriteMetadata
+public class ActionMede8erViewXML : ActionWriteMetadata, IEquatable<ActionMede8erViewXML>
 {
     private readonly int snum;
 
@@ -30,9 +30,6 @@ public class ActionMede8erViewXML : ActionWriteMetadata
     }
 
     #region Action Members
-
-    public override string Name => "Write Mede8er View Data";
-
     public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         XmlWriterSettings settings = new()
@@ -58,7 +55,7 @@ public class ActionMede8erViewXML : ActionWriteMetadata
 
     #endregion Action Members
 
-    #region Item Members
+    #region Comparison Methods
 
     public override bool SameAs(Item o)
     {
@@ -75,15 +72,49 @@ public class ActionMede8erViewXML : ActionWriteMetadata
         return string.Compare(Where.FullName, nfo.Where.FullName, StringComparison.Ordinal);
     }
 
-    #endregion Item Members
+    public bool Equals(ActionMede8erViewXML? other)
+    {
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
 
-    #region Item Members
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return base.Equals(other) && snum == other.snum;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+
+        if (obj.GetType() != this.GetType())
+        {
+            return false;
+        }
+
+        return Equals((ActionMede8erViewXML)obj);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), snum);
+
+    #endregion
 
     public override string SeriesName => SelectedShow?.ShowName ?? Movie!.ShowName;
     public override string SeasonNumber => snum > 0 ? snum.ToString() : string.Empty;
     public override int? SeasonNumberAsInt => snum;
     public override string EpisodeString => string.Empty;
     public override string AirDateString => string.Empty;
-
-    #endregion Item Members
+    public override string Name => "Write Mede8er View Data";
 }

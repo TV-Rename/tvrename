@@ -6,11 +6,12 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
-public abstract class ActionWriteMetadata : ActionDownload
+public abstract class ActionWriteMetadata : ActionDownload, IEquatable<ActionWriteMetadata>
 {
     protected readonly FileInfo Where;
     protected readonly ShowConfiguration? SelectedShow; // if for an entire show, rather than specific episode
@@ -29,21 +30,51 @@ public abstract class ActionWriteMetadata : ActionDownload
 
     public override QueueName Queue() => QueueName.writeMetadata;
     public override string Produces => Where.FullName;
-
     public override string ProgressText => Where.Name;
-
     public override long SizeOfWork => 10000;
-
     public override string TargetFolder => Where.DirectoryName;
-
     public override IgnoreItem Ignore => new(Where.FullName);
-
     public override string ScanListViewGroup => "lvgActionMeta";
-
     public override int IconNumber => 7;
-
     public override string SeriesName => Series?.ShowName ?? Movie!.ShowName;
     public override string DestinationFolder => Where.DirectoryName;
     public override string DestinationFile => Where.Name;
     public override ShowConfiguration? Series => Episode?.Show ?? SelectedShow;
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+
+        if (obj.GetType() != this.GetType())
+        {
+            return false;
+        }
+
+        return Equals((ActionWriteMetadata)obj);
+    }
+
+    public bool Equals(ActionWriteMetadata? other)
+    {
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return base.Equals(other) && Where.Equals(other.Where) && Equals(SelectedShow, other.SelectedShow);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Where, SelectedShow);
 }

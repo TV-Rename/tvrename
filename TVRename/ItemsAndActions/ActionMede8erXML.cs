@@ -18,8 +18,10 @@ using System;
 using System.Xml;
 
 // ReSharper disable once InconsistentNaming
-public class ActionMede8erXML : ActionWriteMetadata
+public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML>
 {
+    #region Constructors
+
     public ActionMede8erXML(FileInfo nfo, ProcessedEpisode pe) : base(nfo, pe.Show)
     {
         Episode = pe;
@@ -30,10 +32,11 @@ public class ActionMede8erXML : ActionWriteMetadata
         Episode = null;
     }
 
-    #region Action Members
+    #endregion
 
     public override string Name => "Write Mede8er Metadata";
 
+    #region Action
     public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
@@ -227,10 +230,10 @@ public class ActionMede8erXML : ActionWriteMetadata
         writer.WriteEndElement(); // tvshow
     }
 
-    #endregion Action Members
+    #endregion Action
 
-    #region Item Members
-
+    #region ComparisonStuff
+  
     public override bool SameAs(Item o)
     {
         return o is ActionMede8erXML xml && xml.Where == Where;
@@ -261,5 +264,29 @@ public class ActionMede8erXML : ActionWriteMetadata
         return string.Compare(Where.FullName + Episode.Name, nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
     }
 
-    #endregion Item Members
+    public bool Equals(ActionMede8erXML? other) => other != null && SameAs(other);
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+
+        if (obj.GetType() != this.GetType())
+        {
+            return false;
+        }
+
+        return Equals((ActionMede8erXML)obj);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(Where,Series);
+
+    #endregion
 }
