@@ -1795,30 +1795,26 @@ public class TVDoc : IDisposable
         }
     }
 
-    public void IgnoreSeasonForItem(Item? er)
+    public void IgnoreSeasonForItem(ShowConfiguration? sc,int? snum, string? folder)
     {
-        if (er?.Episode is null)
+        if (sc is null || snum is null)
         {
             return;
         }
 
-        int snum = er.Episode.AppropriateSeasonNumber;
-
-        if (!er.Episode.Show.IgnoreSeasons.Contains(snum))
+        if (!sc.IgnoreSeasons.Contains(snum.Value))
         {
-            er.Episode.Show.IgnoreSeasons.Add(snum);
+            sc.IgnoreSeasons.Add(snum.Value);
         }
 
         // remove all other episodes of this season from the Action list
         ItemList remove = new();
         foreach (Item action in TheActionList)
         {
-            if (action.Episode?.AppropriateSeasonNumber != snum)
-            {
-                continue;
-            }
+            bool seasonMatches = (action is ShowSeasonMissing ssm && ssm.SeasonNumberAsInt == snum) ||
+                                 (action.Episode?.AppropriateSeasonNumber == snum);
 
-            if (action.TargetFolder == er.TargetFolder) //ie if they are for the same cachedSeries
+            if (action.TargetFolder == folder && seasonMatches) //ie if they are for the same cachedSeries
             {
                 remove.Add(action);
             }

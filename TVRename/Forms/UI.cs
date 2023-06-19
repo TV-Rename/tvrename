@@ -2282,7 +2282,14 @@ public partial class UI : Form, IDialogParent
 
         foreach (Item ai in actions)
         {
-            mDoc.IgnoreSeasonForItem(ai);
+            if (ai is ShowSeasonMissing ssm)
+            {
+                mDoc.IgnoreSeasonForItem(ssm.Series, ssm.SeasonNumberAsInt, ai.TargetFolder);
+            }
+            else
+            {
+                mDoc.IgnoreSeasonForItem(ai.Series, ai.Episode?.AppropriateSeasonNumber, ai.TargetFolder);
+            }
         }
 
         FillMyShows(true);
@@ -3873,40 +3880,17 @@ public partial class UI : Form, IDialogParent
     {
         Point pt = ((ListView)sender).PointToScreen(new Point(e.X, e.Y));
 
+        if (e.Button != MouseButtons.Right)
+        {
+            return;
+        }
+        GenerateActionshowRightClickMenu(pt);
+    }
+    private void GenerateActionshowRightClickMenu(Point pt)
+    {
         ItemList lvr = GetSelectedItems();
-
         Item? action = olvAction.FocusedObject as Item;
 
-        if (action?.Episode != null && lvr.Count == 1)
-        {
-            switchToWhenOpenMyShows = action.Episode;
-            if (e.Button != MouseButtons.Right)
-            {
-                return;
-            }
-            GenerateActionshowRightClickMenu(pt, lvr, action.Episode.Show, action.Episode, null);
-        }
-        else if (action?.Movie != null && lvr.Count == 1)
-        {
-            switchToWhenOpenMyMovies = action.Movie;
-            if (e.Button != MouseButtons.Right)
-            {
-                return;
-            }
-            GenerateActionshowRightClickMenu(pt, lvr, null, null, action.Movie);
-        }
-        else
-        {
-            if (e.Button != MouseButtons.Right)
-            {
-                return;
-            }
-            GenerateActionshowRightClickMenu(pt, lvr, null, null, null);
-        }
-    }
-
-    private void GenerateActionshowRightClickMenu(Point pt, ItemList lvr, ShowConfiguration? si, ProcessedEpisode? episode, MovieConfiguration? movie)
-    {
         if (lvr.Count == 0)
         {
             return; // nothing selected
@@ -3914,10 +3898,33 @@ public partial class UI : Form, IDialogParent
 
         showRightClickMenu.Items.Clear();
 
-        ProcessedSeason? seas = episode?.AppropriateProcessedSeason;
+        ShowConfiguration? si = null;
+        ProcessedSeason? seas = null;
+        ProcessedEpisode? episode = null;
+        MovieConfiguration? movie = null;
+
+        if (lvr.Count == 1)
+        {
+            if (action?.Episode != null)
+            {
+                switchToWhenOpenMyShows = action.Episode;
+                episode = action.Episode;
+                seas = episode.AppropriateProcessedSeason;
+                si = action.Episode.Show;
+            }
+            else if (action is ShowSeasonMissing ssm)
+            {
+                si = ssm.Series;
+            }
+            else if (action?.Movie != null)
+            {
+                switchToWhenOpenMyMovies = action.Movie;
+                movie = action.Movie;
+            }
+        }
 
         // Action related items
-        if (lvr.Count > lvr.Missing.ToList().Count) // not just missing selected
+        if (lvr.Actions.Any()) // not just missing selected
         {
             showRightClickMenu.Add("Action Selected", (_, _) => ActionAction(false, false, false));
         }
@@ -3932,7 +3939,9 @@ public partial class UI : Form, IDialogParent
             showRightClickMenu.Add("Revert to Missing Episodes", (_, _) => RevertSeasons());
         }
 
-        if (lvr.Count == lvr.MissingEpisodes.ToList().Count + lvr.MissingMovies.ToList().Count) // only missing items selected?
+        bool missingonly = lvr.Count == lvr.MissingEpisodes.ToList().Count + lvr.MissingMovies.ToList().Count;
+
+        if (missingonly) // only missing items selected?
         {
             if (lvr.Count == 1) // only one selected
             {
@@ -3956,16 +3965,20 @@ public partial class UI : Form, IDialogParent
             MenuGuideAndTvdb(episode, si, seas);
         }
 
-        MenuFolders(lvr, si, episode?.AppropriateProcessedSeason, episode);
+        if (missingonly) // only missing items selected?
+        {
+            showRightClickMenu.AddSeparator();
+            showRightClickMenu.Add("Ignore Selected", (_, _) => IgnoreSelected());
+        }
 
-        showRightClickMenu.AddSeparator();
-        showRightClickMenu.Add("Ignore Selected", (_, _) => IgnoreSelected());
-        if (episode != null)
+        if (episode != null || lvr.MissingSeasons.HasAny())
         {
             showRightClickMenu.Add("Ignore Entire Season", (_, _) => IgnoreSelectedSeasons(lvr));
             showRightClickMenu.Add("Force Refresh and Rescan Show", (_, _) => ForceRefreshAndRescanShows(lvr, false));
         }
         showRightClickMenu.Add("Remove Selected", (_, _) => ActionDeleteSelected());
+
+        MenuFolders(lvr, si, episode?.AppropriateProcessedSeason, episode);
 
         showRightClickMenu.Show(pt);
     }
@@ -4926,23 +4939,7 @@ public partial class UI : Form, IDialogParent
     {
         ToolStripButton button = (ToolStripButton)sender;
         Point pt = button.Owner.PointToScreen(button.Bounds.Location);
-
-        ItemList lvr = GetSelectedItems();
-
-        Item? action = olvAction.FocusedObject as Item;
-
-        if (action?.Episode != null && lvr.Count == 1)
-        {
-            GenerateActionshowRightClickMenu(pt, lvr, action.Episode.Show, action.Episode, null);
-        }
-        else if (action?.Movie != null && lvr.Count == 1)
-        {
-            GenerateActionshowRightClickMenu(pt, lvr, null, null, action.Movie);
-        }
-        else
-        {
-            GenerateActionshowRightClickMenu(pt, lvr, null, null, null);
-        }
+        GenerateActionshowRightClickMenu(pt);
     }
 
     private void ToolStripMenuItem1_Click(object sender, EventArgs e)
