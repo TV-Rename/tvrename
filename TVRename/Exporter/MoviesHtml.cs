@@ -26,7 +26,7 @@ internal class MoviesHtml : MoviesExporter
                 {
                     file.WriteLine(CreateHtml(si));
                 }
-                catch (NullReferenceException ex)
+                catch (Exception ex)
                 {
                     LOGGER.Error(ex,
                         $"Skipped adding {si.ShowName} to the output HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
