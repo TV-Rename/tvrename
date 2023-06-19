@@ -282,7 +282,7 @@ public class CustomEpisodeName
         }
         catch (ArgumentNullException)
         {
-            Logger.Error($"Asked to update {styleString} with information from {pe.Show.ShowName}, {pe.SeasonNumberAsText}, {pe.EpNumsAsString()}");
+            Logger.Error($"Asked to update {styleString} with information from {pe.Show.ShowName}, {pe.SeasonNumberAsText}, {pe.EpisodeNumbersAsText}");
         }
 
         return string.Empty;

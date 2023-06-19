@@ -1479,7 +1479,7 @@ namespace TVRename.Forms
             // 
             // olvEpisode
             // 
-            olvEpisode.AspectName = "EpisodeNumber";
+            olvEpisode.AspectName = "EpisodeString";
             olvEpisode.Groupable = false;
             olvEpisode.GroupWithItemCountFormat = "{0} ({1} items)";
             olvEpisode.GroupWithItemCountSingularFormat = "{0} (1 Item)";

@@ -41,7 +41,7 @@ internal abstract class ActionListXml : ActionListExporter
                 writer.WriteAttributeToXml("ToName", acmr.To.Name);
                 writer.WriteAttributeToXml("ShowName", acmr.SeriesName);
                 writer.WriteAttributeToXml("Season", acmr.SourceEpisode.AppropriateSeasonNumber);
-                writer.WriteAttributeToXml("Episode", acmr.SourceEpisode.EpNumsAsString());
+                writer.WriteAttributeToXml("Episode", acmr.SourceEpisode.EpisodeNumbersAsText);
 
                 writer.WriteEndElement(); //Item
             }

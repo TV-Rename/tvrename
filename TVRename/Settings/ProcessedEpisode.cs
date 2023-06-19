@@ -148,14 +148,17 @@ public class ProcessedEpisode : Episode
         }
     }
 
-    public string EpNumsAsString()
+    public string EpisodeNumbersAsText
     {
-        if (AppropriateEpNum == EpNum2)
+        get
         {
-            return AppropriateEpNum.ToString();
-        }
+            if (AppropriateEpNum > 0 && EpNum2 != AppropriateEpNum && EpNum2 > 0)
+            {
+                return AppropriateEpNum + "-" + EpNum2;
+            }
 
-        return AppropriateEpNum + "-" + EpNum2;
+            return AppropriateEpNum > 0 ? AppropriateEpNum.ToString() : string.Empty;
+        }
     }
 
     public static int EpNumberSorter(ProcessedEpisode e1, ProcessedEpisode e2)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TVRename;
 
@@ -17,11 +18,9 @@ public class ShowSeasonMissing : ItemMissing
         show = si;
     }
 
-    #region Item Members
+    #region Equality Stuff
 
     public override bool SameAs(Item o) => o is ShowSeasonMissing missing && CompareTo(missing) == 0;
-
-    public override string Name => "Missing Season";
 
     public override int CompareTo(Item? o)
     {
@@ -34,6 +33,8 @@ public class ShowSeasonMissing : ItemMissing
     }
 
     #endregion Item Members
+
+    public override string Name => "Missing Season";
 
     public override bool DoRename => Episode?.Show.DoRename ?? true;
 
@@ -48,4 +49,13 @@ public class ShowSeasonMissing : ItemMissing
     public override string ToString() => $"{Show.ShowName} Season:{SeasonNumber}";
 
     public override ShowConfiguration Series => show;
+
+    public override string EpisodeString => ConvertEpNumsToText(show.ActiveSeasons.FirstOrDefault(s => s.Key == seasonNumber).Value);
+
+    private static string ConvertEpNumsToText(List<ProcessedEpisode> value)
+    {
+        int? min = value.Min(e => e.AppropriateEpNum);
+        int? max = value.Max(e => e.EpNum2);
+        return $"{min}-{max}";
+    }
 }

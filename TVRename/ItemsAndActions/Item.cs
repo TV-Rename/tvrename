@@ -47,7 +47,7 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged, IEquatab
     public virtual ShowConfiguration? Series => Episode?.Show;
     public virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;
 
-    public virtual string EpisodeString => Episode?.EpNumsAsString() ?? string.Empty;
+    public virtual string EpisodeString => Episode?.EpisodeNumbersAsText ?? string.Empty;
 
     // ReSharper disable once UnusedMember.Global
     public int? EpisodeNumber => Episode?.AppropriateEpNum;

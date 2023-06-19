@@ -83,7 +83,7 @@ public partial class EditSeason : Form
         {
             foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => ep.PreviouslySeen))
             {
-                ListViewItem lvi = new() { Text = ep.EpNumsAsString() };
+                ListViewItem lvi = new() { Text = ep.EpisodeNumbersAsText };
                 lvi.SubItems.Add(ep.Name);
                 lvi.Tag = ep;
                 lvSeenEpisodes.Items.Add(lvi);

@@ -1657,7 +1657,7 @@ public partial class UI : Form, IDialogParent
         lvi.Group = lvWhenToWatch.Groups[CalculateWtwlviGroup(pe, dt)];
 
         lvi.SubItems.Add(pe.SeasonNumberAsText);
-        lvi.SubItems.Add(GetEpisodeNumber(pe));
+        lvi.SubItems.Add(pe.EpisodeNumbersAsText);
         lvi.SubItems.Add(dt.ToShortDateString());
         lvi.SubItems.Add(dt.ToString("t"));
         lvi.SubItems.Add(dt.ToString("ddd"));
@@ -2749,16 +2749,6 @@ public partial class UI : Form, IDialogParent
         }
 
         return (Color.LightBlue, Color.Black);
-    }
-
-    private static string GetEpisodeNumber(ProcessedEpisode pe)
-    {
-        if (pe.AppropriateEpNum > 0 && pe.EpNum2 != pe.AppropriateEpNum && pe.EpNum2 > 0)
-        {
-            return pe.AppropriateEpNum + "-" + pe.EpNum2;
-        }
-
-        return pe.AppropriateEpNum > 0 ? pe.AppropriateEpNum.ToString() : string.Empty;
     }
 
     private static string CalculateWtwlviGroup(ProcessedEpisode pe, DateTime dt)
@@ -4988,12 +4978,12 @@ public partial class UI : Form, IDialogParent
 
         if (e.Parameters.PrimarySort == olvDate)
         {
-            e.Parameters.PrimarySort = new OLVColumn("RawDate", "AirDate");
+            e.Parameters.PrimarySort = new OLVColumn("RawDate",olvDate.AspectName);
         }
 
         if (e.Parameters.PrimarySort == olvEpisode)
         {
-            e.Parameters.PrimarySort = new OLVColumn("RawEp", "EpisodeNumber");
+            e.Parameters.PrimarySort = new OLVColumn("RawEp", olvEpisode.AspectName);
             e.Parameters.GroupComparer = new SeasonGroupComparer(e.Parameters.GroupByOrder);
         }
 
@@ -5351,7 +5341,7 @@ public partial class UI : Form, IDialogParent
 
         if (e.ColumnToSort == olvEpisode)
         {
-            e.ColumnToSort = new OLVColumn("RawEp", "EpisodeNumber");
+            e.ColumnToSort = new OLVColumn("RawEp", "EpisodeString");
         }
 
         if (e.ColumnToSort == olvSeason)

@@ -62,7 +62,7 @@ internal static class MergedEpisodeFinderController
     {
         if (pep.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
         {
-            output.AppendLine(si.ShowName + " - Season: " + seasonId + " - " + pep.EpNumsAsString() +
+            output.AppendLine(si.ShowName + " - Season: " + seasonId + " - " + pep.EpisodeNumbersAsText +
                               " - " + pep.Name + " is:");
 
             foreach (Episode sourceEpisode in pep.SourceEpisodes)

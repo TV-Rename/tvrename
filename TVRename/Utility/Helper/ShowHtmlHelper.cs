@@ -1676,7 +1676,7 @@ internal static class ShowHtmlHelper
         DirFilesCache dfc = new();
         foreach (ProcessedEpisode ei in eis)
         {
-            string epl = ei.EpNumsAsString();
+            string epl = ei.EpisodeNumbersAsText;
 
             string episodeUrl = ei.ProviderWebUrl();
 

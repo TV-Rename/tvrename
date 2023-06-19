@@ -42,7 +42,7 @@ public class PossibleMergedEpisode
             };
 
             lvi.SubItems.Add(episodeOne.AppropriateSeasonNumber.ToString());
-            lvi.SubItems.Add(episodeOne.EpNumsAsString() + " & " + episodeTwo.EpNumsAsString());
+            lvi.SubItems.Add(episodeOne.EpisodeNumbersAsText + " & " + episodeTwo.EpisodeNumbersAsText);
             lvi.SubItems.Add(episodeOne.GetAirDateDt(true).PrettyPrint());
             lvi.SubItems.Add(episodeOne.Name + " & " + episodeTwo.Name);
 

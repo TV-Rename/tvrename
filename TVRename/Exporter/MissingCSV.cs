@@ -29,7 +29,7 @@ internal class MissingCSV : MissingActionListExporter
             ProcessedEpisode pe = im.MissingEpisode;
             DateTime? dt = pe.GetAirDateDt(true);
             file.WriteLine(
-                $"{pe.TheCachedSeries.Name.InDoubleQuotes()},{pe.AppropriateSeasonNumber},{pe.EpNumsAsString()},{pe.Name.InDoubleQuotes()},{dt:G},{im.TargetFolder.InDoubleQuotes()},{im.Filename.InDoubleQuotes()},{pe.SeriesId}");
+                $"{pe.TheCachedSeries.Name.InDoubleQuotes()},{pe.AppropriateSeasonNumber},{pe.EpisodeNumbersAsText},{pe.Name.InDoubleQuotes()},{dt:G},{im.TargetFolder.InDoubleQuotes()},{im.Filename.InDoubleQuotes()},{pe.SeriesId}");
         }
     }
 }
