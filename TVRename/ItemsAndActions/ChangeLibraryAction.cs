@@ -22,26 +22,14 @@ internal abstract class ChangeLibraryAction : Action
     public override QueueName Queue() => QueueName.writeMetadata;
 }
 
-internal class RemoveMovie : ChangeLibraryAction
+internal class RemoveMovie : ChangeLibraryAction, IEquatable<RemoveMovie>
 {
     public RemoveMovie(MovieConfiguration si, TVDoc doc) : base(doc)
     {
         Movie = si;
     }
 
-    public override int CompareTo(Item? o)
-    {
-        if (o is not RemoveMovie r)
-        {
-            return -1;
-        }
-
-        return string.Compare(this.Movie?.Name, r.Movie?.Name, StringComparison.Ordinal);
-    }
-
-    public override bool SameAs(Item o) =>
-        o is RemoveMovie cmr && Movie == cmr.Movie;
-
+    public override string Produces => Movie?.Name ?? string.Empty;
     public override string Name => "Remove Movie Configuration";
 
     public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
@@ -54,10 +42,36 @@ internal class RemoveMovie : ChangeLibraryAction
         return ActionOutcome.Success();
     }
 
-    public override string Produces => Movie?.Name ?? string.Empty;
+    #region EqualMethods
+    public override int CompareTo(Item? o)
+    {
+        if (o is not RemoveMovie r)
+        {
+            return -1;
+        }
+
+        return string.Compare(this.Movie?.Name, r.Movie?.Name, StringComparison.Ordinal);
+    }
+
+    public override bool SameAs(Item o) =>
+        o is RemoveMovie cmr && Movie == cmr.Movie;
+   
+    public override bool Equals(object? obj) => obj is RemoveMovie rs && Equals(rs);
+    public bool Equals(RemoveMovie? other)
+    {
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        return ReferenceEquals(this, other) || SameAs(other);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(Movie);
+    #endregion
 }
 
-internal class RemoveShow : ChangeLibraryAction
+internal class RemoveShow : ChangeLibraryAction, IEquatable<RemoveShow>
 {
     private readonly ShowConfiguration si;
 
@@ -65,14 +79,20 @@ internal class RemoveShow : ChangeLibraryAction
     {
         this.si = si;
     }
+
+    public override string Name => "Remove TV Show Configuration";
+    public override string Produces => si.Name ?? string.Empty;
+    public override ShowConfiguration Series => si;
+    public override string SeriesName => si.ShowName;
+
     public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
     {
         Doc.TvLibrary.Remove(si);
         Doc.TvAddedOrEdited(false, true, true, null, si);
         return ActionOutcome.Success();
     }
-    public override string Produces => si.Name ?? string.Empty;
 
+    #region EqualMethods
     public override int CompareTo(Item? o)
     {
         if (o is not RemoveShow r)
@@ -86,9 +106,24 @@ internal class RemoveShow : ChangeLibraryAction
     public override bool SameAs(Item o) =>
         o is RemoveShow cmr && si == cmr.si;
 
-    public override string Name => "Remove TV Show Configuration";
+    public override bool Equals(object? obj) => obj is RemoveShow rs && Equals(rs);
 
-    public override ShowConfiguration Series => si;
-    public override string SeriesName => si.ShowName;
+    public bool Equals(RemoveShow? other)
+    {
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return base.Equals(other) && si.Equals(other.si);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), si);
+    #endregion
 }
 
