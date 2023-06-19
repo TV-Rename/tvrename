@@ -46,7 +46,8 @@ public static class HttpHelper
             try
             {
                 // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
-                using HttpClient client = new(new ClearanceHandler());
+                using ClearanceHandler httpMessageHandler = new();
+                using HttpClient client = new(httpMessageHandler);
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
                 return TaskObtainStringFromUrl(url, client);
@@ -78,7 +79,8 @@ public static class HttpHelper
             try
             {
                 // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
-                HttpClient cloudflareclient = new (new ClearanceHandler());
+                using ClearanceHandler httpMessageHandler = new();
+                HttpClient cloudflareclient = new (httpMessageHandler);
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
                 Task<byte[]> task = Task.Run(async () => await cloudflareclient.GetByteArrayAsync(url));
