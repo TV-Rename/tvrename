@@ -266,6 +266,7 @@ public class CustomEpisodeName
             name = ReplaceDates(urlEncode, name, pe.GetAirDateDt(false));
             name = Regex.Replace(name, "{AllEpisodes}", AllEpsText(pe), RegexOptions.IgnoreCase);
 
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (pe.EpNum2 == pe.AppropriateEpNum)
             {
                 name = Regex.Replace(name, "([^\\\\])\\[.*?[^\\\\]\\]", "$1"); // remove optional parts

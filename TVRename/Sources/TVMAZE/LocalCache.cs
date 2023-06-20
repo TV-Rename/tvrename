@@ -36,6 +36,7 @@ public class LocalCache : MediaCache, iTVSource
             {
                 lock (SyncRoot)
                 {
+                    // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
                     if (InternalInstance is null)
                     {
                         InternalInstance = new LocalCache();

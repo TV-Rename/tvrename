@@ -14,8 +14,8 @@ public partial class YtsViewerView : Form
     private readonly UI mainUi;
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private readonly List<MovieConfiguration> addedMovies;
-    string quality;
-    int minRating;
+    private readonly string quality;
+    private readonly int minRating;
     private DateTime scanStartTime;
 
     public YtsViewerView(TVDoc doc, UI main)

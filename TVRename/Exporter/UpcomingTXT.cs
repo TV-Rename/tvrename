@@ -36,9 +36,9 @@ internal class UpcomingTXT : UpcomingExporter
         }
     }
 
-    private string HeaderLine() => FormattedLine("Show", "Network", "Day", "Time");
+    private static string HeaderLine() => FormattedLine("Show", "Network", "Day", "Time");
 
-    private string ConvertToLine(ProcessedEpisode ei)
+    private static string ConvertToLine(ProcessedEpisode ei)
     {
         DateTime? stTime = ei.GetAirDateDt(true);
 

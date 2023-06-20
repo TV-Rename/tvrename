@@ -33,20 +33,19 @@ public class ShowRule
 
     public ShowRule(XElement? xmlSettings) : this()
     {
-        if (xmlSettings != null)
+        if (xmlSettings == null)
         {
-            DoWhatNow = xmlSettings.ExtractEnum("DoWhatNow", RuleAction.kIgnoreEp);
-            First = xmlSettings.ExtractInt("First", -1);
-            Second = xmlSettings.ExtractInt("Second", -1);
-            UserSuppliedText = xmlSettings.ExtractString("Text");
-            RenumberAfter = xmlSettings.ExtractBool("RenumberAfter", true);
+            return;
         }
+
+        DoWhatNow = xmlSettings.ExtractEnum("DoWhatNow", RuleAction.kIgnoreEp);
+        First = xmlSettings.ExtractInt("First", -1);
+        Second = xmlSettings.ExtractInt("Second", -1);
+        UserSuppliedText = xmlSettings.ExtractString("Text");
+        RenumberAfter = xmlSettings.ExtractBool("RenumberAfter", true);
     }
 
-    public override string ToString()
-    {
-        return $"ShowRule: {ActionInWords()} with parameters {First}, {Second} and usertext: {UserSuppliedText} ({RenumberAfter})";
-    }
+    public override string ToString() => $"ShowRule: {ActionInWords()} with parameters {First}, {Second} and usertext: {UserSuppliedText} ({RenumberAfter})";
 
     public void WriteXml(XmlWriter writer)
     {

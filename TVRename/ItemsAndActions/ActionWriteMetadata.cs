@@ -53,7 +53,7 @@ public abstract class ActionWriteMetadata : ActionDownload, IEquatable<ActionWri
             return true;
         }
 
-        if (obj.GetType() != this.GetType())
+        if (obj.GetType() != GetType())
         {
             return false;
         }

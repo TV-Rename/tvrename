@@ -50,7 +50,7 @@ internal class ActionChangeLibraryRemoveMovie : ActionChangeLibrary, IEquatable<
             return -1;
         }
 
-        return string.Compare(this.Movie?.Name, r.Movie?.Name, StringComparison.Ordinal);
+        return string.Compare(Movie?.Name, r.Movie?.Name, StringComparison.Ordinal);
     }
 
     public override bool SameAs(Item o) =>
@@ -100,7 +100,7 @@ internal class ActionChangeLibraryRemoveShow : ActionChangeLibrary, IEquatable<A
             return -1;
         }
 
-        return string.Compare(this.si.Name, r.si.Name, StringComparison.Ordinal);
+        return string.Compare(si.Name, r.si.Name, StringComparison.Ordinal);
     }
 
     public override bool SameAs(Item o) =>

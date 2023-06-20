@@ -725,7 +725,7 @@ public partial class UI : Form, IDialogParent
             return MediaConfiguration.MediaType.movie;
         }
 
-        if (listSelectedObjects.Count == (listSelectedObjects.OfType<ShowItemMissing>().Count() + listSelectedObjects.OfType<ShowSeasonMissing>().Count()))
+        if (listSelectedObjects.Count == listSelectedObjects.OfType<ShowItemMissing>().Count() + listSelectedObjects.OfType<ShowSeasonMissing>().Count())
         {
             return MediaConfiguration.MediaType.tv;
         }
@@ -5492,7 +5492,7 @@ public class SeasonGroupComparer : IComparer<OLVGroup>
             result = string.Compare(x.Header, y.Header, StringComparison.CurrentCultureIgnoreCase);
         }
 
-        if (this.sortOrder == SortOrder.Descending)
+        if (sortOrder == SortOrder.Descending)
         {
             return 0 - result;
         }

@@ -11,7 +11,7 @@ internal static partial class NativeMethods
     /// <returns>A <see cref="FileSystemProperties"/> containing the properties for the specified file system.</returns>
     public static FileSystemProperties GetProperties(string volumeIdentifier)
     {
-        if (NativeMethods.GetDiskFreeSpaceEx(volumeIdentifier, out ulong available, out ulong total, out ulong free))
+        if (GetDiskFreeSpaceEx(volumeIdentifier, out ulong available, out ulong total, out ulong free))
         {
             return new FileSystemProperties((long)total, (long)free, (long)available);
         }
@@ -20,7 +20,7 @@ internal static partial class NativeMethods
 
     [return: MarshalAs(UnmanagedType.Bool)]
     [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    internal static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
+    private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
 
     [DllImport("kernel32.dll")]
     private static extern bool AttachConsole(uint dwProcessId);

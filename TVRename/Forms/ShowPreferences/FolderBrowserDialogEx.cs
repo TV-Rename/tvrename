@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using JetBrains.Annotations;
+// ReSharper disable ArrangeRedundantParentheses
 
 // ReSharper disable ConvertToConstant.Local
 // ReSharper disable UnusedMember.Global
@@ -391,13 +392,22 @@ namespace DaveChambers.FolderBrowserDialogEx
             Win32.BROWSEINFO bi = new(iImage: 0, hwndOwner: owner.Handle);
 
             if (Win32.SHGetSpecialFolderLocation(owner.Handle, (int)RootFolder, ref bi.pidlRoot) != 0)
+            {
                 bi.pidlRoot = IntPtr.Zero;
+            }
+
             bi.lpszTitle = string.Empty;
             bi.ulFlags = Win32.BIF_RETURNONLYFSDIRS;    // do NOT use BIF_NEWDIALOGSTYLE or BIF_STATUSTEXT
             if (ShowEditbox)
+            {
                 bi.ulFlags |= Win32.BIF_EDITBOX;
+            }
+
             if (!ShowNewFolderButton)
+            {
                 bi.ulFlags |= Win32.BIF_NONEWFOLDERBUTTON;
+            }
+
             bi.lpfn = _browseCallbackHandler;
             // Initialization data, used in _browseCallbackHandler
             IntPtr hInit = Marshal.AllocHGlobal(Marshal.SizeOf(initdata));
@@ -461,7 +471,9 @@ namespace DaveChambers.FolderBrowserDialogEx
 
                 // if invalid selection, disable the OK button
                 if (!ok)
+                {
                     Win32.EnableWindow(Win32.GetDlgItem(hDlg, CtlIds.IDOK), false);
+                }
             }
 
             return 0;
@@ -478,10 +490,16 @@ namespace DaveChambers.FolderBrowserDialogEx
         {
             // Only do the adjustments if InitData was supplied
             if (lpData == IntPtr.Zero)
+            {
                 return;
+            }
+
             object? obj = Marshal.PtrToStructure(lpData, typeof(InitData));
             if (obj is null)
+            {
                 return;
+            }
+
             InitData initdata = (InitData)obj;
 
             // Only do the adjustments if we can find the dirtree control
@@ -496,7 +514,9 @@ namespace DaveChambers.FolderBrowserDialogEx
                 }
             }
             if (hTree == IntPtr.Zero)
+            {
                 return;
+            }
 
             // Prep the basic UI
             Win32.SendMessage(hDlg, Win32.BFFM_SETSELECTIONW, 1, initdata.InitialPath);
@@ -533,7 +553,10 @@ namespace DaveChambers.FolderBrowserDialogEx
             rcDlg.Right += 40;
             rcDlg.Bottom += 30;
             if (hEdit != IntPtr.Zero)
+            {
                 rcDlg.Bottom += rcEdit.Height + 5;
+            }
+
             Win32.MoveWindow(hDlg, rcDlg, true);
             Win32.GetClientRect(hDlg, out rcDlg);
 

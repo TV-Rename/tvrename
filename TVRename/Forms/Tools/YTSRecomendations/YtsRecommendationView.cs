@@ -15,7 +15,7 @@ public partial class YtsRecommendationView : Form
     private readonly UI mainUi;
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private readonly List<MovieConfiguration> addedMovies;
-    string quality;
+    private readonly string quality;
     private DateTime scanStartTime;
 
     public YtsRecommendationView(TVDoc doc, UI main, string defaultQuality)

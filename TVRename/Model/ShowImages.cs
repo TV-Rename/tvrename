@@ -20,18 +20,13 @@ public class ShowImages : SafeList<ShowImage>
         return GetImage(snum, lang, MediaImage.ImageType.poster);
     }
 
-    internal ShowImage? GetImage(int snum, Language lang, MediaImage.ImageType type)
-    {
-        return GetBestSeasonLanguage(snum, lang, type)
-               ?? GetBestSeason(snum, type)
-               ?? GetShowImage(lang, type);
-    }
+    private ShowImage? GetImage(int snum, Language lang, MediaImage.ImageType type) =>
+        GetBestSeasonLanguage(snum, lang, type)
+        ?? GetBestSeason(snum, type)
+        ?? GetShowImage(lang, type);
 
     internal ShowImage? GetShowImage(Language lang, MediaImage.ImageType type)
-    {
-        return GetSeriesLangImage(lang, type)
-               ?? GetSeriesImage(type);
-    }
+        => GetSeriesLangImage(lang, type) ?? GetSeriesImage(type);
 
     private ShowImage? GetBestSeason(int snum, MediaImage.ImageType type)
     {

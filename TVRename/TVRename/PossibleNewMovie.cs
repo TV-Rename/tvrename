@@ -18,7 +18,6 @@ public class PossibleNewMovie : ISeriesSpecifier
     public string RefinedHint;
 
     public int? PossibleYear;
-    private string? imdbCodeInternal;
     internal int ProviderCode;
     internal TVDoc.ProviderType SourceProvider;
 
@@ -86,7 +85,7 @@ public class PossibleNewMovie : ISeriesSpecifier
             if (s != null)
             {
                 SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
-                imdbCodeInternal = imdbToTest;
+                ImdbCode = imdbToTest;
                 Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on IMDB = {imdbToTest} which we looked up to get {s.TmdbCode}");
                 return;
             }
@@ -304,7 +303,7 @@ public class PossibleNewMovie : ISeriesSpecifier
 
     public int TmdbId => Provider == TVDoc.ProviderType.TMDB && CodeKnown ? ProviderCode : -1;
 
-    public string? ImdbCode => imdbCodeInternal;
+    public string? ImdbCode { get; private set; }
 
     public Locale TargetLocale => new();
 

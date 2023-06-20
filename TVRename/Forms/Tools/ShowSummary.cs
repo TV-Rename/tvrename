@@ -319,7 +319,7 @@ public partial class ShowSummary : Form, IDialogParent
         {
             this.show = show;
             this.gridSummary = gridSummary;
-            this.mDoc = doc;
+            mDoc = doc;
         }
 
         public ShowClickEvent(ShowSummary gridSummary, ShowConfiguration show, ProcessedSeason processedSeason, TVDoc doc)
@@ -327,7 +327,7 @@ public partial class ShowSummary : Form, IDialogParent
             this.show = show;
             this.processedSeason = processedSeason;
             this.gridSummary = gridSummary;
-            this.mDoc = doc;
+            mDoc = doc;
         }
 
         public override void OnMouseDown(CellContext sender, MouseEventArgs e)

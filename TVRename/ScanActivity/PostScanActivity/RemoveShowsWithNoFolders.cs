@@ -68,9 +68,9 @@ internal class RemoveShowsWithNoFolders : PostScanActivity
         }
     }
 
-    private bool IsReleased(MovieConfiguration mc) => mc.CachedMovie?.IsReleased() ?? false;
+    private static bool IsReleased(MovieConfiguration mc) => mc.CachedMovie?.IsReleased() ?? false;
 
-    private bool HasAiredEpisode(ShowConfiguration sc) => sc.GetFirstAvailableEpisode()?.HasAired() ?? false;
+    private static bool HasAiredEpisode(ShowConfiguration sc) => sc.GetFirstAvailableEpisode()?.HasAired() ?? false;
 
-    private bool NotExist(string folderName) => !Directory.Exists(folderName);
+    private static bool NotExist(string folderName) => !Directory.Exists(folderName);
 }

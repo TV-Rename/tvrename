@@ -1828,7 +1828,7 @@ public partial class Preferences : Form
             LineAlignment = StringAlignment.Center
         };
 
-        using SolidBrush fore = new SolidBrush(tcTabs.ForeColor);
+        using SolidBrush fore = new (tcTabs.ForeColor);
         g.DrawString(tabPage.Text, tcTabs.Font, fore, tabBounds, stringFlags);
     }
 

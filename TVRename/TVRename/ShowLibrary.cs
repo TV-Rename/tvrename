@@ -481,6 +481,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         {
             eis.RemoveAt(fromIndex);
         }
+        // ReSharper disable once RedundantIfElseBlock
         else
         {
             //arguments are not consistent, so we'll do nothing
@@ -590,6 +591,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             ProcessedEpisode n = new(t, si, txt, t.AiredEpNum + 1, t.DvdEpNum + 1, t.EpNum2 + 1);
             eis.Add(n);
         }
+        // ReSharper disable once RedundantIfElseBlock
         else
         {
             //Parameters are invalid, so we'll do nothing
