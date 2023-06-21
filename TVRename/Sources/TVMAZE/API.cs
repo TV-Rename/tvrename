@@ -19,90 +19,74 @@ internal static class API
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    public static IEnumerable<KeyValuePair<string, long>> GetUpdates()
+    private static T HandleErrorsFrom<T>(string message, Func<T> handler)
     {
+        string errorMessage = $"Could not {message} from TV Maze";
         try
         {
-            JObject updatesJson = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/updates/shows", 3, 2);
-
-            return updatesJson.Children<JProperty>()
-                .Select(t => new KeyValuePair<string, long>(t.Name, (long)t.Value));
+            return handler();
         }
         catch (WebException ex)
         {
-            Logger.LogWebException("Could not get updates from TV Maze due to", ex);
-            throw new SourceConnectivityException(ex.Message);
+            Logger.LogWebException(errorMessage, ex);
+            throw new SourceConnectivityException(errorMessage,ex);
         }
         catch (HttpRequestException wex)
         {
-            Logger.LogHttpRequestException("Could not get updates from TV Maze due to", wex);
-            throw new SourceConnectivityException(wex.Message);
+            Logger.LogHttpRequestException(errorMessage, wex);
+            throw new SourceConnectivityException(errorMessage, wex);
         }
         catch (System.IO.IOException iex)
         {
-            Logger.Error($"Could not get updates from TV Maze due to {iex.Message}");
-            throw new SourceConnectivityException(iex.Message);
+            Logger.Error(errorMessage, iex);
+            throw new SourceConnectivityException(errorMessage, iex);
         }
         catch (JsonReaderException jre)
         {
-            Logger.Error($"Could not get updates from TV Maze due to {jre.Message}");
-            throw new SourceConnectivityException(jre.Message);
+            Logger.Error($"{errorMessage} due to {jre.Message}");
+            throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
-            Logger.LogHttpRequestException("Could not get updates from TV Maze due to", wex);
-            throw new SourceConnectivityException(ex.Message);
+            Logger.LogHttpRequestException(errorMessage, wex);
+            throw new SourceConnectivityException(errorMessage,wex);
         }
         catch (System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"Could not get updates from TV Maze due to {ex.Message}");
-            throw new SourceConnectivityException(ex.Message);
+            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            throw new SourceConnectivityException(errorMessage,ex);
         }
         catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"Could not get updates from TV Maze due to {ex.Message}");
-            throw new SourceConnectivityException(ex.Message);
+            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            throw new SourceConnectivityException(errorMessage, ex);
+        }
+    }
+
+    public static IEnumerable<KeyValuePair<string, long>> GetUpdates()
+    {
+        return HandleErrorsFrom("get updates", GetUpdatesInternal);
+
+        static IEnumerable<KeyValuePair<string, long>> GetUpdatesInternal()
+        {
+            string fullUrl = $"{APIRoot}/updates/shows";
+            JObject updatesJson = HttpHelper.HttpGetRequestWithRetry(fullUrl, 3, 2);
+
+            return updatesJson.Children<JProperty>()
+                .Select(t => new KeyValuePair<string, long>(t.Name, (long)t.Value));
         }
     }
 
     public static IEnumerable<CachedSeriesInfo> ShowSearch(string searchText)
     {
-        try
+        string message = $"search TVmaze for show '{searchText}'";
+        return HandleErrorsFrom(message, () => ShowSearchInternal(searchText));
+
+        static IEnumerable<CachedSeriesInfo> ShowSearchInternal(string s)
         {
-            string fullUrl = $"{APIRoot}/search/shows?q={searchText}";
+            string fullUrl = $"{APIRoot}/search/shows?q={s}";
             JArray response = HttpHelper.HttpGetArrayRequestWithRetry(fullUrl, 5, 2);
             return response.Children().Select(ConvertSearchResult).OfType<CachedSeriesInfo>();
-        }
-        catch (WebException wex)
-        {
-            Logger.LogWebException($"Could not search for show '{searchText}' from TV Maze due to", wex);
-            throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
-        }
-        catch (HttpRequestException wex)
-        {
-            Logger.LogHttpRequestException($"Could not search for show '{searchText}' from TV Maze due to", wex);
-            throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
-        }
-        catch (System.IO.IOException wex)
-        {
-            Logger.LogIoException($"Could not search for show '{searchText}' from TV Maze due to", wex);
-            throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
-        }
-
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            Logger.LogHttpRequestException($"Could not search for show '{searchText}' from TV Maze due to", wex);
-            throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
-        }
-        catch (System.Threading.Tasks.TaskCanceledException ex)
-        {
-            Logger.Warn($"Could not get search from TV Maze due to {ex.Message}");
-            throw new SourceConnectivityException(ex.Message);
-        }
-        catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
-        {
-            Logger.Warn($"Could not get search from TV Maze due to {ex.Message}");
-            throw new SourceConnectivityException(ex.Message);
         }
     }
 
@@ -124,52 +108,71 @@ internal static class API
     {
         try
         {
-            JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?thetvdb=" + source.TvdbId, 3, 2);
+            string url = $"{APIRoot}/lookup/shows?thetvdb={source.TvdbId}";
+            JObject r = HttpHelper.HttpGetRequestWithRetry(url, 3, 2);
             int tvMazeId = r.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
 
             source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
         }
         catch (System.IO.IOException wex)
         {
-            throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}");
+            throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}",wex);
         }
         catch (AggregateException ex1) when (ex1.InnerException is HttpRequestException wex)
         {
             if (!wex.Is404())
             {
-                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}");
+                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}",wex);
             }
 
-            string? tvdBimbd = TheTVDB.LocalCache.Instance.GetSeries(source.TvdbId)?.Imdb;
-            if (!source.ImdbCode.HasValue() && !tvdBimbd.HasValue())
-            {
-                throw new MediaNotFoundException(source, $"Cant find a show with TVDB Id {source.TvdbId} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
-            }
-            string? imdbCode = source.ImdbCode ?? tvdBimbd;
-            try
-            {
-                JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?imdb=" + imdbCode, 3, 2);
-                int tvMazeId = r.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
-                JToken externalsToken = GetChild(r, "externals");
-                JToken tvdbToken = GetChild(externalsToken, "thetvdb");
-                int tvdb = tvdbToken.Type == JTokenType.Null ? -1 : (int)tvdbToken;
+            GetSeriesIdFromImdbCode(source, GuessImdbCode(source));
+        }
 
-                if (source.TvdbId > 0)
-                {
-                    Logger.Error(
-                        $"TVMaze Data issue: {tvMazeId} has the wrong TVDB Id based on {imdbCode}. Should be {source.TvdbId}, currently is {tvdb}. [{source}]");
-                }
+        string GuessImdbCode(ISeriesSpecifier seriesSpecifier)
+        {
+            if (seriesSpecifier.ImdbCode.HasValue())
+            {
+                return seriesSpecifier.ImdbCode;
+            }
+            string? tvdBimbd = TheTVDB.LocalCache.Instance.GetSeries(seriesSpecifier.TvdbId)?.Imdb;
+            if (tvdBimbd.HasValue())
+            {
+                return tvdBimbd;
+            }
 
-                source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
-            }
-            catch (HttpRequestException wex2)
+            throw new MediaNotFoundException(seriesSpecifier,
+                $"Cant find a show with TVDB Id {seriesSpecifier.TvdbId} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.",
+                TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+        }
+    }
+
+    private static void GetSeriesIdFromImdbCode(ISeriesSpecifier source, string s)
+    {
+        try
+        {
+            string url = $"{APIRoot}/lookup/shows?imdb={s}";
+            JObject r = HttpHelper.HttpGetRequestWithRetry(url, 3, 2);
+
+            int tvMazeId = r.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
+            JToken externalsToken = GetChild(r, "externals");
+            JToken tvdbToken = GetChild(externalsToken, "thetvdb");
+            int tvdb = tvdbToken.Type == JTokenType.Null ? -1 : (int)tvdbToken;
+
+            if (source.TvdbId > 0)
             {
-                RaiseException(wex2, imdbCode);
+                Logger.Error(
+                    $"TVMaze Data issue: {tvMazeId} has the wrong TVDB Id based on {s}. Should be {source.TvdbId}, currently is {tvdb}. [{source}]");
             }
-            catch (AggregateException ex2) when (ex2.InnerException is HttpRequestException wex2)
-            {
-                RaiseException(wex2, imdbCode);
-            }
+
+            source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
+        }
+        catch (HttpRequestException wex2)
+        {
+            RaiseException(wex2, s);
+        }
+        catch (AggregateException ex2) when (ex2.InnerException is HttpRequestException wex2)
+        {
+            RaiseException(wex2, s);
         }
 
         void RaiseException(HttpRequestException wex2, string? imdbCode)
@@ -182,7 +185,7 @@ internal static class API
             }
 
             throw new SourceConnectivityException(
-                $"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={source.TvdbId} {wex2.Message}");
+                $"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={source.TvdbId} {wex2.Message}",wex2);
         }
     }
 
@@ -212,6 +215,7 @@ internal static class API
 
     private static JObject GetSeriesDetailsWithMazeId(ISeriesSpecifier tvMazeId)
     {
+        string errorMessage = $"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId}";
         try
         {
             return HttpHelper.HttpGetRequestWithRetry($"{APIRoot}/shows/{tvMazeId.TvMazeId}?specials=1&embed[]=cast&embed[]=episodes&embed[]=crew&embed[]=akas&embed[]=seasons&embed[]=images", 5, 2);
@@ -223,8 +227,8 @@ internal static class API
                 throw new MediaNotFoundException(tvMazeId, $"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
             }
 
-            Logger.LogWebException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", wex);
-            throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {wex.Message}");
+            Logger.LogWebException(errorMessage, wex);
+            throw new SourceConnectivityException(errorMessage, wex);
         }
         catch (HttpRequestException wex)
         {
@@ -233,8 +237,8 @@ internal static class API
                 throw new MediaNotFoundException(tvMazeId, $"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
             }
 
-            Logger.LogHttpRequestException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", wex);
-            throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {wex.Message}");
+            Logger.LogHttpRequestException(errorMessage, wex);
+            throw new SourceConnectivityException(errorMessage,wex);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
@@ -243,13 +247,13 @@ internal static class API
                 throw new MediaNotFoundException(tvMazeId, $"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
             }
 
-            Logger.LogHttpRequestException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", wex);
-            throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {wex.Message}");
+            Logger.LogHttpRequestException(errorMessage, wex);
+            throw new SourceConnectivityException(errorMessage,wex);
         }
         catch (System.IO.IOException ioe)
         {
-            Logger.LogIoException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", ioe);
-            throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {ioe.Message}");
+            Logger.LogIoException(errorMessage, ioe);
+            throw new SourceConnectivityException(errorMessage,ioe);
         }
     }
 

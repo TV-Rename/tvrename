@@ -60,23 +60,23 @@ internal static class API
         }
         catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
         {
-            throw new SourceConnectivityException(ex.Message);
+            throw new SourceConnectivityException(ex);
         }
         catch (TaskCanceledException ex)
         {
-            throw new SourceConnectivityException(ex.Message);
+            throw new SourceConnectivityException(ex);
         }
         catch (AggregateException aex) when (aex.InnerException is TaskCanceledException ex)
         {
-            throw new SourceConnectivityException(ex.Message);
+            throw new SourceConnectivityException(ex);
         }
         catch (HttpRequestException ex)
         {
-            throw new SourceConnectivityException(ex.Message);
+            throw new SourceConnectivityException(ex);
         }
         catch (Exception e)
         {
-            throw new SourceConnectivityException(e.Message);
+            throw new SourceConnectivityException(e);
         }
     }
 

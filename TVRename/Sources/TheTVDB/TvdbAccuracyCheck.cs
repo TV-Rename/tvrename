@@ -165,8 +165,8 @@ internal class TvdbAccuracyCheck
         for (int page = 0; page < 10000; page++)
         {
             Logger.Info($" BETA Update Checker: {page}");
-            JObject? currentDownload = LocalCache.Instance.GetUpdatesJson(baseTime, page);
-            JToken? jToken = currentDownload?["data"];
+            JObject currentDownload = LocalCache.Instance.GetUpdatesJson(baseTime, page);
+            JToken? jToken = currentDownload["data"];
 
             if (jToken?.Children().Any() != true)
             {

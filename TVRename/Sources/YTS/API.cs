@@ -21,44 +21,45 @@ public static class API
 
     private static T HandleErrorsFrom<T>(string message, Func<T> handler)
     {
+        string errorMessage = $"Could not {message} from YTS";
         try
         {
             return handler();
         }
         catch (WebException ex)
         {
-            Logger.LogWebException($"Could not {message} from YTS due to", ex);
-            throw new SourceConnectivityException(ex.Message);
+            Logger.LogWebException(errorMessage, ex);
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (HttpRequestException wex)
         {
-            Logger.LogHttpRequestException("Could not {message} from YTS due to", wex);
-            throw new SourceConnectivityException(wex.Message);
+            Logger.LogHttpRequestException(errorMessage, wex);
+            throw new SourceConnectivityException(errorMessage, wex);
         }
         catch (System.IO.IOException iex)
         {
-            Logger.Error($"Could not {message} from YTS due to {iex.Message}");
-            throw new SourceConnectivityException(iex.Message);
+            Logger.Error($"{errorMessage} due to {iex.Message}");
+            throw new SourceConnectivityException(errorMessage, iex);
         }
         catch (JsonReaderException jre)
         {
-            Logger.Error($"Could not {message} from YTS due to {jre.Message}");
-            throw new SourceConnectivityException(jre.Message);
+            Logger.Error($"{errorMessage} due to {jre.Message}");
+            throw new SourceConsistencyException(jre.Message,TVDoc.ProviderType.libraryDefault);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
-            Logger.LogHttpRequestException("Could not {message} from YTS due to", wex);
-            throw new SourceConnectivityException(ex.Message);
+            Logger.LogHttpRequestException(errorMessage, wex);
+            throw new SourceConnectivityException(errorMessage,wex);
         }
         catch (System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"Could not {message} from YTS due to {ex.Message}");
-            throw new SourceConnectivityException(ex.Message);
+            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"Could not {message} from YTS due to {ex.Message}");
-            throw new SourceConnectivityException(ex.Message);
+            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            throw new SourceConnectivityException(errorMessage, ex);
         }
     }
 

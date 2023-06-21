@@ -203,9 +203,7 @@ internal static class API
     private static string HttpRequest(string method, string url, string contentType, TokenProvider? authToken, string lang)
         => HttpHelper.HttpRequest(method, url, null, contentType, authToken?.GetToken(), lang);
 
-    public static JObject? GetShowUpdatesSince(long time, string lang, int page) => GetShowUpdatesSinceV4(time, lang, page);
-
-    private static JObject? GetShowUpdatesSinceV4(long time, string lang, int page)
+    public static JObject? GetShowUpdatesSince(long time, string lang, int page)
     {
         string url = $"{TokenProvider.TVDB_API_URL}/updates";
         return JsonHttpGetRequest(url,
@@ -464,7 +462,7 @@ internal static class API
         try
         {
             Logger.Trace($"   Downloading {uri}");
-            return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true) ?? throw new SourceConnectivityException($"Looking for {uri} (in {requestedLanguageCode})");
+            return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true) ?? throw new SourceConsistencyException($"Looking for {uri} (in {requestedLanguageCode})",TVDoc.ProviderType.TheTVDB);
         }
         catch (WebException webEx)
         {
@@ -481,7 +479,7 @@ internal static class API
             }
 
             Logger.LogWebException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", webEx);
-            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {webEx.Message}");
+            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {webEx.Message}", webEx);
         }
         catch (HttpRequestException wex)
         {
@@ -498,7 +496,7 @@ internal static class API
             }
 
             Logger.LogHttpRequestException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", wex);
-            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {wex.Message}");
+            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {wex.Message}",wex);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
@@ -515,12 +513,12 @@ internal static class API
             }
 
             Logger.LogHttpRequestException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", wex);
-            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {wex.Message}");
+            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {wex.Message}",wex);
         }
         catch (IOException ioe)
         {
             Logger.LogIoException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got: {ioe.LoggableDetails()}", ioe);
-            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {ioe.Message}");
+            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {ioe.Message}",ioe);
         }
     }
 

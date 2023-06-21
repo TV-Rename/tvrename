@@ -223,6 +223,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private bool TVDBLogin(bool showErrorMsgBox)
     {
         Say("TheTVDB Login");
+        const string ERROR_MESSAGE = "Failed to login to TVDB";
         try
         {
             API.Login(false);
@@ -232,22 +233,22 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         catch (WebException ex)
         {
             HandleConnectionProblem(showErrorMsgBox, ex);
-            return false;
+            throw new SourceConnectivityException(ERROR_MESSAGE,ex);
         }
         catch (HttpRequestException wex)
         {
             HandleConnectionProblem(showErrorMsgBox, wex);
-            return false;
+            throw new SourceConnectivityException(ERROR_MESSAGE, wex);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             HandleConnectionProblem(showErrorMsgBox, wex);
-            return false;
+            throw new SourceConnectivityException(ERROR_MESSAGE, wex);
         }
         catch (System.IO.IOException ex)
         {
             HandleConnectionProblem(showErrorMsgBox, ex);
-            return false;
+            throw new SourceConnectivityException(ERROR_MESSAGE, ex);
         }
         finally
         {
@@ -306,8 +307,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         Say("Validating TheTVDB cache");
         AddPlaceholders(ss);
         bool auditUpdates = Helpers.InDebug();
-
-        if (!IsConnected && !Connect(showErrorMsgBox))
+        try
+        {
+            if (!IsConnected && !Connect(showErrorMsgBox))
+            {
+                SayNothing();
+                return false;
+            }
+        }
+        catch (SourceConnectivityException)
         {
             SayNothing();
             return false;
@@ -445,7 +453,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 throw new UpdateCancelledException();
             }
 
-            JObject jsonUpdateResponse = GetUpdatesJson(fromEpochTime, pageNumber) ?? throw new SourceConnectivityException( $"No Updates available from TVDB: {fromEpochTime}:{pageNumber} ({LastErrorMessage})");
+            JObject jsonUpdateResponse = GetUpdatesJson(fromEpochTime, pageNumber);
 
             int numberOfResponses = GetNumResponses(jsonUpdateResponse, GetRequestedTime(fromEpochTime))?? throw new SourceConsistencyException(                    $"NumberOfResponses is null: {fromEpochTime}:{pageNumber}:{jsonUpdateResponse}",                    TVDoc.ProviderType.TheTVDB);
 
@@ -545,56 +553,48 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    internal JObject? GetUpdatesJson(long updateFromEpochTime, int page)
+    internal JObject GetUpdatesJson(long updateFromEpochTime, int pageNumber)
     {
+        string errorMessage = $"Error obtaining lastupdated query since (local) {updateFromEpochTime}:{pageNumber}";
         try
         {
-            return API.GetShowUpdatesSince(updateFromEpochTime, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation, page);
+            return API.GetShowUpdatesSince(updateFromEpochTime, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation, pageNumber)
+                ?? throw new SourceConsistencyException("Could not get updates from TVDB",TVDoc.ProviderType.TheTVDB);
         }
         catch (System.IO.IOException iex)
         {
-            LOGGER.LogIoException(
-                $"Error obtaining lastupdated query since (local) {updateFromEpochTime}: Message is", iex);
-
+            LOGGER.LogIoException(errorMessage, iex);
             SayNothing();
             LastErrorMessage = iex.LoggableDetails();
-            return null;
+            throw new SourceConnectivityException(errorMessage, iex);
         }
         catch (WebException ex)
         {
-            LOGGER.LogWebException(
-                $"Error obtaining lastupdated query since (local) {updateFromEpochTime}: Message is", ex);
-
+            LOGGER.LogWebException(errorMessage, ex);
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
-            return null;
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (HttpRequestException ex)
         {
-            LOGGER.LogHttpRequestException(
-                $"Error obtaining lastupdated query since (local) {updateFromEpochTime}: Message is", ex);
-
+            LOGGER.LogHttpRequestException(errorMessage, ex);
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
-            return null;
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (AggregateException aex) when (aex.InnerException is WebException ex)
         {
-            LOGGER.LogWebException(
-                $"Error obtaining lastupdated query since (local) {updateFromEpochTime}: Message is", ex);
-
+            LOGGER.LogWebException(errorMessage, ex);
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
-            return null;
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
         {
-            LOGGER.LogHttpRequestException(
-                $"Error obtaining lastupdated query since (local) {updateFromEpochTime}: Message is", ex);
-
+            LOGGER.LogHttpRequestException(errorMessage, ex);
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
-            return null;
+            throw new SourceConnectivityException(errorMessage, ex);
         }
     }
 
@@ -969,7 +969,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             Say("Failed to Connect to TVDB");
             SayNothing();
-            throw new SourceConnectivityException();
         }
 
         ProcessedSeason.SeasonType st = code is ShowConfiguration showConfig
@@ -991,7 +990,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             Say("Failed to Connect to TVDB");
             SayNothing();
-            throw new SourceConnectivityException();
         }
 
         (CachedMovieInfo si, Language? languageCode) = API.GenerateMovieInfoV4(DownloadMovieJson(code, locale), locale);
@@ -1005,19 +1003,18 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private JObject DownloadMovieJson(ISeriesSpecifier code, Locale locale)
     {
+        string errorMessage = $"Error obtaining movie {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:";
         try
         {
             return API.GetMovieV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code());
         }
         catch (System.IO.IOException ioex)
         {
-            LOGGER.LogIoException(
-                $"Error obtaining movie {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                ioex);
+            LOGGER.LogIoException(errorMessage, ioex);
 
             SayNothing();
             LastErrorMessage = ioex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, ioex);
         }
         catch (HttpRequestException ex)
         {
@@ -1036,13 +1033,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 }
             }
 
-            LOGGER.LogHttpRequestException(
-                $"Error obtaining movie {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                ex);
-
+            LOGGER.LogHttpRequestException(errorMessage, ex);
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (WebException ex)
         {
@@ -1061,36 +1055,31 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 }
             }
 
-            LOGGER.LogWebException(
-                $"Error obtaining movie {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                ex);
-
+            LOGGER.LogWebException(errorMessage, ex);
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, ex);
         }
     }
     
     private JObject DownloadSeriesJson(ISeriesSpecifier code, Locale locale)
     {
+        string errorMessage = $"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:";
         try
         {
             return API.GetSeriesV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code());
         }
         catch (System.IO.IOException e)
         {
-            LOGGER.LogIoException(
-                $"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                e);
+            LOGGER.LogIoException(errorMessage, e);
 
             SayNothing();
             LastErrorMessage = e.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, e);
         }
         catch (WebException ex)
         {
-            if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse
-                { StatusCode: HttpStatusCode.NotFound })
+            if (ex.Is404())
             {
                 LOGGER.Warn($"Show with Id {code} is no longer available from TVDB (got a 404).");
                 SayNothing();
@@ -1104,13 +1093,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 }
             }
 
-            LOGGER.LogWebException(
-                $"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                ex);
+            LOGGER.LogWebException(errorMessage, ex);
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (HttpRequestException wex)
         {
@@ -1126,13 +1113,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 }
             }
 
-            LOGGER.LogHttpRequestException(
-                $"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                wex);
-
+            LOGGER.LogHttpRequestException(errorMessage, wex);
             SayNothing();
             LastErrorMessage = wex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, wex);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
@@ -1148,13 +1132,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 }
             }
 
-            LOGGER.LogHttpRequestException(
-                $"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
-                wex);
-
+            LOGGER.LogHttpRequestException(errorMessage, wex);
             SayNothing();
             LastErrorMessage = wex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, wex);
         }
     }
 
@@ -1178,7 +1159,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             Say("Failed to Connect to TVDB");
             SayNothing();
-            throw new SourceConnectivityException();
         }
         try
         {
@@ -1190,7 +1170,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             SayNothing();
             LastErrorMessage = ioex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage,ioex);
         }
         catch (WebException ex)
         {
@@ -1198,7 +1178,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (AggregateException ex) when (ex.InnerException is WebException wex)
         {
@@ -1206,7 +1186,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             SayNothing();
             LastErrorMessage = wex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, wex);
         }
         catch (HttpRequestException ex)
         {
@@ -1214,7 +1194,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
@@ -1222,7 +1202,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             SayNothing();
             LastErrorMessage = wex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, wex);
         }
         catch (TaskCanceledException ex)
         {
@@ -1230,7 +1210,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             SayNothing();
             LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (AggregateException ex) when (ex.InnerException is TaskCanceledException wex)
         {
@@ -1238,7 +1218,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             SayNothing();
             LastErrorMessage = wex.LoggableDetails();
-            throw new SourceConnectivityException();
+            throw new SourceConnectivityException(errorMessage, wex);
         }
     }
 
@@ -1412,13 +1392,13 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         Say($"{cachedSeriesInfo.Name} ({eptxt}) in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
 
-        JObject jsonEpisodeResponse;
+        JObject? jsonEpisodeResponse;
         string errorMessage = $"Error obtaining {cachedSeriesInfo.Name} episode[{episodeId}]:";
 
         try
         {
             jsonEpisodeResponse =
-                API.GetEpisode(episodeId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation) ?? throw new SourceConnectivityException();
+                API.GetEpisode(episodeId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation);
         }
         catch (System.IO.IOException ex)
         {
@@ -1453,7 +1433,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             SayNothing();
         }
 
-        JObject jsonResponseData = (JObject?)jsonEpisodeResponse["data"] ??
+        JObject jsonResponseData = (JObject?)jsonEpisodeResponse?["data"] ??
                                    throw new SourceConsistencyException("No Data in Ep Response",
                                        TVDoc.ProviderType.TheTVDB);
 
@@ -1595,7 +1575,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, Locale locale)
     {
-        if (!IsConnected && !Connect(showErrorMsgBox))
+        try
+        {
+            if (!IsConnected && !Connect(showErrorMsgBox))
+            {
+                Say("Failed to Connect to TVDB");
+                return;
+            }
+        }
+        catch (SourceConnectivityException)
         {
             Say("Failed to Connect to TVDB");
             return;
