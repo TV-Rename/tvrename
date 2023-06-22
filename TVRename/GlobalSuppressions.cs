@@ -14,4 +14,5 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0074:Use compound assignment", Justification = "<Pending>", Scope = "member", Target = "~P:TVRename.TVSettings.Instance")]
 [assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>", Scope = "member", Target = "~M:TVRename.TheTVDB.API.ImageTypesV4~Newtonsoft.Json.Linq.JObject")]
 [assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>", Scope = "member", Target = "~M:TVRename.TheTVDB.API.GetSeasonV4(TVRename.ISeriesSpecifier,System.Int32,System.String)~Newtonsoft.Json.Linq.JObject")]
-
+[assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>", Scope = "member", Target = "~M:TVRename.TheTVDB.TvdbWebApi.ImageTypesV4~Newtonsoft.Json.Linq.JObject")]
+[assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>", Scope = "member", Target = "~M:TVRename.TheTVDB.TvdbWebApi.GetSeasonV4(TVRename.ISeriesSpecifier,System.Int32,System.String)~Newtonsoft.Json.Linq.JObject")]

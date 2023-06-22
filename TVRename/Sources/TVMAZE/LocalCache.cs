@@ -115,7 +115,7 @@ public class LocalCache : MediaCache, iTVSource
             LastErrorMessage = sce.Message;
             return true;
         }
-
+        SayNothing();
         return true;
     }
 

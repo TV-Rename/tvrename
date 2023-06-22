@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -28,10 +26,6 @@ public static class API
     private static readonly string WebsiteImageRoot = "https://artworks.thetvdb.com";
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-    // ReSharper disable once InconsistentNaming
-    private static readonly TokenProvider TokenProvider = new();
-    internal static bool IsConnected { get; set; }
 
     // ReSharper disable once InconsistentNaming
     public static string GetImageURL(string? url)
@@ -65,20 +59,8 @@ public static class API
     {
         try
         {
-            string theUrl = GetImageURL(url);
-
-            HttpClient wc = new();
-
-            Task<byte[]> task = Task.Run(async () => await wc.GetByteArrayAsync(url));
-
-            byte[] r = task.Result;
-
-            if (!url.EndsWith(".zip", StringComparison.Ordinal))
-            {
-                Logger.Info("Downloaded " + theUrl + ", " + r.Length + " bytes");
-            }
-
-            return r;
+            System.Net.Http.HttpClient wc = new();
+            return Task.Run(async () => await wc.GetByteArrayAsync(url)).Result;
         }
         catch (Exception e)
         {
@@ -168,41 +150,6 @@ public static class API
         }
     }
 
-    internal static JObject GetUpdatesJson(long updateFromEpochTime, int pageNumber)
-    {
-        string errorMessage = $"Error obtaining lastupdated query since (local) {updateFromEpochTime}:{pageNumber}";
-        try
-        {
-            return GetShowUpdatesSince(updateFromEpochTime, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation, pageNumber)
-                ?? throw new SourceConsistencyException("Could not get updates from TVDB", TVDoc.ProviderType.TheTVDB);
-        }
-        catch (IOException iex)
-        {
-            Logger.LogIoException(errorMessage, iex);
-            throw new SourceConnectivityException(errorMessage + iex.LoggableDetails(), iex);
-        }
-        catch (WebException ex)
-        {
-            Logger.LogWebException(errorMessage, ex);
-            throw new SourceConnectivityException(errorMessage + ex.LoggableDetails(), ex);
-        }
-        catch (HttpRequestException ex)
-        {
-            Logger.LogHttpRequestException(errorMessage, ex);
-            throw new SourceConnectivityException(errorMessage + ex.LoggableDetails(), ex);
-        }
-        catch (AggregateException aex) when (aex.InnerException is WebException ex)
-        {
-            Logger.LogWebException(errorMessage, ex);
-            throw new SourceConnectivityException(errorMessage + ex.LoggableDetails(), ex);
-        }
-        catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
-        {
-            Logger.LogHttpRequestException(errorMessage, ex);
-            throw new SourceConnectivityException(errorMessage + ex.LoggableDetails(), ex);
-        }
-    }
-
     public static void ReloadEpisodesV4(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
     {
         Parallel.ForEach(si.Seasons, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, s =>
@@ -229,8 +176,8 @@ public static class API
 
     private static void ReloadEpisode(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order, Season s)
     {
-        JObject seasonInfo = API.GetSeasonEpisodesV4(si, s.SeasonId,
-            locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code());
+        JObject seasonInfo = TvdbWebApi.GetSeasonEpisodes(si,
+            locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), s.SeasonId);
 
         JToken? episodeData = seasonInfo["data"]?["episodes"];
 
@@ -259,156 +206,26 @@ public static class API
         }
     }
 
-    private static JObject DownloadMovieJson(ISeriesSpecifier code, Locale locale)
-    {
-        string errorMessage = $"Error obtaining movie {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:";
-        try
-        {
-            return GetMovieV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code());
-        }
-        catch (IOException ioex)
-        {
-            Logger.LogIoException(errorMessage, ioex);
-            throw new SourceConnectivityException(errorMessage + ioex.LoggableDetails(), ioex);
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.Is404())
-            {
-                Logger.Warn($"Movie with Id {code} is no longer available from TVDB (got a 404).");
-
-                if (TvdbIsUp() && !CanFindEpisodesFor(code, locale)
-                   ) //todo - Check whether this is right? will be no episodes for a movie
-                {
-                    string msg = $"Movie with TVDB Id {code} is no longer found on TVDB. Please Update";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie);
-                }
-            }
-
-            Logger.LogHttpRequestException(errorMessage, ex);
-            throw new SourceConnectivityException(errorMessage+ ex.LoggableDetails(), ex);
-        }
-        catch (WebException ex)
-        {
-            if (ex.Is404())
-            {
-                Logger.Warn($"Movie with Id {code} is no longer available from TVDB (got a 404).");
-
-                if (API.TvdbIsUp() && !API.CanFindEpisodesFor(code, locale)
-                   ) //todo - Check whether this is right? will be no episodes for a movie
-                {
-                    string msg = $"Movie with TVDB Id {code} is no longer found on TVDB. Please Update";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie);
-                }
-            }
-
-            Logger.LogWebException(errorMessage, ex);
-            throw new SourceConnectivityException(errorMessage + ex.LoggableDetails(), ex);
-        }
-    }
-
-    private static JObject DownloadSeriesJson(ISeriesSpecifier code, Locale locale)
-    {
-        string errorMessage = $"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:";
-        try
-        {
-            return GetSeriesV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code());
-        }
-        catch (IOException e)
-        {
-            Logger.LogIoException(errorMessage, e);
-            throw new SourceConnectivityException(errorMessage + e.LoggableDetails(), e);
-        }
-        catch (WebException ex)
-        {
-            if (ex.Is404())
-            {
-                Logger.Warn($"Show with Id {code} is no longer available from TVDB (got a 404).");
-
-                if (API.TvdbIsUp() && !API.CanFindEpisodesFor(code, locale))
-                {
-                    string msg = $"Show with TVDB Id {code} is no longer found on TVDB. Please Update. ";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
-                }
-            }
-
-            Logger.LogWebException(errorMessage, ex);
-            throw new SourceConnectivityException(errorMessage + ex.LoggableDetails(), ex);
-        }
-        catch (HttpRequestException wex)
-        {
-            if (wex.Is404())
-            {
-                Logger.Warn($"Show with Id {code.TvdbId} is no longer available from TVDB (got a 404).");
-
-                if (API.TvdbIsUp() && code.TvdbId > 0)
-                {
-                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. Please Update";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
-                }
-            }
-
-            Logger.LogHttpRequestException(errorMessage, wex);
-            throw new SourceConnectivityException(errorMessage + wex.LoggableDetails(), wex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            if (wex.Is404())
-            {
-                Logger.Warn($"Show with Id {code.TvdbId} is no longer available from TVDB (got a 404).");
-
-                if (API.TvdbIsUp() && code.TvdbId > 0)
-                {
-                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. Please Update";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
-                }
-            }
-
-            Logger.LogHttpRequestException(errorMessage, wex);
-            throw new SourceConnectivityException(errorMessage + wex.LoggableDetails(), wex);
-        }
-    }
-
     internal static CachedMovieInfo DownloadMovieInfo(ISeriesSpecifier code, Locale locale)
     {
-        (CachedMovieInfo si, Language? languageCode) = API.GenerateMovieInfoV4(DownloadMovieJson(code, locale), locale);
+        (CachedMovieInfo si, Language? languageCode) = GenerateMovieInfoV4(TvdbWebApi.DownloadMovie(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB)), locale);
         if (languageCode != null)
         {
-            si.AddTranslations(DownloadMovieTranslationsJsonV4(code, new Locale(languageCode)));
+            si.AddTranslations(TvdbWebApi.DownloadMovieTranslations(code, languageCode));
         }
 
         return si;
     }
-
-    private static JObject DownloadMovieTranslationsJsonV4(ISeriesSpecifier code, Locale locale)
-    {
-        return HandleWebErrorsFor(
-            () => API.GetMovieTranslationsV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code()),
-        $"obtaining translations for {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
-    }
-
-    private static JObject DownloadSeriesTranslationsJsonV4(ISeriesSpecifier code, Locale locale)
-    {
-        return HandleWebErrorsFor(
-            () => API.GetSeriesTranslationsV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code()),
-            $"obtaining translations for {code.TvdbId} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
-    }
-
     internal static CachedSeriesInfo DownloadSeriesInfo(ISeriesSpecifier code, Locale locale)
     {
         ProcessedSeason.SeasonType st = code is ShowConfiguration showConfig
             ? showConfig.Order
             : ProcessedSeason.SeasonType.aired;
 
-        (CachedSeriesInfo si, Language? languageCodeToUse) = API.GenerateSeriesInfoV4(DownloadSeriesJson(code, locale), locale, st);
+        (CachedSeriesInfo si, Language? languageCodeToUse) = GenerateSeriesInfoV4(TvdbWebApi.DownloadSeries(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB)), locale, st);
         if (languageCodeToUse != null)
         {
-            si.AddTranslations(DownloadSeriesTranslationsJsonV4(code, new Locale(languageCodeToUse)));
+            si.AddTranslations(TvdbWebApi.DownloadSeriesTranslations(code, languageCodeToUse));
         }
 
         return si;
@@ -418,8 +235,8 @@ public static class API
     {
         try
         {
-            JObject episodeInfo = API.GetSeriesEpisodesV4(si,
-                locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation, st);
+            JObject episodeInfo = TvdbWebApi.GetSeriesEpisodesOfType(si,
+                locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), st);
 
             JToken? episodeData = episodeInfo["data"]?["episodes"];
 
@@ -472,7 +289,7 @@ public static class API
             (Episode newEp, Language? bestLanguage) = API.GenerateCoreEpisodeV4(x, code.TvdbId, si, locale, order);
             if (bestLanguage != null)
             {
-                newEp.AddTranslations(API.GetEpisodeTranslationsV4(code, newEp.EpisodeId, bestLanguage.TVDBV4Code()));
+                newEp.AddTranslations(TvdbWebApi.GetEpisodeTranslations(code, bestLanguage, newEp.EpisodeId));
             }
 
             si.AddEpisode(newEp);
@@ -549,7 +366,8 @@ public static class API
             }
 
             //TODO - get these in parallel;
-            JObject jsonUpdateResponse = GetUpdatesJson(fromEpochTime, pageNumber);
+            JObject jsonUpdateResponse = TvdbWebApi.GetUpdates(fromEpochTime, pageNumber)
+                                         ?? throw new SourceConsistencyException("Could not get updates from TVDB", TVDoc.ProviderType.TheTVDB);
 
             int numberOfResponses = GetNumResponses(jsonUpdateResponse, fromEpochTime.GetRequestedTime(),showConnectionIssues) ?? throw new SourceConsistencyException($"NumberOfResponses is null: {fromEpochTime}:{pageNumber}:{jsonUpdateResponse}", TVDoc.ProviderType.TheTVDB);
 
@@ -678,106 +496,7 @@ public static class API
         }
         return null;
     }
-    // ReSharper disable once InconsistentNaming
-    public static bool TVDBLogin()
-    {
-        const string ERROR_MESSAGE = "Failed to obtain token from TVDB";
-        try
-        {
-            Login(false);
-            IsConnected = true;
-            return true;
-        }
-        catch (WebException ex)
-        {
-            Logger.LogWebException(ERROR_MESSAGE, ex);
-            throw new SourceConnectivityException(ERROR_MESSAGE, ex);
-        }
-        catch (HttpRequestException wex)
-        {
-            Logger.LogHttpRequestException(ERROR_MESSAGE, wex);
-            throw new SourceConnectivityException(ERROR_MESSAGE, wex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            Logger.LogHttpRequestException(ERROR_MESSAGE, wex);
-            throw new SourceConnectivityException(ERROR_MESSAGE, wex);
-        }
-        catch (IOException ex)
-        {
-            Logger.LogIoException(ERROR_MESSAGE,ex);
-            throw new SourceConnectivityException(ERROR_MESSAGE, ex);
-        }
-    }
-    public static bool ReConnect()
-    {
-        const string ERROR_MESSAGE = "Failed to renew token from TVDB";
-        try
-        {
-            Login(true);
-            IsConnected = true;
-            return true;
-        }
-        catch (WebException ex)
-        {
-            Logger.LogWebException(ERROR_MESSAGE, ex);
-            throw new SourceConnectivityException(ERROR_MESSAGE, ex);
-        }
-        catch (HttpRequestException wex)
-        {
-            Logger.LogHttpRequestException(ERROR_MESSAGE, wex);
-            throw new SourceConnectivityException(ERROR_MESSAGE, wex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            Logger.LogHttpRequestException(ERROR_MESSAGE, wex);
-            throw new SourceConnectivityException(ERROR_MESSAGE, wex);
-        }
-        catch (IOException ex)
-        {
-            Logger.LogIoException(ERROR_MESSAGE, ex);
-            throw new SourceConnectivityException(ERROR_MESSAGE, ex);
-        }
-    }
-
-    private static bool CanFindEpisodesFor(ISeriesSpecifier code, Locale locale)
-    {
-        try
-        {
-            return GetSeriesEpisodes(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation)?.HasValues ?? false; 
-        }
-        catch (IOException)
-        {
-            return true;
-        }
-        catch (WebException ex)
-        {
-            if (ex is
-                {
-                    Status: WebExceptionStatus.ProtocolError, Response: HttpWebResponse
-                        { StatusCode: HttpStatusCode.NotFound }
-                })
-            {
-                return false;
-            }
-        }
-        catch (HttpRequestException wex)
-        {
-            if (wex.StatusCode is HttpStatusCode.NotFound)
-            {
-                return false;
-            }
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            if (wex.StatusCode is HttpStatusCode.NotFound)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
+   
     public static string WebsiteShowUrl(ShowConfiguration si)
     {
         string? value = si.CachedShow?.Slug;
@@ -862,63 +581,6 @@ public static class API
     public static string WebsiteEpisodeUrl(string slug, int episodeId)
     {
         return episodeId > 0 ? $"{WebsiteRoot}/series/{slug}/episodes/{episodeId}" : string.Empty;
-    }
-
-    private static JObject? JsonHttpGetRequest(string url, Dictionary<string, string?>? parameters, TokenProvider? authToken, bool retry) =>
-        JsonHttpGetRequest(url, parameters, authToken, string.Empty, retry);
-
-    private static JObject? JsonHttpGetRequest(string url, Dictionary<string, string?>? parameters, TokenProvider? authToken, string lang, bool retry)
-    {
-        string fullUrl = url + HttpHelper.GetHttpParameters(parameters);
-
-        string? response = null;
-
-        void Operation()
-        {
-            response = HttpRequest("GET", fullUrl, "application/json", authToken, lang);
-        }
-
-        if (retry)
-        {
-            HttpHelper.RetryOnException(3, 2.Seconds(), fullUrl, _ => true, Operation, () => { authToken?.EnsureValid(); });
-        }
-        else
-        {
-            Operation();
-        }
-
-        try
-        {
-            return response.HasValue() ? JObject.Parse(response) : null;
-        }
-        catch (JsonReaderException)
-        {
-            const string ERROR_ON_END = @"{""Error"":""Not authorized""}";
-            if (response.HasValue() && response.EndsWith(ERROR_ON_END, StringComparison.Ordinal) && response.Length > ERROR_ON_END.Length)
-            {
-                return JObject.Parse(response.TrimEnd(ERROR_ON_END));
-            }
-            throw;
-        }
-    }
-
-    private static string HttpRequest(string method, string url, string contentType, TokenProvider? authToken, string lang)
-        => HttpHelper.HttpRequest(method, url, null, contentType, authToken?.GetToken(), lang);
-
-    private static JObject? GetShowUpdatesSince(long time, string lang, int page)
-    {
-        string url = $"{TokenProvider.TVDB_API_URL}/updates";
-        return JsonHttpGetRequest(url,
-            new Dictionary<string, string?> { { "since", time.ToString() }, { "page", page.ToString() } },
-            TokenProvider, lang, true);
-    }
-
-    private static JObject? GetSeriesEpisodes(int seriesId, string languageCode, int pageNumber = 0)
-    {
-        string episodeUri = $"{TokenProvider.TVDB_API_URL}/series/{seriesId}/episodes";
-        return JsonHttpGetRequest(episodeUri,
-            new Dictionary<string, string?> { { "page", pageNumber.ToString() } },
-            TokenProvider, languageCode, true);
     }
 
     private static void AddTranslations(this Episode newEp, JObject downloadSeriesTranslationsJsonV4)
@@ -1018,220 +680,6 @@ public static class API
         }
 
         return transName ?? originalName ?? string.Empty;
-    }
-
-    private static JObject? SearchV4(string text, string defaultLanguageCode, MediaConfiguration.MediaType media)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/search";
-        return media switch
-        {
-            MediaConfiguration.MediaType.tv => JsonHttpGetRequest(uri,
-                new Dictionary<string, string?> { { "q", text }, { "type", "series" } },
-                TokenProvider, defaultLanguageCode, false),
-            MediaConfiguration.MediaType.movie => JsonHttpGetRequest(uri,
-                new Dictionary<string, string?> { { "q", text }, { "type", "movie" } },
-                TokenProvider, defaultLanguageCode, false),
-            MediaConfiguration.MediaType.both => JsonHttpGetRequest(uri,
-                new Dictionary<string, string?> { { "q", text } },
-                TokenProvider, defaultLanguageCode, false),
-            _ => throw new ArgumentOutOfRangeException(nameof(media), media, null)
-        };
-    }
-
-    public static bool TvdbIsUp()
-    {
-        JObject? jsonResponse;
-        try
-        {
-            //Deliberately send no authToken, so that it should fail if it's up
-            jsonResponse = JsonHttpGetRequest(TokenProvider.TVDB_API_URL, null, null, false);
-        }
-        catch (WebException ex)
-        {
-            //we expect an Unauthorised response - so we know the site is up
-            if (ex is { Status: WebExceptionStatus.ProtocolError, Response: HttpWebResponse resp })
-            {
-                return resp.StatusCode switch
-                {
-                    HttpStatusCode.Unauthorized => true,
-                    HttpStatusCode.Forbidden => true,
-                    HttpStatusCode.NotFound => false,
-                    HttpStatusCode.OK => true,
-                    _ => false
-                };
-            }
-
-            return false;
-        }
-        catch (HttpRequestException hex)
-        {
-            //we expect an Unauthorised response - so we know the site is up
-
-            return hex.StatusCode switch
-            {
-                HttpStatusCode.Unauthorized => true,
-                HttpStatusCode.Forbidden => true,
-                HttpStatusCode.NotFound => false,
-                HttpStatusCode.OK => true,
-                _ => false
-            };
-        }
-        catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
-        {
-            //we expect an Unauthorised response - so we know the site is up
-
-            return ex.StatusCode switch
-            {
-                HttpStatusCode.Unauthorized => true,
-                HttpStatusCode.Forbidden => true,
-                HttpStatusCode.NotFound => false,
-                HttpStatusCode.OK => true,
-                _ => false
-            };
-        }
-        return jsonResponse?.HasValues ?? false;
-    }
-    private static JObject GetSeriesV4(ISeriesSpecifier code, string requestedLanguageCode)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/extended";
-        return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.tv);
-    }
-
-    // ReSharper disable once UnusedMember.Local
-    private static JObject GetSeasonV4(ISeriesSpecifier code, int seasonId, string requestLangCode)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
-        return GetUrl(code, uri, requestLangCode, MediaConfiguration.MediaType.tv);
-    }
-
-    private static JObject GetSeriesEpisodesV4(ISeriesSpecifier code, string requestLangCode, ProcessedSeason.SeasonType type)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/episodes/{type.PrettyPrint()}";
-        return GetUrl(code, uri, requestLangCode, MediaConfiguration.MediaType.tv);
-    }
-
-    private static JObject? GetEpisode(int episodeId, string requestLangCode)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}";
-        return JsonHttpGetRequest(uri, null, TokenProvider, requestLangCode, true);
-    }
-
-    private static void Login(bool forceReconnect)
-    {
-        if (forceReconnect)
-        {
-            TokenProvider.Reset();
-        }
-        TokenProvider.EnsureValid();
-    }
-
-    // ReSharper disable once InconsistentNaming
-    private static string TVDBV4Code(this Language l) =>
-        l.ISODialectAbbreviation == "pt-BR" ? "pt" :
-        l.ISODialectAbbreviation == "zh-TW" ? "zhtw" :
-        l.ISODialectAbbreviation == "zh-YU" ? "yue" :
-        l.ThreeAbbreviation;
-
-    private static JObject GetMovieV4(ISeriesSpecifier code, string requestedLanguageCode)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/extended";
-        return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.movie);
-    }
-
-    private static JObject GetSeasonEpisodesV4(ISeriesSpecifier id, int seasonId, string requestedLanguageCode)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
-        return GetUrl(id, uri, requestedLanguageCode, MediaConfiguration.MediaType.tv);
-    }
-
-    private static JObject GetSeriesTranslationsV4(ISeriesSpecifier code, string requestedLanguageCode)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/translations/{requestedLanguageCode}";
-        return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.tv);
-    }
-
-    private static JObject GetEpisodeTranslationsV4(ISeriesSpecifier id, int episodeId, string requestedLanguageCode)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}/translations/{requestedLanguageCode}";
-        return GetUrl(id, uri, requestedLanguageCode, MediaConfiguration.MediaType.tv);
-    }
-
-    private static JObject GetMovieTranslationsV4(ISeriesSpecifier code, string requestedLanguageCode)
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/translations/{requestedLanguageCode}";
-        return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.movie);
-    }
-
-    private static JObject GetUrl(ISeriesSpecifier? code, string uri, string requestedLanguageCode, MediaConfiguration.MediaType type)
-    {
-        try
-        {
-            Logger.Trace($"   Downloading {uri}");
-            return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true) ?? throw new SourceConsistencyException($"Looking for {uri} (in {requestedLanguageCode})",TVDoc.ProviderType.TheTVDB);
-        }
-        catch (WebException webEx)
-        {
-            if (webEx.Is404())
-            {
-                Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404).");
-
-                if (TvdbIsUp() && code != null)
-                {
-                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. {uri} Please Update";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, type);
-                }
-            }
-
-            Logger.LogWebException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", webEx);
-            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {webEx.Message}", webEx);
-        }
-        catch (HttpRequestException wex)
-        {
-            if (wex.Is404())
-            {
-                Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404) via {uri}.");
-
-                if (TvdbIsUp() && code != null)
-                {
-                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB via {uri}. Please Update";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, type);
-                }
-            }
-
-            Logger.LogHttpRequestException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", wex);
-            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {wex.Message}",wex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            if (wex.Is404())
-            {
-                Logger.Warn($"Show with Id {code?.TvdbId} is no longer available from TVDB (got a 404) via {uri}.");
-
-                if (TvdbIsUp() && code != null)
-                {
-                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB via {uri}. Please Update";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, type);
-                }
-            }
-
-            Logger.LogHttpRequestException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", wex);
-            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {wex.Message}",wex);
-        }
-        catch (IOException ioe)
-        {
-            Logger.LogIoException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got: {ioe.LoggableDetails()}", ioe);
-            throw new SourceConnectivityException($"Id={code?.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {ioe.Message}",ioe);
-        }
-    }
-
-    // ReSharper disable once UnusedMember.Local
-    private static JObject ImageTypesV4()
-    {
-        string uri = $"{TokenProvider.TVDB_API_URL}/artwork/types";
-        return GetUrl(null, uri, "en", MediaConfiguration.MediaType.both);
     }
 
     public static string WebsiteMovieUrl(string? serSlug)
@@ -1775,6 +1223,13 @@ public static class API
             ?.ToString();
     }
 
+    // ReSharper disable once InconsistentNaming
+    internal static string TVDBV4Code(this Language l) =>
+        l.ISODialectAbbreviation == "pt-BR" ? "pt" :
+        l.ISODialectAbbreviation == "zh-TW" ? "zhtw" :
+        l.ISODialectAbbreviation == "zh-YU" ? "yue" :
+        l.ThreeAbbreviation;
+
     private static void AddAliasesV4(JObject r, Language lang, CachedMediaInfo si)
     {
         JToken? aliasNode = r["data"]?["aliases"];
@@ -2047,8 +1502,7 @@ public static class API
         //text = text.Replace(".", " ");
         TvdbSearchResult result = new();
 
-        string language = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code();
-        JObject? jsonSearchResponse = JsonSearchResponse(text, type, language);
+        JObject? jsonSearchResponse = TvdbWebApi.SearchResponse(text, type, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB));
 
         if (jsonSearchResponse != null)
         {
@@ -2057,117 +1511,20 @@ public static class API
 
         Locale defaultLocale = new(TVSettings.Instance.PreferredTVDBLanguage);
         string defaultLanguage = defaultLocale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code();
+        string language = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code();
         if (language == defaultLanguage)
         {
             return result;
         }
 
         //we also want to search for search terms that match in default language
-        JObject? jsonSearchDefaultLangResponse = JsonSearchResponse(text, type, defaultLanguage);
+        JObject? jsonSearchDefaultLangResponse = TvdbWebApi.SearchResponse(text, type, defaultLocale.LanguageToUse(TVDoc.ProviderType.TheTVDB));
         if (jsonSearchDefaultLangResponse != null)
         {
             ProcessSearchResult(result, jsonSearchDefaultLangResponse,defaultLocale);
         }
 
         return result;
-    }
-
-    private static JObject? JsonSearchResponse(string text, MediaConfiguration.MediaType type, string language)
-    {
-        string errorMessage = $"Error obtaining results for search term '{text}':";
-        string notFoundMessage = $"Could not find any search results for {text} in {language}";
-
-        try
-        {
-            return API.SearchV4(text, language, type);
-        }
-        catch (WebException ex)
-        {
-            if (ex.Response is null) //probably a timeout
-            {
-                Logger.LogWebException(errorMessage, ex);
-                throw new SourceConnectivityException(errorMessage + "-" + ex.LoggableDetails(), ex);
-            }
-
-            if (ex.Is404())
-            {
-                Logger.Info(notFoundMessage);
-            }
-            else
-            {
-                Logger.LogWebException(errorMessage, ex);
-                throw new SourceConnectivityException(errorMessage + "-" + ex.LoggableDetails(), ex);
-            }
-        }
-        catch (HttpRequestException wex)
-        {
-            if (wex.Is404())
-            {
-                Logger.Info(notFoundMessage);
-            }
-            else
-            {
-                Logger.LogHttpRequestException(errorMessage, wex);
-                throw new SourceConnectivityException(errorMessage + "-" + wex.LoggableDetails(), wex);
-            }
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            if (wex.StatusCode is HttpStatusCode.NotFound)
-            {
-                Logger.Info(notFoundMessage);
-            }
-            else
-            {
-                Logger.LogHttpRequestException(errorMessage, wex);
-                throw new SourceConnectivityException(errorMessage + "-" + wex.LoggableDetails(), ex);
-            }
-        }
-
-        return null;
-    }
-
-    private static T HandleWebErrorsFor<T>(Func<T> webCall, string errorMessage)
-    {
-        try
-        {
-            return webCall();
-        }
-        catch (IOException ioex)
-        {
-            Logger.LogIoException($"Error {errorMessage}:", ioex);
-            throw new SourceConnectivityException(errorMessage+ "-"+ ioex.LoggableDetails(), ioex);
-        }
-        catch (WebException ex)
-        {
-            Logger.LogWebException($"Error {errorMessage}:", ex);
-            throw new SourceConnectivityException(errorMessage + "-" + ex.LoggableDetails(), ex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is WebException wex)
-        {
-            Logger.LogWebException($"Error {errorMessage}:", wex);
-            throw new SourceConnectivityException(errorMessage + "-" + wex.LoggableDetails(), wex);
-        }
-        catch (HttpRequestException ex)
-        {
-            Logger.LogHttpRequestException($"Error {errorMessage}:", ex);
-            throw new SourceConnectivityException(errorMessage + "-" + ex.LoggableDetails(), ex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            Logger.LogHttpRequestException($"Error {errorMessage}:", wex);
-            throw new SourceConnectivityException(errorMessage + "-" + wex.LoggableDetails(), wex);
-        }
-        catch (TaskCanceledException ex)
-        {
-            Logger.LogTaskCanceledException($"Error {errorMessage}:", ex);
-            throw new SourceConnectivityException(errorMessage + "-" + ex.LoggableDetails(), ex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is TaskCanceledException wex)
-        {
-            Logger.LogTaskCanceledException($"Error {errorMessage}:", wex);
-            throw new SourceConnectivityException(errorMessage + "-" + wex.LoggableDetails(), wex);
-        }
     }
 
     private static void ProcessSearchResult(TvdbSearchResult result, JObject jsonResponse, Locale locale)
@@ -2201,11 +1558,7 @@ public static class API
     public static void DownloadEpisodeNow(CachedSeriesInfo cachedSeriesInfo, int episodeId, Locale locale,
         ProcessedSeason.SeasonType order)
     {
-        string errorMessage = $"Error obtaining {cachedSeriesInfo.Name} episode[{episodeId}]:";
-
-        JObject? jsonEpisodeResponse = HandleWebErrorsFor(
-            () => GetEpisode(episodeId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation),
-            errorMessage);
+        JObject? jsonEpisodeResponse = TvdbWebApi.DownloadEpisode(cachedSeriesInfo.Name, episodeId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB));
 
         JObject jsonResponseData = (JObject?)jsonEpisodeResponse?["data"] ??
                                    throw new SourceConsistencyException("No Data in Ep Response",

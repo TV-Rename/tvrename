@@ -43,7 +43,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private LocalCache()
     {
         LastErrorMessage = string.Empty;
-        API.IsConnected = false;
+        TvdbWebApi.IsConnected = false;
         extraEpisodes = new ConcurrentDictionary<int, ExtraEp>();
         //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
         //If we have no prior install then the app has no shows and is by definition up-to-date
@@ -211,7 +211,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         Say("TheTVDB Login");
         try
         {
-            return API.TVDBLogin();
+            return TvdbWebApi.TVDBLogin();
         }
         catch (SourceConnectivityException e)
         {
@@ -242,7 +242,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         Say("TheTVDB Reconnect");
         try
         {
-            API.ReConnect();
+            TvdbWebApi.ReConnect();
         }
         catch (SourceConnectivityException e)
         {
@@ -277,7 +277,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             Series.Clear();
         }
 
-        API.IsConnected = false;
+        TvdbWebApi.IsConnected = false;
         SaveCache();
 
         //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point

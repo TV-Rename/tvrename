@@ -140,7 +140,7 @@ internal class TvdbAccuracyCheck
 
     private static bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
     {
-        if (newSi.CollectionName != si.CollectionName)
+        if (newSi.CollectionName != si.CollectionName && newSi.CollectionName.HasValue() && si.CollectionName.HasValue())
         {
             return false;
         }
@@ -150,11 +150,15 @@ internal class TvdbAccuracyCheck
             return false;
         }
 
-        if (newSi.FirstAired != si.FirstAired)
+        if (newSi.FirstAired.HasValue && si.FirstAired.HasValue && !newSi.FirstAired.Value.EqualsUpToSeconds(si.FirstAired.Value))
         {
             return false;
         }
 
+        if (newSi.SrvLastUpdated != si.SrvLastUpdated)
+        {
+            return false;
+        }
         //TODO - Check More fields
         return true;
     }
@@ -164,7 +168,8 @@ internal class TvdbAccuracyCheck
         for (int page = 0; page < 10000; page++)
         {
             Logger.Info($" BETA Update Checker: {page}");
-            JObject currentDownload = API.GetUpdatesJson(baseTime, page);
+            JObject currentDownload = TvdbWebApi.GetUpdates(baseTime, page)
+                                      ?? throw new SourceConsistencyException("Could not get updates from TVDB", TVDoc.ProviderType.TheTVDB);
             JToken? jToken = currentDownload["data"];
 
             if (jToken?.Children().Any() != true)
