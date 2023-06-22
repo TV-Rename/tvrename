@@ -102,6 +102,18 @@ public static class Helpers
         };
     }
 
+    public static string PrettyPrint(this TheTVDB.API.UpdateRecord.UpdateType st)
+    {
+        return st switch
+        {
+            TheTVDB.API.UpdateRecord.UpdateType.series => "TV Show",
+            TheTVDB.API.UpdateRecord.UpdateType.movie => "Movie",
+            TheTVDB.API.UpdateRecord.UpdateType.season => "TV Show Season",
+            TheTVDB.API.UpdateRecord.UpdateType.episode => "TV Show Episode",
+            _ => throw new ArgumentOutOfRangeException(nameof(st), st, null)
+        };
+    }
+
     public static string PrettyPrint(this TVDoc.ProviderType type)
     {
         return type switch

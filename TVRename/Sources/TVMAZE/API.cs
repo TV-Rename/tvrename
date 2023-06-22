@@ -29,7 +29,7 @@ internal static class API
         catch (WebException ex)
         {
             Logger.LogWebException(errorMessage, ex);
-            throw new SourceConnectivityException(errorMessage,ex);
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (HttpRequestException wex)
         {
@@ -48,6 +48,64 @@ internal static class API
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
+            Logger.LogHttpRequestException(errorMessage, wex);
+            throw new SourceConnectivityException(errorMessage, wex);
+        }
+        catch (System.Threading.Tasks.TaskCanceledException ex)
+        {
+            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            throw new SourceConnectivityException(errorMessage, ex);
+        }
+        catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
+        {
+            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            throw new SourceConnectivityException(errorMessage, ex);
+        }
+    }
+
+    private static T HandleErrorsFrom<T>(string message, Func<T> handler, string mediaNotFoundMessage,ISeriesSpecifier tvMazeId)
+    {
+        string errorMessage = $"Could not {message} from TV Maze";
+        try
+        {
+            return handler();
+        }
+        catch (WebException ex)
+        {
+            if (ex.Is404() && TvMazeIsUp())
+            {
+                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+            }
+
+            Logger.LogWebException(errorMessage, ex);
+            throw new SourceConnectivityException(errorMessage,ex);
+        }
+        catch (HttpRequestException wex)
+        {
+            if (wex.Is404() && TvMazeIsUp())
+            {
+                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+            }
+            Logger.LogHttpRequestException(errorMessage, wex);
+            throw new SourceConnectivityException(errorMessage, wex);
+        }
+        catch (System.IO.IOException iex)
+        {
+            Logger.LogIoException(errorMessage, iex);
+            throw new SourceConnectivityException(errorMessage, iex);
+        }
+        catch (JsonReaderException jre)
+        {
+            Logger.Error($"{errorMessage} due to {jre.Message}");
+            throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze);
+        }
+        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
+        {
+            if (wex.Is404() && TvMazeIsUp())
+            {
+                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+            }
+
             Logger.LogHttpRequestException(errorMessage, wex);
             throw new SourceConnectivityException(errorMessage,wex);
         }
@@ -128,7 +186,7 @@ internal static class API
             GetSeriesIdFromImdbCode(source, GuessImdbCode(source));
         }
 
-        string GuessImdbCode(ISeriesSpecifier seriesSpecifier)
+        static string GuessImdbCode(ISeriesSpecifier seriesSpecifier)
         {
             if (seriesSpecifier.ImdbCode.HasValue())
             {
@@ -216,45 +274,10 @@ internal static class API
     private static JObject GetSeriesDetailsWithMazeId(ISeriesSpecifier tvMazeId)
     {
         string errorMessage = $"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId}";
-        try
-        {
-            return HttpHelper.HttpGetRequestWithRetry($"{APIRoot}/shows/{tvMazeId.TvMazeId}?specials=1&embed[]=cast&embed[]=episodes&embed[]=crew&embed[]=akas&embed[]=seasons&embed[]=images", 5, 2);
-        }
-        catch (WebException wex)
-        {
-            if (wex.Is404() && TvMazeIsUp())
-            {
-                throw new MediaNotFoundException(tvMazeId, $"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
-            }
+        string mediaNotFoundMessage = $"Please add show maze id {tvMazeId} to tvMaze";
+        string fullUrl = $"{APIRoot}/shows/{tvMazeId.TvMazeId}?specials=1&embed[]=cast&embed[]=episodes&embed[]=crew&embed[]=akas&embed[]=seasons&embed[]=images";
 
-            Logger.LogWebException(errorMessage, wex);
-            throw new SourceConnectivityException(errorMessage, wex);
-        }
-        catch (HttpRequestException wex)
-        {
-            if (wex.Is404() && TvMazeIsUp())
-            {
-                throw new MediaNotFoundException(tvMazeId, $"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
-            }
-
-            Logger.LogHttpRequestException(errorMessage, wex);
-            throw new SourceConnectivityException(errorMessage,wex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            if (wex.Is404() && TvMazeIsUp())
-            {
-                throw new MediaNotFoundException(tvMazeId, $"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
-            }
-
-            Logger.LogHttpRequestException(errorMessage, wex);
-            throw new SourceConnectivityException(errorMessage,wex);
-        }
-        catch (System.IO.IOException ioe)
-        {
-            Logger.LogIoException(errorMessage, ioe);
-            throw new SourceConnectivityException(errorMessage,ioe);
-        }
+        return HandleErrorsFrom(errorMessage, () => HttpHelper.HttpGetRequestWithRetry(fullUrl, 5, 2), mediaNotFoundMessage, tvMazeId);
     }
 
     public static CachedSeriesInfo GetSeriesDetails(ISeriesSpecifier ss)

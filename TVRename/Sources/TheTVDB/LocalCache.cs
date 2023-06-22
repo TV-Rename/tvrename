@@ -11,14 +11,10 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Newtonsoft.Json.Linq;
 using TVRename.Forms.Utilities;
-using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Talk to the TheTVDB web API, and get tv cachedSeries info
@@ -35,7 +31,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         extraEpisodes; // IDs of extra episodes to grab and merge in on next update
 
     private readonly UpdateTimeTracker LatestUpdateTime;
-
+    
     private bool showConnectionIssues;
 
     //We are using the singleton design pattern
@@ -47,7 +43,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private LocalCache()
     {
         LastErrorMessage = string.Empty;
-        IsConnected = false;
+        API.IsConnected = false;
         extraEpisodes = new ConcurrentDictionary<int, ExtraEp>();
         //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
         //If we have no prior install then the app has no shows and is by definition up-to-date
@@ -96,38 +92,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LOGGER.Info($"Assumed we have updates until {LatestUpdateTime}");
     }
 
-    public byte[]? GetTvdbDownload(string url)
-    {
-        try
-        {
-            return API.GetTvdbDownload(url);
-        }
-        catch (WebException e)
-        {
-            LOGGER.Warn(CurrentDLTask + " : " + e.LoggableDetails() + " : " + url);
-            LastErrorMessage = CurrentDLTask + " : " + e.LoggableDetails();
-            return null;
-        }
-        catch (HttpRequestException e)
-        {
-            LOGGER.Warn(CurrentDLTask + " : " + e.LoggableDetails() + " : " + url);
-            LastErrorMessage = CurrentDLTask + " : " + e.LoggableDetails();
-            return null;
-        }
-        catch (System.IO.IOException e)
-        {
-            LOGGER.Warn(CurrentDLTask + " : " + e.LoggableDetails() + " : " + url);
-            LastErrorMessage = CurrentDLTask + " : " + e.LoggableDetails();
-            return null;
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException e)
-        {
-            LOGGER.Warn(CurrentDLTask + " : " + e.LoggableDetails() + " : " + url);
-            LastErrorMessage = CurrentDLTask + " : " + e.LoggableDetails();
-            return null;
-        }
-    }
-
     public CachedSeriesInfo? GetSeriesOrDownload(ISeriesSpecifier id, bool showErrorMsgBox) => HasSeries(id.TvdbId)
         ? Series[id.TvdbId]
         : DownloadSeriesNow(id, false, false, new Locale(TVSettings.Instance.PreferredTVDBLanguage),
@@ -144,7 +108,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     internal IEnumerable<CachedSeriesInfo> ServerTvAccuracyCheck()
     {
-        TvdbAccuracyCheck check = new(this);
+        TvdbAccuracyCheck check = new();
 
         Say($"TVDB Accuracy Check (TV) running for {FullShows().Count} shows.");
 
@@ -166,7 +130,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     }
     internal IEnumerable<CachedMovieInfo> ServerMovieAccuracyCheck()
     {
-        TvdbAccuracyCheck check = new(this);
+        TvdbAccuracyCheck check = new();
 
         Say($"TVDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
 
@@ -187,6 +151,50 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return check.MoviesToUpdate;
     }
 
+    private bool DownloadEpisodeNow(ISeriesSpecifier series, int episodeId, Locale locale, ProcessedSeason.SeasonType order)
+    {
+        if (episodeId == 0)
+        {
+            LOGGER.Warn($"Asked to download episodeId = 0 for cachedSeries {series.Name}:{series.TvdbId}");
+            SayNothing();
+            return true;
+        }
+
+        if (!Series.TryGetValue(series.TvdbId, out CachedSeriesInfo? cachedSeriesInfo))
+        {
+            return false; // shouldn't happen
+        }
+
+        Episode? ep = FindEpisodeById(episodeId);
+        string eptxt = ep == null
+            ? "New Episode Id = " + episodeId
+            : order == ProcessedSeason.SeasonType.dvd
+                ? $"S{ep.DvdSeasonNumber:00}E{ep.DvdEpNum:00}"
+                : $"S{ep.AiredSeasonNumber:00}E{ep.AiredEpNum:00}";
+
+        Say($"{cachedSeriesInfo.Name} ({eptxt}) in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
+        try
+        {
+            API.DownloadEpisodeNow(cachedSeriesInfo, episodeId, locale,order);
+        }
+        catch (SourceConnectivityException)
+        {
+            cachedSeriesInfo.Dirty = true;
+            return false;
+        }
+        catch (SourceConsistencyException)
+        {
+            cachedSeriesInfo.Dirty = true;
+            return false;
+        }
+        finally
+        {
+            SayNothing();
+        }
+
+        return true;
+    }
+    
     private Episode? FindEpisodeById(int id)
     {
         lock (SERIES_LOCK)
@@ -198,8 +206,66 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    public bool Connect(bool showErrorMsgBox) => TVDBLogin(showErrorMsgBox);
+    public bool Connect(bool showErrorMsgBox)
+    {
+        Say("TheTVDB Login");
+        try
+        {
+            return API.TVDBLogin();
+        }
+        catch (SourceConnectivityException e)
+        {
+            LastErrorMessage = $"Failed to login to TVDB: {e.Message}: {e.SourceException.Message}";
 
+            if (showErrorMsgBox)
+            {
+                CannotConnectForm form = new("Error while obtaining token from TVDB",
+                    LastErrorMessage, TVDoc.ProviderType.TheTVDB);
+
+                DialogResult result = form.ShowDialog();
+                if (result == DialogResult.Abort)
+                {
+                    TVSettings.Instance.OfflineMode = true;
+                    LastErrorMessage = string.Empty;
+                }
+            }
+        }
+        finally
+        {
+            SayNothing();
+        }
+
+        return false;
+    }
+    public override void ReConnect(bool showErrorMsgBox)
+    {
+        Say("TheTVDB Reconnect");
+        try
+        {
+            API.ReConnect();
+        }
+        catch (SourceConnectivityException e)
+        {
+            LastErrorMessage = $"Failed to Reconnect to TVDB: {e.Message}: {e.SourceException.Message}";
+
+            if (showErrorMsgBox)
+            {
+                CannotConnectForm form = new("Error while Reconnect token from TVDB",
+                    LastErrorMessage, TVDoc.ProviderType.TheTVDB);
+
+                DialogResult result = form.ShowDialog();
+                if (result == DialogResult.Abort)
+                {
+                    TVSettings.Instance.OfflineMode = true;
+                    LastErrorMessage = string.Empty;
+                }
+            }
+        }
+        finally
+        {
+            SayNothing();
+        }
+    }
     public void ForgetEverything()
     {
         lock (MOVIE_LOCK)
@@ -211,7 +277,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             Series.Clear();
         }
 
-        IsConnected = false;
+        API.IsConnected = false;
         SaveCache();
 
         //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
@@ -219,107 +285,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LOGGER.Info($"Forget everything, so we assume we have updates until {LatestUpdateTime}");
     }
 
-    // ReSharper disable once InconsistentNaming
-    private bool TVDBLogin(bool showErrorMsgBox)
-    {
-        Say("TheTVDB Login");
-        const string ERROR_MESSAGE = "Failed to login to TVDB";
-        try
-        {
-            API.Login(false);
-            IsConnected = true;
-            return true;
-        }
-        catch (WebException ex)
-        {
-            HandleConnectionProblem(showErrorMsgBox, ex);
-            throw new SourceConnectivityException(ERROR_MESSAGE,ex);
-        }
-        catch (HttpRequestException wex)
-        {
-            HandleConnectionProblem(showErrorMsgBox, wex);
-            throw new SourceConnectivityException(ERROR_MESSAGE, wex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            HandleConnectionProblem(showErrorMsgBox, wex);
-            throw new SourceConnectivityException(ERROR_MESSAGE, wex);
-        }
-        catch (System.IO.IOException ex)
-        {
-            HandleConnectionProblem(showErrorMsgBox, ex);
-            throw new SourceConnectivityException(ERROR_MESSAGE, ex);
-        }
-        finally
-        {
-            SayNothing();
-        }
-    }
-
-    private void HandleConnectionProblem(bool showErrorMsgBox, Exception ex)
-    {
-        Say("Could not connect to TVDB");
-
-        if (ex is WebException wex)
-        {
-            LOGGER.LogWebException("Error obtaining token from TVDB", wex);
-            LastErrorMessage = wex.LoggableDetails();
-        }
-        else if (ex is HttpRequestException lex)
-        {
-            LOGGER.LogHttpRequestException("Error obtaining token from TVDB", lex);
-            LastErrorMessage = lex.LoggableDetails();
-        }
-        else if (ex is System.IO.IOException iex)
-        {
-            LOGGER.LogIoException("Error obtaining token from TVDB", iex);
-            LastErrorMessage = iex.LoggableDetails();
-        }
-        else if (ex is AggregateException { InnerException: HttpRequestException hex })
-        {
-            LOGGER.LogHttpRequestException("Error obtaining token from TVDB", hex);
-            LastErrorMessage = hex.LoggableDetails();
-        }
-        else
-        {
-            LOGGER.Error(ex, "Error obtaining token from TVDB");
-            LastErrorMessage = ex.Message;
-        }
-
-        if (showErrorMsgBox)
-        {
-            CannotConnectForm form = ex is WebException e
-                    ? new CannotConnectForm("Error while obtaining token from TVDB", e.LoggableDetails(), TVDoc.ProviderType.TheTVDB)
-                    : new CannotConnectForm("Error while obtaining token from TVDB", ex.Message, TVDoc.ProviderType.TheTVDB)
-                ;
-
-            DialogResult result = form.ShowDialog();
-            if (result == DialogResult.Abort)
-            {
-                TVSettings.Instance.OfflineMode = true;
-                LastErrorMessage = string.Empty;
-            }
-        }
-    }
-
     public override bool GetUpdates(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TheTVDB cache");
         AddPlaceholders(ss);
-        bool auditUpdates = Helpers.InDebug();
-        try
-        {
-            if (!IsConnected && !Connect(showErrorMsgBox))
-            {
-                SayNothing();
-                return false;
-            }
-        }
-        catch (SourceConnectivityException)
-        {
-            SayNothing();
-            return false;
-        }
 
         Say("Calculating updates needed from TVDB");
         long updateFromEpochTime = LatestUpdateTime.LastSuccessfulServerUpdateTimecode();
@@ -357,24 +326,39 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         try
         {
             Say("Getting updates list from TVDB");
-            List<JObject> updatesResponses = GetUpdatesV4(updateFromEpochTime, cts);
+            API.TvdbUpdateResponse updatesResponse = API.GetUpdatesV4(updateFromEpochTime, showConnectionIssues, cts);
+
+            long maxUpdateTime = updatesResponse.LatestTime;
+
+            if (maxUpdateTime > 0)
+            {
+                LatestUpdateTime.RegisterServerUpdate(maxUpdateTime);
+                LOGGER.Info(
+                    $"Obtained updates - since (local) {updateFromEpochTime.GetRequestedTime().ToLocalTime()} - to (local) {LatestUpdateTime}");
+            }
 
             Say("Processing Updates from TVDB");
-            Parallel.ForEach(updatesResponses, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, o =>
-            {
-                Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
-                ProcessUpdate(o, cts);
-            });
-
-            if (auditUpdates && updatesResponses.Any())
-            {
-                Say("Recording Updates");
-                int n = 0;
-                foreach (JObject response in updatesResponses)
+            Parallel.ForEach(updatesResponse.Updates,
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, o =>
                 {
-                    PersistResponse(response, updateFromEpochTime, n++);
-                }
+                    Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
+                    ProcessUpdate(o);
+                });
+        }
+        catch (TooManyCallsException e)
+        {
+            string errorMessage = e.Message +
+                                  "The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {LatestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {LatestUpdateTime.ProposedServerUpdateDateTime()}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MAX_NUMBER_OF_CALLS} week blocks of updates, otherwise consider a 'Force Refresh All'";
+            LOGGER.Error(errorMessage);
+            if (showConnectionIssues && Environment.UserInteractive)
+            {
+                MessageBox.Show(errorMessage, "Long Running Update", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
+
+            LastErrorMessage = errorMessage;
+            SayNothing();
+            return false;
         }
         catch (UpdateCancelledException)
         {
@@ -405,6 +389,88 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return true;
     }
 
+    private void ProcessUpdate(API.UpdateRecord updateRecord)
+    {
+        int id = updateRecord.Id;
+        long time = updateRecord.Time;
+        string entityType = updateRecord.Type.PrettyPrint();
+
+        switch (updateRecord.Type)
+        {
+            case API.UpdateRecord.UpdateType.series:
+            {
+                CachedSeriesInfo? selectedCachedSeriesInfo = GetSeries(id);
+                if (selectedCachedSeriesInfo != null)
+                {
+                    MarkDirty(selectedCachedSeriesInfo, time,
+                        $"as it({id}-{entityType}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
+                        true);
+                }
+
+                return;
+            }
+            case API.UpdateRecord.UpdateType.movie:
+            {
+                CachedMovieInfo? selectedMovieCachedData = GetMovie(id);
+                if (selectedMovieCachedData != null)
+                {
+                    MarkDirty(selectedMovieCachedData, time,
+                        $"as it({id}-{entityType}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
+                        true);
+                }
+
+                return;
+            }
+            case API.UpdateRecord.UpdateType.episode:
+            {
+                List<CachedSeriesInfo> matchingShows =
+                    Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id)).ToList();
+
+                if (!matchingShows.Any())
+                {
+                    return;
+                }
+
+                foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
+                {
+                    MarkDirty(selectedCachedSeriesInfo, time,
+                        $"({selectedCachedSeriesInfo.Id()}) as episodes({id}-{entityType}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
+                        false);
+                }
+
+                foreach (Episode updatedEpisode in Series.Values.SelectMany(s => s.Episodes)
+                             .Where(e => e.EpisodeId == id))
+                {
+                    updatedEpisode.Dirty = true;
+                }
+
+                return;
+            }
+            case API.UpdateRecord.UpdateType.season:
+            {
+                List<CachedSeriesInfo> matchingShows =
+                    Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id)).ToList();
+
+                if (!matchingShows.Any())
+                {
+                    return;
+                }
+
+                foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
+                {
+                    MarkDirty(selectedCachedSeriesInfo, time,
+                        $"({selectedCachedSeriesInfo.Id()}) as seasons({id}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
+                        false);
+                }
+
+                return;
+            }
+            default:
+                LOGGER.Error($"Found update record for '{entityType}' = {id}");
+                return;
+        }
+    }
+
     private bool GetUpdatesManually()
     {
         long time = DateTime.UtcNow.ToUnixTime();
@@ -424,77 +490,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LatestUpdateTime.RegisterServerUpdate(time);
         return true;
     }
-
-    private static void PersistResponse(JObject response, long updateFromEpochTime, int i)
-    {
-        //open file stream
-        using System.IO.StreamWriter file = File.CreateText(PathManager.AuditLogFile($"-{updateFromEpochTime}-{i}"));
-        Newtonsoft.Json.JsonSerializer serializer = new();
-        //serialize object directly into file stream
-        serializer.Serialize(file, response);
-    }
-
-    private List<JObject> GetUpdatesV4(long updateFromEpochTime, CancellationToken cts)
-    {
-        //We need to ask for a number of pages
-        //We'll keep asking until we get to a page until there is no next pages
-
-        bool moreUpdates = true;
-        int pageNumber = 0;
-        const int MAX_NUMBER_OF_CALLS = 1000;
-        const int OFFSET = 0;
-        long fromEpochTime = updateFromEpochTime - OFFSET;
-        List<JObject> updatesResponses = new();
-
-        while (moreUpdates)
-        {
-            if (cts.IsCancellationRequested)
-            {
-                throw new UpdateCancelledException();
-            }
-
-            JObject jsonUpdateResponse = GetUpdatesJson(fromEpochTime, pageNumber);
-
-            int numberOfResponses = GetNumResponses(jsonUpdateResponse, GetRequestedTime(fromEpochTime))?? throw new SourceConsistencyException(                    $"NumberOfResponses is null: {fromEpochTime}:{pageNumber}:{jsonUpdateResponse}",                    TVDoc.ProviderType.TheTVDB);
-
-            updatesResponses.Add(jsonUpdateResponse);
-            pageNumber++;
-            long maxTime = GetUpdateTime(jsonUpdateResponse);
-            LOGGER.Info($"Obtained {numberOfResponses} responses from lastupdated query({fromEpochTime.FromUnixTime().ToLocalTime()}) #{pageNumber} - until {maxTime.FromUnixTime().ToLocalTime()} ({maxTime})");
-
-            if (!MoreFrom(jsonUpdateResponse))
-            {
-                moreUpdates = false;
-            }
-
-            //As a safety measure we check that no more than MAX_NUMBER_OF_CALLS calls are made
-            if (pageNumber > MAX_NUMBER_OF_CALLS)
-            {
-                moreUpdates = false;
-                string errorMessage =
-                    $"We have got {pageNumber} pages of updates and we are not up to date.  The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {LatestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {LatestUpdateTime.ProposedServerUpdateDateTime()}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MAX_NUMBER_OF_CALLS} week blocks of updates, otherwise consider a 'Force Refresh All'";
-
-                LOGGER.Error(errorMessage);
-                if (showConnectionIssues && Environment.UserInteractive)
-                {
-                    MessageBox.Show(errorMessage, "Long Running Update", MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-                }
-            }
-        }
-
-        long maxUpdateTime = updatesResponses.Max(GetUpdateTime);
-
-        if (maxUpdateTime > 0)
-        {
-            LatestUpdateTime.RegisterServerUpdate(maxUpdateTime);
-            LOGGER.Info(
-                $"Obtained {pageNumber} pages of updates - since (local) {GetRequestedTime(fromEpochTime).ToLocalTime()} - to (local) {LatestUpdateTime}");
-        }
-
-        return updatesResponses;
-    }
-
+    
     private void AddPlaceholders(IEnumerable<ISeriesSpecifier> ss)
     {
         IEnumerable<ISeriesSpecifier> seriesSpecifiers = ss.ToList();
@@ -509,109 +505,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             this.AddPlaceholderMovie(downloadShow);
         }
-    }
-
-    private static bool MoreFrom(JObject jsonUpdateResponse)
-    {
-        JToken? x = jsonUpdateResponse["links"]?["next"];
-        return x is { Type: JTokenType.String };
-    }
-
-    private int? GetNumResponses(JObject jsonUpdateResponse, DateTime requestedTime)
-    {
-        try
-        {
-            JToken? dataToken = jsonUpdateResponse["data"];
-            if (dataToken is null)
-            {
-                return 0;
-            }
-
-            return !dataToken.HasValues ? 0 : ((JArray)dataToken).Count;
-        }
-        catch (InvalidCastException ex)
-        {
-            SayNothing();
-            LastErrorMessage = ex.Message;
-
-            string msg = "Unable to get latest updates from TVDB " + Environment.NewLine +
-                         "Trying to get updates since " + requestedTime.ToLocalTime() +
-                         Environment.NewLine + Environment.NewLine +
-                         "If the date is very old, please consider a full refresh";
-
-            LOGGER.Warn($"Error obtaining lastupdated query -since(local) {requestedTime.ToLocalTime()}");
-
-            LOGGER.Warn(ex, msg);
-
-            if (showConnectionIssues && Environment.UserInteractive)
-            {
-                MessageBox.Show(msg, "Error obtaining updates from TVDB", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-            }
-
-            return null;
-        }
-    }
-
-    internal JObject GetUpdatesJson(long updateFromEpochTime, int pageNumber)
-    {
-        string errorMessage = $"Error obtaining lastupdated query since (local) {updateFromEpochTime}:{pageNumber}";
-        try
-        {
-            return API.GetShowUpdatesSince(updateFromEpochTime, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation, pageNumber)
-                ?? throw new SourceConsistencyException("Could not get updates from TVDB",TVDoc.ProviderType.TheTVDB);
-        }
-        catch (System.IO.IOException iex)
-        {
-            LOGGER.LogIoException(errorMessage, iex);
-            SayNothing();
-            LastErrorMessage = iex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, iex);
-        }
-        catch (WebException ex)
-        {
-            LOGGER.LogWebException(errorMessage, ex);
-            SayNothing();
-            LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, ex);
-        }
-        catch (HttpRequestException ex)
-        {
-            LOGGER.LogHttpRequestException(errorMessage, ex);
-            SayNothing();
-            LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, ex);
-        }
-        catch (AggregateException aex) when (aex.InnerException is WebException ex)
-        {
-            LOGGER.LogWebException(errorMessage, ex);
-            SayNothing();
-            LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, ex);
-        }
-        catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
-        {
-            LOGGER.LogHttpRequestException(errorMessage, ex);
-            SayNothing();
-            LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, ex);
-        }
-    }
-
-    private static DateTime GetRequestedTime(long updateFromEpochTime)
-    {
-        try
-        {
-            return updateFromEpochTime.FromUnixTime().ToUniversalTime();
-        }
-        catch (Exception ex)
-        {
-            LOGGER.Error(ex,
-                $"Could not convert {updateFromEpochTime} to DateTime.");
-        }
-
-        //Have to do something!!
-        return DateTime.UnixEpoch.ToUniversalTime();
     }
 
     private void UpgradeDirtyLocks()
@@ -641,137 +534,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private void ProcessUpdate(JObject jsonResponse, CancellationToken cts)
-    {
-        // if updatetime > localtime for item, then remove it, so it will be downloaded later
-        JToken jToken = jsonResponse["data"] ?? throw new SourceConsistencyException($"Could not get data element from {jsonResponse}", TVDoc.ProviderType.TheTVDB);
-
-        try
-        {
-            foreach (JObject seriesResponse in jToken.Cast<JObject>())
-            {
-                if (!cts.IsCancellationRequested)
-                {
-                    ProcessSeriesUpdateV4(seriesResponse);
-                }
-            }
-        }
-        catch (InvalidCastException ex)
-        {
-            LOGGER.Error("Did not receive the expected format of json from lastupdated query.");
-            LOGGER.Error(ex);
-            LOGGER.Error(jToken.ToString());
-        }
-        catch (OverflowException ex)
-        {
-            LOGGER.Error("Could not parse the json from lastupdated query.");
-            LOGGER.Error(ex);
-            LOGGER.Error(jToken.ToString());
-        }
-    }
-
-    private void ProcessSeriesUpdateV4(JObject seriesResponse)
-    {
-        int id = seriesResponse.GetMandatoryInt("recordId", TVDoc.ProviderType.TheTVDB);
-        long time = seriesResponse.GetMandatoryLong("timeStamp", TVDoc.ProviderType.TheTVDB);
-        string? entityType = (string?)seriesResponse["entityType"];
-        //string method = (string)seriesResponse["method"];
-
-        switch (entityType)
-        {
-            case "series":
-            case "translatedseries":
-            case "seriespeople":
-                {
-                    CachedSeriesInfo? selectedCachedSeriesInfo = GetSeries(id);
-                    if (selectedCachedSeriesInfo != null)
-                    {
-                        ProcessUpdate(selectedCachedSeriesInfo, time, $"as it({id}-{entityType}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})", true);
-                    }
-                    return;
-                }
-            case "movies":
-            case "translatedmovies":
-            case "movie-genres":
-                {
-                    CachedMovieInfo? selectedMovieCachedData = GetMovie(id);
-                    if (selectedMovieCachedData != null)
-                    {
-                        ProcessUpdate(selectedMovieCachedData, time, $"as it({id}-{entityType}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})", true);
-                    }
-
-                    return;
-                }
-            case "episodes":
-            case "translatedepisodes":
-                {
-                    List<CachedSeriesInfo> matchingShows = Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id)).ToList();
-                    if (!matchingShows.Any())
-                    {
-                        return;
-                    }
-
-                    foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
-                    {
-                        ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as episodes({id}-{entityType}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})", false);
-                    }
-
-                    foreach (Episode updatedEpisode in Series.Values.SelectMany(s => s.Episodes).Where(e => e.EpisodeId == id))
-                    {
-                        updatedEpisode.Dirty = true;
-                    }
-                    return;
-                }
-            case "seasons":
-            case "translatedseasons":
-                {
-                    List<CachedSeriesInfo> matchingShows = Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id)).ToList();
-                    if (!matchingShows.Any())
-                    {
-                        return;
-                    }
-                    foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
-                    {
-                        ProcessUpdate(selectedCachedSeriesInfo, time, $"({selectedCachedSeriesInfo.Id()}) as seasons({id}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})", false);
-                    }
-                    return;
-                }
-            case "artwork":
-            case "artworktypes":
-            case "people":
-            case "characters":
-            case "award-nominees":
-            case "award_categories":
-            case "companies":
-            case "awards":
-            case "company_types":
-            case "movie_status":
-            case "content_ratings":
-            case "countries":
-            case "entity_types":
-            case "genres":
-            case "languages":
-            case "peopletypes":
-            case "seasontypes":
-            case "sourcetypes":
-            case "translatedpeople":
-            case "translatedcharacters":
-            case "lists":
-            case "translatedlists":
-            case "translatedcompanies":
-            case "tags":
-            case "tag-options":
-            case "award-categories":
-
-                return;
-
-            default:
-                LOGGER.Error($"Found update record for '{entityType}' = {id}");
-                return;
-        }
-    }
-
-    private static void ProcessUpdate(CachedMediaInfo selectedCachedSeriesInfo, long time, string message, bool notifyTimeDiscrepancy)
+    private static void MarkDirty(CachedMediaInfo selectedCachedSeriesInfo, long time, string message, bool notifyTimeDiscrepancy)
     {
         if (time > selectedCachedSeriesInfo.SrvLastUpdated) // newer version on the server
         {
@@ -785,40 +548,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
     
-    private static long GetUpdateTime(JObject jsonUpdateResponse)
-    {
-        try
-        {
-            const string KEY_NAME = "timeStamp";
-            IEnumerable<long>? updateTimes = jsonUpdateResponse["data"]?.Select(a => a.GetMandatoryLong(KEY_NAME, TVDoc.ProviderType.TheTVDB));
-            long maxUpdateTime = updateTimes?.DefaultIfEmpty(0).Max() ?? 0;
-
-            long nowTime = TimeHelpers.UnixUtcNow();
-            if (maxUpdateTime > nowTime)
-            {
-                int buffer = 10.Seconds().Seconds;
-                string message = $"Assuming up to date: Update time from TVDB API is greater than current time for {maxUpdateTime} > {nowTime} ({maxUpdateTime.FromUnixTime().ToLocalTime()} > {nowTime.FromUnixTime().ToLocalTime()})";
-                if (maxUpdateTime > nowTime + buffer)
-                {
-                    LOGGER.Error(message);
-                }
-                else
-                {
-                    LOGGER.Warn(message);
-                }
-
-                return nowTime;
-            }
-
-            return maxUpdateTime;
-        }
-        catch (Exception e)
-        {
-            LOGGER.Error(e, jsonUpdateResponse.ToString());
-            return 0;
-        }
-    }
-
     private long GetUpdateTimeFromShows()
     {
         // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
@@ -828,12 +557,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             .Select(info => info.SrvLastUpdated)
             .Where(i => i > 0)
             .DefaultIfEmpty(0).Min();
-    }
-
-    public enum PagingMethod
-    {
-        proper, // uses the links/next method
-        brute //keeps asking until we get a 0 length response
     }
     
     public void AddOrUpdateEpisode(Episode e)
@@ -863,6 +586,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             SayNothing();
             return null;
         }
+        if (!Connect(showErrorMsgBox))
+        {
+            Say("Failed to Connect to TVDB");
+            SayNothing();
+        }
 
         bool forceReload = DoWeForceReloadFor(code.TvdbId);
 
@@ -870,7 +598,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         try
         {
-            CachedSeriesInfo? si = DownloadSeriesInfo(code, locale, showErrorMsgBox);
+            CachedSeriesInfo? si = API.DownloadSeriesInfo(code, locale);
             this.AddSeriesToCache(si);
             lock (SERIES_LOCK)
             {
@@ -890,12 +618,12 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
                 if (episodesToo || forceReload)
                 {
-                    ReloadEpisodesV4(code, locale, si, st);
+                    API.ReloadEpisodesV4(code, locale, si, st);
                 }
                 else
                 {
                     //The Series has changed, so we need to check for any new episodes
-                    CheckForNewEpisodes(code, locale, si, st);
+                    API.CheckForNewEpisodes(code, locale, si, st);
                 }
             }
 
@@ -912,353 +640,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return returnValue;
     }
 
-    private static void CheckForNewEpisodes(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType st)
-    {
-        try
-        {
-            JObject episodeInfo = API.GetSeriesEpisodesV4(si,
-                locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation, st);
-
-            JToken? episodeData = episodeInfo["data"]?["episodes"];
-
-            if (episodeData == null)
-            {
-                return;
-            }
-
-            IEnumerable<(int? id, JToken jsonData)> availableEpisodes =
-                episodeData.Select(x => (x["id"]?.ToObject<int>(), x)).Where(x => x.Item1.HasValue);
-
-            List<(int? id, JToken jsonData)> neededEpisodes =
-                availableEpisodes
-                    .Where(x => x.id.HasValue && si.Episodes.All(e => e.EpisodeId != x.id))
-                    .ToList();
-
-            if (!neededEpisodes.Any())
-            {
-                return;
-            }
-
-            Parallel.ForEach(neededEpisodes,
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, x =>
-                {
-                    int? epNumber = x.jsonData["number"]?.ToObject<int>();
-                    Thread.CurrentThread.Name ??=
-                        $"Creating SE{epNumber} Episode for {si.Name}"; // Can only set it once
-
-                    GenerateAddEpisodeV4(code, locale, si, x.jsonData, st);
-                });
-        }
-        catch (SourceConsistencyException sce)
-        {
-            LOGGER.Error(sce);
-        }
-        catch (SourceConnectivityException sce)
-        {
-            LOGGER.Warn(sce.Message);
-        }
-        catch (MediaNotFoundException mnfe)
-        {
-            LOGGER.Error($"Season Issue: {mnfe.Message}");
-        }
-    }
-
-    internal CachedSeriesInfo DownloadSeriesInfo(ISeriesSpecifier code, Locale locale, bool showErrorMsgBox)
-    {
-        if (!IsConnected && !Connect(showErrorMsgBox))
-        {
-            Say("Failed to Connect to TVDB");
-            SayNothing();
-        }
-
-        ProcessedSeason.SeasonType st = code is ShowConfiguration showConfig
-            ? showConfig.Order
-            : ProcessedSeason.SeasonType.aired;
-
-        (CachedSeriesInfo si, Language? languageCodeToUse) = API.GenerateSeriesInfoV4(DownloadSeriesJson(code, locale), locale, st);
-        if (languageCodeToUse != null)
-        {
-            si.AddTranslations(DownloadSeriesTranslationsJsonV4(code, new Locale(languageCodeToUse), showErrorMsgBox));
-        }
-
-        return si;
-    }
-    
-    private CachedMovieInfo DownloadMovieInfo(ISeriesSpecifier code, Locale locale, bool showErrorMsgBox)
-    {
-        if (!IsConnected && !Connect(showErrorMsgBox))
-        {
-            Say("Failed to Connect to TVDB");
-            SayNothing();
-        }
-
-        (CachedMovieInfo si, Language? languageCode) = API.GenerateMovieInfoV4(DownloadMovieJson(code, locale), locale);
-        if (languageCode != null)
-        {
-            si.AddTranslations(DownloadMovieTranslationsJsonV4(code, new Locale(languageCode), showErrorMsgBox));
-        }
-
-        return si;
-    }
-
-    private JObject DownloadMovieJson(ISeriesSpecifier code, Locale locale)
-    {
-        string errorMessage = $"Error obtaining movie {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:";
-        try
-        {
-            return API.GetMovieV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code());
-        }
-        catch (System.IO.IOException ioex)
-        {
-            LOGGER.LogIoException(errorMessage, ioex);
-
-            SayNothing();
-            LastErrorMessage = ioex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, ioex);
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.Is404())
-            {
-                LOGGER.Warn($"Movie with Id {code} is no longer available from TVDB (got a 404).");
-                SayNothing();
-
-                if (API.TvdbIsUp() && !CanFindEpisodesFor(code, locale)
-                   ) //todo - Check whether this is right? will be no episodes for a movie
-                {
-                    LastErrorMessage = ex.LoggableDetails();
-                    string msg = $"Movie with TVDB Id {code} is no longer found on TVDB. Please Update";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie);
-                }
-            }
-
-            LOGGER.LogHttpRequestException(errorMessage, ex);
-            SayNothing();
-            LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, ex);
-        }
-        catch (WebException ex)
-        {
-            if (ex.Is404())
-            {
-                LOGGER.Warn($"Movie with Id {code} is no longer available from TVDB (got a 404).");
-                SayNothing();
-
-                if (API.TvdbIsUp() && !CanFindEpisodesFor(code, locale)
-                   ) //todo - Check whether this is right? will be no episodes for a movie
-                {
-                    LastErrorMessage = ex.LoggableDetails();
-                    string msg = $"Movie with TVDB Id {code} is no longer found on TVDB. Please Update";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie);
-                }
-            }
-
-            LOGGER.LogWebException(errorMessage, ex);
-            SayNothing();
-            LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, ex);
-        }
-    }
-    
-    private JObject DownloadSeriesJson(ISeriesSpecifier code, Locale locale)
-    {
-        string errorMessage = $"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:";
-        try
-        {
-            return API.GetSeriesV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code());
-        }
-        catch (System.IO.IOException e)
-        {
-            LOGGER.LogIoException(errorMessage, e);
-
-            SayNothing();
-            LastErrorMessage = e.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, e);
-        }
-        catch (WebException ex)
-        {
-            if (ex.Is404())
-            {
-                LOGGER.Warn($"Show with Id {code} is no longer available from TVDB (got a 404).");
-                SayNothing();
-
-                if (API.TvdbIsUp() && !CanFindEpisodesFor(code, locale))
-                {
-                    LastErrorMessage = ex.LoggableDetails();
-                    string msg = $"Show with TVDB Id {code} is no longer found on TVDB. Please Update. ";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
-                }
-            }
-
-            LOGGER.LogWebException(errorMessage, ex);
-
-            SayNothing();
-            LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, ex);
-        }
-        catch (HttpRequestException wex)
-        {
-            if (wex.Is404())
-            {
-                LOGGER.Warn($"Show with Id {code.TvdbId} is no longer available from TVDB (got a 404).");
-
-                if (API.TvdbIsUp() && code.TvdbId > 0)
-                {
-                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. Please Update";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
-                }
-            }
-
-            LOGGER.LogHttpRequestException(errorMessage, wex);
-            SayNothing();
-            LastErrorMessage = wex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, wex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            if (wex.Is404())
-            {
-                LOGGER.Warn($"Show with Id {code.TvdbId} is no longer available from TVDB (got a 404).");
-
-                if (API.TvdbIsUp() && code.TvdbId >0)
-                {
-                    string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. Please Update";
-                    throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
-                        TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
-                }
-            }
-
-            LOGGER.LogHttpRequestException(errorMessage, wex);
-            SayNothing();
-            LastErrorMessage = wex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, wex);
-        }
-    }
-
-    private JObject DownloadMovieTranslationsJsonV4(ISeriesSpecifier code, Locale locale, bool showErrorMsgBox)
-    {
-        return HandleWebErrorsFor(
-            () => API.GetMovieTranslationsV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code()),
-        $"obtaining translations for {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}", showErrorMsgBox);
-    }
-
-    private JObject DownloadSeriesTranslationsJsonV4(ISeriesSpecifier code, Locale locale, bool showErrorMsgBox)
-    {
-        return HandleWebErrorsFor(
-            () => API.GetSeriesTranslationsV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code()),
-            $"obtaining translations for {code.TvdbId} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}", showErrorMsgBox);
-    }
-
-    private T HandleWebErrorsFor<T>(Func<T> webCall, string errorMessage, bool showErrorMsgBox)
-    {
-        if (!IsConnected && !Connect(showErrorMsgBox))
-        {
-            Say("Failed to Connect to TVDB");
-            SayNothing();
-        }
-        try
-        {
-            return webCall();
-        }
-        catch (System.IO.IOException ioex)
-        {
-            LOGGER.LogIoException($"Error {errorMessage}:", ioex);
-
-            SayNothing();
-            LastErrorMessage = ioex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage,ioex);
-        }
-        catch (WebException ex)
-        {
-            LOGGER.LogWebException($"Error {errorMessage}:", ex);
-
-            SayNothing();
-            LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, ex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is WebException wex)
-        {
-            LOGGER.LogWebException($"Error {errorMessage}:", wex);
-
-            SayNothing();
-            LastErrorMessage = wex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, wex);
-        }
-        catch (HttpRequestException ex)
-        {
-            LOGGER.LogHttpRequestException($"Error {errorMessage}:", ex);
-
-            SayNothing();
-            LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, ex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            LOGGER.LogHttpRequestException($"Error {errorMessage}:", wex);
-
-            SayNothing();
-            LastErrorMessage = wex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, wex);
-        }
-        catch (TaskCanceledException ex)
-        {
-            LOGGER.LogTaskCanceledException($"Error {errorMessage}:", ex);
-
-            SayNothing();
-            LastErrorMessage = ex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, ex);
-        }
-        catch (AggregateException ex) when (ex.InnerException is TaskCanceledException wex)
-        {
-            LOGGER.LogTaskCanceledException($"Error {errorMessage}:", wex);
-
-            SayNothing();
-            LastErrorMessage = wex.LoggableDetails();
-            throw new SourceConnectivityException(errorMessage, wex);
-        }
-    }
-
-    private static bool CanFindEpisodesFor(ISeriesSpecifier code, Locale locale)
-    {
-        try
-        {
-            API.GetSeriesEpisodes(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation);
-        }
-        catch (System.IO.IOException)
-        {
-            return true;
-        }
-        catch (WebException ex)
-        {
-            if (ex is { Status: WebExceptionStatus.ProtocolError, Response: HttpWebResponse
-                    { StatusCode: HttpStatusCode.NotFound }
-                })
-            {
-                return false;
-            }
-        }
-        catch (HttpRequestException wex)
-        {
-            if (wex.StatusCode is HttpStatusCode.NotFound)
-            {
-                return false;
-            }
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            if (wex.StatusCode is HttpStatusCode.NotFound)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-    
     private string GenerateMessage(int code, bool episodesToo, bool bannersToo)
     {
         string txt;
@@ -1286,171 +667,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
 
         return txt;
-    }
-
-    public static void ReloadEpisodesV4(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
-    {
-        Parallel.ForEach(si.Seasons, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, s =>
-        {
-            Thread.CurrentThread.Name ??= $"Download Season {s.SeasonNumber} for {si.Name}"; // Can only set it once
-            try
-            {
-                ReloadEpisode(code, locale, si, order, s);
-            }
-            catch (SourceConsistencyException sce)
-            {
-                LOGGER.Error(sce);
-            }
-            catch (SourceConnectivityException sce)
-            {
-                LOGGER.Warn(sce.Message);
-            }
-            catch (MediaNotFoundException mnfe)
-            {
-                LOGGER.Error($"Season Issue: {mnfe.Message}");
-            }
-        });
-    }
-
-    private static void ReloadEpisode(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order, Season s)
-    {
-        JObject seasonInfo = API.GetSeasonEpisodesV4(si, s.SeasonId,
-            locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code());
-
-        JToken? episodeData = seasonInfo["data"]?["episodes"];
-
-        if (episodeData != null)
-        {
-            Parallel.ForEach(episodeData,
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, x =>
-                {
-                    int? epNumber = x["number"]?.ToObject<int>();
-                    Thread.CurrentThread.Name ??=
-                        $"Creating S{s.SeasonNumber}E{epNumber} Episode for {si.Name}"; // Can only set it once
-
-                    GenerateAddEpisodeV4(code, locale, si, x, order);
-                });
-        }
-
-        JToken? imageData = seasonInfo["data"]?["artwork"];
-        if (imageData != null)
-        {
-            foreach (ShowImage newImage in imageData.Select(API.ConvertJsonToImage))
-            {
-                newImage.SeasonId = s.SeasonId;
-                newImage.SeasonNumber = s.SeasonNumber;
-                si.AddOrUpdateImage(newImage);
-            }
-        }
-    }
-
-    private static void GenerateAddEpisodeV4(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, JToken x, ProcessedSeason.SeasonType order)
-    {
-        try
-        {
-            (Episode newEp, Language? bestLanguage) = API.GenerateCoreEpisodeV4(x, code.TvdbId, si, locale, order);
-            if (bestLanguage != null)
-            {
-                newEp.AddTranslations(API.GetEpisodeTranslationsV4(code, newEp.EpisodeId, bestLanguage.TVDBV4Code()));
-            }
-
-            si.AddEpisode(newEp);
-        }
-        catch (MediaNotFoundException mnfe)
-        {
-            LOGGER.Error($"Episode (+ Translations) claimed to exist, but got a 404 when searching for them. Ignoring Episode, but might be worth a full refresh of the show and contacting TVDB if it does not get resolved. {mnfe.Message}");
-            si.Dirty = true;
-        }
-        catch (SourceConnectivityException sce1)
-        {
-            LOGGER.Warn(sce1.Message);
-            si.Dirty = true;
-        }
-        catch (SourceConsistencyException sce1)
-        {
-            LOGGER.Error(sce1);
-            si.Dirty = true;
-        }
-    }
-
-    private bool DownloadEpisodeNow(ISeriesSpecifier series, int episodeId, Locale locale, ProcessedSeason.SeasonType order)
-    {
-        if (episodeId == 0)
-        {
-            LOGGER.Warn($"Asked to download episodeId = 0 for cachedSeries {series.Name}:{series.TvdbId}");
-            SayNothing();
-            return true;
-        }
-
-        if (!Series.TryGetValue(series.TvdbId,out CachedSeriesInfo? cachedSeriesInfo))
-        {
-            return false; // shouldn't happen
-        }
-
-        Episode? ep = FindEpisodeById(episodeId);
-        string eptxt = EpisodeDescription(order, episodeId, ep);
-
-        Say($"{cachedSeriesInfo.Name} ({eptxt}) in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
-
-        JObject? jsonEpisodeResponse;
-        string errorMessage = $"Error obtaining {cachedSeriesInfo.Name} episode[{episodeId}]:";
-
-        try
-        {
-            jsonEpisodeResponse =
-                API.GetEpisode(episodeId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation);
-        }
-        catch (System.IO.IOException ex)
-        {
-            LOGGER.LogIoException(errorMessage, ex);
-            LastErrorMessage = ex.LoggableDetails();
-            cachedSeriesInfo.Dirty = true;
-            return false;
-        }
-        catch (WebException ex)
-        {
-            LOGGER.LogWebException(errorMessage, ex);
-            LastErrorMessage = ex.LoggableDetails();
-            cachedSeriesInfo.Dirty = true;
-            return false;
-        }
-        catch (HttpRequestException wex)
-        {
-            LOGGER.LogHttpRequestException(errorMessage, wex);
-            LastErrorMessage = wex.LoggableDetails();
-            cachedSeriesInfo.Dirty = true;
-            return false;
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            LOGGER.LogHttpRequestException(errorMessage, wex);
-            LastErrorMessage = wex.LoggableDetails();
-            cachedSeriesInfo.Dirty = true;
-            return false;
-        }
-        finally
-        {
-            SayNothing();
-        }
-
-        JObject jsonResponseData = (JObject?)jsonEpisodeResponse?["data"] ??
-                                   throw new SourceConsistencyException("No Data in Ep Response",
-                                       TVDoc.ProviderType.TheTVDB);
-
-        GenerateAddEpisodeV4(cachedSeriesInfo, locale, cachedSeriesInfo, jsonResponseData, order);
-        return true;
-    }
-
-    private static string EpisodeDescription(ProcessedSeason.SeasonType order, int episodeId, Episode? ep)
-    {
-        if (ep == null)
-        {
-            return "New Episode Id = " + episodeId;
-        }
-
-        return order == ProcessedSeason.SeasonType.dvd
-            ? $"S{ep.DvdSeasonNumber:00}E{ep.DvdEpNum:00}"
-            : $"S{ep.AiredSeasonNumber:00}E{ep.AiredEpNum:00}";
     }
 
     public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
@@ -1489,7 +705,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         Say($"Movie: {id.Name} from The TVDB");
         try
         {
-            CachedMovieInfo? downloadedSi = DownloadMovieNow(id, id.TargetLocale, showErrorMsgBox);
+            CachedMovieInfo? downloadedSi = DownloadMovieNow(id, id.TargetLocale,showErrorMsgBox);
 
             if (downloadedSi is null)
             {
@@ -1550,7 +766,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             ok = DownloadSeriesNow(seriesd, false, bannersToo, showErrorMsgBox) != null;
         }
 
-        foreach (Episode e in Series[code].Episodes.Where(e => e.Dirty && e.EpisodeId > 0))
+        foreach (Episode e in Series[code].Episodes.Where(e => e is { Dirty: true, EpisodeId: > 0 }))
         {
             extraEpisodes.TryAdd(e.EpisodeId, new ExtraEp(e.SeriesId, e.EpisodeId, seriesd.SeasonOrder));
             extraEpisodes[e.EpisodeId].Done = false;
@@ -1575,20 +791,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, Locale locale)
     {
-        try
-        {
-            if (!IsConnected && !Connect(showErrorMsgBox))
-            {
-                Say("Failed to Connect to TVDB");
-                return;
-            }
-        }
-        catch (SourceConnectivityException)
-        {
-            Say("Failed to Connect to TVDB");
-            return;
-        }
-
         if (string.IsNullOrWhiteSpace(text))
         {
             Say("Please Search for a Show Name");
@@ -1611,7 +813,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                             break;
 
                         case MediaConfiguration.MediaType.movie:
-                            DownloadMovieNow(ss, locale, showErrorMsgBox);
+                            DownloadMovieNow(ss, locale,showErrorMsgBox);
                             break;
                     }
                 }
@@ -1622,109 +824,33 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             }
         }
 
-        // but, the number could also be a name, so continue searching as usual
-        //text = text.Replace(".", " ");
-
-        JObject? jsonSearchResponse = null;
-        JObject? jsonSearchDefaultLangResponse = null;
         try
         {
-            jsonSearchResponse = API.SearchV4(text, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBV4Code(),
-                type);
-        }
-        catch (WebException ex)
-        {
-            if (ex.Response is null) //probably a timeout
-            {
-                LOGGER.LogWebException($"Error obtaining results for search term '{text}':", ex);
-                LastErrorMessage = ex.LoggableDetails();
-                SayNothing();
-            }
-            else if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
-            {
-                LOGGER.Info(
-                    $"Could not find any search results for {text} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
-            }
-            else
-            {
-                LOGGER.LogWebException($"Error obtaining results for search term '{text}':", ex);
-                LastErrorMessage = ex.LoggableDetails();
-                SayNothing();
-            }
-        }
-        catch (HttpRequestException wex)
-        {
-            if (wex.StatusCode is HttpStatusCode.NotFound)
-            {
-                LOGGER.Info(
-                    $"Could not find any search results for {text} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
-            }
-            else
-            {
-                LOGGER.LogHttpRequestException($"Error obtaining results for search term '{text}':", wex);
-                LastErrorMessage = wex.LoggableDetails();
-                SayNothing();
-            }
-        }
-        catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
-        {
-            if (wex.StatusCode is HttpStatusCode.NotFound)
-            {
-                LOGGER.Info(
-                    $"Could not find any search results for {text} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
-            }
-            else
-            {
-                LOGGER.LogHttpRequestException($"Error obtaining results for search term '{text}':", wex);
-                LastErrorMessage = wex.LoggableDetails();
-                SayNothing();
-            }
-        }
+            TvdbSearchResult sr = API.Search(text, locale, type);
 
-        if (jsonSearchResponse != null)
-        {
-            ProcessSearchResult(jsonSearchResponse, locale);
-        }
+            foreach (CachedSeriesInfo si in sr.TvShows)
+            {
+                this.AddSeriesToCache(si);
+            }
 
-        if (jsonSearchDefaultLangResponse != null)
-        //we also want to search for search terms that match in default language
+            foreach (CachedMovieInfo si in sr.Movies)
+            {
+                this.AddMovieToCache(si);
+            }
+        }
+        catch (SourceConnectivityException ex)
         {
-            ProcessSearchResult(jsonSearchDefaultLangResponse,
-                new Locale(TVSettings.Instance.PreferredTVDBLanguage));
+            LOGGER.Warn($"Searcing for {text} may be compromised as got an error from the API",ex);
+        }
+        catch (SourceConsistencyException ex)
+        {
+            LOGGER.Error($"Searcing for {text} may be compromised as got an error from the API", ex);
         }
     }
 
     public override int PrimaryKey(ISeriesSpecifier ss) => ss.TvdbId;
 
     public override string CacheSourceName() => "TVDB";
-
-    private void ProcessSearchResult(JObject jsonResponse, Locale locale)
-    {
-        JToken jToken = jsonResponse["data"] ?? throw new SourceConsistencyException($"Could not get data element from {jsonResponse}",
-                TVDoc.ProviderType.TheTVDB);
-        try
-        {
-            IEnumerable<CachedSeriesInfo> cachedSeriesInfos = API.GetEnumSeriesV4(jToken, locale, true);
-
-            foreach (CachedSeriesInfo si in cachedSeriesInfos)
-            {
-                this.AddSeriesToCache(si);
-            }
-
-            IEnumerable<CachedMovieInfo> cachedMovieInfos = API.GetEnumMoviesV4(jToken, locale, true);
-
-            foreach (CachedMovieInfo si in cachedMovieInfos)
-            {
-                this.AddMovieToCache(si);
-            }
-        }
-        catch (InvalidCastException ex)
-        {
-            LOGGER.Error("<TVDB ISSUE?>: Did not receive the expected format of json from search results.");
-            LOGGER.Error(ex);
-            LOGGER.Error(jToken.ToString());
-        }
-    }
 
     public void SaveCache()
     {
@@ -1746,9 +872,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     public CachedMovieInfo? GetMovieAndDownload(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox) => HasMovie(id.TvdbId)
         ? CachedMovieData[id.TvdbId]
-        : DownloadMovieNow(id, locale, showErrorMsgBox);
+        : DownloadMovieNow(id, locale,showErrorMsgBox);
 
-    internal CachedMovieInfo? DownloadMovieNow(ISeriesSpecifier tvdbId, Locale locale, bool showErrorMsgBox)
+    private CachedMovieInfo? DownloadMovieNow(ISeriesSpecifier tvdbId, Locale locale, bool showErrroMsgBox)
     {
         if (tvdbId.TvdbId == 0)
         {
@@ -1760,13 +886,16 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         try
         {
-            CachedMovieInfo si = DownloadMovieInfo(tvdbId, locale, showErrorMsgBox);
+            CachedMovieInfo si = API.DownloadMovieInfo(tvdbId, locale);
             this.AddMovieToCache(si);
         }
         catch (SourceConnectivityException)
         {
-            SayNothing();
-            return null;
+            if (!showErrroMsgBox)
+            {
+                SayNothing();
+                return null;
+            }
         }
 
         lock (MOVIE_LOCK)
@@ -1777,33 +906,13 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    public override void ReConnect(bool showErrorMsgBox)
-    {
-        Say("TheTVDB Login");
-        try
-        {
-            API.Login(true);
-            IsConnected = true;
-        }
-        catch (System.IO.IOException ex)
-        {
-            HandleConnectionProblem(showErrorMsgBox, ex);
-        }
-        catch (WebException ex)
-        {
-            HandleConnectionProblem(showErrorMsgBox, ex);
-        }
-        catch (HttpRequestException ex)
-        {
-            HandleConnectionProblem(showErrorMsgBox, ex);
-        }
-        finally
-        {
-            SayNothing();
-        }
-    }
-
     TVDoc.ProviderType iMovieSource.SourceProvider() => Provider();
+}
+
+public class TvdbSearchResult
+{
+    public readonly List<CachedSeriesInfo> TvShows = new();
+    public readonly List<CachedMovieInfo> Movies=new();
 }
 
 public class UpdateCancelledException : Exception

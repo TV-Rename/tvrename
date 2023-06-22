@@ -246,15 +246,13 @@ public partial class YtsRecommendationView : Form
 
     private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
     {
-        if ((e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject is not YtsRecommendationRow rr)
+        if (e.Item is BrightIdeasSoftware.OLVListItem { RowObject: YtsRecommendationRow rr })
         {
-            return;
+            UI.SetHtmlBody(chrRecommendationPreview,
+                rr.Movie != null
+                    ? rr.Movie.GetMovieHtmlOverview(false)
+                    : rr.YtsMovie.GetMovieHtmlOverview());
         }
-
-        UI.SetHtmlBody(chrRecommendationPreview,
-            rr.Movie != null
-                ? rr.Movie.GetMovieHtmlOverview(false)
-                : rr.YtsMovie.GetMovieHtmlOverview());
     }
     private void this_FormClosing(object sender, FormClosingEventArgs e)
     {

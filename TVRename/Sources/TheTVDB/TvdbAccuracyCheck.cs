@@ -1,24 +1,23 @@
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace TVRename.TheTVDB;
 
 internal class TvdbAccuracyCheck
 {
-    internal readonly List<string> Issues;
-    internal readonly List<CachedSeriesInfo> ShowsToUpdate;
-    internal readonly List<CachedMovieInfo> MoviesToUpdate;
-    private readonly LocalCache lc;
+    internal readonly SafeList<string> Issues;
+    internal readonly SafeList<CachedSeriesInfo> ShowsToUpdate;
+    internal readonly SafeList<CachedMovieInfo> MoviesToUpdate;
 
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    public TvdbAccuracyCheck(LocalCache localCache)
+    public TvdbAccuracyCheck()
     {
-        lc = localCache;
-        Issues = new List<string>();
-        ShowsToUpdate = new List<CachedSeriesInfo>();
-        MoviesToUpdate = new List<CachedMovieInfo>();
+        Issues = new SafeList<string>();
+        ShowsToUpdate = new SafeList<CachedSeriesInfo>();
+        MoviesToUpdate = new SafeList<CachedMovieInfo>();
     }
 
     public void ServerAccuracyCheck(CachedMovieInfo si)
@@ -26,28 +25,28 @@ internal class TvdbAccuracyCheck
         Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
         try
         {
-            CachedMovieInfo? newSi = lc.DownloadMovieNow(si, si.TargetLocale, false);
+            CachedMovieInfo newSi = API.DownloadMovieInfo(si, si.TargetLocale);
 
-            if (newSi is null)
+            if (Match(newSi, si))
             {
-                Issues.Add($"Failed to compare {si.Name} as we could not download the cachedSeries details.");
                 return;
             }
 
-            if (!Match(newSi, si))
+            Issues.Add(
+                $"{si.Name} ({si.Id()}) is not up to date: Local is {si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is {newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
+            si.Dirty = true;
+            if (!MoviesToUpdate.Contains(si))
             {
-                Issues.Add(
-                    $"{si.Name} ({si.Id()}) is not up to date: Local is {si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is {newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
-                si.Dirty = true;
-                if (!MoviesToUpdate.Contains(si))
-                {
-                    MoviesToUpdate.Add(si);
-                }
+                MoviesToUpdate.Add(si);
             }
         }
         catch (SourceConnectivityException)
         {
             Issues.Add($"Failed to compare {si.Name} as we could not download the cachedSeries details.");
+        }
+        catch (MediaNotFoundException)
+        {
+            Issues.Add($"Failed to compare {si.Name} as it no longer exists on TVDB {si.TvdbId}.");
         }
     }
     public void ServerAccuracyCheck(CachedSeriesInfo si)
@@ -56,7 +55,7 @@ internal class TvdbAccuracyCheck
 
         try
         {
-            CachedSeriesInfo newSi = lc.DownloadSeriesInfo(si, new Locale(), false);
+            CachedSeriesInfo newSi = API.DownloadSeriesInfo(si, si.TargetLocale);
             if (newSi.SrvLastUpdated != si.SrvLastUpdated)
             {
                 Issues.Add(
@@ -64,7 +63,7 @@ internal class TvdbAccuracyCheck
 
                 EnsureUpdated(si);
             }
-            LocalCache.ReloadEpisodesV4(newSi, si.ActualLocale ?? new Locale(), newSi, si.SeasonOrder);
+            API.ReloadEpisodesV4(newSi, si.ActualLocale ?? new Locale(), newSi, si.SeasonOrder);
 
             foreach (Episode newEpisode in newSi.Episodes)
             {
@@ -84,7 +83,7 @@ internal class TvdbAccuracyCheck
         }
     }
 
-    private void FindOrphanEpisodes(CachedSeriesInfo si, List<int> serverEpIds)
+    private void FindOrphanEpisodes(CachedSeriesInfo si, ICollection<int> serverEpIds)
     {
         foreach (Episode localEp in si.Episodes)
         {
@@ -165,7 +164,7 @@ internal class TvdbAccuracyCheck
         for (int page = 0; page < 10000; page++)
         {
             Logger.Info($" BETA Update Checker: {page}");
-            JObject currentDownload = LocalCache.Instance.GetUpdatesJson(baseTime, page);
+            JObject currentDownload = API.GetUpdatesJson(baseTime, page);
             JToken? jToken = currentDownload["data"];
 
             if (jToken?.Children().Any() != true)

@@ -60,8 +60,6 @@ public abstract class MediaCache
         forceReloadOn.TryAdd(code, code);
     }
 
-    protected bool IsConnected { get; set; }
-
     public abstract bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
 
     protected void SayNothing() => Say(null);

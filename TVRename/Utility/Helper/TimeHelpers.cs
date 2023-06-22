@@ -40,6 +40,22 @@ public static class TimeHelpers
         }
     }
 
+    public static DateTime GetRequestedTime(this long updateFromEpochTime)
+    {
+        try
+        {
+            return updateFromEpochTime.FromUnixTime().ToUniversalTime();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex,
+                $"Could not convert {updateFromEpochTime} to DateTime.");
+        }
+
+        //Have to do something!!
+        return DateTime.UnixEpoch.ToUniversalTime();
+    }
+
     private static void LogNtpConnectionIssue(Exception e)
     {
         if (AlreadyAlerted)
