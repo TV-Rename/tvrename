@@ -60,7 +60,7 @@ public static class API
         try
         {
             System.Net.Http.HttpClient wc = new();
-            return Task.Run(async () => await wc.GetByteArrayAsync(url)).Result;
+            return Task.Run(() => wc.GetByteArrayAsync(url)).Result;
         }
         catch (Exception e)
         {

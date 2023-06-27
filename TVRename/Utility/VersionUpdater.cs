@@ -34,7 +34,7 @@ public static class VersionUpdater
             return null;
         }
 
-        (ServerRelease? latestVersion, ServerRelease? latestBetaVersion) = await GetLatestReleases().ConfigureAwait(false);
+        (ServerRelease? latestVersion, ServerRelease? latestBetaVersion) = await GetLatestReleasesAsync().ConfigureAwait(false);
 
         return TVSettings.Instance.mode switch
         {
@@ -46,7 +46,7 @@ public static class VersionUpdater
         };
     }
 
-    private static async Task<(ServerRelease? latestVersion, ServerRelease? latestBetaVersion)> GetLatestReleases()
+    private static async Task<(ServerRelease? latestVersion, ServerRelease? latestBetaVersion)> GetLatestReleasesAsync()
     {
         ServerRelease? latestVersion = null;
         ServerRelease? latestBetaVersion = null;

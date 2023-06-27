@@ -29,7 +29,7 @@ internal static class LinqHelper
                 while (partition.MoveNext())
                 {
                     await Task.Yield(); // prevents a sync/hot thread hangup
-                    await funcBody(partition.Current);
+                    await funcBody(partition.Current).ConfigureAwait(false);
                 }
             }
         }

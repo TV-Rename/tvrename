@@ -15,17 +15,17 @@ internal static class TaskHelper
     // <exception cref="TimeoutException"></exception>
     // <returns></returns>
     /// <exception cref="TimeoutException">Condition.</exception>
-    public static async Task WaitWhile(Func<bool> condition, int frequency = 25, int timeout = -1)
+    public static async Task WaitWhileAsync(Func<bool> condition, int frequency = 25, int timeout = -1)
     {
         Task waitTask = Task.Run(async () =>
         {
             while (condition())
             {
-                await Task.Delay(frequency);
+                await Task.Delay(frequency).ConfigureAwait(false);
             }
         });
 
-        if (waitTask != await Task.WhenAny(waitTask, Task.Delay(timeout)))
+        if (waitTask != await Task.WhenAny(waitTask, Task.Delay(timeout)).ConfigureAwait(false))
         {
             throw new TimeoutException();
         }
@@ -39,18 +39,18 @@ internal static class TaskHelper
     /// <param name="timeout">The timeout in milliseconds.</param>
     /// <returns></returns>
     /// <exception cref="TimeoutException">Condition.</exception>
-    public static async Task WaitUntil(Func<bool> condition, int frequency = 25, int timeout = -1)
+    public static async Task WaitUntilAsync(Func<bool> condition, int frequency = 25, int timeout = -1)
     {
         Task waitTask = Task.Run(async () =>
         {
             while (!condition())
             {
-                await Task.Delay(frequency);
+                await Task.Delay(frequency).ConfigureAwait(false);
             }
         });
 
         if (waitTask != await Task.WhenAny(waitTask,
-                Task.Delay(timeout)))
+                Task.Delay(timeout)).ConfigureAwait(false))
         {
             throw new TimeoutException();
         }

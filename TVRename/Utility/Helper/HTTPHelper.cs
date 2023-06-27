@@ -90,7 +90,7 @@ public static class HttpHelper
                 HttpClient cloudflareclient = new (httpMessageHandler);
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
-                Task<byte[]> task = Task.Run(async () => await cloudflareclient.GetByteArrayAsync(url));
+                Task<byte[]> task = Task.Run(() => cloudflareclient.GetByteArrayAsync(url));
                 return task.Result;
             }
             catch (AggregateException ex) when (ex.InnerException is CloudFlareClearanceException)
@@ -107,7 +107,7 @@ public static class HttpHelper
         {
             Client.DefaultRequestHeaders.UserAgent.Clear();
             Client.DefaultRequestHeaders.UserAgent.ParseAdd(TVSettings.USER_AGENT);
-            Task<byte[]> task = Task.Run(async () => await Client.GetByteArrayAsync(url));
+            Task<byte[]> task = Task.Run(() => Client.GetByteArrayAsync(url));
             return task.Result;
         }
 
@@ -166,7 +166,7 @@ public static class HttpHelper
     {
         try
         {
-            return async () => await client.GetStringAsync(url);
+            return () => client.GetStringAsync(url);
         }
         catch (HttpRequestException hre)
         {

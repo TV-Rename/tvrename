@@ -1,6 +1,5 @@
 using Alphaleonis.Win32.Filesystem;
 using NLog;
-using System;
 
 namespace TVRename;
 

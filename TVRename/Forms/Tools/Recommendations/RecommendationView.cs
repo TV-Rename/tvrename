@@ -196,10 +196,10 @@ public partial class RecommendationView : Form
             recs = media switch
             {
                 MediaConfiguration.MediaType.tv => TMDB.LocalCache.Instance
-                    .GetRecommendations((BackgroundWorker)sender, tvShows.ToList(), languageCode)
+                    .GetRecommendationsAsync((BackgroundWorker)sender, tvShows.ToList(), languageCode)
                     .Result,
                 MediaConfiguration.MediaType.movie => TMDB.LocalCache.Instance
-                    .GetRecommendations((BackgroundWorker)sender, movies.ToList(), languageCode)
+                    .GetRecommendationsAsync((BackgroundWorker)sender, movies.ToList(), languageCode)
                     .Result,
                 _ => throw new NotSupportedException($"media = {media} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}")
             };
