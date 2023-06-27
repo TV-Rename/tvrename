@@ -1,3 +1,5 @@
+using NLog;
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
@@ -6,6 +8,7 @@ namespace TVRename;
 
 public class PreviouslySeenMovies : List<int>
 {
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     public PreviouslySeenMovies()
     {
     }
@@ -19,7 +22,14 @@ public class PreviouslySeenMovies : List<int>
 
         foreach (XElement n in xml.Descendants("Movie"))
         {
-            EnsureAdded(XmlConvert.ToInt32(n.Value));
+            try
+            {
+                EnsureAdded(XmlConvert.ToInt32(n.Value));
+            }
+            catch (OverflowException ex)
+            {
+                Logger.Fatal($"Could not add movie Id {n.Value} to previouslyseenmovies", ex);
+            }
         }
     }
 

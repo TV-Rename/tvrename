@@ -49,15 +49,18 @@ internal abstract class UpcomingExporter : Exporter
         return string.Empty;
     }
 
+    /// <exception cref="UnauthorizedAccessException">Access is denied.</exception>
+    /// <exception cref="System.IO.DirectoryNotFoundException">The specified path is invalid (for example, it is on an unmapped drive).</exception>
+    /// <exception cref="System.Security.SecurityException">The caller does not have the required permission.</exception>
+    /// <exception cref="System.IO.IOException"></exception>
+    /// <exception cref="System.IO.PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length.</exception>
     protected override void Do()
     {
         string contents = Produce();
 
         //Write Contents to file
-        using (System.IO.StreamWriter file = new(Location()))
-        {
-            file.Write(contents);
-        }
+        using System.IO.StreamWriter file = new(Location());
+        file.Write(contents);
 
         LOGGER.Trace($"Contents of File are: {contents}");
     }

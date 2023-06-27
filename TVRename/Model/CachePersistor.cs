@@ -237,7 +237,7 @@ internal static class CachePersistor
 
             Logger.Error(message);
             Logger.Error(x.ToString());
-            throw new CacheLoadException(message);
+            throw new CacheLoadException(message, e);
         }
         return true;
     }
@@ -315,7 +315,7 @@ internal static class CachePersistor
 
             Logger.Error(message);
             Logger.Error(x.ToString());
-            throw new CacheLoadException(message);
+            throw new CacheLoadException(message, e);
         }
         return true;
     }

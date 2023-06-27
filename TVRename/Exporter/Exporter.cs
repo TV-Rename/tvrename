@@ -8,6 +8,7 @@
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading;
 using TVRename.Utility.Helper;
 
 namespace TVRename;
@@ -74,13 +75,32 @@ internal abstract class Exporter
     public abstract bool Active();
     protected abstract string Location();
     protected abstract string Name();
+
+    /// <exception cref="ArgumentException">Locaiton is not valid.</exception>
+    /// <exception cref="UnauthorizedAccessException">Access is denied.</exception>
+    /// <exception cref="System.IO.DirectoryNotFoundException">The specified path is invalid (for example, it is on an unmapped drive).</exception>
+    /// <exception cref="System.Security.SecurityException">The caller does not have the required permission.</exception>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="System.IO.IOException"></exception>
+    /// <exception cref="System.IO.PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length.</exception>
     protected abstract void Do();
 
     public void RunAsThread()
     {
         if (Active())
         {
-            TaskHelper.Run(Run, $"{Name()} Thread");
+            try
+            {
+                TaskHelper.Run(Run, $"{Name()} Thread");
+            }
+            catch (ThreadStateException ex)
+            {
+                LOGGER.Error($"Failed to run {Name()} to {Location()}",ex);
+            }
+            catch (OutOfMemoryException ex)
+            {
+                LOGGER.Error($"Failed to run {Name()} to {Location()}", ex);
+            }
         }
     }
 }

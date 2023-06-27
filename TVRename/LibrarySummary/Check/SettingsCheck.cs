@@ -51,6 +51,7 @@ internal abstract class SettingsCheck
         }
     }
 
+    /// <exception cref="FixCheckException">Can't fix movie as multiple Movie Library Folders are specified</exception>
     protected abstract void FixInternal();
 
     protected abstract void MarkMediaDirty();

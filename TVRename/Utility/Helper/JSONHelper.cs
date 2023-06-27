@@ -105,10 +105,13 @@ public static class JsonHelper
         return null;
     }
 
+    /// <exception cref="SourceConsistencyException">Condition.</exception>
     public static int GetMandatoryInt(this JToken r, string key, TVDoc.ProviderType type)
     {
         return (int?)r[key] ?? throw new SourceConsistencyException($"Could not get data element '{key}' from {r}", type);
     }
+
+    /// <exception cref="SourceConsistencyException">Condition.</exception>
     public static long GetMandatoryLong(this JToken r, string key, TVDoc.ProviderType type)
     {
         return (long?)r[key] ?? throw new SourceConsistencyException($"Could not get data element '{key}' from {r}", type);

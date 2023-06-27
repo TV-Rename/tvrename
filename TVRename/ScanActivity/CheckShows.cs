@@ -20,6 +20,7 @@ internal class CheckShows : ScanActivity
 
     protected override string CheckName() => "Looked in the library to find missing files";
 
+    /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
     protected override void DoCheck(SetProgressDelegate progress)
     {
         if (TVSettings.Instance.RenameCheck)

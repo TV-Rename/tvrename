@@ -150,7 +150,7 @@ internal class CleanUpTorrents : ScanActivity
 
             return new List<ProcessedEpisode> { episode };
         }
-        catch (ShowConfiguration.EpisodeNotFoundException)
+        catch (EpisodeNotFoundException)
         {
             return null;
         }

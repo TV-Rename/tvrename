@@ -11,6 +11,7 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
     {
     }
 
+    /// <exception cref="FixCheckException">Can't fix ManualFoldersMovieCheck</exception>
     protected override void FixInternal()
     {
         if (Movie.UseManualLocations && Movie.ManualLocations.Count == 1 && !Movie.AutomaticFolderRoot.HasValue())
@@ -97,7 +98,7 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
         }
         catch (System.IO.IOException ioe)
         {
-            throw new FixCheckException(ioe.Message);
+            throw new FixCheckException(ioe.Message, ioe);
         }
     }
 

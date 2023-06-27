@@ -16,6 +16,7 @@ namespace TVRename;
 
 public class ProcessedSeason
 {
+    protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
     public enum SeasonStatus
     {
         aired, // Season completely aired ... no further shows in this season scheduled to date
@@ -179,22 +180,12 @@ public class ProcessedSeason
     public DateTime? LastAiredDate()
     {
         DateTime? returnValue = null;
-        foreach (Episode a in Episodes.Values)
+        foreach (DateTime? episodeAirDate in Episodes.Values.Select(a => a.FirstAired)
+                     .Where(episodeAirDate => episodeAirDate.HasValue)
+                     .Select(epis=> epis!.Value)
+                     .Where(episodeAirDate =>
+                         DateTime.Compare(episodeAirDate.ToUniversalTime(), TimeHelpers.UtcNow()) <= 0))
         {
-            DateTime? episodeAirDate = a.FirstAired;
-
-            //ignore episode if has no date
-            if (!episodeAirDate.HasValue)
-            {
-                continue;
-            }
-
-            //ignore episode if it's in the future
-            if (DateTime.Compare(episodeAirDate.Value.ToUniversalTime(), TimeHelpers.UtcNow()) > 0)
-            {
-                continue;
-            }
-
             //If we don't have a best offer yet
             if (!returnValue.HasValue)
             {
@@ -216,7 +207,14 @@ public class ProcessedSeason
 
     public void AddUpdateEpisode(Episode newEpisode)
     {
-        Episodes.AddOrUpdate(newEpisode.EpisodeId, newEpisode, (_, _) => newEpisode);
+        try
+        {
+            Episodes.AddOrUpdate(newEpisode.EpisodeId, newEpisode, (_, _) => newEpisode);
+        }
+        catch (OverflowException ex)
+        {
+            LOGGER.Warn($"Could not add {newEpisode.EpisodeId} to the list of episodes for season {this.SeasonNumber}, so ignoring for now. If this happens consistenly contact the developer", ex);
+        }
     }
 
     public bool ContainsEpisode(int episodeNumber, SeasonType order)

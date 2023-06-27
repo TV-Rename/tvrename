@@ -1431,7 +1431,7 @@ public partial class Preferences : Form
 
     private static class EnumUtil
     {
-        public static IEnumerable<T> GetValues<T>() => Enum.GetValues(typeof(T)).Cast<T>();
+        public static IEnumerable<T> GetValues<T>() => Enum.GetValues(typeof(T)).OfType<T>();
     }
 
     private void FillTreeViewColoringShowStatusTypeCombobox()

@@ -168,6 +168,7 @@ public class Episode
 
     public IEnumerable<string> Directors => EpisodeDirector.FromPsv();
 
+    /// <exception cref="InvalidOperationException" accessor="get">Attempt to access Series for an Episode that has yet to be set</exception>
     public CachedSeriesInfo TheCachedSeries
     {
         get

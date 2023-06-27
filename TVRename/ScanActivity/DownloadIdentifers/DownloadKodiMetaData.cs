@@ -6,9 +6,10 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
 
@@ -38,18 +39,22 @@ internal class DownloadKodiMetaData : DownloadIdentifier
             FileInfo tvshownfo = FileHelper.FileInFolder(si.AutoAddFolderBase, "tvshow.nfo");
 
             CachedSeriesInfo? cachedSeriesInfo = si.CachedShow;
-            bool needUpdate = !tvshownfo.Exists ||
-                              cachedSeriesInfo is null ||
-                              System.Math.Abs(cachedSeriesInfo.SrvLastUpdated - TimeZoneHelper.Epoch(tvshownfo.LastWriteTime)) > 1;
-
-            bool alreadyOnTheList = DoneNfo.Contains(tvshownfo.FullName);
-
-            if ((forceRefresh || needUpdate) && !alreadyOnTheList)
+            try
             {
-                theActionList.Add(new ActionNfoShow(tvshownfo, si));
-                DoneNfo.Add(tvshownfo.FullName);
+                bool needUpdate = !tvshownfo.Exists || cachedSeriesInfo is null || System.Math.Abs(cachedSeriesInfo.SrvLastUpdated - TimeZoneHelper.Epoch(tvshownfo.LastWriteTime)) > 1;
+                bool alreadyOnTheList = DoneNfo.Contains(tvshownfo.FullName);
+
+                if ((forceRefresh || needUpdate) && !alreadyOnTheList)
+                {
+                    theActionList.Add(new ActionNfoShow(tvshownfo, si));
+                    DoneNfo.Add(tvshownfo.FullName);
+                }
+                return theActionList;
             }
-            return theActionList;
+            catch (IOException ex)
+            {
+                LOGGER.Warn(ex, "Failed to find file size to look for NFO Files");
+            }
         }
         return base.ProcessShow(si, forceRefresh);
     }
@@ -61,21 +66,32 @@ internal class DownloadKodiMetaData : DownloadIdentifier
             return null;
         }
 
-        FileInfo nfo = FileHelper.FileInFolder(file.Directory, file.RemoveExtension() + ".nfo");
-
-        if (nfo.Exists && System.Math.Abs(episode.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) < 1 && !forceRefresh)
+        try
         {
-            return null;
-        }
+            FileInfo nfo = FileHelper.FileInFolder(file.Directory, file.RemoveExtension() + ".nfo");
+             if (nfo.Exists && System.Math.Abs(episode.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) < 1 && !forceRefresh)
+             {
+                 return null;
+             }
 
-        //If we do not already have plans to put the file into place
-        if (DoneNfo.Contains(nfo.FullName))
+             //If we do not already have plans to put the file into place
+             if (DoneNfo.Contains(nfo.FullName))
+             {
+                 return null;
+             }
+
+             DoneNfo.Add(nfo.FullName);
+             return new ItemList { new ActionNfoEpisode(nfo, episode) };
+        }
+        catch (DirectoryNotFoundException ex)
         {
-            return null;
+            LOGGER.Warn(ex, "Failed to find directory to look for episode NFO Files");
         }
-
-        DoneNfo.Add(nfo.FullName);
-        return new ItemList { new ActionNfoEpisode(nfo, episode) };
+        catch (IOException ex)
+        {
+            LOGGER.Warn(ex, "Failed to find file size to look for episode NFO Files");
+        }
+        return null;
     }
 
     public override ItemList? ProcessMovie(MovieConfiguration mc, FileInfo file, bool forceRefresh)
@@ -84,22 +100,33 @@ internal class DownloadKodiMetaData : DownloadIdentifier
         {
             return null;
         }
-
-        FileInfo nfo = FileHelper.FileInFolder(file.Directory, file.MovieFileNameBase() + ".nfo");
-
-        if (nfo.Exists && System.Math.Abs(mc.CachedMovie.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) < 1 && !forceRefresh)
+        try
         {
-            return null;
-        }
+            FileInfo nfo = FileHelper.FileInFolder(file.Directory, file.MovieFileNameBase() + ".nfo");
 
-        //If we do not already have plans to put the file into place
-        if (DoneNfo.Contains(nfo.FullName))
+            if (nfo.Exists && System.Math.Abs(mc.CachedMovie.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) < 1 && !forceRefresh)
+            {
+                return null;
+            }
+
+            //If we do not already have plans to put the file into place
+            if (DoneNfo.Contains(nfo.FullName))
+            {
+                return null;
+            }
+
+            DoneNfo.Add(nfo.FullName);
+            return new ItemList { new ActionNfoMovie(nfo, mc) };
+        }
+        catch (DirectoryNotFoundException ex)
         {
-            return null;
+            LOGGER.Warn(ex, "Failed to find directory to look for movie NFO Files");
         }
-
-        DoneNfo.Add(nfo.FullName);
-        return new ItemList { new ActionNfoMovie(nfo, mc) };
+        catch (IOException ex)
+        {
+            LOGGER.Warn(ex, "Failed to find file size to look for movie NFO Files");
+        }
+        return null;
     }
 
     public sealed override void Reset() => DoneNfo = new List<string>();

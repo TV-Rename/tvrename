@@ -11,14 +11,15 @@ namespace TVRename;
 
 public class SourceConnectivityException : Exception
 {
-    public Exception SourceException { get; }
-
-    public SourceConnectivityException(string message, Exception e) : base(message)
+    public SourceConnectivityException(string message, Exception e) : base(message, e)
     {
-        SourceException = e;
     }
 
     public SourceConnectivityException(Exception ex) : this (ex.Message, ex)
+    {
+    }
+
+    public SourceConnectivityException(string? message) : base(message)
     {
     }
 }

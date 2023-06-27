@@ -1,9 +1,11 @@
 using Alphaleonis.Win32.Filesystem;
+using NLog;
 
 namespace TVRename;
 
 internal abstract class DownloadIdentifier
 {
+    protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
     public enum DownloadType
     {
         downloadImage,

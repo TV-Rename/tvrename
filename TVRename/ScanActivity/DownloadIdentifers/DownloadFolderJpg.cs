@@ -1,5 +1,6 @@
-using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
+using System.IO;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
 
@@ -19,36 +20,43 @@ internal class DownloadFolderJpg : DownloadIdentifier
             return new ItemList();
         }
 
-        FileInfo fi = mc.IsDvdBluRay()
-            ? FileHelper.FileInFolder(file.Directory.Parent, DEFAULT_FILE_NAME)
-            : FileHelper.FileInFolder(file.Directory, DEFAULT_FILE_NAME);
-
-        bool fileDoesntExist = !doneFolderJpg.Contains(fi.FullName) && !fi.Exists;
-
-        if (!forceRefresh && !fileDoesntExist)
+        try
         {
+            FileInfo fi = mc.IsDvdBluRay()
+                ? FileHelper.FileInFolder(file.Directory.Parent, DEFAULT_FILE_NAME)
+                : FileHelper.FileInFolder(file.Directory, DEFAULT_FILE_NAME);
+            bool fileDoesntExist = !doneFolderJpg.Contains(fi.FullName) && !fi.Exists;
+
+            if (!forceRefresh && !fileDoesntExist)
+            {
+                return new ItemList();
+            }
+
+            CachedMovieInfo? cachedMovie = mc.CachedMovie;
+
+            if (cachedMovie is null)
+            {
+                return new ItemList();
+            }
+
+            ItemList theActionList = new();
+
+            //default to poster
+            string? downloadPath = cachedMovie.PosterUrl;
+
+            if (!string.IsNullOrEmpty(downloadPath))
+            {
+                theActionList.Add(new ActionDownloadMovieImage(mc, fi, downloadPath));
+            }
+
+            doneFolderJpg.Add(fi.FullName);
+            return theActionList;
+        }
+        catch (DirectoryNotFoundException ex)
+        {
+            LOGGER.Warn(ex, "Failed to find directory to look for images for folder");
             return new ItemList();
         }
-
-        CachedMovieInfo? cachedMovie = mc.CachedMovie;
-
-        if (cachedMovie is null)
-        {
-            return new ItemList();
-        }
-
-        ItemList theActionList = new();
-
-        //default to poster
-        string? downloadPath = cachedMovie.PosterUrl;
-
-        if (!string.IsNullOrEmpty(downloadPath))
-        {
-            theActionList.Add(new ActionDownloadMovieImage(mc, fi, downloadPath));
-        }
-
-        doneFolderJpg.Add(fi.FullName);
-        return theActionList;
     }
 
     public override ItemList ProcessShow(ShowConfiguration si, bool forceRefresh)

@@ -21,6 +21,7 @@ internal class MergeLibraryEpisodes : ScanShowActivity
 
     protected override string ActivityName() => "Created Merge Rules for episodes in the library";
 
+    /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
     protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
         if (settings.Token.IsCancellationRequested)
@@ -54,12 +55,12 @@ internal class MergeLibraryEpisodes : ScanShowActivity
             }
 
             // all the folders for this particular season
-            MergeShowEpisodes(si, dfc, settings.Token, snum, folders);
+            MergeShowEpisodes(si, dfc, snum, folders, settings.Token);
         } // for each season of this show
     }
 
     // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-    private static void MergeShowEpisodes(ShowConfiguration si, DirFilesCache dfc, CancellationToken token, int snum, IEnumerable<string> folders)
+    private static void MergeShowEpisodes(ShowConfiguration si, DirFilesCache dfc, int snum, IEnumerable<string> folders, CancellationToken token)
     {
         if (snum == 0 && si.CountSpecials)
         {

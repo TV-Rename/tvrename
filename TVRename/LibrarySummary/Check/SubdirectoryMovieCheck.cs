@@ -1,5 +1,5 @@
-using Alphaleonis.Win32.Filesystem;
 using System;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
 
 namespace TVRename;
 
@@ -13,6 +13,7 @@ internal class SubdirectoryMovieCheck : MovieCheck
 
     public override string Explain() => $"This movie does not use the standard folder naming format '{TVSettings.Instance.MovieFolderFormat}', it uses '{Movie.CustomFolderNameFormat}'";
 
+    /// <exception cref="FixCheckException">Condition.</exception>
     protected override void FixInternal()
     {
         string newLocation = Movie.AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.DirectoryNameFor(Movie, TVSettings.Instance.MovieFolderFormat);
@@ -40,7 +41,7 @@ internal class SubdirectoryMovieCheck : MovieCheck
         }
         catch (UnauthorizedAccessException uae)
         {
-            throw new FixCheckException(message + ": " + uae.Message);
+            throw new FixCheckException(message + ": " + uae.Message,uae);
         }
         catch (System.IO.DirectoryNotFoundException)
         {
@@ -48,7 +49,11 @@ internal class SubdirectoryMovieCheck : MovieCheck
         }
         catch (System.IO.PathTooLongException ptle)
         {
-            throw new FixCheckException(message + ": " + ptle.Message);
+            throw new FixCheckException(message + ": " + ptle.Message,ptle);
+        }
+        catch (System.IO.IOException ex)
+        {
+            throw new FixCheckException(message + ": " + ex.Message, ex);
         }
     }
 

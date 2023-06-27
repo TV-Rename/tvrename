@@ -10,6 +10,7 @@ internal class MovieFolderCheck : MovieCheck
 
     public override string Explain() => $"{Movie.Name} does not use automated nor manual folders";
 
+    /// <exception cref="FixCheckException">Condition.</exception>
     protected override void FixInternal()
     {
         if (!TVSettings.Instance.DefMovieUseAutomaticFolders)

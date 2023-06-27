@@ -41,7 +41,9 @@ public static class Helpers
         {
             string v = Assembly.GetExecutingAssembly()
                 .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false)
-                .Cast<AssemblyInformationalVersionAttribute>().First().InformationalVersion;
+                .OfType<AssemblyInformationalVersionAttribute>()
+                .First()
+                .InformationalVersion;
 #if DEBUG
             v += DebugText;
 #endif

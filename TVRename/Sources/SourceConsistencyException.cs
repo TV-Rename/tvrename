@@ -11,4 +11,9 @@ public class SourceConsistencyException : Exception
         : base(provider.PrettyPrint() + ": " + message)
     {
     }
+
+    public SourceConsistencyException(string message, TVDoc.ProviderType provider, Exception ex)
+        : base(provider.PrettyPrint() + ": " + message,ex)
+    {
+    }
 }

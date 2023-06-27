@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
+using TMDbLib.Objects.Exceptions;
 
 namespace TVRename;
 // "PossibleNewMovie" represents a folder found by doing a Check in the 'Bulk Add Movie' dialog
@@ -12,22 +13,18 @@ public class PossibleNewMovie : ISeriesSpecifier
 {
     private readonly string movieStub;
     private readonly FileInfo movieFile;
-    public DirectoryInfo Directory => movieFile.Directory;
-
     // ReSharper disable once InconsistentNaming
     public string RefinedHint;
-
     public int? PossibleYear;
     internal int ProviderCode;
     internal TVDoc.ProviderType SourceProvider;
 
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
+    public DirectoryInfo Directory => movieFile.Directory;
     public CachedMovieInfo? CachedMovie => TVDoc.GetMovieCache(SourceProvider).GetMovie(ProviderCode);
-
     public bool CodeKnown => !CodeUnknown;
     public bool CodeUnknown => ProviderCode <= 0;
-
     public string CodeString => CodeKnown ? $"{ProviderCode} ({SourceProvider.PrettyPrint()})" : "<Unknown>";
 
     public PossibleNewMovie(FileInfo possibleMovieFile, bool andGuess, bool showErrorMsgBox)
@@ -49,87 +46,130 @@ public class PossibleNewMovie : ISeriesSpecifier
 
     public void GuessMovie(bool showErrorMsgBox)
     {
-        //TODO  make generic, as this assumes TMDB
-
-        //Lookup based on TMDB ID Being Present
-        int? tmdbId = FindShowCode("tmdbid", "tmdb").ToInt();
-        Locale preferredLocale = new();
-
-        int? tmdbCode = ValidateOnTMDB(tmdbId, preferredLocale);
-        if (tmdbCode.HasValue)
+        try
         {
-            SetId(tmdbCode.Value, TVDoc.ProviderType.TMDB);
-            Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TMDB = {tmdbId} which validated to {tmdbCode}");
-            return;
-        }
+            //TODO  make generic, as this assumes TMDB
 
-        string? imdbToTest = null;
-        string? imdbId = FindShowCode("imdbid", "imdb");
+            //Lookup based on TMDB ID Being Present
+            int? tmdbId = FindShowCode("tmdbid", "tmdb").ToInt();
+            Locale preferredLocale = new();
 
-        if (imdbId.HasValue())
-        {
-            imdbToTest = imdbId;
-        }
-        else
-        {
-            string? id = FindShowCode("id", "id");
-            if (id?.StartsWith("tt", StringComparison.OrdinalIgnoreCase) ?? false)
+            int? tmdbCode = ValidateOnTMDB(tmdbId, preferredLocale);
+            if (tmdbCode.HasValue)
             {
-                imdbToTest = id;
-            }
-        }
+                SetId(tmdbCode.Value, TVDoc.ProviderType.TMDB);
+                Logger.Info(
+                    $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TMDB = {tmdbId} which validated to {tmdbCode}");
 
-        if (imdbToTest.HasValue())
-        {
-            CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest, preferredLocale);
-            if (s != null)
-            {
-                SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
-                ImdbCode = imdbToTest;
-                Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on IMDB = {imdbToTest} which we looked up to get {s.TmdbCode}");
                 return;
             }
-        }
 
-        //Do a Search on TMDB
-        CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, preferredLocale, showErrorMsgBox);
-        if (ser != null)
-        {
-            SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
-            Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on Name = {RefinedHint} which we looked up to get {ser.TmdbCode}");
-            return;
-        }
+            string? imdbToTest = null;
+            string? imdbId = FindShowCode("imdbid", "imdb");
 
-        //Tweak the hints and do another Search on TMDB
-        ser = ParseHints(showErrorMsgBox);
-        if (ser != null)
-        {
-            SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
-            Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on Name = {RefinedHint}({PossibleYear}) which we looked up to get {ser.TmdbCode}");
-            return;
-        }
-
-        //Tweak the hints and do another Search on TMDB
-        int? tvdbId = FindShowCode("tvdbid", "tvdb").ToInt();
-        if (tvdbId.HasValue)
-        {
-            CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, preferredLocale);
-            if (s2 != null)
+            if (imdbId.HasValue())
             {
-                Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TVDB = {tvdbId}({PossibleYear}) which we looked up to get {s2.TmdbCode}");
-                SetId(s2.TmdbCode, TVDoc.ProviderType.TMDB);
+                imdbToTest = imdbId;
             }
             else
             {
-                //Find movie on TVDB based on Id
-                CachedMovieInfo? s3 = TheTVDB.LocalCache.Instance.GetMovieAndDownload(this, preferredLocale, showErrorMsgBox);
-                if (s3 != null)
+                string? id = FindShowCode("id", "id");
+                if (id?.StartsWith("tt", StringComparison.OrdinalIgnoreCase) ?? false)
                 {
-                    Logger.Info($"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TVDB(s3) = {tvdbId}({PossibleYear}) which we looked up to get {s3.TmdbCode}");
-                    SetId(s3.TvdbCode, TVDoc.ProviderType.TheTVDB);
+                    imdbToTest = id;
+                }
+            }
+
+            if (imdbToTest.HasValue())
+            {
+                CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest, preferredLocale);
+                if (s != null)
+                {
+                    SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
+                    ImdbCode = imdbToTest;
+                    Logger.Info(
+                        $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on IMDB = {imdbToTest} which we looked up to get {s.TmdbCode}");
+
+                    return;
+                }
+            }
+
+            //Do a Search on TMDB
+            CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, preferredLocale, showErrorMsgBox);
+            if (ser != null)
+            {
+                SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
+                Logger.Info(
+                    $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on Name = {RefinedHint} which we looked up to get {ser.TmdbCode}");
+
+                return;
+            }
+
+            //Tweak the hints and do another Search on TMDB
+            ser = ParseHints(showErrorMsgBox);
+            if (ser != null)
+            {
+                SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
+                Logger.Info(
+                    $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on Name = {RefinedHint}({PossibleYear}) which we looked up to get {ser.TmdbCode}");
+
+                return;
+            }
+
+            //Tweak the hints and do another Search on TMDB
+            int? tvdbId = FindShowCode("tvdbid", "tvdb").ToInt();
+            if (tvdbId.HasValue)
+            {
+                CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, preferredLocale);
+                if (s2 != null)
+                {
+                    Logger.Info(
+                        $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TVDB = {tvdbId}({PossibleYear}) which we looked up to get {s2.TmdbCode}");
+
+                    SetId(s2.TmdbCode, TVDoc.ProviderType.TMDB);
+                }
+                else
+                {
+                    //Find movie on TVDB based on Id
+                    CachedMovieInfo? s3 =
+                        TheTVDB.LocalCache.Instance.GetMovieAndDownload(this, preferredLocale, showErrorMsgBox);
+
+                    if (s3 != null)
+                    {
+                        Logger.Info(
+                            $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TVDB(s3) = {tvdbId}({PossibleYear}) which we looked up to get {s3.TmdbCode}");
+
+                        SetId(s3.TvdbCode, TVDoc.ProviderType.TheTVDB);
+                    }
                 }
             }
         }
+        catch (MediaNotFoundException ex)
+        {
+            //not really an issue so we can continue
+            Logger.Warn($"Could not match the possible movie: {this}", ex);
+        }
+        catch (SourceConnectivityException ex)
+        {
+            Logger.Warn($"Could not match the possible movie: {this}", ex);
+        }
+        catch (SourceConsistencyException ex)
+        {
+            Logger.Error($"Could not match the possible movie: {this}", ex);
+        }
+        catch (GeneralHttpException ex)
+        {
+            Logger.Error($"Could not match the possible movie: {this}", ex);
+        }
+        catch (AggregateException ex)
+        {
+            Logger.Error($"Could not match the possible movie: {this}", ex);
+        }
+    }
+
+    public override string ToString()
+    {
+        return $"Possible New Movie: {movieFile.FullName} Estimated:{movieStub} Hint:{RefinedHint} Year:{PossibleYear} Provider:{SourceProvider.PrettyPrint()}:{ProviderCode}";
     }
 
     public void SetId(int code, TVDoc.ProviderType provider)
@@ -138,37 +178,43 @@ public class PossibleNewMovie : ISeriesSpecifier
         SourceProvider = provider;
     }
 
-    private CachedMovieInfo? ParseHints(bool showErrorMsgBox)
+    public CachedMovieInfo? ParseHints(bool showErrorMsgBox)
     {
-        Match mat = Regex.Match(RefinedHint.Trim(), @"\s(\d{4})$");
-        if (mat.Success)
+        try
         {
-            int newPossibleYear = mat.Groups[1].Value.ToInt(0);
-
-            //Try removing any year
-            string showNameNoYear = RefinedHint.RemoveYearFromEnd();
-
-            //Remove anything we can from hint to make it cleaner and hence more likely to match
-            string refinedHint = showNameNoYear;
-
-            if (string.IsNullOrWhiteSpace(refinedHint))
+            Match mat = Regex.Match(RefinedHint.Trim(), @"\s(\d{4})$");
+            if (mat.Success)
             {
-                Logger.Info($"Ignoring {RefinedHint} as it refines to nothing.");
-                return null;
+                int newPossibleYear = mat.Groups[1].Value.ToInt(0);
+
+                //Try removing any year
+                string showNameNoYear = RefinedHint.RemoveYearFromEnd();
+
+                //Remove anything we can from hint to make it cleaner and hence more likely to match
+                string refinedHint = showNameNoYear;
+
+                if (string.IsNullOrWhiteSpace(refinedHint))
+                {
+                    Logger.Info($"Ignoring {RefinedHint} as it refines to nothing.");
+                    return null;
+                }
+
+                if (RefinedHint.Equals(refinedHint, StringComparison.OrdinalIgnoreCase))
+                {
+                    return null;
+                }
+
+                RefinedHint = refinedHint;
+                PossibleYear ??= newPossibleYear;
+
+                //todo -validate if this can work for multi-providers
+                return TMDB.LocalCache.Instance.GetMovie(this, new Locale(), showErrorMsgBox);
             }
-
-            if (RefinedHint.Equals(refinedHint, StringComparison.OrdinalIgnoreCase))
-            {
-                return null;
-            }
-
-            RefinedHint = refinedHint;
-            PossibleYear ??= newPossibleYear;
-
-            //todo -validate if this can work for multi-providers
-            return TMDB.LocalCache.Instance.GetMovie(this, new Locale(), showErrorMsgBox);
         }
-
+        catch (RegexMatchTimeoutException ex)
+        {
+            Logger.Warn(ex,$"Could not parse hints for new movie");
+        }
         return null;
     }
 

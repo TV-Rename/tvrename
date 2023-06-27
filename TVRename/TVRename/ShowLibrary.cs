@@ -246,6 +246,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         }
     }
 
+    /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
     public static List<ProcessedEpisode>? GenerateEpisodes(ShowConfiguration si, int snum, bool applyRules)
     {
         if (!si.AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? seas))

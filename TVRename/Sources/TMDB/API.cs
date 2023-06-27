@@ -60,6 +60,7 @@ internal static class API
         }
         catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
         {
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(ex);
         }
         catch (TaskCanceledException ex)
@@ -68,6 +69,7 @@ internal static class API
         }
         catch (AggregateException aex) when (aex.InnerException is TaskCanceledException ex)
         {
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(ex);
         }
         catch (HttpRequestException ex)

@@ -227,6 +227,7 @@ internal static class FinderHelper
         return true;
     }
 
+    /// <exception cref="ArgumentNullException"><paramref name="di"/> is <see langword="null"/></exception>
     public static bool FileNeeded(DirectoryInfo? di, ShowConfiguration? si, DirFilesCache dfc)
     {
         if (di is null)
@@ -248,6 +249,7 @@ internal static class FinderHelper
         return true;
     }
 
+    /// <exception cref="ArgumentNullException"><paramref name="di"/> is <see langword="null"/></exception>
     public static bool FileNeeded(DirectoryInfo? di, MovieConfiguration? si, DirFilesCache dfc)
     {
         if (di is null)
@@ -368,7 +370,7 @@ internal static class FinderHelper
                 return false;
             }
         }
-        catch (ShowConfiguration.EpisodeNotFoundException)
+        catch (EpisodeNotFoundException)
         {
             //Ignore exception, we may need the file
             return true;

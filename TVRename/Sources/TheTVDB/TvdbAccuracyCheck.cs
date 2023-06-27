@@ -44,11 +44,16 @@ internal class TvdbAccuracyCheck
         {
             Issues.Add($"Failed to compare {si.Name} as we could not download the cachedSeries details.");
         }
+        catch (SourceConsistencyException ex)
+        {
+            Logger.Error($"Failed to compare {si.Name} as we could not download the cachedSeries details.", ex);
+        }
         catch (MediaNotFoundException)
         {
             Issues.Add($"Failed to compare {si.Name} as it no longer exists on TVDB {si.TvdbId}.");
         }
     }
+    
     public void ServerAccuracyCheck(CachedSeriesInfo si)
     {
         Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
@@ -56,15 +61,9 @@ internal class TvdbAccuracyCheck
         try
         {
             CachedSeriesInfo newSi = API.DownloadSeriesInfo(si, si.TargetLocale);
-            if (newSi.SrvLastUpdated != si.SrvLastUpdated)
-            {
-                Issues.Add(
-                    $"{si.Name} ({si.Id()}) is not up to date: Local is {si.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({si.SrvLastUpdated}) server is {newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
+            TvShowAccuracyCheck(si, newSi);
 
-                EnsureUpdated(si);
-            }
-            API.ReloadEpisodesV4(newSi, si.ActualLocale ?? new Locale(), newSi, si.SeasonOrder);
-
+            API.ReloadEpisodes(newSi, si.ActualLocale ?? new Locale(), newSi, si.SeasonOrder);
             foreach (Episode newEpisode in newSi.Episodes)
             {
                 EpisodeAccuracyCheck(si, newEpisode);
@@ -77,22 +76,39 @@ internal class TvdbAccuracyCheck
         {
             Issues.Add($"Failed to compare {si.Name} as we could not download the cachedSeries details.");
         }
+        catch (SourceConsistencyException ex)
+        {
+            Logger.Error($"Failed to compare {si.Name} as we could not download the cachedSeries details.",ex);
+        }
         catch (MediaNotFoundException)
         {
             Issues.Add($"Failed to compare {si.Name} as it no longer exists on TVDB {si.TvdbId}.");
         }
-    }
 
-    private void FindOrphanEpisodes(CachedSeriesInfo si, ICollection<int> serverEpIds)
-    {
-        foreach (Episode localEp in si.Episodes)
+        void TvShowAccuracyCheck(CachedSeriesInfo testSi, CachedSeriesInfo newSi)
         {
-            int localEpId = localEp.EpisodeId;
-            if (!serverEpIds.Contains(localEpId))
+            if (newSi.SrvLastUpdated == testSi.SrvLastUpdated)
             {
-                Issues.Add($"{si.Name} {localEpId} should be removed: Server is missing.");
-                localEp.Dirty = true;
-                EnsureUpdated(si);
+                return;
+            }
+
+            Issues.Add(
+                $"{testSi.Name} ({testSi.Id()}) is not up to date: Local is {testSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({testSi.SrvLastUpdated}) server is {newSi.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({newSi.SrvLastUpdated})");
+
+            EnsureUpdated(testSi);
+        }
+
+        void FindOrphanEpisodes(CachedSeriesInfo testSi, ICollection<int> serverEpIds)
+        {
+            foreach (Episode localEp in testSi.Episodes)
+            {
+                int localEpId = localEp.EpisodeId;
+                if (!serverEpIds.Contains(localEpId))
+                {
+                    Issues.Add($"{testSi.Name} {localEpId} should be removed: Server is missing.");
+                    localEp.Dirty = true;
+                    EnsureUpdated(testSi);
+                }
             }
         }
     }
@@ -106,36 +122,33 @@ internal class TvdbAccuracyCheck
         }
     }
 
-    private void EpisodeAccuracyCheck(CachedSeriesInfo si, long serverUpdateTime, int epId)
+    private void EpisodeAccuracyCheck(CachedSeriesInfo si, Episode t)
     {
+        long serverUpdateTime = t.SrvLastUpdated;
+        int epId = t.EpisodeId;
+
         try
         {
             Episode ep = si.GetEpisode(epId);
 
-            if (serverUpdateTime != ep.SrvLastUpdated)
+            if (serverUpdateTime == ep.SrvLastUpdated)
             {
-                ep.Dirty = true;
-                EnsureUpdated(si);
-                string diff = serverUpdateTime > ep.SrvLastUpdated ? "not up to date" : "in the future";
-                Issues.Add(
-                    $"{si.Name}({si.TvdbId}), S{ep.AiredSeasonNumber}E{ep.AiredEpNum} ({ep.EpisodeId}) is {diff}: Local is {ep.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({ep.SrvLastUpdated}) server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
+                return;
             }
+
+            ep.Dirty = true;
+            EnsureUpdated(si);
+            string diff = serverUpdateTime > ep.SrvLastUpdated ? "not up to date" : "in the future";
+            Issues.Add(
+                $"{si.Name}({si.TvdbId}), S{ep.AiredSeasonNumber}E{ep.AiredEpNum} ({ep.EpisodeId}) is {diff}: Local is {ep.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({ep.SrvLastUpdated}) server is {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
         }
-        catch (ShowConfiguration.EpisodeNotFoundException)
+        catch (EpisodeNotFoundException)
         {
             Issues.Add(
                 $"{si.Name}({si.TvdbId}), episode with Id {epId} is not found: Local is missing; server was updated on {serverUpdateTime.FromUnixTime().ToLocalTime()} ({serverUpdateTime})");
 
             EnsureUpdated(si);
         }
-    }
-
-    private void EpisodeAccuracyCheck(CachedSeriesInfo si, Episode t)
-    {
-        long serverUpdateTime = t.SrvLastUpdated;
-        int epId = t.EpisodeId;
-
-        EpisodeAccuracyCheck(si, serverUpdateTime, epId);
     }
 
     private static bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
@@ -163,6 +176,8 @@ internal class TvdbAccuracyCheck
         return true;
     }
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     public static void InvestigateUpdatesSince(int targetId, long baseTime)
     {
         for (int page = 0; page < 10000; page++)

@@ -2278,15 +2278,23 @@ public class TVDoc : IDisposable
 
     public static void SaveCaches()
     {
-        Utility.Helper.TaskHelper.Run(
-            () =>
+        try
+        {
+            Utility.Helper.TaskHelper.Run(() =>
             {
                 TheTVDB.LocalCache.Instance.SaveCache();
                 TVmaze.LocalCache.Instance.SaveCache();
                 TMDB.LocalCache.Instance.SaveCache();
-            },
-            "Save Cache Files",
-            false);
+            }, "Save Cache Files", false);
+        }
+        catch (ThreadStateException ex)
+        {
+            Logger.Error(ex, "Could not save caches");
+        }
+        catch (OutOfMemoryException ex)
+        {
+            Logger.Error(ex, "Could not save caches");
+        }
     }
 
     public void DoActions(ActionSettings set)

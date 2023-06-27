@@ -12,6 +12,7 @@ internal class FolderBaseMovieCheck : MovieCheck
 
     public override string Explain() => "This Movie does not have an automatic folder base specified.";
 
+    /// <exception cref="FixCheckException">Can't fix movie as multiple Movie Library Folders are specified</exception>
     protected override void FixInternal()
     {
         Movie.AutomaticFolderRoot = TVSettings.Instance.MovieLibraryFolders.Count switch

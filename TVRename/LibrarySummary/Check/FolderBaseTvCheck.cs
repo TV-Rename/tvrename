@@ -12,6 +12,7 @@ internal class FolderBaseTvCheck : TvShowCheck
 
     public override string Explain() => "This TV show does not have an automatic folder base specified.";
 
+    /// <exception cref="FixCheckException">Can't fix movie</exception>
     protected override void FixInternal()
     {
         if (TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation && TVSettings.Instance.DefShowLocation.HasValue())

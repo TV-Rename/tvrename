@@ -105,6 +105,7 @@ public class MovieConfiguration : MediaConfiguration
         return value is null ? TVSettings.Instance.DefMovieFolderFormat : (MovieFolderFormat)value;
     }
 
+    /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
     public MovieConfiguration(PossibleNewMovie movie) : this()
     {
         if (movie.CodeUnknown)

@@ -42,6 +42,7 @@ public partial class RecommendationView : Form
         olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
     }
 
+    /// <exception cref="ArgumentOutOfRangeException">MediaType.</exception>
     public RecommendationView(TVDoc doc, UI main, MediaConfiguration.MediaType type) : this(doc, main)
     {
         media = type;

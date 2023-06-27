@@ -1,5 +1,6 @@
-using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
+using System.IO;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
 
@@ -30,19 +31,26 @@ internal class DownloadEpisodeJpg : DownloadIdentifier
 
         string basefn = file.RemoveExtension();
 
-        FileInfo imgjpg = FileHelper.FileInFolder(file.Directory, basefn + DEFAULT_EXTENSION);
-
-        if (doneJpg.Contains(imgjpg.FullName))
+        try
         {
+            FileInfo imgjpg = FileHelper.FileInFolder(file.Directory, basefn + DEFAULT_EXTENSION);
+            if (doneJpg.Contains(imgjpg.FullName))
+            {
+                return null;
+            }
+
+            if (!forceRefresh && imgjpg.Exists)
+            {
+                return null;
+            }
+
+            return new ItemList { new ActionDownloadImage(episode.Show, episode, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages) };
+        }
+        catch (DirectoryNotFoundException ex)
+        {
+            LOGGER.Warn(ex,"Failed to find directory to look for images for episode");
             return null;
         }
-
-        if (!forceRefresh && imgjpg.Exists)
-        {
-            return null;
-        }
-
-        return new ItemList { new ActionDownloadImage(episode.Show, episode, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages) };
     }
 
     public sealed override void Reset()

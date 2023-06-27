@@ -43,7 +43,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private LocalCache()
     {
         LastErrorMessage = string.Empty;
-        TvdbWebApi.IsConnected = false;
         extraEpisodes = new ConcurrentDictionary<int, ExtraEp>();
         //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
         //If we have no prior install then the app has no shows and is by definition up-to-date
@@ -92,6 +91,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LOGGER.Info($"Assumed we have updates until {LatestUpdateTime}");
     }
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     public CachedSeriesInfo? GetSeriesOrDownload(ISeriesSpecifier id, bool showErrorMsgBox) => HasSeries(id.TvdbId)
         ? Series[id.TvdbId]
         : DownloadSeriesNow(id, false, false, new Locale(TVSettings.Instance.PreferredTVDBLanguage),
@@ -177,13 +179,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             API.DownloadEpisodeNow(cachedSeriesInfo, episodeId, locale,order);
         }
-        catch (SourceConnectivityException)
+        catch (SourceConnectivityException e)
         {
             cachedSeriesInfo.Dirty = true;
+            HandleConnectionIssue(showConnectionIssues, e);
             return false;
         }
-        catch (SourceConsistencyException)
+        catch (SourceConsistencyException ex)
         {
+            LOGGER.Error(ex);
             cachedSeriesInfo.Dirty = true;
             return false;
         }
@@ -215,20 +219,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (SourceConnectivityException e)
         {
-            LastErrorMessage = $"Failed to login to TVDB: {e.Message}: {e.SourceException.Message}";
-
-            if (showErrorMsgBox)
-            {
-                CannotConnectForm form = new("Error while obtaining token from TVDB",
-                    LastErrorMessage, TVDoc.ProviderType.TheTVDB);
-
-                DialogResult result = form.ShowDialog();
-                if (result == DialogResult.Abort)
-                {
-                    TVSettings.Instance.OfflineMode = true;
-                    LastErrorMessage = string.Empty;
-                }
-            }
+            LastErrorMessage = $"Failed to login to TVDB: {e.Message}: {e.InnerException?.Message}";
+            HandleConnectionIssue(showErrorMsgBox, e);
         }
         finally
         {
@@ -237,6 +229,27 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         return false;
     }
+
+    private void HandleConnectionIssue(bool showErrorMsgBox, Exception e)
+    {
+        if (!showErrorMsgBox)
+        {
+            return;
+        }
+
+        CannotConnectForm form = new("Error while obtaining token from TVDB",
+            LastErrorMessage??e.Message, TVDoc.ProviderType.TheTVDB);
+
+        DialogResult result = form.ShowDialog();
+        if (result != DialogResult.Abort)
+        {
+            return;
+        }
+
+        TVSettings.Instance.OfflineMode = true;
+        LastErrorMessage = string.Empty;
+    }
+
     public override void ReConnect(bool showErrorMsgBox)
     {
         Say("TheTVDB Reconnect");
@@ -246,20 +259,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (SourceConnectivityException e)
         {
-            LastErrorMessage = $"Failed to Reconnect to TVDB: {e.Message}: {e.SourceException.Message}";
-
-            if (showErrorMsgBox)
-            {
-                CannotConnectForm form = new("Error while Reconnect token from TVDB",
-                    LastErrorMessage, TVDoc.ProviderType.TheTVDB);
-
-                DialogResult result = form.ShowDialog();
-                if (result == DialogResult.Abort)
-                {
-                    TVSettings.Instance.OfflineMode = true;
-                    LastErrorMessage = string.Empty;
-                }
-            }
+            LastErrorMessage = $"Failed to Reconnect to TVDB: {e.Message}: {e.InnerException?.Message}";
+            HandleConnectionIssue(showErrorMsgBox, e);
         }
         finally
         {
@@ -277,7 +278,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             Series.Clear();
         }
 
-        TvdbWebApi.IsConnected = false;
+        try
+        {
+            TvdbWebApi.ReConnect();
+        }
+        catch (SourceConnectivityException ex)
+        {
+            HandleConnectionIssue(true,ex);
+        } 
         SaveCache();
 
         //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
@@ -326,7 +334,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         try
         {
             Say("Getting updates list from TVDB");
-            API.TvdbUpdateResponse updatesResponse = API.GetUpdatesV4(updateFromEpochTime, showConnectionIssues, cts);
+            API.TvdbUpdateResponse updatesResponse = API.GetUpdates(updateFromEpochTime, showConnectionIssues, cts);
 
             long maxUpdateTime = updatesResponse.LatestTime;
 
@@ -369,6 +377,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             LOGGER.Warn(conex.Message);
             LastErrorMessage = conex.Message;
+            HandleConnectionIssue(showErrorMsgBox, conex);
             SayNothing();
             return false;
         }
@@ -558,7 +567,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             .Where(i => i > 0)
             .DefaultIfEmpty(0).Min();
     }
-    
+
+    /// <exception cref="SourceConsistencyException">Episode's Series Id is not found.</exception>
     public void AddOrUpdateEpisode(Episode e)
     {
         lock (SERIES_LOCK)
@@ -574,10 +584,16 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private CachedSeriesInfo? DownloadSeriesNow(ISeriesSpecifier deets, bool episodesToo, bool bannersToo,
         bool showErrorMsgBox) =>
         DownloadSeriesNow(deets, episodesToo, bannersToo, deets.TargetLocale, showErrorMsgBox);
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private CachedSeriesInfo? DownloadSeriesNow(ISeriesSpecifier code, bool episodesToo, bool bannersToo, Locale locale,
         bool showErrorMsgBox)
     {
@@ -618,7 +634,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
                 if (episodesToo || forceReload)
                 {
-                    API.ReloadEpisodesV4(code, locale, si, st);
+                    API.ReloadEpisodes(code, locale, si, st);
                 }
                 else
                 {
@@ -629,8 +645,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             HaveReloaded(code.TvdbId);
         }
-        catch (SourceConnectivityException)
+        catch (SourceConnectivityException ex)
         {
+            LOGGER.Warn(ex);
+            LastErrorMessage = ex.Message;
+            HandleConnectionIssue(showErrorMsgBox, ex);
             SayNothing();
             return null;
         }
@@ -669,6 +688,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return txt;
     }
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
     {
         if (s.Provider != TVDoc.ProviderType.TheTVDB)
@@ -686,6 +708,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         return EnsureSeriesUpdated(s, bannersToo, showErrorMsgBox);
     }
 
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private bool EnsureMovieUpdated(ISeriesSpecifier id, bool showErrorMsgBox)
     {
         lock (MOVIE_LOCK)
@@ -728,6 +751,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             LastErrorMessage = conex.Message;
             LOGGER.Warn(LastErrorMessage);
+            HandleConnectionIssue(showErrorMsgBox, conex);
             return false;
         }
         catch (SourceConsistencyException sce)
@@ -742,6 +766,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private bool EnsureSeriesUpdated(ISeriesSpecifier seriesd, bool bannersToo, bool showErrorMsgBox)
     {
         int code = seriesd.TvdbId;
@@ -821,6 +848,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 {
                     //not really an issue so we can continue
                 }
+                catch (SourceConnectivityException ex)
+                {
+                    LOGGER.Warn($"Searcing for {text} may be compromised as got an error from the API", ex);
+                    HandleConnectionIssue(showErrorMsgBox, ex);
+                }
+                catch (SourceConsistencyException ex)
+                {
+                    LOGGER.Error($"Searcing for {text} may be compromised as got an error from the API", ex);
+                }
             }
         }
 
@@ -841,6 +877,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         catch (SourceConnectivityException ex)
         {
             LOGGER.Warn($"Searcing for {text} may be compromised as got an error from the API",ex);
+            HandleConnectionIssue(showErrorMsgBox, ex);
         }
         catch (SourceConsistencyException ex)
         {
@@ -870,10 +907,16 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LOGGER.Info($"Loaded file with updates until {LatestUpdateTime.LastSuccessfulServerUpdateDateTime()}");
     }
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     public CachedMovieInfo? GetMovieAndDownload(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox) => HasMovie(id.TvdbId)
         ? CachedMovieData[id.TvdbId]
         : DownloadMovieNow(id, locale,showErrorMsgBox);
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private CachedMovieInfo? DownloadMovieNow(ISeriesSpecifier tvdbId, Locale locale, bool showErrroMsgBox)
     {
         if (tvdbId.TvdbId == 0)
@@ -889,13 +932,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             CachedMovieInfo si = API.DownloadMovieInfo(tvdbId, locale);
             this.AddMovieToCache(si);
         }
-        catch (SourceConnectivityException)
+        catch (SourceConnectivityException e)
         {
             if (!showErrroMsgBox)
             {
                 SayNothing();
                 return null;
             }
+
+            HandleConnectionIssue(showErrroMsgBox, e);
         }
 
         lock (MOVIE_LOCK)

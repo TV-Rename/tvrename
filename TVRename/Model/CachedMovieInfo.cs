@@ -35,13 +35,14 @@ public class CachedMovieInfo : CachedMediaInfo
         DefaultValues();
     }
 
+    /// <exception cref="SourceConsistencyException">Condition.</exception>
     public CachedMovieInfo(XElement seriesXml, TVDoc.ProviderType source) : base(source)
     {
         DefaultValues();
         IsSearchResultOnly = false;
-        LoadCommonXml(seriesXml);
         try
         {
+            LoadCommonXml(seriesXml);
             CollectionId = seriesXml.ExtractInt("CollectionId");
             CollectionName = seriesXml.ExtractStringOrNull("CollectionName");
             MovieType = seriesXml.ExtractString("Type");

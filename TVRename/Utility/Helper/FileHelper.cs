@@ -17,9 +17,14 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename;
 
@@ -34,18 +39,45 @@ public static class FileHelper
             return;
         }
 
-        if (tidyup == null || tidyup.DeleteEmptyIsRecycle)
+        try
         {
-            //TODO make all one use of the folder removal
-            Logger.Info($"Recycling {di.FullName}");
-            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
-                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            if (tidyup == null || tidyup.DeleteEmptyIsRecycle)
+            {
+                //TODO make all one use of the folder removal
+                Logger.Info($"Recycling {di.FullName}");
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            }
+            else
+            {
+                Logger.Info($"Deleting {di.FullName}");
+                    di.Delete(true, true);
+            }
         }
-        else
+        catch (System.IO.DirectoryNotFoundException ex)
         {
-            Logger.Info($"Deleting {di.FullName}");
-            di.Delete(true, true);
+            Logger.Warn(ex,$"Failed to remove {di.FullName}");
+        }
+        catch (System.IO.IOException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (ArgumentException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (SecurityException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (OperationCanceledException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
         }
     }
 
@@ -63,70 +95,89 @@ public static class FileHelper
         }
 
         //if there are sub-directories then we shouldn't remove this one
-        DirectoryInfo[] directories = di.GetDirectories();
-        foreach (DirectoryInfo subdi in directories)
+        try
         {
-            bool okToDelete = settings.EmptyIgnoreWordsArray.Any(word =>
-                subdi.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
-
-            if (!okToDelete)
+            DirectoryInfo[] directories = di.GetDirectories();
+            foreach (DirectoryInfo subdi in directories)
             {
-                Logger.Info($"Not Removing {di.FullName} as it contains {subdi.Name} which does not have {settings.EmptyIgnoreWordsArray.ToCsv()} in the directory name.");
+                bool okToDelete = settings.EmptyIgnoreWordsArray.Any(word =>
+                    subdi.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
+
+                if (!okToDelete)
+                {
+                    Logger.Info($"Not Removing {di.FullName} as it contains {subdi.Name} which does not have {settings.EmptyIgnoreWordsArray.ToCsv()} in the directory name.");
+                    return;
+                }
+            }
+            //we know that each subfolder is OK to delete
+
+            //if the directory is the root download folder do not delete
+            if (TVSettings.Instance.DownloadFolders.Contains(di.FullName))
+            {
                 return;
             }
-        }
-        //we know that each subfolder is OK to delete
 
-        //if the directory is the root download folder do not delete
-        if (TVSettings.Instance.DownloadFolders.Contains(di.FullName))
-        {
-            return;
-        }
-
-        // Do not delete any monitor folders either
-        if (TVSettings.Instance.LibraryFolders.Contains(di.FullName))
-        {
-            return;
-        }
-        if (TVSettings.Instance.MovieLibraryFolders.Contains(di.FullName))
-        {
-            return;
-        }
-
-        FileInfo[] files = di.GetFiles();
-        if (files.Length == 0)
-        {
-            // its empty, so just delete it
-            DeleteOrRecycleFolder(di, settings);
-            return;
-        }
-
-        if (settings.EmptyIgnoreExtensions && !settings.EmptyIgnoreWords)
-        {
-            return; // nope
-        }
-
-        foreach (FileInfo fi in files.Where(x => !CanDelete(x, settings)))
-        {
-            Logger.Info($"Not Removing {di.FullName} as it contains {fi.Name} which does not have {settings.EmptyIgnoreExtensionsArray.ToCsv()} as extension or {settings.EmptyIgnoreWordsArray.ToCsv()} in the filename.");
-            return;
-        }
-
-        if (settings.EmptyMaxSizeCheck)
-        {
-            // how many MB are we deleting?
-            long totalBytes = files.Sum(fi => fi.Length);
-
-            double mbytes = 1.0 * totalBytes / (1024 * 1024);
-            if (mbytes > settings.EmptyMaxSizeMB)
+            // Do not delete any monitor folders either
+            if (TVSettings.Instance.LibraryFolders.Contains(di.FullName))
             {
-                Logger.Info(
-                    $"Not Removing {di.FullName} as it contains too much Mb of files [{mbytes} vs {settings.EmptyMaxSizeMB}]");
-                return; // too much
+                return;
             }
-        }
+            if (TVSettings.Instance.MovieLibraryFolders.Contains(di.FullName))
+            {
+                return;
+            }
 
-        DeleteOrRecycleFolder(di, settings);
+            FileInfo[] files = di.GetFiles();
+            if (files.Length == 0)
+            {
+                // its empty, so just delete it
+                DeleteOrRecycleFolder(di, settings);
+                return;
+            }
+
+            if (settings.EmptyIgnoreExtensions && !settings.EmptyIgnoreWords)
+            {
+                return; // nope
+            }
+
+            foreach (FileInfo fi in files.Where(x => !CanDelete(x, settings)))
+            {
+                Logger.Info($"Not Removing {di.FullName} as it contains {fi.Name} which does not have {settings.EmptyIgnoreExtensionsArray.ToCsv()} as extension or {settings.EmptyIgnoreWordsArray.ToCsv()} in the filename.");
+                return;
+            }
+
+            if (settings.EmptyMaxSizeCheck)
+            {
+                // how many MB are we deleting?
+                long totalBytes = files.Sum(fi => fi.Length);
+
+                double mbytes = 1.0 * totalBytes / (1024 * 1024);
+                if (mbytes > settings.EmptyMaxSizeMB)
+                {
+                    Logger.Info(
+                        $"Not Removing {di.FullName} as it contains too much Mb of files [{mbytes} vs {settings.EmptyMaxSizeMB}]");
+                    return; // too much
+                }
+            }
+
+            DeleteOrRecycleFolder(di, settings);
+        }
+        catch (System.IO.DirectoryNotFoundException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
+        catch (System.IO.IOException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
+        catch (OverflowException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
     }
 
     private static bool CanDelete(FileInfo fi, TVSettings.TidySettings settings)

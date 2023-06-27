@@ -32,6 +32,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
         return distinctGenres;
     }
 
+    /// <exception cref="InvalidOperationException">Condition.</exception>
     public MovieConfiguration? GetMovie(int id, TVDoc.ProviderType provider)
     {
         if (id is 0 or -1)

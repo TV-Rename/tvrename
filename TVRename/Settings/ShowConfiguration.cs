@@ -174,11 +174,6 @@ public class ShowConfiguration : MediaConfiguration
         return seasonNumbers.IndexOf(seasonNumber) + 1;
     }
 
-    [Serializable]
-    public class EpisodeNotFoundException : Exception
-    {
-    }
-
     private bool HasAnyAirdates(int snum)
     {
         return AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? season)
@@ -193,6 +188,7 @@ public class ShowConfiguration : MediaConfiguration
         airedSeasons.Values.ForEach(s => s.RemoveEpisode(episodeId));
     }
 
+    /// <exception cref="EpisodeNotFoundException">Condition.</exception>
     internal ProcessedEpisode GetEpisode(int seasF, int epF)
     {
         if (SeasonEpisodes.TryGetValue(seasF, out List<ProcessedEpisode>? season))
@@ -855,7 +851,17 @@ public class ShowConfiguration : MediaConfiguration
         int maxSeasonToUse = maxSeasonNumber <= 0 ? lastPossibleSeason : maxSeasonNumber;
         if (maxSeasonToUse < 1)
         {
-            LOGGER.Warn($"{Name} has a problem with series in {Order.PrettyPrint()} order - max={maxSeasonToUse}, keys = {SeasonEpisodes.Keys.ToCsv()}, numberOfEps = {SeasonEpisodes.Count}");
+            try
+            {
+                LOGGER.Warn(
+                    $"{Name} has a problem with series in {Order.PrettyPrint()} order - max={maxSeasonToUse}, keys = {SeasonEpisodes.Keys.ToCsv()}, numberOfEps = {SeasonEpisodes.Count}");
+            }
+            catch (OverflowException ex)
+            {
+                LOGGER.Error(
+                    $"{Name} has a problem with series in {Order.PrettyPrint()} order - max={maxSeasonToUse}, keys = {SeasonEpisodes.Keys.ToCsv()}, numberOfEps = OVERFLOW",ex);
+            }
+
             return true;
         }
 
@@ -914,4 +920,9 @@ public class ShowConfiguration : MediaConfiguration
     }
 
     public CachedSeriesInfo? CachedShow => CachedData as CachedSeriesInfo;
+}
+
+[Serializable]
+public class EpisodeNotFoundException : Exception
+{
 }

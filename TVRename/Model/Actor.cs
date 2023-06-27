@@ -6,9 +6,9 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using System;
 using System.Xml;
 using System.Xml.Linq;
+using System;
 
 namespace TVRename;
 
@@ -37,9 +37,10 @@ public class Actor
         }
     }
 
+    /// <exception cref="ArgumentException">Error Extracting Id for Actor</exception>
     public Actor(XElement r)
     {
-        ActorId = r.ExtractInt("Id") ?? throw new Exception("Error Extracting Id for Actor");
+        ActorId = r.ExtractInt("Id") ?? throw new ArgumentException("Error Extracting Id for Actor");
         ActorImage = r.ExtractString("Image");
         ActorName = r.ExtractString("Name");
         ActorRole = r.ExtractString("Role");

@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System;
 using System.Collections.Concurrent;
 
 namespace TVRename;
@@ -22,7 +23,14 @@ internal class UrlCache
         }
 
         string newValue = HttpHelper.GetUrl(s, instanceSearchJsonUseCloudflare);
-        internalCache.TryAdd(s, newValue);
+        try
+        {
+            internalCache.TryAdd(s, newValue);
+        }
+        catch (OverflowException)
+        {
+            return newValue;
+        }
         return newValue;
     }
 }

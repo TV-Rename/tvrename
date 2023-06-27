@@ -10,6 +10,7 @@ internal class TvShowProviderCheck : TvShowCheck
 
     public override string Explain() => $"TV Show does not use the library default, ({TVSettings.Instance.DefaultProvider.PrettyPrint()}), it uses {Show.ConfigurationProvider.PrettyPrint()} (Hardcoded)";
 
+    /// <exception cref="FixCheckException">Condition.</exception>
     protected override void FixInternal()
     {
         if (Show.HasIdOfType(TVSettings.Instance.DefaultProvider))

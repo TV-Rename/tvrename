@@ -15,6 +15,7 @@ public class NlogILogger : ILogger
         this.baseLogger = baseLogger;
     }
 
+    /// <exception cref="ArgumentNullException"><paramref name="formatter"/> is <see langword="null"/></exception>
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
         if (formatter == null)
@@ -45,6 +46,7 @@ public class NlogILogger : ILogger
         };
     }
 
+    /// <exception cref="ArgumentNullException"><paramref name="state"/> is <see langword="null"/></exception>
     public IDisposable BeginScope<TState>(TState state)
     {
         if (state is null)

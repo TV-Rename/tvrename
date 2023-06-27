@@ -6,9 +6,11 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
 
@@ -42,46 +44,57 @@ internal class DownloadKodiImages : DownloadIdentifier
         {
             ItemList theActionList = new();
             string baseFileName = file.MovieFileNameBase();
-
-            FileInfo posterJpg = movie.IsDvdBluRay()
-                ? FileHelper.FileInFolder(file.Directory.Parent, "poster.jpg")
-                : FileHelper.FileInFolder(file.Directory, baseFileName + "-poster.jpg");
-            FileInfo bannerJpg = movie.IsDvdBluRay()
-                ? FileHelper.FileInFolder(file.Directory.Parent, "banner.jpg")
-                : FileHelper.FileInFolder(file.Directory, baseFileName + "-banner.jpg");
-            FileInfo fanartJpg = movie.IsDvdBluRay()
-                ? FileHelper.FileInFolder(file.Directory.Parent, "fanart.jpg")
-                : FileHelper.FileInFolder(file.Directory, baseFileName + "-fanart.jpg");
-
-            if ((forceRefresh || !posterJpg.Exists) && !donePosterJpg.Contains(file.Directory.FullName))
+            try
             {
-                string? path = movie.CachedMovie?.PosterUrl;
-                if (!string.IsNullOrEmpty(path))
+                FileInfo posterJpg = movie.IsDvdBluRay()
+                    ? FileHelper.FileInFolder(file.Directory.Parent, "poster.jpg")
+                    : FileHelper.FileInFolder(file.Directory, baseFileName + "-poster.jpg");
+
+                FileInfo bannerJpg = movie.IsDvdBluRay()
+                    ? FileHelper.FileInFolder(file.Directory.Parent, "banner.jpg")
+                    : FileHelper.FileInFolder(file.Directory, baseFileName + "-banner.jpg");
+
+                FileInfo fanartJpg = movie.IsDvdBluRay()
+                    ? FileHelper.FileInFolder(file.Directory.Parent, "fanart.jpg")
+                    : FileHelper.FileInFolder(file.Directory, baseFileName + "-fanart.jpg");
+
+                if ((forceRefresh || !posterJpg.Exists) && !donePosterJpg.Contains(file.Directory.FullName))
                 {
-                    theActionList.Add(new ActionDownloadMovieImage(movie, posterJpg, path, false));
-                    donePosterJpg.Add(file.Directory.FullName);
+                    string? path = movie.CachedMovie?.PosterUrl;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        theActionList.Add(new ActionDownloadMovieImage(movie, posterJpg, path, false));
+                        donePosterJpg.Add(file.Directory.FullName);
+                    }
+                }
+
+                if ((forceRefresh || !bannerJpg.Exists) && !doneBannerJpg.Contains(file.Directory.FullName))
+                {
+                    string? path = movie.CachedMovie?.Images(MediaImage.ImageType.wideBanner).FirstOrDefault()
+                        ?.ImageUrl;
+
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        theActionList.Add(new ActionDownloadMovieImage(movie, bannerJpg, path, false));
+                        doneBannerJpg.Add(file.Directory.FullName);
+                    }
+                }
+
+                if ((forceRefresh || !fanartJpg.Exists) && !doneFanartJpg.Contains(file.Directory.FullName))
+                {
+                    string? path = movie.CachedMovie?.FanartUrl;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        theActionList.Add(new ActionDownloadMovieImage(movie, fanartJpg, path));
+                        doneFanartJpg.Add(file.Directory.FullName);
+                    }
                 }
             }
-
-            if ((forceRefresh || !bannerJpg.Exists) && !doneBannerJpg.Contains(file.Directory.FullName))
+            catch (DirectoryNotFoundException ex)
             {
-                string? path = movie.CachedMovie?.Images(MediaImage.ImageType.wideBanner).FirstOrDefault()?.ImageUrl;
-                if (!string.IsNullOrEmpty(path))
-                {
-                    theActionList.Add(new ActionDownloadMovieImage(movie, bannerJpg, path, false));
-                    doneBannerJpg.Add(file.Directory.FullName);
-                }
+                LOGGER.Warn(ex,"Failed to download images");
             }
 
-            if ((forceRefresh || !fanartJpg.Exists) && !doneFanartJpg.Contains(file.Directory.FullName))
-            {
-                string? path = movie.CachedMovie?.FanartUrl;
-                if (!string.IsNullOrEmpty(path))
-                {
-                    theActionList.Add(new ActionDownloadMovieImage(movie, fanartJpg, path));
-                    doneFanartJpg.Add(file.Directory.FullName);
-                }
-            }
             return theActionList;
         }
 

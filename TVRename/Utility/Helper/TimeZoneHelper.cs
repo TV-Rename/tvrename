@@ -88,5 +88,14 @@ public static class TimeZoneHelper
     public static DateTime FromUnixTime(this long unixTime)
         => DateTime.UnixEpoch.AddSeconds(unixTime);
     public static long ToUnixTime(this DateTime date)
-        => Convert.ToInt64((date.ToUniversalTime() - DateTime.UnixEpoch).TotalSeconds);
+    {
+        try
+        {
+            return Convert.ToInt64((date.ToUniversalTime() - DateTime.UnixEpoch).TotalSeconds);
+        }
+        catch (OverflowException)
+        {
+            return 0;
+        }
+    }
 }

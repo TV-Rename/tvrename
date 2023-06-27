@@ -19,6 +19,8 @@ internal static class API
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     private static T HandleErrorsFrom<T>(string message, Func<T> handler)
     {
         string errorMessage = $"Could not {message} from TV Maze";
@@ -44,11 +46,12 @@ internal static class API
         catch (JsonReaderException jre)
         {
             Logger.Error($"{errorMessage} due to {jre.Message}");
-            throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze);
+            throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze,jre);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             Logger.LogHttpRequestException(errorMessage, wex);
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage, wex);
         }
         catch (System.Threading.Tasks.TaskCanceledException ex)
@@ -59,10 +62,14 @@ internal static class API
         catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
         {
             Logger.Warn($"{errorMessage} due to {ex.Message}");
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage, ex);
         }
     }
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private static T HandleErrorsFrom<T>(string message, Func<T> handler, string mediaNotFoundMessage,ISeriesSpecifier tvMazeId)
     {
         string errorMessage = $"Could not {message} from TV Maze";
@@ -74,7 +81,7 @@ internal static class API
         {
             if (ex.Is404() && TvMazeIsUp())
             {
-                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv,ex);
             }
 
             Logger.LogWebException(errorMessage, ex);
@@ -84,7 +91,7 @@ internal static class API
         {
             if (wex.Is404() && TvMazeIsUp())
             {
-                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv,wex);
             }
             Logger.LogHttpRequestException(errorMessage, wex);
             throw new SourceConnectivityException(errorMessage, wex);
@@ -97,16 +104,18 @@ internal static class API
         catch (JsonReaderException jre)
         {
             Logger.Error($"{errorMessage} due to {jre.Message}");
-            throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze);
+            throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze,jre);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             if (wex.Is404() && TvMazeIsUp())
             {
-                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+                // ReSharper disable once ThrowFromCatchWithNoInnerException
+                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv,wex);
             }
 
             Logger.LogHttpRequestException(errorMessage, wex);
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage,wex);
         }
         catch (System.Threading.Tasks.TaskCanceledException ex)
@@ -117,35 +126,33 @@ internal static class API
         catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
         {
             Logger.Warn($"{errorMessage} due to {ex.Message}");
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage, ex);
         }
     }
 
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     public static IEnumerable<KeyValuePair<string, long>> GetUpdates()
     {
-        return HandleErrorsFrom("get updates", GetUpdatesInternal);
+        string fullUrl = $"{APIRoot}/updates/shows";
 
-        static IEnumerable<KeyValuePair<string, long>> GetUpdatesInternal()
-        {
-            string fullUrl = $"{APIRoot}/updates/shows";
-            JObject updatesJson = HttpHelper.HttpGetRequestWithRetry(fullUrl, 3, 2);
+        JObject updatesJson = HandleErrorsFrom("get updates", () => HttpHelper.HttpGetRequestWithRetry(fullUrl, 3, 2));
 
-            return updatesJson.Children<JProperty>()
-                .Select(t => new KeyValuePair<string, long>(t.Name, (long)t.Value));
-        }
+        return updatesJson.Children<JProperty>()
+            .Select(t => new KeyValuePair<string, long>(t.Name, (long)t.Value));
     }
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     public static IEnumerable<CachedSeriesInfo> ShowSearch(string searchText)
     {
         string message = $"search TVmaze for show '{searchText}'";
-        return HandleErrorsFrom(message, () => ShowSearchInternal(searchText));
+        string fullUrl = $"{APIRoot}/search/shows?q={searchText}";
 
-        static IEnumerable<CachedSeriesInfo> ShowSearchInternal(string s)
-        {
-            string fullUrl = $"{APIRoot}/search/shows?q={s}";
-            JArray response = HttpHelper.HttpGetArrayRequestWithRetry(fullUrl, 5, 2);
-            return response.Children().Select(ConvertSearchResult).OfType<CachedSeriesInfo>();
-        }
+        JArray response = HandleErrorsFrom(message, () => HttpHelper.HttpGetArrayRequestWithRetry(fullUrl, 5, 2));
+
+        return response.Children().Select(ConvertSearchResult).OfType<CachedSeriesInfo>();
     }
 
     private static CachedSeriesInfo? ConvertSearchResult(JToken token)
@@ -162,6 +169,9 @@ internal static class API
         return downloadedSi;
     }
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">Condition.</exception>
     private static void GetSeriesIdFromOtherCodes(ISeriesSpecifier source)
     {
         try
@@ -180,6 +190,7 @@ internal static class API
         {
             if (!wex.Is404())
             {
+                // ReSharper disable once ThrowFromCatchWithNoInnerException
                 throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}",wex);
             }
 
@@ -204,6 +215,9 @@ internal static class API
         }
     }
 
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">Condition.</exception>
     private static void GetSeriesIdFromImdbCode(ISeriesSpecifier source, string s)
     {
         try
@@ -271,6 +285,9 @@ internal static class API
         }
     }
 
+    /// <exception cref="SourceConsistencyException">Condition.</exception>
+    /// <exception cref="SourceConnectivityException">Condition.</exception>
+    /// <exception cref="MediaNotFoundException">Condition.</exception>
     private static JObject GetSeriesDetailsWithMazeId(ISeriesSpecifier tvMazeId)
     {
         string errorMessage = $"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId}";
@@ -280,6 +297,9 @@ internal static class API
         return HandleErrorsFrom(errorMessage, () => HttpHelper.HttpGetRequestWithRetry(fullUrl, 5, 2), mediaNotFoundMessage, tvMazeId);
     }
 
+    /// <exception cref="SourceConsistencyException">Condition.</exception>
+    /// <exception cref="MediaNotFoundException">Condition.</exception>
+    /// <exception cref="SourceConnectivityException">Condition.</exception>
     public static CachedSeriesInfo GetSeriesDetails(ISeriesSpecifier ss)
     {
         if (ss.TvMazeId <= 0)

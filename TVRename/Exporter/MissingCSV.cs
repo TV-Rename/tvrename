@@ -1,4 +1,5 @@
 using System;
+using System.Security;
 
 namespace TVRename;
 
@@ -14,6 +15,13 @@ internal class MissingCSV : MissingActionListExporter
     protected override string Location() => TVSettings.Instance.ExportMissingCSVTo;
     protected override string Name() => "Missing CSV Exporter";
 
+    /// <exception cref="ArgumentException">Locaiton is not valid.</exception>
+    /// <exception cref="UnauthorizedAccessException">Access is denied.</exception>
+    /// <exception cref="System.IO.DirectoryNotFoundException">The specified path is invalid (for example, it is on an unmapped drive).</exception>
+    /// <exception cref="SecurityException">The caller does not have the required permission.</exception>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="System.IO.IOException"></exception>
+    /// <exception cref="System.IO.PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length.</exception>
     protected override void Do()
     {
         using System.IO.StreamWriter file = new(Location());

@@ -43,6 +43,7 @@ public abstract class MediaConfiguration : ISeriesSpecifier
 
     public abstract ProcessedSeason.SeasonType SeasonOrder { get; }
 
+    /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
     public void UpdateId(int id, TVDoc.ProviderType source)
     {
         switch (source)
@@ -266,6 +267,7 @@ public abstract class MediaConfiguration : ISeriesSpecifier
         return GetSimplifiedPossibleShowNames().Select(name => FileHelper.SimplifyAndCheckFilenameLength(filename.CompareName(), name, false, false)).Max();
     }
 
+    /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
     public void SetId(TVDoc.ProviderType type, int code)
     {
         switch (type)

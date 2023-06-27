@@ -32,11 +32,14 @@ public abstract class ScanActivity
 
     public abstract bool Active();
 
+    /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
     protected abstract void DoCheck(SetProgressDelegate progress);
 
+    /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
     public void Check(SetProgressDelegate prog) =>
         Check(prog, 0, 100);
 
+    /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
     public void Check(SetProgressDelegate prog, int startpct, int totPct)
     {
         startPosition = startpct;

@@ -14,6 +14,7 @@ internal static class TaskHelper
     // <param name="timeout">Timeout in milliseconds.</param>
     // <exception cref="TimeoutException"></exception>
     // <returns></returns>
+    /// <exception cref="TimeoutException">Condition.</exception>
     public static async Task WaitWhile(Func<bool> condition, int frequency = 25, int timeout = -1)
     {
         Task waitTask = Task.Run(async () =>
@@ -37,6 +38,7 @@ internal static class TaskHelper
     /// <param name="frequency">The frequency at which the condition will be checked.</param>
     /// <param name="timeout">The timeout in milliseconds.</param>
     /// <returns></returns>
+    /// <exception cref="TimeoutException">Condition.</exception>
     public static async Task WaitUntil(Func<bool> condition, int frequency = 25, int timeout = -1)
     {
         Task waitTask = Task.Run(async () =>
@@ -54,8 +56,12 @@ internal static class TaskHelper
         }
     }
 
+    /// <exception cref="ThreadStateException">The thread has already been started.</exception>
+    /// <exception cref="OutOfMemoryException">There is not enough memory available to start this thread.</exception>
     public static void Run(System.Action action, string name) => Run(action, name, true);
 
+    /// <exception cref="ThreadStateException">The thread has already been started.</exception>
+    /// <exception cref="OutOfMemoryException">There is not enough memory available to start this thread.</exception>
     public static void Run(System.Action action, string name, bool isBackground)
     {
         Thread t = new(() => action()) { Name = name, IsBackground = isBackground };

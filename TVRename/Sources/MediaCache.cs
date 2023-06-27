@@ -57,7 +57,14 @@ public abstract class MediaCache
     }
     public void NeedToReload(int code)
     {
-        forceReloadOn.TryAdd(code, code);
+        try
+        {
+            forceReloadOn.TryAdd(code, code);
+        }
+        catch (OverflowException ex)
+        {
+            LOGGER.Warn($"Could not add {code} to the list of items to reload, so ignoring for now. If this happens consistenly contact the developer", ex);
+        }
     }
 
     public abstract bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);

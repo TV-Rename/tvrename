@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using NLog;
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
@@ -14,6 +16,8 @@ namespace TVRename;
 
 public class PreviouslySeenEpisodes : List<int>
 {
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
     public PreviouslySeenEpisodes()
     {
     }
@@ -27,7 +31,14 @@ public class PreviouslySeenEpisodes : List<int>
 
         foreach (XElement n in xml.Descendants("Episode"))
         {
-            EnsureAdded(XmlConvert.ToInt32(n.Value));
+            try
+            {
+                EnsureAdded(XmlConvert.ToInt32(n.Value));
+            }
+            catch (OverflowException ex)
+            {
+                Logger.Fatal($"Could not add episode Id {n.Value} to previouslyseenepisodes",ex);
+            }
         }
     }
 

@@ -133,6 +133,10 @@ public class ActionUnArchive : ActionFileOperation
         {
             return new ActionOutcome(e);
         }
+        catch (UnauthorizedAccessException e)
+        {
+            return new ActionOutcome(e);
+        }
     }
     private static IArchive GetArchive(FileInfo archive)
     {

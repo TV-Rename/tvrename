@@ -44,11 +44,12 @@ public static class API
         catch (JsonReaderException jre)
         {
             Logger.Error($"{errorMessage} due to {jre.Message}");
-            throw new SourceConsistencyException(jre.Message,TVDoc.ProviderType.libraryDefault);
+            throw new SourceConsistencyException(jre.Message,TVDoc.ProviderType.libraryDefault,jre);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             Logger.LogHttpRequestException(errorMessage, wex);
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage,wex);
         }
         catch (System.Threading.Tasks.TaskCanceledException ex)
@@ -59,6 +60,7 @@ public static class API
         catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
         {
             Logger.Warn($"{errorMessage} due to {ex.Message}");
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage, ex);
         }
     }

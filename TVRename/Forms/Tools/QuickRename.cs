@@ -184,7 +184,7 @@ public partial class QuickRename : Form, IDialogParent
                 FileFinder.CopySubsFolders(mDoc.TheActionList, mDoc);
             }
         }
-        catch (ShowConfiguration.EpisodeNotFoundException)
+        catch (EpisodeNotFoundException)
         {
             Logger.Info(
                 $"Can't rename file for {bestShow.ShowName} for {droppedFile.FullName}, as it does not have Episode {episodeNum} for Season {seasonNum}.");

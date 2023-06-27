@@ -5,8 +5,13 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using Alphaleonis.Win32.Filesystem;
+
 using System;
+using NLog;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename;
 
@@ -21,15 +26,50 @@ public static class PathManager
     private const string STATE_FILE_NAME = "State.xml";
 
     private static string? UserDefinedBasePath;
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    public static FileInfo[] GetPossibleSettingsHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(SETTINGS_FILE_NAME + "*");
+    public static FileInfo[] GetPossibleSettingsHistory() => GetPatternFiles(SETTINGS_FILE_NAME);
+    public static FileInfo[] GetPossibleTvdbHistory() => GetPatternFiles(TVDB_FILE_NAME);
+    public static FileInfo[] GetPossibleTvMazeHistory() => GetPatternFiles(TVMAZE_FILE_NAME);
+    public static FileInfo[] GetPossibleTmdbHistory() => GetPatternFiles(TMDB_FILE_NAME);
+    public static FileInfo StateFile => GetFileInfo(STATE_FILE_NAME);
+    public static FileInfo StatisticsFile => GetFileInfo(STATISTICS_FILE_NAME);
+    // ReSharper disable once InconsistentNaming
+    public static FileInfo UILayoutFile => GetFileInfo(UI_LAYOUT_FILE_NAME);
+    // ReSharper disable once InconsistentNaming
+    public static FileInfo TVDBFile => GetFileInfo(TVDB_FILE_NAME);
+    // ReSharper disable once InconsistentNaming
+    public static FileInfo TVmazeFile => GetFileInfo(TVMAZE_FILE_NAME);
+    public static FileInfo TmdbFile => GetFileInfo(TMDB_FILE_NAME);
+    // ReSharper disable once InconsistentNaming
+    public static FileInfo TVDocSettingsFile => GetFileInfo(SETTINGS_FILE_NAME);
+    public static string CefCachePath()
+        => TvRenameFolder("cache");
+    public static string CefLogFile()
+        => Path.Combine(TvRenameFolder("log"), "cef-debug.log");
+    public static string AuditLogFile(string postfix)
+        => Path.Combine(TvRenameFolder("audit"), $"Updates{postfix}.json");
 
-    public static FileInfo[] GetPossibleTvdbHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(TVDB_FILE_NAME + "*");
+    private static FileInfo[] GetPatternFiles(string pattern)
+    {
+        try
+        {
+            return new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(pattern + "*");
+        }
+        catch (System.IO.IOException ex)
+        {
+            Logger.Warn(ex, $"Cannot access {pattern} files from directory {TVDocSettingsFile.FullName}");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Logger.Warn(ex, $"Cannot access {pattern} files from directory {TVDocSettingsFile.FullName}");
+        }
 
-    public static FileInfo[] GetPossibleTvMazeHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(TVMAZE_FILE_NAME + "*");
+        return Array.Empty<FileInfo>();
+    }
 
-    public static FileInfo[] GetPossibleTmdbHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(TMDB_FILE_NAME + "*");
-
+    /// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/></exception>
+    /// <exception cref="ArgumentException">Condition.</exception>
     public static void SetUserDefinedBasePath(string path)
     {
         if (string.IsNullOrEmpty(path))
@@ -58,49 +98,28 @@ public static class PathManager
         Directory.CreateDirectory(path);
         return new FileInfo(System.IO.Path.Combine(path, file));
     }
-
-    public static FileInfo StateFile => GetFileInfo(STATE_FILE_NAME);
-
-    public static FileInfo StatisticsFile => GetFileInfo(STATISTICS_FILE_NAME);
-
-    // ReSharper disable once InconsistentNaming
-    public static FileInfo UILayoutFile => GetFileInfo(UI_LAYOUT_FILE_NAME);
-
-    // ReSharper disable once InconsistentNaming
-    public static FileInfo TVDBFile => GetFileInfo(TVDB_FILE_NAME);
-
-    // ReSharper disable once InconsistentNaming
-    public static FileInfo TVmazeFile => GetFileInfo(TVMAZE_FILE_NAME);
-
-    public static FileInfo TmdbFile => GetFileInfo(TMDB_FILE_NAME);
-
-    // ReSharper disable once InconsistentNaming
-    public static FileInfo TVDocSettingsFile => GetFileInfo(SETTINGS_FILE_NAME);
-
-    public static string CefCachePath
+    
+    private static string TvRenameFolder(string folderName)
     {
-        get
+        string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", folderName);
+
+        try
         {
-            {
-                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "cache");
-                Directory.CreateDirectory(path);
-                return path;
-            }
-        }
-    }
-    public static string CefLogFile
-    {
-        get
-        {
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "log");
             Directory.CreateDirectory(path);
-            return Path.Combine(path, "cef-debug.log");
         }
-    }
-    public static string AuditLogFile(string postfix)
-    {
-        string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "audit");
-        Directory.CreateDirectory(path);
-        return Path.Combine(path, $"Updates{postfix}.json");
+        catch (System.IO.DirectoryNotFoundException ex)
+        {
+            Logger.Warn(ex, $"Could not create {path}");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Logger.Warn(ex, $"Could not create {path}");
+        }
+        catch (System.IO.IOException ex)
+        {
+            Logger.Warn(ex, $"Could not create {path}");
+        }
+
+        return path;
     }
 }

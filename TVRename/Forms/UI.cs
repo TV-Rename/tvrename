@@ -5376,7 +5376,18 @@ public partial class UI : Form, IDialogParent
         }
 
         Logger.Info($"BETA Update Checker: Testing: {config.Name} ({config.Id()}) since {timeSince.Value.FromUnixTime().ToLocalTime()} ({timeSince}), last update was {config.CachedData?.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({config.CachedData?.SrvLastUpdated})");
-        TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSince(config.Id(), timeSince.Value);
+        try
+        {
+            TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSince(config.Id(), timeSince.Value);
+        }
+        catch (SourceConnectivityException ex)
+        {
+            Logger.Warn(ex);
+        }
+        catch (SourceConsistencyException ex)
+        {
+            Logger.Error(ex);
+        }
     }
 
     private void requestANewFeatureToolStripMenuItem_Click(object sender, EventArgs e)

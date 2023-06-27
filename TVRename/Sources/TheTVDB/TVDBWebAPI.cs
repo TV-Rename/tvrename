@@ -18,8 +18,6 @@ public static class TvdbWebApi
     #region Login
     // ReSharper disable once InconsistentNaming
     private static readonly TokenProvider TokenProvider = new();
-    internal static bool IsConnected { get; set; }
-
     private static void Login(bool forceReconnect)
     {
         if (forceReconnect)
@@ -30,13 +28,13 @@ public static class TvdbWebApi
     }
 
     // ReSharper disable once InconsistentNaming
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     public static bool TVDBLogin()
     {
         const string ERROR_MESSAGE = "Failed to obtain token from TVDB";
         try
         {
-            TvdbWebApi.Login(false);
-            TvdbWebApi.IsConnected = true;
+            Login(false);
             return true;
         }
         catch (WebException ex)
@@ -52,6 +50,7 @@ public static class TvdbWebApi
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             Logger.LogHttpRequestException(ERROR_MESSAGE, wex);
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(ERROR_MESSAGE, wex);
         }
         catch (IOException ex)
@@ -60,13 +59,14 @@ public static class TvdbWebApi
             throw new SourceConnectivityException(ERROR_MESSAGE, ex);
         }
     }
+
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     public static bool ReConnect()
     {
         const string ERROR_MESSAGE = "Failed to renew token from TVDB";
         try
         {
-            TvdbWebApi.Login(true);
-            TvdbWebApi.IsConnected = true;
+            Login(true);
             return true;
         }
         catch (WebException ex)
@@ -82,6 +82,7 @@ public static class TvdbWebApi
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             Logger.LogHttpRequestException(ERROR_MESSAGE, wex);
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(ERROR_MESSAGE, wex);
         }
         catch (IOException ex)
@@ -93,13 +94,18 @@ public static class TvdbWebApi
     #endregion
 
     #region DB access
+
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
+    // ReSharper disable once UnusedMember.Local
     private static JObject GetUrlWithErrorHandling(ISeriesSpecifier? code, string uri, Language language)
     {
         return HandleWebErrorsWithNotFoundFor(
             () => {
-                Logger.Trace($"   Downloading {uri} in {language.EnglishName} ({language.TVDBV4Code()}");
-                string message = $"Error obtaining {uri} in {language.EnglishName} ({language.TVDBV4Code()})";
-                return JsonHttpGetRequest(uri, null, TokenProvider, language.TVDBV4Code(), true)
+                Logger.Trace($"   Downloading {uri} in {language.EnglishName} ({language.TVDBCode()}");
+                string message = $"Error obtaining {uri} in {language.EnglishName} ({language.TVDBCode()})";
+                return JsonHttpGetRequest(uri, null, TokenProvider, language.TVDBCode(), true)
                        ?? throw new SourceConsistencyException(message, TVDoc.ProviderType.TheTVDB);
             },
             $"Error obtaining {code?.Media.PrettyPrint()} with id={code} Looking for {uri} (in {language}), but got an error:",
@@ -107,8 +113,27 @@ public static class TvdbWebApi
             $"{code?.Media.PrettyPrint()} with TVDB Id {code} is no longer found on TVDB. ({uri}) Please Update"
         );
     }
+
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    private static JObject GetUrl(string uri, Language language)
+    {
+        return HandleWebErrorsFor(
+            () => {
+                Logger.Trace($"   Downloading {uri} in {language.EnglishName} ({language.TVDBCode()}");
+                string message = $"Error obtaining {uri} in {language.EnglishName} ({language.TVDBCode()})";
+
+                return JsonHttpGetRequest(uri, null, TokenProvider, language.TVDBCode(), true)
+                       ?? throw new SourceConsistencyException(message, TVDoc.ProviderType.TheTVDB);
+            },
+            $"Error obtaining {uri} (in {language}), but got an error:"
+        );
+    }
+
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="WebException">Regular WebExceptions</exception>
     private static JObject GetUrl(string uri, Language language,string errorMessage)
-    => JsonHttpGetRequest(uri, null, TokenProvider, language.TVDBV4Code(), true)
+    => JsonHttpGetRequest(uri, null, TokenProvider, language.TVDBCode(), true)
        ?? throw new SourceConsistencyException(errorMessage, TVDoc.ProviderType.TheTVDB);
     private static JObject? JsonHttpGetRequest(string url, Dictionary<string, string?>? parameters, TokenProvider? authToken, bool retry) =>
         JsonHttpGetRequest(url, parameters, authToken, string.Empty, retry);
@@ -148,6 +173,9 @@ public static class TvdbWebApi
     }
     private static string HttpRequest(string method, string url, string contentType, TokenProvider? authToken, string lang)
         => HttpHelper.HttpRequest(method, url, null, contentType, authToken?.GetToken(), lang);
+
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     private static T HandleWebErrorsFor<T>(Func<T> webCall, string errorMessage)
     {
         try
@@ -167,6 +195,7 @@ public static class TvdbWebApi
         catch (AggregateException ex) when (ex.InnerException is WebException wex)
         {
             Logger.LogWebException($"Error {errorMessage}:", wex);
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage + " - " + wex.LoggableDetails(), wex);
         }
         catch (HttpRequestException ex)
@@ -177,6 +206,7 @@ public static class TvdbWebApi
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             Logger.LogHttpRequestException($"Error {errorMessage}:", wex);
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage + " - " + wex.LoggableDetails(), wex);
         }
         catch (TaskCanceledException ex)
@@ -187,9 +217,14 @@ public static class TvdbWebApi
         catch (AggregateException ex) when (ex.InnerException is TaskCanceledException wex)
         {
             Logger.LogTaskCanceledException($"Error {errorMessage}:", wex);
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage + "- " + wex.LoggableDetails(), wex);
         }
     }
+
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private static T HandleWebErrorsWithNotFoundFor<T>(Func<T> webCall, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage)
     {
         try
@@ -209,6 +244,7 @@ public static class TvdbWebApi
         catch (AggregateException ex) when (ex.InnerException is TaskCanceledException wex)
         {
             Logger.LogTaskCanceledException($"Error {errorMessage}:", wex);
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage + "- " + wex.LoggableDetails(), wex);
         }
         catch (WebException ex)
@@ -228,7 +264,7 @@ public static class TvdbWebApi
             ProcessHttpRequestException(wex, errorMessage, code, notFoundMessage);
         }
 
-        throw new Exception();//should never happen - just to appease compiler
+        throw new SourceConnectivityException("Failed to execute");//should never happen - just to appease compiler
 
         static void ProcessWebException(WebException ex, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage)
         {
@@ -313,20 +349,27 @@ public static class TvdbWebApi
     #endregion
 
     #region Simple Queries
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     internal static JObject DownloadMovieTranslations(ISeriesSpecifier code, Language language)
     {
-        string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/translations/{language.TVDBV4Code()}";
+        string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/translations/{language.TVDBCode()}";
         string errorMessage = $"obtaining translations for {code} in {language.EnglishName}";
 
         return HandleWebErrorsFor(() => GetUrl( uri, language, errorMessage),errorMessage);
     }
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     internal static JObject DownloadSeriesTranslations(ISeriesSpecifier code, Language language)
     {
-        string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/translations/{language.TVDBV4Code()}";
+        string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/translations/{language.TVDBCode()}";
         string errorMessage = $"obtaining translations for {code.TvdbId} in {language.EnglishName}";
 
         return HandleWebErrorsFor(() => GetUrl(uri, language, errorMessage), errorMessage);
     }
+
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     internal static JObject? DownloadEpisode(string showName, int episodeId, Language language)
     {
         string errorMessage = $"Error obtaining {showName} episode[{episodeId}]:";
@@ -338,12 +381,17 @@ public static class TvdbWebApi
             errorMessage);
     }
     // ReSharper disable once UnusedMember.Local
+
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     internal static JObject ImageTypes()
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/artwork/types";
-        return GetUrlWithErrorHandling(null, uri, Languages.Instance.FallbackLanguage);
+        return GetUrl( uri, Languages.Instance.FallbackLanguage);
     }
     // ReSharper disable once UnusedMember.Local
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     internal static JObject GetSeason(ISeriesSpecifier code, Language language, int seasonId)
     {
         string errorMessage = $"Error obtaining season {seasonId} in {language.EnglishName} episodes for [{code}]:";
@@ -351,6 +399,9 @@ public static class TvdbWebApi
 
         return HandleWebErrorsFor(() => GetUrl(uri, language, errorMessage), errorMessage);
     }
+
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     internal static JObject GetSeriesEpisodesOfType(ISeriesSpecifier code, Language language, ProcessedSeason.SeasonType type)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/episodes/{type.PrettyPrint()}";
@@ -358,20 +409,28 @@ public static class TvdbWebApi
 
         return HandleWebErrorsFor(() => GetUrl(uri, language, errorMessage), errorMessage);
     }
+
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     internal static JObject GetSeasonEpisodes(ISeriesSpecifier code, Language language, int seasonId)
     {
-        string errorMessage = $"Error obtaining episodes for [{code}] in {language.TVDBV4Code()} for season [{seasonId}]:";
+        string errorMessage = $"Error obtaining episodes for [{code}] in {language.TVDBCode()} for season [{seasonId}]:";
         string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
 
         return HandleWebErrorsFor(() => GetUrl(uri, language, errorMessage), errorMessage);
     }
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     internal static JObject GetEpisodeTranslations(ISeriesSpecifier code, Language language, int episodeId)
     {
         string errorMessage = $"Error obtaining episode [{episodeId}] for [{code}] in {language.EnglishName}:";
-        string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}/translations/{language.TVDBV4Code()}";
+        string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}/translations/{language.TVDBCode()}";
 
         return HandleWebErrorsFor(() => GetUrl(uri, language, errorMessage), errorMessage);
     }
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     internal static JObject DownloadMovie(ISeriesSpecifier code, Language language)
     {
         string errorMessage = $"Error obtaining movie {code} in {language.EnglishName}:";
@@ -380,6 +439,9 @@ public static class TvdbWebApi
 
         return HandleWebErrorsWithNotFoundFor(() => GetUrl(uri, language,errorMessage), errorMessage, code, notFoundMessage);
     }
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
+    /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     internal static JObject DownloadSeries(ISeriesSpecifier code, Language language)
     {
         string errorMessage = $"Error obtaining TV series {code} in {language.EnglishName}:";
@@ -388,6 +450,9 @@ public static class TvdbWebApi
 
         return HandleWebErrorsWithNotFoundFor(() => GetUrl(uri, language, errorMessage), errorMessage, code, notFoundMessage);
     }
+
+    /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     internal static JObject? GetUpdates(long updateFromEpochTime, int pageNumber)
     {
         string errorMessage = $"Error obtaining lastupdated query since (local) {updateFromEpochTime}:{pageNumber}";
@@ -401,17 +466,18 @@ public static class TvdbWebApi
     #endregion
 
     #region Custom Search Query
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     internal static JObject? SearchResponse(string text, MediaConfiguration.MediaType type, Language language)
     {
         //This is separate from the main queries as we want to handle 404s differently
 
         string errorMessage = $"Error obtaining results for search term '{text}':";
-        string notFoundMessage = $"Could not find any search results for {text} in {language.TVDBV4Code()}";
+        string notFoundMessage = $"Could not find any search results for {text} in {language.TVDBCode()}";
         string uri = $"{TokenProvider.TVDB_API_URL}/search";
 
         try
         {
-            return JsonHttpGetRequest(uri,GenerateParmeters(text,type),TokenProvider,language.TVDBV4Code(), true);
+            return JsonHttpGetRequest(uri,GenerateParmeters(text,type),TokenProvider,language.TVDBCode(), true);
         }
         catch (WebException ex)
         {
@@ -462,6 +528,7 @@ public static class TvdbWebApi
         catch (AggregateException ex) when (ex.InnerException is TaskCanceledException wex)
         {
             Logger.LogTaskCanceledException($"Error {errorMessage}:", wex);
+            // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage + "- " + wex.LoggableDetails(), wex);
         }
         return null;
@@ -477,6 +544,5 @@ public static class TvdbWebApi
             };
         }
     }
-
     #endregion
 }

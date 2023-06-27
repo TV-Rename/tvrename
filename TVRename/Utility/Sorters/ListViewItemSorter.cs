@@ -20,6 +20,7 @@ public abstract class ListViewItemSorter : IComparer
         Col = column;
     }
 
+    /// <exception cref="InvalidOperationException">Condition.</exception>
     public int Compare(object? x, object? y)
     {
         if (x is not ListViewItem lvix)

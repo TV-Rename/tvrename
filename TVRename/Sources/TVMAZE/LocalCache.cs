@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System;
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,6 +72,8 @@ public class LocalCache : MediaCache, iTVSource
         }
     }
 
+    /// <exception cref="SourceConsistencyException">Condition.</exception>
+    /// <exception cref="MediaNotFoundException">Condition.</exception>
     public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
     {
         if (s.Provider != TVDoc.ProviderType.TVmaze)
@@ -184,6 +187,12 @@ public class LocalCache : MediaCache, iTVSource
             LOGGER.Warn(LastErrorMessage);
             return false;
         }
+        catch (OverflowException ex)
+        {
+            LastErrorMessage = $"Error with the format of the TV Maze updates json: {ex.Message}";
+            LOGGER.Warn(LastErrorMessage);
+            return false;
+        }
     }
 
     public void UpdatesDoneOk()
@@ -191,6 +200,8 @@ public class LocalCache : MediaCache, iTVSource
         //No Need to do anything as we always refresh from scratch
     }
 
+    /// <exception cref="SourceConsistencyException">Condition.</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale)
     {
         Search(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
@@ -212,6 +223,8 @@ public class LocalCache : MediaCache, iTVSource
         };
     }
 
+    /// <exception cref="SourceConsistencyException">Condition.</exception>
+    /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type,
         Locale preferredLocale)
     {
@@ -245,6 +258,7 @@ public class LocalCache : MediaCache, iTVSource
         }
     }
 
+    /// <exception cref="SourceConsistencyException">Condition.</exception>
     public void AddOrUpdateEpisode(Episode e)
     {
         lock (SERIES_LOCK)

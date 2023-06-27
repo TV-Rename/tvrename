@@ -69,6 +69,8 @@ public static class UiHelpers
         showRightClickMenu.Items.Add(tss);
     }
 
+    /// <exception cref="ArgumentNullException"><paramref name="uiElement"/> is <see langword="null"/></exception>
+    /// <exception cref="ObjectDisposedException">Control is already disposed.</exception>
     public static void SafeInvoke(this Control uiElement, System.Action updater, bool forceSynchronous)
     {
         if (uiElement is null)
@@ -80,11 +82,11 @@ public static class UiHelpers
         {
             if (forceSynchronous)
             {
-                uiElement.Invoke((System.Action)delegate { SafeInvoke(uiElement, updater, true); });
+                uiElement.Invoke(delegate { SafeInvoke(uiElement, updater, true); });
             }
             else
             {
-                uiElement.BeginInvoke((System.Action)delegate { SafeInvoke(uiElement, updater, false); });
+                uiElement.BeginInvoke(delegate { SafeInvoke(uiElement, updater, false); });
             }
         }
         else
@@ -94,7 +96,14 @@ public static class UiHelpers
                 throw new ObjectDisposedException("Control is already disposed.");
             }
 
-            updater();
+            try
+            {
+                updater();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex,"Failed to Invoke");
+            }
         }
     }
 

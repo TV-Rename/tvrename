@@ -21,6 +21,7 @@ public class SearchSpecifier : ISeriesSpecifier
 
     public ProcessedSeason.SeasonType SeasonOrder => ProcessedSeason.SeasonType.aired; //Assume so
 
+    /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
     public void UpdateId(int id, TVDoc.ProviderType source)
     {
         switch (source)

@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using NLog;
 using System;
 using System.Linq;
 using System.Windows.Forms;
@@ -17,26 +18,33 @@ public partial class MovieFilters : Form
     private readonly TVDoc doc;
     private const string IS_NOT = "is not";
     private const string IS = "is";
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public MovieFilters(TVDoc doc)
     {
         this.doc = doc;
         InitializeComponent();
 
-        clbGenre.Items.AddRange(doc.FilmLibrary.GetGenres().Cast<object>().ToArray());
+        try
+        {
+            clbGenre.Items.AddRange(doc.FilmLibrary.GetGenres().Cast<object>().ToArray());
 
-        cmbNetwork.Items.Add(string.Empty);
-        cmbNetwork.Items.AddRange(doc.FilmLibrary.GetNetworks().Cast<object>().ToArray());
+            cmbNetwork.Items.Add(string.Empty);
+            cmbNetwork.Items.AddRange(doc.FilmLibrary.GetNetworks().Cast<object>().ToArray());
 
-        cmbShowStatus.Items.Add(string.Empty);
-        cmbShowStatus.Items.AddRange(doc.FilmLibrary.GetStatuses().Cast<object>().ToArray());
+            cmbShowStatus.Items.Add(string.Empty);
+            cmbShowStatus.Items.AddRange(doc.FilmLibrary.GetStatuses().Cast<object>().ToArray());
 
-        cmbRating.Items.Add(string.Empty);
-        cmbRating.Items.AddRange(doc.FilmLibrary.GetContentRatings().Cast<object>().ToArray());
+            cmbRating.Items.Add(string.Empty);
+            cmbRating.Items.AddRange(doc.FilmLibrary.GetContentRatings().Cast<object>().ToArray());
 
-        cmbYear.Items.Add(string.Empty);
-        cmbYear.Items.AddRange(doc.FilmLibrary.GetYears().Cast<object>().ToArray());
-
+            cmbYear.Items.Add(string.Empty);
+            cmbYear.Items.AddRange(doc.FilmLibrary.GetYears().Cast<object>().ToArray());
+        }
+        catch (InvalidCastException ex)
+        {
+            Logger.Error(ex);
+        }
         SetButtonStates();
     }
 

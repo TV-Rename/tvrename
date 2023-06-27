@@ -21,6 +21,7 @@ public class Searchers : List<SearchEngine>
 {
     public SearchEngine CurrentSearch { get; private set; }
 
+    /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
     public Searchers(MediaConfiguration.MediaType t)
     {
         switch (t)

@@ -352,7 +352,14 @@ public static class XmlHelper
                 return null;
             }
 
-            return XmlConvert.ToDateTime(textVersion, XmlDateTimeSerializationMode.Utc);
+            try
+            {
+                return XmlConvert.ToDateTime(textVersion, XmlDateTimeSerializationMode.Utc);
+            }
+            catch (NullReferenceException)
+            {
+                return null;
+            }
         }
         return null;
     }
@@ -416,6 +423,7 @@ public static class XmlHelper
 
     public static long ExtractLong(this XElement xmlSettings, string elementName, int defaultValue) => ExtractLong(xmlSettings, elementName) ?? defaultValue;
 
+    /// <exception cref="ArgumentException">T must be an enumerated type</exception>
     public static T? ExtractEnum<T>(this XElement xmlSettings, string elementName, T? defaultVal)
     {
         if (!typeof(T).IsEnum)
@@ -432,7 +440,14 @@ public static class XmlHelper
 
         if (typeof(T).IsEnumDefined(val))
         {
-            return (T)Enum.Parse(typeof(T), val.Value.ToString(), true);
+            try
+            {
+                return (T)Enum.Parse(typeof(T), val.Value.ToString(), true);
+            }
+            catch (OverflowException)
+            {
+                return defaultVal;
+            }
         }
         return defaultVal;
     }

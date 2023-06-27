@@ -50,9 +50,9 @@ public class CefWrapper
         {
             using CefSettings settings = new()
             {
-                CachePath = PathManager.CefCachePath,
-                UserDataPath = PathManager.CefCachePath,
-                LogFile = PathManager.CefLogFile
+                CachePath = PathManager.CefCachePath(),
+                UserDataPath = PathManager.CefCachePath(),
+                LogFile = PathManager.CefLogFile()
             };
 
             if (!Helpers.InDebug())
@@ -64,7 +64,7 @@ public class CefWrapper
         catch (System.IO.FileNotFoundException fex)
         {
             Logger.Error(fex,
-                $"Can't initialise CEF with settings {PathManager.CefCachePath}, {PathManager.CefLogFile}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");
+                $"Can't initialise CEF with settings {PathManager.CefCachePath()}, {PathManager.CefLogFile()}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");
 
             Logger.Error("C++ Version (Installers): " + Vc2015Installed().ToCsv());
             Logger.Error("C++ Version (Git Library): " + VcRuntime.GetInstalled(_ => true).Select(VersionToString).ToCsv());

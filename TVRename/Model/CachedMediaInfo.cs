@@ -275,6 +275,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
     public Locale TargetLocale => ActualLocale ?? new Locale();
     public abstract ProcessedSeason.SeasonType SeasonOrder { get; }
 
+    /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
     public void UpdateId(int id, TVDoc.ProviderType source)
     {
         switch (source)
@@ -362,6 +363,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
         writer.WriteEndElement(); //Genres
     }
 
+    /// <exception cref="SourceConsistencyException">Condition.</exception>
     protected void LoadCommonXml(XElement seriesXml)
     {
         //<Data>

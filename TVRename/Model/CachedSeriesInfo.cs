@@ -273,13 +273,14 @@ public class CachedSeriesInfo : CachedMediaInfo
         int.TryParse(siteRatingVotesString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRatingVotes);
     }
 
+    /// <exception cref="EpisodeNotFoundException">Condition.</exception>
     internal Episode GetEpisode(int epId)
     {
         if (sourceEpisodes.TryGetValue(epId, out Episode? returnValue))
         {
             return returnValue;
         }
-        throw new ShowConfiguration.EpisodeNotFoundException();
+        throw new EpisodeNotFoundException();
     }
 
     private void LoadJson(JObject bestLanguageR, JObject backupLanguageR)

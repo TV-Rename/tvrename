@@ -32,12 +32,18 @@ public class BTList : BTItem
 
     public override void Write(System.IO.Stream sw)
     {
-        sw.WriteByte((byte)'l');
-        foreach (BTItem i in Items)
+        try
         {
-            i.Write(sw);
+            sw.WriteByte((byte)'l');
+            foreach (BTItem i in Items)
+            {
+                i.Write(sw);
+            }
+            sw.WriteByte((byte)'e');
         }
-
-        sw.WriteByte((byte)'e');
+        catch (System.IO.IOException)
+        {
+            // TODO: Handle the System.IO.IOException
+        }
     }
 }

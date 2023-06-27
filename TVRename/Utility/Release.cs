@@ -25,6 +25,9 @@ public class Release
     public string Prerelease { get; }
     public string Build { get; }
 
+    /// <exception cref="ArgumentException">The provided version string is invalid.</exception>
+    /// <exception cref="RegexMatchTimeoutException">A time-out occurred. For more information about time-outs, see the Remarks section.</exception>
+    /// <exception cref="OverflowException">The version number cannot be parsed.</exception>
     public Release(string version, VersionType type)
     {
         if (string.IsNullOrWhiteSpace(version))

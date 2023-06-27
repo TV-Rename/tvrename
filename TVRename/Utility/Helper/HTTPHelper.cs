@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace TVRename;
 
@@ -18,6 +19,12 @@ public static class HttpHelper
     // HttpClient is intended to be instantiated once per application, rather than per-use.
     private static readonly HttpClient Client = new();
 
+    /// <exception cref="System.IO.DirectoryNotFoundException">The specified path is invalid, (for example, it is on an unmapped drive).</exception>
+    /// <exception cref="UnauthorizedAccessException"><paramref name="path" /> specified a directory.  
+    ///  -or-  
+    ///  The caller does not have the required permission.</exception>
+    /// <exception cref="System.IO.FileNotFoundException">The file specified in <paramref name="path" /> was not found.</exception>
+    /// <exception cref="System.IO.IOException">An I/O error occurred while opening the file.</exception>
     internal static MultipartFormDataContent AddFile(this MultipartFormDataContent @this,
         string name,
         string path,
@@ -112,6 +119,8 @@ public static class HttpHelper
         return HttpRequest(method, url, json, contentType, token, string.Empty);
     }
 
+    /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
+    /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     public static string HttpRequest(string method, string url, string? postContent,
         string? contentType, string? token, string? lang)
     {
@@ -250,6 +259,8 @@ public static class HttpHelper
 
     public static bool Is404(this HttpRequestException ex) => ex.StatusCode is HttpStatusCode.NotFound;
 
+    /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
+    /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     public static byte[] Download(string url)
     {
         using HttpClient wc = new();
@@ -317,12 +328,18 @@ public static class HttpHelper
         return s.ToString();
     }
 
+    /// <exception cref="JsonReaderException">Response is not valid JSON.</exception>
+    /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
+    /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
     public static JObject JsonHttpGetRequest(string url, string? authToken) =>
         JObject.Parse(HttpRequest("GET", url, null, "application/json", authToken, string.Empty));
 
+    /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
+    /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
     public static JArray JsonListHttpGetRequest(string url, string? authToken) =>
         JArray.Parse(HttpRequest("GET", url, null, "application/json", authToken, string.Empty));
 
+    /// <exception cref="JsonReaderException">Response is not valid JSON.</exception>
     public static JObject JsonHttpPostRequest(string url, JObject request, bool retry)
     {
         string? response = null;
@@ -362,6 +379,9 @@ public static class HttpHelper
         return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
     }
 
+    /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="operation"/> is <see langword="null"/></exception>
+    /// <exception cref="Exception">If we still get an Exception after all retries.</exception>
     public static void RetryOnException(int times, TimeSpan delay, string url, Func<Exception, bool> retryableException, System.Action operation, System.Action? updateOperation)
     {
         if (times <= 0)
@@ -406,6 +426,8 @@ public static class HttpHelper
         } while (true);
     }
 
+    /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="operation"/> is <see langword="null"/></exception>
     public static async Task RetryOnExceptionAsync<TException>(int times, TimeSpan delay, string url, Func<Task> operation) where TException : Exception
     {
         if (times <= 0)
@@ -442,6 +464,7 @@ public static class HttpHelper
         } while (true);
     }
 
+    /// <exception cref="Exception">If we still get an Exception after all retries.</exception>
     public static JObject HttpGetRequestWithRetry(string fullUrl, int times, int secondsGap)
     {
         JObject? response = null;
@@ -464,6 +487,9 @@ public static class HttpHelper
                                                   || (e is HttpRequestException hre && !hre.Is404())
                                                   || (e is AggregateException ae && ae.InnerException != null && ae.InnerException.IsRetryable());
 
+    /// <exception cref="Exception">If we still get an Exception after all retries.</exception>
+    /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
+    /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
     public static JArray HttpGetArrayRequestWithRetry(string fullUrl, int times, int secondsGap)
     {
         JArray? response = null;

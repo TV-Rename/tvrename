@@ -24,4 +24,12 @@ public class MediaNotFoundException : Exception
         ErrorProvider = errorProvider;
         SourceType = sourceType;
     }
+
+    public MediaNotFoundException(ISeriesSpecifier mc, string message, TVDoc.ProviderType showIdProvider, TVDoc.ProviderType errorProvider, MediaConfiguration.MediaType sourceType, Exception ex) :base (message,ex)
+    {
+        Media = mc;
+        ShowIdProvider = showIdProvider;
+        ErrorProvider = errorProvider;
+        SourceType = sourceType;
+    }
 }

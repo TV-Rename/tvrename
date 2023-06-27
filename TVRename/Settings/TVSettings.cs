@@ -1248,7 +1248,14 @@ public sealed class TVSettings
 
         public string DoReplace(string fn)
         {
-            return CaseInsensitive ? Regex.Replace(fn, Regex.Escape(This), Regex.Escape(That), RegexOptions.IgnoreCase) : fn.Replace(This, That);
+            try
+            {
+                return CaseInsensitive ? Regex.Replace(fn, Regex.Escape(This), Regex.Escape(That), RegexOptions.IgnoreCase) : fn.Replace(This, That);
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                return fn.Replace(This, That);
+            }
         }
     }
 

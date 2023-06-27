@@ -87,6 +87,7 @@ public class CustomEpisodeName
 
     public string NameFor(ProcessedEpisode pe) => NameFor(pe, string.Empty, 0);
 
+    /// <exception cref="System.IO.PathTooLongException">Condition.</exception>
     public string NameFor(ProcessedEpisode pe, string? extension, int folderNameLength)
     {
         const int MAX_LENGTH = 260;

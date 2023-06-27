@@ -1,12 +1,14 @@
-using Alphaleonis.Win32.Filesystem;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
 
@@ -240,7 +242,7 @@ public class qBitTorrent : IDownloadProvider
 
     public DownloadingFinder.DownloadApp Application => DownloadingFinder.DownloadApp.qBitTorrent;
 
-    public static void StartTorrent(string torrentFileName)
+    private static void StartTorrent(string torrentFileName)
     {
         if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
         {
@@ -284,6 +286,31 @@ public class qBitTorrent : IDownloadProvider
         {
             Logger.Warn(
                 $"Could not connect to {wex.Response?.ResponseUri} to download {torrentName}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.Message}");
+        }
+        catch (TaskCanceledException)
+        {
+            Logger.Warn(
+                $"Could not connect to {url} to download {torrentName}, Task was cancelled.");
+        }
+        catch (DirectoryNotFoundException ex)
+        {
+            Logger.Warn(ex, 
+                $"Could not connect to {url} to download {torrentName}, Could not find directory.");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Logger.Warn(ex,
+                $"Could not connect to {url} to download {torrentName}, Could not access directory.");
+        }
+        catch (FileNotFoundException ex)
+        {
+            Logger.Warn(ex,
+                $"Could not connect to {url} to download {torrentName}, Could not find file.");
+        }
+        catch (IOException ex)
+        {
+            Logger.Warn(ex,
+                $"Could not connect to {url} to download {torrentName}, Could not load file contents.");
         }
     }
 
@@ -332,6 +359,9 @@ public class qBitTorrent : IDownloadProvider
         }
     }
 
+    /// <exception cref="WebException">Condition.</exception>
+    /// <exception cref="HttpRequestException">Condition.</exception>
+    /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     public void RemoveCompletedDownload(TorrentEntry name)
     {
         if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))

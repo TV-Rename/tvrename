@@ -26,7 +26,14 @@ public static class FileOperationExtensions
         string args = $"/e, /select, {filename.InDoubleQuotes()}";
 
         ProcessStartInfo info = new() { FileName = "explorer", Arguments = args };
-        Process.Start(info);
+        try
+        {
+            Process.Start(info);
+        }
+        catch (Win32Exception ex)
+        {
+            Logger.Error(ex);
+        }
     }
 
     public static bool OpenUrlInBrowser(this string url) => OpenUrlInternal(url);

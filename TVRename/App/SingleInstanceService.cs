@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -26,15 +27,38 @@ internal class SingleInstanceService
 
     internal bool IsFirstInstance()
     {
-        if (Semaphore.TryOpenExisting(semaphoreName, out semaphore))
+        try
         {
+            if (Semaphore.TryOpenExisting(semaphoreName, out semaphore))
+            {
+                return false;
+            }
+            else
+            {
+                semaphore = new Semaphore(0, 1, semaphoreName);
+                Task.Run(ListenForArguments);
+                return true;
+            }
+        }
+        catch (IOException ex)
+        {
+            Log.Error(ex);
             return false;
         }
-        else
+        catch (UnauthorizedAccessException ex)
         {
-            semaphore = new Semaphore(0, 1, semaphoreName);
-            Task.Run(ListenForArguments);
-            return true;
+            Log.Error(ex);
+            return false;
+        }
+        catch (ArgumentException ex)
+        {
+            Log.Error(ex);
+            return false;
+        }
+        catch (WaitHandleCannotBeOpenedException ex)
+        {
+            Log.Error(ex);
+            return false;
         }
     }
 

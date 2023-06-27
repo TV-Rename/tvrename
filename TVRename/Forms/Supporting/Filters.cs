@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using NLog;
 
 namespace TVRename.Forms;
 
@@ -17,23 +18,30 @@ public partial class Filters : Form
     private readonly TVDoc doc;
     private const string IS_NOT = "is not";
     private const string IS = "is";
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public Filters(TVDoc doc)
     {
         this.doc = doc;
         InitializeComponent();
 
-        clbGenre.Items.AddRange(doc.TvLibrary.GetGenres().Cast<object>().ToArray());
+        try
+        {
+            clbGenre.Items.AddRange(doc.TvLibrary.GetGenres().Cast<object>().ToArray());
 
-        cmbNetwork.Items.Add(string.Empty);
-        cmbNetwork.Items.AddRange(doc.TvLibrary.GetNetworks().Cast<object>().ToArray());
+            cmbNetwork.Items.Add(string.Empty);
+            cmbNetwork.Items.AddRange(doc.TvLibrary.GetNetworks().Cast<object>().ToArray());
 
-        cmbShowStatus.Items.Add(string.Empty);
-        cmbShowStatus.Items.AddRange(doc.TvLibrary.GetStatuses().Cast<object>().ToArray());
+            cmbShowStatus.Items.Add(string.Empty);
+            cmbShowStatus.Items.AddRange(doc.TvLibrary.GetStatuses().Cast<object>().ToArray());
 
-        cmbRating.Items.Add(string.Empty);
-        cmbRating.Items.AddRange(doc.TvLibrary.GetContentRatings().Cast<object>().ToArray());
-
+            cmbRating.Items.Add(string.Empty);
+            cmbRating.Items.AddRange(doc.TvLibrary.GetContentRatings().Cast<object>().ToArray());
+        }
+        catch (InvalidCastException ex)
+        {
+            Logger.Error(ex);
+        }
         SetButtonStates();
     }
 

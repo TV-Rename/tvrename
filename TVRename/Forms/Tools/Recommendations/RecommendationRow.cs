@@ -11,6 +11,8 @@ public class RecommendationRow
     public readonly CachedMovieInfo? Movie;
     private readonly CachedMediaInfo? cachedMediaInfo;
     private readonly int trendingWeight, topWeight, relatedWeight, similarWeight, maxRelated, maxSimilar;
+
+    /// <exception cref="ArgumentOutOfRangeException">MediaType.</exception>
     public RecommendationRow(RecommendationResult x, MediaConfiguration.MediaType t, int trendingWeight, int topWeight, int relatedWeight, int similarWeight, int maxRelated, int maxSimilar)
     {
         result = x;

@@ -1,3 +1,4 @@
+using System;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -24,7 +25,7 @@ public class Crew
 
     public Crew(XElement r)
     {
-        Id = r.ExtractInt("Id") ?? throw new SourceConsistencyException("Error Extracting Id for Crew", TVDoc.ProviderType.TheTVDB);
+        Id = r.ExtractInt("Id") ?? throw new ArgumentException("Error Extracting Id for Crew");
         ImageUrl = r.ExtractString("Image");
         Name = r.ExtractString("Name");
         Job = r.ExtractString("Job");

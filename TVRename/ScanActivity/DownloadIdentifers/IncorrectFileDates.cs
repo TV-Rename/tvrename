@@ -42,6 +42,7 @@ internal sealed class IncorrectFileDates : DownloadIdentifier
         return new ItemList { new ActionDateTouchMedia(di, si, newUpdateTime) };
     }
 
+    /// <exception cref="System.IO.DirectoryNotFoundException">Condition.</exception>
     public override ItemList? ProcessMovie(MovieConfiguration movie, FileInfo file, bool forceRefresh)
     {
         DateTime? updateTime = movie.CachedMovie?.FirstAired;

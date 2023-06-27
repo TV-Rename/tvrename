@@ -34,7 +34,8 @@ public static class ScanHelper
                     return false;
 
                 default:
-                    throw new NotSupportedException($"result = {result} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
+                    Logger.Fatal($"result = {result} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
+                    return false;
             }
         }
         catch (System.IO.FileNotFoundException)
@@ -71,7 +72,8 @@ public static class ScanHelper
                     return false;
 
                 default:
-                    throw new NotSupportedException($"result = {result} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
+                    Logger.Fatal($"result = {result} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
+                    return false;
             }
         }
         catch (System.IO.FileNotFoundException)
