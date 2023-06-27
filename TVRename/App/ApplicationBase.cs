@@ -10,8 +10,6 @@ using System;
 using System.Windows.Forms;
 using TVRename.Forms;
 
-//using TVRename.Ipc;
-
 namespace TVRename.App;
 
 /// <summary>
@@ -227,8 +225,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
 
     private void SetupLogging()
     {
-        LogManager.Setup()
-            .SetupExtensions(e => e.RegisterAssembly("NLog.Targets.Syslog"));
+        LogManager.Setup().SetupExtensions(e => e.RegisterAssembly("NLog.Targets.Syslog"));
         //ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("Timber.io.NLog"));
 
         SetupPapertrailLogging();
@@ -302,7 +299,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         try
         {
             LoggingConfiguration config = LogManager.Configuration;
-            using SyslogTarget papertrail = new()
+            SyslogTarget papertrail = new()
             {
                 MessageCreation = { Facility = Facility.Local7 },
                 MessageSend =
