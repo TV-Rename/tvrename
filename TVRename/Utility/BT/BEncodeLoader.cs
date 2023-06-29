@@ -120,9 +120,11 @@ public class BEncodeLoader
     public BTFile? Load(string filename)
     {
         BTFile f = new();
+        System.IO.FileStream? sr = null;
+        
         try
         {
-            System.IO.FileStream sr = new (filename, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            sr = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read);
             while (sr.Position < sr.Length)
             {
                 f.Items.Add(ReadNext(sr));
@@ -140,7 +142,7 @@ public class BEncodeLoader
         }
         finally
         {
-            sr.Close();
+            sr?.Close();
         }
         return f;
     }
