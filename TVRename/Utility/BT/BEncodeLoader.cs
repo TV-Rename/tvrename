@@ -6,7 +6,7 @@ public class BEncodeLoader
 {
     private static BTItem ReadString(System.IO.Stream sr, long length)
     {
-        using System.IO.BinaryReader br = new(sr);
+        System.IO.BinaryReader br = new(sr);
         return new BTString { Data = br.ReadBytes((int)length) };
     }
 
@@ -120,11 +120,13 @@ public class BEncodeLoader
     public BTFile? Load(string filename)
     {
         BTFile f = new();
-
-        System.IO.FileStream sr;
         try
         {
-            sr = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            System.IO.FileStream sr = new (filename, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            while (sr.Position < sr.Length)
+            {
+                f.Items.Add(ReadNext(sr));
+            }
         }
         catch (System.IO.IOException e)
         {
@@ -136,14 +138,10 @@ public class BEncodeLoader
             Logger.Error(e);
             return null;
         }
-
-        while (sr.Position < sr.Length)
+        finally
         {
-            f.Items.Add(ReadNext(sr));
+            sr.Close();
         }
-
-        sr.Close();
-
         return f;
     }
 
