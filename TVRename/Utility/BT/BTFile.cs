@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace TVRename;
@@ -70,8 +71,8 @@ public class BTFile
 
     public BTDictionary GetDict()
     {
-        System.Diagnostics.Debug.Assert(Items.Count == 1);
-        System.Diagnostics.Debug.Assert(Items[0].Type == BTChunk.kDictionary);
+        Debug.Assert(Items.Count == 1);
+        Debug.Assert(Items[0].Type == BTChunk.kDictionary);
 
         // our first (and only) Item will be a dictionary of stuff
         return (BTDictionary)Items[0];

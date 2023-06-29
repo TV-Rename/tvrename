@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -42,7 +43,7 @@ public class BTDictionaryItem : BTItem
         }
     }
 
-    public override void Write(System.IO.Stream sw)
+    public override void Write(Stream sw)
     {
         new BTString(Key).Write(sw);
         Data.Write(sw);

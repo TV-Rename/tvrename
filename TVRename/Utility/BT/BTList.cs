@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -30,7 +31,7 @@ public class BTList : BTItem
         }
     }
 
-    public override void Write(System.IO.Stream sw)
+    public override void Write(Stream sw)
     {
         try
         {
@@ -41,7 +42,7 @@ public class BTList : BTItem
             }
             sw.WriteByte((byte)'e');
         }
-        catch (System.IO.IOException)
+        catch (IOException)
         {
             // TODO: Handle the System.IO.IOException
         }

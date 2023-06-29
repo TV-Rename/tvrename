@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -10,7 +12,7 @@ public class BTString : BTItem
 
     public BTString(string s) : base(BTChunk.kString)
     {
-        Data = System.Text.Encoding.UTF8.GetBytes(s);
+        Data = Encoding.UTF8.GetBytes(s);
     }
 
     public BTString() : base(BTChunk.kString)
@@ -20,7 +22,7 @@ public class BTString : BTItem
 
     public override string AsText() => "String=" + AsString();
 
-    public string AsString() => System.Text.Encoding.UTF8.GetString(Data);
+    public string AsString() => Encoding.UTF8.GetString(Data);
 
     public static string CharsToHex(byte[] data, int start, int n)
     {
@@ -41,11 +43,11 @@ public class BTString : BTItem
         tn.Add(n);
     }
 
-    public override void Write(System.IO.Stream sw)
+    public override void Write(Stream sw)
     {
         // Byte strings are encoded as follows: <string length encoded in base ten ASCII>:<string data>
 
-        byte[] len = System.Text.Encoding.ASCII.GetBytes(Data.Length.ToString());
+        byte[] len = Encoding.ASCII.GetBytes(Data.Length.ToString());
         sw.Write(len, 0, len.Length);
         sw.WriteByte((byte)':');
         sw.Write(Data, 0, Data.Length);

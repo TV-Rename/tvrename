@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -5,11 +6,11 @@ namespace TVRename;
 // ReSharper disable once InconsistentNaming
 public class BTError : BTItem
 {
-    public string Message;
+    public readonly string Message;
 
-    public BTError() : base(BTChunk.kError)
+    public BTError(string message) : base(BTChunk.kError)
     {
-        Message = string.Empty;
+        Message = message;
     }
 
     public override string AsText() => $"Error:{Message}";
@@ -20,7 +21,7 @@ public class BTError : BTItem
         tn.Add(n);
     }
 
-    public override void Write(System.IO.Stream sw)
+    public override void Write(Stream sw)
     {
     }
 }

@@ -1,3 +1,5 @@
+using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -5,12 +7,12 @@ namespace TVRename;
 // ReSharper disable once InconsistentNaming
 public class BTInteger : BTItem
 {
-    public long Value;
+    internal readonly long Value;
 
-    public BTInteger()
+    public BTInteger(long value)
         : base(BTChunk.kInteger)
     {
-        Value = 0;
+        Value = value;
     }
 
     public override string AsText() => "Integer=" + Value;
@@ -21,10 +23,10 @@ public class BTInteger : BTItem
         tn.Add(n);
     }
 
-    public override void Write(System.IO.Stream sw)
+    public override void Write(Stream sw)
     {
         sw.WriteByte((byte)'i');
-        byte[] b = System.Text.Encoding.ASCII.GetBytes(Value.ToString());
+        byte[] b = Encoding.ASCII.GetBytes(Value.ToString());
         sw.Write(b, 0, b.Length);
         sw.WriteByte((byte)'e');
     }

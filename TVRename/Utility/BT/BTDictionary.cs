@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -61,7 +62,7 @@ public class BTDictionary : BTItem
         return null;
     }
 
-    public override void Write(System.IO.Stream sw)
+    public override void Write(Stream sw)
     {
         sw.WriteByte((byte)'d');
         foreach (BTDictionaryItem i in Items)

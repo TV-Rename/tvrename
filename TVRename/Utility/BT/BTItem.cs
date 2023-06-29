@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -20,5 +21,5 @@ public abstract class BTItem
         tn.Add(n);
     }
 
-    public abstract void Write(System.IO.Stream sw);
+    public abstract void Write(Stream sw);
 }

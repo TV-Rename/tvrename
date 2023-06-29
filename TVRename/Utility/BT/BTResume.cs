@@ -1,7 +1,9 @@
-using Alphaleonis.Win32.Filesystem;
-using NLog;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using NLog;
+using File = Alphaleonis.Win32.Filesystem.File;
+using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename;
 
@@ -61,7 +63,6 @@ public class BTResume : BTCore
             return r;
         }
 
-        BEncodeLoader bel = new();
         foreach (BTDictionaryItem dictitem in resumeDat.GetDict().Items)
         {
             if (dictitem.Type != BTChunk.kDictionaryItem)
@@ -102,7 +103,7 @@ public class BTResume : BTCore
                 continue; // can't find it.  give up!
             }
 
-            BTFile? tor = bel.Load(torrentFile);
+            BTFile? tor = BEncodeLoader.Load(torrentFile);
 
             List<string>? a = tor?.AllFilesInTorrent();
             if (a is null)
@@ -160,7 +161,7 @@ public class BTResume : BTCore
             TorrentEntry te = new(torrentFile, saveTo, percent, completed, torrentFile);
             r.Add(te);
         }
-        catch (System.IO.PathTooLongException ptle)
+        catch (PathTooLongException ptle)
         {
             //this is not the file we are looking for
             Logger.Debug(ptle);
@@ -185,8 +186,7 @@ public class BTResume : BTCore
 
     public bool LoadResumeDat()
     {
-        BEncodeLoader bel = new();
-        resumeDat = bel.Load(resumeDatPath);
+        resumeDat = BEncodeLoader.Load(resumeDatPath);
         return resumeDat != null;
     }
 }

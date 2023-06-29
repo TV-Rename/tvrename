@@ -1,16 +1,29 @@
 using System;
+using System.IO;
+using NLog;
 
 namespace TVRename;
 
-public class BEncodeLoader
+public static class BEncodeLoader
 {
-    private static BTItem ReadString(System.IO.Stream sr, long length)
+    private static BTItem ReadString(this FileStream sr, long length)
     {
-        System.IO.BinaryReader br = new(sr);
-        return new BTString { Data = br.ReadBytes((int)length) };
+        return new BTString { Data = sr.ReadBytes(length) };
     }
 
-    private static BTItem ReadInt(System.IO.FileStream sr)
+    private static byte[] ReadBytes(this FileStream sr, long length)
+    {
+        byte[] arrfile = new byte[length];
+
+        for (int i = 0; i < arrfile.Length; i++)
+        {
+            arrfile[i] = Convert.ToByte(sr.ReadByte());
+        }
+
+        return arrfile;
+    }
+
+    private static BTItem ReadInt(this FileStream sr)
     {
         long r = 0;
         int c;
@@ -29,16 +42,10 @@ public class BEncodeLoader
             }
         }
 
-        if (neg)
-        {
-            r = -r;
-        }
-
-        BTInteger bti = new() { Value = r };
-        return bti;
+        return new BTInteger( neg ?  -r : r);
     }
 
-    private BTItem ReadDictionary(System.IO.FileStream sr)
+    private static BTItem ReadDictionary(this FileStream sr)
     {
         BTDictionary d = new();
         for (; ; )
@@ -51,7 +58,7 @@ public class BEncodeLoader
 
             if (next.Type != BTChunk.kString)
             {
-                return new BTError { Message = "Didn't get string as first of pair in dictionary" };
+                return new BTError( "Didn't get string as first of pair in dictionary" );
             }
 
             BTDictionaryItem di = new(((BTString)next).AsString(), ReadNext(sr));
@@ -59,12 +66,12 @@ public class BEncodeLoader
         }
     }
 
-    private BTItem ReadList(System.IO.FileStream sr)
+    private static BTItem ReadList(this FileStream sr)
     {
         BTList ll = new();
         for (; ; )
         {
-            BTItem next = ReadNext(sr);
+            BTItem next = sr.ReadNext();
             if (next.Type == BTChunk.kListOrDictionaryEnd)
             {
                 return ll;
@@ -74,7 +81,7 @@ public class BEncodeLoader
         }
     }
 
-    private BTItem ReadNext(System.IO.FileStream sr)
+    private static BTItem ReadNext(this FileStream sr)
     {
         if (sr.Length == sr.Position)
         {
@@ -84,53 +91,43 @@ public class BEncodeLoader
         // Read the next character from the stream to see what is next
 
         int c = sr.ReadByte();
-        switch (c)
+        return c switch
         {
-            case 'd':
-                return ReadDictionary(sr); // dictionary
-            case 'l':
-                return ReadList(sr); // list
-            case 'i':
-                return ReadInt(sr); // integer
-            case 'e':
-                return new BTListOrDictionaryEnd(); // end of list/dictionary/etc.
-            // digits mean it is a string of the specified length
-            case >= '0' and <= '9':
-                {
-                    string r = Convert.ToString(c - '0');
-                    while ((c = sr.ReadByte()) != ':')
-                    {
-                        r += Convert.ToString(c - '0');
-                    }
-
-                    return ReadString(sr, Convert.ToInt32(r));
-                }
-            default:
-                {
-                    BTError e = new()
-                    {
-                        Message = $"Error: unknown BEncode item type: {c}"
-                    };
-
-                    return e;
-                }
-        }
+            'd' => sr.ReadDictionary(), // dictionary
+            'l' => sr.ReadList(), // list
+            'i' => sr.ReadInt(), // integer
+            'e' => new BTListOrDictionaryEnd(), // end of list/dictionary/etc.
+            >= '0' and <= '9' => sr.ReadString(GetStringLength(sr, c)),// digits mean it is a string of the specified length
+            _ => new BTError($"Error: unknown BEncode item type: {c}")
+        };
     }
 
-    public BTFile? Load(string filename)
+    private static int GetStringLength(this FileStream sr, int c)
     {
-        BTFile f = new();
-        System.IO.FileStream? sr = null;
-        
+        //We have already read the first digit, so seed the return value with it
+        string r = Convert.ToString(c - '0');
+        while ((c = sr.ReadByte()) != ':')
+        {
+            r += Convert.ToString(c - '0');
+        }
+
+        return Convert.ToInt32(r);
+    }
+
+    public static BTFile? Load(string filename)
+    {
         try
         {
-            sr = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            BTFile f = new();
+            using FileStream sr = new(filename, FileMode.Open, FileAccess.Read);
             while (sr.Position < sr.Length)
             {
-                f.Items.Add(ReadNext(sr));
+                f.Items.Add(sr.ReadNext());
             }
+            sr.Close();
+            return f;
         }
-        catch (System.IO.IOException e)
+        catch (IOException e)
         {
             Logger.Warn(e.Message);
             return null;
@@ -140,12 +137,7 @@ public class BEncodeLoader
             Logger.Error(e);
             return null;
         }
-        finally
-        {
-            sr?.Close();
-        }
-        return f;
     }
 
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 }
