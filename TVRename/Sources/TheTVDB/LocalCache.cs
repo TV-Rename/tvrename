@@ -356,7 +356,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         catch (TooManyCallsException e)
         {
             string errorMessage = e.Message +
-                                  "The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {LatestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {LatestUpdateTime.ProposedServerUpdateDateTime()}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MAX_NUMBER_OF_CALLS} week blocks of updates, otherwise consider a 'Force Refresh All'";
+                                  $"The system will need to check again once this set of updates have been processed.{Environment.NewLine} Last Updated time was {LatestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {LatestUpdateTime.ProposedServerUpdateDateTime()}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting updates, otherwise consider a 'Force Refresh All'";
             LOGGER.Error(errorMessage);
             if (showConnectionIssues && Environment.UserInteractive)
             {
