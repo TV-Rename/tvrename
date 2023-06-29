@@ -1,6 +1,3 @@
-using System.IO;
-using System.Windows.Forms;
-
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
@@ -12,14 +9,4 @@ public abstract class BTItem
     {
         Type = type;
     }
-
-    public virtual string AsText() => $"Type ={Type}";
-
-    public virtual void Tree(TreeNodeCollection tn)
-    {
-        TreeNode n = new("BTItem:" + Type);
-        tn.Add(n);
-    }
-
-    public abstract void Write(Stream sw);
 }

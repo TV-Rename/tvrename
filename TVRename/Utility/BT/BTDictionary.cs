@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace TVRename;
 
@@ -15,36 +12,6 @@ public class BTDictionary : BTItem
         : base(BTChunk.kDictionary)
     {
         Items = new List<BTDictionaryItem>();
-    }
-
-    public override string AsText()
-    {
-        return "Dictionary=[" + Items.Select(x => x.AsText()).ToCsv() + "]";
-    }
-
-    public override void Tree(TreeNodeCollection tn)
-    {
-        TreeNode n = new("Dictionary");
-        tn.Add(n);
-        foreach (BTDictionaryItem t in Items)
-        {
-            t.Tree(n.Nodes);
-        }
-    }
-
-    // ReSharper disable once UnusedMethodReturnValue.Global
-    public bool RemoveItem(string key)
-    {
-        for (int i = 0; i < Items.Count; i++)
-        {
-            if (Items[i].Key == key)
-            {
-                Items.RemoveAt(i);
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public BTItem? GetItem(string key) => GetItem(key, false);
@@ -60,16 +27,5 @@ public class BTDictionary : BTItem
         }
 
         return null;
-    }
-
-    public override void Write(Stream sw)
-    {
-        sw.WriteByte((byte)'d');
-        foreach (BTDictionaryItem i in Items)
-        {
-            i.Write(sw);
-        }
-
-        sw.WriteByte((byte)'e');
     }
 }

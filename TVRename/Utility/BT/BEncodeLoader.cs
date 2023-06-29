@@ -8,7 +8,7 @@ public static class BEncodeLoader
 {
     private static BTItem ReadString(this FileStream sr, long length)
     {
-        return new BTString { Data = sr.ReadBytes(length) };
+        return new BTString(sr.ReadBytes(length) );
     }
 
     private static byte[] ReadBytes(this FileStream sr, long length)
