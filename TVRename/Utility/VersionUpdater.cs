@@ -22,7 +22,7 @@ public static class VersionUpdater
 
     public static async Task<ServerRelease?> CheckForUpdatesAsync()
     {
-        Release currentVersion;
+        Release? currentVersion = null;
 
         try
         {
@@ -31,19 +31,57 @@ public static class VersionUpdater
         catch (ArgumentException e)
         {
             Logger.Error(e, "Failed to establish if there are any new releases as could not parse internal version: " + Helpers.DisplayVersion);
-            return null;
         }
 
         (ServerRelease? latestVersion, ServerRelease? latestBetaVersion) = await GetLatestReleasesAsync().ConfigureAwait(false);
 
-        return TVSettings.Instance.mode switch
+        bool production = TVSettings.Instance.mode == TVSettings.BetaMode.ProductionOnly;
+
+        if (production)
         {
-            TVSettings.BetaMode.ProductionOnly when latestVersion?.NewerThan(currentVersion) ?? false =>
-                latestVersion,
-            TVSettings.BetaMode.BetaToo when latestBetaVersion?.NewerThan(currentVersion) ?? false =>
-                latestBetaVersion,
-            _ => null
-        };
+            if (currentVersion is null)
+            {
+                Logger.Warn("Internal version is missing, assuming we need to upgrade.");
+                return latestVersion ?? latestBetaVersion;
+            }
+            if (currentVersion.SameVersionAs(latestVersion))
+            {
+                return null;
+            }
+            if (latestVersion is null)
+            {
+                Logger.Warn("Cannot obtain the latest version from GitHub");
+                return null;
+            }
+
+            if (latestVersion.NewerThan(currentVersion))
+            {
+                return latestVersion;
+            }
+        }
+
+        if (!production)
+        {
+            if (currentVersion is null)
+            {
+                Logger.Warn("Internal version is missing, assuming we need to upgrade to latest beta.");
+                return latestBetaVersion ?? latestVersion;
+            }
+            if (currentVersion.SameVersionAs(latestBetaVersion))
+            {
+                return null;
+            }
+            if (latestBetaVersion is null)
+            {
+                Logger.Warn("Cannot obtain the latest beta version from GitHub");
+                return null;
+            }
+            if (latestBetaVersion.NewerThan(currentVersion))
+            {
+                return latestBetaVersion;
+            }
+        }
+        return null;
     }
 
     private static async Task<(ServerRelease? latestVersion, ServerRelease? latestBetaVersion)> GetLatestReleasesAsync()

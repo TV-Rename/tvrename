@@ -105,6 +105,10 @@ public class Release
 
     public bool NewerThan(Release? compare) => CompareTo(compare) > 0;
 
+    public bool OlderThan(Release? compare) => CompareTo(compare) < 0;
+
+    public bool SameVersionAs(Release? compare) => CompareTo(compare) == 0;
+
     public override string ToString()
     {
         StringBuilder sb = new();
