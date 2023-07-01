@@ -147,23 +147,23 @@ public class PossibleNewMovie : ISeriesSpecifier
         catch (MediaNotFoundException ex)
         {
             //not really an issue so we can continue
-            Logger.Warn($"Could not match the possible movie: {this}", ex);
+            Logger.Warn(ex,$"Could not match the possible movie: {this}");
         }
         catch (SourceConnectivityException ex)
         {
-            Logger.Warn($"Could not match the possible movie: {this}", ex);
+            Logger.Warn(ex, $"Could not match the possible movie: {this}");
         }
         catch (SourceConsistencyException ex)
         {
-            Logger.Error($"Could not match the possible movie: {this}", ex);
+            Logger.Error(ex, $"Could not match the possible movie: {this}");
         }
         catch (GeneralHttpException ex)
         {
-            Logger.Error($"Could not match the possible movie: {this}", ex);
+            Logger.Error(ex, $"Could not match the possible movie: {this}");
         }
         catch (AggregateException ex)
         {
-            Logger.Error($"Could not match the possible movie: {this}", ex);
+            Logger.Error(ex, $"Could not match the possible movie: {this}");
         }
     }
 

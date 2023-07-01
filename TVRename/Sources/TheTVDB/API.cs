@@ -441,14 +441,12 @@ public static class API
         }
         catch (InvalidCastException ex)
         {
-            Logger.Error("Did not receive the expected format of json from lastupdated query.");
-            Logger.Error(ex);
+            Logger.Error(ex,"Did not receive the expected format of json from lastupdated query.");
             Logger.Error(jToken.ToString());
         }
         catch (OverflowException ex)
         {
-            Logger.Error("Could not parse the json from lastupdated query.");
-            Logger.Error(ex);
+            Logger.Error(ex,"Could not parse the json from lastupdated query.");
             Logger.Error(jToken.ToString());
         }
 
@@ -1578,8 +1576,7 @@ public static class API
         }
         catch (InvalidCastException ex)
         {
-            Logger.Error("<TVDB ISSUE?>: Did not receive the expected format of json from search results.");
-            Logger.Error(ex);
+            Logger.Error(ex, "<TVDB ISSUE?>: Did not receive the expected format of json from search results.");
             Logger.Error(jToken.ToString());
         }
     }

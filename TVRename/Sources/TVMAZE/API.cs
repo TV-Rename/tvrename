@@ -40,7 +40,7 @@ internal static class API
         }
         catch (System.IO.IOException iex)
         {
-            Logger.Error(errorMessage, iex);
+            Logger.Error(iex, errorMessage);
             throw new SourceConnectivityException(errorMessage, iex);
         }
         catch (JsonReaderException jre)
