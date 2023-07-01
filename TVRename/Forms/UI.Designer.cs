@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using System;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 
@@ -37,7 +36,15 @@ namespace TVRename.Forms
             {
                 scanProgDlg.Dispose();
             }
-            base.Dispose(disposing);
+
+            try
+            {
+                base.Dispose(disposing);
+            }
+            catch (System.IO.FileNotFoundException ex)
+            {
+                Logger.Warn(ex);
+            }
         }
 
         #region Windows Form Designer generated code

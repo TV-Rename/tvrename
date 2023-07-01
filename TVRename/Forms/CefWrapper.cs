@@ -63,11 +63,11 @@ public class CefWrapper
         }
         catch (System.IO.FileNotFoundException fex)
         {
-            Logger.Error(fex,
+            Logger.Warn(fex,
                 $"Can't initialise CEF with settings {PathManager.CefCachePath()}, {PathManager.CefLogFile()}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");
 
-            Logger.Error("C++ Version (Installers): " + Vc2015Installed().ToCsv());
-            Logger.Error("C++ Version (Git Library): " + VcRuntime.GetInstalled(_ => true).Select(VersionToString).ToCsv());
+            Logger.Warn("C++ Version (Installers): " + Vc2015Installed().ToCsv());
+            Logger.Warn("C++ Version (Git Library): " + VcRuntime.GetInstalled(_ => true).Select(VersionToString).ToCsv());
             Logger.Warn("If C++ 2019 is not installed visit: https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-160 and install the latest appropriate version");
 
             MessageBox.Show("TV Rename needs Microsoft Visual C++ 2015-2019 Redistributable to be present. Downloading installer now.", "Missing Dependencies");
@@ -151,7 +151,7 @@ public class CefWrapper
         }
         catch (Exception a)
         {
-            Logger.Error(a, "Missing Cef Dependencies");
+            Logger.Warn(a, "Missing Cef Dependencies");
             if (showUi)
             {
                 MessageBox.Show("Dependencies missing - see log for more details", "Browser Capability Test");
