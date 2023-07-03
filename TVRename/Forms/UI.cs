@@ -5419,9 +5419,9 @@ public partial class UI : Form, IDialogParent
 
     public void ProcessReceivedArgs(string[] args)
     {
-        if (!IsHandleCreated)
+        if (!IsHandleCreated || IsDisposed)
         {
-            Logger.Warn($"Could not pass the parameters {args.ToCsv()} to the running instance as the handle for the window has not been created.");
+            Logger.Warn($"Could not pass the parameters {args.ToCsv()} to the running instance as the handle for the window has not been created (or is disposed).");
             return;
         }
         Invoke((MethodInvoker)delegate
