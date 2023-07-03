@@ -67,6 +67,7 @@ public class Languages : SafeList<Language>
         Add(new Language(152, "hi", "hin", "Hindi (India)", "हिन्दी", "hi-IN", true));
         Add(new Language(19, "hu", "hun", "Hungarian", "Magyar", "hu-HU", true));
         Add(new Language(161, "id", "ind", "Indonesian", "Bahasa Indonesia", "id-ID", true));
+        Add(new Language(998, "is", "isl", "Icelandic", "Icelandic", "is-IC", true));
         Add(new Language(15, "it", "ita", "Italian", "italiano", "it-IT", true));
         Add(new Language(25, "ja", "jpn", "Japanese", "日本語", "ja-JP", true));
         Add(new Language(168, "ka", "kat", "Georgian", "ქართული", "ka-GE", true));
