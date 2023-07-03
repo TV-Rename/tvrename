@@ -9,6 +9,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Net.Http;
 using System.Threading;
 
 namespace TVRename;
@@ -107,9 +108,11 @@ public class ActionDownloadImage : ActionDownload
                 theData = ConvertBytes(theData);
             }
 
-            System.IO.FileStream fs = new(destination.FullName, System.IO.FileMode.Create);
-            fs.Write(theData, 0, theData.Length);
-            fs.Close();
+            SaveDataToFile(destination, theData);
+        }
+        catch (HttpRequestException e)
+        {
+            return new ActionOutcome(e.Message);
         }
         catch (Exception e)
         {
@@ -117,6 +120,13 @@ public class ActionDownloadImage : ActionDownload
         }
 
         return ActionOutcome.Success();
+    }
+
+    private static void SaveDataToFile(FileInfo destination, byte[] theData)
+    {
+        using System.IO.FileStream fs = new(destination.FullName, System.IO.FileMode.Create);
+        fs.Write(theData, 0, theData.Length);
+        fs.Close();
     }
 
     private byte[] ConvertBytes(byte[] theData)

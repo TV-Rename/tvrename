@@ -180,7 +180,7 @@ public class ProcessedSeason
     public DateTime? LastAiredDate()
     {
         DateTime? returnValue = null;
-        foreach (DateTime? episodeAirDate in Episodes.Values.Select(a => a.FirstAired)
+        foreach (DateTime episodeAirDate in Episodes.Values.Select(a => a.FirstAired)
                      .Where(episodeAirDate => episodeAirDate.HasValue)
                      .Select(epis=> epis!.Value)
                      .Where(episodeAirDate =>
@@ -189,12 +189,12 @@ public class ProcessedSeason
             //If we don't have a best offer yet
             if (!returnValue.HasValue)
             {
-                returnValue = episodeAirDate.Value;
+                returnValue = episodeAirDate;
             }
             //else the currently tested date is better than the current value
-            else if (DateTime.Compare(episodeAirDate.Value, returnValue.Value) > 0)
+            else if (DateTime.Compare(episodeAirDate, returnValue.Value) > 0)
             {
-                returnValue = episodeAirDate.Value;
+                returnValue = episodeAirDate;
             }
         }
 

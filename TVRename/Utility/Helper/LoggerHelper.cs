@@ -1,7 +1,6 @@
 using NLog;
 using System.Diagnostics;
 using System.Reflection;
-using System.Threading;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -79,11 +78,11 @@ public static class LoggerHelper
             : str; //using the Regex when the string does not contain <brackets> returns an empty string.
 
         return s == ""
-            ? "'Emtpy'" //for log visibility we want to know if something it's empty.
+            ? "'Empty'" //for log visibility we want to know if something it's empty.
             : s;
     }
 
     public static string ThreadAndDateInfo =>
         //returns thread number and precise date and time.
-        "[" + Thread.CurrentThread.ManagedThreadId + " - " + DateTime.Now.ToString("dd/MM HH:mm:ss.ffffff") + "] ";
+        "[" + Environment.CurrentManagedThreadId + " - " + DateTime.Now.ToString("dd/MM HH:mm:ss.ffffff") + "] ";
 }

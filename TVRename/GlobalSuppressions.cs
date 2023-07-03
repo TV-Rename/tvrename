@@ -19,3 +19,5 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0074:Use compound assignment", Justification = "<Pending>", Scope = "member", Target = "~P:TVRename.TVmaze.LocalCache.Instance")]
 [assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>", Scope = "member", Target = "~M:TVRename.TheTVDB.TvdbWebApi.GetUrlWithErrorHandling(TVRename.ISeriesSpecifier,System.String,TVRename.Language)~Newtonsoft.Json.Linq.JObject")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "type", Target = "~T:TVRename.iTVSource")]
+[assembly: SuppressMessage("Style", "IDE0074:Use compound assignment", Justification = "<Pending>", Scope = "member", Target = "~P:TVRename.Languages.Instance")]
+[assembly: SuppressMessage("Style", "IDE0074:Use compound assignment", Justification = "<Pending>", Scope = "member", Target = "~P:TVRename.Regions.Instance")]

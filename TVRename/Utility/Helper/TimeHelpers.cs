@@ -14,17 +14,24 @@ public static class TimeHelpers
 
     private static NtpClock GetClock()
     {
+        if (ClockInstance is not null)
+        {
+            return ClockInstance;
+        }
+
+        if (AlreadyAlerted && TVSettings.Instance.OfflineMode)
+        {
+            return NtpClock.LocalFallback;
+        }
+
         try
         {
-            if (ClockInstance is null)
+            Logger.Info($"Connected to NTP Server at UTC (based on local clock) {DateTime.UtcNow}");
+            ClockInstance = NtpClient.Default.Query();
+            Logger.Info($"Finished connecting to NTP Server at UTC (based on local clock) {DateTime.UtcNow} - Offset = {ClockInstance.CorrectionOffset}");
+            if (ClockInstance.CorrectionOffset > 20.Seconds())
             {
-                Logger.Info($"Connected to NTP Server at UTC (based on local clock) {DateTime.UtcNow}");
-                ClockInstance = NtpClient.Default.Query();
-                Logger.Info($"Finished connecting to NTP Server at UTC (based on local clock) {DateTime.UtcNow} - Offset = {ClockInstance.CorrectionOffset}");
-                if (ClockInstance.CorrectionOffset > 20.Seconds())
-                {
-                    Logger.Warn($"Discrepancy for systemtime of {DateTime.UtcNow} to {ClockInstance.UtcNow.UtcDateTime}");
-                }
+                Logger.Warn($"Discrepancy for systemtime of {DateTime.UtcNow} to {ClockInstance.UtcNow.UtcDateTime}");
             }
             return ClockInstance;
         }
