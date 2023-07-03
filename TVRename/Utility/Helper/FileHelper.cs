@@ -461,7 +461,7 @@ public static class FileHelper
         catch (PlatformNotSupportedException pe)
         {
             Logger.Error(
-                $"Unable to use shell to access file as part of {operation} for {movieFile.FullName}. Platform is not supported: {pe.Message}");
+                $"Unable to use shell to access file as part of {operation} for {movieFile.FullName}. Platform is not supported: {pe.ErrorText()}");
         }
 
         MediaInfoWrapper mw = new(movieFile.FullName, Logger.AsILogger());
@@ -724,7 +724,7 @@ public static class FileHelper
         }
         catch (System.IO.IOException i)
         {
-            Logger.Warn($"Could not find {folderName} as we got a OperationCanceledException: {i.Message}");
+            Logger.Warn($"Could not find {folderName} as we got a IOException: {i.ErrorText()}");
         }
     }
 

@@ -63,7 +63,7 @@ internal static class CachePersistor
         }
         catch (Exception e)
         {
-            Logger.Error($"Complete failure to save {cacheFile.FullName}. {e.Message}");
+            Logger.Error($"Complete failure to save {cacheFile.FullName}. {e.ErrorText()}");
             //todo - put up user box to ask them to fix disk if out of space
         }
     }
@@ -233,7 +233,7 @@ internal static class CachePersistor
         {
             string message = "Error processing data from Cache (top level).";
             message += "\r\n" + x;
-            message += "\r\n" + e.Message;
+            message += "\r\n" + e.ErrorText();
 
             Logger.Error(message);
             Logger.Error(x.ToString());
@@ -311,7 +311,7 @@ internal static class CachePersistor
         {
             string message = "Error processing data from Cache (top level).";
             message += "\r\n" + x;
-            message += "\r\n" + e.Message;
+            message += "\r\n" + e.ErrorText();
 
             Logger.Error(message);
             Logger.Error(x.ToString());

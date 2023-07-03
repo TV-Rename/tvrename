@@ -68,7 +68,7 @@ public abstract class ScanActivity
         }
         catch (TaskCanceledException sce)
         {
-            LOGGER.Warn($"Failed to run Scan for {CheckName()} : {sce.Message}");
+            LOGGER.Warn($"Failed to run Scan for {CheckName()} : {sce.ErrorText()}");
         }
         catch (Exception e)
         {

@@ -270,24 +270,24 @@ public static class HttpHelper
     public static string LoggableDetails(this System.IO.IOException ex)
     {
         StringBuilder s = new();
-        s.Append($"IOException obtained. {ex.Message}");
+        s.Append($"IOException obtained. {ex.ErrorText()}");
         if (ex.InnerException != null)
         {
-            s.Append($". Further details: {ex.InnerException.Message}");
+            s.Append($". Further details: {ex.InnerException.ErrorText()}");
         }
         return s.ToString();
     }
     public static string LoggableDetails(this TaskCanceledException ex)
     {
         return ex.InnerException != null
-            ? $"TaskCanceledException obtained. {ex.Message}. Further details: {ex.InnerException.Message}"
-            : $"TaskCanceledException obtained. {ex.Message}";
+            ? $"TaskCanceledException obtained. {ex.ErrorText()}. Further details: {ex.InnerException.Message}"
+            : $"TaskCanceledException obtained. {ex.ErrorText()}";
     }
 
     public static string LoggableDetails(this WebException ex)
     {
         StringBuilder s = new();
-        s.Append($"WebException {ex.Status} obtained. {ex.Message}");
+        s.Append($"WebException {ex.Status} obtained. {ex.ErrorText()}");
         if (ex.Response == null)
         {
             s.Append(" with no response");
@@ -302,7 +302,7 @@ public static class HttpHelper
         }
         if (ex.InnerException != null)
         {
-            s.Append($". Further details: {ex.InnerException.Message}");
+            s.Append($". Further details: {ex.InnerException.ErrorText()}");
         }
         return s.ToString();
     }
@@ -310,7 +310,7 @@ public static class HttpHelper
     public static string LoggableDetails(this HttpRequestException ex)
     {
         StringBuilder s = new();
-        s.Append($"HttpRequestException obtained. {ex.Message}");
+        s.Append($"HttpRequestException obtained. {ex.ErrorText()}");
         {
             s.Append($" from {ex.TargetSite}");
         }
@@ -322,7 +322,7 @@ public static class HttpHelper
             }
             else
             {
-                s.Append($". Further details: {ex.InnerException.Message}");
+                s.Append($". Further details: {ex.InnerException.ErrorText()}");
             }
         }
         return s.ToString();
@@ -407,11 +407,11 @@ public static class HttpHelper
             {
                 if (attempts == times || !retryableException(ex))
                 {
-                    Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - cancelling: {ex.Message}");
+                    Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - cancelling: {ex.ErrorText()}");
                     throw;
                 }
 
-                Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
+                Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.ErrorText()}");
 
                 Task.Delay(delay).Wait();
                 try
@@ -420,7 +420,7 @@ public static class HttpHelper
                 }
                 catch (Exception refreshException)
                 {
-                    Logger.Error(refreshException,$"Could not complete the update operation: {refreshException.Message}");
+                    Logger.Error(refreshException,$"Could not complete the update operation: {refreshException.ErrorText()}");
                 }
             }
         } while (true);
@@ -453,11 +453,11 @@ public static class HttpHelper
             {
                 if (attempts == times)
                 {
-                    Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - cancelling: {ex.Message}");
+                    Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - cancelling: {ex.ErrorText()}");
                     throw;
                 }
 
-                Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
+                Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.ErrorText()}");
 
                 await Task.Delay(delay).ConfigureAwait(false);
             }

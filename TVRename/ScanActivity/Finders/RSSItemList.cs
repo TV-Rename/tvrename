@@ -35,7 +35,7 @@ internal class RssItemList : List<RSSItem>
             }
             catch (InvalidOperationException ioe)
             {
-                Logger.Warn($"Could not download RSS page at:{url} Message was: {ioe.Message}");
+                Logger.Warn($"Could not download RSS page at:{url} Message was: {ioe.ErrorText()}");
                 return false;
             }
 
@@ -59,7 +59,7 @@ internal class RssItemList : List<RSSItem>
         }
         catch (XmlException e)
         {
-            Logger.Warn($"Could not parse RSS page at:{url} Message was: {e.Message}");
+            Logger.Warn($"Could not parse RSS page at:{url} Message was: {e.ErrorText()}");
             Logger.Info(response);
             return false;
         }

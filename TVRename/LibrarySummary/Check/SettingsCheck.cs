@@ -41,13 +41,13 @@ internal abstract class SettingsCheck
         {
             IsError = true;
             ErrorText = e.Message;
-            LOGGER.Warn($"Error occurred fixing {Explain()}, error was {e.Message} for {MediaName}");
+            LOGGER.Warn($"Error occurred fixing {Explain()}, error was {e.ErrorText()} for {MediaName}");
         }
         catch (Exception exception)
         {
             IsError = true;
             ErrorText = exception.Message;
-            LOGGER.Error(exception, $"Error occurred fixing {Explain()}, for {MediaName}, error was {exception.Message}");
+            LOGGER.Error(exception, $"Error occurred fixing {Explain()}, for {MediaName}, error was {exception.ErrorText()}");
         }
     }
 

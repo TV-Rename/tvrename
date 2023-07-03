@@ -63,7 +63,7 @@ public abstract class PostScanActivity : LongOperation
         }
         catch (System.Threading.Tasks.TaskCanceledException tce)
         {
-            LOGGER.Warn($"Failed to run Scan for {ActivityName()} : {tce.Message}");
+            LOGGER.Warn($"Failed to run Scan for {ActivityName()} : {tce.ErrorText()}");
         }
         catch (Exception e)
         {

@@ -156,7 +156,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
         }
         catch (ArgumentException a)
         {
-            LOGGER.Warn($"Could not determine whether {folderName} can be removed as we got as ArgumentException {a.Message}");
+            LOGGER.Warn($"Could not determine whether {folderName} can be removed as we got as ArgumentException {a.ErrorText()}");
         }
         catch (FileReadOnlyException)
         {
@@ -188,7 +188,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
         }
         catch (System.IO.IOException i)
         {
-            LOGGER.Warn($"Could not find {folderName} as we got a OperationCanceledException: {i.Message}");
+            LOGGER.Warn($"Could not find {folderName} as we got a OperationCanceledException: {i.ErrorText()}");
         }
 
         return false;

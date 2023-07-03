@@ -129,7 +129,7 @@ public static class BEncodeLoader
         }
         catch (IOException e)
         {
-            Logger.Warn(e.Message);
+            Logger.Warn(e.ErrorText());
             return null;
         }
         catch (Exception e)

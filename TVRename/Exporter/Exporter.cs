@@ -52,19 +52,19 @@ internal abstract class Exporter
         }
         catch (NotSupportedException e)
         {
-            LOGGER.Warn($"Output File must be a local file: {Location()} {e.Message}");
+            LOGGER.Warn($"Output File must be a local file: {Location()} {e.ErrorText()}");
         }
         catch (System.IO.DirectoryNotFoundException e)
         {
-            LOGGER.Warn($"Could not find File/Directory at: {Location()} {e.Message}");
+            LOGGER.Warn($"Could not find File/Directory at: {Location()} {e.ErrorText()}");
         }
         catch (UnauthorizedAccessException e)
         {
-            LOGGER.Warn($"Could not access File/Directory at: {Location()} {e.Message}");
+            LOGGER.Warn($"Could not access File/Directory at: {Location()} {e.ErrorText()}");
         }
         catch (System.IO.IOException e)
         {
-            LOGGER.Warn($"Could not access File/Directory at: {Location()} {e.Message}");
+            LOGGER.Warn($"Could not access File/Directory at: {Location()} {e.ErrorText()}");
         }
         catch (Exception e)
         {

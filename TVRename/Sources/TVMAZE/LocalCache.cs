@@ -108,13 +108,13 @@ public class LocalCache : MediaCache, iTVSource
         }
         catch (SourceConnectivityException conex)
         {
-            LOGGER.Warn(conex.Message);
+            LOGGER.Warn(conex.ErrorText());
             LastErrorMessage = conex.Message;
             return true;
         }
         catch (SourceConsistencyException sce)
         {
-            LOGGER.Error(sce.Message);
+            LOGGER.Error(sce.ErrorText());
             LastErrorMessage = sce.Message;
             return true;
         }
@@ -172,12 +172,12 @@ public class LocalCache : MediaCache, iTVSource
         catch (SourceConnectivityException conex)
         {
             LastErrorMessage = conex.Message;
-            LOGGER.Warn(conex.Message);
+            LOGGER.Warn(conex.ErrorText());
             return false;
         }
         catch (SourceConsistencyException sce)
         {
-            LOGGER.Error(sce.Message);
+            LOGGER.Error(sce.ErrorText());
             LastErrorMessage = sce.Message;
             return false;
         }
@@ -189,7 +189,7 @@ public class LocalCache : MediaCache, iTVSource
         }
         catch (OverflowException ex)
         {
-            LastErrorMessage = $"Error with the format of the TV Maze updates json: {ex.Message}";
+            LastErrorMessage = $"Error with the format of the TV Maze updates json: {ex.ErrorText()}";
             LOGGER.Warn(LastErrorMessage);
             return false;
         }

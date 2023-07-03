@@ -68,11 +68,11 @@ public static class TimeHelpers
     {
         if (AlreadyAlerted)
         {
-            Logger.Warn($"Could not connect to NTP clock: {e.Message}");
+            Logger.Warn($"Could not connect to NTP clock: {e.ErrorText()}");
         }
         else
         {
-            Logger.Error($"Could not connect to NTP clock: {e.Message}");
+            Logger.Error($"Could not connect to NTP clock: {e.ErrorText()}");
             AlreadyAlerted = true;
         }
     }

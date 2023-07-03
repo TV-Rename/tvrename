@@ -15,7 +15,7 @@ public class SourceConnectivityException : Exception
     {
     }
 
-    public SourceConnectivityException(Exception ex) : this (ex.Message, ex)
+    public SourceConnectivityException(Exception ex) : this (ex.ErrorText(), ex)
     {
     }
 

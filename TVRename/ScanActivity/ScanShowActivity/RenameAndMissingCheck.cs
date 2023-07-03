@@ -297,7 +297,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
         }
         catch (FileNotFoundException fnfe)
         {
-            LOGGER.Warn( $"Could not find file so aborting scan for it. Possibly it was removed half way through the scan - {fnfe.Message}");
+            LOGGER.Warn( $"Could not find file so aborting scan for it. Possibly it was removed half way through the scan - {fnfe.ErrorText()}");
         }
         return null;
     }

@@ -173,11 +173,11 @@ public static class API
             }
             catch (SourceConnectivityException sce)
             {
-                Logger.Warn(sce.Message);
+                Logger.Warn(sce.ErrorText());
             }
             catch (MediaNotFoundException mnfe)
             {
-                Logger.Error($"Season Issue: {mnfe.Message}");
+                Logger.Error($"Season Issue: {mnfe.ErrorText()}");
             }
         });
     }
@@ -292,7 +292,7 @@ public static class API
         }
         catch (MediaNotFoundException mnfe)
         {
-            Logger.Error($"Season Issue: {mnfe.Message}");
+            Logger.Error($"Season Issue: {mnfe.ErrorText()}");
         }
     }
 
@@ -310,12 +310,12 @@ public static class API
         }
         catch (MediaNotFoundException mnfe)
         {
-            Logger.Error($"Episode (+ Translations) claimed to exist, but got a 404 when searching for them. Ignoring Episode, but might be worth a full refresh of the show and contacting TVDB if it does not get resolved. {mnfe.Message}");
+            Logger.Error($"Episode (+ Translations) claimed to exist, but got a 404 when searching for them. Ignoring Episode, but might be worth a full refresh of the show and contacting TVDB if it does not get resolved. {mnfe.ErrorText()}");
             si.Dirty = true;
         }
         catch (SourceConnectivityException sce1)
         {
-            Logger.Warn(sce1.Message);
+            Logger.Warn(sce1.ErrorText());
             si.Dirty = true;
         }
         catch (SourceConsistencyException sce1)

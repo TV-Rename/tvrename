@@ -84,7 +84,7 @@ internal class TokenProvider
                 }
                 catch (Exception e)
                 {
-                    Logger.Error($"Could not refresh Token: {e.Message}");
+                    Logger.Error($"Could not refresh Token: {e.ErrorText()}");
                     AcquireToken();
                 }
             }

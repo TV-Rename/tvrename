@@ -215,7 +215,7 @@ public class CustomEpisodeName
         }
         catch (ArgumentOutOfRangeException ex)
         {
-            Logger.Error($"Parsing date {airdt} into {name}: {ex.Message}");
+            Logger.Error($"Parsing date {airdt} into {name}: {ex.ErrorText()}");
             throw;
         }
     }

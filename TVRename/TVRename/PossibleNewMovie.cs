@@ -256,19 +256,19 @@ public class PossibleNewMovie : ISeriesSpecifier
             }
             catch (System.IO.DirectoryNotFoundException e)
             {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
+                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
             }
             catch (UnauthorizedAccessException e)
             {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
+                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
             }
             catch (NotSupportedException e)
             {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
+                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
             }
             catch (System.IO.IOException e)
             {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
+                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
             }
         }
 
@@ -306,23 +306,23 @@ public class PossibleNewMovie : ISeriesSpecifier
         }
         catch (XmlException xe)
         {
-            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any Ids inside, got {xe.Message}");
+            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any Ids inside, got {xe.ErrorText()}");
         }
         catch (System.IO.IOException xe)
         {
-            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any Ids inside, got {xe.Message}");
+            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any Ids inside, got {xe.ErrorText()}");
         }
         catch (UnauthorizedAccessException xe)
         {
-            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any Ids inside, got {xe.Message}");
+            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any Ids inside, got {xe.ErrorText()}");
         }
         catch (OperationCanceledException xe)
         {
-            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any Ids inside, got {xe.Message}");
+            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any Ids inside, got {xe.ErrorText()}");
         }
         catch (Exception e)
         {
-            Logger.Error($"Could not parse {file.FullName} to try and see whether there is any Ids inside. Got a {e.Message}");
+            Logger.Error($"Could not parse {file.FullName} to try and see whether there is any Ids inside. Got a {e.ErrorText()}");
         }
 
         return null;

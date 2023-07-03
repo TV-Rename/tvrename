@@ -562,7 +562,7 @@ public class TVDoc : IDisposable
         }
         catch (Exception e)
         {
-            Logger.Error($"Complete failure to save {PathManager.TVDocSettingsFile.FullName}. {e.Message}");
+            Logger.Error($"Complete failure to save {PathManager.TVDocSettingsFile.FullName}. {e.ErrorText()}");
             //todo - put up user box to ask them to fix disk if out of space
         }
     }
@@ -1381,19 +1381,19 @@ public class TVDoc : IDisposable
             }
             catch (UnauthorizedAccessException ex)
             {
-                Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access files in {dirPath} {ex.ErrorText()}");
             }
             catch (System.IO.DirectoryNotFoundException ex)
             {
-                Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access files in {dirPath} {ex.ErrorText()}");
             }
             catch (System.IO.IOException ex)
             {
-                Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access files in {dirPath} {ex.ErrorText()}");
             }
             catch (NotSupportedException ex)
             {
-                Logger.Error($"Please update 'Download Folders' {dirPath} is not supported {ex.Message}");
+                Logger.Error($"Please update 'Download Folders' {dirPath} is not supported {ex.ErrorText()}");
             }
             try
             {
@@ -1421,19 +1421,19 @@ public class TVDoc : IDisposable
             }
             catch (UnauthorizedAccessException ex)
             {
-                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.ErrorText()}");
             }
             catch (System.IO.DirectoryNotFoundException ex)
             {
-                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.ErrorText()}");
             }
             catch (System.IO.IOException ex)
             {
-                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.ErrorText()}");
             }
             catch (NotSupportedException ex)
             {
-                Logger.Error($"Please update 'Download Folders' {dirPath} is not supported {ex.Message}");
+                Logger.Error($"Please update 'Download Folders' {dirPath} is not supported {ex.ErrorText()}");
             }
         }
         return showsToScan;
@@ -1488,19 +1488,19 @@ public class TVDoc : IDisposable
             }
             catch (UnauthorizedAccessException ex)
             {
-                Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access files in {dirPath} {ex.ErrorText()}");
             }
             catch (System.IO.DirectoryNotFoundException ex)
             {
-                Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access files in {dirPath} {ex.ErrorText()}");
             }
             catch (System.IO.IOException ex)
             {
-                Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access files in {dirPath} {ex.ErrorText()}");
             }
             catch (NotSupportedException ex)
             {
-                Logger.Error($"Please update 'Download Folders' {dirPath} is not supported {ex.Message}");
+                Logger.Error($"Please update 'Download Folders' {dirPath} is not supported {ex.ErrorText()}");
             }
             try
             {
@@ -1528,19 +1528,19 @@ public class TVDoc : IDisposable
             }
             catch (UnauthorizedAccessException ex)
             {
-                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.ErrorText()}");
             }
             catch (System.IO.DirectoryNotFoundException ex)
             {
-                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.ErrorText()}");
             }
             catch (System.IO.IOException ex)
             {
-                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
+                Logger.Warn($"Could not access sub-directories in {dirPath} {ex.ErrorText()}");
             }
             catch (NotSupportedException ex)
             {
-                Logger.Error($"Please update 'Download Folders' {dirPath} is not supported {ex.Message}");
+                Logger.Error($"Please update 'Download Folders' {dirPath} is not supported {ex.ErrorText()}");
             }
         }
         return showsToScan;
@@ -1975,19 +1975,19 @@ public class TVDoc : IDisposable
         }
         catch (UnauthorizedAccessException ex)
         {
-            Logger.Warn($"Could not access files in {downloadFolder} {ex.Message}");
+            Logger.Warn($"Could not access files in {downloadFolder} {ex.ErrorText()}");
         }
         catch (System.IO.DirectoryNotFoundException ex)
         {
-            Logger.Warn($"Could not access files in {downloadFolder} {ex.Message}");
+            Logger.Warn($"Could not access files in {downloadFolder} {ex.ErrorText()}");
         }
         catch (System.IO.IOException ex)
         {
-            Logger.Warn($"Could not access files in {downloadFolder} {ex.Message}");
+            Logger.Warn($"Could not access files in {downloadFolder} {ex.ErrorText()}");
         }
         catch (NotSupportedException ex)
         {
-            Logger.Error($"Please update 'Download Folders' {downloadFolder} is not supported {ex.Message}");
+            Logger.Error($"Please update 'Download Folders' {downloadFolder} is not supported {ex.ErrorText()}");
         }
     }
 

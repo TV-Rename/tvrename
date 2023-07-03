@@ -128,7 +128,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
                 }
                 catch (Exception e)
                 {
-                    LOGGER.Warn($"Could not create Season Folder {folder} as {e.Message}.");
+                    LOGGER.Warn($"Could not create Season Folder {folder} as {e.ErrorText()}.");
                     break;
                 }
             }
@@ -237,7 +237,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
             }
             catch (Exception ioe)
             {
-                LOGGER.Warn($"Could not create directory: {folder} Error Message: {ioe.Message}");
+                LOGGER.Warn($"Could not create directory: {folder} Error Message: {ioe.ErrorText()}");
             }
         }
     }

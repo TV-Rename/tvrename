@@ -74,7 +74,7 @@ internal class CheckAllMovieFoldersExist : ScanMovieActivity
                 }
                 catch (Exception e)
                 {
-                    LOGGER.Warn($"Could not create Folder {folder} as {e.Message}.");
+                    LOGGER.Warn($"Could not create Folder {folder} as {e.ErrorText()}.");
                     break;
                 }
             }
@@ -192,7 +192,7 @@ internal class CheckAllMovieFoldersExist : ScanMovieActivity
             }
             catch (Exception ioe)
             {
-                LOGGER.Warn($"Could not create directory: {folder} Error Message: {ioe.Message}");
+                LOGGER.Warn($"Could not create directory: {folder} Error Message: {ioe.ErrorText()}");
             }
         }
     }

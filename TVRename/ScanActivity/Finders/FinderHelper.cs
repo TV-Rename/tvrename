@@ -407,7 +407,7 @@ internal static class FinderHelper
         }
         catch (ArgumentOutOfRangeException ex)
         {
-            Logger.Error($"Error in SimplifyFilename for {filename} and {showNameHint}, got {returnFilename} with error {ex.Message}");
+            Logger.Error($"Error in SimplifyFilename for {filename} and {showNameHint}, got {returnFilename} with error {ex.ErrorText()}");
         }
 
         foreach (Match m in Regex.Matches(showNameHint, "(?:^|[^a-z]|\\b)([0-9]{3,})").Cast<Match>()) // find >= 3 digit numbers in show name
@@ -461,11 +461,11 @@ internal static class FinderHelper
             }
             catch (FormatException fe)
             {
-                Logger.Warn($"Please check for the regex {re.RegExpression} as it's causing an FormatException error {fe.Message}");
+                Logger.Warn($"Please check for the regex {re.RegExpression} as it's causing an FormatException error {fe.ErrorText()}");
             }
             catch (ArgumentException ae)
             {
-                Logger.Warn($"Please check for the regex {re.RegExpression} as it's causing an ArgumentException error {ae.Message}");
+                Logger.Warn($"Please check for the regex {re.RegExpression} as it's causing an ArgumentException error {ae.ErrorText()}");
             }
         }
 

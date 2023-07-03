@@ -244,7 +244,7 @@ public class ShowConfiguration : MediaConfiguration
         }
         catch (Exception ex)
         {
-            LOGGER.Info($"Could not work out what timezone '{ShowName}' has. In the settings it uses '{tzstr}', Testing to see whether it needs to be upgraded: {ex.Message}");
+            LOGGER.Info($"Could not work out what timezone '{ShowName}' has. In the settings it uses '{tzstr}', Testing to see whether it needs to be upgraded: {ex.ErrorText()}");
             try
             {
                 tzstr = TZConvert.WindowsToIana(tzstr);

@@ -112,19 +112,19 @@ public class BulkAddSeriesManager
             }
             catch (System.IO.DirectoryNotFoundException e)
             {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
+                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
             }
             catch (UnauthorizedAccessException e)
             {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
+                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
             }
             catch (NotSupportedException e)
             {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
+                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
             }
             catch (System.IO.IOException e)
             {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
+                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
             }
         }
         //Can't find it
@@ -161,17 +161,17 @@ public class BulkAddSeriesManager
         }
         catch (XmlException xe)
         {
-            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
+            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.ErrorText()}");
             return -1;
         }
         catch (System.IO.IOException xe)
         {
-            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
+            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.ErrorText()}");
             return -1;
         }
         catch (UnauthorizedAccessException xe)
         {
-            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
+            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.ErrorText()}");
             return -1;
         }
         catch (Exception e)

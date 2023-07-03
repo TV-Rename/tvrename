@@ -169,13 +169,13 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         catch (SourceConnectivityException ex)
         {
-            LOGGER.Warn(ex.Message);
+            LOGGER.Warn(ex.ErrorText());
             LastErrorMessage = ex.Message;
             return false;
         }
         catch (SourceConsistencyException sce)
         {
-            LOGGER.Error(sce.Message);
+            LOGGER.Error(sce.ErrorText());
             LastErrorMessage = sce.Message;
             return false;
         }
@@ -221,13 +221,13 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         catch (SourceConnectivityException ex)
         {
-            LOGGER.Warn(ex.Message);
+            LOGGER.Warn(ex.ErrorText());
             LastErrorMessage = ex.Message;
             return false;
         }
         catch (SourceConsistencyException sce)
         {
-            LOGGER.Error(sce.Message);
+            LOGGER.Error(sce.ErrorText());
             LastErrorMessage = sce.Message;
             return false;
         }
@@ -328,19 +328,19 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         catch (GeneralHttpException ex)
         {
-            LOGGER.Warn(ex.Message);
+            LOGGER.Warn(ex.ErrorText());
             LastErrorMessage = ex.Message;
             return false;
         }
         catch (SourceConnectivityException ex)
         {
-            LOGGER.Warn(ex.Message);
+            LOGGER.Warn(ex.ErrorText());
             LastErrorMessage = ex.Message;
             return false;
         }
         catch (SourceConsistencyException sce)
         {
-            LOGGER.Error(sce.Message);
+            LOGGER.Error(sce.ErrorText());
             LastErrorMessage = sce.Message;
             return false;
         }

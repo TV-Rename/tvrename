@@ -45,7 +45,7 @@ internal static class API
         }
         catch (JsonReaderException jre)
         {
-            Logger.Error($"{errorMessage} due to {jre.Message}");
+            Logger.Error($"{errorMessage} due to {jre.ErrorText()}");
             throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze,jre);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
@@ -56,12 +56,12 @@ internal static class API
         }
         catch (System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            Logger.Warn($"{errorMessage} due to {ex.ErrorText()}");
             throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            Logger.Warn($"{errorMessage} due to {ex.ErrorText()}");
             // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage, ex);
         }
@@ -103,7 +103,7 @@ internal static class API
         }
         catch (JsonReaderException jre)
         {
-            Logger.Error($"{errorMessage} due to {jre.Message}");
+            Logger.Error($"{errorMessage} due to {jre.ErrorText()}");
             throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze,jre);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
@@ -120,12 +120,12 @@ internal static class API
         }
         catch (System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            Logger.Warn($"{errorMessage} due to {ex.ErrorText()}");
             throw new SourceConnectivityException(errorMessage,ex);
         }
         catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            Logger.Warn($"{errorMessage} due to {ex.ErrorText()}");
             // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage, ex);
         }

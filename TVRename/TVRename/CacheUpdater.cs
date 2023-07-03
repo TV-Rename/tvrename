@@ -198,15 +198,15 @@ public class CacheUpdater : IDisposable
         }
         catch (SourceConsistencyException sce)
         {
-            Logger.Error(sce, sce.Message);
+            Logger.Error(sce, sce.ErrorText());
         }
         catch (SourceConnectivityException sce)
         {
-            Logger.Warn(sce.Message);
+            Logger.Warn(sce.ErrorText());
         }
         catch (TaskCanceledException tce)
         {
-            Logger.Warn(tce.Message);
+            Logger.Warn(tce.ErrorText());
         }
         catch (Exception e)
         {

@@ -375,7 +375,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (SourceConnectivityException conex)
         {
-            LOGGER.Warn(conex.Message);
+            LOGGER.Warn(conex.ErrorText());
             LastErrorMessage = conex.Message;
             HandleConnectionIssue(showErrorMsgBox, conex);
             SayNothing();
@@ -756,7 +756,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (SourceConsistencyException sce)
         {
-            LOGGER.Error(sce.Message);
+            LOGGER.Error(sce.ErrorText());
             LastErrorMessage = sce.Message;
             return false;
         }

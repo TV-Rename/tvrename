@@ -475,7 +475,7 @@ internal abstract class FileFinder : Finder
         }
         catch (System.IO.IOException ioe)
         {
-            LOGGER.Warn($"IOException Occured accessing: {action.From.FullName} nessage:{ioe.Message}");
+            LOGGER.Warn($"IOException Occured accessing: {action.From.FullName} nessage:{ioe.ErrorText()}");
         }
     }
 

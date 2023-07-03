@@ -77,7 +77,7 @@ public static class TimeZoneHelper
             }
             catch (ArgumentException ae)
             {
-                Logger.Error($"Could not convert {theirDateTime} in {theirTimeZone?.Id} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (tried adding one hour too so that we account for daylight saving): {ae.Message}");
+                Logger.Error($"Could not convert {theirDateTime} in {theirTimeZone?.Id} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (tried adding one hour too so that we account for daylight saving): {ae.ErrorText()}");
                 return theirDateTime.ToDateTimeUnspecified();
             }
         }

@@ -56,7 +56,7 @@ public static class XmlHelper
         }
         catch (ArgumentException e)
         {
-            Logger.Error($"Cound not write {elementName} with value {value} because {e.Message}");
+            Logger.Error($"Cound not write {elementName} with value {value} because {e.ErrorText()}");
         }
 
         writer.WriteEndElement();

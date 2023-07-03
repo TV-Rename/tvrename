@@ -64,7 +64,7 @@ public partial class LogViewer : Form
             }
             catch (Win32Exception wex2)
             {
-                Logger.Error($"Could not open {logFileName}. {wex2.Message}");
+                Logger.Error($"Could not open {logFileName}. {wex2.ErrorText()}");
             }
         }
     }

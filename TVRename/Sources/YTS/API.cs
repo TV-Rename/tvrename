@@ -38,12 +38,12 @@ public static class API
         }
         catch (System.IO.IOException iex)
         {
-            Logger.Error($"{errorMessage} due to {iex.Message}");
+            Logger.Error($"{errorMessage} due to {iex.ErrorText()}");
             throw new SourceConnectivityException(errorMessage, iex);
         }
         catch (JsonReaderException jre)
         {
-            Logger.Error($"{errorMessage} due to {jre.Message}");
+            Logger.Error($"{errorMessage} due to {jre.ErrorText()}");
             throw new SourceConsistencyException(jre.Message,TVDoc.ProviderType.libraryDefault,jre);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
@@ -54,12 +54,12 @@ public static class API
         }
         catch (System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            Logger.Warn($"{errorMessage} due to {ex.ErrorText()}");
             throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
         {
-            Logger.Warn($"{errorMessage} due to {ex.Message}");
+            Logger.Warn($"{errorMessage} due to {ex.ErrorText()}");
             // ReSharper disable once ThrowFromCatchWithNoInnerException
             throw new SourceConnectivityException(errorMessage, ex);
         }

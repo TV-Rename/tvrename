@@ -3044,7 +3044,7 @@ public partial class UI : Form, IDialogParent
         }
         catch (OperationCanceledException e)
         {
-            Logger.Warn($"Failed to remove {folderName} as operation was cancelled: {e.Message}");
+            Logger.Warn($"Failed to remove {folderName} as operation was cancelled: {e.ErrorText()}");
         }
         catch (System.IO.DirectoryNotFoundException e)
         {

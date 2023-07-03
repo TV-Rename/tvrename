@@ -211,7 +211,7 @@ public partial class AddModifyRule : Form
         }
         catch (ValidationFailedException valException)
         {
-            Logger.Warn($"Validation Error: {valException.Message}: {mRule}");
+            Logger.Warn($"Validation Error: {valException.ErrorText()}: {mRule}");
             DialogResult = DialogResult.None;
         }
     }

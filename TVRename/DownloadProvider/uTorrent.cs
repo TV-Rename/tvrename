@@ -45,12 +45,12 @@ internal class uTorrent : IDownloadProvider
         }
         catch (System.IO.IOException i)
         {
-            Logger.Warn($"Could not get downloads from uTorrent: {i.Message}");
+            Logger.Warn($"Could not get downloads from uTorrent: {i.ErrorText()}");
             return null;
         }
         catch (FormatException fex)
         {
-            Logger.Warn($"Could not parse contents of uTorrent resource file: Got a format exception accessing {resDatFile}, message: {fex.Message}");
+            Logger.Warn($"Could not parse contents of uTorrent resource file: Got a format exception accessing {resDatFile}, message: {fex.ErrorText()}");
             return null;
         }
     }
