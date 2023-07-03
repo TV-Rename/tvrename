@@ -12,7 +12,7 @@ internal class ActionDateTouchEpisode : ActionDateTouchFile
 
     public override bool SameAs(Item o)
     {
-        return o is ActionDateTouchEpisode touch && touch.WhereFile == WhereFile;
+        return o is ActionDateTouchEpisode touch && touch.WhereFile.FullName == WhereFile.FullName;
     }
 
     public override int CompareTo(Item? o)

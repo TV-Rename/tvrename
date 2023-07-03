@@ -25,18 +25,29 @@ public static class UiHelpers
     }
     public static bool ShowDialogAndOk(FolderBrowserDialogEx d, IWin32Window owner)
     {
+        try
+        {
+            return ShowDialogAndOk(() => d.ShowDialog(owner));
+        }
+        catch (Win32Exception ex)
+        {
+            Logger.Error(ex, $"Failed to load dialog for {d.SelectedPath}");
+            return false;
+        }
+    }
+    public static bool ShowDialogAndOk(CommonDialog d, IWin32Window owner)
+    {
         return ShowDialogAndOk(() => d.ShowDialog(owner));
     }
-
+    public static bool ShowDialogAndOk(Form d, IWin32Window owner)
+    {
+        return ShowDialogAndOk(() => d.ShowDialog(owner));
+    }
     private static bool ShowDialogAndOk(Func<DialogResult> function)
     {
         try
         {
             return function() == DialogResult.OK;
-        }
-        catch (Win32Exception ex)
-        {
-            Logger.Error(ex, "Could not load Dialog:");
         }
         catch (SEHException ex)
         {
@@ -47,15 +58,6 @@ public static class UiHelpers
             Logger.Error(ex, "Could not load Dialog:");
         }
         return false;
-    }
-
-    public static bool ShowDialogAndOk(CommonDialog d, IWin32Window owner)
-    {
-        return ShowDialogAndOk(() => d.ShowDialog(owner));
-    }
-    public static bool ShowDialogAndOk(Form d, IWin32Window owner)
-    {
-        return ShowDialogAndOk(() => d.ShowDialog(owner));
     }
 
     public static void Add(this ContextMenuStrip items, string name, EventHandler command)

@@ -420,7 +420,7 @@ public static class HttpHelper
                 }
                 catch (Exception refreshException)
                 {
-                    Logger.Error($"Could not complete the update operation: {refreshException.Message}");
+                    Logger.Error(refreshException,$"Could not complete the update operation: {refreshException.Message}");
                 }
             }
         } while (true);
