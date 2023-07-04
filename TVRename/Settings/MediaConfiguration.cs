@@ -140,10 +140,10 @@ public abstract class MediaConfiguration : ISeriesSpecifier
 
     private static bool IdsMatch(int code1, int code2) => code1 == code2 && code1 > 0;
 
-    public static int CompareNames(MediaConfiguration x, MediaConfiguration y)
+    public static int CompareNames(MediaConfiguration? x, MediaConfiguration? y)
     {
-        string ones = x.ShowName;
-        string twos = y.ShowName;
+        string? ones = x?.ShowName;
+        string? twos = y?.ShowName;
         return string.Compare(ones, twos, StringComparison.Ordinal);
     }
 

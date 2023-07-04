@@ -10,7 +10,7 @@ namespace TVRename;
 
 public static class LoggerHelper
 {
-    public static ILogger AsILogger(this Logger baseLogger) => new NlogILogger(baseLogger);
+    public static ILogger AsILogger(this Logger baseLogger, string filename) => new NlogILogger(baseLogger,filename);
 
     public static string ErrorText(this Exception e)
     {
