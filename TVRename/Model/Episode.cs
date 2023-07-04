@@ -92,15 +92,19 @@ public class Episode
 
     public LocalDateTime? GetAirDateDt()
     {
-        if (FirstAired is null || internalSeries is null)
+        DateTime? fa = FirstAired;
+
+        if (fa is null)
         {
             return null;
         }
+        DateTime? airs = internalSeries?.AirsTime ?? AirStamp;
 
-        DateTime fa = (DateTime)FirstAired;
-        DateTime? airs = internalSeries.AirsTime;
+        int defaultHour = (internalSeries?.Network).IsStreamingService()
+            ? 0
+            : 20;
 
-        return new LocalDateTime(fa.Year, fa.Month, fa.Day, airs?.Hour ?? 20, airs?.Minute ?? 0);
+        return new LocalDateTime(fa.Value.Year, fa.Value.Month, fa.Value.Day, airs?.Hour ?? defaultHour, airs?.Minute ?? 0);
     }
 
     public DateTime? GetAirDateDt(DateTimeZone tz)

@@ -159,8 +159,8 @@ internal class CleanDownloadDirectory : ScanActivity
     {
         ShowConfiguration si = matchingShows[0]; //Choose the first cachedSeries
         FinderHelper.FindSeasEp(di, out int seasF, out int epF, si, out TVSettings.FilenameProcessorRE? _);
-        CachedSeriesInfo? s = si.CachedShow;
-        if (s is null)
+
+        if (si.CachedShow is null)
         {
             throw new ArgumentNullException(nameof(matchingShows), "s is null");
         }

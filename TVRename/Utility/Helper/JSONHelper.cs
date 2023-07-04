@@ -38,7 +38,7 @@ public static class JsonHelper
         {
             Logger.Error($"Failed to parse time: {theTime}");
         }
-        return DateTime.Parse("20:00");
+        return null;
     }
 
     public static bool ContainsTyped<T>(this JArray arr, T? item)

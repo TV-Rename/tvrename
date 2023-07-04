@@ -22,6 +22,18 @@ public static class TimeZoneHelper
 
     public static string DefaultTimeZone() => "America/New_York";
 
+    public static bool IsStreamingService(this string? network)
+    {
+        if (string.IsNullOrWhiteSpace(network))
+        {
+            return false;
+        }
+
+        string[] streamers = { "Netflix","Apple TV+","Disney+","Amazon Prime Video","Paramount+" };
+
+        return streamers.Contains(network);
+    }
+
     public static string TimeZoneForNetwork(string? network, string defaultTimeZone)
     {
         string[] uktv = { "Sky Atlantic (UK)", "BBC One", "Sky1", "BBC Two", "ITV", "Nick Jr.", "BBC Three", "Channel 4", "CBeebies", "Sky Box Office", "Watch", "ITV2", "National Geographic (UK)", "V", "ITV Encore", "ITV1", "BBC", "E4", "Channel 5 (UK)", "BBC Four", "ITVBe" };
