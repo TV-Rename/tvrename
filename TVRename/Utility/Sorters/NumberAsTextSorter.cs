@@ -39,7 +39,7 @@ public sealed class NumberAsTextSorter : ListViewItemSorter
         }
         catch
         {
-            return 0;
+            return -1;
         }
     }
 }

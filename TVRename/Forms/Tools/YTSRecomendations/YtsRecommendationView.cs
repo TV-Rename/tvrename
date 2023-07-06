@@ -248,8 +248,7 @@ public partial class YtsRecommendationView : Form
     {
         if (e.Item is BrightIdeasSoftware.OLVListItem { RowObject: YtsRecommendationRow rr })
         {
-            UI.SetHtmlBody(chrRecommendationPreview,
-                rr.Movie != null
+            chrRecommendationPreview.SetHtmlBody(rr.Movie != null
                     ? rr.Movie.GetMovieHtmlOverview(false)
                     : rr.YtsMovie.GetMovieHtmlOverview());
         }

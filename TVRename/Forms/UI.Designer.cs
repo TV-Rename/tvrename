@@ -1451,12 +1451,10 @@ namespace TVRename.Forms
             olvAction.UseFiltering = true;
             olvAction.UseNotifyPropertyChanged = true;
             olvAction.View = View.Details;
-            olvAction.BeforeSorting += olvAction_BeforeSorting;
             olvAction.BeforeCreatingGroups += olvAction_BeforeCreatingGroups;
             olvAction.CanDrop += OlvAction_CanDrop;
             olvAction.Dropped += OlvAction_Dropped;
             olvAction.FormatRow += olv1_FormatRow;
-            olvAction.ColumnClick += olvAction_ColumnClick;
             olvAction.ItemChecked += lvAction_ItemChecked;
             olvAction.SelectedIndexChanged += lvAction_SelectedIndexChanged;
             olvAction.KeyDown += lvAction_KeyDown;

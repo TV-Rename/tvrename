@@ -932,7 +932,7 @@ public class TVDoc : IDisposable
             }
 
             // sort Action list by type
-            TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
+            TheActionList.Sort(new DefaultActionItemSorter()); // was new ActionSorter()
 
             Stats().FindAndOrganisesDone++;
 

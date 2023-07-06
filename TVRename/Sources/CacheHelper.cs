@@ -291,14 +291,12 @@ public static class CacheHelper
     {
         cache.Search(hint, showErrorMsgBox, MediaConfiguration.MediaType.movie, preferredLocale);
 
-        string showName = hint;
-
-        if (string.IsNullOrEmpty(showName))
+        if (string.IsNullOrEmpty(hint))
         {
             return null;
         }
 
-        showName = showName.ToLower();
+        string showName = hint.ToLower();
 
         List<CachedMovieInfo> matchingShows = cache.GetMoviesDictMatching(showName).Values.ToList();
 

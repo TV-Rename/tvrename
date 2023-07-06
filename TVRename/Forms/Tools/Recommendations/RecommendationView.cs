@@ -276,11 +276,11 @@ public partial class RecommendationView : Form
         }
         if (rr.Movie != null)
         {
-            UI.SetHtmlBody(chrRecommendationPreview, rr.Movie.GetMovieHtmlOverview(rr));
+            chrRecommendationPreview.SetHtmlBody(rr.Movie.GetMovieHtmlOverview(rr));
         }
         else if (rr.Series != null)
         {
-            UI.SetHtmlBody(chrRecommendationPreview, rr.Series.GetShowHtmlOverview(rr));
+            chrRecommendationPreview.SetHtmlBody(rr.Series.GetShowHtmlOverview(rr));
         }
     }
     private void this_FormClosing(object sender, FormClosingEventArgs e)

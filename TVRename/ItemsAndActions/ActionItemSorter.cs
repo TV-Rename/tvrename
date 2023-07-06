@@ -10,10 +10,8 @@ using System;
 
 namespace TVRename;
 
-public class ActionItemSorter : System.Collections.Generic.IComparer<Item>
+public abstract class ActionItemSorter : System.Collections.Generic.IComparer<Item>
 {
-    #region IComparer<Item> Members
-
     public int Compare(Item? x, Item? y)
     {
         if (x is null)
@@ -26,8 +24,17 @@ public class ActionItemSorter : System.Collections.Generic.IComparer<Item>
             return 1;
         }
 
-        return TypeNumber(x) == TypeNumber(y) ? x.CompareTo(y) : TypeNumber(x) - TypeNumber(y);
+        return CompareItems(x,y);
     }
+
+    protected abstract int CompareItems(Item item, Item item1);
+}
+public class DefaultActionItemSorter:ActionItemSorter
+{
+    #region IComparer<Item> Members
+
+    protected override int CompareItems(Item x, Item y)
+        => TypeNumber(x) == TypeNumber(y) ? x.CompareTo(y) : TypeNumber(x) - TypeNumber(y);
 
     #endregion IComparer<Item> Members
 
@@ -61,4 +68,44 @@ public class ActionItemSorter : System.Collections.Generic.IComparer<Item>
             _ => throw new NotSupportedException()
         };
     }
+}
+
+public abstract class ActionItemStringSorter : ActionItemSorter
+{
+    protected override int CompareItems(Item x, Item y) => string.Compare(GetString(x),GetString(y),StringComparison.CurrentCultureIgnoreCase);
+
+    protected abstract string GetString(Item x);
+}
+
+public class ActionItemNameSorter : ActionItemStringSorter
+{
+    protected override string GetString(Item x) => x.SeriesName;
+}
+public class ActionItemDateSorter : ActionItemSorter
+{
+    protected override int CompareItems(Item x, Item y) => DateTime.Compare(x.AirDate ?? DateTime.MinValue,y.AirDate ?? DateTime.MinValue);
+}
+public class ActionItemFilenameSorter : ActionItemStringSorter
+{
+    protected override string GetString(Item x) => x.DestinationFile ?? string.Empty;
+}
+public class ActionItemFolderSorter : ActionItemStringSorter
+{
+    protected override string GetString(Item x) => x.DestinationFolder ?? string.Empty;
+}
+public class ActionItemSourceSorter : ActionItemStringSorter
+{
+    protected override string GetString(Item x) => x.SourceDetails;
+}
+public class ActionItemErrorsSorter : ActionItemStringSorter
+{
+    protected override string GetString(Item x) =>x.ErrorText ?? string.Empty;
+}
+public class ActionItemSeasonSorter : ActionItemSorter
+{
+    protected override int CompareItems(Item x, Item y) => x.SeasonNumberAsInt ?? 0 - y.SeasonNumberAsInt ?? 0;
+}
+public class ActionItemEpisodeSorter : ActionItemSorter
+{
+    protected override int CompareItems(Item x, Item y) => x.EpisodeNumber ?? 0 - y.EpisodeNumber ?? 0 ;
 }

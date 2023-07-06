@@ -203,8 +203,7 @@ public partial class YtsViewerView : Form
         object? rowObject = (e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject;
         if (rowObject is YtsViewerRow rr)
         {
-            UI.SetHtmlBody(chrRecommendationPreview,
-                rr.Movie != null
+            chrRecommendationPreview.SetHtmlBody(rr.Movie != null
                     ? rr.Movie.GetMovieHtmlOverview(false)
                     : rr.YtsMovie.GetMovieHtmlOverview());
         }

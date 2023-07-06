@@ -513,7 +513,7 @@ internal abstract class FileFinder : Finder
         // ideally do that move within same filesystem
 
         // sort based on source file, and destination drive, putting last if destdrive == sourcedrive
-        newList.Sort(new ActionItemSorter());
+        newList.Sort(new DefaultActionItemSorter());
 
         // sort puts all the CopyMoveRenames together
         // then set the last of each source file to be a move

@@ -75,8 +75,7 @@ public partial class UI : Form, IDialogParent
     private MovieConfiguration? switchToWhenOpenMyMovies;
 
     private readonly ListViewColumnSorter lvwScheduleColumnSorter;
-    //private readonly ListViewColumnSorter lvwActionColumnSorter;
-
+    
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private bool IsBusy => busy != 0;
 
@@ -125,7 +124,7 @@ public partial class UI : Form, IDialogParent
         lvwScheduleColumnSorter = new ListViewColumnSorter(new DateSorterWtw(3));
         lvWhenToWatch.ListViewItemSorter = lvwScheduleColumnSorter;
 
-        //lvwActionColumnSorter = new ListViewColumnSorter(new NumberAsTextSorter(1));
+        //lvwActionColumnSorter = new ListViewActionItemSorter();
 
         if (mDoc.Args.Hide || !showUi)
         {
@@ -300,6 +299,8 @@ public partial class UI : Form, IDialogParent
         }
     }
 
+    #region olvAction Methods
+
     private void SetupObjectListForScanResults()
     {
         olvAction.SetObjects(mDoc.TheActionList);
@@ -312,6 +313,7 @@ public partial class UI : Form, IDialogParent
 
         olvDate.GroupKeyGetter = GroupDateKeyDelegate;
         olvDate.GroupKeyToTitleConverter = GroupDateTitleDelegate;
+        olvDate.DataType = typeof(DateTime);
 
         olvSeason.GroupKeyGetter = GroupSeasonKeyDelegate;
 
@@ -320,10 +322,140 @@ public partial class UI : Form, IDialogParent
         SimpleDropSink currActionDropSink = (SimpleDropSink)olvAction.DropSink;
         currActionDropSink.FeedbackColor = Color.LightGray;
 
-        olvDate.DataType = typeof(DateTime);
         olvAction.SortGroupItemsByPrimaryColumn = false;
+
+        olvAction.CustomSorter = delegate(OLVColumn column, SortOrder order)
+        {
+            olvAction.ListViewItemSorter = new ColumnComparer(
+                MapToSortColumn(column), order);
+        };
+        olvAction.ShowSortIndicator();
+    }
+    private void olvAction_BeforeCreatingGroups(object sender, CreateGroupsEventArgs e)
+    {
+        e.Parameters.ItemComparer = new OlvActionGroupComparer(MapColumnToSorter(e.Parameters.PrimarySort), e.Parameters.PrimarySortOrder);
+
+        if (e.Parameters.PrimarySort == olvEpisode || e.Parameters.PrimarySort == olvSeason)
+        {
+            e.Parameters.GroupComparer = new SeasonGroupComparer(e.Parameters.GroupByOrder);
+        }
     }
 
+    private ActionItemSorter MapColumnToSorter(OLVColumn column)
+    {
+        if (column == olvDate)
+        {
+            return new ActionItemDateSorter();
+        }
+        if (column == olvShowColumn)
+        {
+            return new ActionItemNameSorter();
+        }
+        if (column == olvEpisode)
+        {
+            return new ActionItemEpisodeSorter();
+        }
+        if (column == olvSeason)
+        {
+            return new ActionItemSeasonSorter();
+        }
+        if (column == olvErrors)
+        {
+            return new ActionItemErrorsSorter();
+        }
+        if (column == olvFolder)
+        {
+            return new ActionItemFolderSorter();
+        }
+        if (column == olvFilename)
+        {
+            return new ActionItemFilenameSorter();
+        }
+        if (column == olvSource)
+        {
+            return new ActionItemSourceSorter();
+        }
+        if (column == olvType)
+        {
+            return new DefaultActionItemSorter();
+        }
+
+        return new DefaultActionItemSorter();
+    }
+
+    private void DefaultOlvView()
+    {
+        olvAction.BeginUpdate();
+        olvAction.ShowGroups = true;
+        olvAction.AlwaysGroupByColumn = null;
+        olvAction.Sort(olvType, SortOrder.Ascending);
+        olvAction.BuildGroups(olvType, SortOrder.Ascending, olvShowColumn, SortOrder.Ascending, olvSeason, SortOrder.Ascending);
+        olvAction.ResetColumnFiltering();
+        olvAction.EndUpdate();
+    }
+
+    private void OlvAction_Dropped(object sender, OlvDropEventArgs e)
+    {
+        // Get a list of filenames being dragged
+        string[] files = (string[])((DataObject)e.DataObject).GetData(DataFormats.FileDrop, false);
+
+        // Establish item in list being dragged to, and exit if no item matched
+        // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
+        if (files.Length <= 0 || e.DropTargetItem.RowObject is not ItemMissing mi)
+        {
+            return;
+        }
+
+        // Only want the first file if multiple files were dragged across.
+        ManuallyAddFileForItem(mi, files[0]);
+    }
+
+    private void OlvAction_CanDrop(object sender, OlvDropEventArgs e)
+    {
+        if (e.DropSink?.DropTargetItem?.RowObject is not Item item)
+        {
+            e.Effect = DragDropEffects.None;
+        }
+        else
+        {
+            if (item is ItemMissing)
+            {
+                if (((DataObject)e.DataObject).GetDataPresent(DataFormats.FileDrop))
+                {
+                    e.Effect = DragDropEffects.All;
+                }
+                else
+                {
+                    e.Effect = DragDropEffects.None;
+                    e.InfoMessage = "Can only drag files onto a missing episode";
+                }
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+                e.InfoMessage = "Can only drag onto a missing episode";
+            }
+        }
+    }
+
+    private OLVColumn MapToSortColumn(OLVColumn source)
+    {
+        if (source == olvDate)
+        {
+            return new OLVColumn("RawDate", "AirDate");
+        }
+        if (source == olvEpisode)
+        {
+            return new OLVColumn("RawEp", "EpisodeString");
+        }
+        if (source == olvSeason)
+        {
+            return new OLVColumn("RawSe", "SeasonNumberAsInt");
+        }
+
+        return source;
+    }
+    
     private static object GroupFolderTitleDelegate(object rowObject)
     {
         Item? ep = (Item?)rowObject;
@@ -525,12 +657,14 @@ public partial class UI : Form, IDialogParent
 
     private void olv1_FormatRow(object sender, FormatRowEventArgs e)
     {
-        if (e.Model is Action a && a.Outcome.Error)
+        if (e.Model is Action { Outcome.Error: true })
         {
             e.Item.BackColor = UiHelpers.WarningColor();
         }
     }
 
+    #endregion
+    
     private void ReceiveArgs(string[] args)
     {
         // Send command-line arguments to already running instance
@@ -575,17 +709,17 @@ public partial class UI : Form, IDialogParent
 
     private void ClearInfoWindows(string defaultText)
     {
-        SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(defaultText));
-        SetHtmlBody(chrInformation, ShowHtmlHelper.CreateOldPage(defaultText));
-        SetHtmlBody(chrSummary, ShowHtmlHelper.CreateOldPage(defaultText));
-        SetHtmlBody(chrTvTrailer, ShowHtmlHelper.CreateOldPage(defaultText));
+        chrImages.SetSimpleHtmlBody(defaultText);
+        chrInformation.SetSimpleHtmlBody(defaultText);
+        chrSummary.SetSimpleHtmlBody(defaultText);
+        chrTvTrailer.SetSimpleHtmlBody(defaultText);
     }
 
     private void ClearMovieInfoWindows(string defaultText)
     {
-        SetHtmlBody(chrMovieImages, ShowHtmlHelper.CreateOldPage(defaultText));
-        SetHtmlBody(chrMovieInformation, ShowHtmlHelper.CreateOldPage(defaultText));
-        SetHtmlBody(chrMovieTrailer, ShowHtmlHelper.CreateOldPage(defaultText));
+        chrMovieImages.SetSimpleHtmlBody(defaultText);
+        chrMovieInformation.SetSimpleHtmlBody(defaultText);
+        chrMovieTrailer.SetSimpleHtmlBody(defaultText);
     }
 
     private void MoreBusy()
@@ -929,6 +1063,8 @@ public partial class UI : Form, IDialogParent
         }
     }
 
+    #region Save and Load window size XML
+
     private bool LoadWidths(XElement xml)
     {
         string? forwho = xml.Attribute("For")?.Value;
@@ -1132,6 +1268,8 @@ public partial class UI : Form, IDialogParent
         writer.WriteEndElement(); // ColumnWidths
     }
 
+    #endregion
+
     private void UI_FormClosing(object sender, FormClosingEventArgs e)
     {
         try
@@ -1316,10 +1454,10 @@ public partial class UI : Form, IDialogParent
     {
         try
         {
-            SetHtmlEmbed(chrInformation, QuickStartGuide());
-            SetHtmlEmbed(chrImages, QuickStartGuide());
-            SetHtmlEmbed(chrSummary, QuickStartGuide());
-            SetHtmlEmbed(chrTvTrailer, QuickStartGuide());
+            chrInformation.SetHtmlEmbed(QuickStartGuide());
+            chrImages.SetHtmlEmbed(QuickStartGuide());
+            chrSummary.SetHtmlEmbed(QuickStartGuide());
+            chrTvTrailer.SetHtmlEmbed( QuickStartGuide());
         }
         catch (COMException ex)
         {
@@ -1445,27 +1583,27 @@ public partial class UI : Form, IDialogParent
         {
             if (snum >= 0 && si.AppropriateSeasons().TryGetValue( snum, out ProcessedSeason? s))
             {
-                SetHtmlBody(chrInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
-                SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+                chrInformation.SetSimpleHtmlBody(si.GetSeasonHtmlOverviewOffline(s));
+                chrImages.SetSimpleHtmlBody(si.GetSeasonImagesHtmlOverview(s));
             }
             else
             {
                 // no epnum specified, just show an overview
-                SetHtmlBody(chrInformation, ShowHtmlHelper.CreateOldPage(si.GetShowHtmlOverviewOffline()));
-                SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
+                chrInformation.SetSimpleHtmlBody(si.GetShowHtmlOverviewOffline());
+                chrImages.SetSimpleHtmlBody(si.GetShowImagesHtmlOverview());
             }
-            SetHtmlBody(chrSummary, ShowHtmlHelper.CreateOldPage("Not available offline"));
-            SetHtmlBody(chrTvTrailer, ShowHtmlHelper.CreateOldPage("Not available offline"));
+            chrSummary.SetSimpleHtmlBody("Not available offline");
+            chrTvTrailer.SetSimpleHtmlBody("Not available offline");
 
             return;
         }
 
         if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? se))
         {
-            SetHtmlBody(chrImages, se.GetSeasonImagesOverview());
-            SetHtmlBody(chrInformation, si.GetSeasonHtmlOverview(se, false));
-            SetHtmlBody(chrSummary, si.GetSeasonSummaryHtmlOverview(se, false));
-            UpdateTvTrailer(si);
+            chrImages.SetHtmlBody(se.GetSeasonImagesOverview());
+            chrInformation.SetHtmlBody(si.GetSeasonHtmlOverview(se, false));
+            chrSummary.SetHtmlBody(si.GetSeasonSummaryHtmlOverview(se, false));
+            chrTvTrailer.UpdateTvTrailer(si);
 
             ResetRunBackGroundWorker(bwSeasonHTMLGenerator, se);
             ResetRunBackGroundWorker(bwSeasonSummaryHTMLGenerator, se);
@@ -1473,10 +1611,10 @@ public partial class UI : Form, IDialogParent
         else
         {
             // no epnum specified, just show an overview
-            SetHtmlBody(chrImages, si.GetShowImagesOverview());
-            SetHtmlBody(chrInformation, si.GetShowHtmlOverview(false));
-            SetHtmlBody(chrSummary, si.GetShowSummaryHtmlOverview(false));
-            UpdateTvTrailer(si);
+            chrImages.SetHtmlBody(si.GetShowImagesOverview());
+            chrInformation.SetHtmlBody(si.GetShowHtmlOverview(false));
+            chrSummary.SetHtmlBody(si.GetShowSummaryHtmlOverview(false));
+            chrTvTrailer.UpdateTvTrailer(si);
 
             ResetRunBackGroundWorker(bwShowHTMLGenerator, si);
             ResetRunBackGroundWorker(bwShowSummaryHTMLGenerator, si);
@@ -1495,70 +1633,6 @@ public partial class UI : Form, IDialogParent
         {
             worker.RunWorkerAsync(s);
         }
-    }
-
-    private void UpdateTvTrailer(ShowConfiguration? si)
-    {
-        if (si?.CachedShow?.TrailerUrl?.HasValue() ?? false)
-        {
-            // ReSharper disable once AssignNullToNotNullAttribute
-            SetHtmlEmbed(chrTvTrailer, ShowHtmlHelper.YoutubeTrailer(si.CachedShow!));
-        }
-        else
-        {
-            SetHtmlBody(chrTvTrailer, ShowHtmlHelper.CreateOldPage("Not available for this TV show"));
-        }
-    }
-
-    private static void SetWeb(ChromiumWebBrowser web, System.Action a)
-    {
-        web.Visible = true;
-        if (web.IsDisposed)
-        {
-            return;
-        }
-
-        if (!web.IsBrowserInitialized)
-        {
-            web.IsBrowserInitializedChanged += (_, _) =>
-            {
-                web.BeginInvoke((MethodInvoker)delegate { SetWeb(web, a); });
-            };
-        }
-
-        try
-        {
-            a();
-        }
-        catch (COMException ex)
-        {
-            //Fail gracefully - no RHS episode guide is not too big of a problem.
-            Logger.Warn(ex, "Could not update UI for the show/cachedSeries/movie information pane");
-        }
-        catch (Exception ex)
-        {
-            //Fail gracefully - no RHS episode guide is not too big of a problem.
-            Logger.Error(ex);
-        }
-        web.Update();
-    }
-
-    public static void SetHtmlBody(ChromiumWebBrowser web, string body)
-    {
-        SetWeb(web,
-            () =>
-            {
-                web.Load("data:text/html;base64," + Convert.ToBase64String(Encoding.UTF8.GetBytes(body)));
-            });
-    }
-
-    private static void SetHtmlEmbed(ChromiumWebBrowser web, string? link)
-    {
-        SetWeb(web,
-            () =>
-            {
-                web.Load(link ?? string.Empty);
-            });
     }
 
     public static void TvSourceFor(ProcessedEpisode? e)
@@ -1683,8 +1757,7 @@ public partial class UI : Form, IDialogParent
 
     private void lvWhenToWatch_ColumnClick(object sender, ColumnClickEventArgs e)
     {
-        int col = e.Column;
-        SortSchedule(col);
+        SortSchedule(e.Column);
     }
 
     private void SortSchedule(int col)
@@ -3290,22 +3363,23 @@ public partial class UI : Form, IDialogParent
 
         if (TVSettings.Instance.OfflineMode || TVSettings.Instance.ShowBasicShowDetails)
         {
-            SetHtmlBody(chrMovieInformation, ShowHtmlHelper.CreateOldPage(si.GetMovieHtmlOverviewOffline()));
-            SetHtmlBody(chrMovieImages, ShowHtmlHelper.CreateOldPage(si.GetMovieImagesHtmlOverview()));
-            SetHtmlBody(chrMovieTrailer, ShowHtmlHelper.CreateOldPage("Not available offline"));
+            chrMovieInformation.SetSimpleHtmlBody(si.GetMovieHtmlOverviewOffline());
+            chrMovieImages.SetSimpleHtmlBody(si.GetMovieImagesHtmlOverview());
+            chrMovieTrailer.SetSimpleHtmlBody("Not available offline");
             return;
         }
-        //SetHtmlBody(chrMovieImages, ShowHtmlHelper.CreateOldPage(si.GetMovieImagesHtmlOverview()));
-        SetHtmlBody(chrMovieImages, si.GetMovieImagesOverview());
-        SetHtmlBody(chrMovieInformation, si.GetMovieHtmlOverview(false));
+
+        chrMovieImages.SetHtmlBody(si.GetMovieImagesOverview());
+        chrMovieInformation.SetHtmlBody(si.GetMovieHtmlOverview(false));
+
         if (si.CachedMovie?.TrailerUrl?.HasValue() ?? false)
         {
             // ReSharper disable once AssignNullToNotNullAttribute
-            SetHtmlEmbed(chrMovieTrailer, ShowHtmlHelper.YoutubeTrailer(si.CachedMovie));
+            chrMovieTrailer.SetHtmlEmbed(ShowHtmlHelper.YoutubeTrailer(si.CachedMovie));
         }
         else
         {
-            SetHtmlBody(chrMovieTrailer, ShowHtmlHelper.CreateOldPage("Not available for this Movie"));
+            chrMovieTrailer.SetSimpleHtmlBody("Not available for this Movie");
         }
 
         ResetRunBackGroundWorker(bwMovieHTMLGenerator, si);
@@ -3682,7 +3756,7 @@ public partial class UI : Form, IDialogParent
         {
             string message = mDoc.ShowProblems.Count() > 1
                 ? $"Shows with Id {mDoc.ShowProblems.Select(exception => exception.Media.ToString()).ToCsv()} are not found on TVDB, TMDB and TVMaze. Please update them"
-                : $"Show with {StringFor(mDoc.ShowProblems.First().ShowIdProvider)} Id {mDoc.ShowProblems.First().Media.IdFor(mDoc.ShowProblems.First().Media.Provider)} is not found on {StringFor(mDoc.ShowProblems.First().ErrorProvider)}. Please Update";
+                : $"Show with {mDoc.ShowProblems.First().ShowIdProvider.PrettyPrint()} Id {mDoc.ShowProblems.First().Media.IdFor(mDoc.ShowProblems.First().Media.Provider)} is not found on {(mDoc.ShowProblems.First().ErrorProvider.PrettyPrint())}. Please Update";
 
             DialogResult result = MessageBox.Show(message, "Series/Show No Longer Found", MessageBoxButtons.OKCancel,
                 MessageBoxIcon.Error);
@@ -3714,7 +3788,7 @@ public partial class UI : Form, IDialogParent
         {
             string message = mDoc.MovieProblems.Count() > 1
                 ? $"Movies with Id {string.Join(",", mDoc.MovieProblems.Select(exception => exception.Media.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
-                : $"Movie with {StringFor(mDoc.MovieProblems.First().ShowIdProvider)} Id {mDoc.MovieProblems.First().Media} is not found on {StringFor(mDoc.MovieProblems.First().ErrorProvider)}. Please Update";
+                : $"Movie with {(mDoc.MovieProblems.First().ShowIdProvider.PrettyPrint())} Id {mDoc.MovieProblems.First().Media} is not found on {(mDoc.MovieProblems.First().ErrorProvider.PrettyPrint())}. Please Update";
 
             DialogResult result = MessageBox.Show(message, "Movie No Longer Found", MessageBoxButtons.OKCancel,
                 MessageBoxIcon.Error);
@@ -3741,18 +3815,6 @@ public partial class UI : Form, IDialogParent
         }
 
         mDoc.ClearCacheUpdateProblems();
-    }
-
-    private static string StringFor(TVDoc.ProviderType i)
-    {
-        return i switch
-        {
-            TVDoc.ProviderType.TVmaze => "TV Maze",
-            TVDoc.ProviderType.TMDB => "TMDB",
-            TVDoc.ProviderType.TheTVDB => "The TVDB",
-            TVDoc.ProviderType.libraryDefault => throw new ArgumentOutOfRangeException(nameof(i), i, null),
-            _ => throw new ArgumentOutOfRangeException(nameof(i), i, null)
-        };
     }
 
     private static object ActionImageGetter(object rowObject)
@@ -4618,7 +4680,7 @@ public partial class UI : Form, IDialogParent
         {
             if (UiHasContextFor(result.Argument))
             {
-                SetHtmlBody(result.Web, result.Html);
+                result.Web.SetHtmlBody(result.Html);
             }
         }
     }
@@ -4789,64 +4851,6 @@ public partial class UI : Form, IDialogParent
         DefaultOlvView();
     }
 
-    private void DefaultOlvView()
-    {
-        olvAction.BeginUpdate();
-        olvAction.ShowGroups = true;
-        olvAction.AlwaysGroupByColumn = null;
-        olvAction.CustomSorter = delegate { olvAction.ListViewItemSorter = new ListViewActionItemSorter(); };
-        olvAction.Sort(olvType, SortOrder.Ascending);
-        olvAction.BuildGroups(olvType, SortOrder.Ascending, olvShowColumn, SortOrder.Ascending, olvSeason, SortOrder.Ascending);
-        //olvAction.Sort();
-        //olvAction.BuildGroups(olvType,SortOrder.Ascending);//(olvType, SortOrder.Ascending,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
-        olvAction.ResetColumnFiltering();
-        olvAction.EndUpdate();
-    }
-
-    private void OlvAction_Dropped(object sender, OlvDropEventArgs e)
-    {
-        // Get a list of filenames being dragged
-        string[] files = (string[])((DataObject)e.DataObject).GetData(DataFormats.FileDrop, false);
-
-        // Establish item in list being dragged to, and exit if no item matched
-        // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
-        if (files.Length <= 0 || e.DropTargetItem.RowObject is not ItemMissing mi)
-        {
-            return;
-        }
-
-        // Only want the first file if multiple files were dragged across.
-        ManuallyAddFileForItem(mi, files[0]);
-    }
-
-    private void OlvAction_CanDrop(object sender, OlvDropEventArgs e)
-    {
-        if (e.DropSink?.DropTargetItem?.RowObject is not Item item)
-        {
-            e.Effect = DragDropEffects.None;
-        }
-        else
-        {
-            if (item is ItemMissing)
-            {
-                if (((DataObject)e.DataObject).GetDataPresent(DataFormats.FileDrop))
-                {
-                    e.Effect = DragDropEffects.All;
-                }
-                else
-                {
-                    e.Effect = DragDropEffects.None;
-                    e.InfoMessage = "Can only drag files onto a missing episode";
-                }
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
-                e.InfoMessage = "Can only drag onto a missing episode";
-            }
-        }
-    }
-
     private void BwShowSummaryHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
     {
         Thread.CurrentThread.Name ??= "Show Summary HTML Creation Thread"; // Can only set it once
@@ -4973,42 +4977,6 @@ public partial class UI : Form, IDialogParent
                 JackettFinder.SearchForEpisode((ProcessedEpisode)lvi.Tag);
             }
         }
-    }
-
-    private void olvAction_BeforeCreatingGroups(object sender, CreateGroupsEventArgs e)
-    {
-        e.Parameters.ItemComparer = GetActionComparer(e.Parameters.GroupByColumn);
-
-        if (e.Parameters.PrimarySort == olvDate)
-        {
-            e.Parameters.PrimarySort = new OLVColumn("RawDate",olvDate.AspectName);
-        }
-
-        if (e.Parameters.PrimarySort == olvEpisode)
-        {
-            e.Parameters.PrimarySort = new OLVColumn("RawEp", olvEpisode.AspectName);
-            e.Parameters.GroupComparer = new SeasonGroupComparer(e.Parameters.GroupByOrder);
-        }
-
-        if (e.Parameters.PrimarySort == olvSeason || e.Parameters.PrimarySort.AspectName == "SeasonNumberAsInt")
-        {
-            e.Parameters.PrimarySort = new OLVColumn("RawSe", "SeasonNumberAsInt");
-            e.Parameters.GroupComparer = new SeasonGroupComparer(e.Parameters.GroupByOrder);
-        }
-
-        e.Parameters.SecondarySort = new OLVColumn("key", "OrderKey");
-        e.Parameters.SecondarySortOrder = SortOrder.Ascending;
-    }
-
-    private static IComparer<OLVListItem> GetActionComparer(OLVColumn column)
-    {
-        return column.Index switch
-        {
-            1 => new NumberAsTextActionComparer(column.Index),
-            2 => new NumberAsTextActionComparer(column.Index),
-            3 => new DateActionComparer(column.Index),
-            _ => new TextActionComparer(column.Index)
-        };
     }
 
     public void ShowFgDownloadProgress(CacheUpdater cu, CancellationTokenSource cts)
@@ -5327,36 +5295,6 @@ public partial class UI : Form, IDialogParent
         FocusOnScanResults();
     }
 
-    private void olvAction_ColumnClick(object sender, ColumnClickEventArgs e)
-    {
-        if (!olvAction.AllColumns[e.Column].Groupable && olvAction.AllColumns[e.Column].Sortable)
-        {
-            //TODO work out how to deal with this
-        }
-    }
-
-    private void olvAction_BeforeSorting(object sender, BeforeSortingEventArgs e)
-    {
-        if (e.ColumnToSort == olvDate)
-        {
-            e.ColumnToSort = new OLVColumn("RawDate", "AirDate");
-        }
-
-        if (e.ColumnToSort == olvEpisode)
-        {
-            e.ColumnToSort = new OLVColumn("RawEp", "EpisodeString");
-        }
-
-        if (e.ColumnToSort == olvSeason)
-        {
-            e.ColumnToSort = new OLVColumn("RawSe", "SeasonNumberAsInt");
-        }
-
-        e.SecondaryColumnToSort = new OLVColumn("AbsoluteOrder", "OrderKey");
-        e.SecondarySortOrder = SortOrder.Ascending;
-        olvAction.ShowSortIndicator();
-    }
-
     private void tVDBUPdateCheckerLogToolStripMenuItem_Click(object sender, EventArgs e)
     {
         TvdbUpdateChecker form = new(mDoc);
@@ -5457,61 +5395,74 @@ public partial class UI : Form, IDialogParent
     }
 }
 
-/// <summary>
-/// This comparer sort list view specifically for sesaons so that they appear in the season order
-/// OLVGroups have a "SortValue" property,
-/// which is used if present. Otherwise, the titles of the groups will be compared.
-/// </summary>
-public class SeasonGroupComparer : IComparer<OLVGroup>
+public static class TvWebExtensions
 {
-    /// <summary>
-    /// Create a group comparer
-    /// </summary>
-    /// <param name="order">The ordering for column values</param>
-    public SeasonGroupComparer(SortOrder order)
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    public static void UpdateTvTrailer(this ChromiumWebBrowser web, ShowConfiguration? si)
     {
-        sortOrder = order;
-    }
-
-    /// <summary>
-    /// Compare the two groups. OLVGroups have a "SortValue" property,
-    /// which is used if present. Otherwise, the titles of the groups will be compared.
-    /// </summary>
-    /// <param name="x">group1</param>
-    /// <param name="y">group2</param>
-    /// <returns>An ordering indication: -1, 0, 1</returns>
-    public int Compare(OLVGroup? x, OLVGroup? y)
-    {
-        if (x is null || y is null)
+        if (si?.CachedShow?.TrailerUrl?.HasValue() ?? false)
         {
-            return 0;
-        }
-
-        // If we can compare the sort values, do that.
-        // Otherwise do a case insensitive compare on the group header.
-        int result;
-        if (x.Items.Any() && y.Items.Any())
-        {
-            result = CompareValue(x).CompareTo(CompareValue(y));
-        }
-        else if (x.SortValue != null && y.SortValue != null)
-        {
-            result = x.SortValue.CompareTo(y.SortValue);
+            // ReSharper disable once AssignNullToNotNullAttribute
+            SetHtmlEmbed(web, ShowHtmlHelper.YoutubeTrailer(si.CachedShow!));
         }
         else
         {
-            result = string.Compare(x.Header, y.Header, StringComparison.CurrentCultureIgnoreCase);
+            SetHtmlBody(web, ShowHtmlHelper.CreateOldPage("Not available for this TV show"));
         }
-
-        if (sortOrder == SortOrder.Descending)
-        {
-            return 0 - result;
-        }
-
-        return result;
     }
 
-    private static int CompareValue(OLVGroup x) => ((Item)x.Items.First().RowObject).SeasonNumberAsInt ?? 0;
+    private static void SetWeb(this ChromiumWebBrowser web, System.Action a)
+    {
+        web.Visible = true;
+        if (web.IsDisposed)
+        {
+            return;
+        }
 
-    private readonly SortOrder sortOrder;
+        if (!web.IsBrowserInitialized)
+        {
+            web.IsBrowserInitializedChanged += (_, _) =>
+            {
+                web.BeginInvoke((MethodInvoker)delegate { SetWeb(web, a); });
+            };
+        }
+
+        try
+        {
+            a();
+        }
+        catch (COMException ex)
+        {
+            //Fail gracefully - no RHS episode guide is not too big of a problem.
+            Logger.Warn(ex, "Could not update UI for the show/cachedSeries/movie information pane");
+        }
+        catch (Exception ex)
+        {
+            //Fail gracefully - no RHS episode guide is not too big of a problem.
+            Logger.Error(ex);
+        }
+        web.Update();
+    }
+
+    public static void SetSimpleHtmlBody(this ChromiumWebBrowser web, string message)
+    {
+        web.SetHtmlBody(ShowHtmlHelper.CreateOldPage(message));
+    }
+    public static void SetHtmlBody(this ChromiumWebBrowser web, string body)
+    {
+        SetHtml(web,"data:text/html;base64," + Convert.ToBase64String(Encoding.UTF8.GetBytes(body)));
+    }
+    internal static void SetHtmlEmbed(this ChromiumWebBrowser web, string? link)
+    {
+        SetHtml(web,link ?? string.Empty);
+    }
+
+    private static void SetHtml(this ChromiumWebBrowser web, string value)
+    {
+        SetWeb(web,
+            () =>
+            {
+                web.Load(value);
+            });
+    }
 }
