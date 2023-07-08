@@ -52,7 +52,7 @@ public class ListViewColumnSorter : IComparer
     /// <summary>
     /// Gets or sets the number of the column to which to apply the sorting operation (Defaults to '0').
     /// </summary>
-    public int SortColumn { set; get; }
+    private int SortColumn { set; get; }
 
     /// <summary>
     /// Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').

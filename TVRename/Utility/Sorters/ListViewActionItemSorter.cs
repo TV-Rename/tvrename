@@ -124,12 +124,12 @@ internal class OlvActionGroupComparer : IComparer<OLVListItem>
     /// <summary>
     /// Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').
     /// </summary>
-    public SortOrder Order { set; get; }
+    private SortOrder Order { set; get; }
 
     /// <summary>
     /// Case insensitive comparer object
     /// </summary>
-    public ActionItemSorter Sorter { get; set; }
+    private ActionItemSorter Sorter { get; set; }
 
     /// <summary>
     /// Class constructor.  Initializes various elements
@@ -165,17 +165,18 @@ internal class OlvActionGroupComparer : IComparer<OLVListItem>
         // Handle nulls. Null values come last
         bool xIsNull = x1 == null;
         bool yIsNull = y1 == null;
-        if (xIsNull || yIsNull)
-        {
-            if (xIsNull && yIsNull)
-            {
-                return 0;
-            }
 
-            return xIsNull ? -1 : 1;
+        if (!xIsNull && !yIsNull)
+        {
+            return Polarity() * Sorter.Compare(x1, y1);
         }
 
-        return Polarity() * Sorter.Compare(x1, y1);
+        if (xIsNull && yIsNull)
+        {
+            return 0;
+        }
+
+        return xIsNull ? -1 : 1;
     }
 
     private int Polarity()
