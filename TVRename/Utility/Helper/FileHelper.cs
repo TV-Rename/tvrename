@@ -426,6 +426,11 @@ public static class FileHelper
 
     private static int GetMetaDetails(this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string, FileInfo, int> parseMethod, string operation, Func<MediaInfoWrapper, int> meExtractMethod, Func<int, int> meParseMethod)
     {
+        if (!movieFile.Exists)
+        {
+            Logger.Warn($"Unable to find file as part of {operation} for {movieFile.FullName}");
+            return -1;
+        }
         try
         {
             string duration;
