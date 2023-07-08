@@ -4955,7 +4955,7 @@ public partial class UI : Form, IDialogParent
                 {
                     JackettFinder.SearchForEpisode(i.Episode);
                 }
-                else if (i is ShowSeasonMissing { Series: { }, SeasonNumberAsInt: { } } ssm)
+                else if (i is ShowSeasonMissing { Series: not null, SeasonNumberAsInt: not null } ssm)
                 {
                     JackettFinder.SearchForSeason(ssm.Series, ssm.SeasonNumberAsInt.Value);
                 }

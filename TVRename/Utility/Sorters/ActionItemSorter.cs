@@ -123,9 +123,11 @@ public class ActionItemErrorsSorter : ActionItemStringSorter
 }
 public class ActionItemSeasonSorter : ActionItemSorter
 {
-    protected override int CompareItems(Item x, Item y) => x.SeasonNumberAsInt ?? 0 - y.SeasonNumberAsInt ?? 0;
+    protected override int CompareItems(Item x, Item y) => GetValue(x) - GetValue(y);
+    private static int GetValue(Item x) => x.SeasonNumberAsInt ?? 0;
 }
 public class ActionItemEpisodeSorter : ActionItemSorter
 {
-    protected override int CompareItems(Item x, Item y) => x.EpisodeNumber ?? 0 - y.EpisodeNumber ?? 0 ;
+    protected override int CompareItems(Item x, Item y) => GetValue(x) - GetValue(y);
+    private static int GetValue(Item x) => x.EpisodeNumber ?? 0;
 }
