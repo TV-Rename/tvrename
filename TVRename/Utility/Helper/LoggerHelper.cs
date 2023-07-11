@@ -21,6 +21,8 @@ public static class LoggerHelper
             string methodName = site == null ? string.Empty : site.Name;//avoid null ref if it's null.
             methodName = ExtractBracketed(methodName);
 
+            returnValue.AppendLine($"{ThreadAndDateInfo}Exception: {methodName}: {e.Message} from {e.Source}");
+
             StackTrace stkTrace = new(e, true);
             for (int i = 0; i < 3; i++)
             {
@@ -33,7 +35,7 @@ public static class LoggerHelper
                 int lineNum = frame.GetFileLineNumber();//get the line and column numbers
                 int colNum = frame.GetFileColumnNumber();
                 string className = ExtractBracketed(frame.GetMethod()?.ReflectedType?.FullName);
-                returnValue.AppendLine(ThreadAndDateInfo + "Exception: " + className + "." + methodName + ", Ln " + lineNum + " Col " + colNum + ": " + e.Message);
+                returnValue.AppendLine(Helpers.Tab + ": " + className + "." + methodName + ", Ln " + lineNum + " Col " + colNum);
                 if (lineNum + colNum > 0)
                 {
                     break; //exit the for loop if you have valid info. If not, try going up one frame...
@@ -46,25 +48,6 @@ public static class LoggerHelper
             return "**** Exception in ErrorText(Exception e): " + ee.Message;
         }
         return returnValue.ToString();
-    }
-    public static string ErrorText(this string str)
-    {
-        try
-        {
-            StackFrame frame = new(1);
-            MethodBase? method = frame.GetMethod();
-            if (method is null)
-            {
-                return string.Empty;
-            }
-            string name = ExtractBracketed(method.Name);//extract the content that is inside <brackets> the rest is irrelevant 
-
-            return ThreadAndDateInfo + method.DeclaringType + "." + name + ": " + str;
-        }
-        catch (Exception e)
-        {
-            return "*** Exception in ErrorText(string str): " + e.Message;
-        }
     }
 
     private static string ExtractBracketed(string? str)

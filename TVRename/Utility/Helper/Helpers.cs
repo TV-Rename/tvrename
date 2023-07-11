@@ -54,6 +54,8 @@ public static class Helpers
     public static string DebugText => " ** Debug Build **";
     #endregion
 
+    public static string Tab => "\t";
+
     #region PrettyPrint
     public static string PrettyPrint(this TVSettings.ScanType st)
     {

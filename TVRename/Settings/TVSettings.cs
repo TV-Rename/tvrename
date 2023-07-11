@@ -1145,7 +1145,7 @@ public sealed class TVSettings
         if (fn.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
         {
             Logger.Warn($"Need to remove some characters from {fn} as the episode name contains characters that cannot be in the filename.");
-            fn = fn.RemoveCharactersFrom(Path.GetInvalidFileNameChars()).RemoveCharactersFrom("\t".ToCharArray());
+            fn = fn.RemoveCharactersFrom(Path.GetInvalidFileNameChars()).RemoveCharactersFrom(Helpers.Tab.ToCharArray());
         }
 
         return ForceLowercaseFilenames ? fn.ToLower() : fn;
@@ -1166,7 +1166,7 @@ public sealed class TVSettings
         if (fn.ContainsAnyCharactersFrom(Path.GetInvalidPathChars()))
         {
             Logger.Warn($"Need to remove some characters from {fn} as the directory name contains characters that cannot be in the path.");
-            fn = fn.RemoveCharactersFrom(Path.GetInvalidPathChars()).RemoveCharactersFrom("\t".ToCharArray());
+            fn = fn.RemoveCharactersFrom(Path.GetInvalidPathChars()).RemoveCharactersFrom(Helpers.Tab.ToCharArray());
         }
 
         return fn;
