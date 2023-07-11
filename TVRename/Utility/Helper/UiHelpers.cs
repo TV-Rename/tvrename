@@ -35,6 +35,18 @@ public static class UiHelpers
             return false;
         }
     }
+    public static bool ShowDialogAndOk(FolderBrowserDialog d, IWin32Window owner)
+    {
+        try
+        {
+            return ShowDialogAndOk(() => d.ShowDialog(owner));
+        }
+        catch (Win32Exception ex)
+        {
+            Logger.Error(ex, $"Failed to load dialog for {d.SelectedPath}");
+            return false;
+        }
+    }
     public static bool ShowDialogAndOk(CommonDialog d, IWin32Window owner)
     {
         return ShowDialogAndOk(() => d.ShowDialog(owner));
