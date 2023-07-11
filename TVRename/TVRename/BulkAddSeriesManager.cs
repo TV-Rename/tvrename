@@ -429,7 +429,7 @@ public class BulkAddSeriesManager
         foreach (PossibleNewTvShow ai in ais)
         {
             // see if there is a matching show item
-            ShowConfiguration? found = mDoc.TvLibrary.GetShowItem(ai.ProviderCode, ai.Provider);
+            ShowConfiguration? found = mDoc.TvLibrary.GetShowItem(ai);
             if (found is null)
             {
                 // need to add a new showitem

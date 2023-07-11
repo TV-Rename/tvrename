@@ -840,7 +840,10 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         return episodes;
     }
 
-    public ShowConfiguration? GetShowItem(ISeriesSpecifier ai) => GetShowItem(ai.Id(), ai.Provider);
+    public ShowConfiguration? GetShowItem(ISeriesSpecifier ai) => GetShowItem(ai.Id(), ai.Provider)
+                                                                  ?? GetShowItem(ai.TmdbId, TVDoc.ProviderType.TMDB)
+                                                                  ?? GetShowItem(ai.TvdbId, TVDoc.ProviderType.TheTVDB)
+                                                                  ?? GetShowItem(ai.TvMazeId, TVDoc.ProviderType.TVmaze);
 
     internal void AddAlias(ShowConfiguration sc, string hint)
     {

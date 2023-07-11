@@ -167,7 +167,10 @@ public class MovieLibrary : SafeList<MovieConfiguration>
             .OrderBy(s => s);
     }
 
-    public MovieConfiguration? GetMovie(ISeriesSpecifier ai) => GetMovie(ai.Id(), ai.Provider);
+    public MovieConfiguration? GetMovie(ISeriesSpecifier ai) => GetMovie(ai.Id(), ai.Provider)
+                                                                ?? GetMovie(ai.TmdbId, TVDoc.ProviderType.TMDB)
+                                                                ?? GetMovie(ai.TvdbId, TVDoc.ProviderType.TheTVDB)
+                                                                ?? GetMovie(ai.TvMazeId, TVDoc.ProviderType.TVmaze);
 
     public void UpdateCollectionInformation()
     {
