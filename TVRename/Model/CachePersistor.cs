@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -63,8 +64,14 @@ internal static class CachePersistor
         }
         catch (Exception e)
         {
-            Logger.Error($"Complete failure to save {cacheFile.FullName}. {e.ErrorText()}");
-            //todo - put up user box to ask them to fix disk if out of space
+            Logger.Error($"Complete failure to save {cacheFile.FullName}. {e.Message}");
+
+            DialogResult dr = MessageBox.Show($"Could not save {cacheFile.Name} due to {e.Message}. Local cache will be lost. Retry? ", "TV Rename",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+            if (dr != DialogResult.No)
+            {
+                SaveCache(series,movies,cacheFile,timestamp);
+            }
         }
     }
     private static void SaveCacheInternal(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp)

@@ -562,8 +562,13 @@ public class TVDoc : IDisposable
         }
         catch (Exception e)
         {
-            Logger.Error($"Complete failure to save {PathManager.TVDocSettingsFile.FullName}. {e.ErrorText()}");
-            //todo - put up user box to ask them to fix disk if out of space
+            Logger.Error($"Complete failure to save {PathManager.TVDocSettingsFile.FullName}. {e.Message}");
+            DialogResult dr = MessageBox.Show($"Could not save {PathManager.TVDocSettingsFile.Name} due to {e.Message}. Settings and configuration will be lost. Retry? ", "TV Rename",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+            if (dr != DialogResult.No)
+            {
+                WriteXMLSettings();
+            }
         }
     }
     private void WriteXmlSettingsInternal()
