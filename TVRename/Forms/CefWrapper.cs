@@ -72,7 +72,7 @@ public class CefWrapper
 
             MessageBox.Show("TV Rename needs Microsoft Visual C++ 2015-2019 Redistributable to be present. Downloading installer now.", "Missing Dependencies");
             string urlToDownload = Environment.Is64BitProcess ? "vc_redist.x64.exe" : "vc_redist.x86.exe";
-            $"https://aka.ms/vs/16/release/{urlToDownload}".OpenUrlInBrowser();
+            $"https://aka.ms/vs/17/release/{urlToDownload}".OpenUrlInBrowser();
         }
         CheckForBrowserDependencies(false);
     }
