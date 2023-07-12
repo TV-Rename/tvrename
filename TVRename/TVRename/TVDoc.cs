@@ -131,8 +131,13 @@ public class TVDoc : IDisposable
 
     internal bool AlreadyContains(MediaConfiguration show)
     {
-        return ContainsMedia(FilmLibrary.Movies.Select(x => (MediaConfiguration)x), show)
-               || ContainsMedia(TvLibrary.Shows.Select(x => (MediaConfiguration)x), show);
+        if (show is ShowConfiguration configuration)
+        {
+            UpdateIdsFromCache(configuration);
+            return ContainsMedia(TvLibrary.Shows.Select(x => (MediaConfiguration)x), show);
+        }
+
+        return ContainsMedia(FilmLibrary.Movies.Select(x => (MediaConfiguration)x), show);
     }
 
     public static bool ContainsMedia(IEnumerable<MediaConfiguration> media, MediaConfiguration testMedia)
@@ -221,10 +226,10 @@ public class TVDoc : IDisposable
         }
     }
 
-    private void UpdateIdsFromCache(ShowConfiguration show)
+    private void UpdateIdsFromCache(ShowConfiguration? show)
     {
-        CachedSeriesInfo? cachedData = show.CachedShow;
-        if (cachedData is null)
+        CachedSeriesInfo? cachedData = show?.CachedShow;
+        if (cachedData is null || show is null)
         {
             return;
         }
