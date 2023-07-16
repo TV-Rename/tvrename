@@ -213,17 +213,5 @@ public static class VersionUpdater
             releaseDate);
     }
 
-    private static Release ObtainCurrentVersion()
-    {
-        string currentVersionString = Helpers.DisplayVersion;
-
-        bool inDebug = currentVersionString.EndsWith(Helpers.DebugText, StringComparison.Ordinal);
-        //remove debug stuff
-        if (inDebug)
-        {
-            currentVersionString = currentVersionString[..currentVersionString.LastIndexOf(Helpers.DebugText, StringComparison.Ordinal)];
-        }
-
-        return new Release(currentVersionString, Release.VersionType.friendly);
-    }
+    private static Release ObtainCurrentVersion() => new(Helpers.Version, Release.VersionType.friendly);
 }

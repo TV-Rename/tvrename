@@ -7,9 +7,9 @@
 //
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+#pragma warning disable CS0162
 
 // Helpful functions and classes
 
@@ -27,7 +27,14 @@ public static class Helpers
     /// </value>
     public static bool OnMono => Type.GetType("Mono.Runtime") != null;
 
-    public static bool InDebug() => Debugger.IsAttached;
+    public static bool InDebug()
+    {
+#if DEBUG 
+        return true;
+#endif
+        // ReSharper disable once HeuristicUnreachableCode
+        return false;
+    }
 
     /// <summary>
     /// Gets the application display version from the current assemblies <see cref="AssemblyInformationalVersionAttribute"/>.
@@ -35,23 +42,19 @@ public static class Helpers
     /// <value>
     /// The application display version.
     /// </value>
-    public static string DisplayVersion
-    {
-        get
-        {
-            string v = Assembly.GetExecutingAssembly()
-                .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false)
-                .OfType<AssemblyInformationalVersionAttribute>()
-                .First()
-                .InformationalVersion;
-#if DEBUG
-            v += DebugText;
-#endif
-            return v;
-        }
-    }
+    public static string DisplayVersion =>
+        InDebug()
+            ? Version + DebugText
+            : Version;
 
-    public static string DebugText => " ** Debug Build **";
+    public static string Version => 
+     Assembly.GetExecutingAssembly()
+            .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false)
+            .OfType<AssemblyInformationalVersionAttribute>()
+            .First()
+            .InformationalVersion;
+
+    private static string DebugText => " ** Debug Build **";
     #endregion
 
     public static string Tab => "\t";
