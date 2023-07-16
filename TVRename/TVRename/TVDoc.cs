@@ -306,19 +306,37 @@ public class TVDoc : IDisposable
             string baseMessage = $"Media:{type.PrettyPrint()}: {show.ShowName} ({show}) has inconsistent {provider.PrettyPrint()} Id: {currentValue} {valueFromCache}, updating to {valueFromCache}, {basedOnInformation} (Cached Value is {cachedData})." + Environment.NewLine
                 + $"    Config: {show}" + Environment.NewLine
                 + $"    Cache:  {cachedData}";
+
+            bool startsWith = valueFromCache.ToString().StartsWith(currentValue.ToString(), StringComparison.Ordinal);
             switch (show.Media)
             {
                 case MediaConfiguration.MediaType.tv:
-                    Logger.Error(baseMessage + Environment.NewLine +
-                                 $"    TVDB:   {TheTVDB.LocalCache.Instance.GetSeries(show.TvdbId)}" + Environment.NewLine +
-                                 $"    TMDB:   {TMDB.LocalCache.Instance.GetSeries(show.TmdbId)}" + Environment.NewLine +
-                                 $"    TVMaze: {TVmaze.LocalCache.Instance.GetSeries(show.TvMazeId)}");
+                    string message = baseMessage + Environment.NewLine +
+                                                     $"    TVDB:   {TheTVDB.LocalCache.Instance.GetSeries(show.TvdbId)}" + Environment.NewLine +
+                                                     $"    TMDB:   {TMDB.LocalCache.Instance.GetSeries(show.TmdbId)}" + Environment.NewLine +
+                                                     $"    TVMaze: {TVmaze.LocalCache.Instance.GetSeries(show.TvMazeId)}";
+                    if (startsWith)
+                    {
+                        Logger.Warn(message);
+                    }
+                    else
+                    {
+                        Logger.Error(message);
+                    }
                     FullyRefresh((ShowConfiguration)show);
                     break;
                 case MediaConfiguration.MediaType.movie:
-                    Logger.Error(baseMessage + Environment.NewLine +
-                                 $"    TVDB:   {TheTVDB.LocalCache.Instance.GetMovie(show.TvdbId)}" + Environment.NewLine +
-                                 $"    TMDB:   {TMDB.LocalCache.Instance.GetMovie(show.TmdbId)}");
+                    string mainMessage = baseMessage + Environment.NewLine +
+                                                     $"    TVDB:   {TheTVDB.LocalCache.Instance.GetMovie(show.TvdbId)}" + Environment.NewLine +
+                                                     $"    TMDB:   {TMDB.LocalCache.Instance.GetMovie(show.TmdbId)}";
+                    if (startsWith)
+                    {
+                        Logger.Warn(mainMessage);
+                    }
+                    else
+                    {
+                        Logger.Error(mainMessage);
+                    }
                     FullyRefresh((MovieConfiguration)show);
                     break;
                 default:
