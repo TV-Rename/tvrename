@@ -1719,7 +1719,7 @@ internal static class ShowHtmlHelper
                 // 300x168 / 300x225
                 if (ei.ThumbnailUrl().HasValue())
                 {
-                    body += "<img src=" + ei.ThumbnailUrl() + ">";
+                    body += "<img width=300 src=" + ei.ThumbnailUrl() + ">";
                 }
 
                 body += "</td></tr></table>";
