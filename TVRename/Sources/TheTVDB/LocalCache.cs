@@ -11,6 +11,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -182,6 +183,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         catch (SourceConnectivityException e)
         {
             cachedSeriesInfo.Dirty = true;
+            if (e.InnerException is HttpRequestException hre && hre.Is404())
+            {
+                return false;
+            }
             HandleConnectionIssue(showConnectionIssues, e);
             return false;
         }
