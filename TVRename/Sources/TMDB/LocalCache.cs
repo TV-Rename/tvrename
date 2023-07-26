@@ -15,6 +15,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Humanizer;
 using TMDbLib.Client;
 using TMDbLib.Objects.Exceptions;
 using TMDbLib.Objects.Find;
@@ -584,7 +585,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
         try
         {
-            return webCall();
+            return webCall.WithRetry(3,2.Seconds(),ex=>ex is RequestLimitExceededException ,errorMessage);
         }
         catch (System.IO.IOException ioex)
         {

@@ -9,6 +9,9 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Polly;
+using NLog;
+
 #pragma warning disable CS0162
 
 // Helpful functions and classes
@@ -17,6 +20,8 @@ namespace TVRename;
 
 public static class Helpers
 {
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
     #region DebugingInfo
 
     /// <summary>
@@ -210,4 +215,21 @@ public static class Helpers
     }
 
     #endregion
+
+    public static T WithRetry<T>(this Func<T> operation, int retryTimes, TimeSpan delay,
+        Func<Exception, bool> retryableException, string message)
+    {
+        Policy retryPolicy = Policy
+            .Handle(retryableException)
+            .WaitAndRetry(
+                retryTimes,
+                _ => delay,
+                (exception, timeSpan, retryCount, _) =>
+                {
+                    Logger.Warn(exception,
+                        $"Retry {retryCount}/{retryTimes}, waiting {timeSpan} to {message}.");
+                });
+
+        return retryPolicy.Execute(operation);
+    }
 }
