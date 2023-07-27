@@ -66,7 +66,6 @@ Section "Install"
 
     SetOutPath "$INSTDIR\runtimes\win\lib\net6.0"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win\lib\net6.0\*.dll"
-    
     SetOutPath "$INSTDIR\runtimes\win\lib\netcoreapp2.1"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win\lib\netcoreapp2.1\*.dll"
     
@@ -77,11 +76,11 @@ Section "Install"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.dll"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.exe"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.json"
-    File /r TVRename\packages\cef.redist.x64\114.2.10\CEF\*.dll
-    File /r TVRename\packages\cef.redist.x64\114.2.10\CEF\*.pak
-    File /r TVRename\packages\cef.redist.x64\114.2.10\CEF\*.bin
-    File /r TVRename\packages\cef.redist.x64\114.2.10\CEF\*.dat
-    File /r TVRename\packages\cef.redist.x64\114.2.10\CEF\*.json
+    File /r TVRename\packages\cef.redist.x64\106.0.29\CEF\*.dll
+    File /r TVRename\packages\cef.redist.x64\106.0.29\CEF\*.pak
+    File /r TVRename\packages\cef.redist.x64\106.0.29\CEF\*.bin
+    File /r TVRename\packages\cef.redist.x64\106.0.29\CEF\*.dat
+    File /r TVRename\packages\cef.redist.x64\106.0.29\CEF\*.json
 
     SetOutPath "$INSTDIR\runtimes\win-x64\native\locales"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\locales\*.pak"
@@ -93,11 +92,11 @@ Section "Install"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.dll"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.exe"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.json"
-    File /r TVRename\packages\cef.redist.x86\114.2.10\CEF\*.dll
-    File /r TVRename\packages\cef.redist.x86\114.2.10\CEF\*.pak
-    File /r TVRename\packages\cef.redist.x86\114.2.10\CEF\*.bin
-    File /r TVRename\packages\cef.redist.x86\114.2.10\CEF\*.dat
-    File /r TVRename\packages\cef.redist.x86\114.2.10\CEF\*.json
+    File /r TVRename\packages\cef.redist.x86\106.0.29\CEF\*.dll
+    File /r TVRename\packages\cef.redist.x86\106.0.29\CEF\*.pak
+    File /r TVRename\packages\cef.redist.x86\106.0.29\CEF\*.bin
+    File /r TVRename\packages\cef.redist.x86\106.0.29\CEF\*.dat
+    File /r TVRename\packages\cef.redist.x86\106.0.29\CEF\*.json
     
     SetOutPath "$INSTDIR\runtimes\win-x86\native\locales"
     File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\locales\*.pak"
