@@ -75,7 +75,7 @@ public partial class UI : Form, IDialogParent
     private MovieConfiguration? switchToWhenOpenMyMovies;
 
     private readonly ListViewColumnSorter lvwScheduleColumnSorter;
-    
+
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private bool IsBusy => busy != 0;
 
@@ -324,7 +324,7 @@ public partial class UI : Form, IDialogParent
 
         olvAction.SortGroupItemsByPrimaryColumn = false;
 
-        olvAction.CustomSorter = delegate(OLVColumn column, SortOrder order)
+        olvAction.CustomSorter = delegate (OLVColumn column, SortOrder order)
         {
             olvAction.ListViewItemSorter = new ColumnComparer(
                 MapToSortColumn(column), order);
@@ -455,7 +455,7 @@ public partial class UI : Form, IDialogParent
 
         return source;
     }
-    
+
     private static object GroupFolderTitleDelegate(object rowObject)
     {
         Item? ep = (Item?)rowObject;
@@ -664,7 +664,7 @@ public partial class UI : Form, IDialogParent
     }
 
     #endregion
-    
+
     private void ReceiveArgs(string[] args)
     {
         // Send command-line arguments to already running instance
@@ -1457,7 +1457,7 @@ public partial class UI : Form, IDialogParent
             chrInformation.SetHtmlEmbed(QuickStartGuide());
             chrImages.SetHtmlEmbed(QuickStartGuide());
             chrSummary.SetHtmlEmbed(QuickStartGuide());
-            chrTvTrailer.SetHtmlEmbed( QuickStartGuide());
+            chrTvTrailer.SetHtmlEmbed(QuickStartGuide());
         }
         catch (COMException ex)
         {
@@ -1581,7 +1581,7 @@ public partial class UI : Form, IDialogParent
 
         if (TVSettings.Instance.OfflineMode || TVSettings.Instance.ShowBasicShowDetails)
         {
-            if (snum >= 0 && si.AppropriateSeasons().TryGetValue( snum, out ProcessedSeason? s))
+            if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? s))
             {
                 chrInformation.SetSimpleHtmlBody(si.GetSeasonHtmlOverviewOffline(s));
                 chrImages.SetSimpleHtmlBody(si.GetSeasonImagesHtmlOverview(s));
@@ -4614,7 +4614,7 @@ public partial class UI : Form, IDialogParent
 
         TabControl? tabCtrl = sender as TabControl;
 
-        using SolidBrush back = new (BackColor);
+        using SolidBrush back = new(BackColor);
         g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : back, e.Bounds);
 
         // Get the item from the collection.
@@ -4648,7 +4648,7 @@ public partial class UI : Form, IDialogParent
 
             Rectangle textarea = tabBounds.Value with { Y = tabBounds.Value.Y + INDENT + bit.Height, Height = tabBounds.Value.Height - (INDENT + bit.Height) };
 
-            using SolidBrush fore = new (ForeColor);
+            using SolidBrush fore = new(ForeColor);
             g.DrawString(tabPage.Text, tabPage.Font, fore, textarea, stringFlags);
         }
     }
@@ -5393,6 +5393,11 @@ public partial class UI : Form, IDialogParent
     {
         PartialScan(new RemoveShowsWithNoFolders(mDoc));
     }
+
+    private void exportFilteredToolStripMenuItem_Click(Object sender, EventArgs e)
+    {
+        mDoc.RunExporters(TVSettings.Instance.Filter,TVSettings.Instance.MovieFilter);
+    }
 }
 
 public static class TvWebExtensions
@@ -5450,11 +5455,11 @@ public static class TvWebExtensions
     }
     public static void SetHtmlBody(this ChromiumWebBrowser web, string body)
     {
-        SetHtml(web,"data:text/html;base64," + Convert.ToBase64String(Encoding.UTF8.GetBytes(body)));
+        SetHtml(web, "data:text/html;base64," + Convert.ToBase64String(Encoding.UTF8.GetBytes(body)));
     }
     internal static void SetHtmlEmbed(this ChromiumWebBrowser web, string? link)
     {
-        SetHtml(web,link ?? string.Empty);
+        SetHtml(web, link ?? string.Empty);
     }
 
     private static void SetHtml(this ChromiumWebBrowser web, string value)

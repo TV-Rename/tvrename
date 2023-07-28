@@ -740,17 +740,38 @@ public class TVDoc : IDisposable
             ue.RunAsThread();
         }
     }
-
-    public void ExportMovieInfo()
+    public void RunExporters()
     {
-        List<MovieConfiguration> movieConfigurations = FilmLibrary.GetSortedMovies();
+        OutputActionFiles();
+        ExportShowInfo();
+        ExportMovieInfo();
+        WriteUpcoming();
+        WriteRecent();
+    }
+
+    public void RunExporters(ShowFilter tvFilter, MovieFilter movieFilter)
+    {
+        ExportShowInfo(tvFilter);
+        ExportMovieInfo(movieFilter);
+    }
+
+    private void ExportMovieInfo(MovieFilter filter)
+        => ExportMovieInfo(FilmLibrary.GetSortedMovies().Where(filter.Filter).ToList());
+    private void ExportShowInfo(ShowFilter filter)
+        => ExportShowInfo(TvLibrary.GetSortedShowItems().Where(filter.Filter).ToList());
+
+    public void ExportMovieInfo() => ExportMovieInfo(FilmLibrary.GetSortedMovies());
+
+    public void ExportMovieInfo(List<MovieConfiguration> movieConfigurations)
+    {
         new MoviesTxt(movieConfigurations).RunAsThread();
         new MoviesHtml(movieConfigurations).RunAsThread();
     }
 
-    public void ExportShowInfo()
+    public void ExportShowInfo() => ExportShowInfo(TvLibrary.GetSortedShowItems());
+
+    public void ExportShowInfo(List<ShowConfiguration> sortedShowItems)
     {
-        List<ShowConfiguration> sortedShowItems = TvLibrary.GetSortedShowItems();
         new ShowsTXT(sortedShowItems).RunAsThread();
         new ShowsHtml(sortedShowItems).RunAsThread();
     }
@@ -1763,15 +1784,6 @@ public class TVDoc : IDisposable
     }
 
     public bool AutoScanCanRun() => !currentlyBusy;
-
-    public void RunExporters()
-    {
-        OutputActionFiles();
-        ExportShowInfo();
-        ExportMovieInfo();
-        WriteUpcoming();
-        WriteRecent();
-    }
 
     public void ClearCacheUpdateProblems() => cacheManager.ClearProblems();
 

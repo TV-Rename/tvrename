@@ -99,6 +99,7 @@ namespace TVRename.Forms
             toolStripSeparator121 = new ToolStripSeparator();
             cleanLibraryFoldersToolStripMenuItem = new ToolStripMenuItem();
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem = new ToolStripMenuItem();
+            removeShowsWithNoFoldersToolStripMenuItem = new ToolStripMenuItem();
             viewToolStripMenuItem = new ToolStripMenuItem();
             statisticsToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator5 = new ToolStripSeparator();
@@ -284,7 +285,8 @@ namespace TVRename.Forms
             bwAction = new System.ComponentModel.BackgroundWorker();
             tableLayoutPanel3 = new TableLayoutPanel();
             panel1 = new Panel();
-            removeShowsWithNoFoldersToolStripMenuItem = new ToolStripMenuItem();
+            exportFilteredToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator25 = new ToolStripSeparator();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
             tbMyMovies.SuspendLayout();
@@ -341,7 +343,7 @@ namespace TVRename.Forms
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { exportToolStripMenuItem, saveToolStripMenuItem, toolStripSeparator1, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { exportToolStripMenuItem, exportFilteredToolStripMenuItem, toolStripSeparator25, saveToolStripMenuItem, toolStripSeparator1, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
             fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -351,7 +353,7 @@ namespace TVRename.Forms
             // 
             exportToolStripMenuItem.Name = "exportToolStripMenuItem";
             exportToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.E;
-            exportToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            exportToolStripMenuItem.Size = new System.Drawing.Size(184, 26);
             exportToolStripMenuItem.Text = "&Export";
             exportToolStripMenuItem.Click += exportToolStripMenuItem_Click;
             // 
@@ -360,20 +362,20 @@ namespace TVRename.Forms
             saveToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("saveToolStripMenuItem.Image");
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            saveToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            saveToolStripMenuItem.Size = new System.Drawing.Size(184, 26);
             saveToolStripMenuItem.Text = "&Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(145, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(181, 6);
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
-            exitToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            exitToolStripMenuItem.Size = new System.Drawing.Size(184, 26);
             exitToolStripMenuItem.Text = "E&xit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
@@ -478,14 +480,14 @@ namespace TVRename.Forms
             // flushCacheToolStripMenuItem
             // 
             flushCacheToolStripMenuItem.Name = "flushCacheToolStripMenuItem";
-            flushCacheToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            flushCacheToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             flushCacheToolStripMenuItem.Text = "&Force Refesh All";
             flushCacheToolStripMenuItem.Click += flushCacheToolStripMenuItem_Click;
             // 
             // flushImageCacheToolStripMenuItem
             // 
             flushImageCacheToolStripMenuItem.Name = "flushImageCacheToolStripMenuItem";
-            flushImageCacheToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            flushImageCacheToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             flushImageCacheToolStripMenuItem.Text = "&Force Refesh All Images";
             flushImageCacheToolStripMenuItem.Click += flushImageCacheToolStripMenuItem_Click;
             // 
@@ -494,112 +496,119 @@ namespace TVRename.Forms
             backgroundDownloadNowToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("backgroundDownloadNowToolStripMenuItem.Image");
             backgroundDownloadNowToolStripMenuItem.Name = "backgroundDownloadNowToolStripMenuItem";
             backgroundDownloadNowToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.B;
-            backgroundDownloadNowToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            backgroundDownloadNowToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             backgroundDownloadNowToolStripMenuItem.Text = "&Background Download Now";
             backgroundDownloadNowToolStripMenuItem.Click += backgroundDownloadNowToolStripMenuItem_Click;
             // 
             // toolStripSeparator17
             // 
             toolStripSeparator17.Name = "toolStripSeparator17";
-            toolStripSeparator17.Size = new System.Drawing.Size(274, 6);
+            toolStripSeparator17.Size = new System.Drawing.Size(270, 6);
             // 
             // folderMonitorToolStripMenuItem
             // 
             folderMonitorToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("folderMonitorToolStripMenuItem.Image");
             folderMonitorToolStripMenuItem.Name = "folderMonitorToolStripMenuItem";
-            folderMonitorToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            folderMonitorToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             folderMonitorToolStripMenuItem.Text = "Bulk &Add TV Shows...";
             folderMonitorToolStripMenuItem.Click += folderMonitorToolStripMenuItem_Click;
             // 
             // bulkAddMoviesToolStripMenuItem
             // 
             bulkAddMoviesToolStripMenuItem.Name = "bulkAddMoviesToolStripMenuItem";
-            bulkAddMoviesToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            bulkAddMoviesToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             bulkAddMoviesToolStripMenuItem.Text = "Bulk Add Movies...";
             bulkAddMoviesToolStripMenuItem.Click += bulkAddMoviesToolStripMenuItem_Click;
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new System.Drawing.Size(274, 6);
+            toolStripSeparator3.Size = new System.Drawing.Size(270, 6);
             // 
             // tsmiOrphanFiles
             // 
             tsmiOrphanFiles.Name = "tsmiOrphanFiles";
-            tsmiOrphanFiles.Size = new System.Drawing.Size(277, 26);
+            tsmiOrphanFiles.Size = new System.Drawing.Size(273, 22);
             tsmiOrphanFiles.Text = "Find Orphan Media Files....";
             tsmiOrphanFiles.Click += ToolStripMenuItem1_Click;
             // 
             // duplicateFinderLOGToolStripMenuItem
             // 
             duplicateFinderLOGToolStripMenuItem.Name = "duplicateFinderLOGToolStripMenuItem";
-            duplicateFinderLOGToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            duplicateFinderLOGToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             duplicateFinderLOGToolStripMenuItem.Text = "Find Merged Episodes...";
             duplicateFinderLOGToolStripMenuItem.Click += duplicateFinderLOGToolStripMenuItem_Click;
             // 
             // duplicateMoviesToolStripMenuItem
             // 
             duplicateMoviesToolStripMenuItem.Name = "duplicateMoviesToolStripMenuItem";
-            duplicateMoviesToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            duplicateMoviesToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             duplicateMoviesToolStripMenuItem.Text = "Find Duplicate Movies...";
             duplicateMoviesToolStripMenuItem.Click += duplicateMoviesToolStripMenuItem_Click;
             // 
             // toolStripSeparator18
             // 
             toolStripSeparator18.Name = "toolStripSeparator18";
-            toolStripSeparator18.Size = new System.Drawing.Size(274, 6);
+            toolStripSeparator18.Size = new System.Drawing.Size(270, 6);
             // 
             // quickRenameToolStripMenuItem
             // 
             quickRenameToolStripMenuItem.Name = "quickRenameToolStripMenuItem";
-            quickRenameToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            quickRenameToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             quickRenameToolStripMenuItem.Text = "Quick Rename TV Files...";
             quickRenameToolStripMenuItem.Click += QuickRenameToolStripMenuItem_Click;
             // 
             // scanMovieFolderToolStripMenuItem
             // 
             scanMovieFolderToolStripMenuItem.Name = "scanMovieFolderToolStripMenuItem";
-            scanMovieFolderToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            scanMovieFolderToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             scanMovieFolderToolStripMenuItem.Text = "Move Movies From...";
             scanMovieFolderToolStripMenuItem.Click += scanMovieFolderToolStripMenuItem_Click;
             // 
             // toolStripSeparator21
             // 
             toolStripSeparator21.Name = "toolStripSeparator21";
-            toolStripSeparator21.Size = new System.Drawing.Size(274, 6);
+            toolStripSeparator21.Size = new System.Drawing.Size(270, 6);
             // 
             // movieRecommendationsToolStripMenuItem
             // 
             movieRecommendationsToolStripMenuItem.Name = "movieRecommendationsToolStripMenuItem";
-            movieRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            movieRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             movieRecommendationsToolStripMenuItem.Text = "Movie Recommendations...";
             movieRecommendationsToolStripMenuItem.Click += movieRecommendationsToolStripMenuItem_Click;
             // 
             // tvRecommendationsToolStripMenuItem
             // 
             tvRecommendationsToolStripMenuItem.Name = "tvRecommendationsToolStripMenuItem";
-            tvRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            tvRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             tvRecommendationsToolStripMenuItem.Text = "TV Show Recommendations...";
             tvRecommendationsToolStripMenuItem.Click += recommendationsToolStripMenuItem_Click;
             // 
             // toolStripSeparator121
             // 
             toolStripSeparator121.Name = "toolStripSeparator121";
-            toolStripSeparator121.Size = new System.Drawing.Size(274, 6);
+            toolStripSeparator121.Size = new System.Drawing.Size(270, 6);
             // 
             // cleanLibraryFoldersToolStripMenuItem
             // 
             cleanLibraryFoldersToolStripMenuItem.Name = "cleanLibraryFoldersToolStripMenuItem";
-            cleanLibraryFoldersToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            cleanLibraryFoldersToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             cleanLibraryFoldersToolStripMenuItem.Text = "Clean Empty Library Folders...";
             cleanLibraryFoldersToolStripMenuItem.Click += cleanLibraryFoldersToolStripMenuItem_Click;
             // 
             // forceRefreshKodiTVShowNFOFIlesToolStripMenuItem
             // 
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Name = "forceRefreshKodiTVShowNFOFIlesToolStripMenuItem";
-            forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
+            forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Text = "Force Refresh Kodi TV Show NFO FIles";
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Click += forceRefreshKodiTVShowNFOFIlesToolStripMenuItem_Click;
+            // 
+            // removeShowsWithNoFoldersToolStripMenuItem
+            // 
+            removeShowsWithNoFoldersToolStripMenuItem.Name = "removeShowsWithNoFoldersToolStripMenuItem";
+            removeShowsWithNoFoldersToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            removeShowsWithNoFoldersToolStripMenuItem.Text = "Remove Shows With No Folders...";
+            removeShowsWithNoFoldersToolStripMenuItem.Click += removeShowsWithNoFoldersToolStripMenuItem_Click;
             // 
             // viewToolStripMenuItem
             // 
@@ -612,26 +621,26 @@ namespace TVRename.Forms
             // 
             statisticsToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("statisticsToolStripMenuItem.Image");
             statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
-            statisticsToolStripMenuItem.Size = new System.Drawing.Size(231, 26);
+            statisticsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             statisticsToolStripMenuItem.Text = "&Statistics...";
             statisticsToolStripMenuItem.Click += statisticsToolStripMenuItem_Click;
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new System.Drawing.Size(228, 6);
+            toolStripSeparator5.Size = new System.Drawing.Size(224, 6);
             // 
             // showSummaryToolStripMenuItem
             // 
             showSummaryToolStripMenuItem.Name = "showSummaryToolStripMenuItem";
-            showSummaryToolStripMenuItem.Size = new System.Drawing.Size(231, 26);
+            showSummaryToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             showSummaryToolStripMenuItem.Text = "TV Show Summary...";
             showSummaryToolStripMenuItem.Click += showSummaryToolStripMenuItem_Click;
             // 
             // movieCollectionSummaryLogToolStripMenuItem
             // 
             movieCollectionSummaryLogToolStripMenuItem.Name = "movieCollectionSummaryLogToolStripMenuItem";
-            movieCollectionSummaryLogToolStripMenuItem.Size = new System.Drawing.Size(231, 26);
+            movieCollectionSummaryLogToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             movieCollectionSummaryLogToolStripMenuItem.Text = "Movie Collection Summary...";
             movieCollectionSummaryLogToolStripMenuItem.Click += movieCollectionSummaryLogToolStripMenuItem_Click;
             // 
@@ -639,7 +648,7 @@ namespace TVRename.Forms
             // 
             actorsToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("actorsToolStripMenuItem.Image");
             actorsToolStripMenuItem.Name = "actorsToolStripMenuItem";
-            actorsToolStripMenuItem.Size = new System.Drawing.Size(231, 26);
+            actorsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             actorsToolStripMenuItem.Text = "TV Show &Actors Grid...";
             actorsToolStripMenuItem.Click += actorsToolStripMenuItem_Click;
             // 
@@ -2328,12 +2337,17 @@ namespace TVRename.Forms
             panel1.Size = new System.Drawing.Size(1102, 690);
             panel1.TabIndex = 12;
             // 
-            // removeShowsWithNoFoldersToolStripMenuItem
+            // exportFilteredToolStripMenuItem
             // 
-            removeShowsWithNoFoldersToolStripMenuItem.Name = "removeShowsWithNoFoldersToolStripMenuItem";
-            removeShowsWithNoFoldersToolStripMenuItem.Size = new System.Drawing.Size(277, 26);
-            removeShowsWithNoFoldersToolStripMenuItem.Text = "Remove Shows With No Folders...";
-            removeShowsWithNoFoldersToolStripMenuItem.Click += removeShowsWithNoFoldersToolStripMenuItem_Click;
+            exportFilteredToolStripMenuItem.Name = "exportFilteredToolStripMenuItem";
+            exportFilteredToolStripMenuItem.Size = new System.Drawing.Size(184, 26);
+            exportFilteredToolStripMenuItem.Text = "Export Filtered";
+            exportFilteredToolStripMenuItem.Click += exportFilteredToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator25
+            // 
+            toolStripSeparator25.Name = "toolStripSeparator25";
+            toolStripSeparator25.Size = new System.Drawing.Size(181, 6);
             // 
             // UI
             // 
@@ -2648,5 +2662,7 @@ namespace TVRename.Forms
         private ToolStripMenuItem yTSMovieRecommendationsToolStripMenuItem;
         private ToolStripMenuItem forceRefreshKodiTVShowNFOFIlesToolStripMenuItem;
         private ToolStripMenuItem removeShowsWithNoFoldersToolStripMenuItem;
+        private ToolStripMenuItem exportFilteredToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator25;
     }
 }

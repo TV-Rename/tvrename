@@ -226,10 +226,10 @@ public abstract class MediaConfiguration : ISeriesSpecifier
             }
             if (LastName.HasValue())
             {
-                return LastName!;
+                return LastName;
             }
 
-            return "<" + Code + " not downloaded>";
+            return $"({Code} not downloaded)";
         }
     }
 
