@@ -762,7 +762,7 @@ public class TVDoc : IDisposable
 
     public void ExportMovieInfo() => ExportMovieInfo(FilmLibrary.GetSortedMovies());
 
-    public void ExportMovieInfo(List<MovieConfiguration> movieConfigurations)
+    public static void ExportMovieInfo(List<MovieConfiguration> movieConfigurations)
     {
         new MoviesTxt(movieConfigurations).RunAsThread();
         new MoviesHtml(movieConfigurations).RunAsThread();
@@ -770,7 +770,7 @@ public class TVDoc : IDisposable
 
     public void ExportShowInfo() => ExportShowInfo(TvLibrary.GetSortedShowItems());
 
-    public void ExportShowInfo(List<ShowConfiguration> sortedShowItems)
+    public static void ExportShowInfo(List<ShowConfiguration> sortedShowItems)
     {
         new ShowsTXT(sortedShowItems).RunAsThread();
         new ShowsHtml(sortedShowItems).RunAsThread();
