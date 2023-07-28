@@ -207,10 +207,7 @@ public class TVDoc : IDisposable
         CheckForUsefulMovieIds(TheTVDB.LocalCache.Instance, ProviderType.TVmaze);
         CheckForUsefulMovieIds(TheTVDB.LocalCache.Instance, ProviderType.TMDB);
 
-        foreach (ShowConfiguration? show in TvLibrary.Shows)
-        {
-            UpdateIdsFromCache(show);
-        }
+        TvLibrary.Shows.ForEach(UpdateIdsFromCache);
 
         foreach (MovieConfiguration? show in FilmLibrary.Movies)
         {
@@ -381,14 +378,8 @@ public class TVDoc : IDisposable
     {
         try
         {
-            foreach (Item i in theList)
-            {
-                if (i is Action a)
-                {
-                    a.ResetOutcome();
-                }
-            }
-
+            theList.Actions.ForEach(a=>a.ResetOutcome());
+            
             ActionManager.DoActions(theList, token);
             List<Action> doneActions = TheActionList.Actions.Where(a => a.Outcome is { Done: true, Error: false }).ToList();
             List<Item> subsequentItems = doneActions.Select(a => a.Becomes()).OfType<Item>().ToList();
@@ -432,15 +423,10 @@ public class TVDoc : IDisposable
 
     private void ForceRefreshIdentifiedMedia()
     {
-        foreach (ShowConfiguration si in forceShowsRefresh)
-        {
-            ForgetShow(si);
-        }
-        foreach (MovieConfiguration si in forceMoviesRefresh)
-        {
-            ForgetMovie(si);
-        }
+        forceMoviesRefresh.ForEach(ForgetMovie);
         forceMoviesRefresh.Clear();
+
+        forceShowsRefresh.ForEach(ForgetShow);
         forceShowsRefresh.Clear();
     }
 
@@ -735,10 +721,9 @@ public class TVDoc : IDisposable
             new RenamingXml(TheActionList)
         };
 
-        foreach (ActionListExporter ue in ALExporters.Where(ue => ue.Active() && ue.ApplicableFor(lastScanType)))
-        {
-            ue.RunAsThread();
-        }
+        ALExporters
+            .Where(ue => ue.Active() && ue.ApplicableFor(lastScanType))
+            .ForEach(e=>e.RunAsThread());
     }
     public void RunExporters()
     {
@@ -779,21 +764,13 @@ public class TVDoc : IDisposable
     public void WriteUpcoming()
     {
         List<UpcomingExporter> lup = new() { new UpcomingRSS(this), new UpcomingXML(this), new UpcomingiCAL(this), new UpcomingTXT(this) };
-
-        foreach (UpcomingExporter ue in lup)
-        {
-            ue.RunAsThread();
-        }
+        lup.ForEach(e=>e.RunAsThread());
     }
 
     public void WriteRecent()
     {
         List<RecentExporter> reps = new() { new RecentASXExporter(this), new RecentM3UExporter(this), new RecentWPLExporter(this), new RecentXSPFExporter(this) };
-
-        foreach (RecentExporter ue in reps)
-        {
-            ue.RunAsThread();
-        }
+        reps.ForEach(e=>e.RunAsThread());
     }
 
     internal void Add(List<ShowConfiguration>? newShow, bool showErrors)
@@ -1608,11 +1585,8 @@ public class TVDoc : IDisposable
 
         PreventAutoScan("Force Refresh");
         List<ShowConfiguration> showConfigurations = sis.ToList();
+        showConfigurations.ForEach(ForgetShow);
 
-        foreach (ShowConfiguration si in showConfigurations)
-        {
-            ForgetShow(si);
-        }
         if (doDownloads)
         {
             DoDownloadsFg(unattended, tvrMinimised, owner, showConfigurations);
@@ -1665,12 +1639,10 @@ public class TVDoc : IDisposable
         }
 
         PreventAutoScan("Force Refresh");
-        List<MovieConfiguration> movieConfigurations = sis.ToList();
 
-        foreach (MovieConfiguration si in movieConfigurations)
-        {
-            ForgetMovie(si);
-        }
+        List<MovieConfiguration> movieConfigurations = sis.ToList();
+        movieConfigurations.ForEach(ForgetMovie);
+
         if (doDownloads)
         {
             DoDownloadsFg(unattended, tvrMinimised, owner, movieConfigurations);
@@ -2376,23 +2348,15 @@ public class TVDoc : IDisposable
     public void UpdateImagesScan(IReadOnlyCollection<ShowConfiguration> sis)
     {
         TheActionList.Clear();
-        foreach (ShowConfiguration si in sis)
-        {
-            //update images for the showitem
-            ForceUpdateImages(si);
-        }
-
+        //update images for the showitem
+        sis.ForEach(ForceUpdateImages);
         RemoveIgnored();
     }
     public void UpdateMovieImagesScan(IReadOnlyCollection<MovieConfiguration> sis)
     {
         TheActionList.Clear();
-        foreach (MovieConfiguration si in sis)
-        {
-            //update images for the showitem
-            ForceUpdateImages(si);
-        }
-
+        //update images for the showitem
+        sis.ForEach(ForceUpdateImages);
         RemoveIgnored();
     }
 
