@@ -31,7 +31,7 @@ public static class UiHelpers
         }
         catch (Win32Exception ex)
         {
-            Logger.Error(ex, $"Failed to load dialog for {d.SelectedPath}");
+            Logger.Error(ex, $"Failed to load dialog for '{d.SelectedPath}'");
             return false;
         }
     }
@@ -43,7 +43,7 @@ public static class UiHelpers
         }
         catch (Win32Exception ex)
         {
-            Logger.Error(ex, $"Failed to load dialog for {d.SelectedPath}");
+            Logger.Error(ex, $"Failed to load dialog for '{d.SelectedPath}'");
             return false;
         }
     }
