@@ -469,7 +469,7 @@ public static class FileHelper
                 $"Unable to use shell to access file as part of {operation} for {movieFile.FullName}. Platform is not supported: {pe.ErrorText()}");
         }
 
-        MediaInfoWrapper mw = new(movieFile.FullName, Logger.AsILogger(movieFile.FullName));
+        MediaInfoWrapper mw = new(movieFile.FullName, Logger.AsILogger(movieFile.FullName,"MediaInfo"));
         int returnVal = meExtractMethod(mw);
 
         if (returnVal != 0)

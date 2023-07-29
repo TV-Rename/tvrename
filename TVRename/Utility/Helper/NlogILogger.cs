@@ -8,13 +8,15 @@ namespace TVRename;
 
 public class NlogILogger : ILogger
 {
-    private string FileName { get; }
+    private string Details { get; }
+    private string Source{ get; }
     private readonly Logger baseLogger;
 
-    public NlogILogger(Logger baseLogger, string fileName)
+    public NlogILogger(Logger baseLogger, string details, string source)
     {
-        FileName = fileName;
+        Details = details;
         this.baseLogger = baseLogger;
+        Source = source;
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="formatter"/> is <see langword="null"/></exception>
@@ -25,7 +27,7 @@ public class NlogILogger : ILogger
             throw new ArgumentNullException(nameof(formatter));
         }
 
-        string message = "MediaInfo: " + formatter(state, exception)+ ": "+FileName + ": " + exception?.ErrorText();
+        string message = $"{Source}: {formatter(state, exception)}: {Details}: {exception?.ErrorText()}";
         NLog.LogLevel convertedLogLevel = GetNLogLogLevel(logLevel);
 
         baseLogger.Log(convertedLogLevel, message);
