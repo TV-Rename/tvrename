@@ -29,7 +29,7 @@ public static class TimeZoneHelper
             return false;
         }
 
-        string[] streamers = { "Netflix","Apple TV+","Disney+","Amazon Prime Video","Paramount+" };
+        string[] streamers = { "Netflix","Apple TV+","Disney+","Amazon Prime Video","Paramount+", "Hulu", "Peacock", "Discovery+" };
 
         return streamers.Contains(network);
     }
@@ -40,7 +40,7 @@ public static class TimeZoneHelper
         string[] ausTv = { "ABC4Kids", "Stan", "Showcase (AU)", "PBS Kids Sprout", "SBS (AU)", "Nine Network", "ABC (AU)" };
         string[] usTv =
         {
-            "ABC (US)", "Amazon", "AMC", "BBC America", "Bravo", "Cartoon Network", "CBC (CA)", "CBS", "Cinemax",
+            "ABC", "ABC (US)", "Amazon", "AMC", "BBC America", "Bravo", "Cartoon Network", "CBC (CA)", "CBS", "Cinemax",
             "CNN", "Comedy Central", "Discovery Family", "Disney Channel", "Disney Junior", "Disney XD", "Disney+",
             "ESPN", "FOX", "FX", "FXX", "HBO", "History", "Hulu", "IFC", "MTV", "National Geographic", "NBC",
             "Netflix", "NHK", "PBS", "Showtime", "Starz", "Syfy", "TBS", "The CW", "TNT (US)", "Travel Channel",
