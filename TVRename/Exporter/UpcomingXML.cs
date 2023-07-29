@@ -77,7 +77,7 @@ internal class UpcomingXML : UpcomingExporter
             writer.WriteElement("Overview", ei.Overview);
 
             writer.WriteStartElement("FirstAired");
-            DateTime? dt = ei.GetAirDateDt(true);
+            DateTime? dt = ei.GetAirDateDt();
             if (dt != null)
             {
                 writer.WriteValue(dt.Value.ToString("F"));

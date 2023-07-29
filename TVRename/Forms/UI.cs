@@ -1721,7 +1721,7 @@ public partial class UI : Form, IDialogParent
             Tag = pe
         };
 
-        DateTime? airdt = pe.GetAirDateDt(true);
+        DateTime? airdt = pe.GetAirDateDt();
         if (airdt is null)
         {
             return lvi;
@@ -1826,7 +1826,7 @@ public partial class UI : Form, IDialogParent
         }
 
         mInternalChange++;
-        DateTime? dt = ei.GetAirDateDt(true);
+        DateTime? dt = ei.GetAirDateDt();
         if (dt != null)
         {
             calCalendar.SelectionStart = (DateTime)dt;
@@ -1884,7 +1884,7 @@ public partial class UI : Form, IDialogParent
             lvi.Selected = false;
 
             ProcessedEpisode ei = (ProcessedEpisode)lvi.Tag;
-            DateTime? dt2 = ei.GetAirDateDt(true);
+            DateTime? dt2 = ei.GetAirDateDt();
             if (dt2 != null)
             {
                 double h = dt2.Value.Subtract(dt).TotalHours;
@@ -4773,7 +4773,7 @@ public partial class UI : Form, IDialogParent
                 continue;
             }
 
-            DateTime? dt = ei.GetAirDateDt(true);
+            DateTime? dt = ei.GetAirDateDt();
             if (dt != null)
             {
                 bolded.Add(dt.Value);

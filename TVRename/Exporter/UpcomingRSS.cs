@@ -60,7 +60,7 @@ internal class UpcomingRSS : UpcomingExporter
                     writer.WriteElement("description", ei.Show.ShowName + "<br/>" + niceName + "<br/>" + ei.Overview);
 
                     writer.WriteStartElement("pubDate");
-                    DateTime? dt = ei.GetAirDateDt(true);
+                    DateTime? dt = ei.GetAirDateDt();
                     if (dt != null)
                     {
                         writer.WriteValue(dt.Value.ToString("r"));

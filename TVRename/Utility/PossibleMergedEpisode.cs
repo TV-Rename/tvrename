@@ -1,4 +1,4 @@
-//
+    //
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -43,7 +43,7 @@ public class PossibleMergedEpisode
 
             lvi.SubItems.Add(episodeOne.AppropriateSeasonNumber.ToString());
             lvi.SubItems.Add(episodeOne.EpisodeNumbersAsText + " & " + episodeTwo.EpisodeNumbersAsText);
-            lvi.SubItems.Add(episodeOne.GetAirDateDt(true).PrettyPrint());
+            lvi.SubItems.Add(episodeOne.GetAirDateDt().PrettyPrint());
             lvi.SubItems.Add(episodeOne.Name + " & " + episodeTwo.Name);
 
             List<string> names = new() { episodeOne.Name, episodeTwo.Name };

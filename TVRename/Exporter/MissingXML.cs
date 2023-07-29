@@ -68,7 +68,7 @@ internal class MissingXML : MissingActionListExporter
             writer.WriteElement("description", missing.MissingEpisode.Overview);
 
             writer.WriteStartElement("pubDate");
-            DateTime? dt = missing.MissingEpisode.GetAirDateDt(true);
+            DateTime? dt = missing.MissingEpisode.GetAirDateDt();
             if (dt != null)
             {
                 writer.WriteValue(dt.Value.ToString("F"));

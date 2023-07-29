@@ -1072,7 +1072,7 @@ internal static class ShowHtmlHelper
         }
 
         string airedText = ep.HasAired() ? " (Aired)" : string.Empty;
-        DateTime? airDateDt = ep.GetAirDateDt(true);
+        DateTime? airDateDt = ep.GetAirDateDt();
         string airDateString = airDateDt.HasValue && airDateDt > DateTime.MinValue
             ? airDateDt.Value.ToString("d", DateTimeFormatInfo.CurrentInfo)
             : string.Empty;
@@ -1350,7 +1350,7 @@ internal static class ShowHtmlHelper
     {
         try
         {
-            DateTime? dt = ei.GetAirDateDt(true);
+            DateTime? dt = ei.GetAirDateDt();
             if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
             {
                 return $"<h6>{dt.Value.ToShortDateString()}</h6><small class=\"text-muted\">({ei.HowLong()})</small>";
@@ -1703,7 +1703,7 @@ internal static class ShowHtmlHelper
                 body += " <A HREF=\"" + TVSettings.Instance.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
             }
 
-            DateTime? dt = ei.GetAirDateDt(true);
+            DateTime? dt = ei.GetAirDateDt();
             if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
             {
                 body += "<p>" + dt.Value.ToShortDateString() + " (" + ei.HowLong() + ")";

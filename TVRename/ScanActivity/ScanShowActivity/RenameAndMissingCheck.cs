@@ -325,7 +325,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
         // second part of missing check is to see what is missing!
         if (missCheck)
         {
-            DateTime? dt = episode.GetAirDateDt(true);
+            DateTime? dt = episode.GetAirDateDt();
             bool dtOk = dt != null;
 
             bool notFuture =

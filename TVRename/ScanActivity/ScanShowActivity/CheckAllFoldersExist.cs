@@ -91,7 +91,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
             }
         }
 
-        if (!episode.Show.ForceCheckNoAirdate && episode.GetAirDateDt(true) == null)
+        if (!episode.Show.ForceCheckNoAirdate && episode.GetAirDateDt() == null)
         {
             return false;
         }

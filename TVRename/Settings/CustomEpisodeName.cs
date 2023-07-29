@@ -10,6 +10,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using NodaTime;
 
 // This builds the filenames to rename to, for any given episode (or multi-episode episode)
 
@@ -169,7 +170,7 @@ public class CustomEpisodeName
         ProcessedSeason? selectedProcessedSeason = show.GetSeason(ep.GetSeasonNumber(show.Order));
         name = name.ReplaceInsensitive("{SeasonYear}", selectedProcessedSeason != null ? selectedProcessedSeason.MinYear().ToString() : string.Empty);
 
-        name = ReplaceDates(urlEncode, name, ep.GetAirDateDt(show.GetTimeZone()));
+        name = ReplaceDates(urlEncode, name, ep.LocalAirTime());
 
         name = Regex.Replace(name, "([^\\\\])\\[.*?[^\\\\]\\]", "$1"); // remove optional parts
 
@@ -179,7 +180,7 @@ public class CustomEpisodeName
         return name.Trim();
     }
 
-    private static string ReplaceDates(bool urlEncode, string name, DateTime? airdt)
+    private static string ReplaceDates(bool urlEncode, string name, LocalDateTime? airdt)
     {
         if (!name.Contains("{ShortDate}") && !name.Contains("{LongDate}") && !name.Contains("{YMDDate}"))
         {
@@ -193,7 +194,7 @@ public class CustomEpisodeName
 
             if (airdt != null)
             {
-                DateTime dt = (DateTime)airdt;
+                DateTime dt = airdt.Value.ToDateTimeUnspecified();
                 name = name.ReplaceInsensitive("{ShortDate}", dt.ToString("d"));
                 name = name.ReplaceInsensitive("{LongDate}", dt.ToString("D"));
                 ymd = dt.ToString("yyyy/MM/dd");
@@ -264,7 +265,7 @@ public class CustomEpisodeName
             name = name.ReplaceInsensitive("{Imdb}", pe.ImdbCode);
             name = name.ReplaceInsensitive("{ShowImdb}", pe.Show.CachedShow?.Imdb ?? string.Empty);
 
-            name = ReplaceDates(urlEncode, name, pe.GetAirDateDt(false));
+            name = ReplaceDates(urlEncode, name, pe.LocalAirTime());
             name = Regex.Replace(name, "{AllEpisodes}", AllEpsText(pe), RegexOptions.IgnoreCase);
 
             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression

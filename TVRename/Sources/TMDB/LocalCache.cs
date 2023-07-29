@@ -777,8 +777,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                 {
                     Name = downloadedEpisode.Name,
                     Overview = downloadedEpisode.Overview,
-                    AirTime = downloadedEpisode.AirDate,
-                    AirStamp = downloadedEpisode.AirDate,
                     FirstAired = downloadedEpisode.AirDate,
                     AiredEpNum = downloadedEpisode.EpisodeNumber,
                     AiredSeasonNumber = downloadedEpisode.SeasonNumber,

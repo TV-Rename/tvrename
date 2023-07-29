@@ -108,19 +108,17 @@ public class ProcessedSeason
     internal int MinYear()
     {
         return Episodes.Values
-            .Select(e => e.GetAirDateDt())
+            .Select(e => e.Year)
             .Where(adt => adt.HasValue)
-            .Select(adt => adt!.Value)
-            .MinOrDefault(airDateTime => airDateTime.Year, 9999);
+            .MinOrDefault(adt => adt!.Value, 9999);
     }
 
     internal int MaxYear()
     {
         return Episodes.Values
-            .Select(e => e.GetAirDateDt())
+            .Select(e => e.Year)
             .Where(adt => adt.HasValue)
-            .Select(adt => adt!.Value)
-            .MaxOrDefault(airDateTime => airDateTime.Year, 0);
+            .MaxOrDefault(adt => adt!.Value, 0);
     }
 
     private bool HasEpisodes => !Episodes.IsEmpty;

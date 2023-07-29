@@ -60,7 +60,7 @@ internal class UpcomingiCAL : UpcomingExporter
         string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
         try
         {
-            DateTime? stTime = ei.GetAirDateDt(true);
+            DateTime? stTime = ei.GetAirDateDt();
 
             if (!stTime.HasValue)
             {

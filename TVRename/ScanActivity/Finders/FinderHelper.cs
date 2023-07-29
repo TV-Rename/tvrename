@@ -129,7 +129,7 @@ internal static class FinderHelper
 
         foreach (Episode epi in si.EpisodesToUse())
         {
-            LocalDateTime? dt = epi.GetAirDateDt(); // file will have local timezone date, not ours
+            LocalDateTime? dt = epi.LocalAirTime(); // file will have local timezone date, not ours
             if (dt is null)
             {
                 continue;

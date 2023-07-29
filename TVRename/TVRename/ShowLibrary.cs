@@ -678,7 +678,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
                 return found;
             }
 
-            DateTime? nextdt = nextAfterThat.GetAirDateDt(true);
+            DateTime? nextdt = nextAfterThat.GetAirDateDt();
             if (nextdt.HasValue)
             {
                 notBefore = nextdt.Value;
@@ -721,7 +721,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
                             continue;
                         }
 
-                        DateTime? airdt = ei.GetAirDateDt(true);
+                        DateTime? airdt = ei.GetAirDateDt();
 
                         if (airdt is null || airdt == DateTime.MaxValue)
                         {
@@ -759,6 +759,8 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     public IEnumerable<ProcessedEpisode> GetRecentAndFutureEps(int recentDays)
     {
         List<ProcessedEpisode> returnList = new();
+        DateTime now = DateTime.Now;
+        DateTime limit = now.AddDays(-recentDays);
 
         foreach (ShowConfiguration si in Shows)
         {
@@ -767,19 +769,16 @@ public class ShowLibrary : SafeList<ShowConfiguration>
                 continue;
             }
 
-            DateTime now = DateTime.Now;
-            DateTime limit = now.AddDays(-recentDays);
-
             foreach (List<ProcessedEpisode> eis in si.ActiveSeasons.Select(p => p.Value))
             {
                 bool nextToAirFound = false;
 
                 foreach (ProcessedEpisode ei in eis
                              .Where(ei=>ei.HasAiredDate())
-                             .Where(ei=>ei.GetAirDateDt(true)>=limit)
-                             .OrderBy(ei=>ei.GetAirDateDt(true)))
+                             .Where(ei=>ei.GetAirDateDt()>=limit)
+                             .OrderBy(ei=>ei.GetAirDateDt()))
                 {
-                    DateTime? dt = ei.GetAirDateDt(true);
+                    DateTime? dt = ei.GetAirDateDt();
                     
                     if (dt>now && !nextToAirFound)
                     {

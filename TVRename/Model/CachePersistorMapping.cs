@@ -29,7 +29,7 @@ internal static class CachePersistorMapping
 
         writer.WriteElement("FirstAired", e.FirstAired?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), true);
         writer.WriteElement("AirTime", e.AirTime?.ToString("HH:mm"), true);
-        writer.WriteElement("AirTime", e.AirStamp);
+        writer.WriteElement("AirStamp", e.AirStamp);
 
         writer.WriteElement("DvdChapter", e.DvdChapter);
         writer.WriteElement("DvdDiscId", e.DvdDiscId, true);

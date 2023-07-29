@@ -40,7 +40,7 @@ internal class UpcomingTXT : UpcomingExporter
 
     private static string ConvertToLine(ProcessedEpisode ei)
     {
-        DateTime? stTime = ei.GetAirDateDt(true);
+        DateTime? stTime = ei.GetAirDateDt();
 
         if (!stTime.HasValue)
         {

@@ -1,4 +1,3 @@
-using NodaTime;
 using System;
 using System.Collections.Generic;
 
@@ -135,18 +134,7 @@ public class ProcessedEpisode : Episode
 
     public string SeasonNumberAsText => TVSettings.SeasonNameFor(AppropriateSeasonNumber);
 
-    public string? WebsiteUrl
-    {
-        get
-        {
-            if (Show.Provider == TVDoc.ProviderType.TheTVDB)
-            {
-                return TVDBWebsiteUrl;
-            }
-
-            return LinkUrl;
-        }
-    }
+    public string? WebsiteUrl => Show.Provider == TVDoc.ProviderType.TheTVDB ? TVDBWebsiteUrl : LinkUrl;
 
     public string EpisodeNumbersAsText
     {
@@ -178,27 +166,13 @@ public class ProcessedEpisode : Episode
         return ep1 - ep2;
     }
 
-    public DateTime? GetAirDateDt(bool inLocalTime)
-    {
-        LocalDateTime? x = GetAirDateDt();
-
-        if (!inLocalTime && x.HasValue)
-        {
-            return x.Value.ToDateTimeUnspecified();
-        }
-
-        if (!inLocalTime)
-        {
-            return null;
-        }
-
+    public DateTime? GetAirDateDt() =>
         // do timezone adjustment
-        return GetAirDateDt(Show.GetTimeZone());
-    }
+        GetAirDateDt(Show.GetTimeZone());
 
     public string HowLong()
     {
-        DateTime? airsdt = GetAirDateDt(true);
+        DateTime? airsdt = GetAirDateDt();
         if (airsdt is null)
         {
             return string.Empty;
@@ -226,26 +200,26 @@ public class ProcessedEpisode : Episode
 
     public string DayOfWeek()
     {
-        DateTime? dt = GetAirDateDt(true);
+        DateTime? dt = GetAirDateDt();
         return dt != null ? dt.Value.ToString("ddd") : "-";
     }
 
     public string TimeOfDay()
     {
-        DateTime? dt = GetAirDateDt(true);
+        DateTime? dt = GetAirDateDt();
         return dt != null ? dt.Value.ToString("t") : "-";
     }
 
     public new bool HasAired()
     {
-        DateTime? airsdt = GetAirDateDt(true);
+        DateTime? airsdt = GetAirDateDt();
         TimeSpan? ts = airsdt?.Subtract(DateTime.Now); // how long...
         return ts?.TotalHours < 0;
     }
 
     public bool WithinLastDays(int days)
     {
-        DateTime? dt = GetAirDateDt(true);
+        DateTime? dt = GetAirDateDt();
         if (dt is null || dt.Value.CompareTo(DateTime.MaxValue) == 0)
         {
             return false;
@@ -259,7 +233,7 @@ public class ProcessedEpisode : Episode
 
     public bool IsInFuture(bool def)
     {
-        DateTime? airsdt = GetAirDateDt(true);
+        DateTime? airsdt = GetAirDateDt();
         if (airsdt is null)
         {
             return def;
@@ -294,7 +268,7 @@ public class ProcessedEpisode : Episode
 
     public bool HasAiredDate()
     {
-        DateTime? dt = GetAirDateDt(true);
+        DateTime? dt = GetAirDateDt();
         return dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0;
     }
 }

@@ -56,9 +56,9 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged, IEquatab
     public string OrderKey => SeasonNumberAsInt?.Pad(2) + "-" +
                                       Episode?.AppropriateEpNum.Pad(4) + "-" + AirDateString;
 
-    public virtual string AirDateString => Episode?.GetAirDateDt(true).PrettyPrint() ?? Movie?.CachedMovie?.FirstAired.PrettyPrint() ?? string.Empty;
+    public virtual string AirDateString => Episode?.GetAirDateDt().PrettyPrint() ?? Movie?.CachedMovie?.FirstAired.PrettyPrint() ?? string.Empty;
 
-    public virtual DateTime? AirDate => Episode?.GetAirDateDt(true) ?? Movie?.CachedMovie?.FirstAired;
+    public virtual DateTime? AirDate => Episode?.GetAirDateDt() ?? Movie?.CachedMovie?.FirstAired;
     public abstract string? DestinationFolder { get; }
     public abstract string? DestinationFile { get; }
 

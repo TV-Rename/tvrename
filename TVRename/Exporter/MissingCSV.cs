@@ -35,7 +35,7 @@ internal class MissingCSV : MissingActionListExporter
         foreach (ShowItemMissing? im in TheActionList.MissingEpisodes)
         {
             ProcessedEpisode pe = im.MissingEpisode;
-            DateTime? dt = pe.GetAirDateDt(true);
+            DateTime? dt = pe.GetAirDateDt();
             file.WriteLine(
                 $"{pe.TheCachedSeries.Name.InDoubleQuotes()},{pe.AppropriateSeasonNumber},{pe.EpisodeNumbersAsText},{pe.Name.InDoubleQuotes()},{dt:G},{im.TargetFolder.InDoubleQuotes()},{im.Filename.InDoubleQuotes()},{pe.SeriesId}");
         }

@@ -90,7 +90,7 @@ public class Episode
         AirTime = o.AirTime;
     }
 
-    public LocalDateTime? GetAirDateDt()
+    public LocalDateTime? LocalAirTime()
     {
         DateTime? fa = FirstAired;
 
@@ -109,7 +109,7 @@ public class Episode
 
     public DateTime? GetAirDateDt(DateTimeZone tz)
     {
-        LocalDateTime? dt = GetAirDateDt();
+        LocalDateTime? dt = LocalAirTime();
         if (dt is null)
         {
             return null;
@@ -186,6 +186,7 @@ public class Episode
         }
     }
 
+    public int? Year => LocalAirTime()?.Year;
     public bool Ok()
     {
         bool returnVal = EpisodeId != -1 && AiredEpNum != -1 && SeasonId != -1 && ReadAiredSeasonNum != -1;
@@ -259,7 +260,7 @@ public class Episode
 
     public bool HasAired()
     {
-        LocalDateTime? dateTime = GetAirDateDt();
+        LocalDateTime? dateTime = LocalAirTime();
         return dateTime.HasValue && dateTime.Value.InUtc().ToInstant().CompareTo(SystemClock.Instance.GetCurrentInstant()) < 0;
     }
 

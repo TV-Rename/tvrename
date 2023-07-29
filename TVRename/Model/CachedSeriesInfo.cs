@@ -35,18 +35,18 @@ public class CachedSeriesInfo : CachedMediaInfo
     public int? MinYear =>
         Episodes
             .Where(e => !e.IsSpecial(SeasonOrderType))
-            .Select(e => e.GetAirDateDt())
+            .Select(e => e.Year)
             .Where(adt => adt.HasValue)
-            .Select(adt => adt!.Value)
-            .Min(airDateTime => (int?)airDateTime.Year);
+            .MinOrNull(adt => adt!.Value)
+            ;
 
     public int? MaxYear =>
         Episodes
             .Where(e => !e.IsSpecial(SeasonOrderType))
-            .Select(e => e.GetAirDateDt())
+            .Select(e => e.Year)
             .Where(adt => adt.HasValue)
-            .Select(adt => adt!.Value)
-            .Max(airDateTime => (int?)airDateTime.Year);
+            .MaxOrNull(adt => adt!.Value)
+            ;
 
     public string Year => FirstAired?.Year.ToString() ?? $"{MinYear}";
 

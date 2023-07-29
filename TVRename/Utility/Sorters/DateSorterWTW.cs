@@ -21,7 +21,7 @@ public class DateSorterWtw : ListViewItemDateSorter
     {
         try
         {
-            return ((ProcessedEpisode)lvi.Tag).GetAirDateDt(true);
+            return ((ProcessedEpisode)lvi.Tag).GetAirDateDt();
         }
         catch
         {

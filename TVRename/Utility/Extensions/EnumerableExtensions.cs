@@ -81,4 +81,9 @@ public static class EnumerableExtensions
 
         return list.Any() ? list.Min(selector) : null;
     }
+    public static TProp? MaxOrNull<TItem, TProp>(this IEnumerable<TItem> @this, Func<TItem, TProp> selector) where TProp : struct
+    {
+        IEnumerable<TItem> list = @this.ToList();
+        return list.Any() ? list.Max(selector) : null;
+    }
 }
