@@ -585,7 +585,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
         try
         {
-            return webCall.WithRetry(3,2.Seconds(),ex=>ex is RequestLimitExceededException ,errorMessage);
+            return webCall.WithRetry(3,10.Seconds(),ex=>ex is RequestLimitExceededException ,errorMessage);
         }
         catch (System.IO.IOException ioex)
         {
