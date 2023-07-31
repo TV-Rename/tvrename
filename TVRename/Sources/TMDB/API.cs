@@ -33,7 +33,7 @@ internal static class API
             int numberOfCallsMade = 0;
 
             for (DateTime time = latestUpdateTime.LastSuccessfulServerUpdateDateTime();
-                 time <= DateTime.Now;
+                 time <= TimeHelpers.LocalNow();
                  time = time.AddDays(14)
                 )
             {

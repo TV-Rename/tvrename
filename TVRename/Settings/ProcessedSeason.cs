@@ -141,7 +141,7 @@ public class ProcessedSeason
             }
 
             DateTime airDateTime = adt.Value;
-            if (airDateTime > DateTime.Now)
+            if (airDateTime > TimeHelpers.LocalNow())
             {
                 return true;
             }
@@ -166,7 +166,7 @@ public class ProcessedSeason
             }
 
             DateTime airDateTime = adt.Value;
-            if (airDateTime < DateTime.Now)
+            if (airDateTime < TimeHelpers.LocalNow())
             {
                 return true;
             }

@@ -31,7 +31,7 @@ public static class TimeHelpers
             Logger.Info($"Finished connecting to NTP Server at UTC (based on local clock) {DateTime.UtcNow} - Offset = {ClockInstance.CorrectionOffset}");
             if (ClockInstance.CorrectionOffset > 20.Seconds())
             {
-                Logger.Warn($"Discrepancy for systemtime of {DateTime.UtcNow} to {ClockInstance.UtcNow.UtcDateTime}");
+                Logger.Error($"Discrepancy for systemtime of {DateTime.UtcNow} to {ClockInstance.UtcNow.UtcDateTime}");
             }
             return ClockInstance;
         }
@@ -46,6 +46,8 @@ public static class TimeHelpers
             return NtpClock.LocalFallback;
         }
     }
+
+    public static string TimeDebugMessage => $"At {DateTime.UtcNow} the offset is {GetClock().CorrectionOffset}";
 
     public static DateTime GetRequestedTime(this long updateFromEpochTime)
     {
@@ -104,4 +106,6 @@ public static class TimeHelpers
 
         return string.Empty;
     }
+
+    public static bool IsInPast(this DateTime testValue) => testValue.CompareTo(LocalNow()) < 0;
 }

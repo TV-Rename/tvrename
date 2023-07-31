@@ -8,7 +8,7 @@ public partial class LicenceInfoForm : Form
     public LicenceInfoForm()
     {
         InitializeComponent();
-        lblCopyright.Text = $"Copyright (C) {DateTime.Now.Year} TV Rename";
+        lblCopyright.Text = $"Copyright (C) {TimeHelpers.LocalNow().Year} TV Rename";
     }
 
     private void btnLicence_Click(object sender, EventArgs e)

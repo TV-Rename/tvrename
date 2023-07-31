@@ -153,6 +153,6 @@ public class CachedMovieInfo : CachedMediaInfo
 
     public bool IsReleased()
     {
-        return FirstAired.HasValue && FirstAired.Value.CompareTo(DateTime.Now) < 0;
+        return FirstAired.HasValue && FirstAired.Value.IsInPast();
     }
 }

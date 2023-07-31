@@ -11,7 +11,6 @@
 
 using Alphaleonis.Win32.Filesystem;
 using NLog;
-using NodaTime.Extensions;
 using Polly;
 using System;
 using System.Collections.Generic;
@@ -1202,7 +1201,7 @@ public class TVDoc : IDisposable
             TheActionList.Add(
                 downloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
 
-            si.BannersLastUpdatedOnDisk = DateTime.Now;
+            si.BannersLastUpdatedOnDisk = TimeHelpers.LocalNow();
             SetDirty();
         }
 
@@ -1744,9 +1743,9 @@ public class TVDoc : IDisposable
 
     public void PreventAutoScan(string v)
     {
-        Logger.Info($"TV Rename is about to be busy doing {v} since {DateTime.Now.ToLocalDateTime()}");
+        Logger.Info($"TV Rename is about to be busy doing {v} since {TimeHelpers.LocalNow()}");
         currentlyBusy = true;
-        busySince = DateTime.Now;
+        busySince = TimeHelpers.LocalNow();
     }
 
     public void AllowAutoScan()

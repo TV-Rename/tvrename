@@ -521,12 +521,12 @@ public partial class UI : Form, IDialogParent
             return "This Week";
         }
 
-        if (DateTime.Now.Year == episodeTime.Value.Year && DateTime.Now.Month == episodeTime.Value.Month)
+        if (TimeHelpers.LocalNow().Year == episodeTime.Value.Year && TimeHelpers.LocalNow().Month == episodeTime.Value.Month)
         {
             return "Earlier this Month";
         }
 
-        if (DateTime.Now.Year == episodeTime.Value.Year)
+        if (TimeHelpers.LocalNow().Year == episodeTime.Value.Year)
         {
             return episodeTime.Value.ToString("MMMM yyyy");
         }
@@ -2826,7 +2826,7 @@ public partial class UI : Form, IDialogParent
 
     private static string CalculateWtwlviGroup(ProcessedEpisode pe, DateTime dt)
     {
-        double ttn = dt.Subtract(DateTime.Now).TotalHours;
+        double ttn = dt.Subtract(TimeHelpers.LocalNow()).TotalHours;
 
         if (ttn < 0)
         {

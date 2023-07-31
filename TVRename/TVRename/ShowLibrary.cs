@@ -666,7 +666,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
     public List<ProcessedEpisode> NextNShows(int nShows, int nDaysPast, int nDaysFuture)
     {
-        DateTime notBefore = DateTime.Now.AddDays(-nDaysPast);
+        DateTime notBefore = TimeHelpers.LocalNow().AddDays(-nDaysPast);
         List<ProcessedEpisode> found = new();
 
         for (int i = 0; i < nShows; i++)
@@ -730,7 +730,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
                         DateTime dt = airdt.Value;
 
-                        TimeSpan timeUntil = dt.Subtract(DateTime.Now);
+                        TimeSpan timeUntil = dt.Subtract(TimeHelpers.LocalNow());
                         if (timeUntil.TotalDays > nDaysFuture)
                         {
                             continue; //episode is too far in the future
@@ -759,7 +759,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     public IEnumerable<ProcessedEpisode> GetRecentAndFutureEps(int recentDays)
     {
         List<ProcessedEpisode> returnList = new();
-        DateTime now = DateTime.Now;
+        DateTime now = TimeHelpers.LocalNow();
         DateTime limit = now.AddDays(-recentDays);
 
         foreach (ShowConfiguration si in Shows)

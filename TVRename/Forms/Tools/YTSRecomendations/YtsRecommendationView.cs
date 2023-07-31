@@ -125,7 +125,7 @@ public partial class YtsRecommendationView : Form
         RecommendationMovieStructure source = new();
         int page = 0;
         List<MovieConfiguration> inputMovies = mDoc.FilmLibrary.Movies.Where(m => m.ImdbCode != null && !m.ImdbCode.IsNullOrWhitespace()).ToList();
-        scanStartTime = DateTime.Now;
+        scanStartTime = TimeHelpers.LocalNow();
 
         try
         {
@@ -185,7 +185,7 @@ public partial class YtsRecommendationView : Form
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        DateTime completionDateTime = scanStartTime.Add((DateTime.Now - scanStartTime) / (pbProgress.Value+1) * 100) ;
+        DateTime completionDateTime = scanStartTime.Add((TimeHelpers.LocalNow() - scanStartTime) / (pbProgress.Value+1) * 100) ;
         lblStatus.Text = $"ETC={completionDateTime} {e.UserState?.ToString()?.ToUiVersion()}";
     }
 

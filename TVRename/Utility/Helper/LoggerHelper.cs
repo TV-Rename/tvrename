@@ -67,5 +67,5 @@ public static class LoggerHelper
 
     public static string ThreadAndDateInfo =>
         //returns thread number and precise date and time.
-        "[" + Environment.CurrentManagedThreadId + " - " + DateTime.Now.ToString("dd/MM HH:mm:ss.ffffff") + "] ";
+        "[" + Environment.CurrentManagedThreadId + " - " + TimeHelpers.LocalNow().ToString("dd/MM HH:mm:ss.ffffff") + "] ";
 }

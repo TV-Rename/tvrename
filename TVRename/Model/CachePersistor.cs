@@ -25,7 +25,7 @@ internal static class CachePersistor
             {
                 // see when the last rotate was, and only rotate if its been at least an hour since the last save
                 DateTime dt = File.GetLastWriteTime(cacheFile.FullName + ".0");
-                hours = DateTime.Now.Subtract(dt).TotalHours;
+                hours = TimeHelpers.LocalNow().Subtract(dt).TotalHours;
             }
 
             if (hours >= 24.0) // rotate the save file daily

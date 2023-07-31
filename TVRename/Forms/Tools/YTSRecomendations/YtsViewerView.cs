@@ -122,7 +122,7 @@ public partial class YtsViewerView : Form
     private void BwScan_DoWork(object sender, DoWorkEventArgs e)
     {
         System.Threading.Thread.CurrentThread.Name ??= "Recommendations Scan Thread"; // Can only set it once
-        scanStartTime = DateTime.Now;
+        scanStartTime = TimeHelpers.LocalNow();
         try
         {
             recs = YTS.API
@@ -139,7 +139,7 @@ public partial class YtsViewerView : Form
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
         pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        DateTime completionDateTime = scanStartTime.Add((DateTime.Now - scanStartTime) / (pbProgress.Value + 1) * 100);
+        DateTime completionDateTime = scanStartTime.Add((TimeHelpers.LocalNow() - scanStartTime) / (pbProgress.Value + 1) * 100);
         lblStatus.Text = $"ETC={completionDateTime} {e.UserState?.ToString()?.ToUiVersion()}";
     }
 

@@ -261,7 +261,7 @@ public class Episode
     public bool HasAired()
     {
         LocalDateTime? dateTime = LocalAirTime();
-        return dateTime.HasValue && dateTime.Value.InUtc().ToInstant().CompareTo(SystemClock.Instance.GetCurrentInstant()) < 0;
+        return dateTime.HasValue && dateTime.Value.ToDateTimeUnspecified().IsInPast();
     }
 
     public bool IsSpecial(ProcessedSeason.SeasonType seasonOrderType)

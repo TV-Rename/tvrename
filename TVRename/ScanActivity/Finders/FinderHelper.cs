@@ -144,7 +144,7 @@ internal static class FinderHelper
                 if (filename.Contains(datestr) && DateTime.TryParseExact(datestr, dateFormat,
                         new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime dtInFilename))
                 {
-                    TimeSpan timeAgo = DateTime.Now.Subtract(dtInFilename);
+                    TimeSpan timeAgo = TimeHelpers.LocalNow().Subtract(dtInFilename);
 
                     if (timeAgo < closestDate)
                     {

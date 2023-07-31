@@ -178,7 +178,7 @@ public class ProcessedEpisode : Episode
             return string.Empty;
         }
 
-        TimeSpan ts = airsdt.Value.Subtract(DateTime.Now); // how long...
+        TimeSpan ts = airsdt.Value.Subtract(TimeHelpers.LocalNow()); // how long...
         if (ts.TotalHours < 0)
         {
             return "Aired";
@@ -213,7 +213,7 @@ public class ProcessedEpisode : Episode
     public new bool HasAired()
     {
         DateTime? airsdt = GetAirDateDt();
-        TimeSpan? ts = airsdt?.Subtract(DateTime.Now); // how long...
+        TimeSpan? ts = airsdt?.Subtract(TimeHelpers.LocalNow()); // how long...
         return ts?.TotalHours < 0;
     }
 
@@ -225,7 +225,7 @@ public class ProcessedEpisode : Episode
             return false;
         }
 
-        DateTime now = DateTime.Now;
+        DateTime now = TimeHelpers.LocalNow();
         DateTime limit = now.AddDays(-days);
         
         return limit <= dt && dt <= now;
@@ -241,7 +241,7 @@ public class ProcessedEpisode : Episode
 
         DateTime dt = (DateTime)airsdt;
 
-        TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
+        TimeSpan ts = dt.Subtract(TimeHelpers.LocalNow()); // how long...
         return ts.TotalHours > 0;
     }
 

@@ -328,7 +328,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
         {
             DateTime? dt = si.CachedMovie?.FirstAired;
 
-            bool inPast = dt.HasValue && dt.Value.CompareTo(DateTime.Now) < 0;
+            bool inPast = dt.HasValue && dt.Value.IsInPast();
             bool shouldCheckFutureDated = si.ForceCheckFuture && dt.HasValue;
             bool shouldCheckNoDatedMovies = si.ForceCheckNoAirdate && !dt.HasValue;
 

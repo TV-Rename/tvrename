@@ -329,7 +329,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return true; // that's it for now
         }
 
-        if (DateTime.UtcNow - updateFromEpochTime.FromUnixTime() > 10.Weeks())
+        if (TimeHelpers.UtcNow() - updateFromEpochTime.FromUnixTime() > 10.Weeks())
         {
             SayNothing();
             LOGGER.Warn("Last update from TVDB was more than 10 weeks ago, so doing a full refresh.");
@@ -487,7 +487,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private bool GetUpdatesManually()
     {
-        long time = DateTime.UtcNow.ToUnixTime();
+        long time = TimeHelpers.UnixUtcNow();
         IEnumerable<CachedSeriesInfo> seriesToUpdate = ServerTvAccuracyCheck();
         foreach (CachedSeriesInfo s in seriesToUpdate)
         {
