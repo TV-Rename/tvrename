@@ -169,13 +169,21 @@ public partial class UI : Form, IDialogParent
 
         SetupObjectListForScanResults();
 
-        if (TVSettings.Instance.RunOnStartUp())
+        if (mDoc.Args.Hide || !showUi)
         {
-            UpdateSplashStatus(splash, "Running Auto-scan", 100);
+            UpdateSplashStatus(splash, "Running Command line parameters", 99);
+            ProcessArgs(mDoc.Args);
+            UpdateSplashStatus(splash, "Ready...", 100);
         }
-
-        SetStartUpTab();
-        UpdateSplashStatus(splash, "Opening...", 100);
+        else
+        {
+            if (TVSettings.Instance.RunOnStartUp())
+            {
+                UpdateSplashStatus(splash, "Running Auto-scan", 100);
+            }
+            SetStartUpTab();
+            UpdateSplashStatus(splash, "Opening...", 100);
+        }
     }
 
     private static void WaitForCefInitialised()

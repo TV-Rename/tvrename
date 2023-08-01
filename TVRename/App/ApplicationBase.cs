@@ -328,7 +328,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
     {
         if (ui is null)
         {
-            Logger.Warn($"Cannot pass {args.ToCsv()} to running instance Main FOrm 'ui' is not created yet.");
+            Logger.Warn($"Cannot pass {args.ToCsv()} to running instance Main Form 'ui' is not created yet.");
         }
         else
         {

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TVRename": {
+      "commandName": "Project",
+      "commandLineArgs": "/scan /doall /ignoremissing /hide /quit"
+    }
+  }
+}
