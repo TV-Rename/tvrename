@@ -95,6 +95,9 @@ public partial class UI : Form, IDialogParent
         internalCheckChange = false;
 
         InitializeComponent();
+
+        ShowInTaskbar = TVSettings.Instance.ShowInTaskbar && !mDoc.Args.Hide;
+
         chrSummary.RequestHandler = new BrowserRequestHandler();
         chrImages.RequestHandler = new BrowserRequestHandler();
         chrInformation.RequestHandler = new BrowserRequestHandler();
@@ -172,7 +175,7 @@ public partial class UI : Form, IDialogParent
         if (mDoc.Args.Hide || !showUi)
         {
             UpdateSplashStatus(splash, "Running Command line parameters", 99);
-            ProcessArgs(mDoc.Args);
+            quickTimer.Start();
             UpdateSplashStatus(splash, "Ready...", 100);
         }
         else
@@ -912,8 +915,6 @@ public partial class UI : Form, IDialogParent
 
     private void UI_Load(object sender, EventArgs e)
     {
-        ShowInTaskbar = TVSettings.Instance.ShowInTaskbar && !mDoc.Args.Hide;
-
         foreach (TabPage tp in tabControl1.TabPages) // grr! why does it go white?
         {
             tp.BackColor = SystemColors.Control;
@@ -2492,7 +2493,7 @@ public partial class UI : Form, IDialogParent
             mLastNonMaximizedSize = Size;
         }
 
-        if (WindowState == FormWindowState.Minimized && !TVSettings.Instance.ShowInTaskbar)
+        if (WindowState == FormWindowState.Minimized && !TVSettings.Instance.ShowInTaskbar && this.Visible)
         {
             Hide();
         }
@@ -4637,11 +4638,10 @@ public partial class UI : Form, IDialogParent
         Rectangle? tabBounds = tabCtrl?.GetTabRect(e.Index);
 
         // Draw string. Center the text.
-        using StringFormat stringFlags = new()
-        {
-            Alignment = StringAlignment.Center,
-            LineAlignment = StringAlignment.Center
-        };
+        using StringFormat stringFlags = new();
+
+        stringFlags.Alignment = StringAlignment.Center;
+        stringFlags.LineAlignment = StringAlignment.Center;
         const int INDENT = 15;
 
         //GetIcon

@@ -48,12 +48,11 @@ public class CefWrapper
     {
         try
         {
-            using CefSettings settings = new()
-            {
-                CachePath = PathManager.CefCachePath(),
-                UserDataPath = PathManager.CefCachePath(),
-                LogFile = PathManager.CefLogFile()
-            };
+            using CefSettings settings = new();
+
+            settings.CachePath = PathManager.CefCachePath();
+            settings.UserDataPath = PathManager.CefCachePath();
+            settings.LogFile = PathManager.CefLogFile();
 
             if (!Helpers.InDebug())
             {

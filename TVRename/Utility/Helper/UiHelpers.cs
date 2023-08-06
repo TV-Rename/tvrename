@@ -27,6 +27,11 @@ public static class UiHelpers
     {
         try
         {
+            if (d.SelectedPath.StartsWith(@"\",StringComparison.OrdinalIgnoreCase))
+            {
+                d.SelectedPath = d.SelectedPath.RemoveFirstCharacter();
+            }
+
             return ShowDialogAndOk(() => d.ShowDialog(owner));
         }
         catch (Win32Exception ex)
@@ -39,6 +44,11 @@ public static class UiHelpers
     {
         try
         {
+            if (d.SelectedPath.StartsWith(@"\", StringComparison.OrdinalIgnoreCase))
+            {
+                d.SelectedPath = d.SelectedPath.RemoveFirstCharacter();
+            }
+
             return ShowDialogAndOk(() => d.ShowDialog(owner));
         }
         catch (Win32Exception ex)

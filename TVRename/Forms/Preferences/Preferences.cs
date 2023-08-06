@@ -1822,11 +1822,10 @@ public partial class Preferences : Form
         Rectangle tabBounds = tcTabs.GetTabRect(e.Index);
 
         // Draw string. Center the text.
-        using StringFormat stringFlags = new()
-        {
-            Alignment = StringAlignment.Near,
-            LineAlignment = StringAlignment.Center
-        };
+        using StringFormat stringFlags = new();
+
+        stringFlags.Alignment = StringAlignment.Near;
+        stringFlags.LineAlignment = StringAlignment.Center;
 
         using SolidBrush fore = new (tcTabs.ForeColor);
         g.DrawString(tabPage.Text, tcTabs.Font, fore, tabBounds, stringFlags);
