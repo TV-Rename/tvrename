@@ -428,6 +428,7 @@ public partial class BulkAddMovie : Form
                 if (i < lvFMNewShows.Items.Count)
                 {
                     lvFMNewShows.Items[i].Selected = true;
+                    lvFMNewShows.Items[i].EnsureVisible();
                 }
             }
         }
@@ -444,7 +445,7 @@ public partial class BulkAddMovie : Form
         }
 
         lvi.SubItems.Clear();
-        lvi.Text = ai.Directory.FullName.ToUiVersion();
+        lvi.Text = ai.Directory.FullName;
         if (ai.CodeKnown)
         {
             CachedMovieInfo? x = ai.CachedMovie;
@@ -547,7 +548,7 @@ public partial class BulkAddMovie : Form
             EditEntry(fme);
             UpdateListItem(fme, true);
         }
-        FillNewShowList(false);
+        FillNewShowList(true);
     }
 
     private void EditEntry(PossibleNewMovie fme)
