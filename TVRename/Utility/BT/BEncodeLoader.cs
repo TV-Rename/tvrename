@@ -37,7 +37,7 @@ public static class BEncodeLoader
                     break;
                 case >= '0' and <= '9':
                     r *= 10;
-                    r += c - '0';
+                    r += c.AsAsciiIntToInt();
                     break;
             }
         }
@@ -45,6 +45,7 @@ public static class BEncodeLoader
         return new BTInteger( neg ?  -r : r);
     }
 
+    private static int AsAsciiIntToInt(this int asciiInt) => asciiInt - '0';
     private static BTItem ReadDictionary(this FileStream sr)
     {
         BTDictionary d = new();
@@ -102,17 +103,27 @@ public static class BEncodeLoader
         };
     }
 
-    private static int GetStringLength(this FileStream sr, int c)
+    private static int GetStringLength(this FileStream sr, int baseAscii)
     {
         //We have already read the first digit, so seed the return value with it
-        string r = Convert.ToString(c - '0');
-        while ((c = sr.ReadByte()) != ':')
+        string r = baseAscii.FromAsciiToString();
+        int c2;
+        while ((c2 = sr.ReadByte()) != ':')
         {
-            r += Convert.ToString(c - '0');
+            r += c2.FromAsciiToString();
         }
-
-        return Convert.ToInt32(r);
+        try
+        {
+            return Convert.ToInt32(r);
+        }
+        catch (FormatException f)
+        {
+            Logger.Error(f,$"Could not parse [{r}] in GetStringLength");
+            throw;
+        }
     }
+
+    private static string FromAsciiToString(this int baseAscii) => Convert.ToString(baseAscii.AsAsciiIntToInt());
 
     public static BTFile? Load(string filename)
     {
