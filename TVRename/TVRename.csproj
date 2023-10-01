@@ -114,18 +114,18 @@
     <PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
     <PackageReference Include="MediaInfo.Wrapper.Core" Version="21.9.3" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.3" />
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
     <PackageReference Include="MscVersion" Version="1.0.0.9" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
-    <PackageReference Include="NLog.OutputDebugString" Version="5.2.2" />
+    <PackageReference Include="NLog.OutputDebugString" Version="5.2.4" />
     <PackageReference Include="NLog.Targets.Syslog" Version="7.0.0" />
-    <PackageReference Include="NLog.Windows.Forms" Version="5.2.0" />
+    <PackageReference Include="NLog.Windows.Forms" Version="5.2.1" />
     <PackageReference Include="NodaTime" Version="3.1.9" />
     <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
-    <PackageReference Include="Polly" Version="7.2.4" />
-    <PackageReference Include="SharpCompress" Version="0.33.0" />
+    <PackageReference Include="Polly" Version="8.0.0" />
+    <PackageReference Include="SharpCompress" Version="0.34.0" />
     <PackageReference Include="SourceGrid" Version="4.4.0" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageReference Include="System.Console" Version="4.3.1" />
@@ -147,13 +147,14 @@
     <PackageReference Include="System.Threading.Timer" Version="4.3.0" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
     <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
+    <PackageReference Include="TagLibSharp" Version="2.3.0" />
     <PackageReference Include="TimeZoneConverter" Version="6.1.0" />
     <PackageReference Include="TMDbLib" Version="2.0.0" />
     <PackageReference Include="System.ServiceModel.Federation" Version="6.0.0" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.4" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.5" />
     <PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.12.0.2" />
   </ItemGroup>
   <ItemGroup>
