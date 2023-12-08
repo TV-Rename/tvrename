@@ -481,14 +481,14 @@ namespace TVRename.Forms
             // 
             flushCacheToolStripMenuItem.Name = "flushCacheToolStripMenuItem";
             flushCacheToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
-            flushCacheToolStripMenuItem.Text = "&Force Refesh All";
+            flushCacheToolStripMenuItem.Text = "&Force Refresh All";
             flushCacheToolStripMenuItem.Click += flushCacheToolStripMenuItem_Click;
             // 
             // flushImageCacheToolStripMenuItem
             // 
             flushImageCacheToolStripMenuItem.Name = "flushImageCacheToolStripMenuItem";
             flushImageCacheToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
-            flushImageCacheToolStripMenuItem.Text = "&Force Refesh All Images";
+            flushImageCacheToolStripMenuItem.Text = "&Force Refresh All Images";
             flushImageCacheToolStripMenuItem.Click += flushImageCacheToolStripMenuItem_Click;
             // 
             // backgroundDownloadNowToolStripMenuItem
