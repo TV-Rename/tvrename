@@ -217,7 +217,7 @@ public static class CacheHelper
 
     public static Dictionary<int, CachedSeriesInfo> GetSeriesDictMatching<T>(this T cache, string testShowName) where T : MediaCache, iTVSource
     {
-        Dictionary<int, CachedSeriesInfo> matchingSeries = new();
+        Dictionary<int, CachedSeriesInfo> matchingSeries = [];
 
         testShowName = testShowName.CompareName();
 
@@ -242,7 +242,7 @@ public static class CacheHelper
 
     public static Dictionary<int, CachedMovieInfo> GetMoviesDictMatching<T>(this T cache, string testShowName) where T : MediaCache, iMovieSource
     {
-        Dictionary<int, CachedMovieInfo> matchingSeries = new();
+        Dictionary<int, CachedMovieInfo> matchingSeries = [];
 
         testShowName = testShowName.CompareName();
 

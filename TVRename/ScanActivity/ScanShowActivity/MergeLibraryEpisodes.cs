@@ -74,7 +74,7 @@ internal class MergeLibraryEpisodes : ScanShowActivity
 
         List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
 
-        List<ShowRule> rulesToAdd = new();
+        List<ShowRule> rulesToAdd = [];
 
         foreach (string folder in folders)
         {

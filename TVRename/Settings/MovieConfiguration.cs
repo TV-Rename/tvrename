@@ -41,7 +41,7 @@ public class MovieConfiguration : MediaConfiguration
         UseCustomFolderNameFormat = false;
         UseCustomRegion = false;
 
-        ManualLocations = new List<string>();
+        ManualLocations = [];
         CustomNamingFormat = string.Empty;
         CustomFolderNameFormat = string.Empty;
         CustomRegionCode = string.Empty;
@@ -140,7 +140,7 @@ public class MovieConfiguration : MediaConfiguration
     {
         Dictionary<int, SafeList<string>> fld = new()
         {
-            [0] = new SafeList<string>()
+            [0] = []
         };
 
         if (manualToo && UseManualLocations)

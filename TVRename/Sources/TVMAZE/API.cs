@@ -463,7 +463,7 @@ internal static class API
             returnValue.Genres = genres.Select(x => x.Value<string>()?.Trim()).OfType<string>().Distinct().ToSafeList();
         }
 
-        List<string> typesToTransferToGenres = new() { "Animation", "Reality", "Documentary", "News", "Sports" };
+        List<string> typesToTransferToGenres = ["Animation", "Reality", "Documentary", "News", "Sports"];
         foreach (string conversionType in typesToTransferToGenres.Where(s => s == returnValue.SeriesType))
         {
             returnValue.Genres.Add(conversionType);

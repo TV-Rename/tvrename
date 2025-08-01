@@ -10,6 +10,6 @@ public class BTList : BTItem
     public BTList()
         : base(BTChunk.kList)
     {
-        Items = new List<BTItem>();
+        Items = [];
     }
 }

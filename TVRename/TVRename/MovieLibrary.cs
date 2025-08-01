@@ -21,7 +21,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
 
     public IEnumerable<string> GetGenres()
     {
-        List<string> allGenres = new();
+        List<string> allGenres = [];
         foreach (MovieConfiguration si in Movies)
         {
             allGenres.AddRange(si.Genres);

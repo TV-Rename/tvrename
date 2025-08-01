@@ -1869,7 +1869,7 @@ public partial class UI : Form, IDialogParent
                 break;
 
             case TVSettings.WTWDoubleClickAction.Scan:
-                UiScan(new List<ShowConfiguration> { ei.Show }, null, false, TVSettings.ScanType.SingleShow, MediaConfiguration.MediaType.tv);
+                UiScan([ei.Show], null, false, TVSettings.ScanType.SingleShow, MediaConfiguration.MediaType.tv);
                 tabControl1.SelectTab(tbAllInOne);
                 break;
 
@@ -2040,12 +2040,12 @@ public partial class UI : Form, IDialogParent
 
     private void RightClickOnMyShows(ShowConfiguration si, Point pt)
     {
-        BuildshowRightClickMenu(pt, null, new List<ShowConfiguration> { si }, null);
+        BuildshowRightClickMenu(pt, null, [si], null);
     }
 
     private void RightClickOnMyShows(ProcessedSeason seas, Point pt)
     {
-        BuildshowRightClickMenu(pt, null, new List<ShowConfiguration> { seas.Show }, seas);
+        BuildshowRightClickMenu(pt, null, [seas.Show], seas);
     }
 
     private void WtwRightClickOnShow(List<ProcessedEpisode> eps, Point pt)
@@ -2092,13 +2092,13 @@ public partial class UI : Form, IDialogParent
     }
     private void RightMenuMovieScan(MovieConfiguration si, TVSettings.ScanType x)
     {
-        UiScan(null, new List<MovieConfiguration> { si }, false, x, MediaConfiguration.MediaType.movie);
+        UiScan(null, [si], false, x, MediaConfiguration.MediaType.movie);
         tabControl1.SelectTab(tbAllInOne);
     }
 
     private void MenuFolders(ItemList? lvr, ShowConfiguration? si, ProcessedSeason? seas, ProcessedEpisode? ep)
     {
-        List<string> added = new();
+        List<string> added = [];
 
         if (ep != null)
         {
@@ -2193,7 +2193,7 @@ public partial class UI : Form, IDialogParent
 
         if (si.Locations.Any())
         {
-            List<string> added = new();
+            List<string> added = [];
             AddFolders(si.Locations, added);
         }
 
@@ -3668,13 +3668,13 @@ public partial class UI : Form, IDialogParent
         CancellationTokenSource cts = new();
         bool hidden = WindowState == FormWindowState.Minimized;
 
-        TVDoc.ScanSettings initialSettings = new(shows ?? new List<ShowConfiguration>(),
-            movies ?? new List<MovieConfiguration>(), unattended, hidden, st, media, this, null, cts.Token);
+        TVDoc.ScanSettings initialSettings = new(shows ?? [],
+            movies ?? [], unattended, hidden, st, media, this, null, cts.Token);
         mDoc.SetScanSettings(initialSettings);
         SetupScanUi(hidden);
 
-        TVDoc.ScanSettings scanSettings = new(shows ?? new List<ShowConfiguration>(),
-            movies ?? new List<MovieConfiguration>(), unattended, hidden, st, media, this, scanProgDlg, cts.Token);
+        TVDoc.ScanSettings scanSettings = new(shows ?? [],
+            movies ?? [], unattended, hidden, st, media, this, scanProgDlg, cts.Token);
         mDoc.SetScanSettings(scanSettings);
 
         UiHelpers.SetProgressStateNormal(Handle);
@@ -4407,14 +4407,14 @@ public partial class UI : Form, IDialogParent
         {
             if (!ContainsKey(network))
             {
-                Add(network, new Dictionary<string, List<string>>());
+                Add(network, []);
             }
 
             Dictionary<string, List<string>> snet = this[network];
 
             if (!snet.ContainsKey(timezone))
             {
-                snet.Add(timezone, new List<string>());
+                snet.Add(timezone, []);
             }
 
             List<string> snettz = snet[timezone];
@@ -4754,7 +4754,7 @@ public partial class UI : Form, IDialogParent
             "Aired in the last " + dd + " day" + (dd == 1 ? "" : "s");
 
         // try to maintain selections if we can
-        List<ProcessedEpisode> selections = new();
+        List<ProcessedEpisode> selections = [];
         foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
         {
             selections.Add((ProcessedEpisode)lvi.Tag);
@@ -4765,7 +4765,7 @@ public partial class UI : Form, IDialogParent
 
         lvWhenToWatch.Items.Clear();
 
-        List<DateTime> bolded = new();
+        List<DateTime> bolded = [];
 
         foreach (ListViewItem lvi in newContents)
         {

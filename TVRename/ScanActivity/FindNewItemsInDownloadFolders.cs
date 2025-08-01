@@ -67,7 +67,7 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
 
     private List<PossibleMedia> RemoveExistingAndDups(IEnumerable<PossibleMedia> addedShows)
     {
-        List<PossibleMedia> returnList = new();
+        List<PossibleMedia> returnList = [];
         foreach (PossibleMedia testMedia in addedShows)
         {
             if (MDoc.AlreadyContains(testMedia.Configuration))
@@ -91,7 +91,7 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
 
     private static IEnumerable<FileInfo> GetPossibleFiles()
     {
-        List<FileInfo> possibleShowNames = new();
+        List<FileInfo> possibleShowNames = [];
 
         foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToArray())
         {

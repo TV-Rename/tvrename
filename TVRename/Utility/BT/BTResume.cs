@@ -56,7 +56,7 @@ public class BTResume : BTCore
 
     public List<TorrentEntry> AllFilesBeingDownloaded()
     {
-        List<TorrentEntry> r = new();
+        List<TorrentEntry> r = [];
 
         if (resumeDat is null)
         {

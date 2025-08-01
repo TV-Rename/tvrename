@@ -40,15 +40,15 @@ public partial class EditSeason : Form
         nameStyle = style;
         InitializeComponent();
 
-        episodesToAddToSeen = new List<ProcessedEpisode>();
-        episodesToRemoveFromSeen = new List<ProcessedEpisode>();
+        episodesToAddToSeen = [];
+        episodesToRemoveFromSeen = [];
 
         show = si;
         mSeasonNumber = seasonNumber;
 
         workingRuleSet = si.SeasonRules.TryGetValue(seasonNumber, out List<ShowRule>? rule)
             ? new List<ShowRule>(rule)
-            : new List<ShowRule>();
+            : [];
 
         txtShowName.Text = si.ShowName.ToUiVersion();
         txtSeasonNumber.Text = seasonNumber.ToString();
@@ -69,7 +69,7 @@ public partial class EditSeason : Form
     }
     private void FillSeenEpisodes(bool keepSel)
     {
-        List<int> sel = new();
+        List<int> sel = [];
         if (keepSel)
         {
             foreach (int i in lvSeenEpisodes.SelectedIndices)
@@ -121,7 +121,7 @@ public partial class EditSeason : Form
 
     private void FillRuleList(bool keepSel, int adj)
     {
-        List<int> sel = new();
+        List<int> sel = [];
         if (keepSel)
         {
             foreach (int i in lvRuleList.SelectedIndices)
@@ -277,7 +277,7 @@ public partial class EditSeason : Form
 
     private IEnumerable<ProcessedEpisode> ProcessedEpisodes()
     {
-        List<ProcessedEpisode> pel = new();
+        List<ProcessedEpisode> pel = [];
 
         if (mOriginalEps != null)
         {
@@ -294,7 +294,7 @@ public partial class EditSeason : Form
 
     private void Button2_Click(object sender, System.EventArgs e)
     {
-        List<ProcessedEpisode> possibleEpisodes = new();
+        List<ProcessedEpisode> possibleEpisodes = [];
         if (mOriginalEps != null)
         {
             possibleEpisodes.AddRange(mOriginalEps.Where(testEp => !testEp.PreviouslySeen).Where(testEp => !episodesToAddToSeen.Contains(testEp)));

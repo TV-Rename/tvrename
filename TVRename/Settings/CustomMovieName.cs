@@ -8,15 +8,15 @@ public static class CustomMovieName
 {
     public static string DefaultStyle() => Presets[0];
 
-    private static readonly List<string> Presets = new()
-    {
+    private static readonly List<string> Presets =
+    [
         "{ShowName} ({Year})",
         "{ShowNameNoYear} ({Year})",
         "{ShowName}"
-    };
+    ];
 
-    internal static readonly List<string> TAGS = new()
-    {
+    internal static readonly List<string> TAGS =
+    [
         "{ShowName}",
         "{ShowNameInitial}",
         "{ShowNameLower}",
@@ -28,7 +28,7 @@ public static class CustomMovieName
         "{MovieType}",
         "{CollectionFolder}",
         "{CollectionOrder}",
-    };
+    ];
 
     public static List<string> ExamplePresets(MovieConfiguration s)
     {

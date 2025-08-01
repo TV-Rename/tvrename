@@ -27,7 +27,7 @@ internal class ActionNfoEpisode : ActionNfo
 
         //We will replace the file as too difficult to update multiparts
         //We can't use XDocument as it's not fully valid XML
-        List<XElement> episodeXmLs = new();
+        List<XElement> episodeXmLs = [];
 
         if (Episode != null)
         {

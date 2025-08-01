@@ -961,8 +961,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
 public class TvdbSearchResult
 {
-    public readonly List<CachedSeriesInfo> TvShows = new();
-    public readonly List<CachedMovieInfo> Movies=new();
+    public readonly List<CachedSeriesInfo> TvShows = [];
+    public readonly List<CachedMovieInfo> Movies=[];
 }
 
 public class UpdateCancelledException : Exception

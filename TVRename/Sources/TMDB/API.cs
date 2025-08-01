@@ -29,7 +29,7 @@ internal static class API
         //(up to a maximum of 52 - if you are this far behind then you may need multiple refreshes)
         try
         {
-            List<ChangesListItem> updatesResponses = new();
+            List<ChangesListItem> updatesResponses = [];
             int numberOfCallsMade = 0;
 
             for (DateTime time = latestUpdateTime.LastSuccessfulServerUpdateDateTime();

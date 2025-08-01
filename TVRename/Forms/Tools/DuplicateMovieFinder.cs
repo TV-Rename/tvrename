@@ -18,7 +18,7 @@ public partial class DuplicateMovieFinder : Form
     public DuplicateMovieFinder(TVDoc doc, UI main)
     {
         InitializeComponent();
-        dupMovies = new List<DuplicateMovie>();
+        dupMovies = [];
         mDoc = doc;
         mainUi = main;
         Scan();

@@ -312,7 +312,7 @@ internal abstract class FileFinder : Finder
     {
         // for each of the items in rcl, do the same copy/move if for other items with the same
         // base name, but different extensions
-        ItemList extras = new();
+        ItemList extras = [];
 
         foreach (ActionCopyMoveRename action in actionlist.CopyMoveRename)
         {
@@ -397,7 +397,7 @@ internal abstract class FileFinder : Finder
     {
         // for each of the items in rcl, do the same copy/move if for other items with the same
         // base name, but different extensions
-        ItemList extras = new();
+        ItemList extras = [];
 
         foreach (ActionCopyMoveRename action in actionlist.CopyMoveRename)
         {
@@ -618,7 +618,7 @@ internal abstract class FileFinder : Finder
     private static List<FileInfo> IdentifyBestMatches(List<FileInfo> matchedFiles)
     {
         //See whether there are any of the matched files that stand out
-        List<FileInfo> bestMatchedFiles = new();
+        List<FileInfo> bestMatchedFiles = [];
         foreach (FileInfo matchedFile in matchedFiles)
         {
             //test first file against all the others
@@ -655,7 +655,7 @@ internal abstract class FileFinder : Finder
                 continue;
             }
 
-            if (ReviewFile(testMissingAction, new ItemList(), matchedFile, false, false, false, useFullPath))
+            if (ReviewFile(testMissingAction, [], matchedFile, false, false, false, useFullPath))
             {
                 //We have 2 options that match  me and testAction - See whether one is subset of the other
                 if (me.Episode != null && me.Episode.Show.ShowName.Contains(testMissingAction.MissingEpisode.Show.ShowName))

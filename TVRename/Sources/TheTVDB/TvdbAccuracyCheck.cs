@@ -15,9 +15,9 @@ internal class TvdbAccuracyCheck
 
     public TvdbAccuracyCheck()
     {
-        Issues = new SafeList<string>();
-        ShowsToUpdate = new SafeList<CachedSeriesInfo>();
-        MoviesToUpdate = new SafeList<CachedMovieInfo>();
+        Issues = [];
+        ShowsToUpdate = [];
+        MoviesToUpdate = [];
     }
 
     public void ServerAccuracyCheck(CachedMovieInfo si)

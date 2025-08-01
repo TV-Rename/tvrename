@@ -295,7 +295,7 @@ internal static class FinderHelper
     {
         DirFilesCache cache = dfc ?? new DirFilesCache();
 
-        List<FileInfo> ret = new();
+        List<FileInfo> ret = [];
 
         int seasWanted = epi.AppropriateSeasonNumber;
         int epWanted = epi.AppropriateEpNum;
@@ -679,8 +679,7 @@ internal static class FinderHelper
     public static string RemoveSceneTerms(string refinedHint)
     {
         List<string> removeCrapAfterTerms =
-            new()
-            {
+            [
                 "2160p",
                 "1080p",
                 "720p",
@@ -699,7 +698,7 @@ internal static class FinderHelper
                 "3d",
                 "xvid",
                 "r6rip"
-            };
+            ];
 
         foreach (string removeCrapAfterTerm in removeCrapAfterTerms)
         {
@@ -720,7 +719,7 @@ internal static class FinderHelper
     public static IEnumerable<PossibleMedia> FindMedia(IEnumerable<FileInfo> possibleShows,
         TVDoc doc, IDialogParent owner)
     {
-        List<PossibleMedia> addedShows = new();
+        List<PossibleMedia> addedShows = [];
         try
         {
             foreach (FileInfo file in possibleShows)

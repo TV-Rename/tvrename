@@ -42,8 +42,8 @@ internal class SABnzbdFinder : DownloadingFinder
             return;
         }
 
-        ItemList newList = new();
-        ItemList toRemove = new();
+        ItemList newList = [];
+        ItemList toRemove = [];
         int c = ActionList.Missing.Count + 1;
         int n = 0;
 

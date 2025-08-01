@@ -825,7 +825,7 @@ public static class FileHelper
     }
 
     // see https://kodi.wiki/view/Naming_video_files/Movies#Split_Video_Files
-    private static readonly List<string> Ending = new() { "part", "cd", "dvd", "pt", "disk", "disc" };
+    private static readonly List<string> Ending = ["part", "cd", "dvd", "pt", "disk", "disc"];
 
     public static bool IsDoublePartMovie(FileInfo f1, FileInfo f2)
     {

@@ -287,7 +287,7 @@ public partial class AddEditSeasEpFinders : Form
 
         lvPreview.Enabled = true;
 
-        List<TVSettings.FilenameProcessorRE> rel = new();
+        List<TVSettings.FilenameProcessorRE> rel = [];
 
         if (chkTestAll.Checked)
         {
@@ -397,7 +397,7 @@ public partial class AddEditSeasEpFinders : Form
 
     private static List<TorrentEntry> GetTorrentCache()
     {
-        List<TorrentEntry> newTorrentCache = new();
+        List<TorrentEntry> newTorrentCache = [];
         if (TVSettings.Instance.CheckuTorrent)
         {
             newTorrentCache.AddNullableRange(new uTorrent().GetTorrentDownloads());

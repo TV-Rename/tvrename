@@ -21,8 +21,8 @@ public partial class YtsRecommendationView : Form
     public YtsRecommendationView(TVDoc doc, UI main, string defaultQuality)
     {
         InitializeComponent();
-        recs = new List<YtsRecommendationRow>();
-        addedMovies = new List<MovieConfiguration>();
+        recs = [];
+        addedMovies = [];
 
         mDoc = doc;
         mainUi = main;

@@ -56,10 +56,10 @@ public class TVDoc : IDisposable
     private FindMissingEpisodes? searchFinders;
     private FindMissingEpisodes? downloadFinders;
 
-    private readonly List<MovieConfiguration> forceMoviesRefresh = new();
-    private readonly List<ShowConfiguration> forceShowsRefresh = new();
-    private readonly List<MovieConfiguration> forceMoviesScan = new();
-    private readonly List<ShowConfiguration> forceShowsScan = new();
+    private readonly List<MovieConfiguration> forceMoviesRefresh = [];
+    private readonly List<ShowConfiguration> forceShowsRefresh = [];
+    private readonly List<MovieConfiguration> forceMoviesScan = [];
+    private readonly List<ShowConfiguration> forceShowsScan = [];
 
     public string? LoadErr;
     public readonly bool LoadOk;
@@ -76,11 +76,11 @@ public class TVDoc : IDisposable
     {
         Args = args;
 
-        TvLibrary = new ShowLibrary();
-        FilmLibrary = new MovieLibrary();
+        TvLibrary = [];
+        FilmLibrary = [];
         cacheManager = new CacheUpdater();
         mDirty = false;
-        TheActionList = new ItemList();
+        TheActionList = [];
 
         downloadIdentifiers = new DownloadIdentifiersController();
 
@@ -672,13 +672,13 @@ public class TVDoc : IDisposable
             TvLibrary.LoadFromXml(x.Descendants("MyShows").First());
             FilmLibrary.LoadFromXml(x.Descendants("MyMovies").FirstOrDefault());
             TVSettings.Instance.IgnoreFolders =
-                x.Descendants("IgnoreFolders").FirstOrDefault()?.ReadStringsFromXml("Folder").ToSafeList() ?? new SafeList<string>();
+                x.Descendants("IgnoreFolders").FirstOrDefault()?.ReadStringsFromXml("Folder").ToSafeList() ?? [];
             TVSettings.Instance.DownloadFolders =
-                x.Descendants("FinderSearchFolders").FirstOrDefault()?.ReadStringsFromXml("Folder").ToSafeList() ?? new SafeList<string>();
+                x.Descendants("FinderSearchFolders").FirstOrDefault()?.ReadStringsFromXml("Folder").ToSafeList() ?? [];
             TVSettings.Instance.IgnoredAutoAddHints =
-                x.Descendants("IgnoredAutoAddHints").FirstOrDefault()?.ReadStringsFromXml("Hint").ToSafeList() ?? new SafeList<string>();
+                x.Descendants("IgnoredAutoAddHints").FirstOrDefault()?.ReadStringsFromXml("Hint").ToSafeList() ?? [];
             TVSettings.Instance.Ignore =
-                x.Descendants("IgnoreItems").FirstOrDefault()?.ReadIiFromXml("Ignore").ToSafeList() ?? new SafeList<IgnoreItem>();
+                x.Descendants("IgnoreItems").FirstOrDefault()?.ReadIiFromXml("Ignore").ToSafeList() ?? [];
             TVSettings.Instance.PreviouslySeenEpisodes = new PreviouslySeenEpisodes(x.Descendants("PreviouslySeenEpisodes").FirstOrDefault());
             TVSettings.Instance.PreviouslySeenMovies = new PreviouslySeenMovies(x.Descendants("PreviouslySeenMovies").FirstOrDefault());
 
@@ -690,7 +690,7 @@ public class TVDoc : IDisposable
             }
 
             TVSettings.Instance.MovieLibraryFolders =
-                x.Descendants("MovieLibraryFolders").FirstOrDefault()?.ReadStringsFromXml("Folder").ToSafeList() ?? new SafeList<string>();
+                x.Descendants("MovieLibraryFolders").FirstOrDefault()?.ReadStringsFromXml("Folder").ToSafeList() ?? [];
         }
         catch (Exception e)
         {
@@ -710,15 +710,15 @@ public class TVDoc : IDisposable
         }
 
         // ReSharper disable once InconsistentNaming
-        List<ActionListExporter> ALExporters = new()
-        {
+        List<ActionListExporter> ALExporters =
+        [
             new MissingXML(TheActionList),
             new MissingCSV(TheActionList),
             new MissingMovieXml(TheActionList),
             new MissingMovieCsv(TheActionList),
             new CopyMoveXml(TheActionList),
             new RenamingXml(TheActionList)
-        };
+        ];
 
         ALExporters
             .Where(ue => ue.Active() && ue.ApplicableFor(lastScanType))
@@ -762,13 +762,13 @@ public class TVDoc : IDisposable
 
     public void WriteUpcoming()
     {
-        List<UpcomingExporter> lup = new() { new UpcomingRSS(this), new UpcomingXML(this), new UpcomingiCAL(this), new UpcomingTXT(this) };
+        List<UpcomingExporter> lup = [new UpcomingRSS(this), new UpcomingXML(this), new UpcomingiCAL(this), new UpcomingTXT(this)];
         lup.ForEach(e=>e.RunAsThread());
     }
 
     public void WriteRecent()
     {
-        List<RecentExporter> reps = new() { new RecentASXExporter(this), new RecentM3UExporter(this), new RecentWPLExporter(this), new RecentXSPFExporter(this) };
+        List<RecentExporter> reps = [new RecentASXExporter(this), new RecentM3UExporter(this), new RecentWPLExporter(this), new RecentXSPFExporter(this)];
         reps.ForEach(e=>e.RunAsThread());
     }
 
@@ -1120,7 +1120,7 @@ public class TVDoc : IDisposable
 
     private IEnumerable<ShowConfiguration> GetQuickShowsToScan(bool doRecentMissing, bool doFilesInDownloadDir)
     {
-        List<ShowConfiguration> showsToScan = new();
+        List<ShowConfiguration> showsToScan = [];
         if (doFilesInDownloadDir)
         {
             showsToScan = GetShowsThatHaveDownloads();
@@ -1139,7 +1139,7 @@ public class TVDoc : IDisposable
 
     private IEnumerable<MovieConfiguration> GetQuickMoviesToScan(bool doFilesInDownloadDir)
     {
-        List<MovieConfiguration> showsToScan = new();
+        List<MovieConfiguration> showsToScan = [];
         if (doFilesInDownloadDir)
         {
             showsToScan = GetMoviesThatHaveDownloads();
@@ -1150,7 +1150,7 @@ public class TVDoc : IDisposable
 
     public void RemoveIgnored()
     {
-        ItemList toRemove = new();
+        ItemList toRemove = [];
         int numberIgnored = 0;
         int numberPreviouslySeen = 0;
         int numberPreviouslySeenMovies = 0;
@@ -1342,7 +1342,7 @@ public class TVDoc : IDisposable
 
     private static IEnumerable<ProcessedEpisode> GetMissingEps(DirFilesCache dfc, IEnumerable<ProcessedEpisode> lpe)
     {
-        List<ProcessedEpisode> missing = new();
+        List<ProcessedEpisode> missing = [];
 
         foreach (ProcessedEpisode pe in lpe)
         {
@@ -1366,7 +1366,7 @@ public class TVDoc : IDisposable
         //does show match selected file?
         //if so add cachedSeries to list of cachedSeries scanned
 
-        List<ShowConfiguration> showsToScan = new();
+        List<ShowConfiguration> showsToScan = [];
 
         foreach (string dirPath in TVSettings.Instance.DownloadFolders)
         {
@@ -1472,7 +1472,7 @@ public class TVDoc : IDisposable
         //does show match selected file?
         //if so add cachedSeries to list of cachedSeries scanned
 
-        List<MovieConfiguration> showsToScan = new();
+        List<MovieConfiguration> showsToScan = [];
 
         foreach (string dirPath in TVSettings.Instance.DownloadFolders)
         {
@@ -1819,7 +1819,7 @@ public class TVDoc : IDisposable
         }
 
         // remove all other episodes of this season from the Action list
-        ItemList remove = new();
+        ItemList remove = [];
         foreach (Item action in TheActionList)
         {
             bool seasonMatches = (action is ShowSeasonMissing ssm && ssm.SeasonNumberAsInt == snum) ||
@@ -1860,7 +1860,7 @@ public class TVDoc : IDisposable
             return;
         }
 
-        List<Item> toRemove = new();
+        List<Item> toRemove = [];
 
         foreach (Item a in TheActionList)
         {
@@ -1982,7 +1982,7 @@ public class TVDoc : IDisposable
             {
                 FileFinder.CopySubsFolders(TheActionList, this);
             }
-            MoviesAddedOrEdited(true, false, false, ui, new List<MovieConfiguration>());
+            MoviesAddedOrEdited(true, false, false, ui, []);
         }
         catch (UnauthorizedAccessException ex)
         {

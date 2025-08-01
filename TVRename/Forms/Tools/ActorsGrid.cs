@@ -408,8 +408,8 @@ public partial class ActorsGrid : Form
 
         public DataArr(int rowCountPreAlloc)
         {
-            Rows = new List<string>();
-            Cols = new List<string>();
+            Rows = [];
+            Cols = [];
             allocR = rowCountPreAlloc;
             allocC = rowCountPreAlloc * 10;
             Data = new bool?[allocR][];

@@ -17,7 +17,7 @@ internal class DownloadFanartJpg : DownloadIdentifier
         //We only want to do something if the fanart option is enabled. If the KODI option is enabled then let it do the work.
         if (TVSettings.Instance.FanArtJpg && !TVSettings.Instance.KODIImages)
         {
-            ItemList theActionList = new();
+            ItemList theActionList = [];
             FileInfo fi = FileHelper.FileInFolder(si.AutoAddFolderBase, DEFAULT_FILE_NAME);
 
             bool doesntExist = !fi.Exists;
@@ -42,7 +42,7 @@ internal class DownloadFanartJpg : DownloadIdentifier
         //We only want to do something if the fanart option is enabled.
         if (TVSettings.Instance.FanArtJpg)
         {
-            ItemList theActionList = new();
+            ItemList theActionList = [];
             foreach (string location in si.Locations)
             {
                 FileInfo fi = FileHelper.FileInFolder(location, DEFAULT_FILE_NAME);
@@ -69,6 +69,6 @@ internal class DownloadFanartJpg : DownloadIdentifier
 
     public sealed override void Reset()
     {
-        DoneFanartJpg = new List<string>();
+        DoneFanartJpg = [];
     }
 }

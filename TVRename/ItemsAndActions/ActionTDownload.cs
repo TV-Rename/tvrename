@@ -22,7 +22,7 @@ public class ActionTDownload : ActionDownload
     private readonly string url;
     public readonly long sizeBytes;
     public readonly int? Seeders;
-    public ItemList AlsoAvailable = new();
+    public ItemList AlsoAvailable = [];
 
     // ReSharper disable once NotAccessedField.Global - Used as a property in the Choose Download Grid
     public readonly string UpstreamSource;

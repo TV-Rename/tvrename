@@ -374,7 +374,7 @@ public static class API
         const int OFFSET = 0;
         bool auditUpdates = Helpers.InDebug();
         long fromEpochTime = updateFromEpochTime - OFFSET;
-        List<JObject> updatesResponses = new();
+        List<JObject> updatesResponses = [];
         TvdbUpdateResponse result = new();
 
         while (moreUpdates)
@@ -807,7 +807,7 @@ public static class API
             InstagramId = GetExternalIdSearchResult(r, "Instagram"),
             TwitterId = GetExternalIdSearchResult(r, "Twitter"),
             TmdbCode = GetExternalIdSearchResult(r, "TheMovieDB.com")?.ToInt() ?? -1,
-            Genres = r["genres"]?.ToObject<string[]>()?.ToSafeList() ?? new(),
+            Genres = r["genres"]?.ToObject<string[]>()?.ToSafeList() ?? [],
             Network = r["studios"]?.ToObject<string[]>()?.ToPsv() ?? string.Empty,
         };
 
@@ -822,7 +822,7 @@ public static class API
     private static IEnumerable<CachedSeriesInfo> GetEnumSeries(JToken jToken, Locale locale, bool b)
     {
         JArray ja = (JArray)jToken;
-        List<CachedSeriesInfo> ses = new();
+        List<CachedSeriesInfo> ses = [];
 
         foreach (JToken jt in ja.Children())
         {
@@ -840,7 +840,7 @@ public static class API
     private static IEnumerable<CachedMovieInfo> GetEnumMovies(JToken jToken, Locale locale, bool b)
     {
         JArray ja = (JArray)jToken;
-        List<CachedMovieInfo> ses = new();
+        List<CachedMovieInfo> ses = [];
 
         foreach (JToken jt in ja.Children())
         {
@@ -1371,7 +1371,7 @@ public static class API
     }
     private static SafeList<string> GetGenres(JObject r)
     {
-        return r["data"]?["genres"]?.Select(x => x["name"]?.ToString()).OfType<string>().ToSafeList() ?? new SafeList<string>();
+        return r["data"]?["genres"]?.Select(x => x["name"]?.ToString()).OfType<string>().ToSafeList() ?? [];
     }
 
     private static void AddCastAndCrew(JObject r, CachedSeriesInfo si)
@@ -1598,7 +1598,7 @@ public static class API
     public class TvdbUpdateResponse
     {
         public long LatestTime;
-        private readonly SafeList<UpdateRecord> updates = new();
+        private readonly SafeList<UpdateRecord> updates = [];
 
         public IEnumerable<UpdateRecord> Updates => updates;
 

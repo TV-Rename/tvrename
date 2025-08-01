@@ -76,7 +76,7 @@ internal class UpcomingiCAL : UpcomingExporter
                 Start = new CalDateTime(startTime),
                 End = new CalDateTime(endTime),
                 Description = ei.Overview,
-                Comments = new List<string> { ei.Overview ?? string.Empty },
+                Comments = [ei.Overview ?? string.Empty],
                 Summary = niceName,
                 Location = ei.TheCachedSeries.Networks.ToCsv(),
                 Url = new Uri(ei.ProviderWebUrl()),

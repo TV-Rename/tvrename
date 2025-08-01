@@ -123,7 +123,7 @@ public static class API
 
     private static IEnumerable<YtsMovie> GetMoviesInternal(BackgroundWorker sender, string resolution, int minRating)
     {
-        List<YtsMovie> downloadedMovies = new();
+        List<YtsMovie> downloadedMovies = [];
         bool morePages = true;
         int page = 1;
 

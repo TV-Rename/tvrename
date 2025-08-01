@@ -21,8 +21,8 @@ public partial class YtsViewerView : Form
     public YtsViewerView(TVDoc doc, UI main)
     {
         InitializeComponent();
-        recs = new List<YtsViewerRow>();
-        addedMovies = new List<MovieConfiguration>();
+        recs = [];
+        addedMovies = [];
 
         mDoc = doc;
         mainUi = main;

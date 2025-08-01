@@ -30,8 +30,8 @@ public partial class RecommendationView : Form
         recs = new Recomendations();
         tvShows = new List<ShowConfiguration>();
         movies = new List<MovieConfiguration>();
-        addedShows = new List<ShowConfiguration>();
-        addedMovies = new List<MovieConfiguration>();
+        addedShows = [];
+        addedMovies = [];
 
         mDoc = doc;
         mainUi = main;

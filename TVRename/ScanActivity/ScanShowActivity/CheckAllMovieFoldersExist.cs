@@ -30,7 +30,7 @@ internal class CheckAllMovieFoldersExist : ScanMovieActivity
 
         List<string> folders = movie.Locations.ToList();
 
-        List<string> ignoredLocations = new();
+        List<string> ignoredLocations = [];
 
         foreach (string folderExists in folders)
         {

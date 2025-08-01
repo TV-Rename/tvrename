@@ -15,7 +15,7 @@ public partial class MergedEpisodeFinder : Form
     public MergedEpisodeFinder(TVDoc doc, UI main)
     {
         InitializeComponent();
-        dupEps = new List<PossibleMergedEpisode>();
+        dupEps = [];
         mDoc = doc;
         mainUi = main;
         Scan();

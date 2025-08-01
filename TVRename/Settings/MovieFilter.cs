@@ -14,7 +14,7 @@ namespace TVRename;
 
 public class MovieFilter
 {
-    public List<string> Genres { get; } = new();
+    public List<string> Genres { get; } = [];
     public string? ShowName { get; set; }
     public string? ShowStatus { get; set; }
     public bool ShowStatusInclude { get; set; }

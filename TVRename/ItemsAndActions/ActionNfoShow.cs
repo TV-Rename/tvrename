@@ -75,7 +75,7 @@ internal class ActionNfoShow : ActionNfo
 
     private static string GenerateEpisodeGuideJson(CachedMediaInfo cachedSeries)
     {
-        JObject ids = new();
+        JObject ids = [];
         AddId(ids, "tvmaze", cachedSeries.TvMazeCode);
         AddId(ids, "tvrage", cachedSeries.TvRageCode);
         AddId(ids, "tvdb", cachedSeries.TvdbCode);

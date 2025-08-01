@@ -17,7 +17,7 @@ namespace TVRename;
 
 public class DirFilesCache
 {
-    private readonly Dictionary<string, FileInfo[]> cache = new();
+    private readonly Dictionary<string, FileInfo[]> cache = [];
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
     public IEnumerable<FileInfo> GetFilesIncludeSubDirs(string folder) => Get(folder, true);

@@ -28,12 +28,7 @@ public partial class IgnoreEdit : Form
     public IgnoreEdit(TVDoc doc, string defaultFilter)
     {
         mDoc = doc;
-        ignore = new SafeList<IgnoreItem>();
-
-        foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
-        {
-            ignore.Add(ii);
-        }
+        ignore = [.. TVSettings.Instance.Ignore];
 
         InitializeComponent();
 

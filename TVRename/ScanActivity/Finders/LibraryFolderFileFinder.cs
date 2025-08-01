@@ -16,8 +16,8 @@ internal class LibraryFolderFileFinder : FileFinder
 
     protected override void DoCheck(SetProgressDelegate progress)
     {
-        ItemList newList = new();
-        ItemList toRemove = new();
+        ItemList newList = [];
+        ItemList toRemove = [];
         DirFilesCache dfc = new();
 
         int currentItem = 0;
@@ -104,7 +104,7 @@ internal class LibraryFolderFileFinder : FileFinder
 
     private void FindEpisode(ShowItemMissing me, DirFilesCache dfc, ItemList newList, ItemList toRemove)
     {
-        Dictionary<FileInfo, ItemList> thisRound = new();
+        Dictionary<FileInfo, ItemList> thisRound = [];
         if (me.Episode == null)
         {
             return;
@@ -132,13 +132,13 @@ internal class LibraryFolderFileFinder : FileFinder
     {
         if (string.IsNullOrWhiteSpace(baseFolder))
         {
-            return new List<FileInfo>();
+            return [];
         }
 
-        List<FileInfo> matchedFiles = new();
+        List<FileInfo> matchedFiles = [];
         foreach (FileInfo testFile in dfc.GetFilesIncludeSubDirs(baseFolder))
         {
-            ItemList actionsForThisFile = new();
+            ItemList actionsForThisFile = [];
             if (ReviewFile(me, actionsForThisFile, testFile, false, false, false,
                     TVSettings.Instance.UseFullPathNameToMatchLibraryFolders))
             {
@@ -158,7 +158,7 @@ internal class LibraryFolderFileFinder : FileFinder
 
         foreach (FileInfo testFile in files)
         {
-            ItemList actionsForThisFile = new();
+            ItemList actionsForThisFile = [];
             if (!ReviewFile(me, actionsForThisFile, testFile, false, false, false,
                     TVSettings.Instance.UseFullPathNameToMatchLibraryFolders))
             {

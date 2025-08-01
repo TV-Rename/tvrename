@@ -38,9 +38,9 @@ public class CacheUpdater : IDisposable
     {
         DownloadDone = true;
         downloadOk = true;
-        Problems = new ConcurrentBag<MediaNotFoundException>();
-        workers = new List<Thread>();
-        downloadIds = new List<ISeriesSpecifier>();
+        Problems = [];
+        workers = [];
+        downloadIds = [];
     }
 
     public void StartBgDownloadThread(bool stopOnError, ICollection<ISeriesSpecifier> shows, bool showMsgBox,
@@ -297,7 +297,7 @@ public class CacheUpdater : IDisposable
             Logger.Info($"Working on {CountIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie)} TVDB and {CountIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie)} TMDB Movies.");
             Logger.Info($"Identified that {CountDirtyIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv)} TVDB, {CountDirtyIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv)} TMDB and {CountDirtyIdsFrom(TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv)} TV Maze shows need to be updated");
             Logger.Info($"Identified that {CountDirtyIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie)} TVDB and {CountDirtyIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie)} TMDB movies need to be updated");
-            workers = new List<Thread>();
+            workers = [];
 
             Semaphore newSemaphore = new(numWorkers, numWorkers); // allow up to numWorkers working at once
             workerSemaphore = newSemaphore;
@@ -413,7 +413,7 @@ public class CacheUpdater : IDisposable
 
     public void ClearProblems()
     {
-        List<ISeriesSpecifier> toRemove = new();
+        List<ISeriesSpecifier> toRemove = [];
 
         foreach (MediaNotFoundException sid in Problems)
         {

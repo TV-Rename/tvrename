@@ -33,14 +33,14 @@ internal class RSSFinder : DownloadFinder
         UpdateStatus(n, c, "Searching on RSS Feed...");
 
         // ReSharper disable once InconsistentNaming
-        RssItemList RSSList = new();
+        RssItemList RSSList = [];
         foreach (string s in TVSettings.Instance.RSSURLs)
         {
             RSSList.DownloadRSS(s, TVSettings.Instance.RSSUseCloudflare, "RSS");
         }
 
-        ItemList newItems = new();
-        ItemList toRemove = new();
+        ItemList newItems = [];
+        ItemList toRemove = [];
 
         foreach (ShowItemMissing action in ActionList.MissingEpisodes)
         {
@@ -52,7 +52,7 @@ internal class RSSFinder : DownloadFinder
             UpdateStatus(n++, c, action.Filename);
 
             ProcessedEpisode pe = action.MissingEpisode;
-            ItemList newItemsForThisMissingEpisode = new();
+            ItemList newItemsForThisMissingEpisode = [];
 
             foreach (RSSItem rss in RSSList.Where(rss => RssMatch(rss, pe)))
             {

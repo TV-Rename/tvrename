@@ -25,7 +25,7 @@ public class BulkAddMovieManager
 
     public BulkAddMovieManager(TVDoc doc)
     {
-        AddItems = new PossibleNewMovies();
+        AddItems = [];
         mDoc = doc;
     }
 
@@ -200,7 +200,7 @@ public class BulkAddMovieManager
 
     private List<MovieConfiguration> AddToLibrary(IEnumerable<PossibleNewMovie> ais)
     {
-        List<MovieConfiguration> movies = new();
+        List<MovieConfiguration> movies = [];
         foreach (PossibleNewMovie ai in ais.Where(a=>a.CodeKnown))
         {
             // see if there is a matching show item
@@ -296,7 +296,7 @@ public class BulkAddMovieManager
         Logger.Info("*********************************************************************");
         Logger.Info("*Starting to find folders that contain files, but are not in library*");
 
-        AddItems = new PossibleNewMovies();
+        AddItems = [];
 
         CurrentPhaseTotal = 1;
         if (TVSettings.Instance.MovieLibraryFolders.Any())

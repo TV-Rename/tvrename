@@ -78,7 +78,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
     public IEnumerable<string> GetSeasonPatterns()
     {
-        List<string> results = new() { TVSettings.Instance.SeasonFolderFormat };
+        List<string> results = [TVSettings.Instance.SeasonFolderFormat];
 
         IEnumerable<string> seasonWordsFromShows = Shows.Select(si => si.AutoAddCustomFolderFormat);
 
@@ -89,7 +89,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
     public IEnumerable<string> GetGenres()
     {
-        List<string> allGenres = new();
+        List<string> allGenres = [];
         foreach (ShowConfiguration si in Shows)
         {
             allGenres.AddRange(si.Genres);
@@ -211,7 +211,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             foreach (int snum in si.AppropriateSeasons().Keys.ToList())
             {
                 List<ProcessedEpisode>? pel = GenerateEpisodes(si, snum, true);
-                si.SeasonEpisodes[snum] = pel ?? new List<ProcessedEpisode>();
+                si.SeasonEpisodes[snum] = pel ?? [];
                 if (pel is null)
                 {
                     r = false;
@@ -534,10 +534,10 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec) && fromIndex < toIndex)
         {
             ProcessedEpisode oldFirstEi = eis[fromIndex];
-            List<string> episodeNames = new() { eis[fromIndex].Name };
+            List<string> episodeNames = [eis[fromIndex].Name];
             string defaultCombinedName = eis[fromIndex].Name + " + ";
             string combinedSummary = eis[fromIndex].Overview + "<br/><br/>";
-            List<Episode> alleps = new() { eis[fromIndex] };
+            List<Episode> alleps = [eis[fromIndex]];
             for (int i = fromIndex + 1; i <= toIndex; i++)
             {
                 episodeNames.Add(eis[i].Name);
@@ -667,7 +667,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     public List<ProcessedEpisode> NextNShows(int nShows, int nDaysPast, int nDaysFuture)
     {
         DateTime notBefore = TimeHelpers.LocalNow().AddDays(-nDaysPast);
-        List<ProcessedEpisode> found = new();
+        List<ProcessedEpisode> found = [];
 
         for (int i = 0; i < nShows; i++)
         {
@@ -758,7 +758,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
     public IEnumerable<ProcessedEpisode> GetRecentAndFutureEps(int recentDays)
     {
-        List<ProcessedEpisode> returnList = new();
+        List<ProcessedEpisode> returnList = [];
         DateTime now = TimeHelpers.LocalNow();
         DateTime limit = now.AddDays(-recentDays);
 
@@ -819,7 +819,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
     public IEnumerable<ProcessedEpisode> RecentEpisodes(int days)
     {
-        List<ProcessedEpisode> episodes = new();
+        List<ProcessedEpisode> episodes = [];
 
         // for each show, see if any episodes were aired in "recent" days...
         foreach (ShowConfiguration si in GetRecentShows())

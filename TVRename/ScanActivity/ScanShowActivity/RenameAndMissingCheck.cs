@@ -120,7 +120,7 @@ internal class RenameAndMissingCheck : ScanShowActivity
             return;
         }
 
-        Dictionary<int, FileInfo> localEps = new();
+        Dictionary<int, FileInfo> localEps = [];
         int maxEpNumFound = 0;
 
         if (!si.SeasonEpisodes.TryGetValue(snum, out List<ProcessedEpisode>? eps))

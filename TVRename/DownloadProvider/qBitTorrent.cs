@@ -60,7 +60,7 @@ public class qBitTorrent : IDownloadProvider
             if (!currentDownloads.HasValues && settings.HasValues)
             {
                 Logger.Info($"No Downloads available from qBitTorrent: {currentDownloads}");
-                return new List<TorrentEntry>();
+                return [];
             }
 
             if (!currentDownloads.HasValues || !settings.HasValues)
@@ -71,7 +71,7 @@ public class qBitTorrent : IDownloadProvider
 
             string savePath = (string?)settings["save_path"] ?? string.Empty;
 
-            List<TorrentEntry> ret = new();
+            List<TorrentEntry> ret = [];
             foreach (JToken torrent in currentDownloads.Children())
             {
                 AddFilesFromTorrent(ret, torrent, savePath.EnsureEndsWithSeparator());
@@ -258,7 +258,7 @@ public class qBitTorrent : IDownloadProvider
         try
         {
             using HttpClient client = new();
-            using MultipartFormDataContent m = new();
+            using MultipartFormDataContent m = [];
             m.AddFile("torrents", torrentName, "application/x-bittorrent");
             HttpResponseMessage response = client.PostAsync(url, m).Result;
             if (!response.IsSuccessStatusCode)

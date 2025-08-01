@@ -9,8 +9,9 @@ internal abstract class FindMissingEpisodes : ScanActivity
 
     protected FindMissingEpisodes(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
     {
-        finders = new List<Finder> //These should be in order
-        {
+        finders =
+        //These should be in order
+        [
             new LibraryFolderFileFinder(doc,settings),
             new SearchFolderFileFinder(doc,settings),
             new uTorrentFinder(doc,settings),
@@ -19,7 +20,7 @@ internal abstract class FindMissingEpisodes : ScanActivity
             new RSSFinder(doc,settings), //RSS Finder Should Be last as it is the finder if all others fail
             new JSONWebpageFinder(doc,settings), //Except for JSON which is dead last
             new JackettFinder(doc,settings)
-        };
+        ];
     }
 
     protected abstract Finder.FinderDisplayType CurrentType();

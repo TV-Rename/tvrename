@@ -6,7 +6,7 @@ public static class SafeListExtensions
 {
     public static SafeList<T> ToSafeList<T>(this IEnumerable<T> source)
     {
-        SafeList<T> retValue = new();
+        SafeList<T> retValue = [];
         retValue.AddNullableRange(source);
         return retValue;
     }

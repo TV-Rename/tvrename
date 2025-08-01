@@ -18,8 +18,8 @@ public partial class CollectionsView : Form
     public CollectionsView(TVDoc doc, UI main)
     {
         InitializeComponent();
-        collectionMovies = new List<CollectionMember>();
-        allAdded = new List<MovieConfiguration>();
+        collectionMovies = [];
+        allAdded = [];
         mDoc = doc;
         mainUi = main;
         Scan();

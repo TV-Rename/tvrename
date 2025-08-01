@@ -70,10 +70,10 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
 
     protected CachedMediaInfo(TVDoc.ProviderType source)
     {
-        Actors = new SafeList<Actor>();
-        Crew = new SafeList<Crew>();
-        Aliases = new SafeList<string>();
-        Genres = new SafeList<string>();
+        Actors = [];
+        Crew = [];
+        Aliases = [];
+        Genres = [];
 
         Dirty = false;
         Name = string.Empty;
@@ -134,7 +134,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
 
     public void ClearActors()
     {
-        Actors = new SafeList<Actor>();
+        Actors = [];
     }
 
     public void AddActor(Actor actor)
@@ -148,7 +148,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
 
     public void ClearCrew()
     {
-        Crew = new SafeList<Crew>();
+        Crew = [];
     }
 
     public void AddCrew(Crew crew)
@@ -188,7 +188,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
 
     private void LoadAliases(XElement seriesXml)
     {
-        Aliases = new SafeList<string>();
+        Aliases = [];
         foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
         {
             AddAlias(aliasXml.Value);

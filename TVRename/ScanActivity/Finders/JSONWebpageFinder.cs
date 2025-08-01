@@ -36,8 +36,8 @@ internal class JSONWebpageFinder : DownloadFinder
         int n = 0;
         UpdateStatus(n, c, "Searching on JSON Page...");
 
-        ItemList newItems = new();
-        ItemList toRemove = new();
+        ItemList newItems = [];
+        ItemList toRemove = [];
         UrlCache cache = new();
         try
         {
@@ -95,7 +95,7 @@ internal class JSONWebpageFinder : DownloadFinder
 
         string simpleShowName = pe.Show.ShowName.CompareName();
         string simpleSeriesName = pe.TheCachedSeries.Name.CompareName();
-        ItemList newItemsForThisMissingEpisode = new();
+        ItemList newItemsForThisMissingEpisode = [];
 
         string response = cache.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}", TVSettings.Instance.SearchJSONUseCloudflare);
 

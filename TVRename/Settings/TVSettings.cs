@@ -398,7 +398,7 @@ public sealed class TVSettings
     public int RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength = 8;
     public bool DeleteShowFromDisk = true;
 
-    public ShowStatusColoringTypeList ShowStatusColors = new();
+    public ShowStatusColoringTypeList ShowStatusColors = [];
     public string SABHostPort = string.Empty;
     public string SABAPIKey = string.Empty;
     public bool CheckSABnzbd = false;
@@ -453,15 +453,15 @@ public sealed class TVSettings
     private TVSettings()
     {
         // defaults that aren't handled with default initialisers
-        Ignore = new SafeList<IgnoreItem>();
-        PreviouslySeenEpisodes = new PreviouslySeenEpisodes();
-        PreviouslySeenMovies = new PreviouslySeenMovies();
-        DownloadFolders = new SafeList<string>();
-        MovieLibraryFolders = new SafeList<string>();
-        IgnoreFolders = new SafeList<string>();
-        LibraryFolders = new SafeList<string>();
-        MovieLibraryFolders = new SafeList<string>();
-        IgnoredAutoAddHints = new SafeList<string>();
+        Ignore = [];
+        PreviouslySeenEpisodes = [];
+        PreviouslySeenMovies = [];
+        DownloadFolders = [];
+        MovieLibraryFolders = [];
+        IgnoreFolders = [];
+        LibraryFolders = [];
+        MovieLibraryFolders = [];
+        IgnoredAutoAddHints = [];
 
         VideoExtensionsString = VideoExtensionsStringDEFAULT;
         OtherExtensionsString = OtherExtensionsStringDEFAULT;
@@ -967,8 +967,8 @@ public sealed class TVSettings
     {
         // Default list of filename processors
 
-        List<FilenameProcessorRE> l = new()
-        {
+        List<FilenameProcessorRE> l =
+        [
             new FilenameProcessorRE(true,
                 "(^|[^a-z])s?(?<s>[0-9]+).?[ex](?<e>[0-9]{2,})(-?e[0-9]{2,})*-?[ex](?<f>[0-9]{2,})[^a-z]",
                 false, "Multipart Rule : s04e01e02e03 S01E01-E02"),
@@ -1012,14 +1012,13 @@ public sealed class TVSettings
             new FilenameProcessorRE(false,
                 "season (?<s>[0-9]+)\\\\episode (?<e>[0-9]{1,3})",
                 true, "Season 3\\Episode 23")
-        };
+        ];
 
         return l;
     }
 
     private static SafeList<Replacement> DefaultListRE() =>
-        new()
-        {
+        [
             new Replacement("*", "#", false),
             new Replacement("?", "", false),
             new Replacement(">", "", false),
@@ -1029,11 +1028,11 @@ public sealed class TVSettings
             new Replacement("\\", "-", false),
             new Replacement("|", "-", false),
             new Replacement("\"", "'", false)
-        };
+        ];
 
     private static List<string> DefaultRSSURLList()
     {
-        List<string> sl = new();
+        List<string> sl = [];
         return sl;
     }
 
@@ -1641,7 +1640,7 @@ public sealed class TVSettings
         IncludeMoviesQuickRecent = xmlSettings.ExtractBool("IncludeMoviesQuickRecent", false);
 
         Tidyup.Load(xmlSettings);
-        RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL") ?? new List<string>();
+        RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL") ?? [];
         TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").FirstOrDefault(), MediaConfiguration.MediaType.tv);
         TheMovieSearchers = new Searchers(xmlSettings.Descendants("TheMovieSearchers").FirstOrDefault(), MediaConfiguration.MediaType.movie);
 
@@ -1741,7 +1740,7 @@ public sealed class TVSettings
 
     private void UpdateShowStatus(XElement xmlSettings)
     {
-        ShowStatusColors = new ShowStatusColoringTypeList();
+        ShowStatusColors = [];
         foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").FirstOrDefault()
                      ?.Descendants("ShowStatusTVWColor") ?? new List<XElement>())
         {

@@ -27,8 +27,8 @@ public abstract class DownloadingFinder : Finder
 
     protected void SearchForAppropriateDownloads(List<TorrentEntry> downloading, DownloadApp tApp)
     {
-        ItemList newList = new();
-        ItemList toRemove = new();
+        ItemList newList = [];
+        ItemList toRemove = [];
         int c = ActionList.Missing.Count + 2;
         int n = 1;
         UpdateStatus(n, c, "Searching torrent queue...");

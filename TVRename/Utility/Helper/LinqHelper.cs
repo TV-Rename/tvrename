@@ -18,7 +18,7 @@ internal static class LinqHelper
 
         return items.Contains(item);
     }
-    public static List<T> AsList<T>(this T? item) => item is null ? new List<T>() : new List<T> { item };
+    public static List<T> AsList<T>(this T? item) => item is null ? [] : [item];
 
     public static Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP = 4)
     {

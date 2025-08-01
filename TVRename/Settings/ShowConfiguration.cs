@@ -77,7 +77,7 @@ public class ShowConfiguration : MediaConfiguration
         SeasonEpisodes = new ConcurrentDictionary<int, List<ProcessedEpisode>>();
         airedSeasons = new ConcurrentDictionary<int, ProcessedSeason>();
         dvdSeasons = new ConcurrentDictionary<int, ProcessedSeason>();
-        IgnoreSeasons = new List<int>();
+        IgnoreSeasons = [];
 
         UseCustomRegion = false;
         CustomRegionCode = string.Empty;
@@ -393,7 +393,7 @@ public class ShowConfiguration : MediaConfiguration
             }
 
             int snum = int.Parse(value.Value);
-            SeasonRules[snum] = new List<ShowRule>();
+            SeasonRules[snum] = [];
 
             foreach (XElement ruleData in rulesSet.Descendants("Rule"))
             {
@@ -414,16 +414,14 @@ public class ShowConfiguration : MediaConfiguration
 
             int snum = int.Parse(value.Value);
 
-            ManualFolderLocations[snum] = new List<string>();
-
-            foreach (string ff in seasonFolder.Descendants("Folder")
-                         .Select(folderData => folderData.Attribute("Location")?.Value)
-                         .Distinct()
-                         .OfType<string>()
-                         .Where(ff => !string.IsNullOrWhiteSpace(ff) && AutoFolderNameForSeason(snum) != ff))
-            {
-                ManualFolderLocations[snum].Add(ff);
-            }
+            ManualFolderLocations[snum] =
+            [
+                .. seasonFolder.Descendants("Folder")
+                             .Select(folderData => folderData.Attribute("Location")?.Value)
+                             .Distinct()
+                             .OfType<string>()
+                             .Where(ff => !string.IsNullOrWhiteSpace(ff) && AutoFolderNameForSeason(snum) != ff),
+            ];
         }
     }
 
@@ -738,14 +736,14 @@ public class ShowConfiguration : MediaConfiguration
     public Dictionary<int, List<ProcessedEpisode>> GetDvdSeasons()
     {
         //We will create this on the fly
-        Dictionary<int, List<ProcessedEpisode>> returnValue = new();
+        Dictionary<int, List<ProcessedEpisode>> returnValue = [];
         foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in SeasonEpisodes)
         {
             foreach (ProcessedEpisode ep in kvp.Value)
             {
                 if (!returnValue.ContainsKey(ep.DvdSeasonNumber))
                 {
-                    returnValue.Add(ep.DvdSeasonNumber, new List<ProcessedEpisode>());
+                    returnValue.Add(ep.DvdSeasonNumber, []);
                 }
                 returnValue[ep.DvdSeasonNumber].Add(ep);
             }
@@ -756,7 +754,7 @@ public class ShowConfiguration : MediaConfiguration
 
     protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
     {
-        Dictionary<int, SafeList<string>> fld = new();
+        Dictionary<int, SafeList<string>> fld = [];
 
         if (manualToo)
         {
@@ -764,7 +762,7 @@ public class ShowConfiguration : MediaConfiguration
             {
                 if (!fld.ContainsKey(kvp.Key))
                 {
-                    fld[kvp.Key] = new SafeList<string>();
+                    fld[kvp.Key] = [];
                 }
 
                 foreach (string s in kvp.Value)
@@ -797,7 +795,7 @@ public class ShowConfiguration : MediaConfiguration
                 //Now we can add the automated one
                 if (!fld.ContainsKey(i))
                 {
-                    fld[i] = new SafeList<string>();
+                    fld[i] = [];
                 }
 
                 if (!fld[i].Contains(newName))
@@ -818,7 +816,7 @@ public class ShowConfiguration : MediaConfiguration
     {
         if (!SeasonRules.ContainsKey(snum))
         {
-            SeasonRules[snum] = new List<ShowRule>();
+            SeasonRules[snum] = [];
         }
 
         SeasonRules[snum].Add(sr);
@@ -898,7 +896,7 @@ public class ShowConfiguration : MediaConfiguration
 
     public IEnumerable<Episode> EpisodesToUse()
     {
-        List<Episode> returnValue = new();
+        List<Episode> returnValue = [];
         ConcurrentDictionary<int, ProcessedSeason> seasonsToUse = AppropriateSeasons();
 
         foreach (KeyValuePair<int, ProcessedSeason> kvp in seasonsToUse)

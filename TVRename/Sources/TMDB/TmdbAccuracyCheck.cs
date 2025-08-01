@@ -14,9 +14,9 @@ internal class TmdbAccuracyCheck
     public TmdbAccuracyCheck(LocalCache localCache)
     {
         lc = localCache;
-        Issues = new List<string>();
-        ShowsToUpdate = new List<CachedSeriesInfo>();
-        MoviesToUpdate = new List<CachedMovieInfo>();
+        Issues = [];
+        ShowsToUpdate = [];
+        MoviesToUpdate = [];
     }
 
     public void ServerAccuracyCheck(CachedMovieInfo si)

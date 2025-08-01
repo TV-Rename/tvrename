@@ -447,7 +447,7 @@ public partial class AddEditMovie : Form, ICodeWindow
 
     private IEnumerable<string> GetFolders()
     {
-        List<string> folders = new();
+        List<string> folders = [];
         foreach (ListViewItem item in lvManualFolders.Items.OfType<ListViewItem>())
         {
             folders.Add(item.Text);

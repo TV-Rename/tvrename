@@ -29,7 +29,7 @@ public class BulkAddSeriesManager
 
     public BulkAddSeriesManager(TVDoc doc)
     {
-        AddItems = new FolderMonitorEntryList();
+        AddItems = [];
         mDoc = doc;
     }
 
@@ -96,7 +96,7 @@ public class BulkAddSeriesManager
 
     private static int FindTvdbShowCode(PossibleNewTvShow ai)
     {
-        List<string> possibleFilenames = new() { "series.xml", "tvshow.nfo" };
+        List<string> possibleFilenames = ["series.xml", "tvshow.nfo"];
         foreach (string fileName in possibleFilenames)
         {
             try
@@ -425,7 +425,7 @@ public class BulkAddSeriesManager
 
     private List<ShowConfiguration> AddToLibrary(IEnumerable<PossibleNewTvShow> ais)
     {
-        List<ShowConfiguration> touchedShows = new();
+        List<ShowConfiguration> touchedShows = [];
         foreach (PossibleNewTvShow ai in ais)
         {
             // see if there is a matching show item
@@ -467,7 +467,7 @@ public class BulkAddSeriesManager
         Logger.Info("*********************************************************************");
         Logger.Info("*Starting to find folders that contain files, but are not in library*");
 
-        AddItems = new FolderMonitorEntryList();
+        AddItems = [];
 
         int c = TVSettings.Instance.LibraryFolders.Count;
 

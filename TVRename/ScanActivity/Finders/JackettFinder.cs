@@ -41,8 +41,8 @@ internal class JackettFinder : DownloadFinder
         int n = 1;
         UpdateStatus(n, c, "Searching with Jackett...");
 
-        ItemList newItems = new();
-        ItemList toRemove = new();
+        ItemList newItems = [];
+        ItemList toRemove = [];
         try
         {
             foreach (ItemMissing action in ActionList.Missing.ToList())
@@ -92,9 +92,9 @@ internal class JackettFinder : DownloadFinder
         ProcessedEpisode processedEpisode = action.MissingEpisode;
         string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(processedEpisode) : NormalJackettUrl(processedEpisode);
 
-        RssItemList rssList = new();
+        RssItemList rssList = [];
         rssList.DownloadRSS(url, false, "Jackett");
-        ItemList newItemsForThisMissingEpisode = new();
+        ItemList newItemsForThisMissingEpisode = [];
 
         foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, processedEpisode)))
         {
@@ -115,9 +115,9 @@ internal class JackettFinder : DownloadFinder
     {
         string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.MovieConfig) : NormalJackettUrl(action.MovieConfig);
 
-        RssItemList rssList = new();
+        RssItemList rssList = [];
         rssList.DownloadRSS(url, false, "Jackett");
-        ItemList newItemsForThisMissingEpisode = new();
+        ItemList newItemsForThisMissingEpisode = [];
 
         foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, action.MovieConfig)))
         {
@@ -137,9 +137,9 @@ internal class JackettFinder : DownloadFinder
     {
         string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.Series , action.SeasonNumberAsInt) : NormalJackettUrl(action.Series, action.SeasonNumberAsInt);
 
-        RssItemList rssList = new();
+        RssItemList rssList = [];
         rssList.DownloadRSS(url, false, "Jackett");
-        ItemList newItemsForThisMissingEpisode = new();
+        ItemList newItemsForThisMissingEpisode = [];
 
         foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, action.Series, action.SeasonNumberAsInt??0 )))
         {

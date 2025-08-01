@@ -447,7 +447,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             Name = downloadedMovie.Title,
             Runtime = downloadedMovie.Runtime?.ToString(),
             FirstAired = downloadedMovieReleaseDate,
-            Genres = downloadedMovie.Genres?.Select(genre => genre.Name).ToSafeList()??new SafeList<string>(),
+            Genres = downloadedMovie.Genres?.Select(genre => genre.Name).ToSafeList()??[],
             Overview = downloadedMovie.Overview,
             Network = downloadedMovie.ProductionCompanies?.Select(y => y.Name).ToPsv(),
             Status = downloadedMovie.Status,
@@ -1135,7 +1135,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     public Dictionary<int, CachedMovieInfo> GetMovieIdsFromCollection(int collectionId, string languageCode)
     {
-        Dictionary<int, CachedMovieInfo> returnValue = new();
+        Dictionary<int, CachedMovieInfo> returnValue = [];
         TMDbLib.Objects.Collections.Collection collection = Client.GetCollectionAsync(collectionId, languageCode, languageCode).Result;
         if (collection == null)
         {

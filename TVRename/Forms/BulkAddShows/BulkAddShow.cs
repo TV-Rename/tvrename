@@ -445,7 +445,7 @@ public partial class BulkAddShow : Form
 
     private void FillNewShowList(bool keepSel)
     {
-        List<int> sel = new();
+        List<int> sel = [];
         if (keepSel)
         {
             foreach (int i in lvFMNewShows.SelectedIndices)

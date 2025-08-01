@@ -101,7 +101,7 @@ public partial class BugReport : Form
                     txt.AppendLine(si + " : " + si.ShowName + " : S" + snum);
                     txt.AppendLine("Folder: " + folder);
 
-                    DirCache files = new();
+                    DirCache files = [];
                     if (Directory.Exists(folder))
                     {
                         files.AddFolder(null, 0, 0, folder, true);
@@ -125,7 +125,7 @@ public partial class BugReport : Form
 
     private static void ExtractDownloadFolders(StringBuilder txt)
     {
-        DirCache dirC = new();
+        DirCache dirC = [];
         foreach (string efi in TVSettings.Instance.DownloadFolders)
         {
             dirC.AddFolder(null, 0, 0, efi, true);

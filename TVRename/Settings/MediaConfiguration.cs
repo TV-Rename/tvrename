@@ -72,7 +72,7 @@ public abstract class MediaConfiguration : ISeriesSpecifier
     public bool UseCustomRegion;
     public string? CustomRegionCode;
 
-    public readonly List<string> AliasNames = new();
+    public readonly List<string> AliasNames = [];
     protected internal TVDoc.ProviderType ConfigurationProvider;
 
     protected abstract MediaType GetMediaType();
@@ -189,7 +189,7 @@ public abstract class MediaConfiguration : ISeriesSpecifier
 
     protected IEnumerable<string> GetSimplifiedPossibleShowNames()
     {
-        List<string> possibles = new();
+        List<string> possibles = [];
 
         string simplifiedShowName = ShowName.CompareName();
         if (simplifiedShowName != "") { possibles.Add(simplifiedShowName); }

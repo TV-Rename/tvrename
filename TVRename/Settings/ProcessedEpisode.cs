@@ -38,7 +38,7 @@ public class ProcessedEpisode : Episode
         Type = o.Type;
         TheAiredProcessedSeason = o.TheAiredProcessedSeason;
         TheDvdProcessedSeason = o.TheDvdProcessedSeason;
-        SourceEpisodes = new List<Episode>();
+        SourceEpisodes = [];
     }
 
     public ProcessedEpisode(Episode e, ShowConfiguration si)
@@ -52,7 +52,7 @@ public class ProcessedEpisode : Episode
         Type = ProcessedEpisodeType.single;
         TheAiredProcessedSeason = si.GetOrAddAiredSeason(e.AiredSeasonNumber, e.SeasonId);
         TheDvdProcessedSeason = si.GetOrAddDvdSeason(e.DvdSeasonNumber, e.SeasonId);
-        SourceEpisodes = new List<Episode>();
+        SourceEpisodes = [];
     }
 
     public ProcessedEpisode(ProcessedEpisode e, ShowConfiguration si, ProcessedEpisodeType t)
@@ -66,7 +66,7 @@ public class ProcessedEpisode : Episode
         Type = t;
         TheAiredProcessedSeason = e.TheAiredProcessedSeason;
         TheDvdProcessedSeason = e.TheDvdProcessedSeason;
-        SourceEpisodes = new List<Episode>();
+        SourceEpisodes = [];
     }
 
     public ProcessedEpisode(ProcessedEpisode e, ShowConfiguration si, List<Episode> episodes)
@@ -122,7 +122,7 @@ public class ProcessedEpisode : Episode
         Type = ProcessedEpisodeType.single;
         TheAiredProcessedSeason = pe.TheAiredProcessedSeason;
         TheDvdProcessedSeason = pe.TheDvdProcessedSeason;
-        SourceEpisodes = new List<Episode>();
+        SourceEpisodes = [];
     }
 
     public int AppropriateSeasonNumber => Show.Order == ProcessedSeason.SeasonType.dvd ? DvdSeasonNumber : AiredSeasonNumber;

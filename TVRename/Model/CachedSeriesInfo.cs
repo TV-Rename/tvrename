@@ -30,7 +30,7 @@ public class CachedSeriesInfo : CachedMediaInfo
 
     public void ClearEpisodes() => sourceEpisodes.Clear();
 
-    private ShowImages images = new();
+    private ShowImages images = [];
 
     public int? MinYear =>
         Episodes
@@ -219,20 +219,12 @@ public class CachedSeriesInfo : CachedMediaInfo
 
     private void LoadSeasons(XElement seriesXml)
     {
-        seasons = new List<Season>();
-        foreach (Season s in seriesXml.Descendants("Seasons").Descendants("Season").Select(xml => new Season(xml)))
-        {
-            seasons.Add(s);
-        }
+        seasons = [.. seriesXml.Descendants("Seasons").Descendants("Season").Select(xml => new Season(xml))];
     }
 
     private void LoadImages(XElement seriesXml)
     {
-        images = new ShowImages();
-        foreach (ShowImage s in seriesXml.Descendants("Images").Descendants("ShowImage").Select(xml => new ShowImage(Source, xml)))
-        {
-            images.Add(s);
-        }
+        images = [.. seriesXml.Descendants("Images").Descendants("ShowImage").Select(xml => new ShowImage(Source, xml))];
     }
 
     private void LoadJson(JObject r)
@@ -372,7 +364,7 @@ public class CachedSeriesInfo : CachedMediaInfo
 
     public void UpdateBanners(List<int> latestBannerIds)
     {
-        List<int> bannersToRemove = new();
+        List<int> bannersToRemove = [];
         foreach (ShowImage currentImage in images)
         {
             if (latestBannerIds.Contains(currentImage.Id))
@@ -406,7 +398,7 @@ public class CachedSeriesInfo : CachedMediaInfo
 
     public override ProcessedSeason.SeasonType SeasonOrder => SeasonOrderType;
 
-    private List<Season> seasons = new();
+    private List<Season> seasons = [];
 
     public void AddSeason(Season generateSeason)
     {

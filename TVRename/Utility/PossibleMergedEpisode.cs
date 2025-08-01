@@ -46,7 +46,7 @@ public class PossibleMergedEpisode
             lvi.SubItems.Add(episodeOne.GetAirDateDt().PrettyPrint());
             lvi.SubItems.Add(episodeOne.Name + " & " + episodeTwo.Name);
 
-            List<string> names = new() { episodeOne.Name, episodeTwo.Name };
+            List<string> names = [episodeOne.Name, episodeTwo.Name];
             string combinedName = ShowLibrary.GetBestNameFor(names, "");
             lvi.SubItems.Add(combinedName);
 

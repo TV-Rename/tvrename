@@ -7,8 +7,8 @@ public class RecommendationResult
     internal int Key;
     internal bool Trending;
     internal bool TopRated;
-    internal readonly List<MediaConfiguration> Related = new();
-    internal readonly List<MediaConfiguration> Similar = new();
+    internal readonly List<MediaConfiguration> Related = [];
+    internal readonly List<MediaConfiguration> Similar = [];
 
     public double GetScore(int trendingWeight, int topWeight, int relatedWeight, int similarWeight, int maxRelated, int maxSimilar)
     {

@@ -18,7 +18,7 @@ public partial class SettingsReview : Form
     public SettingsReview(TVDoc doc, UI main)
     {
         InitializeComponent();
-        set = new List<SettingsCheck>();
+        set = [];
         mDoc = doc;
         mainUi = main;
         Scan();

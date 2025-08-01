@@ -240,7 +240,7 @@ public class PossibleNewMovie : ISeriesSpecifier
 
     private string? FindShowCode(string simpleIdCode, string uniqueIdCode)
     {
-        List<string> possibleFilenames = new() { $"{movieStub}.nfo", $"{movieStub}.xml" };
+        List<string> possibleFilenames = [$"{movieStub}.nfo", $"{movieStub}.xml"];
         foreach (string fileName in possibleFilenames)
         {
             try

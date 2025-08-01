@@ -11,7 +11,7 @@ internal sealed class MediaMetaData : DownloadIdentifier
 
     public override ItemList ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
     {
-        ItemList returnActions = new();
+        ItemList returnActions = [];
 
         TagLib.File tfile = TagLib.File.Create(file.FullName);
 
@@ -47,7 +47,7 @@ internal sealed class MediaMetaData : DownloadIdentifier
             return null;
         }
 
-        ItemList returnActions = new();
+        ItemList returnActions = [];
         try
         {
             TagLib.File tfile = TagLib.File.Create(file.FullName);

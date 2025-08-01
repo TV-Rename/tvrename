@@ -22,7 +22,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
 
         Dictionary<int, SafeList<string>> flocs = si.AllProposedFolderLocations();
 
-        List<string> ignoredLocations = new();
+        List<string> ignoredLocations = [];
 
         foreach (int snum in si.GetSeasonKeys())
         {
@@ -44,7 +44,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
                 continue;
             }
 
-            SafeList<string> folders = new();
+            SafeList<string> folders = [];
 
             if (flocs.TryGetValue(snum, out SafeList<string>? floc))
             {
@@ -212,7 +212,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
         {
             if (!si.ManualFolderLocations.ContainsKey(snum))
             {
-                si.ManualFolderLocations[snum] = new List<string>();
+                si.ManualFolderLocations[snum] = [];
             }
 
             si.ManualFolderLocations[snum].Add(folder);

@@ -19,7 +19,7 @@ public class SafeList<T> : IList<T>
 
     public SafeList()
     {
-        inner = new List<T>();
+        inner = [];
     }
 
     public int Count

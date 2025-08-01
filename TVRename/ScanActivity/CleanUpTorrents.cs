@@ -13,7 +13,7 @@ internal class CleanUpTorrents : ScanActivity
 
     public CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
     {
-        sources = new List<IDownloadProvider> { new qBitTorrent(), new uTorrent() };
+        sources = [new qBitTorrent(), new uTorrent()];
     }
 
     protected override string CheckName() => "Cleaned up completed TV Torrents";
@@ -118,7 +118,7 @@ internal class CleanUpTorrents : ScanActivity
             return null;
         }
 
-        return new List<MovieConfiguration> { bestShow };
+        return [bestShow];
     }
 
     private static bool IsFound(DirFilesCache dfc, ProcessedEpisode episode)
@@ -148,7 +148,7 @@ internal class CleanUpTorrents : ScanActivity
         {
             ProcessedEpisode episode = bestShow.GetEpisode(seasonNum, episodeNum);
 
-            return new List<ProcessedEpisode> { episode };
+            return [episode];
         }
         catch (EpisodeNotFoundException)
         {

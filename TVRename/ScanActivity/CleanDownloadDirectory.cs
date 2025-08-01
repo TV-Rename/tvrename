@@ -9,10 +9,10 @@ internal class CleanDownloadDirectory : ScanActivity
 {
     public CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
     {
-        filesThatMayBeNeeded = new List<FileInfo>();
-        returnActions = new ItemList();
-        showList = new List<ShowConfiguration>();
-        movieList = new List<MovieConfiguration>();
+        filesThatMayBeNeeded = [];
+        returnActions = [];
+        showList = [];
+        movieList = [];
     }
 
     private List<FileInfo> filesThatMayBeNeeded;
@@ -53,13 +53,13 @@ internal class CleanDownloadDirectory : ScanActivity
                 continue;
             }
 
-            filesThatMayBeNeeded = new List<FileInfo>();
+            filesThatMayBeNeeded = [];
 
             ReviewFilesInDownloadDirectory(dirPath, Settings.Owner);
             ReviewDirsInDownloadDirectory(dirPath);
         }
 
-        ItemList removeActions = new();
+        ItemList removeActions = [];
         //Remove any missing items we are planning to resolve
         foreach (ActionCopyMoveRename acmr in returnActions.OfType<ActionCopyMoveRename>())
         {

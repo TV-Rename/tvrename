@@ -35,7 +35,7 @@ public partial class ShowSummary : Form, IDialogParent
     {
         MainWindow = parent;
         mDoc = doc;
-        showList = new SafeList<ShowSummaryData>();
+        showList = [];
 
         InitializeComponent();
         InitializeCmbShowStatus();
@@ -410,7 +410,7 @@ public partial class ShowSummary : Form, IDialogParent
                 }
             );
 
-            List<string> added = new();
+            List<string> added = [];
 
             if (processedSeason != null)
             {
@@ -515,7 +515,7 @@ public partial class ShowSummary : Form, IDialogParent
     public class ShowSummaryData
     {
         public int MaxSeason;
-        public readonly List<ShowSummarySeasonData> SeasonDataList = new();
+        public readonly List<ShowSummarySeasonData> SeasonDataList = [];
         public readonly ShowConfiguration ShowConfiguration;
         public readonly string ShowName;
 

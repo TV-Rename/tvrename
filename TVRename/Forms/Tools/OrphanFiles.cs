@@ -20,7 +20,7 @@ public partial class OrphanFiles : Form
     {
         MainWindow = parent;
         this.mDoc = mDoc;
-        issues = new List<FileIssue>();
+        issues = [];
         InitializeComponent();
         olvSeason.GroupKeyGetter = GroupSeasonKeyDelegate;
         olvFileDirectory.GroupKeyGetter = GroupFolderTitleDelegate;
@@ -89,7 +89,7 @@ public partial class OrphanFiles : Form
 
     private void UpdateIssues(BackgroundWorker bw)
     {
-        List<string> doneFolders = new();
+        List<string> doneFolders = [];
         int total = mDoc.TvLibrary.Shows.Count();
         int current = 0;
 

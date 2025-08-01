@@ -164,7 +164,7 @@ public class CefWrapper
     private static IEnumerable<string> Vc2015Installed()
     {
         const string DEPENDENCIES_PATH = @"SOFTWARE\Classes\Installer\Dependencies";
-        List<string> returnValue = new();
+        List<string> returnValue = [];
 
         using (RegistryKey? dependencies = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH))
         {

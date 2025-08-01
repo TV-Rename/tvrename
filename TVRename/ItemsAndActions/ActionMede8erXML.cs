@@ -118,7 +118,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
 
         //Genres...taken from overall Series, not episode specific due to thetvdb
         writer.WriteStartElement("genres");
-        string genre = string.Join(" / ", Episode.Show.CachedShow?.Genres ?? new SafeList<string>());
+        string genre = string.Join(" / ", Episode.Show.CachedShow?.Genres ?? []);
         if (!string.IsNullOrEmpty(genre))
         {
             writer.WriteElement("genre", genre);
@@ -186,7 +186,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
         writer.WriteElement("title", SelectedShow!.ShowName);
 
         writer.WriteStartElement("genres");
-        string genre = string.Join(" / ", SelectedShow.CachedShow?.Genres ?? new SafeList<string>());
+        string genre = string.Join(" / ", SelectedShow.CachedShow?.Genres ?? []);
         if (!string.IsNullOrEmpty(genre))
         {
             writer.WriteElement("genre", genre);

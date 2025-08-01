@@ -181,7 +181,7 @@ public class ActionEngine
 
             try
             {
-                actionWorkers = new SafeList<(Thread, CancellationTokenSource)>();
+                actionWorkers = [];
 
                 ExecuteQueues(queues, args.Token);
 
