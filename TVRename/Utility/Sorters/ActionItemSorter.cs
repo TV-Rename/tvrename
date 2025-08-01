@@ -61,10 +61,16 @@ public class DefaultActionItemSorter:ActionItemSorter
             ActionDateTouchSeason => 17,
             ActionDateTouchMedia => 18,
             ActionDateTouchMovie => 19,
-            ActionTRemove => 20,
-            ActionUnArchive => 21,
-            ActionChangeLibraryRemoveMovie =>22,
-            ActionChangeLibraryRemoveShow =>23,
+            UpdateMediaFileTitle=>20,
+            UpdateMediaFileDescription => 21,
+            UpdateMediaFileComment => 22,
+            UpdateMediaFileSubtitle => 23,
+            UpdateMediaFileYear => 24,
+            UpdateMediaFileGenres => 25,
+            ActionTRemove => 30,
+            ActionUnArchive => 31,
+            ActionChangeLibraryRemoveMovie =>32,
+            ActionChangeLibraryRemoveShow =>33,
             _ => throw new NotSupportedException()
         };
     }

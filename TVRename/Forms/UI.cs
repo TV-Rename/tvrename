@@ -591,7 +591,7 @@ public partial class UI : Form, IDialogParent
                 return HeaderName("Media Center Metadata", mDoc.TheActionList.Count(item => item is ActionWriteMetadata));
 
             case "I-UpdateFileDates":
-                return HeaderName("Update File/Directory Metadata", mDoc.TheActionList.Count(item => item is ActionDateTouch));
+                return HeaderName("Update File/Directory Metadata", mDoc.TheActionList.Count(item => item is ActionFileMetaData));
 
             case "J-Downloading":
                 return HeaderName("Downloading", mDoc.TheActionList.Count(item => item is ItemDownloading));
@@ -4725,18 +4725,11 @@ public partial class UI : Form, IDialogParent
         e.Result = new HtmlUpdateSettings(si, html, chrInformation);
     }
 
-    public class HtmlUpdateSettings
+    public class HtmlUpdateSettings(object? argument, string html, ChromiumWebBrowser web)
     {
-        public readonly object? Argument;
-        public readonly string Html;
-        public readonly ChromiumWebBrowser Web;
-
-        public HtmlUpdateSettings(object? argument, string html, ChromiumWebBrowser web)
-        {
-            Argument = argument;
-            Html = html;
-            Web = web;
-        }
+        public readonly object? Argument = argument;
+        public readonly string Html = html;
+        public readonly ChromiumWebBrowser Web = web;
     }
 
     private void BwUpdateSchedule_DoWork(object sender, DoWorkEventArgs e)

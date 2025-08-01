@@ -6,7 +6,7 @@ namespace TVRename;
 // ReSharper disable once InconsistentNaming
 internal class DownloadMede8erMetaData : DownloadIdentifier
 {
-    private List<string> doneFiles = new();
+    private List<string> doneFiles = [];
 
     public DownloadMede8erMetaData() => Reset();
 
@@ -16,7 +16,7 @@ internal class DownloadMede8erMetaData : DownloadIdentifier
     {
         if (TVSettings.Instance.Mede8erXML)
         {
-            ItemList theActionList = new();
+            ItemList theActionList = [];
 
             FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
 
@@ -52,7 +52,7 @@ internal class DownloadMede8erMetaData : DownloadIdentifier
             return null;
         }
 
-        ItemList theActionList = new();
+        ItemList theActionList = [];
 
         //Updates requested by zakwaan@gmail.com on 18/4/2013
         FileInfo viewxml = FileHelper.FileInFolder(folder, "View.xml");
@@ -71,7 +71,7 @@ internal class DownloadMede8erMetaData : DownloadIdentifier
             return null;
         }
 
-        ItemList theActionList = new();
+        ItemList theActionList = [];
         string fn = file.RemoveExtension() + ".xml";
         FileInfo nfo = FileHelper.FileInFolder(file.Directory, fn);
 
@@ -85,6 +85,6 @@ internal class DownloadMede8erMetaData : DownloadIdentifier
 
     public sealed override void Reset()
     {
-        doneFiles = new List<string>();
+        doneFiles = [];
     }
 }

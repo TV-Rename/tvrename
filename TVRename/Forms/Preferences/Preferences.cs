@@ -626,7 +626,7 @@ public partial class Preferences : Form
 
     private TVSettings.ShowStatusColoringTypeList GetShowStatusColouring()
     {
-        TVSettings.ShowStatusColoringTypeList returnValue = new();
+        TVSettings.ShowStatusColoringTypeList returnValue = [];
         foreach (ListViewItem item in lvwDefinedColors.Items)
         {
             if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag is TVSettings.ColouringRule type)
@@ -724,7 +724,7 @@ public partial class Preferences : Form
         ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, typeof(string));
         ReplacementsGrid[r, 2] = new SourceGrid.Cells.CheckBox(null, ins);
         if (!string.IsNullOrEmpty(from) &&
-            TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) != -1)
+            TVSettings.CompulsoryReplacements().Contains(from))
         {
             ReplacementsGrid[r, 0].Editor.EnableEdit = false;
             ReplacementsGrid[r, 0].View = roModel;
@@ -1131,17 +1131,11 @@ public partial class Preferences : Form
         };
     }
 
-    private class UpdateCheckInterval
+    private class UpdateCheckInterval(string text, TimeSpan interval)
     {
-        public UpdateCheckInterval(string text, TimeSpan interval)
-        {
-            Text = text;
-            Interval = interval;
-        }
+        public string Text { get; set; } = text;
 
-        public string Text { get; set; }
-
-        public TimeSpan Interval { get; set; }
+        public TimeSpan Interval { get; set; } = interval;
     }
 
     private void PopulateFromEnums(TVSettings s)

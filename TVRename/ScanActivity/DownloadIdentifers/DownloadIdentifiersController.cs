@@ -35,6 +35,7 @@ internal class DownloadIdentifiersController
             new DownloadKodiMetaData(),
             new DownloadKodiImages(),
             new IncorrectFileDates(),
+            new MediaMetaData(),
         };
     }
 
@@ -50,7 +51,7 @@ internal class DownloadIdentifiersController
     {
         if (si is null)
         {
-            return new ItemList();
+            return [];
         }
 
         ItemList theActionList = new();
