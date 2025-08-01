@@ -31,7 +31,7 @@ public abstract class MediaCache
     {
         lock (MOVIE_LOCK)
         {
-            return Movies.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name).ToList();
+            return [.. Movies.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name)];
         }
     }
 
@@ -44,7 +44,7 @@ public abstract class MediaCache
     {
         lock (SERIES_LOCK)
         {
-            return Series.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name).ToList();
+            return [.. Series.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name)];
         }
     }
 

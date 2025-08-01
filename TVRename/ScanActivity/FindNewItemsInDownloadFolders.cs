@@ -45,7 +45,7 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
         IEnumerable<PossibleMedia> addedShows = FinderHelper.FindMedia(possibleShowNames, MDoc, Settings.Owner);
         List<PossibleMedia> addedShowsUnique = RemoveExistingAndDups(addedShows);
 
-        List<ShowConfiguration> addedTvShows = addedShowsUnique.Select(x=>x.Configuration).OfType<ShowConfiguration>().Distinct().ToList();
+        List<ShowConfiguration> addedTvShows = [.. addedShowsUnique.Select(x=>x.Configuration).OfType<ShowConfiguration>().Distinct()];
         if (addedTvShows.Any())
         {
             MDoc.Add(addedTvShows, true);
@@ -55,7 +55,7 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
             LOGGER.Info($"Added new shows called: {addedTvShows.Select(s => s.ShowName).ToCsv()}");
         }
 
-        List<MovieConfiguration> addedMovies = addedShowsUnique.Select(x => x.Configuration).OfType<MovieConfiguration>().Distinct().ToList();
+        List<MovieConfiguration> addedMovies = [.. addedShowsUnique.Select(x => x.Configuration).OfType<MovieConfiguration>().Distinct()];
         if (addedMovies.Any())
         {
             MDoc.Add(addedMovies, true);

@@ -167,7 +167,7 @@ public class ShowConfiguration : MediaConfiguration
 
     public int GetSeasonIndex(int seasonNumber)
     {
-        List<int> seasonNumbers = AppropriateSeasons().Values.ToList().Where(season => !season.IsSpecial).Select(sn => sn.SeasonNumber).ToList();
+        List<int> seasonNumbers = [.. AppropriateSeasons().Values.ToList().Where(season => !season.IsSpecial).Select(sn => sn.SeasonNumber)];
 
         seasonNumbers.Sort();
 

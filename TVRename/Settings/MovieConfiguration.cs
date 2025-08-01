@@ -321,13 +321,12 @@ public class MovieConfiguration : MediaConfiguration
 
     public List<FileInfo> MovieFiles()
     {
-        return Locations
+        return [.. Locations
             .Where(location => location.HasValue())
             .Select(location => new DirectoryInfo(location))
             .Where(dir => dir.Exists)
             .SelectMany(dir => dir.GetFiles())
             .Where(f => f.IsMovieFile())
-            .Distinct()
-            .ToList();
+            .Distinct()];
     }
 }

@@ -42,7 +42,7 @@ public class ActionQueue
         parallelThreadLimit = parallelLimit;
         actionPosition = 0;
         Sem = new Semaphore(parallelLimit, parallelLimit, name); // allow up to numWorkers working at once
-        this.actions = actions.OrderBy(a=>a.Order).ToList();
+        this.actions = [.. actions.OrderBy(a=>a.Order)];
     }
 
     public override string ToString() => $"'{queueName}' worker, with {parallelThreadLimit} threads.";

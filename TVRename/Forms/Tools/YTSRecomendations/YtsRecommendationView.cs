@@ -44,8 +44,8 @@ public partial class YtsRecommendationView : Form
     private void PopulateGrid()
     {
         List<YtsRecommendationRow> recommendationRows = chkRemoveExisting.Checked
-            ? recs.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.ImdbCode != x.ImdbCode)).ToList()
-            : recs.ToList();
+            ? [.. recs.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.ImdbCode != x.ImdbCode))]
+            : [.. recs];
 
         lvRecommendations.SetObjects(recommendationRows, true);
     }
@@ -124,7 +124,7 @@ public partial class YtsRecommendationView : Form
 
         RecommendationMovieStructure source = new();
         int page = 0;
-        List<MovieConfiguration> inputMovies = mDoc.FilmLibrary.Movies.Where(m => m.ImdbCode != null && !m.ImdbCode.IsNullOrWhitespace()).ToList();
+        List<MovieConfiguration> inputMovies = [.. mDoc.FilmLibrary.Movies.Where(m => m.ImdbCode != null && !m.ImdbCode.IsNullOrWhitespace())];
         scanStartTime = TimeHelpers.LocalNow();
 
         try
@@ -172,13 +172,13 @@ public partial class YtsRecommendationView : Form
             }
             else
             {
-                Add(relatedMovie.Id, new Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>(relatedMovie, new(new List<Tuple<API.YtsMovie, MovieConfiguration>> { new(ytsMovie, existingMovie) })));
+                Add(relatedMovie.Id, new Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>(relatedMovie, [.. [new(ytsMovie, existingMovie)]]));
             }
         }
 
         public List<YtsRecommendationRow> AsRecommendationRows(TVDoc mDoc)
         {
-            return this.Select(m => new YtsRecommendationRow(m.Value.Item1, m.Value.Item2, mDoc)).ToList();
+            return [.. this.Select(m => new YtsRecommendationRow(m.Value.Item1, m.Value.Item2, mDoc))];
         }
     }
 

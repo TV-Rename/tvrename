@@ -1742,7 +1742,7 @@ public sealed class TVSettings
     {
         ShowStatusColors = [];
         foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").FirstOrDefault()
-                     ?.Descendants("ShowStatusTVWColor") ?? new List<XElement>())
+                     ?.Descendants("ShowStatusTVWColor") ?? [])
         {
             ColouringRule? newRule = ExtractColouringRule(rep);
             if (newRule is null)
@@ -1865,7 +1865,7 @@ public sealed class TVSettings
     {
         FNPRegexs.Clear();
         foreach (XElement rep in xmlSettings.Descendants("FNPRegexs").FirstOrDefault()?.Descendants("Regex") ??
-                                 new List<XElement>())
+                                 [])
         {
             string? enabledValue = rep.Attribute("Enabled")?.Value;
             string? reValue = rep.Attribute("RE")?.Value;
@@ -1886,7 +1886,7 @@ public sealed class TVSettings
     {
         Replacements.Clear();
         foreach (XElement rep in xmlSettings.Descendants("Replacements").FirstOrDefault()?.Descendants("Replace") ??
-                                 new List<XElement>())
+                                 [])
         {
             string? thisValue = rep.Attribute("This")?.Value;
             string? thatValue = rep.Attribute("That")?.Value;

@@ -438,7 +438,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             case API.UpdateRecord.UpdateType.episode:
             {
                 List<CachedSeriesInfo> matchingShows =
-                    Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id)).ToList();
+                    [.. Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id))];
 
                 if (!matchingShows.Any())
                 {
@@ -463,7 +463,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             case API.UpdateRecord.UpdateType.season:
             {
                 List<CachedSeriesInfo> matchingShows =
-                    Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id)).ToList();
+                    [.. Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id))];
 
                 if (!matchingShows.Any())
                 {
@@ -507,7 +507,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     
     private void AddPlaceholders(IEnumerable<ISeriesSpecifier> ss)
     {
-        IEnumerable<ISeriesSpecifier> seriesSpecifiers = ss.ToList();
+        IEnumerable<ISeriesSpecifier> seriesSpecifiers = [.. ss];
         foreach (ISeriesSpecifier downloadShow in seriesSpecifiers.Where(downloadShow =>
                      downloadShow.Media == MediaConfiguration.MediaType.tv && !HasSeries(downloadShow.TvdbId)))
         {

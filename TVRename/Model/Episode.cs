@@ -230,7 +230,7 @@ public class Episode
 
     public IEnumerable<Actor> AllActors(CachedSeriesInfo si)
     {
-        List<Actor> returnValue = si.GetActors().ToList();
+        List<Actor> returnValue = [.. si.GetActors()];
         foreach (string star in GuestStars)
         {
             if (si.GetActors().All(actor => actor.ActorName != star))

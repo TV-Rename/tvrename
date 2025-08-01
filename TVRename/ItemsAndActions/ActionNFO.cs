@@ -144,7 +144,7 @@ public abstract class ActionNfo : ActionWriteMetadata
         IEnumerable<XElement> appropriateNodes = root.Elements()
             .Where(node => node.Name == NODE_NAME && node.HasAttribute(NODE_ATTRIBUTE_TYPE, idType));
 
-        IEnumerable<XElement> xElements = appropriateNodes.ToList();
+        IEnumerable<XElement> xElements = [.. appropriateNodes];
         bool needToUpdate = xElements.Any();
 
         if (needToUpdate)
@@ -160,13 +160,13 @@ public abstract class ActionNfo : ActionWriteMetadata
 
     protected static void ReplaceActors(XElement root, IEnumerable<Actor> selectedShowActors)
     {
-        IEnumerable<Actor> showActors = selectedShowActors as Actor[] ?? selectedShowActors.ToArray();
+        IEnumerable<Actor> showActors = selectedShowActors as Actor[] ?? [.. selectedShowActors];
         if (!showActors.ToList().Any())
         {
             return;
         }
 
-        List<XElement> elemsToRemove = root.Elements("actor").ToList();
+        List<XElement> elemsToRemove = [.. root.Elements("actor")];
         foreach (XElement oldActor in elemsToRemove)
         {
             oldActor.Remove();
@@ -199,14 +199,13 @@ public abstract class ActionNfo : ActionWriteMetadata
     protected static void ReplaceThumbs(XElement root, string aspectAttributeName, IEnumerable<MediaImage> images)
     {
         {
-            List<MediaImage> newImages = images.ToList();
+            List<MediaImage> newImages = [.. images];
             if (!newImages.Any())
             {
                 return;
             }
 
-            List<XElement> elemsToRemove = root.Elements("thumb")
-                .Where(x => x.Attribute("aspect")?.Value.Equals(aspectAttributeName) ?? false).ToList();
+            List<XElement> elemsToRemove = [.. root.Elements("thumb").Where(x => x.Attribute("aspect")?.Value.Equals(aspectAttributeName) ?? false)];
 
             foreach (XElement oldActor in elemsToRemove)
             {
@@ -230,13 +229,13 @@ public abstract class ActionNfo : ActionWriteMetadata
     protected static void ReplaceFanart(XElement root, IEnumerable<MediaImage> images)
     {
         {
-            List<MediaImage> newImages = images.ToList();
+            List<MediaImage> newImages = [.. images];
             if (!newImages.Any())
             {
                 return;
             }
 
-            List<XElement> elemsToRemove = root.Elements("fanart").ToList();
+            List<XElement> elemsToRemove = [.. root.Elements("fanart")];
 
             foreach (XElement oldActor in elemsToRemove)
             {

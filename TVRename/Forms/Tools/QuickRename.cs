@@ -124,7 +124,7 @@ public partial class QuickRename : Form, IDialogParent
         {
             if (TVSettings.Instance.AutoAddAsPartOfQuickRename)
             {
-                IEnumerable<MediaConfiguration> addedShows = FinderHelper.FindMedia(new List<FileInfo> { droppedFile }, mDoc, owner).Select(x=>x.Configuration);
+                IEnumerable<MediaConfiguration> addedShows = FinderHelper.FindMedia([droppedFile], mDoc, owner).Select(x=>x.Configuration);
                 bestShow = addedShows.OfType<ShowConfiguration>().FirstOrDefault();
 
                 if (bestShow != null && !mDoc.AlreadyContains(bestShow))

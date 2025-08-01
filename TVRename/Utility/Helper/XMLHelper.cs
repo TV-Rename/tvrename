@@ -35,7 +35,7 @@ public static class XmlHelper
         res = res.Trim();
         return res;
     }
-    public static string ValidXml(this string content) => new(content.Where(XmlConvert.IsXmlChar).ToArray());
+    public static string ValidXml(this string content) => new([.. content.Where(XmlConvert.IsXmlChar)]);
 
     public static void WriteElement(this XmlWriter writer, string elementName, string? value)
     {
@@ -241,7 +241,7 @@ public static class XmlHelper
 
     public static void ReplaceElements(this XElement root, string key, IEnumerable<string> values)
     {
-        IEnumerable<XElement> elementsToRemove = root.Elements(key).ToList();
+        IEnumerable<XElement> elementsToRemove = [.. root.Elements(key)];
         foreach (XElement oldValue in elementsToRemove)
         {
             oldValue.Remove();
@@ -391,7 +391,7 @@ public static class XmlHelper
 
     private static T? ExtractNumber<T>(this XElement xmlSettings, string elementName, Func<string, T> functionToExtract) where T : struct
     {
-        IEnumerable<XElement> xElements = xmlSettings.Descendants(elementName).ToList();
+        IEnumerable<XElement> xElements = [.. xmlSettings.Descendants(elementName)];
 
         if (xElements.Any() && !string.IsNullOrWhiteSpace((string)xElements.First()))
         {
@@ -466,12 +466,12 @@ public static class XmlHelper
 
     internal static List<string> ReadStringsFromXml(this XElement rootElement, string token)
     {
-        return rootElement.Descendants(token).Select(n => n.Value.Trim()).ToList();
+        return [.. rootElement.Descendants(token).Select(n => n.Value.Trim())];
     }
 
     internal static List<IgnoreItem> ReadIiFromXml(this XElement rootElement, string token)
     {
-        return rootElement.Descendants(token).Select(n => new IgnoreItem(n.Value)).ToList();
+        return [.. rootElement.Descendants(token).Select(n => new IgnoreItem(n.Value))];
     }
 
     internal static void WriteStringsToXml(this XmlWriter writer, IEnumerable<IgnoreItem> ignores, string elementName, string stringName)

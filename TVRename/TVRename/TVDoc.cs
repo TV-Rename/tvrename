@@ -246,7 +246,7 @@ public class TVDoc : IDisposable
         List<CachedSeriesInfo> x;
         lock (cache.SERIES_LOCK)
         {
-            x = cache.CachedShowData.Values.Where(show => show.IdCode(provider) > 0).ToList();
+            x = [.. cache.CachedShowData.Values.Where(show => show.IdCode(provider) > 0)];
         }
 
         foreach (CachedSeriesInfo cachedData in x)
@@ -269,7 +269,7 @@ public class TVDoc : IDisposable
         IEnumerable<CachedMovieInfo> x;
         lock (cache.MOVIE_LOCK)
         {
-            x = cache.CachedMovieData.Values.Where(show => show.IdCode(provider) > 0).ToList();
+            x = [.. cache.CachedMovieData.Values.Where(show => show.IdCode(provider) > 0)];
         }
 
         foreach (CachedMovieInfo cachedData in x)
@@ -380,8 +380,8 @@ public class TVDoc : IDisposable
             theList.Actions.ForEach(a=>a.ResetOutcome());
             
             ActionManager.DoActions(theList, token);
-            List<Action> doneActions = TheActionList.Actions.Where(a => a.Outcome is { Done: true, Error: false }).ToList();
-            List<Item> subsequentItems = doneActions.Select(a => a.Becomes()).OfType<Item>().ToList();
+            List<Action> doneActions = [.. TheActionList.Actions.Where(a => a.Outcome is { Done: true, Error: false })];
+            List<Item> subsequentItems = [.. doneActions.Select(a => a.Becomes()).OfType<Item>()];
 
             // remove items from master list, unless it had an error
             TheActionList.Replace(doneActions, subsequentItems);
@@ -394,8 +394,7 @@ public class TVDoc : IDisposable
 
     private bool DoDownloadsFg(bool unattended, bool tvrMinimised, UI owner)
     {
-        List<ISeriesSpecifier> idsToDownload = new(TvLibrary);
-        idsToDownload.AddRange(FilmLibrary.Movies);
+        List<ISeriesSpecifier> idsToDownload = [.. TvLibrary, .. FilmLibrary.Movies];
         return DoDownloadsFGNow(unattended, tvrMinimised, owner, idsToDownload);
     }
 
@@ -415,8 +414,7 @@ public class TVDoc : IDisposable
     public void DoDownloadsBG()
     {
         ForceRefreshIdentifiedMedia();
-        List<ISeriesSpecifier> idsToDownload = new(TvLibrary.Shows);
-        idsToDownload.AddRange(FilmLibrary.Movies);
+        List<ISeriesSpecifier> idsToDownload = [.. TvLibrary.Shows, .. FilmLibrary.Movies];
         cacheManager.StartBgDownloadThread(false, idsToDownload, false, CancellationToken.None);
     }
 
@@ -740,9 +738,9 @@ public class TVDoc : IDisposable
     }
 
     private void ExportMovieInfo(MovieFilter filter)
-        => ExportMovieInfo(FilmLibrary.GetSortedMovies().Where(filter.Filter).ToList());
+        => ExportMovieInfo([.. FilmLibrary.GetSortedMovies().Where(filter.Filter)]);
     private void ExportShowInfo(ShowFilter filter)
-        => ExportShowInfo(TvLibrary.GetSortedShowItems().Where(filter.Filter).ToList());
+        => ExportShowInfo([.. TvLibrary.GetSortedShowItems().Where(filter.Filter)]);
 
     public void ExportMovieInfo() => ExportMovieInfo(FilmLibrary.GetSortedMovies());
 
@@ -995,7 +993,7 @@ public class TVDoc : IDisposable
     private void GroupMissingSeasons()
     {
         List<IGrouping<(ShowConfiguration? Series, int? SeasonNumberAsInt), ShowItemMissing>> oldActions
-            = TheActionList.MissingEpisodes.GroupBy(e => (e.Series, e.SeasonNumberAsInt)).ToList();
+            = [.. TheActionList.MissingEpisodes.GroupBy(e => (e.Series, e.SeasonNumberAsInt))];
 
         foreach (IGrouping<(ShowConfiguration? Series, int? SeasonNumberAsInt), ShowItemMissing> season in oldActions)
         {
@@ -1006,7 +1004,7 @@ public class TVDoc : IDisposable
             {
                 if (configuration.SeasonEpisodes[seasonNum.Value].Count == season.Count() && season.Count() > 1)
                 {
-                    TheActionList.Replace(season, new ShowSeasonMissing(configuration, seasonNum.Value, season.First().TargetFolder, season.ToList()));
+                    TheActionList.Replace(season, new ShowSeasonMissing(configuration, seasonNum.Value, season.First().TargetFolder, [.. season]));
                 }
             }
         }
@@ -1015,13 +1013,13 @@ public class TVDoc : IDisposable
     private void UpdateMediaToScan(ScanSettings settings)
     {
         //Get the default set of shows defined by the specified type
-        List<ShowConfiguration> shows = GetShowList(settings.Type, settings.Media, settings.Shows).ToList();
+        List<ShowConfiguration> shows = [.. GetShowList(settings.Type, settings.Media, settings.Shows)];
         //Get the default set of shows defined by the specified type
-        List<MovieConfiguration> movies = GetMovieList(settings.Type, settings.Media, settings.Movies).ToList();
+        List<MovieConfiguration> movies = [.. GetMovieList(settings.Type, settings.Media, settings.Movies)];
 
         if (settings.Type != TVSettings.ScanType.FastSingleShow)
         {
-            settings.UpdateShowsAndMovies(shows.Union(forceShowsScan.Where(m => TvLibrary.Contains(m))).ToList(), movies.Union(forceMoviesScan.Where(m => FilmLibrary.Contains(m))).ToList());
+            settings.UpdateShowsAndMovies([.. shows.Union(forceShowsScan.Where(m => TvLibrary.Contains(m)))], [.. movies.Union(forceMoviesScan.Where(m => FilmLibrary.Contains(m)))]);
         }
     }
     public class ActionSettings
@@ -1086,17 +1084,17 @@ public class TVDoc : IDisposable
     {
         if (mt == MediaConfiguration.MediaType.movie)
         {
-            return new List<ShowConfiguration>();
+            return [];
         }
         return st switch
         {
             TVSettings.ScanType.Full => TvLibrary.GetSortedShowItems(),
             TVSettings.ScanType.Quick => GetQuickShowsToScan(true, true),
             TVSettings.ScanType.Recent => TvLibrary.GetRecentShows(),
-            TVSettings.ScanType.SingleShow => passedShows ?? new List<ShowConfiguration>(),
-            TVSettings.ScanType.Incremental => passedShows ?? new List<ShowConfiguration>(),
-            TVSettings.ScanType.FastSingleShow => passedShows ?? new List<ShowConfiguration>(),
-            _ => passedShows ?? new List<ShowConfiguration>()
+            TVSettings.ScanType.SingleShow => passedShows ?? [],
+            TVSettings.ScanType.Incremental => passedShows ?? [],
+            TVSettings.ScanType.FastSingleShow => passedShows ?? [],
+            _ => passedShows ?? []
         };
     }
 
@@ -1104,17 +1102,17 @@ public class TVDoc : IDisposable
     {
         if (mt == MediaConfiguration.MediaType.tv)
         {
-            return new List<MovieConfiguration>();
+            return [];
         }
         return st switch
         {
             TVSettings.ScanType.Full => FilmLibrary.GetSortedMovies(),
             TVSettings.ScanType.Quick => GetQuickMoviesToScan(true),
-            TVSettings.ScanType.Recent => TVSettings.Instance.IncludeMoviesQuickRecent ? FilmLibrary.GetSortedMovies() : passedShows ?? new List<MovieConfiguration>(),
-            TVSettings.ScanType.SingleShow => passedShows ?? new List<MovieConfiguration>(),
-            TVSettings.ScanType.FastSingleShow => passedShows ?? new List<MovieConfiguration>(),
-            TVSettings.ScanType.Incremental => passedShows ?? new List<MovieConfiguration>(),
-            _ => passedShows ?? new List<MovieConfiguration>()
+            TVSettings.ScanType.Recent => TVSettings.Instance.IncludeMoviesQuickRecent ? FilmLibrary.GetSortedMovies() : passedShows ?? [],
+            TVSettings.ScanType.SingleShow => passedShows ?? [],
+            TVSettings.ScanType.FastSingleShow => passedShows ?? [],
+            TVSettings.ScanType.Incremental => passedShows ?? [],
+            _ => passedShows ?? []
         };
     }
 
@@ -1260,7 +1258,7 @@ public class TVDoc : IDisposable
                      .Where(items => items.Key != null)
                      .OrderBy(grouping => grouping.Key?.Show.ShowName))
         {
-            List<ActionTDownload> actions = epGroup.ToList();
+            List<ActionTDownload> actions = [.. epGroup];
 
             if (cancelAllFuture)
             {
@@ -1583,7 +1581,7 @@ public class TVDoc : IDisposable
         }
 
         PreventAutoScan("Force Refresh");
-        List<ShowConfiguration> showConfigurations = sis.ToList();
+        List<ShowConfiguration> showConfigurations = [.. sis];
         showConfigurations.ForEach(ForgetShow);
 
         if (doDownloads)
@@ -1639,7 +1637,7 @@ public class TVDoc : IDisposable
 
         PreventAutoScan("Force Refresh");
 
-        List<MovieConfiguration> movieConfigurations = sis.ToList();
+        List<MovieConfiguration> movieConfigurations = [.. sis];
         movieConfigurations.ForEach(ForgetMovie);
 
         if (doDownloads)
@@ -1650,7 +1648,7 @@ public class TVDoc : IDisposable
     }
 
     private bool DoDownloadsFg(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MediaConfiguration> passedShows)
-        => DoDownloadsFGNow(unattended, tvrMinimised, owner, new List<ISeriesSpecifier>(passedShows));
+        => DoDownloadsFGNow(unattended, tvrMinimised, owner, [.. passedShows]);
 
     // ReSharper disable once InconsistentNaming
     internal void TVDBServerAccuracyCheck(bool unattended, bool hidden, UI owner)
@@ -1922,7 +1920,7 @@ public class TVDoc : IDisposable
 
         try
         {
-            IEnumerable<string> x = Directory.GetFiles(downloadFolder, "*", System.IO.SearchOption.AllDirectories).OrderBy(s => s).ToList();
+            IEnumerable<string> x = [.. Directory.GetFiles(downloadFolder, "*", System.IO.SearchOption.AllDirectories).OrderBy(s => s)];
             Logger.Info($"Processing {x.Count()} files for movies in '{downloadFolder}' that need to be analysed.");
 
             foreach (string filePath in x)
@@ -2004,7 +2002,7 @@ public class TVDoc : IDisposable
 
     private List<MovieConfiguration> GetMatchingMovies(FileSystemInfo fi)
     {
-        List<MovieConfiguration> matchingMovies = FilmLibrary.GetSortedMovies().Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<MovieConfiguration> matchingMovies = [.. FilmLibrary.GetSortedMovies().Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         return FinderHelper.RemoveShortShows(matchingMovies);
     }
 
@@ -2105,14 +2103,14 @@ public class TVDoc : IDisposable
         }
 
         FileInfo[] files = folder.GetFiles();
-        FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).ToArray();
+        FileInfo[] movieFiles = [.. files.Where(f => f.IsMovieFile())];
 
         if (movieFiles.Length == 0)
         {
             return true;
         }
 
-        List<string> bases = movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct().ToList();
+        List<string> bases = [.. movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct()];
         string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
 
         if (bases.Count == 1)
@@ -2334,13 +2332,13 @@ public class TVDoc : IDisposable
 
     private void RemoveActionsFromShows(IReadOnlyCollection<ShowConfiguration> shows)
     {
-        List<Item> selectedActions = TheActionList.Where(a => shows.Any(s => a.Series == s)).ToList();
+        List<Item> selectedActions = [.. TheActionList.Where(a => shows.Any(s => a.Series == s))];
         TheActionList.Remove(selectedActions);
     }
 
     private void RemoveActionsFromMovies(IReadOnlyCollection<MovieConfiguration> movie)
     {
-        List<Item> selectedActions = TheActionList.Where(a => movie.Any(s => a.Movie == s)).ToList();
+        List<Item> selectedActions = [.. TheActionList.Where(a => movie.Any(s => a.Movie == s))];
         TheActionList.Remove(selectedActions);
     }
 

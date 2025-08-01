@@ -54,7 +54,7 @@ public class ShowImages : SafeList<ShowImage>
 
     private static ShowImage? BestFrom(IEnumerable<ShowImage> validImages)
     {
-        List<ShowImage> showImages = validImages.ToList();
+        List<ShowImage> showImages = [.. validImages];
         if (!showImages.Any())
         {
             return null;

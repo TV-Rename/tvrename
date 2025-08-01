@@ -32,10 +32,9 @@ internal class FolderBaseLibraryDefaultTvCheck : TvShowCheck
         //Then copy any matching files to new location
         try
         {
-            List<FileInfo> filesWeMayCopy = new DirectoryInfo(oldLocation).EnumerateFiles(DirectoryEnumerationOptions.Recursive)
+            List<FileInfo> filesWeMayCopy = [.. new DirectoryInfo(oldLocation).EnumerateFiles(DirectoryEnumerationOptions.Recursive)
                 .Where(f => f.IsMovieFile())
-                .Where(f => Show.NameMatch(f, false))
-                .ToList();
+                .Where(f => Show.NameMatch(f, false))];
 
             foreach (FileInfo file in filesWeMayCopy)
             {

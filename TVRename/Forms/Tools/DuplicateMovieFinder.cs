@@ -53,9 +53,7 @@ public partial class DuplicateMovieFinder : Form
 
     private void ProcessMovie(MovieConfiguration movie)
     {
-        List<FileInfo> files = movie.MovieFiles()
-            .Where(fiTemp => movie.NameMatch(fiTemp, false))
-            .ToList();
+        List<FileInfo> files = [.. movie.MovieFiles().Where(fiTemp => movie.NameMatch(fiTemp, false))];
 
         if (files.Count > 1)
         {
@@ -118,7 +116,7 @@ public partial class DuplicateMovieFinder : Form
 
         rightClickMenu.Add("Force Refresh", (_, _) =>
         {
-            mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false);
+            mainUi.ForceMovieRefresh([si], false);
             Update(mlastSelected);
         });
         rightClickMenu.Add("Update", (_, _) =>

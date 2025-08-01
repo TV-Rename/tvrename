@@ -80,7 +80,7 @@ public static class API
         {
             result = x;
             Downloads = x["torrents"]?.Children().OfType<JObject>().Select(j => new YtsDownload(j)) ??
-                        new List<YtsDownload>();
+                        [];
         }
 
         public string Name => result.GetMandatoryString("title");

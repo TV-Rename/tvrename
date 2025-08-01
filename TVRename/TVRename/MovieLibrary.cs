@@ -11,13 +11,12 @@ public class MovieLibrary : SafeList<MovieConfiguration>
 
     public IEnumerable<MovieConfiguration> Movies => this;
 
-    public List<(int, string)> Collections => Movies
+    public List<(int, string)> Collections => [.. Movies
         .Where(a => a.InCollection)
         .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
         .Where(a => a.CollectionId.HasValue && a.CollectionName.HasValue())
         .Select(a => (a.CollectionId!.Value, a.CollectionName!))
-        .Distinct()
-        .ToList();
+        .Distinct()];
 
     public IEnumerable<string> GetGenres()
     {
@@ -27,7 +26,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
             allGenres.AddRange(si.Genres);
         }
 
-        List<string> distinctGenres = allGenres.Distinct().ToList();
+        List<string> distinctGenres = [.. allGenres.Distinct()];
         distinctGenres.Sort();
         return distinctGenres;
     }
@@ -39,7 +38,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
         {
             return null;
         }
-        List<MovieConfiguration> matching = Movies.Where(configuration => configuration.IdFor(provider) == id).ToList();
+        List<MovieConfiguration> matching = [.. Movies.Where(configuration => configuration.IdFor(provider) == id)];
 
         if (!matching.Any())
         {
@@ -60,7 +59,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
             return;
         }
 
-        List<MovieConfiguration> matchingShows = Movies.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
+        List<MovieConfiguration> matchingShows = [.. Movies.Where(configuration => configuration.AnyIdsMatch(newShow))];
         if (matchingShows.Any())
         {
             foreach (MovieConfiguration existingshow in matchingShows)
@@ -120,7 +119,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
 
     public List<MovieConfiguration> GetSortedMovies()
     {
-        List<MovieConfiguration> returnList = Movies.ToList();
+        List<MovieConfiguration> returnList = [.. Movies];
         returnList.Sort(MediaConfiguration.CompareNames);
         return returnList;
     }
@@ -204,7 +203,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
             mc.CheckHintExists(hint);
         }
 
-        List<MovieConfiguration> matchingShows = Movies.Where(configuration => configuration.AnyIdsMatch(mc)).ToList();
+        List<MovieConfiguration> matchingShows = [.. Movies.Where(configuration => configuration.AnyIdsMatch(mc))];
         if (matchingShows.Any())
         {
             if (matchingShows.Count == 1)

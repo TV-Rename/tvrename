@@ -28,8 +28,8 @@ public partial class RecommendationView : Form
     {
         InitializeComponent();
         recs = new Recomendations();
-        tvShows = new List<ShowConfiguration>();
-        movies = new List<MovieConfiguration>();
+        tvShows = [];
+        movies = [];
         addedShows = [];
         addedMovies = [];
 
@@ -89,9 +89,9 @@ public partial class RecommendationView : Form
     {
         List<RecommendationResult> recommendationRows = chkRemoveExisting.Checked
             ? media == MediaConfiguration.MediaType.movie
-                ? recs.Values.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.TmdbCode != x.Key)).ToList()
-                : recs.Values.Where(x => mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != x.Key)).ToList()
-            : recs.Values.ToList();
+                ? [.. recs.Values.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.TmdbCode != x.Key))]
+                : [.. recs.Values.Where(x => mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != x.Key))]
+            : [.. recs.Values];
 
         int maxRelated = recommendationRows.MaxOrDefault(x => x.Related.Count, 0);
         int maxSimilar = recommendationRows.MaxOrDefault(x => x.Similar.Count, 0);

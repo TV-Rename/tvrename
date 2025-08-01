@@ -347,7 +347,7 @@ internal abstract class FileFinder : Finder
         {
             //Does not really make sense for shows (multiple episodes in one directory).
             //If we only have one file we can rename it
-            List<FileInfo> subFiles = subtitleFolder.GetFiles().Where(IsSubTitleFile).ToList();
+            List<FileInfo> subFiles = [.. subtitleFolder.GetFiles().Where(IsSubTitleFile)];
             if (subFiles.Count == 1)
             {
                 FileInfo fi = subFiles.Single();

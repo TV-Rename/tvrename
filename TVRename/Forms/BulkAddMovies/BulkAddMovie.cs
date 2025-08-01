@@ -404,7 +404,7 @@ public partial class BulkAddMovie : Form
         List<int> sel = [];
         if (keepSel)
         {
-            sel = lvFMNewShows.SelectedIndices.Cast<int>().ToList();
+            sel = [.. lvFMNewShows.SelectedIndices.Cast<int>()];
         }
 
         lvFMNewShows.BeginUpdate();

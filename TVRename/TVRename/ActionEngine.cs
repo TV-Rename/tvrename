@@ -347,7 +347,7 @@ public class ActionEngine
         //     - #2 NFO Generator list
         //     - #3 Downloads (rss torrent, thumbnail, folder.jpg) across Settings.ParallelDownloads lists
         // We can discard any non-action items, as there is nothing to do for them
-        return EnumerableExtensions.GetAllItems<Action.QueueName>().Select(q => CreateQueue(q, theList)).ToList();
+        return [.. EnumerableExtensions.GetAllItems<Action.QueueName>().Select(q => CreateQueue(q, theList))];
     }
 
     private static ActionQueue CreateQueue(Action.QueueName queue, ItemList theList)

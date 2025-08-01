@@ -20,7 +20,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     public IEnumerable<string> SeasonWords()
     {
         //See https://github.com/TV-Rename/tvrename/issues/241 for background
-        List<string> results = TVSettings.Instance.SearchSeasonWordsArray.ToList();
+        List<string> results = [.. TVSettings.Instance.SearchSeasonWordsArray];
 
         if (!TVSettings.Instance.ForceBulkAddToUseSettingsOnly)
         {
@@ -42,7 +42,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             return;
         }
 
-        List<ShowConfiguration> matchingShows = Shows.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
+        List<ShowConfiguration> matchingShows = [.. Shows.Where(configuration => configuration.AnyIdsMatch(newShow))];
         if (matchingShows.Any())
         {
             foreach (ShowConfiguration existingshow in matchingShows)
@@ -82,7 +82,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
         IEnumerable<string> seasonWordsFromShows = Shows.Select(si => si.AutoAddCustomFolderFormat);
 
-        results.AddRange(seasonWordsFromShows.Distinct().ToList());
+        results.AddRange([.. seasonWordsFromShows.Distinct()]);
 
         return results;
     }
@@ -95,7 +95,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             allGenres.AddRange(si.Genres);
         }
 
-        List<string> distinctGenres = allGenres.Distinct().ToList();
+        List<string> distinctGenres = [.. allGenres.Distinct()];
         distinctGenres.Sort();
         return distinctGenres;
     }
@@ -145,7 +145,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         List<ShowConfiguration> returnList;
         lock (Shows)
         {
-            returnList = Shows.ToList();
+            returnList = [.. Shows];
         }
         returnList.Sort(MediaConfiguration.CompareNames);
         return returnList;
@@ -158,7 +158,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             return null;
         }
         List<ShowConfiguration> matching =
-            Shows.Where(configuration => configuration.IdFor(provider) == id).ToList();
+            [.. Shows.Where(configuration => configuration.IdFor(provider) == id)];
 
         if (!matching.Any())
         {
@@ -227,7 +227,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     private static void AddOverallCount(ShowConfiguration si)
     {
         // now, go through and number them all sequentially
-        List<int> theKeys = si.AppropriateSeasons().Keys.ToList();
+        List<int> theKeys = [.. si.AppropriateSeasons().Keys];
         theKeys.Sort();
 
         int overallCount = 1;
@@ -255,7 +255,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             return null;
         }
 
-        List<ProcessedEpisode> eis = seas.Episodes.Values.Select(e => new ProcessedEpisode(e, si)).ToList();
+        List<ProcessedEpisode> eis = [.. seas.Episodes.Values.Select(e => new ProcessedEpisode(e, si))];
 
         switch (si.Order)
         {
@@ -851,7 +851,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             sc.CheckHintExists(hint);
         }
 
-        List<ShowConfiguration> matchingShows = Shows.Where(configuration => configuration.AnyIdsMatch(sc)).ToList();
+        List<ShowConfiguration> matchingShows = [.. Shows.Where(configuration => configuration.AnyIdsMatch(sc))];
         if (matchingShows.Any())
         {
             if (matchingShows.Count == 1)

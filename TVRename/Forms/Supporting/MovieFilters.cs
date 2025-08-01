@@ -27,19 +27,19 @@ public partial class MovieFilters : Form
 
         try
         {
-            clbGenre.Items.AddRange(doc.FilmLibrary.GetGenres().Cast<object>().ToArray());
+            clbGenre.Items.AddRange([.. doc.FilmLibrary.GetGenres().Cast<object>()]);
 
             cmbNetwork.Items.Add(string.Empty);
-            cmbNetwork.Items.AddRange(doc.FilmLibrary.GetNetworks().Cast<object>().ToArray());
+            cmbNetwork.Items.AddRange([.. doc.FilmLibrary.GetNetworks().Cast<object>()]);
 
             cmbShowStatus.Items.Add(string.Empty);
-            cmbShowStatus.Items.AddRange(doc.FilmLibrary.GetStatuses().Cast<object>().ToArray());
+            cmbShowStatus.Items.AddRange([.. doc.FilmLibrary.GetStatuses().Cast<object>()]);
 
             cmbRating.Items.Add(string.Empty);
-            cmbRating.Items.AddRange(doc.FilmLibrary.GetContentRatings().Cast<object>().ToArray());
+            cmbRating.Items.AddRange([.. doc.FilmLibrary.GetContentRatings().Cast<object>()]);
 
             cmbYear.Items.Add(string.Empty);
-            cmbYear.Items.AddRange(doc.FilmLibrary.GetYears().Cast<object>().ToArray());
+            cmbYear.Items.AddRange([.. doc.FilmLibrary.GetYears().Cast<object>()]);
         }
         catch (InvalidCastException ex)
         {

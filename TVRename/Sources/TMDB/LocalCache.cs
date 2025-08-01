@@ -257,8 +257,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
             latestUpdateTime.RegisterServerUpdate(TimeHelpers.UnixUtcNow());
 
-            List<int> movieUpdates = Client.GetChangesMovies(latestUpdateTime, cts).Select(item => item.Id)
-                .Distinct().ToList();
+            List<int> movieUpdates = [.. Client.GetChangesMovies(latestUpdateTime, cts).Select(item => item.Id).Distinct()];
 
             Say(
                 $"Processing {movieUpdates.Count} movie updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
@@ -291,8 +290,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     $"Identified {Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Movies need updating");
             }
 
-            List<int> showUpdates = Client.GetChangesShows(latestUpdateTime, cts).Select(item => item.Id).Distinct()
-                .ToList();
+            List<int> showUpdates = [.. Client.GetChangesShows(latestUpdateTime, cts).Select(item => item.Id).Distinct()];
 
             Say(
                 $"Processing {showUpdates.Count} show updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");

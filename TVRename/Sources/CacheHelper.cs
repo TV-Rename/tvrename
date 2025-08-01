@@ -9,11 +9,11 @@ public static class CacheHelper
     public static void Tidy<T>(this T cache, IEnumerable<ShowConfiguration> libraryValues) where T : MediaCache, iTVSource
     {
         // remove any shows from cache that aren't in My Shows
-        List<ShowConfiguration> showConfigurations = libraryValues.ToList();
+        List<ShowConfiguration> showConfigurations = [.. libraryValues];
 
         lock (cache.SERIES_LOCK)
         {
-            List<int> removeList = cache.CachedShowData.Keys.Where(id => showConfigurations.All(si => cache.PrimaryKey(si) != id)).ToList();
+            List<int> removeList = [.. cache.CachedShowData.Keys.Where(id => showConfigurations.All(si => cache.PrimaryKey(si) != id))];
 
             foreach (int i in removeList)
             {
@@ -25,11 +25,11 @@ public static class CacheHelper
     public static void Tidy<T>(this T cache, IEnumerable<MediaConfiguration> libraryValues) where T : MediaCache, iMovieSource
     {
         // remove any shows from cache that aren't in My Movies
-        List<MediaConfiguration> movieConfigurations = libraryValues.ToList();
+        List<MediaConfiguration> movieConfigurations = [.. libraryValues];
 
         lock (cache.MOVIE_LOCK)
         {
-            List<int> removeList = cache.CachedMovieData.Keys.Where(id => movieConfigurations.All(si => cache.PrimaryKey(si) != id)).ToList();
+            List<int> removeList = [.. cache.CachedMovieData.Keys.Where(id => movieConfigurations.All(si => cache.PrimaryKey(si) != id))];
 
             foreach (int i in removeList)
             {
@@ -278,7 +278,7 @@ public static class CacheHelper
 
         showName = showName.ToLower();
 
-        List<CachedSeriesInfo> matchingShows = cache.GetSeriesDictMatching(showName).Values.ToList();
+        List<CachedSeriesInfo> matchingShows = [.. cache.GetSeriesDictMatching(showName).Values];
 
         return matchingShows.Count switch
         {
@@ -298,7 +298,7 @@ public static class CacheHelper
 
         string showName = hint.ToLower();
 
-        List<CachedMovieInfo> matchingShows = cache.GetMoviesDictMatching(showName).Values.ToList();
+        List<CachedMovieInfo> matchingShows = [.. cache.GetMoviesDictMatching(showName).Values];
 
         if (matchingShows.Count == 0)
         {
@@ -310,8 +310,7 @@ public static class CacheHelper
             return matchingShows.First();
         }
 
-        List<CachedMovieInfo> exactMatchingShows = matchingShows
-            .Where(info => info.Name.CompareName().Equals(showName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        List<CachedMovieInfo> exactMatchingShows = [.. matchingShows.Where(info => info.Name.CompareName().Equals(showName, StringComparison.InvariantCultureIgnoreCase))];
 
         if (exactMatchingShows.Count == 0 && !useMostPopularMatch)
         {
@@ -330,8 +329,7 @@ public static class CacheHelper
 
         if (possibleYear != null)
         {
-            List<CachedMovieInfo> exactMatchingShowsWithYear = exactMatchingShows
-                .Where(info => info.Year == possibleYear).ToList();
+            List<CachedMovieInfo> exactMatchingShowsWithYear = [.. exactMatchingShows.Where(info => info.Year == possibleYear)];
 
             if (exactMatchingShowsWithYear.Count == 0 && !useMostPopularMatch)
             {

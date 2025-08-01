@@ -617,19 +617,15 @@ public partial class UI : Form, IDialogParent
                 return HeaderName("Rename", renameCount);
 
             case "C-Copy":
-                List<ActionCopyMoveRename> copyActions = mDoc.TheActionList.CopyMove
-                    .Where(cmr => cmr.Operation == ActionCopyMoveRename.Op.copy)
-                    .ToList();
+                List<ActionCopyMoveRename> copyActions = [.. mDoc.TheActionList.CopyMove.Where(cmr => cmr.Operation == ActionCopyMoveRename.Op.copy)];
 
                 long copySize = copyActions.Where(item => item.From.Exists).Sum(copy => copy.From.Length);
                 return HeaderName("Copy", copyActions.Count, copySize);
 
             case "D-Move":
-                List<ActionCopyMoveRename> moveActions = mDoc.TheActionList.CopyMove
-                    .Where(cmr => cmr.Operation == ActionCopyMoveRename.Op.move)
-                    .ToList();
+                List<ActionCopyMoveRename> moveActions = [.. mDoc.TheActionList.CopyMove.Where(cmr => cmr.Operation == ActionCopyMoveRename.Op.move)];
 
-                List<ActionMoveRenameDirectory> x = mDoc.TheActionList.OfType<ActionMoveRenameDirectory>().ToList();
+                List<ActionMoveRenameDirectory> x = [.. mDoc.TheActionList.OfType<ActionMoveRenameDirectory>()];
 
                 long moveSize = moveActions.Where(item => item.From.Exists).Sum(copy => copy.From.Length);
                 return HeaderName("Move", moveActions.Count + x.Count, moveSize);
@@ -681,7 +677,7 @@ public partial class UI : Form, IDialogParent
         // Send command-line arguments to already running instance
 
         // Parse command line arguments
-        CommandLineArgs localArgs = new(new List<string>(args));
+        CommandLineArgs localArgs = new([.. args]);
 
         bool previousRenameBehavior = TVSettings.Instance.RenameCheck;
         // Temporarily override behaviour for renaming folders
@@ -1353,7 +1349,7 @@ public partial class UI : Form, IDialogParent
     private void ChooseSiteMenu(ToolStripSplitButton btn)
     {
         btn.DropDownItems.Clear();
-        btn.DropDownItems.AddRange(GetUsedSearchers().Where(engine => engine.Name.HasValue()).Select(CreateSearcherMenuItem).ToArray());
+        btn.DropDownItems.AddRange([.. GetUsedSearchers().Where(engine => engine.Name.HasValue()).Select(CreateSearcherMenuItem)]);
     }
 
     private static ToolStripItem CreateSearcherMenuItem(SearchEngine search)
@@ -1369,15 +1365,15 @@ public partial class UI : Form, IDialogParent
         ProcessedSeason? currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
         ShowConfiguration? currentSi = TreeNodeToShowItem(MyShowTree.SelectedNode);
 
-        List<ShowConfiguration?> expanded = MyShowTree.Nodes.Cast<TreeNode>()
+        List<ShowConfiguration?> expanded = [.. MyShowTree.Nodes.Cast<TreeNode>()
             .Where(n => n.IsExpanded)
-            .Select(TreeNodeToShowItem).ToList();
+            .Select(TreeNodeToShowItem)];
 
         Logger.Info("UI: Updating MyShows");
         MyShowTree.BeginUpdate();
 
         MyShowTree.Nodes.Clear();
-        List<ShowConfiguration> sil = mDoc.TvLibrary.Shows.ToList();
+        List<ShowConfiguration> sil = [.. mDoc.TvLibrary.Shows];
         sil.Sort((a, b) => string.Compare(GenerateShowUIName(a), GenerateShowUIName(b), StringComparison.OrdinalIgnoreCase));
 
         ShowFilter filter = TVSettings.Instance.Filter;
@@ -1430,7 +1426,7 @@ public partial class UI : Form, IDialogParent
         movieTree.BeginUpdate();
 
         movieTree.Nodes.Clear();
-        List<MovieConfiguration> sil = mDoc.FilmLibrary.Movies.ToList();
+        List<MovieConfiguration> sil = [.. mDoc.FilmLibrary.Movies];
         sil.Sort((a, b) => string.Compare(GenerateShowUiName(a), GenerateShowUiName(b), StringComparison.OrdinalIgnoreCase));
 
         MovieFilter filter = TVSettings.Instance.MovieFilter;
@@ -1719,7 +1715,7 @@ public partial class UI : Form, IDialogParent
         DirFilesCache dfc = new();
 
         IEnumerable<ProcessedEpisode> recentEps = mDoc.TvLibrary.GetRecentAndFutureEps(dd);
-        return recentEps.Select(ei => GenerateLvi(dfc, ei)).ToList();
+        return [.. recentEps.Select(ei => GenerateLvi(dfc, ei))];
     }
 
     private ListViewItem GenerateLvi(DirFilesCache dfc, ProcessedEpisode pe)
@@ -2057,7 +2053,7 @@ public partial class UI : Form, IDialogParent
 
         ProcessedEpisode? ep = eps.Count == 1 ? eps[0] : null;
 
-        List<ShowConfiguration> sis = eps.Select(e => e.Show).ToList();
+        List<ShowConfiguration> sis = [.. eps.Select(e => e.Show)];
 
         BuildshowRightClickMenu(pt, ep, sis, ep?.AppropriateProcessedSeason);
     }
@@ -2122,9 +2118,9 @@ public partial class UI : Form, IDialogParent
         {
             if (si.AutoAddFolderBase.HasValue())
             {
-                AddFolders(new[] { si.AutoAddFolderBase }, added);
+                AddFolders([si.AutoAddFolderBase], added);
             }
-            AddFoldersSubMenu(si.AllExistngFolderLocations().Values.SelectMany(l => l).ToList(), added);
+            AddFoldersSubMenu([.. si.AllExistngFolderLocations().Values.SelectMany(l => l)], added);
         }
 
         if (lvr is null || lvr.Count > 1)
@@ -2179,7 +2175,7 @@ public partial class UI : Form, IDialogParent
         showRightClickMenu.Items.Clear();
 
         showRightClickMenu.Add("Force Refresh", (_, _) => ForceMovieRefresh(si, false));
-        showRightClickMenu.Add("Update Images", (_, _) => UpdateImages(new List<MovieConfiguration> { si }));
+        showRightClickMenu.Add("Update Images", (_, _) => UpdateImages([si]));
 
         showRightClickMenu.AddSeparator();
 
@@ -2425,7 +2421,7 @@ public partial class UI : Form, IDialogParent
         }
 
         Point pt = lvWhenToWatch.PointToScreen(new Point(e.X, e.Y));
-        List<ProcessedEpisode> eis = lvWhenToWatch.SelectedItems.Cast<ListViewItem>().Select(lvi => lvi.Tag).OfType<ProcessedEpisode>().ToList();
+        List<ProcessedEpisode> eis = [.. lvWhenToWatch.SelectedItems.Cast<ListViewItem>().Select(lvi => lvi.Tag).OfType<ProcessedEpisode>()];
 
         WtwRightClickOnShow(eis, pt);
     }
@@ -2718,7 +2714,7 @@ public partial class UI : Form, IDialogParent
                 n.ForeColor = TVSettings.Instance.ShowStatusColors.GetColour(si);
             }
 
-            List<int> theKeys = si.AppropriateSeasons().Keys.ToList();
+            List<int> theKeys = [.. si.AppropriateSeasons().Keys];
 
             theKeys.Sort();
 
@@ -3072,12 +3068,11 @@ public partial class UI : Form, IDialogParent
                 .Select(s => s.TrimStartString(folderName));
 
             List<(ShowConfiguration, string)> showsthatmatchanyfiles =
-                mDoc.TvLibrary.Shows
+                [.. mDoc.TvLibrary.Shows
                     .Where(show => show != si)
                     .SelectMany(_ => videofilesThatWouldBeDeleted, (show, filename) => new { show, filename })
                     .Where(t => t.show.NameMatch(t.filename))
-                    .Select(t => (t.show, t.filename))
-                    .ToList();
+                    .Select(t => (t.show, t.filename))];
 
             if (showsthatmatchanyfiles.Any())
             {
@@ -3096,12 +3091,11 @@ public partial class UI : Form, IDialogParent
                 }
             }
 
-            List<(MovieConfiguration, string)> moviesthatmatchanyfiles = mDoc.FilmLibrary.Movies
+            List<(MovieConfiguration, string)> moviesthatmatchanyfiles = [.. mDoc.FilmLibrary.Movies
                 .Where(show => show != si)
                 .SelectMany(_ => videofilesThatWouldBeDeleted, (show, filename) => new { show, filename })
                 .Where(t => t.show.NameMatch(t.filename))
-                .Select(t => (t.show, t.filename))
-                .ToList();
+                .Select(t => (t.show, t.filename))];
 
             if (moviesthatmatchanyfiles.Any())
             {
@@ -3270,9 +3264,9 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        IEnumerable<Item> enumerable = sis.ToList();
-        List<ShowConfiguration> shows = enumerable.Select(x => x.Series).OfType<ShowConfiguration>().ToList();
-        List<MovieConfiguration> movies = enumerable.Select(x => x.Movie).OfType<MovieConfiguration>().ToList();
+        IEnumerable<Item> enumerable = [.. sis];
+        List<ShowConfiguration> shows = [.. enumerable.Select(x => x.Series).OfType<ShowConfiguration>()];
+        List<MovieConfiguration> movies = [.. enumerable.Select(x => x.Movie).OfType<MovieConfiguration>()];
 
         mDoc.ForceRefreshBeforeRescan(shows, movies, unattended, WindowState == FormWindowState.Minimized, this);
         UiScan(shows, movies, unattended, TVSettings.ScanType.Incremental, MediaConfiguration.MediaType.both);
@@ -4157,8 +4151,8 @@ public partial class UI : Form, IDialogParent
 
     private static void SetCheckbox(ToolStripMenuItem box, IEnumerable<Item> all, IEnumerable<Item> chk)
     {
-        IEnumerable<Item> enumerable = chk.ToList();
-        IEnumerable<Item> btn = all as Item[] ?? all.ToArray();
+        IEnumerable<Item> enumerable = [.. chk];
+        IEnumerable<Item> btn = all as Item[] ?? [.. all];
         if (!enumerable.Any())
         {
             box.CheckState = CheckState.Unchecked;
@@ -4797,7 +4791,7 @@ public partial class UI : Form, IDialogParent
         lvWhenToWatch.Sort();
 
         lvWhenToWatch.EndUpdate();
-        calCalendar.BoldedDates = bolded.ToArray();
+        calCalendar.BoldedDates = [.. bolded];
 
         if (currentSeas != null)
         {
@@ -4898,12 +4892,11 @@ public partial class UI : Form, IDialogParent
         ToolStripButton button = (ToolStripButton)sender;
 
         Point pt = button.Owner.PointToScreen(button.Bounds.Location);
-        List<ProcessedEpisode> eis = lvWhenToWatch
+        List<ProcessedEpisode> eis = [.. lvWhenToWatch
             .SelectedItems
             .Cast<ListViewItem>()
             .Select(lvi => lvi.Tag as ProcessedEpisode)
-            .OfType<ProcessedEpisode>()
-            .ToList();
+            .OfType<ProcessedEpisode>()];
 
         WtwRightClickOnShow(eis, pt);
     }
@@ -5133,7 +5126,7 @@ public partial class UI : Form, IDialogParent
 
     internal void ForceMovieRefresh(MovieConfiguration sis, bool unattended)
     {
-        ForceMovieRefresh(new List<MovieConfiguration> { sis }, unattended);
+        ForceMovieRefresh([sis], unattended);
     }
 
     private void recommendationsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5173,7 +5166,7 @@ public partial class UI : Form, IDialogParent
 
     internal void ForceRefresh(ShowConfiguration show, bool unattended)
     {
-        ForceRefresh(new List<ShowConfiguration> { show }, unattended);
+        ForceRefresh([show], unattended);
     }
 
     private void ForceRefresh(bool unattended)

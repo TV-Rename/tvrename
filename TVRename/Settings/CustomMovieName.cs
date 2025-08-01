@@ -32,7 +32,7 @@ public static class CustomMovieName
 
     public static List<string> ExamplePresets(MovieConfiguration s)
     {
-        return Presets.Select(example => NameFor(s, example)).ToList();
+        return [.. Presets.Select(example => NameFor(s, example))];
     }
 
     public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false, true);

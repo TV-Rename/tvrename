@@ -28,7 +28,7 @@ public static class CustomTvShowName
 
     public static List<string> ExamplePresets(ShowConfiguration s)
     {
-        return Presets.Select(example => NameFor(s, example)).ToList();
+        return [.. Presets.Select(example => NameFor(s, example))];
     }
 
     public static string NameFor(ShowConfiguration? m, string styleString) => NameFor(m, styleString, false, true);

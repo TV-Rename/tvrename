@@ -33,7 +33,7 @@ public class BulkAddMovieManager
     {
         try
         {
-            return di.GetDirectories().Where(d => d.IsImportant()).ToArray();
+            return [.. di.GetDirectories().Where(d => d.IsImportant())];
         }
         catch (UnauthorizedAccessException)
         {
@@ -140,7 +140,7 @@ public class BulkAddMovieManager
 
     private static List<FileInfo> FilmFiles(DirectoryInfo directory)
     {
-        return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Where(file => file.IsMovieFile()).ToList();
+        return [.. directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Where(file => file.IsMovieFile())];
     }
 
     private void CheckFolderForShows(DirectoryInfo di, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
@@ -221,7 +221,7 @@ public class BulkAddMovieManager
                 targetDirectoryName,
                 StringComparison.CurrentCultureIgnoreCase);
 
-            bool existingLocationIsDefaultToo = found.UseAutomaticFolders && found.AutomaticFolderRoot.In(TVSettings.Instance.MovieLibraryFolders.ToArray());
+            bool existingLocationIsDefaultToo = found.UseAutomaticFolders && found.AutomaticFolderRoot.In([.. TVSettings.Instance.MovieLibraryFolders]);
             string? matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s => ai.Directory.FullName.IsSubfolderOf(s));
             bool isInLibraryFolderFileFinder = matchingRoot.HasValue();
 

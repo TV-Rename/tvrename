@@ -354,7 +354,7 @@ internal static class API
 
     private static List<string> GetWriters(JToken crew)
     {
-        return ((JArray)crew).Children<JToken>()
+        return [.. ((JArray)crew).Children<JToken>()
             .Where(token =>
             {
                 JToken typeToken = GetChild(token, "type");
@@ -365,13 +365,12 @@ internal static class API
                 JToken personTokenToken = GetChild(token, "person");
                 return (string?)personTokenToken["name"];
             })
-            .OfType<string>()
-            .ToList();
+            .OfType<string>()];
     }
 
     private static List<string> GetDirectors(JToken crew)
     {
-        return ((JArray)crew).Children<JToken>()
+        return [.. ((JArray)crew).Children<JToken>()
             .Where(token =>
             {
                 JToken typeToken = GetChild(token, "type");
@@ -382,8 +381,7 @@ internal static class API
                 JToken personTokenToken = GetChild(token, "person");
                 return (string?)personTokenToken["name"];
             })
-            .OfType<string>()
-            .ToList();
+            .OfType<string>()];
     }
 
     private static ShowImage GenerateImage(JToken imageJson)

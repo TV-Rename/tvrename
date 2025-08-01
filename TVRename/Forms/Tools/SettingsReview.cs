@@ -152,7 +152,7 @@ public partial class SettingsReview : Form
             {
                 MovieConfiguration si = mcheck.Movie;
                 rightClickMenu.Add("Force Refresh",
-                    (_, _) => mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false));
+                    (_, _) => mainUi.ForceMovieRefresh([si], false));
 
                 rightClickMenu.Add("Edit Movie", (_, _) => mainUi.EditMovie(si));
 
@@ -166,7 +166,7 @@ public partial class SettingsReview : Form
             {
                 ShowConfiguration si = tcheck.Show;
                 rightClickMenu.Add("Force Refresh",
-                    (_, _) => mainUi.ForceRefresh(new List<ShowConfiguration> { si }, false));
+                    (_, _) => mainUi.ForceRefresh([si], false));
 
                 rightClickMenu.Add("Edit TV Show", (_, _) => mainUi.EditShow(si));
             }

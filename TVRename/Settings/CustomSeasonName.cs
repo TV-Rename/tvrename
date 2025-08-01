@@ -54,7 +54,7 @@ public static class CustomSeasonName
 
     public static List<string> ExamplePresets(ProcessedSeason s)
     {
-        return Presets.Select(example => NameFor(s, example)).ToList();
+        return [.. Presets.Select(example => NameFor(s, example))];
     }
 
     public static string NameFor(ProcessedSeason s, string styleString) => NameFor(s, styleString, false);

@@ -267,9 +267,7 @@ public static class API
                 episodeData.Select(x => (x["id"]?.ToObject<int>(), x)).Where(x => x.Item1.HasValue);
 
             List<(int? id, JToken jsonData)> neededEpisodes =
-                availableEpisodes
-                    .Where(x => x.id.HasValue && si.Episodes.All(e => e.EpisodeId != x.id))
-                    .ToList();
+                [.. availableEpisodes.Where(x => x.id.HasValue && si.Episodes.All(e => e.EpisodeId != x.id))];
 
             if (!neededEpisodes.Any())
             {
@@ -450,7 +448,7 @@ public static class API
             Logger.Error(jToken.ToString());
         }
 
-        return new List<UpdateRecord>();
+        return [];
     }
 
     private static UpdateRecord? MapUpdate(JObject seriesResponse)
@@ -1260,7 +1258,7 @@ public static class API
             return;
         }
 
-        List<JToken> languageNodes = aliasNode.Where(x => x["language"]?.ToString() == lang.TVDBCode()).ToList();
+        List<JToken> languageNodes = [.. aliasNode.Where(x => x["language"]?.ToString() == lang.TVDBCode())];
         if (languageNodes.Any())
         {
             foreach (JToken? x in languageNodes)
@@ -1270,7 +1268,7 @@ public static class API
             return;
         }
 
-        languageNodes = aliasNode.Where(x => x["language"]?.ToString() == TVSettings.Instance.PreferredTVDBLanguage.TVDBCode()).ToList();
+        languageNodes = [.. aliasNode.Where(x => x["language"]?.ToString() == TVSettings.Instance.PreferredTVDBLanguage.TVDBCode())];
         if (languageNodes.Any())
         {
             foreach (JToken? x in languageNodes)

@@ -31,7 +31,7 @@ internal abstract class RecentExporter : Exporter
     /// <exception cref="System.IO.PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length.</exception>
     protected override void Do()
     {
-        IEnumerable<ProcessedEpisode> lpe = doc.TvLibrary.RecentEpisodes(TVSettings.Instance.WTWRecentDays).ToList();
+        IEnumerable<ProcessedEpisode> lpe = [.. doc.TvLibrary.RecentEpisodes(TVSettings.Instance.WTWRecentDays)];
         DirFilesCache dfc = new();
 
         //Write Contents to file

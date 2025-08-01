@@ -121,23 +121,23 @@ internal class CleanDownloadDirectory : ScanActivity
             return;
         }
 
-        List<MovieConfiguration> matchingMovies = movieList.Where(mi => mi.NameMatch(di, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<MovieConfiguration> matchingMovies = [.. movieList.Where(mi => mi.NameMatch(di, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
 
-        List<ShowConfiguration> matchingShows = showList.Where(si => si.NameMatch(di, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<ShowConfiguration> matchingShows = [.. showList.Where(si => si.NameMatch(di, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
 
         if (!matchingShows.Any() && !matchingMovies.Any())
         {
             return; // Some sort of random file - ignore
         }
 
-        List<ShowConfiguration> neededMatchingShows = matchingShows.Where(si => FinderHelper.FileNeeded(di, si, dfc)).ToList();
+        List<ShowConfiguration> neededMatchingShows = [.. matchingShows.Where(si => FinderHelper.FileNeeded(di, si, dfc))];
         if (neededMatchingShows.Any())
         {
             LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededMatchingShows.Select(x => x.ShowName).ToCsv()}");
             return;
         }
 
-        List<MovieConfiguration> neededMatchingMovie = matchingMovies.Where(si => FinderHelper.FileNeeded(di, si, dfc)).ToList();
+        List<MovieConfiguration> neededMatchingMovie = [.. matchingMovies.Where(si => FinderHelper.FileNeeded(di, si, dfc))];
         if (neededMatchingMovie.Any())
         {
             LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededMatchingMovie.Select(x => x.ShowName).ToCsv()}");
@@ -218,9 +218,9 @@ internal class CleanDownloadDirectory : ScanActivity
 
     private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, IDialogParent owner)
     {
-        List<ShowConfiguration> matchingShowsAll = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<ShowConfiguration> matchingShowsAll = [.. showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<ShowConfiguration> matchingShows = FinderHelper.RemoveShortShows(matchingShowsAll);
-        List<MovieConfiguration> matchingMoviesAll = movieList.Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<MovieConfiguration> matchingMoviesAll = [.. movieList.Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<MovieConfiguration> matchingMovies = FinderHelper.RemoveShortShows(matchingMoviesAll);
 
         List<MovieConfiguration> matchingMoviesNoShows =
@@ -252,7 +252,7 @@ internal class CleanDownloadDirectory : ScanActivity
             }
         }
 
-        List<MovieConfiguration> neededMatchingMovie = matchingMovies.Where(si => FinderHelper.FileNeeded(fi, si, dfc)).ToList();
+        List<MovieConfiguration> neededMatchingMovie = [.. matchingMovies.Where(si => FinderHelper.FileNeeded(fi, si, dfc))];
         if (neededMatchingMovie.Any())
         {
             LOGGER.Info($"Not removing {fi.FullName} as it may be needed for {neededMatchingMovie.Select(x => x.ShowName).ToCsv()}");
@@ -343,7 +343,7 @@ internal class CleanDownloadDirectory : ScanActivity
 
         foreach (MovieConfiguration testMovie in matchingMovies)
         {
-            List<FileInfo> encumbants = dfc.FindMovieOnDisk(testMovie).ToList();
+            List<FileInfo> encumbants = [.. dfc.FindMovieOnDisk(testMovie)];
 
             foreach (FileInfo existingFile in encumbants)
             {

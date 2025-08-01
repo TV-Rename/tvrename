@@ -526,12 +526,12 @@ internal static class FinderHelper
     {
         //Remove any shows from the list that are subsets of all the ohters
         //so that a file does not match CSI and CSI: New York
-        return matchingShows.Where(testShow => !IsInferiorTo(testShow, matchingShows)).ToList();
+        return [.. matchingShows.Where(testShow => !IsInferiorTo(testShow, matchingShows))];
     }
 
     public static List<T> RemoveShortMedia<T>(IEnumerable<T> matchingMovies, IEnumerable<MediaConfiguration> matchingShows) where T : MediaConfiguration
     {
-        return matchingMovies.Where(testShow => !IsContenedTo(testShow, matchingShows)).ToList();
+        return [.. matchingMovies.Where(testShow => !IsContenedTo(testShow, matchingShows))];
     }
 
     private static bool IsInferiorTo(MediaConfiguration testShow, IEnumerable<MediaConfiguration> matchingShows)
@@ -768,7 +768,7 @@ internal static class FinderHelper
         }
 
         //if hint doesn't match existing added shows
-        List<MediaConfiguration> showConfigurations = addedShows.Select(x => x.Configuration).ToList();
+        List<MediaConfiguration> showConfigurations = [.. addedShows.Select(x => x.Configuration)];
 
         if (LookForSeries(refinedHint, showConfigurations))
         {
@@ -948,12 +948,12 @@ internal static class FinderHelper
 
     public static ShowConfiguration? FindBestMatchingShow(string filename, IEnumerable<ShowConfiguration> shows)
     {
-        IEnumerable<ShowConfiguration> showItems = shows as ShowConfiguration[] ?? shows.ToArray();
+        IEnumerable<ShowConfiguration> showItems = shows as ShowConfiguration[] ?? [.. shows];
 
         IEnumerable<ShowConfiguration> showsMatchAtStart = showItems
             .Where(item => FileHelper.SimplifyAndCheckFilenameAtStart(filename, item.ShowName));
 
-        IEnumerable<ShowConfiguration> matchAtStart = showsMatchAtStart as ShowConfiguration[] ?? showsMatchAtStart.ToArray();
+        IEnumerable<ShowConfiguration> matchAtStart = showsMatchAtStart as ShowConfiguration[] ?? [.. showsMatchAtStart];
 
         if (matchAtStart.Any())
         {
@@ -966,12 +966,12 @@ internal static class FinderHelper
 
     private static MovieConfiguration? FindBestMatchingShow(string filename, IEnumerable<MovieConfiguration> shows)
     {
-        IEnumerable<MovieConfiguration> showItems = shows as MovieConfiguration[] ?? shows.ToArray();
+        IEnumerable<MovieConfiguration> showItems = shows as MovieConfiguration[] ?? [.. shows];
 
         IEnumerable<MovieConfiguration> showsMatchAtStart = showItems
             .Where(item => FileHelper.SimplifyAndCheckFilenameAtStart(filename, item.ShowName));
 
-        IEnumerable<MovieConfiguration> matchAtStart = showsMatchAtStart as MovieConfiguration[] ?? showsMatchAtStart.ToArray();
+        IEnumerable<MovieConfiguration> matchAtStart = showsMatchAtStart as MovieConfiguration[] ?? [.. showsMatchAtStart];
 
         if (matchAtStart.Any())
         {

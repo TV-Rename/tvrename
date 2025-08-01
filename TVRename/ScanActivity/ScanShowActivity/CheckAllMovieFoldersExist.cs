@@ -28,7 +28,7 @@ internal class CheckAllMovieFoldersExist : ScanMovieActivity
             }
         }
 
-        List<string> folders = movie.Locations.ToList();
+        List<string> folders = [.. movie.Locations];
 
         List<string> ignoredLocations = [];
 

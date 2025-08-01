@@ -226,7 +226,7 @@ public static class StringExtensions
     {
         if (s.HasValue())
         {
-            return s.Length <= charsToDisplay ? s : new string(s.Take(charsToDisplay).ToArray());
+            return s.Length <= charsToDisplay ? s : new string([.. s.Take(charsToDisplay)]);
         }
 
         return string.Empty;
@@ -340,7 +340,7 @@ public static class StringExtensions
     }
 
     public static string IntegerCharactersOnly(this string source)
-        => new(source.Where(char.IsDigit).ToArray());
+        => new([.. source.Where(char.IsDigit)]);
     public static bool ContainsOneOf(this string source, IEnumerable<string> terms) => terms.Any(source.Contains);
 
     public static int NumberContains(this string source, IEnumerable<string> terms) => terms.Count(source.Contains);

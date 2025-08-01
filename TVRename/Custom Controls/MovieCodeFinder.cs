@@ -40,10 +40,9 @@ public class MovieCodeFinder : CodeFinder
         List<KeyValuePair<int, CachedMovieInfo>> lvis;
         lock (cache.MOVIE_LOCK)
         {
-            lvis = cache.CachedMovieData
+            lvis = [.. cache.CachedMovieData
                 .Where(kvp => Matches(kvp.Key, kvp.Value, numeric, what, matchnum))
-                .OrderByDescending(m => m.Value.Popularity)
-                .ToList();
+                .OrderByDescending(m => m.Value.Popularity)];
         }
         foreach (ListViewItem lvi in lvis.Select(kvp => NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum)))
         {

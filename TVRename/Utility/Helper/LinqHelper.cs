@@ -54,12 +54,12 @@ internal static class LinqHelper
     {
         if (source is null)
         {
-            return new List<T>();
+            return [];
         }
-        IEnumerable<T> enumerable = source as T[] ?? source.ToArray();
+        IEnumerable<T> enumerable = source as T[] ?? [.. source];
         if (!enumerable.Any())
         {
-            return new List<T>();
+            return [];
         }
         TX targetValue = groupFunction(enumerable.Select(countFunction));
         return enumerable.Where(x => comparisionOperator(countFunction(x), targetValue));

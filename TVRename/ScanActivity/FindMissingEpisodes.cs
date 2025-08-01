@@ -28,7 +28,7 @@ internal abstract class FindMissingEpisodes : ScanActivity
     protected override void DoCheck(SetProgressDelegate progress)
     {
         // have a look around for any missing episodes
-        List<Finder> appropriateFinders = finders.Where(f => f.DisplayType() == CurrentType() && f.Active()).ToList();
+        List<Finder> appropriateFinders = [.. finders.Where(f => f.DisplayType() == CurrentType() && f.Active())];
         int currentMatchingFinderId = 0;
         int totalMatchingFinders = appropriateFinders.Count;
 

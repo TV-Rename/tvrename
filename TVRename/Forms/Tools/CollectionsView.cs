@@ -30,11 +30,11 @@ public partial class CollectionsView : Form
     {
         if (chkRemoveCompleted.Checked && !chkRemoveFuture.Checked)
         {
-            List<string> incompleteCollections = collectionMovies.GroupBy(member => member.CollectionName)
-                .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key).ToList();
+            List<string> incompleteCollections = [.. collectionMovies.GroupBy(member => member.CollectionName)
+                .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key)];
 
             List<CollectionMember> incompleteCollectionMovies =
-                collectionMovies.Where(member => incompleteCollections.Contains(member.CollectionName)).ToList();
+                [.. collectionMovies.Where(member => incompleteCollections.Contains(member.CollectionName))];
             olvCollections.SetObjects(incompleteCollectionMovies, true);
 
             return;
@@ -57,14 +57,13 @@ public partial class CollectionsView : Form
                 return;
             }
 
-            List<string> incompleteHistCollections = historicCollectionMovies.GroupBy(member => member.CollectionName)
-                .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key).ToList();
+            List<string> incompleteHistCollections = [.. historicCollectionMovies.GroupBy(member => member.CollectionName)
+                .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key)];
 
             List<CollectionMember> incompleteHistCollectionMovies =
-                collectionMovies
+                [.. collectionMovies
                     .Where(member => incompleteHistCollections.Contains(member.CollectionName))
-                    .Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < TimeHelpers.LocalNow() && m.MovieYear.HasValue)
-                    .ToList();
+                    .Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < TimeHelpers.LocalNow() && m.MovieYear.HasValue)];
 
             olvCollections.SetObjects(incompleteHistCollectionMovies, true);
         }

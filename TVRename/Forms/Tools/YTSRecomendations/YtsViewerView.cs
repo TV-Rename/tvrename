@@ -45,8 +45,8 @@ public partial class YtsViewerView : Form
     private void PopulateGrid()
     {
         List<YtsViewerRow> recommendationRows = chkRemoveExisting.Checked
-            ? recs.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.ImdbCode != x.ImdbCode)).ToList()
-            : recs.ToList();
+            ? [.. recs.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.ImdbCode != x.ImdbCode))]
+            : [.. recs];
 
         lvRecommendations.SetObjects(recommendationRows, true);
     }
@@ -125,10 +125,9 @@ public partial class YtsViewerView : Form
         scanStartTime = TimeHelpers.LocalNow();
         try
         {
-            recs = YTS.API
+            recs = [.. YTS.API
                     .GetMovies((BackgroundWorker)sender, quality, minRating)
-                    .Select(x => new YtsViewerRow(x, mDoc))
-                    .ToList();
+                    .Select(x => new YtsViewerRow(x, mDoc))];
         }
         catch (Exception ex)
         {

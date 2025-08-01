@@ -20,7 +20,7 @@ internal class CleanUpEmptyLibraryFolders : PostScanActivity
     {
         List<ShowConfiguration> libraryShows = MDoc.TvLibrary.GetSortedShowItems();
         List<MovieConfiguration> movieConfigurations = MDoc.FilmLibrary.GetSortedMovies();
-        List<string> folders = TVSettings.Instance.LibraryFolders.Union(TVSettings.Instance.MovieLibraryFolders).ToList();
+        List<string> folders = [.. TVSettings.Instance.LibraryFolders.Union(TVSettings.Instance.MovieLibraryFolders)];
 
         int totalRecords = libraryShows.Count + movieConfigurations.Count + folders.Count;
         int n = 0;

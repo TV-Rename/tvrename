@@ -27,16 +27,16 @@ public partial class Filters : Form
 
         try
         {
-            clbGenre.Items.AddRange(doc.TvLibrary.GetGenres().Cast<object>().ToArray());
+            clbGenre.Items.AddRange([.. doc.TvLibrary.GetGenres().Cast<object>()]);
 
             cmbNetwork.Items.Add(string.Empty);
-            cmbNetwork.Items.AddRange(doc.TvLibrary.GetNetworks().Cast<object>().ToArray());
+            cmbNetwork.Items.AddRange([.. doc.TvLibrary.GetNetworks().Cast<object>()]);
 
             cmbShowStatus.Items.Add(string.Empty);
-            cmbShowStatus.Items.AddRange(doc.TvLibrary.GetStatuses().Cast<object>().ToArray());
+            cmbShowStatus.Items.AddRange([.. doc.TvLibrary.GetStatuses().Cast<object>()]);
 
             cmbRating.Items.Add(string.Empty);
-            cmbRating.Items.AddRange(doc.TvLibrary.GetContentRatings().Cast<object>().ToArray());
+            cmbRating.Items.AddRange([.. doc.TvLibrary.GetContentRatings().Cast<object>()]);
         }
         catch (InvalidCastException ex)
         {

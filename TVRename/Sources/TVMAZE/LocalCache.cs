@@ -213,7 +213,7 @@ public class LocalCache : MediaCache, iTVSource
 
         showName = showName.ToLower();
 
-        List<CachedSeriesInfo> matchingShows = this.GetSeriesDictMatching(showName).Values.ToList();
+        List<CachedSeriesInfo> matchingShows = [.. this.GetSeriesDictMatching(showName).Values];
 
         return matchingShows.Count switch
         {
@@ -247,7 +247,7 @@ public class LocalCache : MediaCache, iTVSource
                 }
             }
 
-            List<CachedSeriesInfo> results = API.ShowSearch(text).ToList();
+            List<CachedSeriesInfo> results = [.. API.ShowSearch(text)];
             LOGGER.Info($"Got {results.Count:N0} results searching for {text} on TVMaze");
 
             foreach (CachedSeriesInfo result in results)

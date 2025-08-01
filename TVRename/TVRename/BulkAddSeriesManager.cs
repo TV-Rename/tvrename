@@ -101,7 +101,7 @@ public class BulkAddSeriesManager
         {
             try
             {
-                IEnumerable<FileInfo> files = ai.Folder.EnumerateFiles(fileName).ToList();
+                IEnumerable<FileInfo> files = [.. ai.Folder.EnumerateFiles(fileName)];
                 if (files.Any())
                 {
                     foreach (int x in files.Select(FindTvdbShowCode).Where(x => x != -1))

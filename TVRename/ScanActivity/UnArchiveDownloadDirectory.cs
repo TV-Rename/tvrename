@@ -68,9 +68,9 @@ internal class UnArchiveDownloadDirectory : ScanActivity
 
     private void ReviewArchive(FileInfo fi)
     {
-        List<ShowConfiguration> matchingShowsAll = MDoc.TvLibrary.GetSortedShowItems().Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<ShowConfiguration> matchingShowsAll = [.. MDoc.TvLibrary.GetSortedShowItems().Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<ShowConfiguration> matchingShows = FinderHelper.RemoveShortShows(matchingShowsAll);
-        List<MovieConfiguration> matchingMoviesAll = MDoc.FilmLibrary.GetSortedMovies().Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<MovieConfiguration> matchingMoviesAll = [.. MDoc.FilmLibrary.GetSortedMovies().Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<MovieConfiguration> matchingMovies = FinderHelper.RemoveShortShows(matchingMoviesAll);
 
         List<MovieConfiguration> matchingMoviesNoShows =

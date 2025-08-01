@@ -22,27 +22,27 @@ public sealed class ItemList : SafeList<Item>
         AddNullableRange(slil);
     }
 
-    public List<Action> Actions => this.OfType<Action>().ToList();
+    public List<Action> Actions => [.. this.OfType<Action>()];
 
-    public List<Item> Checked => this.Where(i => i.CheckedItem).ToList();
+    public List<Item> Checked => [.. this.Where(i => i.CheckedItem)];
 
-    public List<ItemMissing> Missing => this.OfType<ItemMissing>().ToList();
+    public List<ItemMissing> Missing => [.. this.OfType<ItemMissing>()];
 
-    public List<ShowItemMissing> MissingEpisodes => this.OfType<ShowItemMissing>().ToList();
-    public List<ShowSeasonMissing> MissingSeasons => this.OfType<ShowSeasonMissing>().ToList();
-    public List<MovieItemMissing> MissingMovies => this.OfType<MovieItemMissing>().ToList();
+    public List<ShowItemMissing> MissingEpisodes => [.. this.OfType<ShowItemMissing>()];
+    public List<ShowSeasonMissing> MissingSeasons => [.. this.OfType<ShowSeasonMissing>()];
+    public List<MovieItemMissing> MissingMovies => [.. this.OfType<MovieItemMissing>()];
 
-    public List<ActionMoveRenameDirectory> MoveRenameDirectories => this.OfType<ActionMoveRenameDirectory>().ToList();
+    public List<ActionMoveRenameDirectory> MoveRenameDirectories => [.. this.OfType<ActionMoveRenameDirectory>()];
 
-    public List<ActionCopyMoveRename> CopyMove => this.OfType<ActionCopyMoveRename>().Where(a => a.Operation != ActionCopyMoveRename.Op.rename).ToList();
+    public List<ActionCopyMoveRename> CopyMove => [.. this.OfType<ActionCopyMoveRename>().Where(a => a.Operation != ActionCopyMoveRename.Op.rename)];
 
-    public List<ActionTDownload> DownloadTorrents => this.OfType<ActionTDownload>().ToList();
+    public List<ActionTDownload> DownloadTorrents => [.. this.OfType<ActionTDownload>()];
 
-    public List<ActionDownloadImage> SaveImages => this.OfType<ActionDownloadImage>().ToList();
+    public List<ActionDownloadImage> SaveImages => [.. this.OfType<ActionDownloadImage>()];
 
-    public List<ActionCopyMoveRename> CopyMoveRename => this.OfType<ActionCopyMoveRename>().ToList();
+    public List<ActionCopyMoveRename> CopyMoveRename => [.. this.OfType<ActionCopyMoveRename>()];
 
-    public List<ItemDownloading> Downloading => this.OfType<ItemDownloading>().ToList();
+    public List<ItemDownloading> Downloading => [.. this.OfType<ItemDownloading>()];
 
     public void Replace(IEnumerable<Item>? toRemove, IEnumerable<Item>? newList)
     {
@@ -50,7 +50,7 @@ public sealed class ItemList : SafeList<Item>
         AddNullableRange(newList);
     }
 
-    public List<Action> TorrentActions => this.Where(a => a is ActionTRemove or ActionTDownload).OfType<Action>().ToList();
+    public List<Action> TorrentActions => [.. this.Where(a => a is ActionTRemove or ActionTDownload).OfType<Action>()];
 
     internal void Remove(IEnumerable<Item>? toRemove)
     {
@@ -69,7 +69,7 @@ public sealed class ItemList : SafeList<Item>
     {
         if (newItem is not null)
         {
-            Replace(toRemove, new List<Item> { newItem });
+            Replace(toRemove, [newItem]);
         }
         else
         {

@@ -70,7 +70,7 @@ public abstract class DownloadFinder : Finder
     {
         IEnumerable<ActionTDownload> bestDownloads = Rationalize(newItemsForThisMissingEpisode);
 
-        IEnumerable<ActionTDownload> actionTDownloads = bestDownloads.ToList();
+        IEnumerable<ActionTDownload> actionTDownloads = [.. bestDownloads];
         if (actionTDownloads.HasAny())
         {
             foreach (ActionTDownload x in actionTDownloads)

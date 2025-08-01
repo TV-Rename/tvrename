@@ -220,7 +220,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
         // actors...
         foreach (string aa in
                  SelectedShow.CachedShow?.GetActorNames().Where(aa => !string.IsNullOrEmpty(aa)) ??
-                 new List<string>())
+                 [])
         {
             writer.WriteElement("actor", aa);
         }

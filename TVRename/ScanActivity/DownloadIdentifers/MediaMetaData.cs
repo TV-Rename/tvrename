@@ -74,7 +74,7 @@ internal sealed class MediaMetaData : DownloadIdentifier
 
             if (data.Genres.HasAny() && NotEqual(tfile.Tag.Genres, data.Genres))
             {
-                returnActions.Add(new UpdateMediaFileGenres(file, movie, data.Genres.ToEnumerable().ToArray()));
+                returnActions.Add(new UpdateMediaFileGenres(file, movie, [.. data.Genres.ToEnumerable()]));
             }
 
             if (data.Year.HasValue && tfile.Tag.Year != data.Year)

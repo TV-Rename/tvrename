@@ -28,7 +28,7 @@ internal class MovieManualFoldersMirrorAutomaticCheck : MovieCheck
     protected override void FixInternal()
     {
         IEnumerable<string> matchingLocations =
-            Movie.ManualLocations.Where(loc => LocationsMatch(Movie.AutoFolderNameForMovie(), loc)).ToList();
+            [.. Movie.ManualLocations.Where(loc => LocationsMatch(Movie.AutoFolderNameForMovie(), loc))];
 
         Movie.ManualLocations.RemoveNullableRange(matchingLocations);
 
