@@ -35,7 +35,7 @@ internal class DownloadIdentifiersController
             new DownloadKodiMetaData(),
             new DownloadKodiImages(),
             new IncorrectFileDates(),
-            new MediaMetaData(),
+            //new MediaMetaData(), //Disabled due to extensive additional time to scan folder and no settings to disable it
         ];
     }
 

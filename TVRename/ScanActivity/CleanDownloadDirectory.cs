@@ -438,7 +438,7 @@ internal class CleanDownloadDirectory : ScanActivity
 
             case FileHelper.VideoComparison.cantTell:
             case FileHelper.VideoComparison.similar:
-                if (unattended)
+                if (unattended || (!TVSettings.Instance.ReplaceWithBetterQuality && !TVSettings.Instance.ChooseWhenMultipleEpisodesMatch))
                 {
                     LOGGER.Info(
                         $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
@@ -507,7 +507,7 @@ internal class CleanDownloadDirectory : ScanActivity
 
             case FileHelper.VideoComparison.cantTell:
             case FileHelper.VideoComparison.similar:
-                if (unattended)
+                if (unattended || !TVSettings.Instance.ReplaceMoviesWithBetterQuality)
                 {
                     LOGGER.Info(
                         $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
