@@ -54,12 +54,13 @@ public partial class QuickRename : Form, IDialogParent
         // Get a list of filenames being dragged
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop, false);
 
-            foreach (FileInfo droppedFile in files.Select(droppedFileName => new FileInfo(droppedFileName)))
-            {
-                ProcessUnknown(droppedFile, this);
-            }
+            if (files is not null)
+                foreach (FileInfo droppedFile in files.Select(droppedFileName => new FileInfo(droppedFileName)))
+                {
+                    ProcessUnknown(droppedFile, this);
+                }
         }
 
         parent.FillActionList();
@@ -116,9 +117,9 @@ public partial class QuickRename : Form, IDialogParent
         // Note that the extension of the file may not be fi.extension as users can put ".mkv.t" for example as an extension
         string otherExtension = TVSettings.Instance.FileHasUsefulExtensionDetails(droppedFile, true);
 
-        ShowConfiguration? bestShow = (string)cbShowList.SelectedItem == "<Auto>"
+        ShowConfiguration? bestShow = (string?)cbShowList.SelectedItem == "<Auto>"
             ? FinderHelper.FindBestMatchingShow(droppedFile.FullName, mDoc.TvLibrary.Shows)
-            : mDoc.TvLibrary.Shows.FirstOrDefault(item => item.ShowName == (string)cbShowList.SelectedItem);
+            : mDoc.TvLibrary.Shows.FirstOrDefault(item => item.ShowName == (string?)cbShowList.SelectedItem);
 
         if (bestShow is null)
         {

@@ -5,16 +5,10 @@ using TVRename.Forms.Tools;
 
 namespace TVRename.Forms;
 
-internal class RemedySettings : LongOperation
+internal class RemedySettings(IEnumerable<SettingsCheck> selectedItems, SettingsReview parent) : LongOperation
 {
-    private readonly IEnumerable<SettingsCheck> selectedItems;
-    private readonly SettingsReview parent;
-
-    public RemedySettings(IEnumerable<SettingsCheck> selectedItems, SettingsReview parent)
-    {
-        this.selectedItems = selectedItems;
-        this.parent = parent;
-    }
+    private readonly IEnumerable<SettingsCheck> selectedItems = selectedItems;
+    private readonly SettingsReview parent = parent;
 
     public override void Start(SetProgressDelegate? progress, CancellationToken sourceToken)
     {

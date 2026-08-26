@@ -170,20 +170,12 @@ namespace DaveChambers.FolderBrowserDialogEx
             }
 
             [StructLayout(LayoutKind.Sequential)]
-            public struct RECT
+            public struct RECT(int left, int top, int width, int height)
             {
-                public int Left;
-                public int Top;
-                public int Right;
-                public int Bottom;
-
-                public RECT(int left, int top, int width, int height)
-                {
-                    Left = left;
-                    Top = top;
-                    Right = left + width;
-                    Bottom = top + height;
-                }
+                public int Left = left;
+                public int Top = top;
+                public int Right = left + width;
+                public int Bottom = top + height;
 
                 public int Height => Bottom - Top;
                 public int Width => Right - Left;
@@ -197,16 +189,10 @@ namespace DaveChambers.FolderBrowserDialogEx
             public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 
             [StructLayout(LayoutKind.Sequential)]
-            public readonly struct POINT
+            public readonly struct POINT(int x, int y)
             {
-                public readonly int X;
-                public readonly int Y;
-
-                public POINT(int x, int y)
-                {
-                    X = x;
-                    Y = y;
-                }
+                public readonly int X = x;
+                public readonly int Y = y;
 
                 public static implicit operator Point(POINT p) => new(p.X, p.Y);
 
@@ -349,30 +335,18 @@ namespace DaveChambers.FolderBrowserDialogEx
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        public struct InitData
+        public struct InitData(FolderBrowserDialogEx dlg, IntPtr hParent)
         {
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]   // Titles shouldn't too long, should they?
-            public readonly string Title;
+            public readonly string Title = dlg.Title;
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Win32.MAX_PATH)]
-            public readonly string InitialPath;
+            public readonly string InitialPath = dlg.SelectedPath;
 
-            public readonly bool ShowEditbox;
-            public readonly bool ShowNewFolderButton;
-            public readonly FormStartPosition StartPosition;
-            public IntPtr hParent;
-
-            public InitData(FolderBrowserDialogEx dlg, IntPtr hParent)
-            {
-                // We need to make copies of these values from the dialog.
-                // I tried passing the dlg obj itself in this struct, but Windows will barf after repeated invocations.
-                Title = dlg.Title;
-                InitialPath = dlg.SelectedPath;
-                ShowNewFolderButton = dlg.ShowNewFolderButton;
-                ShowEditbox = dlg.ShowEditbox;
-                StartPosition = dlg.StartPosition;
-                this.hParent = hParent;
-            }
+            public readonly bool ShowEditbox = dlg.ShowEditbox;
+            public readonly bool ShowNewFolderButton = dlg.ShowNewFolderButton;
+            public readonly FormStartPosition StartPosition = dlg.StartPosition;
+            public IntPtr hParent = hParent;
         }
 
         public FolderBrowserDialogEx()

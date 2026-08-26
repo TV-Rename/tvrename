@@ -34,7 +34,7 @@ using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using MessageBox = System.Windows.Forms.MessageBox;
-using SystemColors = System.Drawing.SystemColors;
+using Resources = TVRename.Properties.Resources;
 using Timer = System.Windows.Forms.Timer;
 
 namespace TVRename.Forms;
@@ -191,7 +191,7 @@ public partial class UI : Form, IDialogParent
 
     private static void WaitForCefInitialised()
     {
-        WaitFor(() => CefSharp.Cef.IsInitialized, 10, "browser to initialise", true);
+        WaitFor(() => CefSharp.Cef.IsInitialized??false, 10, "browser to initialise", true);
     }
 
     private static void WaitFor(Func<bool> func, int maxSeconds, string textMessage, bool doLogging)
@@ -408,11 +408,11 @@ public partial class UI : Form, IDialogParent
     private void OlvAction_Dropped(object sender, OlvDropEventArgs e)
     {
         // Get a list of filenames being dragged
-        string[] files = (string[])((DataObject)e.DataObject).GetData(DataFormats.FileDrop, false);
+        string[]? files = (string[]?)((DataObject)e.DataObject).GetData(DataFormats.FileDrop, false);
 
         // Establish item in list being dragged to, and exit if no item matched
         // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
-        if (files.Length <= 0 || e.DropTargetItem.RowObject is not ItemMissing mi)
+        if (files is null || files.Length <= 0 || e.DropTargetItem.RowObject is not ItemMissing mi)
         {
             return;
         }
@@ -1484,7 +1484,7 @@ public partial class UI : Form, IDialogParent
         }
         else
         {
-            TreeNode n = MyShowTree.SelectedNode;
+            TreeNode? n = MyShowTree.SelectedNode;
             FillEpGuideHtml(n);
         }
     }
@@ -1497,7 +1497,7 @@ public partial class UI : Form, IDialogParent
         }
         else
         {
-            TreeNode n = movieTree.SelectedNode;
+            TreeNode? n = movieTree.SelectedNode;
             FillMovieGuideHtml(TreeNodeToMovieItem(n));
         }
     }
@@ -1683,11 +1683,11 @@ public partial class UI : Form, IDialogParent
     {
         if (GetUsedSearchers() == TVDoc.GetMovieSearchers())
         {
-            mDoc.SetMovieSearcher((SearchEngine)e.ClickedItem.Tag);
+            mDoc.SetMovieSearcher((SearchEngine?)e.ClickedItem?.Tag);
         }
         else
         {
-            mDoc.SetSearcher((SearchEngine)e.ClickedItem.Tag);
+            mDoc.SetSearcher((SearchEngine?)e.ClickedItem?.Tag);
         }
 
         UpdateSearchButtons();
@@ -1813,32 +1813,35 @@ public partial class UI : Form, IDialogParent
 
         int n = lvWhenToWatch.SelectedIndices[0];
 
-        ProcessedEpisode ei = (ProcessedEpisode)lvWhenToWatch.Items[n].Tag;
-        switchToWhenOpenMyShows = ei;
+        ProcessedEpisode? ei = (ProcessedEpisode?)lvWhenToWatch.Items[n].Tag;
+        if (ei != null)
+        {
+            switchToWhenOpenMyShows = ei;
 
-        if (TVSettings.Instance.HideWtWSpoilers &&
-            (ei.HowLong() != "Aired" || lvWhenToWatch.Items[n].ImageIndex == 1))
-        {
-            txtWhenToWatchSynopsis.Text = Resources.Spoilers_Hidden_Text;
-        }
-        else if (ei.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
-        {
-            txtWhenToWatchSynopsis.Text = string.Join(Environment.NewLine + Environment.NewLine, ei.SourceEpisodes.Select(episode => episode.Overview?.ToUiVersion()));
-        }
-        else
-        {
-            txtWhenToWatchSynopsis.Text = ei.Overview?.ToUiVersion();
-        }
+            if (TVSettings.Instance.HideWtWSpoilers &&
+                (ei.HowLong() != "Aired" || lvWhenToWatch.Items[n].ImageIndex == 1))
+            {
+                txtWhenToWatchSynopsis.Text = Resources.Spoilers_Hidden_Text;
+            }
+            else if (ei.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
+            {
+                txtWhenToWatchSynopsis.Text = string.Join(Environment.NewLine + Environment.NewLine, ei.SourceEpisodes.Select(episode => episode.Overview?.ToUiVersion()));
+            }
+            else
+            {
+                txtWhenToWatchSynopsis.Text = ei.Overview?.ToUiVersion();
+            }
 
-        mInternalChange++;
-        DateTime? dt = ei.GetAirDateDt();
-        if (dt != null)
-        {
-            calCalendar.SelectionStart = (DateTime)dt;
-            calCalendar.SelectionEnd = (DateTime)dt;
-        }
+            mInternalChange++;
+            DateTime? dt = ei.GetAirDateDt();
+            if (dt != null)
+            {
+                calCalendar.SelectionStart = (DateTime)dt;
+                calCalendar.SelectionEnd = (DateTime)dt;
+            }
 
-        mInternalChange--;
+            mInternalChange--;
+        }
     }
 
     private void lvWhenToWatch_DoubleClick(object sender, EventArgs e)
@@ -1848,7 +1851,10 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        ProcessedEpisode ei = (ProcessedEpisode)lvWhenToWatch.SelectedItems[0].Tag;
+        ProcessedEpisode? ei = (ProcessedEpisode?)lvWhenToWatch.SelectedItems[0].Tag;
+
+        if (ei is null) return;
+
         List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, ei);
         if (fl.Any())
         {
@@ -1888,8 +1894,8 @@ public partial class UI : Form, IDialogParent
         {
             lvi.Selected = false;
 
-            ProcessedEpisode ei = (ProcessedEpisode)lvi.Tag;
-            DateTime? dt2 = ei.GetAirDateDt();
+            ProcessedEpisode? ei = (ProcessedEpisode?)lvi.Tag;
+            DateTime? dt2 = ei?.GetAirDateDt();
             if (dt2 != null)
             {
                 double h = dt2.Value.Subtract(dt).TotalHours;
@@ -1956,7 +1962,7 @@ public partial class UI : Form, IDialogParent
     {
         foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
         {
-            TVDoc.SearchForEpisode((ProcessedEpisode)lvi.Tag);
+            TVDoc.SearchForEpisode((ProcessedEpisode?)lvi.Tag);
         }
     }
 
@@ -2988,7 +2994,7 @@ public partial class UI : Form, IDialogParent
 
     private void bnMyShowsDelete_Click(object sender, EventArgs e)
     {
-        TreeNode n = MyShowTree.SelectedNode;
+        TreeNode? n = MyShowTree.SelectedNode;
         ShowConfiguration? si = TreeNodeToShowItem(n);
         if (si is null)
         {
@@ -3165,7 +3171,7 @@ public partial class UI : Form, IDialogParent
 
     private void bnMyShowsEdit_Click(object sender, EventArgs e)
     {
-        TreeNode n = MyShowTree.SelectedNode;
+        TreeNode? n = MyShowTree.SelectedNode;
         if (n is null)
         {
             return;
@@ -3312,7 +3318,7 @@ public partial class UI : Form, IDialogParent
         if (ModifierKeys == Keys.Control)
         {
             // nuke currently selected show to force getting it fresh
-            TreeNode n = MyShowTree.SelectedNode;
+            TreeNode? n = MyShowTree.SelectedNode;
             ShowConfiguration? si = TreeNodeToShowItem(n);
             if (si != null)
             {
@@ -3398,7 +3404,7 @@ public partial class UI : Form, IDialogParent
         movieTree.SelectedNode = movieTree.GetNodeAt(e.X, e.Y);
 
         Point pt = movieTree.PointToScreen(new Point(e.X, e.Y));
-        TreeNode n = movieTree.SelectedNode;
+        TreeNode? n = movieTree.SelectedNode;
 
         if (n is null)
         {
@@ -3430,7 +3436,7 @@ public partial class UI : Form, IDialogParent
         MyShowTree.SelectedNode = MyShowTree.GetNodeAt(e.X, e.Y);
 
         Point pt = MyShowTree.PointToScreen(new Point(e.X, e.Y));
-        TreeNode n = MyShowTree.SelectedNode;
+        TreeNode? n = MyShowTree.SelectedNode;
 
         if (n is null)
         {
@@ -4272,8 +4278,11 @@ public partial class UI : Form, IDialogParent
         // MAH: move the "Clear" button in the Filter Text Box
         if (tb.Controls.ContainsKey("Clear"))
         {
-            Control filterButton = tb.Controls["Clear"];
+            Control? filterButton = tb.Controls["Clear"];
             int clientSizeHeight = (tb.ClientSize.Height - 16) / 2;
+
+            if (filterButton is null) return;
+
             filterButton.Location = new Point(tb.ClientSize.Width - filterButton.Width, clientSizeHeight + 1);
 
             UiHelpers.StopTextDisappearing(tb, filterButton);
@@ -4744,14 +4753,21 @@ public partial class UI : Form, IDialogParent
 
         int dd = TVSettings.Instance.WTWRecentDays;
 
-        lvWhenToWatch.Groups["justPassed"].Header =
-            "Aired in the last " + dd + " day" + (dd == 1 ? "" : "s");
+        ListViewGroup? justPassedGroup = lvWhenToWatch.Groups["justPassed"];
+
+        if (justPassedGroup != null)
+        {
+            justPassedGroup.Header =
+                "Aired in the last " + dd + " day" + (dd == 1 ? "" : "s");
+        }
 
         // try to maintain selections if we can
         List<ProcessedEpisode> selections = [];
         foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
         {
-            selections.Add((ProcessedEpisode)lvi.Tag);
+            ProcessedEpisode? tag = (ProcessedEpisode?)lvi.Tag;
+
+            if (tag != null) { selections.Add(tag); }
         }
 
         ProcessedSeason? currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
@@ -4891,24 +4907,27 @@ public partial class UI : Form, IDialogParent
 
         ToolStripButton button = (ToolStripButton)sender;
 
-        Point pt = button.Owner.PointToScreen(button.Bounds.Location);
+        Point? pt = button.Owner?.PointToScreen(button.Bounds.Location);
+
+        if (pt is null) return;
+
         List<ProcessedEpisode> eis = [.. lvWhenToWatch
             .SelectedItems
             .Cast<ListViewItem>()
             .Select(lvi => lvi.Tag as ProcessedEpisode)
             .OfType<ProcessedEpisode>()];
 
-        WtwRightClickOnShow(eis, pt);
+        WtwRightClickOnShow(eis, pt.Value);
     }
 
     private void TsbMyShowsContextMenu_Click(object sender, EventArgs e)
     {
         ToolStripButton button = (ToolStripButton)sender;
-        Point pt = button.Owner.PointToScreen(button.Bounds.Location);
+        Point? pt = button.Owner?.PointToScreen(button.Bounds.Location);
 
-        TreeNode n = MyShowTree.SelectedNode;
+        TreeNode? n = MyShowTree.SelectedNode;
 
-        if (n is null)
+        if (n is null || pt is null)
         {
             return;
         }
@@ -4918,19 +4937,22 @@ public partial class UI : Form, IDialogParent
 
         if (seas != null)
         {
-            RightClickOnMyShows(seas, pt);
+            RightClickOnMyShows(seas, pt.Value);
         }
         else if (si != null)
         {
-            RightClickOnMyShows(si, pt);
+            RightClickOnMyShows(si, pt.Value);
         }
     }
 
     private void TsbScanContextMenu_Click(object sender, EventArgs e)
     {
         ToolStripButton button = (ToolStripButton)sender;
-        Point pt = button.Owner.PointToScreen(button.Bounds.Location);
-        GenerateActionshowRightClickMenu(pt);
+        Point? pt = button.Owner?.PointToScreen(button.Bounds.Location);
+
+        if (pt is null) return;
+
+        GenerateActionshowRightClickMenu(pt.Value);
     }
 
     private void ToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -4968,7 +4990,7 @@ public partial class UI : Form, IDialogParent
         {
             foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
             {
-                JackettFinder.SearchForEpisode((ProcessedEpisode)lvi.Tag);
+                JackettFinder.SearchForEpisode((ProcessedEpisode?)lvi.Tag);
             }
         }
     }
@@ -4996,7 +5018,7 @@ public partial class UI : Form, IDialogParent
 
     private void btnMovieDelete_Click(object sender, EventArgs e)
     {
-        TreeNode n = movieTree.SelectedNode;
+        TreeNode? n = movieTree.SelectedNode;
         MovieConfiguration? si = TreeNodeToMovieItem(n);
         if (si is null)
         {
@@ -5077,9 +5099,9 @@ public partial class UI : Form, IDialogParent
     private void tsbMyMoviesContextMenu_Click(object sender, EventArgs e)
     {
         ToolStripButton button = (ToolStripButton)sender;
-        Point pt = button.Owner.PointToScreen(button.Bounds.Location);
+        Point? pt = button.Owner?.PointToScreen(button.Bounds.Location);
 
-        TreeNode n = movieTree.SelectedNode;
+        TreeNode? n = movieTree.SelectedNode;
 
         if (n is null)
         {
@@ -5087,9 +5109,9 @@ public partial class UI : Form, IDialogParent
         }
 
         MovieConfiguration? si = TreeNodeToMovieItem(n);
-        if (si != null)
+        if (si != null && pt != null)
         {
-            RightClickOnMyMovies(si, pt);
+            RightClickOnMyMovies(si, pt.Value);
         }
     }
 
@@ -5106,7 +5128,7 @@ public partial class UI : Form, IDialogParent
         if (ModifierKeys == Keys.Control)
         {
             // nuke currently selected show to force getting it fresh
-            TreeNode n = movieTree.SelectedNode;
+            TreeNode? n = movieTree.SelectedNode;
             MovieConfiguration? si = TreeNodeToMovieItem(n);
             if (si is not null)
             {

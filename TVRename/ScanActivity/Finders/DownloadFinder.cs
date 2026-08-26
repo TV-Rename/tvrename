@@ -11,12 +11,8 @@ using System.Linq;
 
 namespace TVRename;
 
-public abstract class DownloadFinder : Finder
+public abstract class DownloadFinder(TVDoc doc, TVDoc.ScanSettings settings) : Finder(doc, settings)
 {
-    protected DownloadFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
     protected static bool RssMatch(RSSItem rss, ProcessedEpisode pe)

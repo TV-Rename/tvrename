@@ -13,12 +13,8 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-public sealed class TextSorter : ListViewItemSorter
+public sealed class TextSorter(int column) : ListViewItemSorter(column)
 {
-    public TextSorter(int column) : base(column)
-    {
-    }
-
     protected override int CompareListViewItem(ListViewItem x, ListViewItem y) =>
         string.Compare(x.SubItems[Col].Text, y.SubItems[Col].Text, StringComparison.OrdinalIgnoreCase);
 }

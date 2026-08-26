@@ -37,11 +37,16 @@ public partial class UpcomingPopup : Form
     }
     private void UpcomingPopup_Load(object sender, System.EventArgs e)
     {
-        int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
-        int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
-        Left = screenWidth - Width;
-        Top = screenHeight - Height;
+        Screen? primaryScreen = Screen.PrimaryScreen;
 
+        if (primaryScreen != null)
+        {
+
+            int screenWidth = primaryScreen.WorkingArea.Width;
+            int screenHeight = primaryScreen.WorkingArea.Height;
+            Left = screenWidth - Width;
+            Top = screenHeight - Height;
+        }
         FillSelf();
     }
 

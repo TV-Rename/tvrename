@@ -1,11 +1,9 @@
 namespace TVRename;
 
-public abstract class ScanMediaActivity
+public abstract class ScanMediaActivity(TVDoc doc)
 {
     protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
-    protected readonly TVDoc Doc;
-
-    protected ScanMediaActivity(TVDoc doc) => Doc = doc;
+    protected readonly TVDoc Doc = doc;
 
     protected abstract bool Active();
 

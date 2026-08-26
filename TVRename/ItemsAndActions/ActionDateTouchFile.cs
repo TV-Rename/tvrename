@@ -4,14 +4,9 @@ using System.Threading;
 
 namespace TVRename;
 
-internal abstract class ActionDateTouchFile : ActionDateTouch
+internal abstract class ActionDateTouchFile(FileInfo f, DateTime date) : ActionDateTouch(date)
 {
-    protected ActionDateTouchFile(FileInfo f, DateTime date) : base(date)
-    {
-        WhereFile = f;
-    }
-
-    protected readonly FileInfo WhereFile;
+    protected readonly FileInfo WhereFile = f;
     public override string Produces => WhereFile.FullName;
     public override string ProgressText => WhereFile.Name;
     public override IgnoreItem Ignore => new(WhereFile.FullName);

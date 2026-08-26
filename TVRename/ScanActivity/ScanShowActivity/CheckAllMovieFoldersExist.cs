@@ -5,12 +5,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class CheckAllMovieFoldersExist : ScanMovieActivity
+internal class CheckAllMovieFoldersExist(TVDoc doc) : ScanMovieActivity(doc)
 {
-    public CheckAllMovieFoldersExist(TVDoc doc) : base(doc)
-    {
-    }
-
     protected override string ActivityName() => "Checked All movie Folders Exist";
 
     protected override void Check(MovieConfiguration movie, DirFilesCache dfc, TVDoc.ScanSettings settings)

@@ -12,14 +12,9 @@ using System.Text;
 
 namespace TVRename;
 
-internal abstract class UpcomingExporter : Exporter
+internal abstract class UpcomingExporter(TVDoc doc) : Exporter
 {
-    private readonly TVDoc doc;
-
-    protected UpcomingExporter(TVDoc doc)
-    {
-        this.doc = doc;
-    }
+    private readonly TVDoc doc = doc;
 
     private string Produce()
     {

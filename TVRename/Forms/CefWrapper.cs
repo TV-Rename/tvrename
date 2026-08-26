@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -18,7 +19,7 @@ public class CefWrapper
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
     private static volatile CefWrapper? InternalInstance;
-    private static readonly object SyncRoot = new();
+    private static readonly Lock SyncRoot = new();
 
     public static CefWrapper Instance
     {
@@ -51,7 +52,7 @@ public class CefWrapper
             using CefSettings settings = new();
 
             settings.CachePath = PathManager.CefCachePath();
-            settings.UserDataPath = PathManager.CefCachePath();
+            settings.RootCachePath = PathManager.CefCachePath();
             settings.LogFile = PathManager.CefLogFile();
 
             if (!Helpers.InDebug())
@@ -74,8 +75,6 @@ public class CefWrapper
             $"https://aka.ms/vs/17/release/{urlToDownload}".OpenUrlInBrowser();
         }
         CheckForBrowserDependencies(false);
-
-        Cef.EnableHighDPISupport();
     }
 
     public static void Shutdown()

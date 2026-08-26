@@ -11,17 +11,13 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-public class DateSorterWtw : ListViewItemDateSorter
+public class DateSorterWtw(int column) : ListViewItemDateSorter(column)
 {
-    public DateSorterWtw(int column) : base(column)
-    {
-    }
-
     protected override DateTime? GetDate(ListViewItem lvi)
     {
         try
         {
-            return ((ProcessedEpisode)lvi.Tag).GetAirDateDt();
+            return ((ProcessedEpisode?)lvi.Tag)?.GetAirDateDt();
         }
         catch
         {

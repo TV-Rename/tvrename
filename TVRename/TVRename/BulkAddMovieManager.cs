@@ -9,11 +9,11 @@ using TVRename.Forms;
 
 namespace TVRename;
 
-public class BulkAddMovieManager
+public class BulkAddMovieManager(TVDoc doc)
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-    public PossibleNewMovies AddItems;
-    private readonly TVDoc mDoc;
+    public PossibleNewMovies AddItems = [];
+    private readonly TVDoc mDoc = doc;
 
     //Thread safe counters to work out the progress
     //for scanning
@@ -22,12 +22,6 @@ public class BulkAddMovieManager
     private static int CurrentPhaseTotalDirectory;
     private static int CurrentPhase;
     private static int CurrentPhaseTotal;
-
-    public BulkAddMovieManager(TVDoc doc)
-    {
-        AddItems = [];
-        mDoc = doc;
-    }
 
     private static DirectoryInfo[]? GetValidDirectories(DirectoryInfo di)
     {

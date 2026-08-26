@@ -1469,11 +1469,11 @@ internal static class ShowHtmlHelper
     internal static string GenreIconHtml(string genre)
     {
         string[] availableIcons =
-        {
+        [
             "Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama", "Family",
             "Fantasy", "Food", "Horror", "Mini-Series", "Mystery", "Reality", "Romance", "Science-Fiction", "Soap",
             "Talk Show", "Thriller", "Travel", "War", "Western"
-        };
+        ];
 
         const string ROOT = "https://www.tvrename.com/assets/images/GenreIcons/";
 

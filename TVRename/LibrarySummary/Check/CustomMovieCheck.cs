@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal abstract class CustomMovieCheck : MovieCheck
+internal abstract class CustomMovieCheck(MovieConfiguration movie, TVDoc doc) : MovieCheck(movie, doc)
 {
-    protected CustomMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     protected override string MovieCheckName => FieldName;
     protected abstract string FieldName { get; }
     protected abstract bool Field { get; }

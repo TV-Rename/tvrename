@@ -12,12 +12,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class ShowsHtml : ShowsExporter
+internal class ShowsHtml(List<ShowConfiguration> shows) : ShowsExporter(shows)
 {
-    public ShowsHtml(List<ShowConfiguration> shows) : base(shows)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportShowsHTML;
 
     protected override string Location() => TVSettings.Instance.ExportShowsHTMLTo;

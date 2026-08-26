@@ -7,16 +7,12 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
 
-internal class RenameAndMissingCheck : ScanShowActivity
+internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
 {
-    private readonly DownloadIdentifiersController downloadIdentifiers;
+    private readonly DownloadIdentifiersController downloadIdentifiers = new();
 
     protected override string ActivityName() => "Rename & Missing Check";
     protected override bool Active() => true;
-    public RenameAndMissingCheck(TVDoc doc) : base(doc)
-    {
-        downloadIdentifiers = new DownloadIdentifiersController();
-    }
 
     protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {

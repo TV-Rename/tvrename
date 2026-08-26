@@ -114,7 +114,7 @@ public class ShowConfiguration : MediaConfiguration
         AutoAddFolderBase =
             !TVSettings.Instance.DefShowAutoFolders ? string.Empty
             : !TVSettings.Instance.DefShowUseDefLocation ? string.Empty
-            : TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator() + TVSettings.Instance.DefaultTVShowFolder(this);
+            : TVSettings.Instance.DefShowLocation.ToNonNullString().EnsureEndsWithSeparator() + TVSettings.Instance.DefaultTVShowFolder(this);
 
         AutoAddType =
             !TVSettings.Instance.DefShowAutoFolders ? AutomaticFolderType.none
@@ -814,12 +814,13 @@ public class ShowConfiguration : MediaConfiguration
 
     public void AddSeasonRule(int snum, ShowRule sr)
     {
-        if (!SeasonRules.ContainsKey(snum))
+        if (!SeasonRules.TryGetValue(snum, out List<ShowRule>? value))
         {
-            SeasonRules[snum] = [];
+            value = [];
+            SeasonRules[snum] = value;
         }
 
-        SeasonRules[snum].Add(sr);
+        value.Add(sr);
     }
 
     public ConcurrentDictionary<int, ProcessedSeason> AppropriateSeasons() => DvdOrder ? dvdSeasons : airedSeasons;

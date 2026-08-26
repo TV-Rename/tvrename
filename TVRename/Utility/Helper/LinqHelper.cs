@@ -11,10 +11,7 @@ internal static class LinqHelper
 {
     public static bool In<T>(this T? item, params T[] items)
     {
-        if (items == null)
-        {
-            throw new ArgumentNullException(nameof(items));
-        }
+        ArgumentNullException.ThrowIfNull(items);
 
         return items.Contains(item);
     }

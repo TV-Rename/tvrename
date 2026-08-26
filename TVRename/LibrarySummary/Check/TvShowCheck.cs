@@ -1,13 +1,8 @@
 namespace TVRename;
 
-internal abstract class TvShowCheck : SettingsCheck
+internal abstract class TvShowCheck(ShowConfiguration show, TVDoc doc) : SettingsCheck(doc)
 {
-    public readonly ShowConfiguration Show;
-
-    protected TvShowCheck(ShowConfiguration show, TVDoc doc) : base(doc)
-    {
-        Show = show;
-    }
+    public readonly ShowConfiguration Show = show;
 
     protected override void MarkMediaDirty()
     {

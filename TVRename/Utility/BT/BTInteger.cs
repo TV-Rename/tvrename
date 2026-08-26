@@ -1,13 +1,7 @@
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-public class BTInteger : BTItem
+public class BTInteger(long value) : BTItem(BTChunk.kInteger)
 {
-    internal readonly long Value;
-
-    public BTInteger(long value)
-        : base(BTChunk.kInteger)
-    {
-        Value = value;
-    }
+    internal readonly long Value = value;
 }

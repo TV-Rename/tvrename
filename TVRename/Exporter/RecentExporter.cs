@@ -13,14 +13,9 @@ using System.Linq;
 
 namespace TVRename;
 
-internal abstract class RecentExporter : Exporter
+internal abstract class RecentExporter(TVDoc doc) : Exporter
 {
-    private readonly TVDoc doc;
-
-    protected RecentExporter(TVDoc doc)
-    {
-        this.doc = doc;
-    }
+    private readonly TVDoc doc = doc;
 
     /// <exception cref="ArgumentException">Locaiton is not valid.</exception>
     /// <exception cref="UnauthorizedAccessException">Access is denied.</exception>

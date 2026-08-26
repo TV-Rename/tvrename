@@ -11,12 +11,8 @@ using Alphaleonis.Win32.Filesystem;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class RecentWPLExporter : RecentExporter
+internal class RecentWPLExporter(TVDoc doc) : RecentExporter(doc)
 {
-    public RecentWPLExporter(TVDoc doc) : base(doc)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportRecentWPL;
     protected override string Name() => "Recent WPL Exporter";
 

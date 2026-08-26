@@ -4,14 +4,9 @@ using System.Threading;
 
 namespace TVRename;
 
-internal abstract class ActionDateTouchDirectory : ActionDateTouch
+internal abstract class ActionDateTouchDirectory(DirectoryInfo dir, DateTime date) : ActionDateTouch(date)
 {
-    private readonly DirectoryInfo whereDirectory;
-
-    protected ActionDateTouchDirectory(DirectoryInfo dir, DateTime date) : base(date)
-    {
-        whereDirectory = dir;
-    }
+    private readonly DirectoryInfo whereDirectory = dir;
 
     public override string Produces => whereDirectory.FullName;
     public override string ProgressText => whereDirectory.Name;

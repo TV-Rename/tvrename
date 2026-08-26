@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class DefaultFutureMovieCheck : DefaultMovieCheck
+internal class DefaultFutureMovieCheck(MovieConfiguration show, TVDoc doc) : DefaultMovieCheck(show, doc)
 {
-    public DefaultFutureMovieCheck(MovieConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override string FieldName => "Do Future Movies Check";
 
     protected override bool Field => Movie.ForceCheckFuture;

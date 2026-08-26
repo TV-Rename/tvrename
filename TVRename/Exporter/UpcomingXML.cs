@@ -15,12 +15,8 @@ using System.Xml;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class UpcomingXML : UpcomingExporter
+internal class UpcomingXML(TVDoc i) : UpcomingExporter(i)
 {
-    public UpcomingXML(TVDoc i) : base(i)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportWTWXML;
     protected override string Name() => "Upcoming XML Exporter";
     protected override string Location() => TVSettings.Instance.ExportWTWXMLTo;
@@ -55,7 +51,7 @@ internal class UpcomingXML : UpcomingExporter
             if (ei.HasAired())
             {
                 List<FileInfo> fl = dfc.FindEpOnDisk(ei);
-                if (fl.Any())
+                if (fl.Count != 0)
                 {
                     writer.WriteValue("true");
                 }

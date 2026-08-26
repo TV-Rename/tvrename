@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class MovieFolderTypeCheck : MovieCheck
+internal class MovieFolderTypeCheck(MovieConfiguration movie, TVDoc doc) : MovieCheck(movie, doc)
 {
-    public MovieFolderTypeCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     public override bool Check() => Movie.Format != TVSettings.Instance.DefMovieFolderFormat;
 
     public override string Explain() => $"The default format for movies is {TVSettings.Instance.DefMovieFolderFormat.PrettyPrint()}, this movie uses {Movie.Format.PrettyPrint()}.";

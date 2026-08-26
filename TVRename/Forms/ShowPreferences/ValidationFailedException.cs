@@ -2,9 +2,6 @@ using System;
 
 namespace TVRename;
 
-public class ValidationFailedException : Exception
+public class ValidationFailedException(string message) : Exception(message)
 {
-    public ValidationFailedException(string message) : base(message)
-    {
-    }
 }

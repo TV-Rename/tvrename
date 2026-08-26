@@ -9,12 +9,8 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
 
-internal class FolderBaseLibraryDefaultTvCheck : TvShowCheck
+internal class FolderBaseLibraryDefaultTvCheck(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
 {
-    public FolderBaseLibraryDefaultTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     public override bool Check() => Show.AutoAddFolderBase.HasValue() && TVSettings.Instance.LibraryFolders.Any(lf => lf.IsSubfolderOf(Show.AutoAddFolderBase));
 
     public override string Explain() => "This TV show's folder is a Library folder. This indicates that the files are stored at the root of the library.";

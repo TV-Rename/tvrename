@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class DefaultAirDateMatchingTvCheck : DefaultTvShowCheck
+internal class DefaultAirDateMatchingTvCheck(ShowConfiguration show, TVDoc doc) : DefaultTvShowCheck(show, doc)
 {
-    public DefaultAirDateMatchingTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override string FieldName => "Do Airdate matching Check";
 
     protected override bool Field => Show.UseAirDateMatch;

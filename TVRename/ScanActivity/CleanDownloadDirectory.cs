@@ -5,21 +5,13 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class CleanDownloadDirectory : ScanActivity
+internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    public CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-        filesThatMayBeNeeded = [];
-        returnActions = [];
-        showList = [];
-        movieList = [];
-    }
-
-    private List<FileInfo> filesThatMayBeNeeded;
+    private List<FileInfo> filesThatMayBeNeeded = [];
     private readonly DirFilesCache dfc = new();
-    private ICollection<ShowConfiguration> showList;
-    private ICollection<MovieConfiguration> movieList;
-    private readonly ItemList returnActions;
+    private ICollection<ShowConfiguration> showList = [];
+    private ICollection<MovieConfiguration> movieList = [];
+    private readonly ItemList returnActions = [];
 
     public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
                                      TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies ||

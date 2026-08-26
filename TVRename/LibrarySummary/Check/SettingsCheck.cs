@@ -3,9 +3,9 @@ using System;
 
 namespace TVRename;
 
-internal abstract class SettingsCheck
+internal abstract class SettingsCheck(TVDoc doc)
 {
-    protected readonly TVDoc Doc;
+    protected readonly TVDoc Doc = doc;
 
     public abstract bool Check();
 
@@ -63,9 +63,4 @@ internal abstract class SettingsCheck
 
     public abstract string CheckName { get; }
     protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
-
-    protected SettingsCheck(TVDoc doc)
-    {
-        Doc = doc;
-    }
 }

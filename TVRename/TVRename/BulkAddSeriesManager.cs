@@ -21,17 +21,11 @@ namespace TVRename;
 /// Handles the logic behind the Bulk Add Function
 /// Works in conjunction with a UI to show outcomes to the user
 /// </summary>
-public class BulkAddSeriesManager
+public class BulkAddSeriesManager(TVDoc doc)
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-    public FolderMonitorEntryList AddItems;
-    private readonly TVDoc mDoc;
-
-    public BulkAddSeriesManager(TVDoc doc)
-    {
-        AddItems = [];
-        mDoc = doc;
-    }
+    public FolderMonitorEntryList AddItems = [];
+    private readonly TVDoc mDoc = doc;
 
     public static void GuessShowItem(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
     {
@@ -234,7 +228,7 @@ public class BulkAddSeriesManager
                             continue;
                         }
                         //We have a match!
-                        folderFormat = m.Groups["prefix"].Value + m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0", StringComparison.Ordinal) ? "{Season:2}" : "{Season}");
+                        folderFormat = m.Groups["prefix"].Value + m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith('0') ? "{Season:2}" : "{Season}");
 
                         Logger.Info($"Assuming {di.FullName} contains a show because pattern '{folderFormat}' is found in subdirectory {subDir.FullName}");
                     }

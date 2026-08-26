@@ -2,12 +2,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class FolderBaseMovieCheck : MovieCheck
+internal class FolderBaseMovieCheck(MovieConfiguration movie, TVDoc doc) : MovieCheck(movie, doc)
 {
-    public FolderBaseMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     public override bool Check() => Movie.UseAutomaticFolders && !Movie.AutomaticFolderRoot.HasValue();
 
     public override string Explain() => "This Movie does not have an automatic folder base specified.";

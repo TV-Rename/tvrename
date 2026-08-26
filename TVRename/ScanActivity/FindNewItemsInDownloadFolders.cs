@@ -13,12 +13,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class FindNewItemsInDownloadFolders : ScanActivity
+internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    public FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     protected override string CheckName() => "Looked in the Search Folders for any new series/movies that need to be added to the library";
 
     protected override void DoCheck(SetProgressDelegate progress)

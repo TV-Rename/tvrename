@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class DefaultDoRenameTvCheck : DefaultTvShowCheck
+internal class DefaultDoRenameTvCheck(ShowConfiguration show, TVDoc doc) : DefaultTvShowCheck(show, doc)
 {
-    public DefaultDoRenameTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override string FieldName => "Rename Check";
 
     protected override bool Field => Show.DoRename;

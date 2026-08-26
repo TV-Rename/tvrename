@@ -41,7 +41,7 @@ public partial class LinkMovie : Form
     private void btnUseSelectedMovie_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.OK;
-        ChosenShow = (MovieConfiguration)cbShows.SelectedItem;
+        ChosenShow = (MovieConfiguration?)cbShows.SelectedItem;
         Close();
     }
 

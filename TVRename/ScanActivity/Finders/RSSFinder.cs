@@ -11,12 +11,8 @@ using System.Linq;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class RSSFinder : DownloadFinder
+internal class RSSFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadFinder(doc, settings)
 {
-    public RSSFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.SearchRSS;
 
     protected override string CheckName() => "Looked in the listed RSS URLs for download links for the missing files";

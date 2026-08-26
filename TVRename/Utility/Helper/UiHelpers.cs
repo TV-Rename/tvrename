@@ -97,10 +97,7 @@ public static class UiHelpers
     /// <exception cref="ObjectDisposedException">Control is already disposed.</exception>
     public static void SafeInvoke(this Control uiElement, System.Action updater, bool forceSynchronous)
     {
-        if (uiElement is null)
-        {
-            throw new ArgumentNullException(nameof(uiElement));
-        }
+        ArgumentNullException.ThrowIfNull(uiElement);
 
         if (uiElement.InvokeRequired)
         {

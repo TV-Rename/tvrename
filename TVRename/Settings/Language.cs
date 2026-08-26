@@ -8,28 +8,17 @@
 
 namespace TVRename;
 
-public class Language
+public class Language(int tvdbid, string abbreviation, string threeAbbreviation, string englishName, string localName, string isoDialectAbbreviation, bool isPrimary)
 {
-    public Language(int tvdbid, string abbreviation, string threeAbbreviation, string englishName, string localName, string isoDialectAbbreviation, bool isPrimary)
-    {
-        TvdbId = tvdbid;
-        Abbreviation = abbreviation;
-        ThreeAbbreviation = threeAbbreviation;
-        LocalName = localName;
-        EnglishName = englishName;
-        ISODialectAbbreviation = isoDialectAbbreviation;
-        IsPrimary = isPrimary;
-    }
-
-    public int TvdbId { get; set; }
-    public string Abbreviation { get; set; }
-    public string ThreeAbbreviation { get; set; }
+    public int TvdbId { get; set; } = tvdbid;
+    public string Abbreviation { get; set; } = abbreviation;
+    public string ThreeAbbreviation { get; set; } = threeAbbreviation;
 
     // ReSharper disable once InconsistentNaming
-    public string ISODialectAbbreviation { get; set; }
+    public string ISODialectAbbreviation { get; set; } = isoDialectAbbreviation;
 
-    public bool IsPrimary { get; set; }
-    public string LocalName { get; set; }
-    public string EnglishName { get; set; }
+    public bool IsPrimary { get; set; } = isPrimary;
+    public string LocalName { get; set; } = localName;
+    public string EnglishName { get; set; } = englishName;
     public override string ToString() => $"{LocalName} ({EnglishName} - '{ISODialectAbbreviation}')";
 }

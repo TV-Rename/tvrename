@@ -4,17 +4,12 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class CleanUpTorrents : ScanActivity
+internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    private readonly List<IDownloadProvider> sources;
+    private readonly List<IDownloadProvider> sources = [new qBitTorrent(), new uTorrent()];
     private ProcessedEpisode? lastFoundEpisode;
     private MovieConfiguration? lastFoundMovie;
     private TorrentEntry? lastFoundEntry;
-
-    public CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-        sources = [new qBitTorrent(), new uTorrent()];
-    }
 
     protected override string CheckName() => "Cleaned up completed TV Torrents";
 

@@ -60,7 +60,7 @@ internal class RssItemList : List<RSSItem>
         catch (XmlException e)
         {
             Logger.Warn($"Could not parse RSS page at:{url} Message was: {e.ErrorText()}");
-            Logger.Info(response);
+            Logger.Info(response.ToNonNullString());
             return false;
         }
         catch (AggregateException ex) when (ex.InnerException is WebException wex)

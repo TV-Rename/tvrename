@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class DefaultDoRenameMovieCheck : DefaultMovieCheck
+internal class DefaultDoRenameMovieCheck(MovieConfiguration movie, TVDoc doc) : DefaultMovieCheck(movie, doc)
 {
-    public DefaultDoRenameMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     protected override string FieldName => "Rename Check";
 
     protected override bool Field => Movie.DoRename;

@@ -13,12 +13,8 @@ using System.Threading;
 
 namespace TVRename;
 
-internal class MergeLibraryEpisodes : ScanShowActivity
+internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
 {
-    public MergeLibraryEpisodes(TVDoc doc) : base(doc)
-    {
-    }
-
     protected override string ActivityName() => "Created Merge Rules for episodes in the library";
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>

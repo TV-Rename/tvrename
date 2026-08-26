@@ -3,14 +3,10 @@ using System;
 
 namespace TVRename;
 
-internal abstract class ActionChangeLibrary : Action
+internal abstract class ActionChangeLibrary(TVDoc doc) : Action
 {
-    protected readonly TVDoc Doc;
+    protected readonly TVDoc Doc = doc;
 
-    protected ActionChangeLibrary(TVDoc doc)
-    {
-        Doc = doc;
-    }
     public override string ScanListViewGroup => "lvgActionOther";
     public override long SizeOfWork => 1;
     public override IgnoreItem? Ignore => null;
@@ -71,14 +67,9 @@ internal class ActionChangeLibraryRemoveMovie : ActionChangeLibrary, IEquatable<
     #endregion
 }
 
-internal class ActionChangeLibraryRemoveShow : ActionChangeLibrary, IEquatable<ActionChangeLibraryRemoveShow>
+internal class ActionChangeLibraryRemoveShow(ShowConfiguration si, TVDoc doc) : ActionChangeLibrary(doc), IEquatable<ActionChangeLibraryRemoveShow>
 {
-    private readonly ShowConfiguration si;
-
-    public ActionChangeLibraryRemoveShow(ShowConfiguration si, TVDoc doc) : base(doc)
-    {
-        this.si = si;
-    }
+    private readonly ShowConfiguration si = si;
 
     public override string Name => "Remove TV Show Configuration";
     public override string Produces => si.Name ?? string.Empty;

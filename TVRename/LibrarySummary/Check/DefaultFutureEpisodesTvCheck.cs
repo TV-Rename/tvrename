@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class DefaultFutureEpisodesTvCheck : DefaultTvShowCheck
+internal class DefaultFutureEpisodesTvCheck(ShowConfiguration show, TVDoc doc) : DefaultTvShowCheck(show, doc)
 {
-    public DefaultFutureEpisodesTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override string FieldName => "Do Future Episodes Check";
 
     protected override bool Field => Show.ForceCheckFuture;

@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class CustomRegionMovieCheck : CustomMovieCheck
+internal class CustomRegionMovieCheck(MovieConfiguration movie, TVDoc doc) : CustomMovieCheck(movie, doc)
 {
-    public CustomRegionMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     protected override void FixInternal()
     {
         Movie.UseCustomRegion = false;

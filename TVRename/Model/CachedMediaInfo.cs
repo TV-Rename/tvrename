@@ -7,19 +7,19 @@ using System.Xml.Linq;
 
 namespace TVRename;
 
-public abstract class CachedMediaInfo : ISeriesSpecifier
+public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecifier
 {
-    public string Name;
+    public string Name = string.Empty;
     public string? Overview;
     public string? Runtime;
     public string? ContentRating;
     public float SiteRating;
     public int SiteRatingVotes;
     public string? Imdb;
-    public int TvdbCode;
-    public int TvMazeCode;
-    public int TvRageCode;
-    public int TmdbCode;
+    public int TvdbCode = -1;
+    public int TvMazeCode = -1;
+    public int TvRageCode = 0;
+    public int TmdbCode = -1;
     public string? WebUrl;
     public string? OfficialUrl;
     public string? TrailerUrl;
@@ -41,19 +41,19 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
 
     public IEnumerable<string> Networks => Network!.FromPsv();
 
-    public string? Status { get; set; }
+    public string? Status { get; set; } = "Unknown";
     public bool IsSearchResultOnly; // set to true if local info is known to be just certain fields found from search results. Do not need to be saved
 
-    public SafeList<Actor> Actors;
-    public SafeList<Crew> Crew;
-    public SafeList<string> Genres;
-    protected SafeList<string> Aliases;
+    public SafeList<Actor> Actors = [];
+    public SafeList<Crew> Crew = [];
+    public SafeList<string> Genres = [];
+    protected SafeList<string> Aliases = [];
 
-    public bool Dirty; // set to true if local info is known to be older than whats on the server
+    public bool Dirty = false; // set to true if local info is known to be older than whats on the server
     public long SrvLastUpdated;
 
     private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
-    protected internal readonly TVDoc.ProviderType Source;
+    protected internal readonly TVDoc.ProviderType Source = source;
 
     protected CachedMediaInfo(Locale locale, TVDoc.ProviderType source) : this(source)
     {
@@ -66,25 +66,6 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
         TvMazeCode = tvmaze;
         TvdbCode = tvdb;
         TmdbCode = tmdbId;
-    }
-
-    protected CachedMediaInfo(TVDoc.ProviderType source)
-    {
-        Actors = [];
-        Crew = [];
-        Aliases = [];
-        Genres = [];
-
-        Dirty = false;
-        Name = string.Empty;
-
-        TvdbCode = -1;
-        TvMazeCode = -1;
-        TvRageCode = 0;
-        TmdbCode = -1;
-
-        Status = "Unknown";
-        Source = source;
     }
 
     protected abstract MediaConfiguration.MediaType MediaType();

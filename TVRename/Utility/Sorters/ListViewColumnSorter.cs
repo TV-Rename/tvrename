@@ -6,22 +6,11 @@ using System.Windows.Forms;
 // </summary>
 namespace TVRename;
 
-public class ListViewColumnSorter : IComparer
+/// <summary>
+/// Class constructor.  Initializes various elements
+/// </summary>
+public class ListViewColumnSorter(ListViewItemSorter s) : IComparer
 {
-    /// <summary>
-    /// Class constructor.  Initializes various elements
-    /// </summary>
-    public ListViewColumnSorter(ListViewItemSorter s)
-    {
-        // Initialize the column to '0'
-        SortColumn = 0;
-
-        // Initialize the sort order to 'none'
-        Order = SortOrder.None;
-
-        // Initialize the CaseInsensitiveComparer object
-        ListViewItemSorter = s;
-    }
 
     /// <summary>
     /// This method is inherited from the IComparer interface.  It compares the two objects passed using a case insensitive comparison.
@@ -52,17 +41,17 @@ public class ListViewColumnSorter : IComparer
     /// <summary>
     /// Gets or sets the number of the column to which to apply the sorting operation (Defaults to '0').
     /// </summary>
-    private int SortColumn { set; get; }
+    private int SortColumn { set; get; } = 0;
 
     /// <summary>
     /// Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').
     /// </summary>
-    public SortOrder Order { set; get; }
+    public SortOrder Order { set; get; } = SortOrder.None;
 
     /// <summary>
     /// Case insensitive comparer object
     /// </summary>
-    public ListViewItemSorter ListViewItemSorter { get; set; }
+    public ListViewItemSorter ListViewItemSorter { get; set; } = s;
 
     public void ClickedOn(int col)
     {

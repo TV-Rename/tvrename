@@ -2,14 +2,9 @@ using System.Collections.Generic;
 
 namespace TVRename;
 
-internal abstract class DownloadingProviderFinder : DownloadingFinder
+internal abstract class DownloadingProviderFinder(TVDoc doc, IDownloadProvider source, TVDoc.ScanSettings settings) : DownloadingFinder(doc, settings)
 {
-    private readonly IDownloadProvider source;
-
-    protected DownloadingProviderFinder(TVDoc doc, IDownloadProvider source, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-        this.source = source;
-    }
+    private readonly IDownloadProvider source = source;
 
     protected override string CheckName() => $"Looked in {source.Name()} for the missing files to see if they are being downloaded";
 

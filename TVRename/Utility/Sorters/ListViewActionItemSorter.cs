@@ -119,29 +119,20 @@ public class ListViewActionItemSorter : IComparer, IComparer<OLVListItem>
     }
 }
 
-internal class OlvActionGroupComparer : IComparer<OLVListItem>
+/// <summary>
+/// Class constructor.  Initializes various elements
+/// </summary>
+internal class OlvActionGroupComparer(ActionItemSorter sorter, SortOrder order) : IComparer<OLVListItem>
 {
     /// <summary>
     /// Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').
     /// </summary>
-    private SortOrder Order { set; get; }
+    private SortOrder Order { set; get; } = order;
 
     /// <summary>
     /// Case insensitive comparer object
     /// </summary>
-    private ActionItemSorter Sorter { get; set; }
-
-    /// <summary>
-    /// Class constructor.  Initializes various elements
-    /// </summary>
-    public OlvActionGroupComparer(ActionItemSorter sorter, SortOrder order)
-    {
-        // Initialize the sort order to 'none'
-        Order = order;
-
-        // Initialize the CaseInsensitiveComparer object
-        Sorter = sorter;
-    }
+    private ActionItemSorter Sorter { get; set; } = sorter;
 
     /// <summary>
     /// Compare two rows

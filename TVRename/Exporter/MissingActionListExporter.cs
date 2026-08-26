@@ -1,9 +1,6 @@
 namespace TVRename;
 
-internal abstract class MissingActionListExporter : ActionListExporter
+internal abstract class MissingActionListExporter(ItemList theActionList) : ActionListExporter(theActionList)
 {
-    protected MissingActionListExporter(ItemList theActionList) : base(theActionList)
-    {
-    }
     public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full && TVSettings.Instance.RestrictMissingExportsToFullScans;
 }

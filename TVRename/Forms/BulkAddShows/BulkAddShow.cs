@@ -257,23 +257,24 @@ public partial class BulkAddShow : Form
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string path in files)
-            {
-                try
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+            if (files  != null && files.Length > 0)
+                foreach (string path in files)
                 {
-                    DirectoryInfo di = new(path);
-                    if (di.Exists)
+                    try
                     {
-                        engine.CheckFolderForShows(di, true, true, true);
-                        FillNewShowList(true);
+                        DirectoryInfo di = new(path);
+                        if (di.Exists)
+                        {
+                            engine.CheckFolderForShows(di, true, true, true);
+                            FillNewShowList(true);
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
                     }
                 }
-                catch
-                {
-                    // ignored
-                }
-            }
         }
     }
 
@@ -286,20 +287,24 @@ public partial class BulkAddShow : Form
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string path in files)
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+
+            if (files is not null)
             {
-                try
+                foreach (string path in files)
                 {
-                    DirectoryInfo di = new(path);
-                    if (di.Exists)
+                    try
                     {
-                        strings.Add(path.ToLower());
+                        DirectoryInfo di = new(path);
+                        if (di.Exists)
+                        {
+                            strings.Add(path.ToLower());
+                        }
                     }
-                }
-                catch
-                {
-                    // ignored
+                    catch
+                    {
+                        // ignored
+                    }
                 }
             }
         }
@@ -386,8 +391,9 @@ public partial class BulkAddShow : Form
 
         foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
         {
-            PossibleNewTvShow ai = (PossibleNewTvShow)lvi.Tag;
-            engine.AddItems.Remove(ai);
+            PossibleNewTvShow? ai = (PossibleNewTvShow?)lvi.Tag;
+            if (ai is not null)
+                engine.AddItems.Remove(ai);
         }
 
         FillNewShowList(false);
@@ -406,11 +412,14 @@ public partial class BulkAddShow : Form
             return;
         }
 
-        foreach (PossibleNewTvShow ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
-                     .Select(lvi => (PossibleNewTvShow)lvi.Tag))
+        foreach (PossibleNewTvShow? ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
+                     .Select(lvi => (PossibleNewTvShow?)lvi.Tag))
         {
-            TVSettings.Instance.IgnoreFolders.Add(ai.Folder.FullName.ToLower());
-            engine.AddItems.Remove(ai);
+            if (ai is not null)
+            {
+                TVSettings.Instance.IgnoreFolders.Add(ai.Folder.FullName.ToLower());
+                engine.AddItems.Remove(ai);
+            }
         }
         mDoc.SetDirty();
         FillNewShowList(false);

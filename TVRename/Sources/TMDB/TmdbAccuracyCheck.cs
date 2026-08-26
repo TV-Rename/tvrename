@@ -2,22 +2,14 @@ using System.Collections.Generic;
 
 namespace TVRename.TMDB;
 
-internal class TmdbAccuracyCheck
+internal class TmdbAccuracyCheck(LocalCache localCache)
 {
-    internal readonly List<string> Issues;
-    internal readonly List<CachedSeriesInfo> ShowsToUpdate;
-    internal readonly List<CachedMovieInfo> MoviesToUpdate;
-    private readonly LocalCache lc;
+    internal readonly List<string> Issues = [];
+    internal readonly List<CachedSeriesInfo> ShowsToUpdate = [];
+    internal readonly List<CachedMovieInfo> MoviesToUpdate = [];
+    private readonly LocalCache lc = localCache;
 
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
-    public TmdbAccuracyCheck(LocalCache localCache)
-    {
-        lc = localCache;
-        Issues = [];
-        ShowsToUpdate = [];
-        MoviesToUpdate = [];
-    }
 
     public void ServerAccuracyCheck(CachedMovieInfo si)
     {

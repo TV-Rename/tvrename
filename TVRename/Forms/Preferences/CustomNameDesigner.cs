@@ -61,7 +61,7 @@ public partial class CustomNameDesigner : Form
         }
         else
         {
-            pe = (ProcessedEpisode)lvTest.SelectedItems[0].Tag;
+            pe = (ProcessedEpisode?)lvTest.SelectedItems[0].Tag;
         }
 
         foreach (string s in CustomEpisodeName.TAGS)

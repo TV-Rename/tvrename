@@ -16,12 +16,8 @@ using TVRename.SAB;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class SABnzbdFinder : DownloadingFinder
+internal class SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadingFinder(doc, settings)
 {
-    public SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.CheckSABnzbd;
 
     protected override string CheckName() => "Looked in the listed SABnz queue to see if the episode is already being downloaded";

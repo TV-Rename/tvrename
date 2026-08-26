@@ -12,12 +12,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class CheckShows : ScanActivity
+internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    public CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     protected override string CheckName() => "Looked in the library to find missing files";
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>

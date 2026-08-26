@@ -87,7 +87,9 @@ public partial class UpdateNotification : Form
 
     private void NavigateTo(object sender, WebBrowserNavigatingEventArgs e)
     {
-        string url = e.Url.AbsoluteUri;
+        string? url = e.Url?.AbsoluteUri;
+
+        if (url is null || e.Url is null) return;
 
         // ReSharper disable once StringLiteralTypo
         if (url.Contains(@"ieframe.dll"))

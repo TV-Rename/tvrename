@@ -24,7 +24,7 @@ public partial class NewSeenEpisode : Form
 
     private void BnOK_Click(object sender, EventArgs e)
     {
-        ChosenEpisode = (ProcessedEpisode)comboBox1.SelectedItem;
+        ChosenEpisode = (ProcessedEpisode?)comboBox1.SelectedItem;
         DialogResult = DialogResult.OK;
         Close();
     }

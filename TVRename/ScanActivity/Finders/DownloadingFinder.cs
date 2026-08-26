@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace TVRename;
 
-public abstract class DownloadingFinder : Finder
+public abstract class DownloadingFinder(TVDoc doc, TVDoc.ScanSettings settings) : Finder(doc, settings)
 {
     public enum DownloadApp
     {
@@ -88,9 +88,5 @@ public abstract class DownloadingFinder : Finder
             }
         }
         ActionList.Replace(toRemove, newList);
-    }
-
-    protected DownloadingFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
     }
 }

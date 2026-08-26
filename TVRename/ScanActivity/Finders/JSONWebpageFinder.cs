@@ -15,12 +15,8 @@ using System.Net.Http;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class JSONWebpageFinder : DownloadFinder
+internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadFinder(doc, settings)
 {
-    public JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.SearchJSON;
 
     protected override string CheckName() => "Check JSON links for the missing files";

@@ -4,12 +4,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class SearchFolderFileFinder : FileFinder
+internal class SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : FileFinder(doc, settings)
 {
-    public SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.SearchLocally;
 
     protected override string CheckName() => "Looked in the search folders for the missing files";

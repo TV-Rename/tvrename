@@ -42,12 +42,12 @@ public static class API
             return url;
         }
 
-        if (url.StartsWith("/", StringComparison.Ordinal))
+        if (url.StartsWith('/'))
         {
             url = url.RemoveFirstCharacter();
         }
 
-        if (!mirr.EndsWith("/", StringComparison.Ordinal))
+        if (!mirr.EndsWith('/'))
         {
             mirr += "/";
         }
@@ -1606,9 +1606,6 @@ public static class API
         }
     }
 }
-public class TooManyCallsException : Exception
+public class TooManyCallsException(string s) : Exception(s)
 {
-    public TooManyCallsException(string s) :base(s)
-    {
-    }
 }

@@ -26,6 +26,8 @@ public partial class LogViewer : Form
 
     private void Form1_Load(object sender, EventArgs e)
     {
+        LogManager.Configuration ??= new();
+
         RichTextBoxTarget target = new()
         {
             Name = "UI Target",
@@ -50,8 +52,15 @@ public partial class LogViewer : Form
 
     private void btnFullLog_Click(object sender, EventArgs e)
     {
-        FileTarget target = (FileTarget)LogManager.Configuration.FindTargetByName("logfile");
-        string logFileName = ((SimpleLayout)target.FileName).FixedText;
+        FileTarget? target = (FileTarget?)LogManager.Configuration?.FindTargetByName("logfile");
+        string? logFileName = ((SimpleLayout?)target?.FileName)?.FixedText;
+
+        if (logFileName.IsNullOrWhitespace())
+        {
+            Logger.Error($"Could not identify logfilename to open");
+            return;
+        }
+
         try
         {
             System.Diagnostics.Process.Start("notepad.exe", logFileName);

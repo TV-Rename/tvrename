@@ -2,10 +2,10 @@ using System;
 
 namespace TVRename.Forms;
 
-internal class CollectionMember
+internal class CollectionMember(string collectionName, CachedMovieInfo neededShowValue)
 {
-    public readonly string CollectionName;
-    public readonly CachedMovieInfo Movie;
+    public readonly string CollectionName = collectionName;
+    public readonly CachedMovieInfo Movie = neededShowValue;
 
     // ReSharper disable once UnusedMember.Global - Used by UI component
     public string MovieName => Movie.Name;
@@ -13,12 +13,6 @@ internal class CollectionMember
     public int TmdbCode => Movie.TmdbCode;
 
     public bool IsInLibrary;
-
-    public CollectionMember(string collectionName, CachedMovieInfo neededShowValue)
-    {
-        CollectionName = collectionName;
-        Movie = neededShowValue;
-    }
 
     public int? MovieYear => Movie.Year;
     public DateTime? ReleaseDate => Movie.FirstAired;

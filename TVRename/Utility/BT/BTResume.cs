@@ -8,7 +8,7 @@ using Path = Alphaleonis.Win32.Filesystem.Path;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-public class BTResume : BTCore
+public class BTResume(string resumeDatFile) : BTCore
 {
     // ReSharper disable once InconsistentNaming
     private static class BTPrio
@@ -17,14 +17,9 @@ public class BTResume : BTCore
     }
 
     private BTFile? resumeDat; // resume file, if we're using it
-    private readonly string resumeDatPath;
+    private readonly string resumeDatPath = resumeDatFile;
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-    public BTResume(string resumeDatFile)
-    {
-        resumeDatPath = resumeDatFile;
-    }
 
     private static int PercentBitsOn(BTString? s)
     {

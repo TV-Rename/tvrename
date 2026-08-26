@@ -5,12 +5,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class MoviesHtml : MoviesExporter
+internal class MoviesHtml(List<MovieConfiguration> shows) : MoviesExporter(shows)
 {
-    public MoviesHtml(List<MovieConfiguration> shows) : base(shows)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportMoviesHTML;
 
     protected override string Location() => TVSettings.Instance.ExportMoviesHTMLTo;

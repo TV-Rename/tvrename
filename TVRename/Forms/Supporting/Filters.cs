@@ -96,9 +96,9 @@ public partial class Filters : Form
         ShowFilter filter = TVSettings.Instance.Filter;
 
         filter.ShowName = string.IsNullOrEmpty(tbShowName.Text) ? null : tbShowName.Text;
-        filter.ShowStatus = string.IsNullOrEmpty(cmbShowStatus.Text) ? null : cmbShowStatus.SelectedItem.ToString();
-        filter.ShowNetwork = string.IsNullOrEmpty(cmbNetwork.Text) ? null : cmbNetwork.SelectedItem.ToString();
-        filter.ShowRating = string.IsNullOrEmpty(cmbRating.Text) ? null : cmbRating.SelectedItem.ToString();
+        filter.ShowStatus = string.IsNullOrEmpty(cmbShowStatus.Text) ? null : cmbShowStatus.SelectedItem?.ToString();
+        filter.ShowNetwork = string.IsNullOrEmpty(cmbNetwork.Text) ? null : cmbNetwork.SelectedItem?.ToString();
+        filter.ShowRating = string.IsNullOrEmpty(cmbRating.Text) ? null : cmbRating.SelectedItem?.ToString();
 
         filter.ShowStatusInclude = GetIncludeStatus(cmbShowStatusType);
         filter.ShowNetworkInclude = GetIncludeStatus(cmbNetworkType);
@@ -127,7 +127,7 @@ public partial class Filters : Form
             return true;
         }
 
-        if (comboBox.SelectedItem.ToString()!.Equals(IS_NOT))
+        if (comboBox.SelectedItem?.ToString()?.Equals(IS_NOT) ?? false)
         {
             return false;
         }

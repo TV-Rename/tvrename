@@ -73,7 +73,7 @@ public partial class ShowSummary : Form, IDialogParent
     {
         cmbShowStatus.Enabled = chkOnlyShow.Checked;
 
-        if (grid1.IsDisposed || !showList.Any())
+        if (grid1.IsDisposed || showList.Count == 0)
         {
             return;
         }
@@ -160,7 +160,7 @@ public partial class ShowSummary : Form, IDialogParent
             }
 
             if (chkOnlyShow.Checked &&
-                !show.ShowConfiguration.ShowStatus.Equals(cmbShowStatus.SelectedItem.ToString(), StringComparison.OrdinalIgnoreCase))
+                !show.ShowConfiguration.ShowStatus.Equals(cmbShowStatus.SelectedItem?.ToString().ToNonNullString(), StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -512,18 +512,12 @@ public partial class ShowSummary : Form, IDialogParent
 
     #region Nested type: ShowSummaryData
 
-    public class ShowSummaryData
+    public class ShowSummaryData(string showName, ShowConfiguration showConfiguration)
     {
         public int MaxSeason;
         public readonly List<ShowSummarySeasonData> SeasonDataList = [];
-        public readonly ShowConfiguration ShowConfiguration;
-        public readonly string ShowName;
-
-        public ShowSummaryData(string showName, ShowConfiguration showConfiguration)
-        {
-            ShowName = showName;
-            ShowConfiguration = showConfiguration;
-        }
+        public readonly ShowConfiguration ShowConfiguration = showConfiguration;
+        public readonly string ShowName = showName;
 
         public void AddSeason(ShowSummarySeasonData seasonData)
         {
@@ -538,22 +532,13 @@ public partial class ShowSummary : Form, IDialogParent
 
         #region Nested type: ShowSummarySeasonData
 
-        public class ShowSummarySeasonData
+        public class ShowSummarySeasonData(int seasonNumber, int episodeCount, int episodeAiredCount, int episodeGotCount, ProcessedSeason processedSeason)
         {
-            private readonly int episodeAiredCount;
-            private readonly int episodeCount;
-            private readonly int episodeGotCount;
-            public readonly ProcessedSeason ProcessedSeason;
-            public readonly int SeasonNumber;
-
-            public ShowSummarySeasonData(int seasonNumber, int episodeCount, int episodeAiredCount, int episodeGotCount, ProcessedSeason processedSeason)
-            {
-                SeasonNumber = seasonNumber;
-                this.episodeCount = episodeCount;
-                this.episodeAiredCount = episodeAiredCount;
-                this.episodeGotCount = episodeGotCount;
-                ProcessedSeason = processedSeason;
-            }
+            private readonly int episodeAiredCount = episodeAiredCount;
+            private readonly int episodeCount = episodeCount;
+            private readonly int episodeGotCount = episodeGotCount;
+            public readonly ProcessedSeason ProcessedSeason = processedSeason;
+            public readonly int SeasonNumber = seasonNumber;
 
             public bool IsSpecial => SeasonNumber == 0;
             public bool Ignored => ProcessedSeason.Show.IgnoreSeasons.Contains(SeasonNumber);
@@ -619,18 +604,12 @@ public partial class ShowSummary : Form, IDialogParent
 
         #region Nested type: SummaryOutput
 
-        public class SummaryOutput
+        public class SummaryOutput(bool ignored, bool special)
         {
             public Color Color;
             public string? Details;
-            public readonly bool Ignored;
-            public readonly bool Special;
-
-            public SummaryOutput(bool ignored, bool special)
-            {
-                Ignored = ignored;
-                Special = special;
-            }
+            public readonly bool Ignored = ignored;
+            public readonly bool Special = special;
         }
 
         #endregion Nested type: SummaryOutput

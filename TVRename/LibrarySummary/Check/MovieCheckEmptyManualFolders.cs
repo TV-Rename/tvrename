@@ -3,12 +3,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class MovieCheckEmptyManualFolders : MovieCheck
+internal class MovieCheckEmptyManualFolders(MovieConfiguration movie, TVDoc doc) : MovieCheck(movie, doc)
 {
-    public MovieCheckEmptyManualFolders(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     public override bool Check()
     {
         if (!Movie.UseManualLocations)

@@ -256,7 +256,7 @@ public partial class CopyMoveProgress : Form
             return;
         }
 
-        Form parentWindow = childWindow.Owner;
+        Form? parentWindow = childWindow.Owner;
         if (parentWindow != null)
         {
             parentWindow.WindowState = FormWindowState.Minimized;

@@ -7,16 +7,10 @@ namespace TVRename;
 /// A thread-safe IEnumerable implementation
 /// See: http://www.codeproject.com/KB/cs/safe_enumerable.aspx
 /// </summary>
-public class SafeEnumerable<T> : IEnumerable<T>
+public class SafeEnumerable<T>(IEnumerable<T> inner, object @lock) : IEnumerable<T>
 {
-    private readonly IEnumerable<T> inner;
-    private readonly object @lock;
-
-    public SafeEnumerable(IEnumerable<T> inner, object @lock)
-    {
-        this.@lock = @lock;
-        this.inner = inner;
-    }
+    private readonly IEnumerable<T> inner = inner;
+    private readonly object @lock = @lock;
 
     public IEnumerator<T> GetEnumerator() => new SafeEnumerator<T>(inner.GetEnumerator(), @lock);
 

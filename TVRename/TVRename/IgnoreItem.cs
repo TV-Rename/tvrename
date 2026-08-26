@@ -12,14 +12,9 @@ using System;
 
 namespace TVRename;
 
-public class IgnoreItem
+public class IgnoreItem(string fileAndPath)
 {
-    public readonly string FileAndPath;
-
-    public IgnoreItem(string fileAndPath)
-    {
-        FileAndPath = fileAndPath;
-    }
+    public readonly string FileAndPath = fileAndPath;
 
     public bool SameFileAs(IgnoreItem? o)
     {

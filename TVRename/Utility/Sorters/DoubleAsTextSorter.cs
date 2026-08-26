@@ -3,12 +3,8 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-public sealed class DoubleAsTextSorter : ListViewItemSorter
+public sealed class DoubleAsTextSorter(int column) : ListViewItemSorter(column)
 {
-    public DoubleAsTextSorter(int column) : base(column)
-    {
-    }
-
     protected override int CompareListViewItem(ListViewItem x, ListViewItem y) => (int)(1000 * (ParseAsDouble(x) - ParseAsDouble(y)));
 
     private double ParseAsDouble(ListViewItem cellItem)

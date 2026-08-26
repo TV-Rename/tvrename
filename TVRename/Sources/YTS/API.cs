@@ -71,17 +71,11 @@ public static class API
     private static string? GetString(this JToken r, string key)
         => (string?)r[key];
 
-    public class YtsMovie
+    public class YtsMovie(JObject x)
     {
-        private readonly JObject result;
-        public readonly IEnumerable<YtsDownload> Downloads;
-
-        public YtsMovie(JObject x)
-        {
-            result = x;
-            Downloads = x["torrents"]?.Children().OfType<JObject>().Select(j => new YtsDownload(j)) ??
+        private readonly JObject result = x;
+        public readonly IEnumerable<YtsDownload> Downloads = x["torrents"]?.Children().OfType<JObject>().Select(j => new YtsDownload(j)) ??
                         [];
-        }
 
         public string Name => result.GetMandatoryString("title");
         public string Overview => result.GetMandatoryString("summary");
@@ -107,14 +101,9 @@ public static class API
         public string TrailerUrl => $"https://www.youtube.com/embed/{result.GetMandatoryString("yt_trailer_code")}";
     }
 
-    public class YtsDownload
+    public class YtsDownload(JObject x)
     {
-        private readonly JObject result;
-
-        public YtsDownload(JObject x)
-        {
-            result = x;
-        }
+        private readonly JObject result = x;
 
         public string Url => result.GetMandatoryString("url");
         public string Quality => result.GetMandatoryString("quality");

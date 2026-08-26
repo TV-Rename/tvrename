@@ -12,12 +12,8 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-internal class FindNewShowsInLibrary : ScanActivity
+internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    public FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     protected override string CheckName() => "Looked in the library for any new shows to be added (bulk add)";
 
     protected override void DoCheck(SetProgressDelegate progress)

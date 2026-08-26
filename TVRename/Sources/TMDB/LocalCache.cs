@@ -41,7 +41,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
     private static volatile LocalCache? InternalInstance;
-    private static readonly object SyncRoot = new();
+    private static readonly Lock SyncRoot = new();
 
     public static LocalCache Instance
     {
@@ -442,12 +442,12 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         {
             Imdb = downloadedMovie.ExternalIds?.ImdbId,
             TmdbCode = downloadedMovie.Id,
-            Name = downloadedMovie.Title,
+            Name = downloadedMovie.Title ?? string.Empty,
             Runtime = downloadedMovie.Runtime?.ToString(),
             FirstAired = downloadedMovieReleaseDate,
-            Genres = downloadedMovie.Genres?.Select(genre => genre.Name).ToSafeList()??[],
+            Genres = downloadedMovie.Genres?.Select(genre => genre.Name ?? string.Empty).ToSafeList()??[],
             Overview = downloadedMovie.Overview,
-            Network = downloadedMovie.ProductionCompanies?.Select(y => y.Name).ToPsv(),
+            Network = downloadedMovie.ProductionCompanies?.Select(y => y.Name ?? string.Empty).ToPsv(),
             Status = downloadedMovie.Status,
             ShowLanguage = downloadedMovie.OriginalLanguage,
             SiteRating = (float)downloadedMovie.VoteAverage,
@@ -469,7 +469,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             TrailerUrl = GetYouTubeUrl(downloadedMovie),
             WebUrl = $"https://www.themoviedb.org/movie/{downloadedMovie.Id}",
             Dirty = false,
-            Country = downloadedMovie.ProductionCountries.FirstOrDefault()?.Name,
+            Country = downloadedMovie.ProductionCountries?.FirstOrDefault()?.Name,
         };
 
         if (downloadedMovie.AlternativeTitles !=null)
@@ -485,7 +485,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         {
             foreach (Cast? s in downloadedMovie.Credits.Cast)
             {
-                if (s is not null)
+                if (s is not null && !s.Name.IsNullOrWhitespace())
                 {
                     m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character,
                         s.Order));
@@ -493,7 +493,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             }
             foreach (TMDbLib.Objects.General.Crew? s in downloadedMovie.Credits.Crew)
             {
-                if (s is not null)
+                if (s is not null && !s.Name.IsNullOrWhitespace())
                 {
                     m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Job, s.Department, s.CreditId));
                 }
@@ -747,7 +747,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     }
 
     private static string? DecodeAverage(IReadOnlyCollection<int> times) =>
-        times.Any()
+        times.Count != 0
             ? times.Average().ToString("F0", System.Globalization.CultureInfo.CurrentCulture)
             : null;
 
@@ -776,7 +776,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     Name = downloadedEpisode.Name,
                     Overview = downloadedEpisode.Overview,
                     FirstAired = downloadedEpisode.AirDate,
-                    AiredEpNum = downloadedEpisode.EpisodeNumber,
+                    AiredEpNum = (int) downloadedEpisode.EpisodeNumber,
                     AiredSeasonNumber = downloadedEpisode.SeasonNumber,
                     ProductionCode = downloadedEpisode.ProductionCode,
                     EpisodeId = downloadedEpisode.Id,

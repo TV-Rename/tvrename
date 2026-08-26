@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace TVRename;
 
@@ -9,7 +10,7 @@ public class Regions : List<Region>
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
     private static volatile Regions? InternalInstance;
-    private static readonly object SyncRoot = new();
+    private static readonly Lock SyncRoot = new();
 
     public static Regions Instance
     {

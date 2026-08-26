@@ -6,12 +6,8 @@ using System.Threading;
 
 namespace TVRename;
 
-internal class CleanUpEmptyLibraryFolders : PostScanActivity
+internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 {
-    public CleanUpEmptyLibraryFolders(TVDoc doc) : base(doc)
-    {
-    }
-
     public override string ActivityName() => "Clean up empty library folders";
 
     protected override bool Active() => true;

@@ -3,13 +3,9 @@ using System.Linq;
 
 namespace TVRename;
 
-internal abstract class FindMissingEpisodes : ScanActivity
+internal abstract class FindMissingEpisodes(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    private readonly List<Finder> finders;
-
-    protected FindMissingEpisodes(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-        finders =
+    private readonly List<Finder> finders =
         //These should be in order
         [
             new LibraryFolderFileFinder(doc,settings),
@@ -21,7 +17,6 @@ internal abstract class FindMissingEpisodes : ScanActivity
             new JSONWebpageFinder(doc,settings), //Except for JSON which is dead last
             new JackettFinder(doc,settings)
         ];
-    }
 
     protected abstract Finder.FinderDisplayType CurrentType();
 

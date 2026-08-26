@@ -4,12 +4,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class LibraryFolderFileFinder : FileFinder
+internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : FileFinder(doc, settings)
 {
-    public LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.RenameCheck && TVSettings.Instance.MissingCheck && TVSettings.Instance.MoveLibraryFiles;
 
     protected override string CheckName() => "Looked in the library for the missing files";

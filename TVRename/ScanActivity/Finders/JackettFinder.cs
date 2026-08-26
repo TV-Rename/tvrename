@@ -13,12 +13,8 @@ using System.Net.Http;
 
 namespace TVRename;
 
-internal class JackettFinder : DownloadFinder
+internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadFinder(doc, settings)
 {
-    public JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.SearchJackett;
 
     protected override string CheckName() => "Asked Jackett for download links for the missing files";
@@ -210,8 +206,10 @@ internal class JackettFinder : DownloadFinder
         return $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
     }
 
-    public static void SearchForEpisode(ProcessedEpisode episode)
+    public static void SearchForEpisode(ProcessedEpisode? episode)
     {
+        if (episode == null) return;
+
         const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
         string searchTerm = CustomEpisodeName.NameForNoExt(episode, FORMAT, false);
         SearchFor(searchTerm);

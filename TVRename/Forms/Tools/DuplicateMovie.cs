@@ -4,19 +4,13 @@ using System.Linq;
 
 namespace TVRename.Forms;
 
-public class DuplicateMovie
+public class DuplicateMovie(MovieConfiguration movie, List<FileInfo> files)
 {
-    internal readonly MovieConfiguration Movie;
-    internal readonly List<FileInfo> Files;
+    internal readonly MovieConfiguration Movie = movie;
+    internal readonly List<FileInfo> Files = files;
     public bool IsDoublePart;
     public bool IsSample;
     public bool IsDeleted;
-
-    public DuplicateMovie(MovieConfiguration movie, List<FileInfo> files)
-    {
-        Movie = movie;
-        Files = files;
-    }
 
     public string Name => Movie.ShowName;
     public string Filenames => Files.Select(info => info.FullName).ToCsv();

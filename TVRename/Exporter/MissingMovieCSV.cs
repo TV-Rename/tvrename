@@ -2,12 +2,8 @@ using System;
 
 namespace TVRename;
 
-internal class MissingMovieCsv : MissingActionListExporter
+internal class MissingMovieCsv(ItemList theActionList) : MissingActionListExporter(theActionList)
 {
-    public MissingMovieCsv(ItemList theActionList) : base(theActionList)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportMissingMoviesCSV;
     protected override string Name() => "Missing Movie CSV Exporter";
 

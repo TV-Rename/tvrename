@@ -5,12 +5,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class CheckAllFoldersExist : ScanShowActivity
+internal class CheckAllFoldersExist(TVDoc doc) : ScanShowActivity(doc)
 {
-    public CheckAllFoldersExist(TVDoc doc) : base(doc)
-    {
-    }
-
     protected override string ActivityName() => "Checked All Folders Exist";
 
     protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)

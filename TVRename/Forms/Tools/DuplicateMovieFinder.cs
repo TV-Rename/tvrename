@@ -144,10 +144,7 @@ public partial class DuplicateMovieFinder : Form
 
     private void Update(DuplicateMovie duplicate)
     {
-        if (dupMovies.Contains(duplicate))
-        {
-            dupMovies.Remove(duplicate);
-        }
+        dupMovies.Remove(duplicate);
         ProcessMovie(duplicate.Movie);
         UpdateUI();
     }

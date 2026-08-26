@@ -13,20 +13,14 @@ using System.Threading.Tasks;
 
 namespace TVRename;
 
-public abstract class ScanActivity
+public abstract class ScanActivity(TVDoc doc, TVDoc.ScanSettings settings)
 {
     protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
-    protected readonly TVDoc MDoc;
+    protected readonly TVDoc MDoc = doc;
     private SetProgressDelegate? progressDelegate;
     private int startPosition;
     private int endPosition;
-    protected readonly TVDoc.ScanSettings Settings;
-
-    protected ScanActivity(TVDoc doc, TVDoc.ScanSettings settings)
-    {
-        MDoc = doc;
-        Settings = settings;
-    }
+    protected readonly TVDoc.ScanSettings Settings = settings;
 
     protected abstract string CheckName();
 

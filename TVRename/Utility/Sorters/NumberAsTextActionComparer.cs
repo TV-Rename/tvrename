@@ -3,12 +3,8 @@ using System;
 
 namespace TVRename;
 
-public class NumberAsTextActionComparer : ObjectListViewComparer<int>
+public class NumberAsTextActionComparer(int column) : ObjectListViewComparer<int>(column)
 {
-    public NumberAsTextActionComparer(int column) : base(column)
-    {
-    }
-
     protected override int GetValue(OLVListItem x, int columnId)
     {
         string value = x.SubItems[columnId].Text;

@@ -4,12 +4,8 @@ using System.Collections.Generic;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class UpcomingTXT : UpcomingExporter
+internal class UpcomingTXT(TVDoc i) : UpcomingExporter(i)
 {
-    public UpcomingTXT(TVDoc i) : base(i)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportWTWTXT;
 
     protected override string Location() => TVSettings.Instance.ExportWTWTXTTo;
@@ -19,13 +15,11 @@ internal class UpcomingTXT : UpcomingExporter
     {
         try
         {
-            using (System.IO.StreamWriter file = new(str))
+            using System.IO.StreamWriter file = new(str);
+            file.WriteLine(HeaderLine());
+            foreach (ProcessedEpisode processedEpisode in elist)
             {
-                file.WriteLine(HeaderLine());
-                foreach (ProcessedEpisode processedEpisode in elist)
-                {
-                    file.WriteLine(ConvertToLine(processedEpisode));
-                }
+                file.WriteLine(ConvertToLine(processedEpisode));
             }
             return true;
         } // try

@@ -816,7 +816,7 @@ public partial class AddEditShow : Form, ICodeWindow
         if (addingNewShow && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation && cachedSeriesInfo != null)
         {
             txtBaseFolder.Text =
-                TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator()
+                TVSettings.Instance.DefShowLocation.ToNonNullString().EnsureEndsWithSeparator()
                 + TVSettings.Instance.DefaultTVShowFolder(cachedSeriesInfo);
         }
     }

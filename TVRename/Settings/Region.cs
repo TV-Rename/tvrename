@@ -8,20 +8,11 @@
 
 namespace TVRename;
 
-public class Region
+public class Region(int id, string abbreviation, string threeAbbreviation, string localName, string? englishName)
 {
-    public Region(int id, string abbreviation, string threeAbbreviation, string localName, string? englishName)
-    {
-        Id = id;
-        Abbreviation = abbreviation;
-        ThreeAbbreviation = threeAbbreviation;
-        LocalName = localName;
-        EnglishName = englishName;
-    }
-
-    public int Id { get; set; }
-    public string Abbreviation { get; set; }
-    public string ThreeAbbreviation { get; set; }
-    public string LocalName { get; set; }
-    public string? EnglishName { get; set; }
+    public int Id { get; set; } = id;
+    public string Abbreviation { get; set; } = abbreviation;
+    public string ThreeAbbreviation { get; set; } = threeAbbreviation;
+    public string LocalName { get; set; } = localName;
+    public string? EnglishName { get; set; } = englishName;
 }

@@ -476,7 +476,7 @@ public partial class Preferences : Form
         s.DefShowDVDOrder = cbDefShowDVDOrder.Checked;
         s.DefShowAlternateOrder = cbDefShowAlternateOrder.Checked;
         s.DefShowAutoFolders = cbDefShowAutoFolders.Checked;
-        s.DefShowLocation = (string)cmbDefShowLocation.SelectedItem;
+        s.DefShowLocation = (string?)cmbDefShowLocation.SelectedItem;
         s.DefaultShowTimezoneName = cbTimeZone.Text;
         s.DefShowSequentialMatching = cbDefShowSequentialMatching.Checked;
         s.DefShowAirDateMatching = cbDefShowAirdateMatching.Checked;
@@ -492,7 +492,7 @@ public partial class Preferences : Form
         s.DefMovieCheckNoDatedMovies = cbDefMovieIncludeNoAirdate.Checked;
         s.DefMovieUseAutomaticFolders = cbDefMovieAutoFolders.Checked;
         s.DefMovieUseDefaultLocation = cbDefMovieUseDefLocation.Checked;
-        s.DefMovieDefaultLocation = (string)cmbDefMovieLocation.SelectedItem;
+        s.DefMovieDefaultLocation = (string?)cmbDefMovieLocation.SelectedItem;
         s.DefaultMovieProvider = MovieProviderMode();
 
         s.TMDBLanguage = Languages.Instance.GetLanguageFromLocalName(cbTMDBLanguages.SelectedItem?.ToString()) ?? s.TMDBLanguage;
@@ -1332,13 +1332,13 @@ public partial class Preferences : Form
 
     private void UpdateDefShowLocation()
     {
-        string oldValue = (string)cmbDefShowLocation.SelectedItem;
+        string? oldValue = (string?)cmbDefShowLocation.SelectedItem;
         PopulateAndSetDefShowLocation(oldValue);
     }
 
     private void UpdateDefMovieLocation()
     {
-        string oldValue = (string)cmbDefMovieLocation.SelectedItem;
+        string? oldValue = (string?)cmbDefMovieLocation.SelectedItem;
         PopulateAndSetDefMovieLocation(oldValue);
     }
 
@@ -1618,13 +1618,15 @@ public partial class Preferences : Form
 
         try
         {
+            TVSettings.ColouringRule? ssct = (TVSettings.ColouringRule)cboShowStatus.SelectedItem;
+            
             if (ColorTranslator.FromHtml(txtShowStatusColor.Text).IsEmpty ||
-                cboShowStatus.SelectedItem is not TVSettings.ColouringRule ssct)
+                ssct is null)
             {
                 return;
             }
 
-            ListViewItem item = lvwDefinedColors.FindItemWithText(ssct.Text);
+            ListViewItem? item = lvwDefinedColors.FindItemWithText(ssct.Text);
             if (item is null)
             {
                 item = new ListViewItem();
@@ -1908,7 +1910,8 @@ public partial class Preferences : Form
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+            if (files is not null)
             foreach (string path in files)
             {
                 try
@@ -2027,22 +2030,24 @@ public partial class Preferences : Form
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string path in files)
-            {
-                try
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+
+            if (files != null)
+                foreach (string path in files)
                 {
-                    DirectoryInfo di = new(path);
-                    if (di.Exists)
+                    try
                     {
-                        TVSettings.Instance.MovieLibraryFolders.Add(path.ToLower());
+                        DirectoryInfo di = new(path);
+                        if (di.Exists)
+                        {
+                            TVSettings.Instance.MovieLibraryFolders.Add(path.ToLower());
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
                     }
                 }
-                catch
-                {
-                    // ignored
-                }
-            }
         }
 
         mDoc.SetDirty();
@@ -2053,7 +2058,8 @@ public partial class Preferences : Form
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+            if (files != null)
             foreach (string path in files)
             {
                 try

@@ -11,26 +11,15 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-public class PossibleMergedEpisode
+public class PossibleMergedEpisode(ProcessedEpisode episodeOne, ProcessedEpisode episodeTwo, int season, bool airDatesMatch, bool similarNames, bool oneFound, bool largeFileSize)
 {
-    private readonly ProcessedEpisode episodeOne;
-    private readonly ProcessedEpisode episodeTwo;
-    public readonly int SeasonNumber;
-    public readonly bool AirDatesMatch;
-    public readonly bool SimilarNames;
-    public readonly bool OneFound;
-    public readonly bool LargeFileSize;
-
-    public PossibleMergedEpisode(ProcessedEpisode episodeOne, ProcessedEpisode episodeTwo, int season, bool airDatesMatch, bool similarNames, bool oneFound, bool largeFileSize)
-    {
-        this.episodeTwo = episodeTwo;
-        this.episodeOne = episodeOne;
-        SeasonNumber = season;
-        AirDatesMatch = airDatesMatch;
-        SimilarNames = similarNames;
-        OneFound = oneFound;
-        LargeFileSize = largeFileSize;
-    }
+    private readonly ProcessedEpisode episodeOne = episodeOne;
+    private readonly ProcessedEpisode episodeTwo = episodeTwo;
+    public readonly int SeasonNumber = season;
+    public readonly bool AirDatesMatch = airDatesMatch;
+    public readonly bool SimilarNames = similarNames;
+    public readonly bool OneFound = oneFound;
+    public readonly bool LargeFileSize = largeFileSize;
 
     public ListViewItem PresentationView
     {

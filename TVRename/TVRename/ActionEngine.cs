@@ -16,13 +16,13 @@ namespace TVRename;
 /// <summary>
 /// Handles the multithreaded nature of actioning many actions at the same time. It will provide a UI to update the user on the status of the execution if required.
 /// </summary>
-public class ActionEngine
+public class ActionEngine(TVRenameStats stats)
 {
     private bool actionPause;
     private SafeList<(Thread, CancellationTokenSource)>? actionWorkers;
     private bool actionStarting;
 
-    private readonly TVRenameStats mStats; //reference to the main TVRenameStats, so we can update the counts
+    private readonly TVRenameStats mStats = stats; //reference to the main TVRenameStats, so we can update the counts
 
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private static readonly NLog.Logger ThreadsLogger = NLog.LogManager.GetLogger("threads");
@@ -43,11 +43,6 @@ public class ActionEngine
     {
         Logger.Info("Actions requested to be resumed");
         actionPause = false;
-    }
-
-    public ActionEngine(TVRenameStats stats)
-    {
-        mStats = stats;
     }
 
     /// <summary>
@@ -147,16 +142,10 @@ public class ActionEngine
         actionProcessorThread.Join();
     }
 
-    private class ActionProcessorThreadArgs
+    private class ActionProcessorThreadArgs(ItemList theList, CancellationToken token)
     {
-        public readonly ItemList TheList;
-        public readonly CancellationToken Token;
-
-        public ActionProcessorThreadArgs(ItemList theList, CancellationToken token)
-        {
-            TheList = theList;
-            Token = token;
-        }
+        public readonly ItemList TheList = theList;
+        public readonly CancellationToken Token = token;
     }
 
     private void ActionProcessor(object? argsIn)
@@ -378,18 +367,11 @@ public class ActionEngine
 
     #region Nested type: ProcessActionInfo
 
-    private class ProcessActionInfo
+    private class ProcessActionInfo(ActionQueue q, Action a, CancellationToken token)
     {
-        public readonly ActionQueue Queue;
-        public readonly Action TheAction;
-        public readonly CancellationToken Token;
-
-        public ProcessActionInfo(ActionQueue q, Action a, CancellationToken token)
-        {
-            Queue = q;
-            TheAction = a;
-            Token = token;
-        }
+        public readonly ActionQueue Queue = q;
+        public readonly Action TheAction = a;
+        public readonly CancellationToken Token = token;
     }
 
     #endregion Nested type: ProcessActionInfo

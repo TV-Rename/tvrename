@@ -203,15 +203,8 @@ internal static class FinderHelper
 
     private static bool MovieNeeded(MovieConfiguration si, DirFilesCache dfc, FileInfo fi)
     {
-        if (fi is null)
-        {
-            throw new ArgumentNullException(nameof(fi));
-        }
-
-        if (si is null)
-        {
-            throw new ArgumentNullException(nameof(si));
-        }
+        ArgumentNullException.ThrowIfNull(fi);
+        ArgumentNullException.ThrowIfNull(si);
 
         foreach (FileInfo testFileInfo in FindMovieOnDisk(dfc, si))
         {
@@ -230,15 +223,9 @@ internal static class FinderHelper
     /// <exception cref="ArgumentNullException"><paramref name="di"/> is <see langword="null"/></exception>
     public static bool FileNeeded(DirectoryInfo? di, ShowConfiguration? si, DirFilesCache dfc)
     {
-        if (di is null)
-        {
-            throw new ArgumentNullException(nameof(di));
-        }
+        ArgumentNullException.ThrowIfNull(di);
 
-        if (si is null)
-        {
-            throw new ArgumentNullException(nameof(si));
-        }
+        ArgumentNullException.ThrowIfNull(si);
 
         if (FindSeasEp(di, out int seasF, out int epF, si, out _))
         {
@@ -252,15 +239,9 @@ internal static class FinderHelper
     /// <exception cref="ArgumentNullException"><paramref name="di"/> is <see langword="null"/></exception>
     public static bool FileNeeded(DirectoryInfo? di, MovieConfiguration? si, DirFilesCache dfc)
     {
-        if (di is null)
-        {
-            throw new ArgumentNullException(nameof(di));
-        }
+        ArgumentNullException.ThrowIfNull(di);
 
-        if (si is null)
-        {
-            throw new ArgumentNullException(nameof(si));
-        }
+        ArgumentNullException.ThrowIfNull(si);
 
         foreach (FileInfo testFileInfo in FindMovieOnDisk(dfc, si))
         {
@@ -337,15 +318,9 @@ internal static class FinderHelper
     private static bool EpisodeNeeded(ShowConfiguration si, DirFilesCache dfc, int seasF, int epF,
         FileSystemInfo fi)
     {
-        if (si is null)
-        {
-            throw new ArgumentNullException(nameof(si));
-        }
+        ArgumentNullException.ThrowIfNull(si);
 
-        if (fi is null)
-        {
-            throw new ArgumentNullException(nameof(fi));
-        }
+        ArgumentNullException.ThrowIfNull(fi);
 
         try
         {

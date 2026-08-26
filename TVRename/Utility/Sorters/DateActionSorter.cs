@@ -12,12 +12,8 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-public class DateActionSorter : ListViewItemDateSorter
+public class DateActionSorter(int column) : ListViewItemDateSorter(column)
 {
-    public DateActionSorter(int column) : base(column)
-    {
-    }
-
     protected override DateTime? GetDate(ListViewItem lvi)
     {
         try

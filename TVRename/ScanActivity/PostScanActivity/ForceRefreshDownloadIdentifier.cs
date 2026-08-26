@@ -4,16 +4,10 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
-internal class ForceRefreshDownloadIdentifier : PostScanActivity
+internal class ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc doc, string name) : PostScanActivity(doc)
 {
-    private readonly DownloadIdentifiersController cx;
-    private readonly string name;
-
-    public ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc doc, string name) : base(doc)
-    {
-        cx = new DownloadIdentifiersController(action);
-        this.name = name;
-    }
+    private readonly DownloadIdentifiersController cx = new(action);
+    private readonly string name = name;
 
     public override string ActivityName() => name;
 

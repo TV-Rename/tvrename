@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class MovieProviderCheck : MovieCheck
+internal class MovieProviderCheck(MovieConfiguration movie, TVDoc doc) : MovieCheck(movie, doc)
 {
-    public MovieProviderCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     public override bool Check() => Movie.ConfigurationProvider != TVDoc.ProviderType.libraryDefault;
 
     public override string Explain() => $"This movie does not use the library default ({TVSettings.Instance.DefaultMovieProvider.PrettyPrint()}), it uses {Movie.ConfigurationProvider.PrettyPrint()} (Hardcoded)";

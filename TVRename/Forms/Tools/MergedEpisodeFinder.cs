@@ -111,7 +111,7 @@ public partial class MergedEpisodeFinder : Form
             return;
         }
 
-        PossibleMergedEpisode? mlastSelected = (PossibleMergedEpisode)lvMergedEpisodes.SelectedItems[0].Tag;
+        PossibleMergedEpisode? mlastSelected = (PossibleMergedEpisode?)lvMergedEpisodes.SelectedItems[0].Tag;
         ListViewItem? mLastClicked = lvMergedEpisodes.SelectedItems[0];
         ShowConfiguration? si = mlastSelected?.ShowConfiguration;
 

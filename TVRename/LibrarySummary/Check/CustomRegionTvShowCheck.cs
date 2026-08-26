@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class CustomRegionTvShowCheck : CustomTvShowCheck
+internal class CustomRegionTvShowCheck(ShowConfiguration show, TVDoc doc) : CustomTvShowCheck(show, doc)
 {
-    public CustomRegionTvShowCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override void FixInternal()
     {
         Show.UseCustomRegion = false;

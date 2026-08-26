@@ -3,23 +3,14 @@ using System.Text;
 
 namespace TVRename;
 
-public class ServerRelease : Release
+public class ServerRelease(string version, Release.VersionType type, string downloadUrl, string releaseNotesText,
+    string releaseNotesUrl, bool isBeta, DateTime releaseDate) : Release(version, type)
 {
-    public string DownloadUrl { get; }
-    public string ReleaseNotesText { get; }
-    public string ReleaseNotesUrl { get; }
-    public bool IsBeta { get; }
-    public DateTime ReleaseDate { get; }
-
-    public ServerRelease(string version, VersionType type, string downloadUrl, string releaseNotesText,
-        string releaseNotesUrl, bool isBeta, DateTime releaseDate) : base(version, type)
-    {
-        DownloadUrl = downloadUrl;
-        ReleaseNotesText = releaseNotesText;
-        ReleaseNotesUrl = releaseNotesUrl;
-        IsBeta = isBeta;
-        ReleaseDate = releaseDate;
-    }
+    public string DownloadUrl { get; } = downloadUrl;
+    public string ReleaseNotesText { get; } = releaseNotesText;
+    public string ReleaseNotesUrl { get; } = releaseNotesUrl;
+    public bool IsBeta { get; } = isBeta;
+    public DateTime ReleaseDate { get; } = releaseDate;
 
     public string LogMessage()
     {

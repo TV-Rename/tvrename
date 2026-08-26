@@ -39,7 +39,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
     private static volatile LocalCache? InternalInstance;
-    private static readonly object SyncRoot = new();
+    private static readonly Lock SyncRoot = new();
 
     private LocalCache()
     {

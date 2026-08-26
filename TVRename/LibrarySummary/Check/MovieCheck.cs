@@ -1,13 +1,8 @@
 namespace TVRename;
 
-internal abstract class MovieCheck : SettingsCheck
+internal abstract class MovieCheck(MovieConfiguration movie, TVDoc doc) : SettingsCheck(doc)
 {
-    public readonly MovieConfiguration Movie;
-
-    protected MovieCheck(MovieConfiguration movie, TVDoc doc) : base(doc)
-    {
-        Movie = movie;
-    }
+    public readonly MovieConfiguration Movie = movie;
 
     protected override void MarkMediaDirty()
     {

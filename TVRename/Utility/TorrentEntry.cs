@@ -1,21 +1,12 @@
 namespace TVRename;
 
-public class TorrentEntry : IDownloadInformation // represents a torrent downloading in a downloader(Torrent)
+public class TorrentEntry(string? torrentFile, string to, int percent, bool finished, string? key) : IDownloadInformation // represents a torrent downloading in a downloader(Torrent)
 {
-    public readonly string DownloadingTo;
-    public readonly int PercentDone;
-    public readonly string? TorrentFile;
-    public readonly bool Finished;
-    public readonly string? Key;
-
-    public TorrentEntry(string? torrentFile, string to, int percent, bool finished, string? key)
-    {
-        TorrentFile = torrentFile;
-        DownloadingTo = to;
-        PercentDone = percent;
-        Finished = finished;
-        Key = key;
-    }
+    public readonly string DownloadingTo = to;
+    public readonly int PercentDone = percent;
+    public readonly string? TorrentFile = torrentFile;
+    public readonly bool Finished = finished;
+    public readonly string? Key = key;
 
     string? IDownloadInformation.FileIdentifier => TorrentFile;
 

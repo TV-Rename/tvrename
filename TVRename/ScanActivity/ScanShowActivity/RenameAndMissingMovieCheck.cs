@@ -5,16 +5,11 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class RenameAndMissingMovieCheck : ScanMovieActivity
+internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
 {
-    private readonly DownloadIdentifiersController downloadIdentifiers;
+    private readonly DownloadIdentifiersController downloadIdentifiers = new();
 
     protected override string ActivityName() => "Rename & Missing Movie Check";
-
-    public RenameAndMissingMovieCheck(TVDoc doc) : base(doc)
-    {
-        downloadIdentifiers = new DownloadIdentifiersController();
-    }
 
     protected override void Check(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {

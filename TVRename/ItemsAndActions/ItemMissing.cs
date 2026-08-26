@@ -11,18 +11,11 @@ namespace TVRename;
 using Alphaleonis.Win32.Filesystem;
 using System;
 
-public abstract class ItemMissing : Item
+public abstract class ItemMissing(string theFileNoExt, string filename, string folder) : Item
 {
-    public string TheFileNoExt;
-    public string Filename;
-    private readonly string folder;
-
-    protected ItemMissing(string theFileNoExt, string filename, string folder)
-    {
-        TheFileNoExt = theFileNoExt;
-        Filename = filename;
-        this.folder = folder;
-    }
+    public string TheFileNoExt = theFileNoExt;
+    public string Filename = filename;
+    private readonly string folder = folder;
 
     public override string DestinationFile => Filename;
     public override string ScanListViewGroup => "lvgActionMissing";

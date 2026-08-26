@@ -469,15 +469,19 @@ public class TVDoc : IDisposable
     public int DownloadsRemaining() =>
         cacheManager.DownloadDone ? 0 : cacheManager.DownloadsRemaining;
 
-    public void SetSearcher(SearchEngine s)
+    public void SetSearcher(SearchEngine? s)
     {
-        TVSettings.Instance.TheSearchers.SetSearchEngine(s);
+        if (s == null) return;
+
+        TVSettings.Instance.TheSearchers.SetSearchEngine(s.Value);
         SetDirty();
     }
 
-    public void SetMovieSearcher(SearchEngine s)
+    public void SetMovieSearcher(SearchEngine? s)
     {
-        TVSettings.Instance.TheMovieSearchers.SetSearchEngine(s);
+        if (s == null) return;
+
+        TVSettings.Instance.TheMovieSearchers.SetSearchEngine(s.Value);
         SetDirty();
     }
 
@@ -1022,45 +1026,24 @@ public class TVDoc : IDisposable
             settings.UpdateShowsAndMovies([.. shows.Union(forceShowsScan.Where(m => TvLibrary.Contains(m)))], [.. movies.Union(forceMoviesScan.Where(m => FilmLibrary.Contains(m)))]);
         }
     }
-    public class ActionSettings
+    public class ActionSettings(bool unattended, bool doAll, ItemList lvr, CancellationTokenSource token)
     {
-        public readonly bool Unattended;
-        public readonly bool DoAll;
-        public readonly ItemList Lvr;
-        public readonly CancellationTokenSource Token;
-
-        public ActionSettings(bool unattended, bool doAll, ItemList lvr, CancellationTokenSource token)
-        {
-            Unattended = unattended;
-            DoAll = doAll;
-            Lvr = lvr;
-            Token = token;
-        }
+        public readonly bool Unattended = unattended;
+        public readonly bool DoAll = doAll;
+        public readonly ItemList Lvr = lvr;
+        public readonly CancellationTokenSource Token = token;
     }
-    public class ScanSettings
+    public class ScanSettings(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool hidden, TVSettings.ScanType st, MediaConfiguration.MediaType media, UI owner, ScanProgress? updateUi, CancellationToken tok)
     {
-        public readonly bool Unattended;
-        public readonly bool Hidden;
-        public readonly TVSettings.ScanType Type;
-        public List<ShowConfiguration> Shows;
-        public List<MovieConfiguration> Movies;
-        public readonly CancellationToken Token;
-        public readonly UI Owner;
-        public readonly MediaConfiguration.MediaType Media;
-        public readonly ScanProgress? UpdateUi;
-
-        public ScanSettings(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool hidden, TVSettings.ScanType st, MediaConfiguration.MediaType media, UI owner, ScanProgress? updateUi, CancellationToken tok)
-        {
-            Shows = shows;
-            Movies = movies;
-            Unattended = unattended;
-            Hidden = hidden;
-            Type = st;
-            Token = tok;
-            Owner = owner;
-            Media = media;
-            UpdateUi = updateUi;
-        }
+        public readonly bool Unattended = unattended;
+        public readonly bool Hidden = hidden;
+        public readonly TVSettings.ScanType Type = st;
+        public List<ShowConfiguration> Shows = shows;
+        public List<MovieConfiguration> Movies = movies;
+        public readonly CancellationToken Token = tok;
+        public readonly UI Owner = owner;
+        public readonly MediaConfiguration.MediaType Media = media;
+        public readonly ScanProgress? UpdateUi = updateUi;
 
         public bool AnyMediaToUpdate => Shows.Any() || Movies.Any();
 

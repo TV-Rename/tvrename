@@ -5,12 +5,8 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
-internal class RemoveShowsWithNoFolders : PostScanActivity
+internal class RemoveShowsWithNoFolders(TVDoc doc) : PostScanActivity(doc)
 {
-    public RemoveShowsWithNoFolders(TVDoc doc) : base(doc)
-    {
-    }
-
     public override string ActivityName() => "Clean up shows with no folders that exist";
 
     protected override bool Active() => true;

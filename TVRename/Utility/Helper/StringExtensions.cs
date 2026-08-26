@@ -302,7 +302,7 @@ public static class StringExtensions
 
     public static string RemoveAfter(this string root, string ending)
     {
-        if (root.IndexOf(ending, StringComparison.OrdinalIgnoreCase) != -1)
+        if (root.Contains(ending, StringComparison.OrdinalIgnoreCase))
         {
             return root[..root.IndexOf(ending, StringComparison.OrdinalIgnoreCase)];
         }
@@ -355,7 +355,7 @@ public static class StringExtensions
     private static IEnumerable<string> FromSepValues(this string? aggregate, char delimiter)
     {
         return string.IsNullOrEmpty(aggregate)
-            ? Array.Empty<string>()
+            ? []
             : aggregate.Split(delimiter).ValidStrings();
     }
 

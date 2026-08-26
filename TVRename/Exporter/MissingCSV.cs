@@ -4,12 +4,8 @@ using System.Security;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class MissingCSV : MissingActionListExporter
+internal class MissingCSV(ItemList theActionList) : MissingActionListExporter(theActionList)
 {
-    public MissingCSV(ItemList theActionList) : base(theActionList)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportMissingCSV;
 
     protected override string Location() => TVSettings.Instance.ExportMissingCSVTo;

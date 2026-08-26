@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class CustomSearchTvShowCheck : CustomTvShowCheck
+internal class CustomSearchTvShowCheck(ShowConfiguration show, TVDoc doc) : CustomTvShowCheck(show, doc)
 {
-    public CustomSearchTvShowCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override void FixInternal()
     {
         Show.UseCustomSearchUrl = false;

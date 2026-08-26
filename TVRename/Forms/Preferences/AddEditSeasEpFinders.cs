@@ -424,14 +424,9 @@ public partial class AddEditSeasEpFinders : Form
 
     #region Nested type: ChangedCont
 
-    private class ChangedCont : SourceGrid.Cells.Controllers.ControllerBase
+    private class ChangedCont(AddEditSeasEpFinders p) : SourceGrid.Cells.Controllers.ControllerBase
     {
-        private readonly AddEditSeasEpFinders p;
-
-        public ChangedCont(AddEditSeasEpFinders p)
-        {
-            this.p = p;
-        }
+        private readonly AddEditSeasEpFinders p = p;
 
         public override void OnValueChanged(CellContext sender, EventArgs e)
         {

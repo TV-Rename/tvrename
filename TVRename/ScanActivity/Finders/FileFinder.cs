@@ -14,12 +14,8 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-internal abstract class FileFinder : Finder
+internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Finder(doc, settings)
 {
-    protected FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override FinderDisplayType DisplayType() => FinderDisplayType.local;
 
     // ReSharper disable once FunctionComplexityOverflow

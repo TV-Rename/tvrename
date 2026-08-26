@@ -231,23 +231,24 @@ public partial class BulkAddMovie : Form
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string path in files)
-            {
-                try
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+            if (files != null)
+                foreach (string path in files)
                 {
-                    DirectoryInfo di = new(path);
-                    if (di.Exists)
+                    try
                     {
-                        engine.CheckFolderForMovies(di, true, true, true);
-                        FillNewShowList(true);
+                        DirectoryInfo di = new(path);
+                        if (di.Exists)
+                        {
+                            engine.CheckFolderForMovies(di, true, true, true);
+                            FillNewShowList(true);
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
                     }
                 }
-                catch
-                {
-                    // ignored
-                }
-            }
         }
     }
 
@@ -260,7 +261,8 @@ public partial class BulkAddMovie : Form
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+            if (files != null)
             foreach (string path in files)
             {
                 try
@@ -362,11 +364,14 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        foreach (PossibleNewMovie ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
-                     .Select(lvi => (PossibleNewMovie)lvi.Tag))
+        foreach (PossibleNewMovie? ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
+                     .Select(lvi => (PossibleNewMovie?)lvi.Tag))
         {
-            TVSettings.Instance.IgnoreFolders.Add(ai.Directory.FullName.ToLower());
-            engine.AddItems.Remove(ai);
+            if (ai is not null)
+            {
+                TVSettings.Instance.IgnoreFolders.Add(ai.Directory.FullName.ToLower());
+                engine.AddItems.Remove(ai);
+            }
         }
         mDoc.SetDirty();
         FillNewShowList(false);

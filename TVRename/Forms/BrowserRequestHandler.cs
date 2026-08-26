@@ -88,18 +88,11 @@ public class BrowserRequestHandler : IRequestHandler
         X509Certificate2Collection certificates, ISelectClientCertificateCallback callback) =>
         false;
 
-    public void OnRenderProcessTerminated(IWebBrowser browserControl, IBrowser browser, CefTerminationStatus status)
-    {
-    }
-
-    public bool OnQuotaRequest(IWebBrowser browserControl, IBrowser browser, string originUrl, long newSize,
-        IRequestCallback callback)
-    {
-        callback.Dispose();
-        return false;
-    }
-
     public void OnRenderViewReady(IWebBrowser browserControl, IBrowser browser)
+    {
+    }
+
+    public void OnRenderProcessTerminated(IWebBrowser chromiumWebBrowser, IBrowser browser, CefTerminationStatus status, int errorCode, string errorMessage)
     {
     }
 }

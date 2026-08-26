@@ -3,12 +3,8 @@ using System;
 
 namespace TVRename;
 
-public class DateActionComparer : ObjectListViewComparer<DateTime>
+public class DateActionComparer(int column) : ObjectListViewComparer<DateTime>(column)
 {
-    public DateActionComparer(int column) : base(column)
-    {
-    }
-
     protected override DateTime GetValue(OLVListItem x, int columnId)
     {
         try

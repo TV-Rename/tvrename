@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class DefaultUseDvdTvCheck : DefaultTvShowCheck
+internal class DefaultUseDvdTvCheck(ShowConfiguration show, TVDoc doc) : DefaultTvShowCheck(show, doc)
 {
-    public DefaultUseDvdTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override string FieldName => "Use DVD Order Check";
 
     protected override bool Field => Show.DvdOrder;

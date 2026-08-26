@@ -12,14 +12,9 @@ using System.Collections.Generic;
 
 namespace TVRename;
 
-public abstract class ObjectListViewComparer<T> : IComparer<OLVListItem> where T : IComparable<T>
+public abstract class ObjectListViewComparer<T>(int column) : IComparer<OLVListItem> where T : IComparable<T>
 {
-    private readonly int col;
-
-    protected ObjectListViewComparer(int column)
-    {
-        col = column;
-    }
+    private readonly int col = column;
 
     public int Compare(OLVListItem? x, OLVListItem? y)
     {

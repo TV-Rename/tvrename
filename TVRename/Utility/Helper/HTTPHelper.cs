@@ -376,7 +376,7 @@ public static class HttpHelper
             sb.Append($"{item.Key}={WebUtility.UrlEncode(item.Value)}&");
         }
         string finalUrl = sb.ToString();
-        return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
+        return finalUrl.Remove(finalUrl.LastIndexOf('&'));
     }
 
     /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
@@ -384,15 +384,9 @@ public static class HttpHelper
     /// <exception cref="Exception">If we still get an Exception after all retries.</exception>
     public static void RetryOnException(int times, TimeSpan delay, string url, Func<Exception, bool> retryableException, System.Action operation, System.Action? updateOperation)
     {
-        if (times <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(times));
-        }
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(times);
 
-        if (operation is null)
-        {
-            throw new ArgumentNullException(nameof(operation));
-        }
+        ArgumentNullException.ThrowIfNull(operation);
 
         int attempts = 0;
         do
@@ -430,15 +424,9 @@ public static class HttpHelper
     /// <exception cref="ArgumentNullException"><paramref name="operation"/> is <see langword="null"/></exception>
     public static async Task RetryOnExceptionAsync<TException>(int times, TimeSpan delay, string url, Func<Task> operation) where TException : Exception
     {
-        if (times <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(times));
-        }
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(times);
 
-        if (operation is null)
-        {
-            throw new ArgumentNullException(nameof(operation));
-        }
+        ArgumentNullException.ThrowIfNull(operation);
 
         int attempts = 0;
         do

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using TVRename.Forms;
@@ -30,7 +31,7 @@ public sealed class TVSettings
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
     private static volatile TVSettings? instance;
-    private static readonly object syncRoot = new();
+    private static readonly Lock syncRoot = new();
 
     public static TVSettings Instance
     {
@@ -429,7 +430,7 @@ public sealed class TVSettings
     public bool DefShowSpecialsCount = false;
     public bool DefShowAutoFolders = true;
     public bool DefShowUseDefLocation = false;
-    public string DefShowLocation;
+    public string? DefShowLocation;
     public string? DefaultShowTimezoneName;
     public bool DefShowUseBase = false;
     public bool DefShowUseSubFolders = true;
@@ -903,7 +904,7 @@ public sealed class TVSettings
         string[] t = s.Split(';');
         foreach (string s2 in t)
         {
-            if (string.IsNullOrEmpty(s2) || !s2.StartsWith(".", StringComparison.Ordinal) || s2.ContainsAnyCharactersFrom(CompulsoryReplacements()) || s2.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
+            if (string.IsNullOrEmpty(s2) || !s2.StartsWith('.') || s2.ContainsAnyCharactersFrom(CompulsoryReplacements()) || s2.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
             {
                 return false;
             }
@@ -1036,7 +1037,7 @@ public sealed class TVSettings
         return sl;
     }
 
-    private static string[] TabNames() => new[] { "MyMovies", "MyShows", "Scan", "WTW" };
+    private static string[] TabNames() => ["MyMovies", "MyShows", "Scan", "WTW"];
 
     private static string TabNameForNumber(int n)
     {
@@ -1230,20 +1231,13 @@ public sealed class TVSettings
         }
     }
 
-    public class Replacement
+    public class Replacement(string from, string? to, bool insens)
     {
         // used for invalid (and general) character (and string) replacements in file names
 
-        public readonly bool CaseInsensitive;
-        public readonly string That;
-        public readonly string This;
-
-        public Replacement(string from, string? to, bool insens)
-        {
-            This = from;
-            That = to ?? string.Empty;
-            CaseInsensitive = insens;
-        }
+        public readonly bool CaseInsensitive = insens;
+        public readonly string That = to ?? string.Empty;
+        public readonly string This = from;
 
         public string DoReplace(string fn)
         {
@@ -1258,22 +1252,14 @@ public sealed class TVSettings
         }
     }
 
-    public class FilenameProcessorRE
+    public class FilenameProcessorRE(bool enabled, string re, bool useFullPath, string notes)
     {
         // A regular expression to find the season and episode number in a filename
 
-        public readonly bool Enabled;
-        public readonly string Notes;
-        public readonly string RegExpression;
-        public readonly bool UseFullPath;
-
-        public FilenameProcessorRE(bool enabled, string re, bool useFullPath, string notes)
-        {
-            Enabled = enabled;
-            RegExpression = re;
-            UseFullPath = useFullPath;
-            Notes = notes;
-        }
+        public readonly bool Enabled = enabled;
+        public readonly string Notes = notes;
+        public readonly string RegExpression = re;
+        public readonly bool UseFullPath = useFullPath;
     }
 
     [Serializable]
@@ -1331,14 +1317,9 @@ public sealed class TVSettings
         public abstract bool AppliesTo(ShowConfiguration s);
     }
 
-    public class ShowStatusColouringRule : ColouringRule
+    public class ShowStatusColouringRule(string status) : ColouringRule
     {
-        public ShowStatusColouringRule(string status)
-        {
-            this.status = status;
-        }
-
-        public readonly string status;
+        public readonly string status = status;
         public override string Text => "Show Status: " + status;
 
         public override bool AppliesTo(ProcessedSeason s) => false;
@@ -1346,14 +1327,9 @@ public sealed class TVSettings
         public override bool AppliesTo(ShowConfiguration s) => status == s.ShowStatus;
     }
 
-    public class ShowAirStatusColouringRule : ColouringRule
+    public class ShowAirStatusColouringRule(ShowConfiguration.ShowAirStatus status) : ColouringRule
     {
-        public ShowAirStatusColouringRule(ShowConfiguration.ShowAirStatus status)
-        {
-            this.status = status;
-        }
-
-        public readonly ShowConfiguration.ShowAirStatus status;
+        public readonly ShowConfiguration.ShowAirStatus status = status;
 
         public override string ToString()
         {
@@ -1375,14 +1351,9 @@ public sealed class TVSettings
         public override bool AppliesTo(ShowConfiguration s) => status == s.SeasonsAirStatus;
     }
 
-    public class SeasonStatusColouringRule : ColouringRule
+    public class SeasonStatusColouringRule(ProcessedSeason.SeasonStatus status) : ColouringRule
     {
-        public SeasonStatusColouringRule(ProcessedSeason.SeasonStatus status)
-        {
-            this.status = status;
-        }
-
-        public readonly ProcessedSeason.SeasonStatus status;
+        public readonly ProcessedSeason.SeasonStatus status = status;
 
         public override string Text => ToString();
 

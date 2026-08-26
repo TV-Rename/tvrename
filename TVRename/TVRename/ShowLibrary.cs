@@ -622,7 +622,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             return defaultName;
         }
 
-        char[] charsToTrim = { ',', '.', ';', ':', '-', '(' };
+        char[] charsToTrim = [',', '.', ';', ':', '-', '('];
         string[] wordsToTrim = { "part", "episode", "pt", "chapter" };
 
         return root.Trim().TrimEnd(wordsToTrim).Trim().TrimEnd(charsToTrim).Trim();

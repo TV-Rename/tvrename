@@ -37,7 +37,7 @@ public static class Program
         Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
 
         Application.EnableVisualStyles();
-        Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
+        Application.SetHighDpiMode(HighDpiMode.SystemAware);
         Application.SetCompatibleTextRenderingDefault(false);
 
         try
@@ -154,7 +154,7 @@ public static class Program
     {
         if (args.Name.StartsWith("CefSharp", StringComparison.Ordinal))
         {
-            string assemblyName = args.Name.Split(new[] { ',' }, 2)[0] + ".dll";
+            string assemblyName = args.Name.Split([','], 2)[0] + ".dll";
             string architectureSpecificPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                 Environment.Is64BitProcess ? "x64" : "x86",
                 assemblyName);

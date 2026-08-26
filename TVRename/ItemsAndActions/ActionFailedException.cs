@@ -2,11 +2,6 @@ using System;
 
 namespace TVRename;
 
-public class ActionFailedException : Exception
+public class ActionFailedException(string message) : Exception(message)
 {
-    // Thrown if an error occurs in the XML when reading TheTVDB.xml
-    public ActionFailedException(string message)
-        : base(message)
-    {
-    }
 }

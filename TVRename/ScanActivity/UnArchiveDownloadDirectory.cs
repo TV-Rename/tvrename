@@ -5,11 +5,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class UnArchiveDownloadDirectory : ScanActivity
+internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    public UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    { }
-
     public override bool Active() => TVSettings.Instance.UnArchiveFilesInDownloadDirectory;
     protected override string CheckName() => "Unarchived files in download directory";
 
