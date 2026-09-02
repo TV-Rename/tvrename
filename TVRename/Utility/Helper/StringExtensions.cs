@@ -60,6 +60,7 @@ public static class StringExtensions
         n = n.Replace(":", "");
         n = n.Replace(".", " ");
         n = n.Replace("'", "");
+        n = n.Replace("’", "");
         n = n.Replace("‘", "");
         n = n.Replace("\"", "");
         n = n.Replace("&", "and");
@@ -348,7 +349,7 @@ public static class StringExtensions
 
     public static string ToCsv(this IEnumerable<int> values) => string.Join(",", values);
 
-    public static string ToPsv(this IEnumerable<string> values) => string.Join("|", values);
+    public static string ToPsv(this IEnumerable<string?>? values) => values is null ? string.Empty : string.Join("|", values);
 
     public static IEnumerable<string> FromPsv(this string? aggregate) => aggregate.FromSepValues('|');
     public static IEnumerable<string> FromCsv(this string? aggregate) => aggregate.FromSepValues(',');
@@ -364,7 +365,7 @@ public static class StringExtensions
         return possibleStrings?
             .Where(s => s.HasValue())
             .OfType<string>()
-            .Select(s => s.Trim()) ?? Array.Empty<string>();
+            .Select(s => s.Trim()) ?? [];
     }
 
     public static int? ToInt(this string? value)
