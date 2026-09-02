@@ -34,7 +34,14 @@ public class SafeEnumerator<T> : IEnumerator<T>
     {
         // .. and exiting lock on Dispose()
         // This will be called when foreach loop finishes
-        Monitor.Exit(@lock);
+        try
+        {
+            // No-op, just to ensure finally always runs
+        }
+        finally
+        {
+            Monitor.Exit(@lock);
+        }
     }
 
     /// we just delegate actual implementation

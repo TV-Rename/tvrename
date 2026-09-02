@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows7.0</TargetFramework>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
     <OutputType>WinExe</OutputType>
     <ApplicationIcon>App\app.ico</ApplicationIcon>
@@ -25,7 +25,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
-    <UseWPF>true</UseWPF>
+    <UseWPF>False</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -102,29 +102,29 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AlphaFS" Version="2.2.6" />
-    <PackageReference Include="CefSharp.Common.NETCore" Version="138.0.170" />
-    <PackageReference Include="CefSharp.WinForms.NETCore" Version="138.0.170" />
+    <PackageReference Include="CefSharp.Common.NETCore" Version="151.3.240" />
+    <PackageReference Include="CefSharp.WinForms.NETCore" Version="151.3.240" />
     <PackageReference Include="CloudFlareUtilities" Version="1.3.0" />
     <PackageReference Include="GuerrillaNtp" Version="3.1.0" />
     <PackageReference Include="Humanizer" Version="3.0.10" />
-    <PackageReference Include="Ical.Net" Version="5.2.2" />
+    <PackageReference Include="Ical.Net" Version="5.2.3" />
     <PackageReference Include="IMDbApiLib" Version="2.0.2" />
-    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
     <PackageReference Include="MediaInfo.Wrapper.Core" Version="26.1.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.16" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.11" />
     <PackageReference Include="MscVersion" Version="1.0.0.9" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
-    <PackageReference Include="NLog.OutputDebugString" Version="6.1.3" />
+    <PackageReference Include="NLog.OutputDebugString" Version="6.2.0" />
     <PackageReference Include="NLog.Targets.Syslog" Version="7.0.0" />
-    <PackageReference Include="NLog.Windows.Forms" Version="6.1.1" />
-    <PackageReference Include="NodaTime" Version="3.3.2" />
+    <PackageReference Include="NLog.Windows.Forms" Version="6.1.4" />
+    <PackageReference Include="NodaTime" Version="3.3.3" />
     <PackageReference Include="ObjectListView.Repack.NET6Plus" Version="2.9.5" />
-    <PackageReference Include="Polly" Version="8.6.6" />
-    <PackageReference Include="SharpCompress" Version="0.48.1" />
+    <PackageReference Include="Polly" Version="8.7.0" />
+    <PackageReference Include="SharpCompress" Version="0.50.4" />
     <PackageReference Include="SourceGrid" Version="4.4.0" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageReference Include="System.Console" Version="4.3.1" />
@@ -140,7 +140,7 @@
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
     <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.2" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.8" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.11" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="System.Threading.Timer" Version="4.3.0" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
@@ -171,12 +171,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="138.0.17" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="151.3.24" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="138.0.17" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="151.3.24" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="138.0.17" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="151.3.24" />
   </ItemGroup>
 </Project>
