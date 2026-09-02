@@ -35,7 +35,7 @@ internal class DownloadIdentifiersController
             new DownloadKodiMetaData(),
             new DownloadKodiImages(),
             new IncorrectFileDates(),
-            new MediaMetaData(),
+            //new MediaMetaData(),
         ];
     }
 

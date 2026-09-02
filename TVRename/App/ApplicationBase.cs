@@ -74,22 +74,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         //Always get the final notification when the event thread is shutting down
         //so we can unregister.
 
-        SystemEvents.EventsThreadShutdown += OnEventsThreadShutdown;
         SystemEvents.SessionEnded += OnSessionEnded;
-    }
-    private void UnregisterFromSystemEvents()
-    {
-        SystemEvents.EventsThreadShutdown -= OnEventsThreadShutdown;
-        SystemEvents.SessionEnded -= OnSessionEnded;
-    }
-
-    /* Notifies you when the thread that is distributing the events from the SystemEvents class is
-     * shutting down so that we can unregister events on the SystemEvents class
-     */
-    private void OnEventsThreadShutdown(object? sender, EventArgs e)
-    {
-        //Unregister all our events as the notification thread is going away
-        UnregisterFromSystemEvents();
     }
 
     /*  Triggered when the user is actually logging off or shutting down the system

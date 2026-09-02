@@ -43,7 +43,11 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         }
 
         List<ShowConfiguration> matchingShows = [.. Shows.Where(configuration => configuration.AnyIdsMatch(newShow))];
-        if (matchingShows.Any())
+        if (matchingShows.Count == 0)
+        {
+            Add(newShow);
+        }
+        else
         {
             foreach (ShowConfiguration existingshow in matchingShows)
             {
@@ -60,8 +64,6 @@ public class ShowLibrary : SafeList<ShowConfiguration>
             }
             return;
         }
-
-        Add(newShow);
     }
     public void AddShows(List<ShowConfiguration>? newShow, bool showErrors)
     {
@@ -160,14 +162,12 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         List<ShowConfiguration> matching =
             [.. Shows.Where(configuration => configuration.IdFor(provider) == id)];
 
-        if (!matching.Any())
+        switch (matching.Count)
         {
-            return null;
-        }
-
-        if (matching.Count == 1)
-        {
-            return matching.First();
+            case 0:
+                return null;
+            case 1:
+                return matching.First();
         }
 
         //OK we have multiple!!
@@ -323,7 +323,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         }
     }
 
-    private static void MergeEpisode(ShowConfiguration si, int snum, Episode ep, IList<ProcessedEpisode> eis)
+    private static void MergeEpisode(ShowConfiguration si, int snum, Episode ep, List<ProcessedEpisode> eis)
     {
         if (!ep.AirsBeforeSeason.HasValue)
         {
@@ -424,7 +424,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         }
     }
 
-    private static void RemoveIgnoredEpisodes(IList<ProcessedEpisode> eis)
+    private static void RemoveIgnoredEpisodes(List<ProcessedEpisode> eis)
     {
         // now, go through and remove the ignored ones (but don't renumber!!)
         for (int i = eis.Count - 1; i >= 0; i--)
@@ -436,7 +436,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         }
     }
 
-    private static int FindIndex(IReadOnlyList<ProcessedEpisode> eis, int episodeNumber)
+    private static int FindIndex(List<ProcessedEpisode> eis, int episodeNumber)
     {
         for (int i = 0; i < eis.Count; i++)
         {
@@ -448,7 +448,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         return -1;
     }
 
-    private static void IgnoreEpisodes(IReadOnlyList<ProcessedEpisode> eis, int fromIndex, int toIndex)
+    private static void IgnoreEpisodes(List<ProcessedEpisode> eis, int fromIndex, int toIndex)
     {
         int ec = eis.Count;
 
@@ -492,7 +492,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
     private static bool ValidIndex(int index, int maxIndex) => index < maxIndex && index >= 0;
 
-    private static void RenameEpisode(IReadOnlyList<ProcessedEpisode> eis, int index, string txt)
+    private static void RenameEpisode(List<ProcessedEpisode> eis, int index, string txt)
     {
         int ec = eis.Count;
         if (ValidIndex(index, ec))
@@ -501,7 +501,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         }
     }
 
-    private static void SplitEpisode(IList<ProcessedEpisode> eis, ShowConfiguration si, int numberOfNewParts, int index)
+    private static void SplitEpisode(List<ProcessedEpisode> eis, ShowConfiguration si, int numberOfNewParts, int index)
     {
         int ec = eis.Count;
         // split one episode into a multi-parter
@@ -570,7 +570,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         }
     }
 
-    private static void InsertEpisode(IList<ProcessedEpisode> eis, ShowConfiguration si, int index, string txt, ShowRule sr)
+    private static void InsertEpisode(List<ProcessedEpisode> eis, ShowConfiguration si, int index, string txt, ShowRule sr)
     {
         // this only applies for inserting an episode, at the end of the list
         if (sr.First == eis[^1].AppropriateEpNum + 1) // after the last episode
@@ -623,12 +623,12 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         }
 
         char[] charsToTrim = [',', '.', ';', ':', '-', '('];
-        string[] wordsToTrim = { "part", "episode", "pt", "chapter" };
+        string[] wordsToTrim = ["part", "episode", "pt", "chapter"];
 
         return root.Trim().TrimEnd(wordsToTrim).Trim().TrimEnd(charsToTrim).Trim();
     }
 
-    private static void Renumber(IReadOnlyList<ProcessedEpisode> eis)
+    private static void Renumber(List<ProcessedEpisode> eis)
     {
         if (eis.Count == 0)
         {
@@ -689,7 +689,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         return found;
     }
 
-    private ProcessedEpisode? GetNextMostRecentProcessedEpisode(int nDaysFuture, ICollection<ProcessedEpisode> found, DateTime notBefore)
+    private ProcessedEpisode? GetNextMostRecentProcessedEpisode(int nDaysFuture, List<ProcessedEpisode> found, DateTime notBefore)
     {
         ProcessedEpisode? nextAfterThat = null;
         TimeSpan howClose = TimeSpan.MaxValue;
@@ -852,16 +852,19 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         }
 
         List<ShowConfiguration> matchingShows = [.. Shows.Where(configuration => configuration.AnyIdsMatch(sc))];
-        if (matchingShows.Any())
+
+        switch (matchingShows.Count)
         {
-            if (matchingShows.Count == 1)
-            {
+            case 0:
+                return;
+            case 1:
                 matchingShows.First().CheckHintExists(hint);
-            }
-            else
-            {
-                Logger.Warn($"Asked to add {hint} to {sc.Name}, butmultple shows match {matchingShows.Select(x => x.Name).ToCsv()}");
-            }
+                break;
+            default:
+                {
+                    Logger.Warn($"Asked to add {hint} to {sc.Name}, but multple shows match {matchingShows.Select(x => x.Name).ToCsv()}");
+                    break;
+                }
         }
     }
 }

@@ -440,7 +440,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 List<CachedSeriesInfo> matchingShows =
                     [.. Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id))];
 
-                if (!matchingShows.Any())
+                if (matchingShows.Count == 0)
                 {
                     return;
                 }
@@ -465,7 +465,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 List<CachedSeriesInfo> matchingShows =
                     [.. Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id))];
 
-                if (!matchingShows.Any())
+                if (matchingShows.Count == 0)
                 {
                     return;
                 }

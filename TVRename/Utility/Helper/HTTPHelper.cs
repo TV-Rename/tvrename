@@ -79,7 +79,7 @@ public static class HttpHelper
         return string.Empty;
     }
 
-    public static byte[] GetUrlBytes(string url, bool useCloudflareProtection)
+    public static Task<byte[]> GetUrlBytesAsync(string url, bool useCloudflareProtection)
     {
         if (useCloudflareProtection)
         {
@@ -87,11 +87,10 @@ public static class HttpHelper
             {
                 // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
                 using ClearanceHandler httpMessageHandler = new();
-                HttpClient cloudflareclient = new (httpMessageHandler);
+                HttpClient cloudflareclient = new(httpMessageHandler);
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
-                Task<byte[]> task = Task.Run(() => cloudflareclient.GetByteArrayAsync(url));
-                return task.Result;
+                return cloudflareclient.GetByteArrayAsync(url); 
             }
             catch (AggregateException ex) when (ex.InnerException is CloudFlareClearanceException)
             {
@@ -107,11 +106,10 @@ public static class HttpHelper
         {
             Client.DefaultRequestHeaders.UserAgent.Clear();
             Client.DefaultRequestHeaders.UserAgent.ParseAdd(TVSettings.USER_AGENT);
-            Task<byte[]> task = Task.Run(() => Client.GetByteArrayAsync(url));
-            return task.Result;
+            return Client.GetByteArrayAsync(url);
         }
 
-        return Array.Empty<byte>();
+        return Task.FromResult(Array.Empty<byte>());
     }
 
     private static string HttpRequest(string method, string url, string json, string contentType, string? token)
