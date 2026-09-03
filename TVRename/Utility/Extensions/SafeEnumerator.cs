@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -32,6 +33,9 @@ public class SafeEnumerator<T> : IEnumerator<T>
 
     public void Dispose()
     {
+        // Prevent derived types with finalizers from needing to override Dispose
+        GC.SuppressFinalize(this);
+
         // .. and exiting lock on Dispose()
         // This will be called when foreach loop finishes
         try

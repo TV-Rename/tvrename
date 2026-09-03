@@ -257,7 +257,7 @@ public partial class BulkAddMovie : Form
         AddDraggedFiles(e, TVSettings.Instance.IgnoreFolders);
     }
 
-    private void AddDraggedFiles(DragEventArgs e, ICollection<string> strings)
+    private void AddDraggedFiles(DragEventArgs e, SafeList<string> strings)
     {
         if (e.Data is not null)
         {

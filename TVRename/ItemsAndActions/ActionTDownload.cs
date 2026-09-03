@@ -135,7 +135,8 @@ public class ActionTDownload : ActionDownload
     private static async Task<string> SaveDownloadedDataAsync(byte[] r, string name)
     {
         string saveTemp = Path.GetTempPath().EnsureEndsWithSeparator() + TVSettings.Instance.FilenameFriendly(name);
-        if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
+        // Compare extensions with StringComparison to avoid culture-sensitive and null-related issues
+        if (!string.Equals(new FileInfo(saveTemp).Extension, ".torrent", StringComparison.OrdinalIgnoreCase))
         {
             saveTemp += ".torrent";
         }

@@ -408,7 +408,13 @@ public partial class UI : Form, IDialogParent
     private void OlvAction_Dropped(object sender, OlvDropEventArgs e)
     {
         // Get a list of filenames being dragged
-        string[]? files = (string[]?)((DataObject)e.DataObject).GetData(DataFormats.FileDrop, false);
+
+        if (e.DataObject is not DataObject dataObject)
+        {
+            return;
+        }
+
+        dataObject.TryGetData<string[]>(DataFormats.FileDrop, false, out string[]? files);
 
         // Establish item in list being dragged to, and exit if no item matched
         // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
@@ -2139,7 +2145,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void AddFolders(IEnumerable<string> foldersList, ICollection<string> alreadyAdded)
+    private void AddFolders(IEnumerable<string> foldersList, List<string> alreadyAdded)
     {
         bool first = true;
         foreach (string folder in foldersList
@@ -2159,7 +2165,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void AddFoldersSubMenu(IEnumerable<string> foldersList, ICollection<string> alreadyAdded)
+    private void AddFoldersSubMenu(IEnumerable<string> foldersList, List<string> alreadyAdded)
     {
         ToolStripMenuItem tsi = new("Open Other Folders");
 
@@ -4753,13 +4759,8 @@ public partial class UI : Form, IDialogParent
 
         int dd = TVSettings.Instance.WTWRecentDays;
 
-        ListViewGroup? justPassedGroup = lvWhenToWatch.Groups["justPassed"];
-
-        if (justPassedGroup != null)
-        {
-            justPassedGroup.Header =
+        lvWhenToWatch.Groups["justPassed"]?.Header =
                 "Aired in the last " + dd + " day" + (dd == 1 ? "" : "s");
-        }
 
         // try to maintain selections if we can
         List<ProcessedEpisode> selections = [];

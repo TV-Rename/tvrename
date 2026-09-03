@@ -285,7 +285,7 @@ public sealed class TVSettings
 
     private static string[] Convert(string? propertyString)
     {
-        return string.IsNullOrWhiteSpace(propertyString) ? Array.Empty<string>() : propertyString.Split(';');
+        return string.IsNullOrWhiteSpace(propertyString) ? [] : propertyString.Split(';');
     }
 
     internal bool IncludeBetaUpdates() => mode == BetaMode.BetaToo;
@@ -476,11 +476,12 @@ public sealed class TVSettings
         DefShowLocation = string.Empty;
 
         // have a guess at utorrent's path
-        string[] guesses = new string[3];
-        guesses[0] = System.Windows.Forms.Application.StartupPath + "\\..\\uTorrent\\uTorrent.exe";
-        guesses[1] = "c:\\Program Files\\uTorrent\\uTorrent.exe";
-        guesses[2] = "c:\\Program Files (x86)\\uTorrent\\uTorrent.exe";
-
+        string[] guesses =
+        [
+            System.Windows.Forms.Application.StartupPath + "\\..\\uTorrent\\uTorrent.exe",
+            "c:\\Program Files\\uTorrent\\uTorrent.exe",
+            "c:\\Program Files (x86)\\uTorrent\\uTorrent.exe",
+        ];
         uTorrentPath = string.Empty;
         foreach (FileInfo f in guesses.Select(g => new FileInfo(g)).Where(f => f.Exists))
         {
@@ -1269,10 +1270,6 @@ public sealed class TVSettings
         {
         }
 
-        protected ShowStatusColoringTypeList(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-
         public bool AppliesTo(ShowConfiguration show) => Keys.Any(rule => rule.AppliesTo(show));
 
         public System.Drawing.Color GetColour(ShowConfiguration show)
@@ -1629,7 +1626,7 @@ public sealed class TVSettings
         if (subElement != null)
         {
             UpdateCheckInterval = TimeSpan.Parse(subElement.ExtractString("Interval", 1.Hours().ToString()));
-            UpdateCheckType = (UpdateCheckMode)Enum.Parse(typeof(UpdateCheckMode), subElement.ExtractString("Mode", ((int)UpdateCheckMode.Everytime).ToString()));
+            UpdateCheckType = Enum.Parse<UpdateCheckMode>(subElement.ExtractString("Mode", ((int)UpdateCheckMode.Everytime).ToString()));
             SuppressUpdateAvailablePopup = subElement.ExtractBool("SuppressPopup", false);
         }
     }

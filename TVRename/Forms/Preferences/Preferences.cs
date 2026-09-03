@@ -1308,7 +1308,7 @@ public partial class Preferences : Form
     {
         cmbDefMovieFolderFormat.SuspendLayout();
         cmbDefMovieFolderFormat.Items.Clear();
-        cmbDefMovieFolderFormat.Items.AddRange([.. Enum.GetValues(typeof(MovieConfiguration.MovieFolderFormat))
+        cmbDefMovieFolderFormat.Items.AddRange([.. Enum.GetValues<MovieConfiguration.MovieFolderFormat>()
             .OfType<MovieConfiguration.MovieFolderFormat>()
             .Select(x => x.PrettyPrint())]);
         cmbDefMovieFolderFormat.ResumeLayout();
