@@ -14,6 +14,7 @@ namespace TVRename;
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading.Tasks;
 using System.Xml;
 
 public class ActionWdtvMeta : ActionWriteMetadata
@@ -32,15 +33,15 @@ public class ActionWdtvMeta : ActionWriteMetadata
 
     public override string Name => "Write WD TV Live Hub Meta";
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
-        return Episode != null ? WriteEpisodeMetaDataFile() :
-            SelectedShow != null ? WriteSeriesXml() :
+        return Episode != null ? await WriteEpisodeMetaDataFileAsync() :
+            SelectedShow != null ? await WriteSeriesXmlAsync() :
             ActionOutcome.Success();
         //todo WDTV Movie support WriteMovieXml();
     }
 
-    private ActionOutcome WriteSeriesXml()
+    private async Task<ActionOutcome> WriteSeriesXmlAsync()
     {
         try
         {
@@ -95,7 +96,7 @@ public class ActionWdtvMeta : ActionWriteMetadata
         }
     }
 
-    private ActionOutcome WriteEpisodeMetaDataFile()
+    private async Task<ActionOutcome> WriteEpisodeMetaDataFileAsync()
     {
         if (Episode != null)
         {

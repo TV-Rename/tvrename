@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -21,7 +22,7 @@ internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downl
 
     protected override string CheckName() => "Check JSON links for the missing files";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         if (TVSettings.Instance.SearchJSONManualScanOnly && Settings.Unattended)
         {
@@ -46,7 +47,7 @@ internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downl
 
                 UpdateStatus(n++, c, action.Filename);
 
-                FindMissingEpisode(action, toRemove, newItems, cache);
+                await FindMissingEpisodeAsync(action, toRemove, newItems, cache);
             }
         }
         catch (WebException e)
@@ -79,7 +80,7 @@ internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downl
         ActionList.Replace(toRemove, newItems);
     }
 
-    private static void FindMissingEpisode(ShowItemMissing action, ItemList toRemove, ItemList newItems, UrlCache cache)
+    private static async Task FindMissingEpisodeAsync(ShowItemMissing action, ItemList toRemove, ItemList newItems, UrlCache cache)
     {
         ProcessedEpisode pe = action.MissingEpisode;
 
@@ -93,7 +94,7 @@ internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downl
         string simpleSeriesName = pe.TheCachedSeries.Name.CompareName();
         ItemList newItemsForThisMissingEpisode = [];
 
-        string response = cache.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}", TVSettings.Instance.SearchJSONUseCloudflare);
+        string response = await cache.GetUrlAsync($"{TVSettings.Instance.SearchJSONURL}{imdbId}", TVSettings.Instance.SearchJSONUseCloudflare);
 
         if (string.IsNullOrWhiteSpace(response))
         {

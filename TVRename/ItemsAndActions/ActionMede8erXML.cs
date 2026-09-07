@@ -15,6 +15,7 @@ namespace TVRename;
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading.Tasks;
 using System.Xml;
 
 // ReSharper disable once InconsistentNaming
@@ -37,7 +38,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
     public override string Name => "Write Mede8er Metadata";
 
     #region Action
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {

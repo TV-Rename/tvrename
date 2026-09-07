@@ -1,5 +1,6 @@
 using System.Threading;
 using System;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -28,12 +29,12 @@ internal class ActionChangeLibraryRemoveMovie : ActionChangeLibrary, IEquatable<
     public override string Produces => Movie?.Name ?? string.Empty;
     public override string Name => "Remove Movie Configuration";
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         if (Movie != null)
         {
             Doc.FilmLibrary.Remove(Movie);
-            Doc.MoviesAddedOrEdited(false, true, true, null, Movie);
+            await Doc.MoviesAddedOrEditedAsync(false, true, true, null, Movie);
         }
         return ActionOutcome.Success();
     }
@@ -76,10 +77,10 @@ internal class ActionChangeLibraryRemoveShow(ShowConfiguration si, TVDoc doc) : 
     public override ShowConfiguration Series => si;
     public override string SeriesName => si.ShowName;
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         Doc.TvLibrary.Remove(si);
-        Doc.TvAddedOrEdited(false, true, true, null, si);
+        await Doc.TvAddedOrEditedAsync(false, true, true, null, si);
         return ActionOutcome.Success();
     }
 

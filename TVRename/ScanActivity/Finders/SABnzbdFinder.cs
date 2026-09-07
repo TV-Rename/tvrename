@@ -10,6 +10,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using TVRename.SAB;
 
@@ -22,7 +23,7 @@ internal class SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downloadi
 
     protected override string CheckName() => "Looked in the listed SABnz queue to see if the episode is already being downloaded";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || string.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
         {

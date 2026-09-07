@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -20,7 +21,7 @@ internal abstract class FindMissingEpisodes(TVDoc doc, TVDoc.ScanSettings settin
 
     protected abstract Finder.FinderDisplayType CurrentType();
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         // have a look around for any missing episodes
         List<Finder> appropriateFinders = [.. finders.Where(f => f.DisplayType() == CurrentType() && f.Active())];
@@ -44,7 +45,7 @@ internal abstract class FindMissingEpisodes(TVDoc doc, TVDoc.ScanSettings settin
             currentMatchingFinderId++;
             int startPos = 100 * (currentMatchingFinderId - 1) / totalMatchingFinders;
             int endPos = 100 * currentMatchingFinderId / totalMatchingFinders;
-            f.Check(progress, startPos, endPos);
+            await f.CheckAsync(progress, startPos, endPos);
         }
     }
 

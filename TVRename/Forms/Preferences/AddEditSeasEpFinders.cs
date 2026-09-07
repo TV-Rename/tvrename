@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms;
 
@@ -258,10 +259,10 @@ public partial class AddEditSeasEpFinders : Form
         tmrFillPreview.Start();
     }
 
-    private void tmrFillPreview_Tick(object sender, EventArgs e)
+    private async void tmrFillPreview_Tick(object sender, EventArgs e)
     {
         tmrFillPreview.Stop();
-        FillPreview();
+        await FillPreviewAsync();
     }
 
     private void chkTestAll_CheckedChanged(object sender, EventArgs e)
@@ -269,7 +270,7 @@ public partial class AddEditSeasEpFinders : Form
         StartTimer();
     }
 
-    private void FillPreview()
+    private async Task FillPreviewAsync()
     {
         lvPreview.Items.Clear();
         if (string.IsNullOrEmpty(txtFolder.Text) || !Directory.Exists(txtFolder.Text))
@@ -319,10 +320,10 @@ public partial class AddEditSeasEpFinders : Form
             }
         }
 
-        UpdatePreview(rel);
+        await UpdatePreviewAsync(rel);
     }
 
-    private void UpdatePreview(List<TVSettings.FilenameProcessorRE> rel)
+    private async Task UpdatePreviewAsync(List<TVSettings.FilenameProcessorRE> rel)
     {
         lvPreview.BeginUpdate();
 
@@ -343,7 +344,7 @@ public partial class AddEditSeasEpFinders : Form
         }
         else if (rdoTorrentQueue.Checked)
         {
-            foreach (string filename in GetTorrentDownloads().Select(entry => entry.DownloadingTo))
+            foreach (string filename in (await GetTorrentDownloadsAsync()).Select(entry => entry.DownloadingTo))
             {
                 if (!TVSettings.Instance.FileHasUsefulExtension(filename, true))
                 {
@@ -389,23 +390,23 @@ public partial class AddEditSeasEpFinders : Form
         lvPreview.Items.Add(lvi);
     }
 
-    private IEnumerable<TorrentEntry> GetTorrentDownloads()
+    private async Task<IEnumerable<TorrentEntry>> GetTorrentDownloadsAsync()
     {
-        torrentCache ??= GetTorrentCache();
+        torrentCache ??= await GetTorrentCacheAsync();
         return torrentCache;
     }
 
-    private static List<TorrentEntry> GetTorrentCache()
+    private static async Task<List<TorrentEntry>> GetTorrentCacheAsync()
     {
         List<TorrentEntry> newTorrentCache = [];
         if (TVSettings.Instance.CheckuTorrent)
         {
-            newTorrentCache.AddNullableRange(new uTorrent().GetTorrentDownloads());
+            newTorrentCache.AddNullableRange(await new uTorrent().GetTorrentDownloadsAsync());
         }
 
         if (TVSettings.Instance.CheckqBitTorrent)
         {
-            newTorrentCache.AddNullableRange(new qBitTorrent().GetTorrentDownloads());
+            newTorrentCache.AddNullableRange(await new qBitTorrent().GetTorrentDownloadsAsync());
         }
 
         return newTorrentCache;

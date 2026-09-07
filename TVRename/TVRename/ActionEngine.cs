@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -49,7 +50,7 @@ public class ActionEngine(TVRenameStats stats)
     /// Processes an Action by running it.
     /// </summary>
     /// <param name="infoIn">A ProcessActionInfo to be processed. It will contain the Action to be processed</param>
-    private void ProcessSingleAction(object? infoIn)
+    private async Task ProcessSingleActionAsync(object? infoIn)
     {
         if (infoIn is not ProcessActionInfo info)
         {
@@ -70,7 +71,7 @@ public class ActionEngine(TVRenameStats stats)
             }
 
             Logger.Trace($"Triggering Action: {action.Name} - {action.Produces} - {action}");
-            action.Outcome = action.Go(mStats, info.Token);
+            action.Outcome = await action.GoAsync(mStats, info.Token);
             if (action.Outcome.Error)
             {
                 action.ErrorText = action.Outcome.LastError?.Message ?? string.Empty;
@@ -224,7 +225,7 @@ public class ActionEngine(TVRenameStats stats)
                 }
             }
 
-            if (ReviewQueues(queues))
+            if (ReviewQueuesAsync(queues).Result)
             {
                 break; // all done!
             }
@@ -243,7 +244,7 @@ public class ActionEngine(TVRenameStats stats)
         }
     }
 
-    private bool ReviewQueues(IEnumerable<ActionQueue>? queues)
+    private async Task<bool> ReviewQueuesAsync(IEnumerable<ActionQueue>? queues)
     {
         // look through the list of semaphores to see if there is one waiting for some work to do
         if (queues is null)
@@ -264,7 +265,7 @@ public class ActionEngine(TVRenameStats stats)
                 if (!act.Outcome.Done)
                 {
                     CancellationTokenSource cts = new();
-                    StartThread(new ProcessActionInfo(currentQueue, act, cts.Token), cts);
+                    await StartThreadAsync(new ProcessActionInfo(currentQueue, act, cts.Token), cts);
                 }
             }
         }
@@ -272,11 +273,11 @@ public class ActionEngine(TVRenameStats stats)
         return allDone;
     }
 
-    private void StartThread(ProcessActionInfo pai, CancellationTokenSource cancellationTokenSource)
+    private async Task StartThreadAsync(ProcessActionInfo pai, CancellationTokenSource cancellationTokenSource)
     {
         try
         {
-            Thread t = new(ProcessSingleAction)
+            Thread t = new(async (pai) => await ProcessSingleActionAsync(pai))
             {
                 Name = "ProcessSingleAction(" + pai.TheAction.Name + ":" + pai.TheAction.ProgressText + ")"
             };

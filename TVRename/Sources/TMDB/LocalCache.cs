@@ -62,7 +62,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             return InternalInstance;
         }
     }
-    public void ForgetEverything()
+    public async Task ForgetEverythingAsync()
     {
         lock (MOVIE_LOCK)
         {
@@ -83,7 +83,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     public override string CacheSourceName() => "TMDB";
 
-    public void Setup(FileInfo? loadFrom, FileInfo cache, bool showIssues)
+    public async Task SetupAsync(FileInfo? loadFrom, FileInfo cache, bool showIssues)
     {
         System.Diagnostics.Debug.Assert(cache != null);
         CacheFile = cache;
@@ -99,12 +99,14 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             LoadOk = true;
             return;
         }
-        bool mOK = CachePersistor.LoadMovieCache(loadFrom, this);
-        bool tvOk = CachePersistor.LoadTvCache(loadFrom, this);
-        LoadOk = mOK && tvOk;
+
+        var movieLoadTask =  CachePersistor.LoadMovieCache(loadFrom, this);
+        var tvLoadTask =  CachePersistor.LoadTvCache(loadFrom, this);
+
+        LoadOk = movieLoadTask && tvLoadTask;
     }
 
-    public bool Connect(bool showErrorMsgBox) => true;
+    public async Task<bool> ConnectAsync(bool showErrorMsgBox) => true;
 
     public void SaveCache()
     {
@@ -119,7 +121,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
+    public override async Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
     {
         if (s.Provider != TVDoc.ProviderType.TMDB)
         {
@@ -131,11 +133,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
 
         return s.Media == MediaConfiguration.MediaType.movie
-            ? EnsureMovieUpdated(s)
-            : EnsureSeriesUpdated(s);
+            ? await EnsureMovieUpdatedAsync(s)
+            : await EnsureSeriesUpdatedAsync(s);
     }
 
-    private bool EnsureSeriesUpdated(ISeriesSpecifier s)
+    private async Task<bool> EnsureSeriesUpdatedAsync(ISeriesSpecifier s)
     {
         lock (SERIES_LOCK)
         {
@@ -148,7 +150,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         Say($"Series {s.Name} from TMDB");
         try
         {
-            CachedSeriesInfo downloadedSi = DownloadSeriesNow(s);
+            CachedSeriesInfo downloadedSi = await DownloadSeriesNowAsync(s);
 
             if (downloadedSi.TmdbCode != s.TmdbId && s.TmdbId == -1)
             {
@@ -194,7 +196,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return true;
     }
 
-    private bool EnsureMovieUpdated(ISeriesSpecifier id)
+    private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id)
     {
         lock (MOVIE_LOCK)
         {
@@ -207,7 +209,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         Say($"Movie: {id.Name} from TMDB");
         try
         {
-            CachedMovieInfo downloadedSi = DownloadMovieNow(id);
+            CachedMovieInfo downloadedSi = await DownloadMovieNowAsync(id);
 
             if (downloadedSi.TmdbCode != id.TmdbId && id.TmdbId == -1)
             {
@@ -238,7 +240,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
     }
 
-    public override bool GetUpdates(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
+    public override async Task<bool> GetUpdatesAsync(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TMDB cache");
         this.MarkPlaceHoldersDirty(ss);
@@ -257,7 +259,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
             latestUpdateTime.RegisterServerUpdate(TimeHelpers.UnixUtcNow());
 
-            IEnumerable<TMDbLib.Objects.Changes.ChangesListItem> task = Client.GetChangesMoviesAsync(latestUpdateTime, cts).GetAwaiter().GetResult();
+            IEnumerable<TMDbLib.Objects.Changes.ChangesListItem> task = await Client.GetChangesMoviesAsync(latestUpdateTime, cts);
             List<int> movieUpdates = [.. task.Select(item => item.Id).Distinct()];
 
             Say(
@@ -370,7 +372,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         latestUpdateTime.RecordSuccessfulUpdate();
     }
 
-    public CachedMovieInfo? GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => this.GetMovie(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
+    public async Task<CachedMovieInfo?> GetMovieAsync(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => await this.GetMovieAsync(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     public void AddOrUpdateEpisode(Episode e)
@@ -397,28 +399,28 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     /// <exception cref="MediaNotFoundException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">Condition.</exception>
-    public CachedMovieInfo GetMovieAndDownload(ISeriesSpecifier id) => HasMovie(id.TmdbId)
+    public async Task<CachedMovieInfo> GetMovieAndDownloadAsync(ISeriesSpecifier id) => HasMovie(id.TmdbId)
         ? CachedMovieData[id.TmdbId]
-        : DownloadMovieNow(id);
+        : await DownloadMovieNowAsync(id);
 
     /// <exception cref="MediaNotFoundException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">Condition.</exception>
-    internal CachedMovieInfo DownloadMovieNow(ISeriesSpecifier id, bool saveToCache = true)
+    internal async Task<CachedMovieInfo> DownloadMovieNowAsync(ISeriesSpecifier id, bool saveToCache = true)
     {
         string errorMessage = $"Error obtaining TMDB Movie for {id} in {id.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:";
 
-        return HandleWebErrorsFor(() => DownloadMovieNowInternal(id, saveToCache), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await DownloadMovieNowInternalAsync(id, saveToCache), errorMessage);
     }
 
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    private CachedMovieInfo DownloadMovieNowInternal(ISeriesSpecifier seriesSpecifier, bool b)
+    private async Task<CachedMovieInfo> DownloadMovieNowInternalAsync(ISeriesSpecifier seriesSpecifier, bool b)
     {
         string imageLanguage = $"{seriesSpecifier.LanguageToUse().Abbreviation},null";
-        Movie downloadedMovie = Client.GetMovieAsync(seriesSpecifier.TmdbId, seriesSpecifier.LanguageToUse().Abbreviation,
+        Movie downloadedMovie = await Client.GetMovieAsync(seriesSpecifier.TmdbId, seriesSpecifier.LanguageToUse().Abbreviation,
                 imageLanguage,
                 MovieMethods.ExternalIds | MovieMethods.Images | MovieMethods.AlternativeTitles |
                 MovieMethods.ReleaseDates | MovieMethods.Changes | MovieMethods.Videos | MovieMethods.Credits)
-            .Result ?? throw new MediaNotFoundException(seriesSpecifier, "TMDB no longer has this movie",
+            ?? throw new MediaNotFoundException(seriesSpecifier, "TMDB no longer has this movie",
             TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
 
         CachedMovieInfo m = GenerateCachedMovieInfo(seriesSpecifier, downloadedMovie);
@@ -587,11 +589,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     /// <param name="errorMessage"></param>
     /// <returns></returns>
     /// <exception cref="SourceConnectivityException"></exception>
-    private T HandleWebErrorsFor<T>(Func<T> webCall, string errorMessage)
+    private async Task<T> HandleWebErrorsForAsync<T>(Func<Task<T>> webCall, string errorMessage)
     {
         try
         {
-            return webCall.WithRetry(3,10.Seconds(),ex=>ex is RequestLimitExceededException ,errorMessage);
+            return await webCall.WithRetry(3,10.Seconds(),ex=>ex is RequestLimitExceededException ,errorMessage);
         }
         catch (System.IO.IOException ioex)
         {
@@ -663,25 +665,24 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     /// <exception cref="MediaNotFoundException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">Condition.</exception>
-    internal CachedSeriesInfo DownloadSeriesNow(ISeriesSpecifier ss, bool saveToCache = true)
+    internal async Task<CachedSeriesInfo> DownloadSeriesNowAsync(ISeriesSpecifier ss, bool saveToCache = true)
     {
         string errorMessage = $"Error obtaining TMDB Show for {ss} in {ss.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:";
-        return HandleWebErrorsFor(() => DownloadSeriesNowInternal(ss, saveToCache), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await DownloadSeriesNowInternalAsync(ss, saveToCache), errorMessage);
     }
 
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    private CachedSeriesInfo DownloadSeriesNowInternal(ISeriesSpecifier seriesSpecifier, bool save)
+    private async Task<CachedSeriesInfo> DownloadSeriesNowInternalAsync(ISeriesSpecifier seriesSpecifier, bool save)
     {
         int id = seriesSpecifier.TmdbId > 0 ? seriesSpecifier.TmdbId : GetSeriesIdFromOtherCodes(seriesSpecifier) ?? 0;
         string imageLanguage = $"{seriesSpecifier.LanguageToUse().Abbreviation},null";
 
-        TvShow downloadedSeries = Client.GetTvShowAsync(id,
+        TvShow downloadedSeries = await Client.GetTvShowAsync(id,
                                           TvShowMethods.ExternalIds | TvShowMethods.Images |
                                           TvShowMethods.AlternativeTitles |
                                           TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos |
                                           TvShowMethods.Credits, seriesSpecifier.LanguageToUse().Abbreviation,
                                           imageLanguage)
-                                      .Result
                                   ?? throw new MediaNotFoundException(seriesSpecifier, "TMDB no longer has this tv show",
                                       TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
 
@@ -991,7 +992,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     /// <exception cref="SourceConnectivityException">Condition.</exception>
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type,
+    public override async Task SearchAsync(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type,
         Locale locale)
     {
         if (text.IsNumeric())
@@ -1005,11 +1006,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     switch (type)
                     {
                         case MediaConfiguration.MediaType.tv:
-                            DownloadSeriesNow(ss);
+                            await DownloadSeriesNowAsync(ss);
                             break;
 
                         case MediaConfiguration.MediaType.movie:
-                            DownloadMovieNow(ss);
+                            await DownloadMovieNowAsync(ss);
                             break;
                     }
                 }
@@ -1020,17 +1021,17 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             }
         }
 
-        HandleWebErrorsFor(() => SearchInternal(text, type, locale), "Error searching on TMDB:");
+        await HandleWebErrorsForAsync(async () => await SearchInternalAsync(text, type, locale), "Error searching on TMDB:");
     }
 
     /// <exception cref="GeneralHttpException">Condition.</exception>
     /// <exception cref="AggregateException"></exception>
-    private bool SearchInternal(string s, MediaConfiguration.MediaType mediaType, Locale locale1)
+    private async Task<bool> SearchInternalAsync(string s, MediaConfiguration.MediaType mediaType, Locale locale1)
     {
         if (mediaType == MediaConfiguration.MediaType.movie)
         {
-            SearchContainer<SearchMovie>? results = Client
-                .SearchMovieAsync(s, locale1.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation).Result;
+            SearchContainer<SearchMovie>? results = await Client
+                .SearchMovieAsync(s, locale1.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation);
 
             if (results ==null || results?.Results == null)
             {
@@ -1049,7 +1050,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         else
         {
-            SearchContainer<SearchTv>? results = Client.SearchTvShowAsync(s).Result;
+            SearchContainer<SearchTv>? results = await Client.SearchTvShowAsync(s);
 
             if (results == null || results?.Results == null)
             {
@@ -1135,9 +1136,9 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     /// <exception cref="SourceConnectivityException">Condition.</exception>
     /// <exception cref="AggregateException"></exception>
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    public CachedMovieInfo? LookupMovieByImdb(string imdbToTest, Locale locale)
+    public async Task<CachedMovieInfo?> LookupMovieByImdbAsync(string imdbToTest, Locale locale)
     {
-        FindContainer? results = Client.FindAsync(FindExternalSource.Imdb, imdbToTest).Result;
+        FindContainer? results = await Client.FindAsync(FindExternalSource.Imdb, imdbToTest);
 
         if (results?.MovieResults == null)
         {
@@ -1148,7 +1149,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         foreach (SearchMovie result in results!.MovieResults ?? [])
         {
             SearchSpecifier ss = new(result.Id, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
-            DownloadMovieNow(ss);
+            await DownloadMovieNowAsync(ss);
         }
 
         if (results.MovieResults!.Count == 0)
@@ -1211,18 +1212,18 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     /// <exception cref="SourceConnectivityException">Condition.</exception>
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    public CachedMovieInfo? LookupMovieByTvdb(int tvdbId, Locale locale)
+    public async Task<CachedMovieInfo?> LookupMovieByTvdbAsync(int tvdbId, Locale locale)
     {
         try
         {
-            FindContainer? results = Client.FindAsync(FindExternalSource.TvDb, tvdbId.ToString()).Result;
+            FindContainer? results = await Client.FindAsync(FindExternalSource.TvDb, tvdbId.ToString());
             LOGGER.Info($"Got {results?.MovieResults?.Count:N0} results searching for {tvdbId}");
             foreach (SearchMovie result in results?.MovieResults ?? [])
             {
                 SearchSpecifier ss = new(result.Id, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
                 try
                 {
-                    DownloadMovieNow(ss);
+                    await DownloadMovieNowAsync(ss);
                 }
                 catch (MediaNotFoundException ex)
                 {
@@ -1254,7 +1255,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return null;
     }
 
-    internal IEnumerable<CachedSeriesInfo> ServerTvAccuracyCheck()
+    internal async Task<IEnumerable<CachedSeriesInfo>> ServerTvAccuracyCheckAsync()
     {
         TmdbAccuracyCheck check = new(this);
 
@@ -1262,10 +1263,10 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         try
         {
-            Parallel.ForEach(FullShows(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, si =>
+            Parallel.ForEach(FullShows(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, async si =>
             {
                 Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
-                check.ServerAccuracyCheck(si);
+                await check.ServerAccuracyCheckAsync(si);
             });
         }
         catch (OperationCanceledException ex)
@@ -1285,7 +1286,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         SayNothing();
         return check.ShowsToUpdate;
     }
-    internal IEnumerable<CachedMovieInfo> ServerMovieAccuracyCheck()
+    internal async Task<IEnumerable<CachedMovieInfo>> ServerMovieAccuracyCheckAsync()
     {
         TmdbAccuracyCheck check = new(this);
 
@@ -1293,10 +1294,10 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         try
         {
-            Parallel.ForEach(FullMovies(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, si =>
+            Parallel.ForEach(FullMovies(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, async si =>
             {
                 Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
-                check.ServerAccuracyCheck(si);
+                await check.ServerAccuracyCheckAsync(si);
             });
         }
         catch (OperationCanceledException ex)
@@ -1455,7 +1456,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         {
             string errorMessage = $"Error obtaining TMDB Recommendations for {movie.Name}";
 
-            HandleWebErrorsFor(() => GetMovieRecommendations(languageCode, movie, returnValue), errorMessage);
+            await HandleWebErrorsForAsync(async () => await GetMovieRecommendationsAsync(languageCode, movie, returnValue), errorMessage);
             
             sender.ReportProgress(100 * current++ / total, movie.CachedMovie?.Name);
         }
@@ -1463,12 +1464,12 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     }
 
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    private bool GetMovieRecommendations(string languageCode, MovieConfiguration movie, Recomendations returnValue)
+    private async Task<bool> GetMovieRecommendationsAsync(string languageCode, MovieConfiguration movie, Recomendations returnValue)
     {
         Task<SearchContainer<SearchMovie>?> related = Client.GetMovieRecommendationsAsync(movie.TmdbCode, languageCode);
         Task<SearchContainer<SearchMovie>?> similar = Client.GetMovieSimilarAsync(movie.TmdbCode, languageCode);
 
-        Task.WaitAll(related, similar);
+        await Task.WhenAll(related, similar);
         if (related.Result != null)
         {
             foreach (SearchMovie? relatedMovie in related.Result.Results ?? [])

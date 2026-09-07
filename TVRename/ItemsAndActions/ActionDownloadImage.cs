@@ -16,6 +16,7 @@ namespace TVRename;
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading.Tasks;
 
 public class ActionDownloadImage : ActionDownload
 {
@@ -90,7 +91,7 @@ public class ActionDownloadImage : ActionDownload
         return bmPhoto;
     }
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {

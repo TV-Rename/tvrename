@@ -47,7 +47,7 @@ public partial class DownloadProgress : Form
 
     private void Tick()
     {
-        if (mDoc.DownloadDone)
+        if (!mDoc.DownloadIsHappening())
         {
             UiHelpers.SetProgressStateNone(ParentForm?.Handle ?? Handle);
             Close();

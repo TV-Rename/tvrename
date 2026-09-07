@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -16,11 +17,11 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
 {
     protected override string CheckName() => "Looked in the library for any new shows to be added (bulk add)";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         BulkAddSeriesManager bam = new(MDoc);
-        bam.CheckFolders(progress, false, !Settings.Unattended, Settings.Token);
-        AskUserAboutShows(bam);
+        await bam.CheckFoldersAsync(progress, false, !Settings.Unattended, Settings.Token);
+        await AskUserAboutShowsAsync(bam);
 
         if (!bam.AddItems.Any(s => s.CodeKnown))
         {
@@ -29,7 +30,7 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
 
         var idsToAdd = bam.AddItems.Where(s => s.CodeKnown).Select(folder => new { Code = folder.ProviderCode, folder.Provider }).ToList();
 
-        bam.AddAllToMyShows(Settings.Owner);
+        await bam.AddAllToMyShowsAsync(Settings.Owner);
         List<ShowConfiguration> addedShows = [.. idsToAdd.Select(s => MDoc.TvLibrary.GetShowItem(s.Code, s.Provider)).OfType<ShowConfiguration>()];
 
         //add each new show into the shows being scanned
@@ -39,10 +40,10 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
         }
         LOGGER.Info($"Added new shows called: {addedShows.Select(si => si.ShowName).ToCsv()}");
 
-        MDoc.TvAddedOrEdited(true, Settings.Unattended, Settings.Hidden, Settings.Owner, addedShows);
+        await MDoc.TvAddedOrEditedAsync(true, Settings.Unattended, Settings.Hidden, Settings.Owner, addedShows);
     }
 
-    private void AskUserAboutShows(BulkAddSeriesManager bam)
+    private async Task AskUserAboutShowsAsync(BulkAddSeriesManager bam)
     {
         foreach (PossibleNewTvShow folder in bam.AddItems)
         {
@@ -51,18 +52,18 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
                 break;
             }
 
-            AskUserAboutShow(folder, Settings.Owner);
+            await AskUserAboutShowAsync(folder, Settings.Owner);
         }
     }
 
-    private void AskUserAboutShow(PossibleNewTvShow folder, IDialogParent owner)
+    private async Task AskUserAboutShowAsync(PossibleNewTvShow folder, Forms.UI owner)
     {
         if (folder.CodeKnown)
         {
             return;
         }
 
-        BulkAddSeriesManager.GuessShowItem(folder, MDoc.TvLibrary, true);
+        await BulkAddSeriesManager.GuessShowItemAsync(folder, MDoc.TvLibrary, true);
 
         if (folder.CodeKnown)
         {

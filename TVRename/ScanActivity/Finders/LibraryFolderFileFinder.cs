@@ -1,6 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -10,7 +11,7 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
 
     protected override string CheckName() => "Looked in the library for the missing files";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         ItemList newList = [];
         ItemList toRemove = [];

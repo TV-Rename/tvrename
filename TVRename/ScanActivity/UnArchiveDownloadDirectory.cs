@@ -2,6 +2,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -10,7 +11,7 @@ internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings
     public override bool Active() => TVSettings.Instance.UnArchiveFilesInDownloadDirectory;
     protected override string CheckName() => "Unarchived files in download directory";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         int totalDownloadFolders = TVSettings.Instance.DownloadFolders.Count;
         int c = 0;

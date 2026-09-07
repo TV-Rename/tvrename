@@ -1,6 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TVRename.Forms.Tools;
@@ -48,7 +49,7 @@ public partial class QuickRename : Form, IDialogParent
         }
     }
 
-    private void Panel1_DragDrop(object sender, DragEventArgs e)
+    private async void Panel1_DragDrop(object sender, DragEventArgs e)
     {
         Logger.Info("Starting quick rename.");
         // Get a list of filenames being dragged
@@ -59,7 +60,7 @@ public partial class QuickRename : Form, IDialogParent
             if (files is not null)
                 foreach (FileInfo droppedFile in files.Select(droppedFileName => new FileInfo(droppedFileName)))
                 {
-                    ProcessUnknown(droppedFile, this);
+                    await ProcessUnknownAsync(droppedFile, this);
                 }
         }
 
@@ -69,7 +70,7 @@ public partial class QuickRename : Form, IDialogParent
         Logger.Info("Finished quick rename.");
     }
 
-    private void ProcessDirectory(DirectoryInfo droppedDir)
+    private async Task ProcessDirectoryAsync(DirectoryInfo droppedDir)
     {
         if ((droppedDir.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
         {
@@ -79,28 +80,28 @@ public partial class QuickRename : Form, IDialogParent
 
         foreach (FileInfo subFile in droppedDir.GetFiles())
         {
-            ProcessUnknown(subFile, this);
+            await ProcessUnknownAsync(subFile, this);
         }
 
         foreach (DirectoryInfo subFile in droppedDir.GetDirectories())
         {
-            ProcessDirectory(subFile);
+            await ProcessDirectoryAsync(subFile);
         }
     }
 
-    private void ProcessUnknown(FileInfo droppedFile, IDialogParent owner)
+    private async Task ProcessUnknownAsync(FileInfo droppedFile, IDialogParent owner)
     {
         if ((droppedFile.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
         {
-            ProcessDirectory(new DirectoryInfo(droppedFile.FullName));
+            await ProcessDirectoryAsync(new DirectoryInfo(droppedFile.FullName));
         }
         else
         {
-            ProcessFile(droppedFile, owner);
+            await ProcessFileAsync(droppedFile, owner);
         }
     }
 
-    private void ProcessFile(FileInfo droppedFile, IDialogParent owner)
+    private async Task ProcessFileAsync(FileInfo droppedFile, IDialogParent owner)
     {
         if ((droppedFile.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
         {
@@ -125,13 +126,13 @@ public partial class QuickRename : Form, IDialogParent
         {
             if (TVSettings.Instance.AutoAddAsPartOfQuickRename)
             {
-                IEnumerable<MediaConfiguration> addedShows = FinderHelper.FindMedia([droppedFile], mDoc, owner).Select(x=>x.Configuration);
+                IEnumerable<MediaConfiguration> addedShows = (await FinderHelper.FindMediaAsync([droppedFile], mDoc, owner)).Select(x=>x.Configuration);
                 bestShow = addedShows.OfType<ShowConfiguration>().FirstOrDefault();
 
                 if (bestShow != null && !mDoc.AlreadyContains(bestShow))
                 {
                     mDoc.Add(bestShow.AsList(), true);
-                    mDoc.TvAddedOrEdited(true, false, false, parent, bestShow);
+                    await mDoc.TvAddedOrEditedAsync(true, false, false, parent, bestShow);
 
                     Logger.Info($"Added new show called: {bestShow.ShowName}");
                 }

@@ -756,7 +756,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         return nextAfterThat;
     }
 
-    public IEnumerable<ProcessedEpisode> GetRecentAndFutureEps(int recentDays)
+    public List<ProcessedEpisode> GetRecentAndFutureEps(int recentDays)
     {
         List<ProcessedEpisode> returnList = [];
         DateTime now = TimeHelpers.LocalNow();

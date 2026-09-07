@@ -98,7 +98,7 @@ public partial class BulkAddMovie : Form
         DeleteSelectedFolder(lstFMMonitorFolders, TVSettings.Instance.MovieLibraryFolders);
     }
 
-    private void DeleteSelectedFolder(ListBox lb, IList<string> folders)
+    private void DeleteSelectedFolder(ListBox lb, SafeList<string> folders)
     {
         for (int i = lb.SelectedIndices.Count - 1; i >= 0; i--)
         {
@@ -313,7 +313,7 @@ public partial class BulkAddMovie : Form
         bwIdentify.RunWorkerAsync();
     }
 
-    private static void AutoMatchMovie(CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
+    private static async Task AutoMatchMovieAsync(CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
     {
         if (cts.IsCancellationRequested)
         {
@@ -325,7 +325,7 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        ai.GuessMovie(true);
+        await ai.GuessMovieAsync(true);
         Interlocked.Increment(ref VolatileCounter);
         bw.ReportProgress((int)100.0 * VolatileCounter / total, ai);
     }
@@ -479,7 +479,7 @@ public partial class BulkAddMovie : Form
         }
     }
 
-    private void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
+    private async void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
     {
         int numberToAdd = engine.AddItems.Count(ai => ai.CodeKnown);
         if (numberToAdd > 0)
@@ -490,7 +490,7 @@ public partial class BulkAddMovie : Form
                 return;
             }
 
-            engine.AddAllToMyMovies(mainUi);
+            await engine.AddAllToMyMoviesAsync(mainUi);
         }
 
         Close();
@@ -608,10 +608,10 @@ public partial class BulkAddMovie : Form
 
         VolatileCounter = 0;
 
-        Parallel.ForEach(engine.AddItems, movie =>
+        Parallel.ForEach(engine.AddItems, async movie =>
         {
             Thread.CurrentThread.Name ??= $" Identify {movie.Name}"; // Can only set it once
-            AutoMatchMovie(cts, movie, bw, engine.AddItems.Count);
+            await AutoMatchMovieAsync(cts, movie, bw, engine.AddItems.Count);
         });
 
         cts.Cancel();

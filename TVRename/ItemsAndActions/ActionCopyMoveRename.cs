@@ -6,6 +6,7 @@ namespace TVRename;
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading.Tasks;
 
 public class ActionCopyMoveRename : ActionFileOperation
 {
@@ -70,7 +71,7 @@ public class ActionCopyMoveRename : ActionFileOperation
     // 0.0 to 100.0
     public override long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         // read NTFS permissions (if any)
         FileSecurity? security = null;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
 using TVRename.YTS;
@@ -62,12 +63,12 @@ public partial class YtsRecommendationView : Form
         UpdateUI();
     }
 
-    private void AddMovieToLibrary(YtsRecommendationRow addedMovie)
+    private async Task AddMovieToLibraryAsync(YtsRecommendationRow addedMovie)
     {
         string imdbCode = addedMovie.ImdbCode;
         string name = addedMovie.Name;
 
-        CachedMovieInfo? movie = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbCode, new Locale());
+        CachedMovieInfo? movie = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync(imdbCode, new Locale());
         if (movie is null)
         {
             Logger.Info($"Not adding {imdbCode}:{name} as the IMDB code is not found on TMDB");
@@ -118,7 +119,7 @@ public partial class YtsRecommendationView : Form
         rightClickMenu.Close();
     }
 
-    private void BwScan_DoWork(object sender, DoWorkEventArgs e)
+    private async void BwScan_DoWorkAsync(object sender, DoWorkEventArgs e)
     {
         System.Threading.Thread.CurrentThread.Name ??= "Recommendations Scan Thread"; // Can only set it once
 
@@ -133,13 +134,13 @@ public partial class YtsRecommendationView : Form
             {
                 page++;
 
-                API.YtsMovie? ytsMovie = API.GetMovieByImdb(existingMovie.ImdbCode);
+                API.YtsMovie? ytsMovie = await API.GetMovieByImdbAsync(existingMovie.ImdbCode);
                 if (ytsMovie is null || ytsMovie.Id==0)
                 {
                     continue;
                 }
 
-                IEnumerable<API.YtsMovie>? relatedMovies = API.GetRelatedMovies(ytsMovie.Id);
+                IEnumerable<API.YtsMovie>? relatedMovies = await API.GetRelatedMoviesAsync(ytsMovie.Id);
                 if (relatedMovies is null)
                 {
                     continue;
@@ -172,7 +173,7 @@ public partial class YtsRecommendationView : Form
             }
             else
             {
-                Add(relatedMovie.Id, new Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>(relatedMovie, new(new List<Tuple<API.YtsMovie, MovieConfiguration>> { new(ytsMovie, existingMovie) })));
+                Add(relatedMovie.Id, new Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>(relatedMovie, [new(ytsMovie, existingMovie)]));
             }
         }
 
@@ -226,13 +227,13 @@ public partial class YtsRecommendationView : Form
 
         rightClickMenu.Items.Clear();
 
-        rightClickMenu.Add("Add Movie to Library and Download", (_, _) =>
+        rightClickMenu.Add("Add Movie to Library and Download", async (_, _) =>
         {
-            AddMovieToLibrary(lastSelected);
+            await AddMovieToLibraryAsync(lastSelected);
             Download(lastSelected, quality);
         });
 
-        rightClickMenu.Add("Add Movie to Library", (_, _) => AddMovieToLibrary(lastSelected));
+        rightClickMenu.Add("Add Movie to Library", async (_, _) =>  await AddMovieToLibraryAsync(lastSelected));
         rightClickMenu.Add("Download Movie", (_, _) => Download(lastSelected, quality));
     }
 
@@ -253,9 +254,9 @@ public partial class YtsRecommendationView : Form
                     : rr.YtsMovie.GetMovieHtmlOverview());
         }
     }
-    private void this_FormClosing(object sender, FormClosingEventArgs e)
+    private async void this_FormClosing(object sender, FormClosingEventArgs e)
     {
-        mDoc.MoviesAddedOrEdited(true, false, false, mainUi, addedMovies);
+        await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, addedMovies);
     }
 
     private void btnPreferences_Click(object sender, EventArgs e)

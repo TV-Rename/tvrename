@@ -152,9 +152,9 @@ public partial class SettingsReview : Form
             {
                 MovieConfiguration si = mcheck.Movie;
                 rightClickMenu.Add("Force Refresh",
-                    (_, _) => mainUi.ForceMovieRefresh([si], false));
+                    async (_, _) => await mainUi.ForceMovieRefreshAsync([si], false));
 
-                rightClickMenu.Add("Edit Movie", (_, _) => mainUi.EditMovie(si));
+                rightClickMenu.Add("Edit Movie", async (_, _) => await mainUi.EditMovieAsync(si));
 
                 rightClickMenu.AddSeparator();
                 foreach (string? f in si.Locations)
@@ -166,9 +166,9 @@ public partial class SettingsReview : Form
             {
                 ShowConfiguration si = tcheck.Show;
                 rightClickMenu.Add("Force Refresh",
-                    (_, _) => mainUi.ForceRefresh([si], false));
+                    async (_, _) => await mainUi.ForceRefreshAsync([si], false));
 
-                rightClickMenu.Add("Edit TV Show", (_, _) => mainUi.EditShow(si));
+                rightClickMenu.Add("Edit TV Show", async (_, _) => await mainUi.EditShowAsync(si));
             }
 
             rightClickMenu.AddSeparator();

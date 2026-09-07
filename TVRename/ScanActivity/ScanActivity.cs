@@ -27,14 +27,14 @@ public abstract class ScanActivity(TVDoc doc, TVDoc.ScanSettings settings)
     public abstract bool Active();
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
-    protected abstract void DoCheck(SetProgressDelegate progress);
+    protected abstract Task DoCheckAsync(SetProgressDelegate progress);
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
-    public void Check(SetProgressDelegate prog) =>
-        Check(prog, 0, 100);
+    public async Task CheckAsync(SetProgressDelegate prog) =>
+        await CheckAsync(prog, 0, 100);
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
-    public void Check(SetProgressDelegate prog, int startpct, int totPct)
+    public async Task CheckAsync(SetProgressDelegate prog, int startpct, int totPct)
     {
         startPosition = startpct;
         endPosition = totPct;
@@ -53,7 +53,7 @@ public abstract class ScanActivity(TVDoc doc, TVDoc.ScanSettings settings)
                 return;
             }
 
-            DoCheck(prog);
+            await DoCheckAsync(prog);
             LogActionListSummary();
         }
         catch (TVRenameOperationInterruptedException)

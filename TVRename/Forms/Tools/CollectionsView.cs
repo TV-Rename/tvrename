@@ -149,8 +149,8 @@ public partial class CollectionsView : Form
             MovieConfiguration? si = mDoc.FilmLibrary.GetMovie(mlastSelected.TmdbCode, providerToUse);
             if (si != null)
             {
-                rightClickMenu.Add("Force Refresh", (_, _) => mainUi.ForceMovieRefresh(si, false));
-                rightClickMenu.Add("Edit Movie", (_, _) => mainUi.EditMovie(si));
+                rightClickMenu.Add("Force Refresh", async (_, _) => await mainUi.ForceMovieRefreshAsync(si, false));
+                rightClickMenu.Add("Edit Movie", async (_, _) => await mainUi.EditMovieAsync(si));
             }
         }
         else
@@ -201,8 +201,8 @@ public partial class CollectionsView : Form
         UpdateUI();
     }
 
-    private void CollectionsView_FormClosing(object sender, FormClosingEventArgs e)
+    private async void CollectionsView_FormClosing(object sender, FormClosingEventArgs e)
     {
-        mDoc.MoviesAddedOrEdited(true, false, false, mainUi, allAdded);
+        await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, allAdded);
     }
 }

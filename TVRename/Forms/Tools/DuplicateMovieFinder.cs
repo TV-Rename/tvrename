@@ -114,18 +114,18 @@ public partial class DuplicateMovieFinder : Form
 
         rightClickMenu.Items.Clear();
 
-        rightClickMenu.Add("Force Refresh", (_, _) =>
+        rightClickMenu.Add("Force Refresh", async (_, _) =>
         {
-            mainUi.ForceMovieRefresh([si], false);
+            await mainUi.ForceMovieRefreshAsync([si], false);
             Update(mlastSelected);
         });
         rightClickMenu.Add("Update", (_, _) =>
         {
             Update(mlastSelected);
         });
-        rightClickMenu.Add("Edit Movie", (_, _) =>
+        rightClickMenu.Add("Edit Movie", async (_, _) =>
         {
-            mainUi.EditMovie(si);
+            await mainUi.EditMovieAsync(si);
             Update(mlastSelected);
         });
         rightClickMenu.Add("Choose Best", (_, _) => MergeItems(mlastSelected, mainUi));
@@ -195,7 +195,7 @@ public partial class DuplicateMovieFinder : Form
         }
     }
 
-    private static void AskUserAboutFileReplacement(FileInfo file1, FileInfo file2, MovieConfiguration pep, IDialogParent owner)
+    private static void AskUserAboutFileReplacement(FileInfo file1, FileInfo file2, MovieConfiguration pep, UI owner)
     {
         try
         {

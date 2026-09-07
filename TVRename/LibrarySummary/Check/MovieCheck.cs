@@ -4,7 +4,7 @@ internal abstract class MovieCheck(MovieConfiguration movie, TVDoc doc) : Settin
 {
     public readonly MovieConfiguration Movie = movie;
 
-    protected override void MarkMediaDirty()
+    protected override async void MarkMediaDirtyAsync()
     {
         if (Movie.CachedMovie == null)
         {
@@ -12,7 +12,7 @@ internal abstract class MovieCheck(MovieConfiguration movie, TVDoc doc) : Settin
         }
 
         Movie.CachedMovie.Dirty = true;
-        Doc.MoviesAddedOrEdited(false, true, true, null, Movie);
+        await Doc.MoviesAddedOrEditedAsync(false, true, true, null, Movie);
     }
 
     public override MediaConfiguration.MediaType Type() => MediaConfiguration.MediaType.movie;

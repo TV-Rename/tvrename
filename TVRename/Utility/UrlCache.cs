@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -15,14 +16,14 @@ internal class UrlCache
 {
     private readonly ConcurrentDictionary<string, string> internalCache = new();
 
-    public string GetUrl(string s, bool instanceSearchJsonUseCloudflare)
+    public async Task<string> GetUrlAsync(string s, bool instanceSearchJsonUseCloudflare)
     {
         if (internalCache.TryGetValue(s, out string? value))
         {
             return value;
         }
 
-        string newValue = HttpHelper.GetUrl(s, instanceSearchJsonUseCloudflare);
+        string newValue = await HttpHelper.GetUrlAsync(s, instanceSearchJsonUseCloudflare);
         try
         {
             internalCache.TryAdd(s, newValue);

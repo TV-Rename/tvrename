@@ -37,7 +37,7 @@ public class qBitTorrent : IDownloadProvider
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    public List<TorrentEntry>? GetTorrentDownloads()
+    public async Task<List<TorrentEntry>?> GetTorrentDownloadsAsync()
     {
         // get list of files being downloaded by qBitTorrentFinder
 
@@ -51,8 +51,8 @@ public class qBitTorrent : IDownloadProvider
 
         try
         {
-            settingsString = HttpHelper.Obtain(GetApiUrl(qBitTorrentAPIPath.settings));
-            downloadsString = HttpHelper.Obtain(GetApiUrl(qBitTorrentAPIPath.torrents));
+            settingsString = await HttpHelper.ObtainAsync(GetApiUrl(qBitTorrentAPIPath.settings)) ;
+            downloadsString = await HttpHelper.ObtainAsync(GetApiUrl(qBitTorrentAPIPath.torrents));
 
             JToken settings = JToken.Parse(settingsString);
             JArray currentDownloads = JArray.Parse(downloadsString);
@@ -118,7 +118,7 @@ public class qBitTorrent : IDownloadProvider
             (string? hashCode, string? torrentName, bool completed) = ExtractTorrentDetails(torrent);
 
             string url = GetApiUrl(qBitTorrentAPIPath.torrentDetails) + hashCode;
-            torrentDetailsString = HttpHelper.Obtain(url);
+            torrentDetailsString = HttpHelper.ObtainAsync(url).Result;
             JArray torrentDetails = JArray.Parse(torrentDetailsString);
 
             if (!torrentDetails.Children().Any())
@@ -362,7 +362,7 @@ public class qBitTorrent : IDownloadProvider
     /// <exception cref="WebException">Condition.</exception>
     /// <exception cref="HttpRequestException">Condition.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
-    public void RemoveCompletedDownload(TorrentEntry name)
+    public async Task  RemoveCompletedDownloadAsync(TorrentEntry name)
     {
         if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
         {
@@ -376,14 +376,14 @@ public class qBitTorrent : IDownloadProvider
         if (TVSettings.Instance.qBitTorrentAPIVersion == qBitTorrentAPIVersion.v1)
         {
             string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string?> { { "hashes", name.Key } });
-            HttpHelper.HttpRequest("POST", url, parametersString.RemoveCharactersFrom("?"), "application/x-www-form-urlencoded", null, null);
+            HttpHelper.HttpRequestAsync("POST", url, parametersString.RemoveCharactersFrom("?"), "application/x-www-form-urlencoded", null, null).Wait();
         }
         else
         {
             try
             {
                 string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string?> { { "hashes", name.Key }, { "deleteFiles", "false" } });
-                HttpHelper.HttpRequest("GET", url + parametersString, null, null, null, string.Empty);
+                await HttpHelper.HttpRequestAsync("GET", url + parametersString, null, null, null, string.Empty).ConfigureAwait(false);
             }
             catch (WebException wex)
             {

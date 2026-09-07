@@ -20,7 +20,7 @@ internal static class API
         => await GetChangesAsync(client.GetMoviesChangesAsync, latestUpdateTime, cts);
 
     public static async Task<IEnumerable<ChangesListItem>> GetChangesShowsAsync(this TMDbClient client, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
-        => await GetChangesAsync(client.GetTvChangesAsync, latestUpdateTime, cts);
+        => await GetChangesAsync(client.GetTvChangesAsync, latestUpdateTime, cts).ConfigureAwait(false);
 
     private static async Task<IEnumerable<ChangesListItem>> GetChangesAsync(Func<int, DateTime?, DateTime?, CancellationToken, Task<SearchContainer<ChangesListItem>?>> changeMethodAsync, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
     {
@@ -44,7 +44,7 @@ internal static class API
                     {
                         throw new TaskCanceledException("Manual Cancellation");
                     }
-                    SearchContainer<ChangesListItem>? response = await changeMethodAsync(currentPage, time, null, cts);
+                    SearchContainer<ChangesListItem>? response = await changeMethodAsync(currentPage, time, null, cts).ConfigureAwait(false);
 
                     if (response?.Results is null)
                     {

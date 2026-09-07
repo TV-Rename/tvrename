@@ -13,6 +13,7 @@ using Humanizer;
 using NLog;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -61,11 +62,10 @@ public partial class UI : Form, IDialogParent
 
     #endregion Delegates
 
-    private int busy;
+    private int busyDoingDownload = 0;
     private readonly TVDoc mDoc;
-    private bool internalCheckChange;
-    private int lastDlRemaining;
-    private int mInternalChange;
+    private bool actionsListBeingUpdated = false;
+    private int calendarBeingUpdated = 0;
     private Point mLastNonMaximizedLocation;
     private Size mLastNonMaximizedSize;
     private readonly AutoFolderMonitor? mAutoFolderMonitor;
@@ -77,7 +77,7 @@ public partial class UI : Form, IDialogParent
     private readonly ListViewColumnSorter lvwScheduleColumnSorter;
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-    private bool IsBusy => busy != 0;
+    private bool IsBusyDongBackgroundDownload => busyDoingDownload != 0;
 
     private ScanProgress? scanProgDlg;
 
@@ -86,13 +86,6 @@ public partial class UI : Form, IDialogParent
         CefWrapper.Instance.InitialiseBrowserFramework();
 
         mDoc = doc;
-        scanProgDlg = null;
-
-        busy = 0;
-
-        mInternalChange = 0;
-
-        internalCheckChange = false;
 
         InitializeComponent();
 
@@ -191,7 +184,7 @@ public partial class UI : Form, IDialogParent
 
     private static void WaitForCefInitialised()
     {
-        WaitFor(() => CefSharp.Cef.IsInitialized??false, 10, "browser to initialise", true);
+        WaitFor(() => CefSharp.Cef.IsInitialized ?? false, 10, "browser to initialise", true);
     }
 
     private static void WaitFor(Func<bool> func, int maxSeconds, string textMessage, bool doLogging)
@@ -678,7 +671,7 @@ public partial class UI : Form, IDialogParent
 
     #endregion
 
-    private void ReceiveArgs(string[] args)
+    private async Task ReceiveArgsAsync(string[] args)
     {
         // Send command-line arguments to already running instance
 
@@ -691,7 +684,7 @@ public partial class UI : Form, IDialogParent
         // Temporarily override behaviour for missing folders
         mDoc.Args.TemporarilyUse(localArgs);
 
-        ProcessArgs(localArgs);
+        await ProcessArgsAsync(localArgs);
 
         //Revert the settings
         TVSettings.Instance.RenameCheck = previousRenameBehavior;
@@ -700,7 +693,7 @@ public partial class UI : Form, IDialogParent
 
     private void ScanAndAction(TVSettings.ScanType type)
     {
-        UiScan(null, null, true, type, MediaConfiguration.MediaType.both);
+        UiScanAsync(null, null, true, type, MediaConfiguration.MediaType.both).GetAwaiter().GetResult();
         ActionAction(true, true, false);
     }
 
@@ -742,20 +735,23 @@ public partial class UI : Form, IDialogParent
         tpRecentScan.Enabled = false;
         tbFullScan.Enabled = false;
 
-        Interlocked.Increment(ref busy);
+        Interlocked.Increment(ref busyDoingDownload);
     }
 
     private void LessBusy()
     {
-        btnScan.Enabled = true;
-        tbQuickScan.Enabled = true;
-        tpRecentScan.Enabled = true;
-        tbFullScan.Enabled = true;
+        Interlocked.Decrement(ref busyDoingDownload);
 
-        Interlocked.Decrement(ref busy);
+        if (!IsBusyDongBackgroundDownload)
+        {
+            btnScan.Enabled = true;
+            tbQuickScan.Enabled = true;
+            tpRecentScan.Enabled = true;
+            tbFullScan.Enabled = true;
+        }
     }
 
-    private void ProcessArgs(CommandLineArgs a)
+    private async Task ProcessArgsAsync(CommandLineArgs a)
     {
         const bool UNATTENDED = true;
 
@@ -771,7 +767,7 @@ public partial class UI : Form, IDialogParent
 
         if (a.QuickUpdate)
         {
-            UiDownload(true, UNATTENDED);
+            await UiDownloadAsync(true, UNATTENDED);
         }
 
         if (a.ForceUpdate)
@@ -782,26 +778,23 @@ public partial class UI : Form, IDialogParent
 
         if (a.ForceRefresh)
         {
-            ForceRefresh(mDoc.TvLibrary.GetSortedShowItems(), UNATTENDED);
-            ForceMovieRefresh(mDoc.FilmLibrary.Movies, UNATTENDED);
+            await ForceRefreshAsync(mDoc.TvLibrary.GetSortedShowItems(), UNATTENDED);
+            await ForceMovieRefreshAsync(mDoc.FilmLibrary.Movies, UNATTENDED);
         }
 
         if (a.Scan)
         {
-            UiScan(null, null, UNATTENDED, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
-            WaitForScanToComplete();
+            await UiScanAsync(null, null, UNATTENDED, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
         }
 
         if (a.QuickScan)
         {
-            UiScan(null, null, UNATTENDED, TVSettings.ScanType.Quick, MediaConfiguration.MediaType.both);
-            WaitForScanToComplete();
+            await UiScanAsync(null, null, UNATTENDED, TVSettings.ScanType.Quick, MediaConfiguration.MediaType.both);
         }
 
         if (a.RecentScan)
         {
-            UiScan(null, null, UNATTENDED, TVSettings.ScanType.Recent, MediaConfiguration.MediaType.both);
-            WaitForScanToComplete();
+            await UiScanAsync(null, null, UNATTENDED, TVSettings.ScanType.Recent, MediaConfiguration.MediaType.both);
         }
 
         if (a.DoAll)
@@ -827,17 +820,12 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void WaitForScanToComplete()
-    {
-        WaitFor(() => bwScan.IsBusy == false, 10000, "scan to complete", false);
-    }
-
     // ReSharper disable once InconsistentNaming
     private void UITVDBAccuracyCheck(bool unattended)
     {
         MoreBusy();
         TaskHelper.Run(
-            () => mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this), "TVDB Check"
+            async () => await mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this), "TVDB Check"
         );
         LessBusy();
     }
@@ -915,7 +903,7 @@ public partial class UI : Form, IDialogParent
         return false;
     }
 
-    private void UI_Load(object sender, EventArgs e)
+    private async void UI_LoadAsync(object sender, EventArgs e)
     {
         foreach (TabPage tp in tabControl1.TabPages) // grr! why does it go white?
         {
@@ -946,7 +934,7 @@ public partial class UI : Form, IDialogParent
 
         if (TVSettings.Instance.RunOnStartUp())
         {
-            RunAutoScan("Startup Scan");
+            await RunAutoScanAsync("Startup Scan");
         }
     }
 
@@ -1035,7 +1023,7 @@ public partial class UI : Form, IDialogParent
 
     private void flushImageCacheToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (IsBusy)
+        if (IsBusyDongBackgroundDownload)
         {
             MessageBox.Show("Can't refresh until background download is complete");
             return;
@@ -1046,9 +1034,9 @@ public partial class UI : Form, IDialogParent
         FillEpGuideHtml();
     }
 
-    private void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (IsBusy)
+        if (IsBusyDongBackgroundDownload)
         {
             MessageBox.Show("Can't refresh until background download is complete");
             return;
@@ -1063,14 +1051,18 @@ public partial class UI : Form, IDialogParent
 
         if (res == DialogResult.Yes)
         {
-            TheTVDB.LocalCache.Instance.ForgetEverything();
-            TVmaze.LocalCache.Instance.ForgetEverything();
-            TMDB.LocalCache.Instance.ForgetEverything();
-            FillMyShows(true);
-            FillMyMovies();
-            FillEpGuideHtml();
-            FillWhenToWatchList();
-            BGDownloadTimer_QuickFire();
+            await TheTVDB.LocalCache.Instance.ForgetEverythingAsync().ConfigureAwait(false);
+            await TVmaze.LocalCache.Instance.ForgetEverythingAsync().ConfigureAwait(false);
+            await TMDB.LocalCache.Instance.ForgetEverythingAsync().ConfigureAwait(false);
+
+            this.Invoke(new System.Action(() => 
+            {
+                FillMyShows(true);
+                FillMyMovies();
+                FillEpGuideHtml();
+                FillWhenToWatchList();
+                BGDownloadTimer_QuickFire();
+            }));
         }
     }
 
@@ -1281,7 +1273,7 @@ public partial class UI : Form, IDialogParent
 
     #endregion
 
-    private void UI_FormClosing(object sender, FormClosingEventArgs e)
+    private async void UI_FormClosing(object sender, FormClosingEventArgs e)
     {
         try
         {
@@ -1335,7 +1327,7 @@ public partial class UI : Form, IDialogParent
                 SaveLayoutXml();
                 mDoc.TidyCaches();
                 SaveCaches();
-                mDoc.Closing();
+                await mDoc.ClosingAsync();
                 mAutoFolderMonitor?.Dispose();
                 BGDownloadTimer.Dispose();
                 UpdateTimer.Dispose();
@@ -1699,7 +1691,7 @@ public partial class UI : Form, IDialogParent
         UpdateSearchButtons();
     }
 
-    private void bnWhenToWatchCheck_Click(object? sender, EventArgs? e) => RefreshWTW(true, false);
+    private async void bnWhenToWatchCheck_Click(object? sender, EventArgs? e) => await RefreshWTWAsync(true, false);
 
     private void FillWhenToWatchList()
     {
@@ -1838,7 +1830,7 @@ public partial class UI : Form, IDialogParent
                 txtWhenToWatchSynopsis.Text = ei.Overview?.ToUiVersion();
             }
 
-            mInternalChange++;
+            calendarBeingUpdated++;
             DateTime? dt = ei.GetAirDateDt();
             if (dt != null)
             {
@@ -1846,11 +1838,11 @@ public partial class UI : Form, IDialogParent
                 calCalendar.SelectionEnd = (DateTime)dt;
             }
 
-            mInternalChange--;
+            calendarBeingUpdated--;
         }
     }
 
-    private void lvWhenToWatch_DoubleClick(object sender, EventArgs e)
+    private async void lvWhenToWatch_DoubleClick(object sender, EventArgs e)
     {
         if (lvWhenToWatch.SelectedItems.Count == 0)
         {
@@ -1862,7 +1854,7 @@ public partial class UI : Form, IDialogParent
         if (ei is null) return;
 
         List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, ei);
-        if (fl.Any())
+        if (fl.Count != 0)
         {
             fl[0].OpenFile();
             return;
@@ -1877,7 +1869,7 @@ public partial class UI : Form, IDialogParent
                 break;
 
             case TVSettings.WTWDoubleClickAction.Scan:
-                UiScan([ei.Show], null, false, TVSettings.ScanType.SingleShow, MediaConfiguration.MediaType.tv);
+                await UiScanAsync([ei.Show], null, false, TVSettings.ScanType.SingleShow, MediaConfiguration.MediaType.tv);
                 tabControl1.SelectTab(tbAllInOne);
                 break;
 
@@ -1888,7 +1880,7 @@ public partial class UI : Form, IDialogParent
 
     private void calCalendar_DateSelected(object sender, DateRangeEventArgs e)
     {
-        if (mInternalChange != 0)
+        if (calendarBeingUpdated != 0)
         {
             return;
         }
@@ -1921,9 +1913,9 @@ public partial class UI : Form, IDialogParent
     }
 
     // ReSharper disable once InconsistentNaming
-    private void RefreshWTW(bool doDownloads, bool unattended)
+    private async Task RefreshWTWAsync(bool doDownloads, bool unattended)
     {
-        UiDownload(doDownloads, unattended);
+        await UiDownloadAsync(doDownloads, unattended);
 
         FillMyShows(true);
         FillMyMovies();
@@ -1931,19 +1923,19 @@ public partial class UI : Form, IDialogParent
         FillWhenToWatchList();
     }
 
-    private void UiDownload(bool doDownloads, bool unattended)
+    private async Task UiDownloadAsync(bool doDownloads, bool unattended)
     {
-        mDoc.UpdateMedia(doDownloads, unattended, WindowState == FormWindowState.Minimized, this);
+        await mDoc.UpdateMediaAsync(doDownloads, unattended, WindowState == FormWindowState.Minimized, this);
     }
 
-    private void refreshWTWTimer_Tick(object sender, EventArgs e)
+    private async void refreshWTWTimer_Tick(object sender, EventArgs e)
     {
-        if (IsBusy)
+        if (IsBusyDongBackgroundDownload)
         {
             return;
         }
 
-        RefreshWTW(false, true);
+        await RefreshWTWAsync(false, true);
     }
 
     // ReSharper disable once InconsistentNaming
@@ -2093,14 +2085,14 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void RightMenuScan(List<ShowConfiguration> sil, TVSettings.ScanType x)
+    private async Task RightMenuScanAsync(List<ShowConfiguration> sil, TVSettings.ScanType x)
     {
-        UiScan(sil, null, false, x, MediaConfiguration.MediaType.tv);
+        await UiScanAsync(sil, null, false, x, MediaConfiguration.MediaType.tv);
         tabControl1.SelectTab(tbAllInOne);
     }
-    private void RightMenuMovieScan(MovieConfiguration si, TVSettings.ScanType x)
+    private async Task RightMenuMovieScanAsync(MovieConfiguration si, TVSettings.ScanType x)
     {
-        UiScan(null, [si], false, x, MediaConfiguration.MediaType.movie);
+        await UiScanAsync(null, [si], false, x, MediaConfiguration.MediaType.movie);
         tabControl1.SelectTab(tbAllInOne);
     }
 
@@ -2186,18 +2178,18 @@ public partial class UI : Form, IDialogParent
     {
         showRightClickMenu.Items.Clear();
 
-        showRightClickMenu.Add("Force Refresh", (_, _) => ForceMovieRefresh(si, false));
+        showRightClickMenu.Add("Force Refresh", async (_, _) => await ForceMovieRefreshAsync(si, false));
         showRightClickMenu.Add("Update Images", (_, _) => UpdateImages([si]));
 
         showRightClickMenu.AddSeparator();
 
-        showRightClickMenu.Add("Edit Movie", (_, _) => EditMovie(si));
+        showRightClickMenu.Add("Edit Movie", async (_, _) => await EditMovieAsync(si));
         showRightClickMenu.Add("Delete Movie", (_, _) => DeleteMovie(si));
 
         showRightClickMenu.AddSeparator();
 
-        showRightClickMenu.Add($"Scan {si.ShowName.InDoubleQuotes()}", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.SingleShow));
-        showRightClickMenu.Add($"Quick Scan {si.ShowName.InDoubleQuotes()}", (_, _) => RightMenuMovieScan(si, TVSettings.ScanType.FastSingleShow));
+        showRightClickMenu.Add($"Scan {si.ShowName.InDoubleQuotes()}", async (_, _) => await RightMenuMovieScanAsync(si, TVSettings.ScanType.SingleShow));
+        showRightClickMenu.Add($"Quick Scan {si.ShowName.InDoubleQuotes()}", async (_, _) => await RightMenuMovieScanAsync(si, TVSettings.ScanType.FastSingleShow));
 
         if (si.Locations.Any())
         {
@@ -2222,7 +2214,7 @@ public partial class UI : Form, IDialogParent
 
         if (sil.Any())
         {
-            showRightClickMenu.Add("Force Refresh", (_, _) => ForceRefresh(sil, false));
+            showRightClickMenu.Add("Force Refresh", async (_, _) => await ForceRefreshAsync(sil, false));
             showRightClickMenu.Add("Update Images", (_, _) => UpdateImages(sil));
             showRightClickMenu.AddSeparator();
 
@@ -2230,26 +2222,26 @@ public partial class UI : Form, IDialogParent
                 ? "Scan Multiple Shows"
                 : "Scan " + si.ShowName.InDoubleQuotes();
 
-            showRightClickMenu.Add(scanText, (_, _) => RightMenuScan(sil, TVSettings.ScanType.SingleShow));
-            showRightClickMenu.Add($"Quick {scanText}", (_, _) => RightMenuScan(sil, TVSettings.ScanType.FastSingleShow));
+            showRightClickMenu.Add(scanText, async (_, _) => await RightMenuScanAsync(sil, TVSettings.ScanType.SingleShow));
+            showRightClickMenu.Add($"Quick {scanText}", async (_, _) => await RightMenuScanAsync(sil, TVSettings.ScanType.FastSingleShow));
         }
 
         if (sil.Count == 1 && si != null)
         {
-            showRightClickMenu.Add("Edit TV Show", (_, _) => EditShow(si));
-            showRightClickMenu.Add("Delete TV Show", (_, _) => DeleteShow(si));
+            showRightClickMenu.Add("Edit TV Show", async (_, _) => await EditShowAsync(si));
+            showRightClickMenu.Add("Delete TV Show", async (_, _) => await DeleteShowAsync(si));
 
             if (seas != null)
             {
                 string uiFullSeasonWord = ProcessedSeason.UIFullSeasonWord(seas.SeasonNumber);
-                showRightClickMenu.Add("Edit " + uiFullSeasonWord, (_, _) => EditSeason(si, seas.SeasonNumber));
+                showRightClickMenu.Add("Edit " + uiFullSeasonWord, async (_, _) => await EditSeasonAsync(si, seas.SeasonNumber));
                 if (si.IgnoreSeasons.Contains(seas.SeasonNumber))
                 {
-                    showRightClickMenu.Add("Include " + uiFullSeasonWord, (_, _) => IncludeSeason(si, seas.SeasonNumber));
+                    showRightClickMenu.Add("Include " + uiFullSeasonWord, async (_, _) => await IncludeSeasonAsync(si, seas.SeasonNumber));
                 }
                 else
                 {
-                    showRightClickMenu.Add("Ignore " + uiFullSeasonWord, (_, _) => IgnoreSeason(si, seas.SeasonNumber));
+                    showRightClickMenu.Add("Ignore " + uiFullSeasonWord, async (_, _) => await IgnoreSeasonAsync(si, seas.SeasonNumber));
                 }
             }
 
@@ -2326,16 +2318,16 @@ public partial class UI : Form, IDialogParent
 
     private ItemList GetCheckedItems() => new() { mDoc.TheActionList.Checked.Intersect(olvAction.FilteredObjects.OfType<Item>()) };
 
-    private void IncludeSeason(ShowConfiguration si, int seasonNumber)
+    private async Task IncludeSeasonAsync(ShowConfiguration si, int seasonNumber)
     {
         si.IgnoreSeasons.Remove(seasonNumber);
-        ShowAddedOrEdited(false, false, si, true);
+        await ShowAddedOrEditedAsync(false, false, si, true);
     }
 
-    private void IgnoreSeason(ShowConfiguration si, int seasonNumber)
+    private async Task IgnoreSeasonAsync(ShowConfiguration si, int seasonNumber)
     {
         si.IgnoreSeasons.Add(seasonNumber);
-        ShowAddedOrEdited(false, false, si, true);
+        await ShowAddedOrEditedAsync(false, false, si, true);
     }
 
     private void BrowseForMissingItem(ItemMissing? mi)
@@ -2396,7 +2388,7 @@ public partial class UI : Form, IDialogParent
         lvWhenToWatch.Focus();
     }
 
-    private void tabControl1_DoubleClick(object sender, EventArgs e)
+    private async void tabControl1_DoubleClick(object sender, EventArgs e)
     {
         if (tabControl1.SelectedTab == tbMyShows)
         {
@@ -2412,7 +2404,7 @@ public partial class UI : Form, IDialogParent
         }
         else if (tabControl1.SelectedTab == tbMyMovies)
         {
-            ForceMovieRefresh(false);
+            await ForceMovieRefreshAsync(false);
         }
         else
         {
@@ -2440,7 +2432,7 @@ public partial class UI : Form, IDialogParent
 
     private void preferencesToolStripMenuItem_Click(object sender, EventArgs e) => DoPrefs(false);
 
-    private void DoPrefs(bool scanOptions)
+    private async void DoPrefs(bool scanOptions)
     {
         MoreBusy(); // no background download while preferences are open!
         mDoc.PreventAutoScan("Preferences are open");
@@ -2457,7 +2449,7 @@ public partial class UI : Form, IDialogParent
             FillEpGuideHtml();
             mAutoFolderMonitor?.SettingsChanged(TVSettings.Instance.MonitorFolders);
             UpdateVisibilityFromSettings();
-            ForceRefresh(false);
+            await ForceRefreshAsync(false);
         }
 
         mDoc.AllowAutoScan();
@@ -2515,43 +2507,10 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void statusTimer_Tick(object? sender, EventArgs? e)
+    private async void statusTimer_Tick(object? sender, EventArgs? e)
     {
-        int n = mDoc.DownloadsRemaining();
-        string? dlTask = TheTVDB.LocalCache.Instance.CurrentDLTask ??
-                         TVmaze.LocalCache.Instance.CurrentDLTask ??
-                         TMDB.LocalCache.Instance.CurrentDLTask;
-        bool somethingDownloading = dlTask.HasValue();
 
-        txtDLStatusLabel.Visible = n != 0 || TVSettings.Instance.BGDownload || somethingDownloading;
 
-        backgroundDownloadNowToolStripMenuItem.Enabled = n == 0;
-
-        if (somethingDownloading)
-        {
-            txtDLStatusLabel.Text = "Background download: " + dlTask?.ToUiVersion();
-        }
-        else
-        {
-            txtDLStatusLabel.Text = "Background download: Idle";
-        }
-
-        if (IsBusy)
-        {
-            return;
-        }
-
-        if (n == 0 && lastDlRemaining > 0)
-        {
-            // we've just finished a bunch of background downloads
-            SaveCaches();
-            mDoc.SaveSettingsIfNeeded();
-            RefreshWTW(false, true);
-
-            backgroundDownloadNowToolStripMenuItem.Enabled = true;
-        }
-
-        lastDlRemaining = n;
     }
 
     private static void SaveCaches()
@@ -2564,7 +2523,7 @@ public partial class UI : Form, IDialogParent
         TVSettings.Instance.BGDownload = !TVSettings.Instance.BGDownload;
         backgroundDownloadToolStripMenuItem.Checked = TVSettings.Instance.BGDownload;
         offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
-        statusTimer_Tick(null, null);
+
         mDoc.SetDirty();
 
         if (TVSettings.Instance.BGDownload)
@@ -2599,9 +2558,9 @@ public partial class UI : Form, IDialogParent
         uiDisp.Invoke(() => NotifyUpdates(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
     }
 
-    private void BGDownloadTimer_Tick(object sender, EventArgs e)
+    private async void BGDownloadTimer_Tick(object sender, EventArgs e)
     {
-        if (IsBusy)
+        if (IsBusyDongBackgroundDownload)
         {
             BGDownloadTimer.Interval = 60000; // come back in 60 seconds
             BGDownloadTimer.Start();
@@ -2614,10 +2573,10 @@ public partial class UI : Form, IDialogParent
 
         BGDownloadTimer.Start();
 
-        if (TVSettings.Instance.BGDownload && mDoc.DownloadsRemaining() == 0)
+        if (TVSettings.Instance.BGDownload && !mDoc.DownloadsHappening())
         // only do auto-download if don't have stuff to do already
         {
-            BackgroundDownloadNow();
+            await BackgroundDownloadNowAsync();
         }
     }
 
@@ -2628,7 +2587,7 @@ public partial class UI : Form, IDialogParent
         BGDownloadTimer.Start();
     }
 
-    private void backgroundDownloadNowToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void backgroundDownloadNowToolStripMenuItem_Click(object sender, EventArgs e)
     {
         if (TVSettings.Instance.OfflineMode)
         {
@@ -2641,17 +2600,27 @@ public partial class UI : Form, IDialogParent
             }
         }
 
-        BackgroundDownloadNow();
+        await BackgroundDownloadNowAsync();
     }
 
-    private void BackgroundDownloadNow()
+    private async Task BackgroundDownloadNowAsync()
     {
         BGDownloadTimer.Stop();
         BGDownloadTimer.Start();
 
-        mDoc.DoDownloadsBG();
+        backgroundDownloadNowToolStripMenuItem.Enabled = false;
 
-        statusTimer_Tick(null, null);
+        var progress = new DownloadProgressStatus(pbProgressBarx, txtDLStatusLabel);
+
+        await mDoc.DoDownloadsBG(progress);
+
+        // we've just finished a bunch of background downloads
+        SaveCaches();
+        mDoc.SaveSettingsIfNeeded();
+        await RefreshWTWAsync(false, true);
+
+        backgroundDownloadNowToolStripMenuItem.Enabled = true;
+        progress.MarkFinished();
     }
 
     private void offlineOperationToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2934,7 +2903,7 @@ public partial class UI : Form, IDialogParent
         movieTree.SelectedNode = n;
     }
 
-    private void AddMovie_Click(object sender, EventArgs e)
+    private async void AddMovie_Click(object sender, EventArgs e)
     {
         Logger.Info("****************");
         Logger.Info("Adding New Movie");
@@ -2949,7 +2918,7 @@ public partial class UI : Form, IDialogParent
             mDoc.Add(mov.AsList(), false);
             FillMyMovies(mov);
 
-            mDoc.MoviesAddedOrEdited(true, false, WindowState == FormWindowState.Minimized, this, mov);
+            await mDoc.MoviesAddedOrEditedAsync(true, false, WindowState == FormWindowState.Minimized, this, mov);
             FillMyMovies(mov);
 
             Logger.Info($"Added new movie called {mov.ShowName}");
@@ -2963,7 +2932,7 @@ public partial class UI : Form, IDialogParent
         mDoc.AllowAutoScan();
     }
 
-    private void bnMyShowsAdd_Click(object sender, EventArgs e)
+    private async void bnMyShowsAdd_Click(object sender, EventArgs e)
     {
         Logger.Info("****************");
         Logger.Info("Adding New TV Show");
@@ -2977,9 +2946,9 @@ public partial class UI : Form, IDialogParent
         {
             mDoc.Add(si.AsList(), false);
 
-            ShowAddedOrEdited(false, false, si, false);
+            await ShowAddedOrEditedAsync(false, false, si, false);
             SelectShow(si);
-            ShowAddedOrEdited(true, false, si, false);
+            await ShowAddedOrEditedAsync(true, false, si, false);
             Logger.Info($"Added new show called {si.ShowName}");
         }
         else
@@ -2990,15 +2959,15 @@ public partial class UI : Form, IDialogParent
         mDoc.AllowAutoScan();
     }
 
-    private void ShowAddedOrEdited(bool download, bool unattended, ShowConfiguration si, bool updateSelectedNode)
+    private async Task ShowAddedOrEditedAsync(bool download, bool unattended, ShowConfiguration si, bool updateSelectedNode)
     {
-        mDoc.TvAddedOrEdited(download, unattended, WindowState == FormWindowState.Minimized, this, si);
+        await mDoc.TvAddedOrEditedAsync(download, unattended, WindowState == FormWindowState.Minimized, this, si);
 
         FillMyShows(updateSelectedNode);
         FillWhenToWatchList();
     }
 
-    private void bnMyShowsDelete_Click(object sender, EventArgs e)
+    private async void bnMyShowsDelete_Click(object sender, EventArgs e)
     {
         TreeNode? n = MyShowTree.SelectedNode;
         ShowConfiguration? si = TreeNodeToShowItem(n);
@@ -3007,10 +2976,10 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        DeleteShow(si);
+        await DeleteShowAsync(si);
     }
 
-    private void DeleteShow(ShowConfiguration si)
+    private async Task DeleteShowAsync(ShowConfiguration si)
     {
         DialogResult res = MessageBox.Show(
             $"Remove show {si.ShowName.InDoubleQuotes()}.  Are you sure?", "Confirmation", MessageBoxButtons.YesNo,
@@ -3035,7 +3004,7 @@ public partial class UI : Form, IDialogParent
 
         Logger.Info($"User asked to remove {si.ShowName} - removing now");
         mDoc.TvLibrary.Remove(si);
-        ShowAddedOrEdited(false, false, si, true);
+        await ShowAddedOrEditedAsync(false, false, si, true);
     }
 
     private void RemoveFromDisk(string folderName, MediaConfiguration si)
@@ -3175,7 +3144,7 @@ public partial class UI : Form, IDialogParent
         FillMyMovies();
     }
 
-    private void bnMyShowsEdit_Click(object sender, EventArgs e)
+    private async void bnMyShowsEdit_Click(object sender, EventArgs e)
     {
         TreeNode? n = MyShowTree.SelectedNode;
         if (n is null)
@@ -3189,7 +3158,7 @@ public partial class UI : Form, IDialogParent
             ShowConfiguration? si = TreeNodeToShowItem(n);
             if (si != null)
             {
-                EditSeason(si, seas.SeasonNumber);
+                await EditSeasonAsync(si, seas.SeasonNumber);
             }
 
             return;
@@ -3198,11 +3167,11 @@ public partial class UI : Form, IDialogParent
         ShowConfiguration? si2 = TreeNodeToShowItem(n);
         if (si2 != null)
         {
-            EditShow(si2);
+            await EditShowAsync(si2);
         }
     }
 
-    internal void EditSeason(ShowConfiguration si, int seasnum)
+    internal async Task EditSeasonAsync(ShowConfiguration si, int seasnum)
     {
         MoreBusy();
         mDoc.PreventAutoScan("Edit Season");
@@ -3211,7 +3180,7 @@ public partial class UI : Form, IDialogParent
         DialogResult dr = er.ShowDialog(this);
         if (dr == DialogResult.OK)
         {
-            ShowAddedOrEdited(false, false, si, true);
+            await ShowAddedOrEditedAsync(false, false, si, true);
             SelectSeason(si.AppropriateSeasons()[seasnum]);
         }
 
@@ -3219,7 +3188,7 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    internal void EditShow(ShowConfiguration si)
+    internal async Task EditShowAsync(ShowConfiguration si)
     {
         MoreBusy();
         mDoc.PreventAutoScan("Edit TV Show");
@@ -3229,7 +3198,7 @@ public partial class UI : Form, IDialogParent
 
         if (dr == DialogResult.OK)
         {
-            ShowAddedOrEdited(aes.HasChanged, false, si, true);
+            await ShowAddedOrEditedAsync(aes.HasChanged, false, si, true);
             SelectShow(si);
 
             Logger.Info($"Modified show called {si.ShowName}");
@@ -3239,7 +3208,7 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    internal void EditMovie(MovieConfiguration si)
+    internal async Task EditMovieAsync(MovieConfiguration si)
     {
         MoreBusy();
         mDoc.PreventAutoScan("Edit Movie");
@@ -3249,7 +3218,7 @@ public partial class UI : Form, IDialogParent
 
         if (dr == DialogResult.OK)
         {
-            mDoc.MoviesAddedOrEdited(aes.HasChanged, false, WindowState == FormWindowState.Minimized, this, si);
+            await mDoc.MoviesAddedOrEditedAsync(aes.HasChanged, false, WindowState == FormWindowState.Minimized, this, si);
 
             FillMyMovies();
             SelectMovie(si);
@@ -3261,15 +3230,15 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    internal void ForceRefresh(IEnumerable<ShowConfiguration>? sis, bool unattended)
+    internal async Task ForceRefreshAsync(IEnumerable<ShowConfiguration>? sis, bool unattended)
     {
-        mDoc.ForceRefreshShows(sis, unattended, WindowState == FormWindowState.Minimized, this);
+        await mDoc.ForceRefreshShowsAsync(sis, unattended, WindowState == FormWindowState.Minimized, this);
         FillMyShows(true);
         FillEpGuideHtml();
-        RefreshWTW(false, unattended);
+        await RefreshWTWAsync(false, unattended);
     }
 
-    private void ForceRefreshAndRescanShows(IEnumerable<Item>? sis, bool unattended)
+    private async Task ForceRefreshAndRescanShowsAsync(IEnumerable<Item>? sis, bool unattended)
     {
         if (sis is null)
         {
@@ -3280,17 +3249,17 @@ public partial class UI : Form, IDialogParent
         List<ShowConfiguration> shows = [.. enumerable.Select(x => x.Series).OfType<ShowConfiguration>()];
         List<MovieConfiguration> movies = [.. enumerable.Select(x => x.Movie).OfType<MovieConfiguration>()];
 
-        mDoc.ForceRefreshBeforeRescan(shows, movies, unattended, WindowState == FormWindowState.Minimized, this);
-        UiScan(shows, movies, unattended, TVSettings.ScanType.Incremental, MediaConfiguration.MediaType.both);
+        await mDoc.ForceRefreshBeforeRescanAsync(shows, movies, unattended, WindowState == FormWindowState.Minimized, this);
+        await UiScanAsync(shows, movies, unattended, TVSettings.ScanType.Incremental, MediaConfiguration.MediaType.both);
     }
 
-    internal void ForceMovieRefresh(IEnumerable<MovieConfiguration>? sis, bool unattended)
+    internal async Task ForceMovieRefreshAsync(IEnumerable<MovieConfiguration>? sis, bool unattended)
     {
         IEnumerable<MovieConfiguration>? movieConfigurations = sis?.ToList();
-        mDoc.ForceRefreshMovies(movieConfigurations, unattended, WindowState == FormWindowState.Minimized, this);
+        await mDoc.ForceRefreshMoviesAsync(movieConfigurations, unattended, WindowState == FormWindowState.Minimized, this);
         FillMyMovies(movieConfigurations?.FirstOrDefault());
         FillMovieGuideHtml();
-        RefreshWTW(false, unattended);
+        await RefreshWTWAsync(false, unattended);
     }
 
     private void UpdateImages(IReadOnlyCollection<ShowConfiguration>? sis)
@@ -3319,7 +3288,7 @@ public partial class UI : Form, IDialogParent
         FillActionList();
     }
 
-    private void bnMyShowsRefresh_Click(object? sender, EventArgs? e)
+    private async void bnMyShowsRefresh_Click(object? sender, EventArgs? e)
     {
         if (ModifierKeys == Keys.Control)
         {
@@ -3328,12 +3297,12 @@ public partial class UI : Form, IDialogParent
             ShowConfiguration? si = TreeNodeToShowItem(n);
             if (si != null)
             {
-                ForceRefresh(si, false);
+                await ForceRefreshAsync(si, false);
             }
         }
         else
         {
-            ForceRefresh(false);
+            await ForceRefreshAsync(false);
         }
     }
 
@@ -3596,13 +3565,13 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    private void quickTimer_Tick(object sender, EventArgs e)
+    private async void quickTimer_Tick(object sender, EventArgs e)
     {
         quickTimer.Stop();
-        ProcessArgs(mDoc.Args);
+        await ProcessArgsAsync(mDoc.Args);
     }
 
-    private void UI_KeyDown(object sender, KeyEventArgs e)
+    private async void UI_KeyDown(object sender, KeyEventArgs e)
     {
         if (!e.Control)
         {
@@ -3612,15 +3581,15 @@ public partial class UI : Form, IDialogParent
         switch (e.KeyCode)
         {
             case Keys.F:
-                UiScan(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
+                await UiScanAsync(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
                 e.Handled = true;
                 break;
             case Keys.Q:
-                UiScan(null, null, false, TVSettings.ScanType.Quick, MediaConfiguration.MediaType.both);
+                await UiScanAsync(null, null, false, TVSettings.ScanType.Quick, MediaConfiguration.MediaType.both);
                 e.Handled = true;
                 break;
             case Keys.R:
-                UiScan(null, null, false, TVSettings.ScanType.Recent, MediaConfiguration.MediaType.both);
+                await UiScanAsync(null, null, false, TVSettings.ScanType.Recent, MediaConfiguration.MediaType.both);
                 e.Handled = true;
                 break;
             case Keys.D:
@@ -3662,7 +3631,7 @@ public partial class UI : Form, IDialogParent
         };
     }
 
-    private void UiScan(List<ShowConfiguration>? shows, List<MovieConfiguration>? movies, bool unattended, TVSettings.ScanType st, MediaConfiguration.MediaType media)
+    private async Task UiScanAsync(List<ShowConfiguration>? shows, List<MovieConfiguration>? movies, bool unattended, TVSettings.ScanType st, MediaConfiguration.MediaType media)
     {
         if (bwScan.IsBusy)
         {
@@ -3709,7 +3678,7 @@ public partial class UI : Form, IDialogParent
     {
         Thread.CurrentThread.Name ??= "Main Scan Thread"; // Can only set it once
         TVDoc.ScanSettings scanSettings = e.Argument as TVDoc.ScanSettings ?? throw new Exception();
-        mDoc.Scan(scanSettings);
+        mDoc.ScanAsync(scanSettings).Wait();
         lastScanUnattended = scanSettings.Unattended;
     }
 
@@ -3717,13 +3686,13 @@ public partial class UI : Form, IDialogParent
     {
     }
 
-    private void bwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    private async void bwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
         if (!IsDisposed)
         {
             UiHelpers.SetProgressStateNone(Handle);
         }
-        AskUserAboutShowProblems(lastScanUnattended);
+        await AskUserAboutShowProblemsAsync(lastScanUnattended);
         LessBusy(); //Note this is set in UiScan()
         scanProgDlg?.Close();
         if (!IsDisposed)
@@ -3760,7 +3729,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void AskUserAboutShowProblems(bool unattended)
+    private async Task AskUserAboutShowProblemsAsync(bool unattended)
     {
         if (unattended)
         {
@@ -3793,7 +3762,7 @@ public partial class UI : Form, IDialogParent
                     ShowConfiguration? problemShow = mDoc.TvLibrary.GetShowItem(problem.Media);
                     if (problemShow != null)
                     {
-                        EditShow(problemShow);
+                        await EditShowAsync(problemShow);
                     }
                 }
             }
@@ -3824,7 +3793,7 @@ public partial class UI : Form, IDialogParent
                 MovieConfiguration? problemMovie = mDoc.FilmLibrary.GetMovie(problem.Media);
                 if (problemMovie != null)
                 {
-                    EditMovie(problemMovie);
+                    await EditMovieAsync(problemMovie);
                 }
             }
         }
@@ -3845,7 +3814,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        internalCheckChange = true;
+        actionsListBeingUpdated = true;
 
         byte[] oldState = olvAction.SaveState();
         olvAction.BeginUpdate();
@@ -3858,7 +3827,7 @@ public partial class UI : Form, IDialogParent
         olvAction.EndUpdate();
         Logger.Info("UI: Updating Actions: Updating CheckBoxes after action list update");
 
-        internalCheckChange = false;
+        actionsListBeingUpdated = false;
 
         UpdateActionCheckboxes();
     }
@@ -3904,13 +3873,13 @@ public partial class UI : Form, IDialogParent
         lastActionUnattended = set.Unattended;
     }
 
-    private void bwAction_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    private async void bwAction_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
         FillActionList();
-        RefreshWTW(false, lastActionUnattended);
+        await RefreshWTWAsync(false, lastActionUnattended);
     }
 
-    private void Revert()
+    private async Task RevertAsync()
     {
         foreach (Item item in GetSelectedItems())
         {
@@ -3918,7 +3887,7 @@ public partial class UI : Form, IDialogParent
         }
 
         FillActionList();
-        RefreshWTW(false, false);
+        await RefreshWTWAsync(false, false);
     }
     private void RevertSeasons()
     {
@@ -3998,7 +3967,7 @@ public partial class UI : Form, IDialogParent
         if (lvr.CopyMove.Any() || lvr.DownloadTorrents.Any() || lvr.Downloading.Any())
         {
             showRightClickMenu.AddSeparator();
-            showRightClickMenu.Add("Revert to Missing", (_, _) => Revert());
+            showRightClickMenu.Add("Revert to Missing", async (_, _) => await RevertAsync());
         }
 
         if (lvr.MissingSeasons.HasAny())
@@ -4041,7 +4010,7 @@ public partial class UI : Form, IDialogParent
         if (episode != null || lvr.MissingSeasons.HasAny())
         {
             showRightClickMenu.Add("Ignore Entire Season", (_, _) => IgnoreSelectedSeasons(lvr));
-            showRightClickMenu.Add("Force Refresh and Rescan Show", (_, _) => ForceRefreshAndRescanShows(lvr, false));
+            showRightClickMenu.Add("Force Refresh and Rescan Show", async (_, _) => await ForceRefreshAndRescanShowsAsync(lvr, false));
         }
         showRightClickMenu.Add("Remove Selected", (_, _) => ActionDeleteSelected());
 
@@ -4136,7 +4105,7 @@ public partial class UI : Form, IDialogParent
 
     private void UpdateActionCheckboxes()
     {
-        if (internalCheckChange)
+        if (actionsListBeingUpdated)
         {
             return;
         }
@@ -4372,9 +4341,9 @@ public partial class UI : Form, IDialogParent
         uiDisp.Invoke(() => NotifyUpdates(result, true, false));
     }
 
-    private void tmrPeriodicScan_Tick(object sender, EventArgs e) => RunAutoScan("Periodic Scan");
+    private async void tmrPeriodicScan_Tick(object sender, EventArgs e) => await RunAutoScanAsync("Periodic Scan");
 
-    private void RunAutoScan(string scanType)
+    private async Task RunAutoScanAsync(string scanType)
     {
         //We only wish to do a scan now if we are not already undertaking one
         if (mDoc.AutoScanCanRun())
@@ -4414,21 +4383,30 @@ public partial class UI : Form, IDialogParent
     {
         internal void Add(string network, string timezone, string show)
         {
+            Dictionary<string, List<string>> snet = GetNetwork(network);
+            List<string> snettz = GetTimezone(timezone, snet);
+            snettz.Add(show);
+        }
+
+        private static List<string> GetTimezone(string timezone, Dictionary<string, List<string>> snet)
+        {
+            if (!snet.ContainsKey(timezone))
+            {
+                snet.Add(timezone, []);
+            }
+
+            return snet[timezone];
+        }
+
+        private Dictionary<string, List<string>> GetNetwork(string network)
+        {
             if (!ContainsKey(network))
             {
                 Add(network, []);
             }
 
             Dictionary<string, List<string>> snet = this[network];
-
-            if (!snet.ContainsKey(timezone))
-            {
-                snet.Add(timezone, []);
-            }
-
-            List<string> snettz = snet[timezone];
-
-            snettz.Add(show);
+            return snet;
         }
 
         internal string PrintVersion()
@@ -4550,9 +4528,9 @@ public partial class UI : Form, IDialogParent
         ChooseSiteMenu((ToolStripSplitButton)sender);
     }
 
-    private void BtnSearch_ButtonClick(object? sender, EventArgs? e)
+    private async void BtnSearch_ButtonClick(object? sender, EventArgs? e)
     {
-        UiScan(null, null, false, TVSettings.Instance.UIScanType, MediaConfiguration.MediaType.both);
+        await UiScanAsync(null, null, false, TVSettings.Instance.UIScanType, MediaConfiguration.MediaType.both);
     }
 
     private void UpdateCheckboxGroup(ToolStripMenuItem menuItem, Func<Item, bool> isValid)
@@ -4567,14 +4545,14 @@ public partial class UI : Form, IDialogParent
 
         bool checkedStatus = menuItem.CheckState == CheckState.Checked;
 
-        internalCheckChange = true;
+        actionsListBeingUpdated = true;
 
         foreach (Item x in mDoc.TheActionList.Where(isValid))
         {
             x.CheckedItem = checkedStatus;
         }
 
-        internalCheckChange = false;
+        actionsListBeingUpdated = false;
         UpdateActionCheckboxes();
     }
 
@@ -4754,7 +4732,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        mInternalChange++;
+        calendarBeingUpdated++;
         lvWhenToWatch.BeginUpdate();
 
         int dd = TVSettings.Instance.WTWRecentDays;
@@ -4820,22 +4798,22 @@ public partial class UI : Form, IDialogParent
         }
 
         UpdateToolstripWTW();
-        mInternalChange--;
+        calendarBeingUpdated--;
     }
 
-    private void TbFullScan_Click(object sender, EventArgs e)
+    private async void TbFullScan_Click(object sender, EventArgs e)
     {
-        UiScan(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
+        await UiScanAsync(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
     }
 
-    private void TpRecentScan_Click(object sender, EventArgs e)
+    private async void TpRecentScan_Click(object sender, EventArgs e)
     {
-        UiScan(null, null, false, TVSettings.ScanType.Recent, MediaConfiguration.MediaType.both);
+        await UiScanAsync(null, null, false, TVSettings.ScanType.Recent, MediaConfiguration.MediaType.both);
     }
 
-    private void TbQuickScan_Click(object sender, EventArgs e)
+    private async void TbQuickScan_Click(object sender, EventArgs e)
     {
-        UiScan(null, null, false, TVSettings.ScanType.Quick, MediaConfiguration.MediaType.both);
+        await UiScanAsync(null, null, false, TVSettings.ScanType.Quick, MediaConfiguration.MediaType.both);
     }
 
     private void UI_Resize(object sender, EventArgs e)
@@ -5008,12 +4986,12 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void toolStripButton2_Click(object sender, EventArgs e)
+    private async void toolStripButton2_Click(object sender, EventArgs e)
     {
         MovieConfiguration? si2 = TreeNodeToMovieItem(movieTree?.SelectedNode);
         if (si2 != null)
         {
-            EditMovie(si2);
+            await EditMovieAsync(si2);
         }
     }
 
@@ -5090,7 +5068,7 @@ public partial class UI : Form, IDialogParent
     {
         MoreBusy();
         TaskHelper.Run(
-            () => mDoc.TMDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this),
+            async () => await mDoc.TMDBServerAccuracyCheckAsync(unattended, WindowState == FormWindowState.Minimized, this),
             "TMDB Accuracy Check"
         );
 
@@ -5124,7 +5102,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void btnMovieRefresh_Click(object sender, EventArgs e)
+    private async void btnMovieRefresh_Click(object sender, EventArgs e)
     {
         if (ModifierKeys == Keys.Control)
         {
@@ -5133,23 +5111,23 @@ public partial class UI : Form, IDialogParent
             MovieConfiguration? si = TreeNodeToMovieItem(n);
             if (si is not null)
             {
-                ForceMovieRefresh(si, false);
+                await ForceMovieRefreshAsync(si, false);
             }
         }
         else
         {
-            ForceMovieRefresh(false);
+            await ForceMovieRefreshAsync(false);
         }
     }
 
-    private void ForceMovieRefresh(bool unattended)
+    private async Task ForceMovieRefreshAsync(bool unattended)
     {
-        ForceMovieRefresh((List<MovieConfiguration>?)null, unattended);
+        await ForceMovieRefreshAsync((List<MovieConfiguration>?)null, unattended);
     }
 
-    internal void ForceMovieRefresh(MovieConfiguration sis, bool unattended)
+    internal async Task ForceMovieRefreshAsync(MovieConfiguration sis, bool unattended)
     {
-        ForceMovieRefresh([sis], unattended);
+        await ForceMovieRefreshAsync([sis], unattended);
     }
 
     private void recommendationsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5187,14 +5165,14 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    internal void ForceRefresh(ShowConfiguration show, bool unattended)
+    internal async Task ForceRefreshAsync(ShowConfiguration show, bool unattended)
     {
-        ForceRefresh([show], unattended);
+        await ForceRefreshAsync([show], unattended);
     }
 
-    private void ForceRefresh(bool unattended)
+    private async Task ForceRefreshAsync(bool unattended)
     {
-        ForceRefresh((List<ShowConfiguration>?)null, unattended);
+        await ForceRefreshAsync((List<ShowConfiguration>?)null, unattended);
     }
 
     private void settingsCheckToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5209,9 +5187,9 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    private void toolStripButton1_Click_1(object sender, EventArgs e)
+    private async void toolStripButton1_Click_1(object sender, EventArgs e)
     {
-        UiScan(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.movie);
+        await UiScanAsync(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.movie);
         tabControl1.SelectTab(tbAllInOne);
     }
 
@@ -5235,7 +5213,7 @@ public partial class UI : Form, IDialogParent
         TreeNodeToMovieItem(movieTree.SelectedNode)
         ?? mDoc.FilmLibrary.Movies.FirstOrDefault();
 
-    private void scanMovieFolderToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void scanMovieFolderToolStripMenuItem_Click(object sender, EventArgs e)
     {
         //Show Log Pane
         logToolStripMenuItem_Click(sender, e);
@@ -5246,7 +5224,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        mDoc.MovieFolderScan(this, downloadFolder);
+        await mDoc.MovieFolderScanAsync(this, downloadFolder);
 
         FillActionList();
         FocusOnScanResults();
@@ -5288,9 +5266,9 @@ public partial class UI : Form, IDialogParent
         CefWrapper.Instance.CheckForBrowserDependencies(true);
     }
 
-    private void tsbScanTV_Click(object sender, EventArgs e)
+    private async void tsbScanTV_Click(object sender, EventArgs e)
     {
-        UiScan(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.tv);
+        await UiScanAsync(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.tv);
         tabControl1.SelectTab(tbAllInOne);
     }
 
@@ -5312,7 +5290,7 @@ public partial class UI : Form, IDialogParent
         FocusOnScanResults();
     }
 
-    private void tVDBUPdateCheckerLogToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void tVDBUPdateCheckerLogToolStripMenuItem_Click(object sender, EventArgs e)
     {
         TvdbUpdateChecker form = new(mDoc);
         if (form.ShowDialog(this) != DialogResult.OK)
@@ -5333,7 +5311,7 @@ public partial class UI : Form, IDialogParent
         Logger.Info($"BETA Update Checker: Testing: {config.Name} ({config.Id()}) since {timeSince.Value.FromUnixTime().ToLocalTime()} ({timeSince}), last update was {config.CachedData?.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({config.CachedData?.SrvLastUpdated})");
         try
         {
-            TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSince(config.Id(), timeSince.Value);
+            await TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSinceAsync(config.Id(), timeSince.Value);
         }
         catch (SourceConnectivityException ex)
         {
@@ -5379,9 +5357,9 @@ public partial class UI : Form, IDialogParent
             Logger.Warn($"Could not pass the parameters {args.ToCsv()} to the running instance as the handle for the window has not been created (or is disposed).");
             return;
         }
-        Invoke((MethodInvoker)delegate
+        Invoke((MethodInvoker)async delegate
         {
-            ReceiveArgs(args);
+            await ReceiveArgsAsync(args);
         });
     }
 
@@ -5413,7 +5391,12 @@ public partial class UI : Form, IDialogParent
 
     private void exportFilteredToolStripMenuItem_Click(Object sender, EventArgs e)
     {
-        mDoc.RunExporters(TVSettings.Instance.Filter,TVSettings.Instance.MovieFilter);
+        mDoc.RunExporters(TVSettings.Instance.Filter, TVSettings.Instance.MovieFilter);
+    }
+
+    private void txtDLStatusLabel_Click(object sender, EventArgs e)
+    {
+
     }
 }
 
@@ -5486,5 +5469,97 @@ public static class TvWebExtensions
             {
                 web.Load(value);
             });
+    }
+}
+
+
+public struct DownloadProgressReport
+{
+    public enum Type
+    {
+        ProviderUpdates,
+        EpisodeDownload,
+        Final
+    }
+
+    public Type UpdateType { get; set; }
+    public TVDoc.ProviderType Provider { get; set; }
+    public string Message { get; set; }
+}
+
+
+public class DownloadProgressStatus : Progress<DownloadProgressReport>
+{
+    readonly ProgressBar bar;
+    readonly Label label;
+
+    internal DownloadProgressStatus(ProgressBar bar,    Label label)
+    {
+        this.bar = bar;
+        this.label = label;
+        reset();
+    }
+
+    readonly ConcurrentDictionary<TVDoc.ProviderType, (int done, int total)> status = new();
+
+    void reset()
+    {
+        status.Clear();
+        status[TVDoc.ProviderType.TheTVDB] = (0, 1);
+        status[TVDoc.ProviderType.TMDB] = (0, 1);
+        status[TVDoc.ProviderType.TVmaze] = (0, 1);
+    }
+
+    public void UpdateFromSource(TVDoc.ProviderType provider, int total)
+    {
+        status[provider] = (0, total);
+        if (bar.InvokeRequired)
+        {
+            bar.Invoke(new MethodInvoker(delegate { bar.Maximum = status.Values.Sum(a => a.total); }));
+        }
+    } 
+    protected override void OnReport(DownloadProgressReport update)
+    {
+        if (update.UpdateType == DownloadProgressReport.Type.ProviderUpdates)
+        {
+            Update($"Downloading: {update.Provider.PrettyPrint()} updates", 0);
+        }
+        else if (update.UpdateType == DownloadProgressReport.Type.Final)
+        {
+            Update($"Downloading: {update.Message}", 0);
+        }
+        else
+        {
+            status[update.Provider] = (status[update.Provider].done + 1, status[update.Provider].total);
+            Update($"Downloading: {update.Message}", status.Values.Sum(a => a.done));
+        }
+        
+        base.OnReport(update);
+    }
+
+    private void Update(string message, int position)
+    {
+        if (bar.InvokeRequired)
+        {
+            bar.Invoke(new MethodInvoker(delegate
+            {
+                bar.Value = position;
+                bar.Enabled = true;
+                bar.Visible = true;
+
+                label.Text = message.ToUiVersion();
+                label.Visible = true;
+                label.Enabled = true;
+            }));
+        }
+    }
+
+    internal void MarkFinished()
+    {
+        bar.Enabled = false;
+        bar.Visible = false;
+        label.Visible = false;
+        label.Enabled = false;
+        label.Text = string.Empty;
     }
 }

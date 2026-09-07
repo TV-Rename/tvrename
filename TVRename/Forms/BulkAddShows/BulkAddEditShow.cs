@@ -35,15 +35,15 @@ public partial class BulkAddEditShow : Form, ICodeWindow
 
         if (hint.CodeKnown)
         {
-            codeFinderControl.SetHint(hint.ProviderCode.ToString(), hint.Provider);
+            codeFinderControl.SetHintAsync(hint.ProviderCode.ToString(), hint.Provider).GetAwaiter().GetResult();
         }
         else
         {
             string s = hint.Folder.FullName;
             int p = s.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
-            codeFinderControl.SetHint(string.IsNullOrWhiteSpace(hint.RefinedHint)
+            codeFinderControl.SetHintAsync(string.IsNullOrWhiteSpace(hint.RefinedHint)
                 ? s.RemoveFirst(p + 1)
-                : hint.RefinedHint, TVDoc.ProviderType.libraryDefault);
+                : hint.RefinedHint, TVDoc.ProviderType.libraryDefault).GetAwaiter().GetResult();
         }
         Code = -1;
     }

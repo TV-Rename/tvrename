@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
 using TMDbLib.Objects.Exceptions;
 
@@ -27,7 +28,7 @@ public class PossibleNewMovie : ISeriesSpecifier
     public bool CodeUnknown => ProviderCode <= 0;
     public string CodeString => CodeKnown ? $"{ProviderCode} ({SourceProvider.PrettyPrint()})" : "<Unknown>";
 
-    public PossibleNewMovie(FileInfo possibleMovieFile, bool andGuess, bool showErrorMsgBox)
+    public PossibleNewMovie(FileInfo possibleMovieFile, bool showErrorMsgBox)
     {
         movieStub = possibleMovieFile.MovieFileNameBase();
         movieFile = possibleMovieFile;
@@ -37,14 +38,9 @@ public class PossibleNewMovie : ISeriesSpecifier
 
         RefinedHint = fileRefinedHint.HasValue() ? fileRefinedHint : directoryRefinedHint;
         PossibleYear = filePossibleYear ?? directoryPossibleYear;
-
-        if (andGuess)
-        {
-            GuessMovie(showErrorMsgBox);
-        }
     }
 
-    public void GuessMovie(bool showErrorMsgBox)
+    public async Task GuessMovieAsync(bool showErrorMsgBox)
     {
         try
         {
@@ -54,7 +50,7 @@ public class PossibleNewMovie : ISeriesSpecifier
             int? tmdbId = FindShowCode("tmdbid", "tmdb").ToInt();
             Locale preferredLocale = new();
 
-            int? tmdbCode = ValidateOnTMDB(tmdbId, preferredLocale);
+            int? tmdbCode = await ValidateOnTMDBAsync(tmdbId, preferredLocale);
             if (tmdbCode.HasValue)
             {
                 SetId(tmdbCode.Value, TVDoc.ProviderType.TMDB);
@@ -82,7 +78,7 @@ public class PossibleNewMovie : ISeriesSpecifier
 
             if (imdbToTest.HasValue())
             {
-                CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest, preferredLocale);
+                CachedMovieInfo? s = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync(imdbToTest, preferredLocale);
                 if (s != null)
                 {
                     SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -95,7 +91,7 @@ public class PossibleNewMovie : ISeriesSpecifier
             }
 
             //Do a Search on TMDB
-            CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, preferredLocale, showErrorMsgBox);
+            CachedMovieInfo? ser = await TMDB.LocalCache.Instance.GetMovieAsync(this, preferredLocale, showErrorMsgBox);
             if (ser != null)
             {
                 SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -106,7 +102,7 @@ public class PossibleNewMovie : ISeriesSpecifier
             }
 
             //Tweak the hints and do another Search on TMDB
-            ser = ParseHints(showErrorMsgBox);
+            ser = await ParseHintsAsync(showErrorMsgBox);
             if (ser != null)
             {
                 SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -120,7 +116,7 @@ public class PossibleNewMovie : ISeriesSpecifier
             int? tvdbId = FindShowCode("tvdbid", "tvdb").ToInt();
             if (tvdbId.HasValue)
             {
-                CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, preferredLocale);
+                CachedMovieInfo? s2 = await TMDB.LocalCache.Instance.LookupMovieByTvdbAsync(tvdbId.Value, preferredLocale);
                 if (s2 != null)
                 {
                     Logger.Info(
@@ -131,8 +127,8 @@ public class PossibleNewMovie : ISeriesSpecifier
                 else
                 {
                     //Find movie on TVDB based on Id
-                    CachedMovieInfo? s3 =
-                        TheTVDB.LocalCache.Instance.GetMovieAndDownload(this, preferredLocale, showErrorMsgBox);
+                    CachedMovieInfo? s3 = await
+                        TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(this, preferredLocale, showErrorMsgBox);
 
                     if (s3 != null)
                     {
@@ -178,7 +174,7 @@ public class PossibleNewMovie : ISeriesSpecifier
         SourceProvider = provider;
     }
 
-    public CachedMovieInfo? ParseHints(bool showErrorMsgBox)
+    public async Task<CachedMovieInfo?> ParseHintsAsync(bool showErrorMsgBox)
     {
         try
         {
@@ -208,7 +204,7 @@ public class PossibleNewMovie : ISeriesSpecifier
                 PossibleYear ??= newPossibleYear;
 
                 //todo -validate if this can work for multi-providers
-                return TMDB.LocalCache.Instance.GetMovie(this, new Locale(), showErrorMsgBox);
+                return await TMDB.LocalCache.Instance.GetMovieAsync(this, new Locale(), showErrorMsgBox);
             }
         }
         catch (RegexMatchTimeoutException ex)
@@ -218,7 +214,7 @@ public class PossibleNewMovie : ISeriesSpecifier
         return null;
     }
 
-    private static int? ValidateOnTMDB(int? tmdbId, Locale locale)
+    private static async Task<int?> ValidateOnTMDBAsync(int? tmdbId, Locale locale)
     {
         if (tmdbId.HasValue)
         {
@@ -226,7 +222,7 @@ public class PossibleNewMovie : ISeriesSpecifier
             {
                 ISeriesSpecifier ss = new SearchSpecifier(tmdbId.Value, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
 
-                CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(ss);
+                CachedMovieInfo series = await TMDB.LocalCache.Instance.GetMovieAndDownloadAsync(ss);
                 return series.TmdbCode;
             }
             catch (MediaNotFoundException)

@@ -7,6 +7,7 @@ using NLog.Layouts;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms;
 
@@ -53,7 +54,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         SplashScreen.SafeInvoke(
             () => ((TVRenameSplash)SplashScreen).UpdateStatus("Initializing"), true);
 
-        doc = LoadSettings(parameters);
+        doc = LoadSettingsAsync(parameters).Result;
 
         if (TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs)
         {
@@ -86,10 +87,10 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             doc?.WriteXMLSettings();
         }
 
-        doc?.Closing();
+        doc?.ClosingAsync();
     }
 
-    private TVDoc LoadSettings(CommandLineArgs commandLineArgs)
+    private async Task<TVDoc> LoadSettingsAsync(CommandLineArgs commandLineArgs)
     {
         bool recover = false;
         string recoverText = string.Empty;
@@ -136,11 +137,12 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             // Try loading TheTVDB cache file
             bool showIssues = commandLineArgs is { Unattended: false, Hide: false };
             AlertUser("Loading TVDB Cache", 20);
-            TheTVDB.LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, showIssues);
+            await TheTVDB.LocalCache.Instance.SetupAsync(tvdbFile, PathManager.TVDBFile, showIssues);
+
             AlertUser("Loading TVMaze Cache", 30);
-            TVmaze.LocalCache.Instance.Setup(tvMazeFile, PathManager.TVmazeFile, showIssues);
+            await TVmaze.LocalCache.Instance.SetupAsync(tvMazeFile, PathManager.TVmazeFile, showIssues);
             AlertUser("Loading TMDB Cache", 40);
-            TMDB.LocalCache.Instance.Setup(tmdbFile, PathManager.TmdbFile, showIssues);
+            await TMDB.LocalCache.Instance.SetupAsync(tmdbFile, PathManager.TmdbFile, showIssues);
 
             if (recover)
             {

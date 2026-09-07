@@ -2,6 +2,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -11,7 +12,7 @@ internal class uTorrent : IDownloadProvider
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
     /// <exception cref="NotSupportedException">Condition.</exception>
-    public void RemoveCompletedDownload(TorrentEntry name)
+    public async Task RemoveCompletedDownloadAsync(TorrentEntry name)
     {
         throw new NotSupportedException();
     }
@@ -24,7 +25,7 @@ internal class uTorrent : IDownloadProvider
         throw new NotSupportedException();
     }
 
-    public List<TorrentEntry>? GetTorrentDownloads()
+    public async Task<List<TorrentEntry>?> GetTorrentDownloadsAsync()
     {
         string resDatFile = TVSettings.Instance.ResumeDatPath;
         try

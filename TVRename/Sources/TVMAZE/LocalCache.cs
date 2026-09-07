@@ -52,17 +52,17 @@ public class LocalCache : MediaCache, iTVSource
     public override int PrimaryKey(ISeriesSpecifier ss) => ss.TvMazeId;
 
     public override string CacheSourceName() => "TVMaze";
-    public void Setup(FileInfo? loadFrom, FileInfo cache, bool showIssues)
+    public async Task SetupAsync(FileInfo? loadFrom, FileInfo cache, bool showIssues)
     {
         System.Diagnostics.Debug.Assert(cache != null);
         CacheFile = cache;
 
         LastErrorMessage = string.Empty;
 
-        LoadOk = loadFrom is null || CachePersistor.LoadTvCache(loadFrom, this);
+        LoadOk = loadFrom is null || (CachePersistor.LoadTvCache(loadFrom, this));
     }
 
-    public bool Connect(bool showErrorMsgBox) => true;
+    public async Task<bool> ConnectAsync(bool showErrorMsgBox) => true;
 
     public void SaveCache()
     {
@@ -74,7 +74,7 @@ public class LocalCache : MediaCache, iTVSource
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
+    public override async Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
     {
         if (s.Provider != TVDoc.ProviderType.TVmaze)
         {
@@ -94,7 +94,7 @@ public class LocalCache : MediaCache, iTVSource
         Say($"{s.Name} from TVmaze");
         try
         {
-            CachedSeriesInfo downloadedSi = API.GetSeriesDetails(s);
+            CachedSeriesInfo downloadedSi = await API.GetSeriesDetailsAsync(s);
 
             if (downloadedSi.TvMazeCode != s.TvMazeId && s.TvMazeId == -1)
             {
@@ -122,7 +122,7 @@ public class LocalCache : MediaCache, iTVSource
         return true;
     }
 
-    public override bool GetUpdates(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
+    public override async Task<bool> GetUpdatesAsync(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TVmaze cache");
         foreach (ISeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvMazeId)))
@@ -133,7 +133,7 @@ public class LocalCache : MediaCache, iTVSource
         try
         {
             Say("Updates list from TVmaze");
-            IEnumerable<KeyValuePair<string, long>> updateTimes = API.GetUpdates();
+            IEnumerable<KeyValuePair<string, long>> updateTimes = await API.GetUpdatesAsync();
 
             Say("Processing updates from TVmaze");
             foreach (KeyValuePair<string, long> showUpdateTime in updateTimes)
@@ -202,9 +202,9 @@ public class LocalCache : MediaCache, iTVSource
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale)
+    public async Task<CachedSeriesInfo?> GetSeriesAsync(string showName, bool showErrorMsgBox, Locale preferredLocale)
     {
-        Search(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
+        await SearchAsync(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
 
         if (string.IsNullOrEmpty(showName))
         {
@@ -225,7 +225,7 @@ public class LocalCache : MediaCache, iTVSource
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type,
+    public override async Task SearchAsync(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type,
         Locale preferredLocale)
     {
         if (type == MediaConfiguration.MediaType.tv)
@@ -238,7 +238,7 @@ public class LocalCache : MediaCache, iTVSource
                         TVDoc.ProviderType.TVmaze, type);
                     try
                     {
-                        EnsureUpdated(ss, false, showErrorMsgBox);
+                        await EnsureUpdatedAsync(ss, false, showErrorMsgBox);
                     }
                     catch (MediaNotFoundException)
                     {
@@ -247,7 +247,7 @@ public class LocalCache : MediaCache, iTVSource
                 }
             }
 
-            List<CachedSeriesInfo> results = [.. API.ShowSearch(text)];
+            List<CachedSeriesInfo> results = [.. await API.ShowSearchAsync(text)];
             LOGGER.Info($"Got {results.Count:N0} results searching for {text} on TVMaze");
 
             foreach (CachedSeriesInfo result in results)
@@ -274,7 +274,7 @@ public class LocalCache : MediaCache, iTVSource
         }
     }
 
-    public void ForgetEverything()
+    public async Task ForgetEverythingAsync()
     {
         lock (SERIES_LOCK)
         {

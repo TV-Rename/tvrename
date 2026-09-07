@@ -7,19 +7,20 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
 public interface iTVSource
 {
-    void Setup(FileInfo loadFrom, FileInfo cacheFile, bool showConnectionIssues);
+    Task SetupAsync(FileInfo loadFrom, FileInfo cacheFile, bool showConnectionIssues);
 
-    bool Connect(bool showErrorMsgBox);
+    Task<bool> ConnectAsync(bool showErrorMsgBox);
 
     void SaveCache();
 
-    bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
+    Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
 
     void UpdatesDoneOk();
 
@@ -27,7 +28,7 @@ public interface iTVSource
 
     bool HasSeries(int id);
 
-    void ForgetEverything();
+    Task ForgetEverythingAsync();
 
     void AddOrUpdateEpisode(Episode episode);
 

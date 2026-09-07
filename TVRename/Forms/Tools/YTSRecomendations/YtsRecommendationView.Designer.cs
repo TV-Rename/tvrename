@@ -89,7 +89,7 @@ namespace TVRename.Forms
             // bwScan
             // 
             this.bwScan.WorkerReportsProgress = true;
-            this.bwScan.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwScan_DoWork);
+            this.bwScan.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwScan_DoWorkAsync);
             this.bwScan.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BwScan_ProgressChanged);
             this.bwScan.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BwScan_RunWorkerCompleted);
             // 

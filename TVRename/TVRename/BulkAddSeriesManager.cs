@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using TVRename.Forms;
 
@@ -27,7 +28,7 @@ public class BulkAddSeriesManager(TVDoc doc)
     public FolderMonitorEntryList AddItems = [];
     private readonly TVDoc mDoc = doc;
 
-    public static void GuessShowItem(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
+    public static async Task GuessShowItemAsync(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
     {
         Language languageToUse = TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB
             ? TVSettings.Instance.TMDBLanguage
@@ -49,7 +50,7 @@ public class BulkAddSeriesManager(TVDoc doc)
             try
             {
                 ai.UpdateId(tvdbId, TVDoc.ProviderType.TheTVDB);
-                CachedSeriesInfo? cachedSeries = TheTVDB.LocalCache.Instance.GetSeriesOrDownload(ai, showErrorMsgBox);
+                CachedSeriesInfo? cachedSeries = await TheTVDB.LocalCache.Instance.GetSeriesOrDownloadAsync(ai, showErrorMsgBox);
                 if (cachedSeries != null)
                 {
                     return;
@@ -61,7 +62,7 @@ public class BulkAddSeriesManager(TVDoc doc)
             }
         }
 
-        CachedSeriesInfo? ser = TheTVDB.LocalCache.Instance.GetSeries(showName, showErrorMsgBox, localeToUse);
+        CachedSeriesInfo? ser = await TheTVDB.LocalCache.Instance.GetSeriesAsync(showName, showErrorMsgBox, localeToUse);
         if (ser != null)
         {
             ai.UpdateId(ser.TvdbId, TVDoc.ProviderType.TheTVDB);
@@ -79,7 +80,7 @@ public class BulkAddSeriesManager(TVDoc doc)
             Logger.Info($"Ignoring {showName} as it refines to nothing.");
         }
 
-        ser = TheTVDB.LocalCache.Instance.GetSeries(refinedHint, showErrorMsgBox, localeToUse);
+        ser = await TheTVDB.LocalCache.Instance.GetSeriesAsync(refinedHint, showErrorMsgBox, localeToUse);
 
         ai.RefinedHint = refinedHint;
         if (ser != null)
@@ -185,7 +186,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         foreach (string seasonWord in library.SeasonWords())
         {
             string seasonFinder = ".*" + seasonWord + "[ _\\.]+([0-9]+).*";
-            if (Regex.Matches(showName, seasonFinder, RegexOptions.IgnoreCase).Count == 0)
+            if (Regex.Count(showName, seasonFinder, RegexOptions.IgnoreCase) == 0)
             {
                 continue;
             }
@@ -265,7 +266,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         return false;
     }
 
-    public (bool finished, DirectoryInfo[]? subDirs) CheckFolderForShows(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
+    public async Task<(bool finished, DirectoryInfo[]? subDirs)> CheckFolderForShowsAsync(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
     {
         try
         {
@@ -311,7 +312,7 @@ public class BulkAddSeriesManager(TVDoc doc)
             Logger.Info($"Adding {theFolder} as a new folder");
             if (andGuess)
             {
-                GuessShowItem(ai, mDoc.TvLibrary, showErrorMsgBox);
+                await GuessShowItemAsync(ai, mDoc.TvLibrary, showErrorMsgBox);
             }
             return (hasSeasonFolders, subDirectories);
         }
@@ -366,7 +367,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
     }
 
-    private void CheckFolderForShows(DirectoryInfo di, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
+    private async Task CheckFolderForShowsAsync(DirectoryInfo di, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
         if (!di.Exists)
         {
@@ -389,7 +390,7 @@ public class BulkAddSeriesManager(TVDoc doc)
             return;
         }
 
-        (bool finished, DirectoryInfo[]? subDirs) = CheckFolderForShows(di, false, fullLogging, showErrorMsgBox);
+        (bool finished, DirectoryInfo[]? subDirs) = await CheckFolderForShowsAsync(di, false, fullLogging, showErrorMsgBox);
 
         if (finished)
         {
@@ -405,15 +406,15 @@ public class BulkAddSeriesManager(TVDoc doc)
 
         foreach (DirectoryInfo di2 in subDirs)
         {
-            CheckFolderForShows(di2, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
+            await CheckFolderForShowsAsync(di2, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
         } // for each directory
     }
 
-    public void AddAllToMyShows(UI ui)
+    public async Task AddAllToMyShowsAsync(UI ui)
     {
         List<ShowConfiguration> shows = AddToLibrary(AddItems.Where(ai => ai.CodeKnown));
 
-        mDoc.TvAddedOrEdited(true, false, false, ui, shows);
+        await mDoc.TvAddedOrEditedAsync(true, false, false, ui, shows);
         AddItems.Clear();
     }
 
@@ -453,7 +454,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         return touchedShows;
     }
 
-    public void CheckFolders(SetProgressDelegate prog, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
+    public async Task CheckFoldersAsync(SetProgressDelegate prog, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
     {
         // Check the  folder list, and build up a new "AddItems" list.
         // guessing what the shows actually are isn't done here.  That is done by
@@ -476,7 +477,7 @@ public class BulkAddSeriesManager(TVDoc doc)
                 continue;
             }
 
-            CheckFolderForShows(di, detailedLogging, showErrorMsgBox, token);
+            await CheckFolderForShowsAsync(di, detailedLogging, showErrorMsgBox, token);
 
             if (token.IsCancellationRequested)
             {

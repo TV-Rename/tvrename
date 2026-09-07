@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -30,7 +31,7 @@ public abstract class ActionNfo : ActionWriteMetadata
     }
     #endregion Action Members
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {
@@ -57,7 +58,7 @@ public abstract class ActionNfo : ActionWriteMetadata
             try
             {
                 Where.Delete(true);
-                return Go(stats, cancellationToken);
+                return await GoAsync(stats, cancellationToken);
             }
             catch (System.IO.IOException ex)
             {

@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -67,7 +68,7 @@ public abstract class MediaCache
         }
     }
 
-    public abstract bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
+    public abstract Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
 
     protected void SayNothing() => Say(null);
 
@@ -153,9 +154,9 @@ public abstract class MediaCache
         };
     }
 
-    public abstract void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, Locale locale);
+    public abstract Task SearchAsync(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, Locale locale);
     public abstract int PrimaryKey(ISeriesSpecifier ss);
     public abstract string CacheSourceName();
     public abstract void ReConnect(bool b);
-    public abstract bool GetUpdates(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts);
+    public abstract Task<bool> GetUpdatesAsync(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts);
 }

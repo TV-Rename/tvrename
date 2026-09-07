@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Path = System.IO.Path;
 
@@ -86,11 +87,11 @@ internal static class FinderHelper
 
         string matchText = "X " + filename + " X"; // need to pad to let it match non-numbers at start and end
         string[] regexes =
-        {
+        [
             @"\D\s(E|e|Ep|ep|episode|Episode)\s?0*(?<sequencenumber>\d+)\s\D",
             @"\D\s0*(?<sequencenumber>\d+)\s\D",
             @"\D\s0*(?<sequencenumber>\d+)v\d+\s\D",
-        };
+        ];
 
         return regexes
             .Select(regex => Regex.Match(matchText, regex))
@@ -119,7 +120,7 @@ internal static class FinderHelper
             return false;
         }
 
-        string[] dateFormats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy", "MM-dd-yy" };
+        string[] dateFormats = ["yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy", "MM-dd-yy"];
 
         // force possible date separators to a dash
         filename = filename.Replace("/", "-");
@@ -372,7 +373,7 @@ internal static class FinderHelper
         {
             if (returnFilename.StartsWith(showNameHint, StringComparison.Ordinal))
             {
-                return returnFilename.Remove(0, showNameHint.Length);
+                return returnFilename[showNameHint.Length..];
             }
 
             if (showNameHint.IsNumeric() && returnFilename.Contains(showNameHint)) // e.g. "24", or easy exact match of show name at start of filename
@@ -691,7 +692,7 @@ internal static class FinderHelper
         return refinedHint;
     }
 
-    public static IEnumerable<PossibleMedia> FindMedia(IEnumerable<FileInfo> possibleShows,
+    public static async Task<IEnumerable<PossibleMedia>> FindMediaAsync(IEnumerable<FileInfo> possibleShows,
         TVDoc doc, IDialogParent owner)
     {
         List<PossibleMedia> addedShows = [];
@@ -699,7 +700,7 @@ internal static class FinderHelper
         {
             foreach (FileInfo file in possibleShows)
             {
-                FindMedia(file, addedShows, doc, owner);
+                await FindMediaAsync(file, addedShows, doc, owner);
             }
 
             return addedShows;
@@ -710,7 +711,7 @@ internal static class FinderHelper
         }
     }
 
-    private static void FindMedia(FileInfo file, List<PossibleMedia> addedShows, TVDoc doc, IDialogParent owner)
+    private static async Task FindMediaAsync(FileInfo file, List<PossibleMedia> addedShows, TVDoc doc, IDialogParent owner)
     {
         //If the hint contains certain terms then we'll ignore it
         if (TVSettings.Instance.IgnoredAutoAddHints.Contains(file.RemoveExtension()))
@@ -795,7 +796,7 @@ internal static class FinderHelper
             TVSettings.Instance.DefMovieUseDefaultLocation && TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
         {
             //TODO - Make generic, currently uses TMDB only
-            CachedMovieInfo? foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null, new Locale(), true, true);
+            CachedMovieInfo? foundMovie = await TMDB.LocalCache.Instance.GetMovieAsync(refinedHint, null, new Locale(), true, true);
             if (foundMovie != null)
             {
                 // no need to popup dialog

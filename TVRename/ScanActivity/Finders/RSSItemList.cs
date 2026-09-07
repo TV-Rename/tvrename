@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -23,7 +24,7 @@ internal class RssItemList : List<RSSItem>
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     // ReSharper disable once InconsistentNaming
-    public bool DownloadRSS(string url, bool useCloudflareProtection, string sourcePrefix)
+    public async Task<bool> DownloadRSSAsync(string url, bool useCloudflareProtection, string sourcePrefix)
     {
         string? response = null;
 
@@ -31,7 +32,7 @@ internal class RssItemList : List<RSSItem>
         {
             try
             {
-                response = HttpHelper.GetUrl(url, useCloudflareProtection);
+                response = await HttpHelper.GetUrlAsync(url, useCloudflareProtection);
             }
             catch (InvalidOperationException ioe)
             {
@@ -55,6 +56,12 @@ internal class RssItemList : List<RSSItem>
         catch (WebException e)
         {
             Logger.LogWebException($"Could not download RSS page at: {url} got the following message:", e);
+            return false;
+        }
+        catch (UriFormatException e)
+        {
+            Logger.Warn($"Could not parse URL at:{url} Message was: {e.ErrorText()}");
+            Logger.Info(response.ToNonNullString());
             return false;
         }
         catch (XmlException e)

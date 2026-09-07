@@ -2,6 +2,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -21,7 +22,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
 
     protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         returnActions.Clear();
         showList = MDoc.TvLibrary.GetSortedShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using TVRename.Forms;
 
 namespace TVRename;
@@ -100,7 +101,11 @@ public class BulkAddMovieManager(TVDoc doc)
             {
                 // ....its good!
                 Logger.Info($"Adding {newFilm.FullName} as a new Movie");
-                PossibleNewMovie ai = new(newFilm, andGuess, showErrorMsgBox);
+                PossibleNewMovie ai = new(newFilm, showErrorMsgBox);
+                if (andGuess)
+                {
+                    ai.GuessMovieAsync(showErrorMsgBox).Wait();
+                }
                 AddItems.AddIfNew(ai);
             }
 
@@ -184,11 +189,11 @@ public class BulkAddMovieManager(TVDoc doc)
         } // for each directory
     }
 
-    public void AddAllToMyMovies(UI ui)
+    public async Task AddAllToMyMoviesAsync(UI ui)
     {
         List<MovieConfiguration> movies = AddToLibrary(AddItems.Where(ai => ai.CodeKnown));
 
-        mDoc.MoviesAddedOrEdited(true, false, false, ui, movies);
+        await mDoc.MoviesAddedOrEditedAsync(true, false, false, ui, movies);
         AddItems.Clear();
     }
 

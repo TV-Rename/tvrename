@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace TVRename.TVmaze;
 
@@ -21,12 +22,12 @@ internal static class API
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    private static T HandleErrorsFrom<T>(string message, Func<T> handler)
+    private static async Task<T> HandleErrorsFromAsync<T>(string message, Func<Task<T>> handler)
     {
         string errorMessage = $"Could not {message} from TV Maze";
         try
         {
-            return handler();
+            return await handler();
         }
         catch (WebException ex)
         {
@@ -70,16 +71,16 @@ internal static class API
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    private static T HandleErrorsFrom<T>(string message, Func<T> handler, string mediaNotFoundMessage,ISeriesSpecifier tvMazeId)
+    private static async Task<T> HandleErrorsFromAsync<T>(string message, Func<Task<T>> handler, string mediaNotFoundMessage, ISeriesSpecifier tvMazeId)
     {
         string errorMessage = $"Could not {message} from TV Maze";
         try
         {
-            return handler();
+            return await handler();
         }
         catch (WebException ex)
         {
-            if (ex.Is404() && TvMazeIsUp())
+            if (ex.Is404() && await TvMazeIsUpAsync())
             {
                 throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv,ex);
             }
@@ -89,7 +90,7 @@ internal static class API
         }
         catch (HttpRequestException wex)
         {
-            if (wex.Is404() && TvMazeIsUp())
+            if (wex.Is404() && await TvMazeIsUpAsync())
             {
                 throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv,wex);
             }
@@ -108,7 +109,7 @@ internal static class API
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
-            if (wex.Is404() && TvMazeIsUp())
+            if (wex.Is404() && await TvMazeIsUpAsync())
             {
                 // ReSharper disable once ThrowFromCatchWithNoInnerException
                 throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv,wex);
@@ -133,11 +134,11 @@ internal static class API
 
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
-    public static IEnumerable<KeyValuePair<string, long>> GetUpdates()
+    public static async Task<IEnumerable<KeyValuePair<string, long>>> GetUpdatesAsync()
     {
         string fullUrl = $"{APIRoot}/updates/shows";
 
-        JObject updatesJson = HandleErrorsFrom("get updates", () => HttpHelper.HttpGetRequestWithRetry(fullUrl, 3, 2));
+        JObject updatesJson = await HandleErrorsFromAsync("get updates", async () => await HttpHelper.HttpGetRequestWithRetryAsync(fullUrl, 3, 2));
 
         return updatesJson.Children<JProperty>()
             .Select(t => new KeyValuePair<string, long>(t.Name, (long)t.Value));
@@ -145,12 +146,12 @@ internal static class API
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    public static IEnumerable<CachedSeriesInfo> ShowSearch(string searchText)
+    public static async Task<IEnumerable<CachedSeriesInfo>> ShowSearchAsync(string searchText)
     {
         string message = $"search TVmaze for show '{searchText}'";
         string fullUrl = $"{APIRoot}/search/shows?q={searchText}";
 
-        JArray response = HandleErrorsFrom(message, () => HttpHelper.HttpGetArrayRequestWithRetry(fullUrl, 5, 2));
+        JArray response = await HandleErrorsFromAsync(message, async () => await HttpHelper.HttpGetArrayRequestWithRetryAsync(fullUrl, 5, 2));
 
         return response.Children().Select(ConvertSearchResult).OfType<CachedSeriesInfo>();
     }
@@ -172,12 +173,12 @@ internal static class API
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    private static void GetSeriesIdFromOtherCodes(ISeriesSpecifier source)
+    private static async Task GetSeriesIdFromOtherCodesAsync(ISeriesSpecifier source)
     {
         try
         {
             string url = $"{APIRoot}/lookup/shows?thetvdb={source.TvdbId}";
-            JObject r = HttpHelper.HttpGetRequestWithRetry(url, 3, 2);
+            JObject r = await HandleErrorsFromAsync($"lookup show by TVDB ID {source.TvdbId}", async () => await HttpHelper.HttpGetRequestWithRetryAsync(url, 3, 2));
             int tvMazeId = r.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
 
             source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
@@ -194,7 +195,7 @@ internal static class API
                 throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}",wex);
             }
 
-            GetSeriesIdFromImdbCode(source, GuessImdbCode(source));
+            await GetSeriesIdFromImdbCodeAsync(source, GuessImdbCode(source));
         }
 
         static string GuessImdbCode(ISeriesSpecifier seriesSpecifier)
@@ -218,12 +219,12 @@ internal static class API
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    private static void GetSeriesIdFromImdbCode(ISeriesSpecifier source, string s)
+    private static async Task GetSeriesIdFromImdbCodeAsync(ISeriesSpecifier source, string s)
     {
         try
         {
             string url = $"{APIRoot}/lookup/shows?imdb={s}";
-            JObject r = HttpHelper.HttpGetRequestWithRetry(url, 3, 2);
+            JObject r = await HandleErrorsFromAsync($"lookup show by IMDB ID {s}", async () => await HttpHelper.HttpGetRequestWithRetryAsync(url, 3, 2));
 
             int tvMazeId = r.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
             JToken externalsToken = GetChild(r, "externals");
@@ -240,16 +241,16 @@ internal static class API
         }
         catch (HttpRequestException wex2)
         {
-            RaiseException(wex2, s);
+            await RaiseException(wex2, s);
         }
         catch (AggregateException ex2) when (ex2.InnerException is HttpRequestException wex2)
         {
-            RaiseException(wex2, s);
+            await RaiseException(wex2, s);
         }
 
-        void RaiseException(HttpRequestException wex2, string? imdbCode)
+        async Task   RaiseException(HttpRequestException wex2, string? imdbCode)
         {
-            if (wex2.Is404() && TvMazeIsUp())
+            if (wex2.Is404() && await TvMazeIsUpAsync())
             {
                 throw new MediaNotFoundException(source,
                     $"Please add show with imdb={imdbCode} and tvdb={source.TvdbId} to tvMaze, or use TVDB as the source for that show.",
@@ -261,11 +262,11 @@ internal static class API
         }
     }
 
-    private static bool TvMazeIsUp()
+    private static async Task<bool> TvMazeIsUpAsync()
     {
         try
         {
-            return HttpHelper.HttpGetRequestWithRetry(APIRoot + "/singlesearch/shows?q=girls", 5, 1).HasValues;
+            return (await HandleErrorsFromAsync("check TVmaze status", async () => await HttpHelper.HttpGetRequestWithRetryAsync(APIRoot + "/singlesearch/shows?q=girls", 5, 1))).HasValues;
         }
         catch (WebException)
         {
@@ -288,25 +289,25 @@ internal static class API
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">Condition.</exception>
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    private static JObject GetSeriesDetailsWithMazeId(ISeriesSpecifier tvMazeId)
+    private static async Task<JObject> GetSeriesDetailsWithMazeIdAsync(ISeriesSpecifier tvMazeId)
     {
         string errorMessage = $"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId}";
         string mediaNotFoundMessage = $"Please add show maze id {tvMazeId} to tvMaze";
         string fullUrl = $"{APIRoot}/shows/{tvMazeId.TvMazeId}?specials=1&embed[]=cast&embed[]=episodes&embed[]=crew&embed[]=akas&embed[]=seasons&embed[]=images";
 
-        return HandleErrorsFrom(errorMessage, () => HttpHelper.HttpGetRequestWithRetry(fullUrl, 5, 2), mediaNotFoundMessage, tvMazeId);
+        return await HandleErrorsFromAsync(errorMessage, async () => await HttpHelper.HttpGetRequestWithRetryAsync(fullUrl, 5, 2), mediaNotFoundMessage, tvMazeId);
     }
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="MediaNotFoundException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">Condition.</exception>
-    public static CachedSeriesInfo GetSeriesDetails(ISeriesSpecifier ss)
+    public static async Task<CachedSeriesInfo> GetSeriesDetailsAsync(ISeriesSpecifier ss)
     {
         if (ss.TvMazeId <= 0)
         {
-            GetSeriesIdFromOtherCodes(ss);
+            await GetSeriesIdFromOtherCodesAsync(ss);
         }
-        JObject results = GetSeriesDetailsWithMazeId(ss);
+        JObject results = await GetSeriesDetailsWithMazeIdAsync(ss);
 
         CachedSeriesInfo downloadedSi = GenerateSeriesInfo(results);
         JToken jToken = GetChild(results, "_embedded");

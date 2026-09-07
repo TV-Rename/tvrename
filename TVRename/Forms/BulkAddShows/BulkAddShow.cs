@@ -11,6 +11,7 @@ using DaveChambers.FolderBrowserDialogEx;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms;
 
@@ -202,12 +203,12 @@ public partial class BulkAddShow : Form
         OpenSelectedFolder();
     }
 
-    private void bnCheck_Click(object sender, System.EventArgs e)
+    private async void bnCheck_Click(object sender, System.EventArgs e)
     {
-        DoCheck();
+        await DoCheckAsync();
     }
 
-    private void DoCheck()
+    private async Task DoCheckAsync()
     {
         tbResults.Parent = tabControl1;
 
@@ -228,7 +229,7 @@ public partial class BulkAddShow : Form
             Thread.Sleep(10);
         }
 
-        engine.CheckFolders(UpdateProgress, true, true, cts.Token);
+        await engine.CheckFoldersAsync(UpdateProgress, true, true, cts.Token);
         cts.Cancel();
         FillNewShowList(false);
     }
@@ -253,7 +254,7 @@ public partial class BulkAddShow : Form
         AddDraggedFiles(e, TVSettings.Instance.LibraryFolders);
     }
 
-    private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
+    private async void lvFMNewShows_DragDrop(object _, DragEventArgs e)
     {
         if (e.Data is not null)
         {
@@ -266,7 +267,7 @@ public partial class BulkAddShow : Form
                         DirectoryInfo di = new(path);
                         if (di.Exists)
                         {
-                            engine.CheckFolderForShows(di, true, true, true);
+                            await engine.CheckFolderForShowsAsync(di, true, true, true);
                             FillNewShowList(true);
                         }
                     }
@@ -329,7 +330,7 @@ public partial class BulkAddShow : Form
         }
     }
 
-    private void bnFullAuto_Click(object _, System.EventArgs e)
+    private async void bnFullAuto_Click(object _, System.EventArgs e)
     {
         if (engine.AddItems.Count == 0)
         {
@@ -367,7 +368,7 @@ public partial class BulkAddShow : Form
                 continue;
             }
 
-            BulkAddSeriesManager.GuessShowItem(ai, mDoc.TvLibrary, true);
+            await BulkAddSeriesManager.GuessShowItemAsync(ai, mDoc.TvLibrary, true);
 
             // update our display
             UpdateListItem(ai, true);
@@ -525,7 +526,7 @@ public partial class BulkAddShow : Form
         }
     }
 
-    private void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
+    private async void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
     {
         if (engine.AddItems.Any())
         {
@@ -535,7 +536,7 @@ public partial class BulkAddShow : Form
                 return;
             }
 
-            engine.AddAllToMyShows(mainUi);
+            await engine.AddAllToMyShowsAsync(mainUi);
         }
 
         Close();
@@ -574,9 +575,9 @@ public partial class BulkAddShow : Form
         }
     }
 
-    private void bnCheck2_Click(object sender, System.EventArgs e)
+    private async void bnCheck2_Click(object sender, System.EventArgs e)
     {
-        DoCheck();
+        await DoCheckAsync();
     }
 
     private void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)

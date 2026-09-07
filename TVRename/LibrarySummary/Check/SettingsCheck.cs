@@ -34,7 +34,7 @@ internal abstract class SettingsCheck(TVDoc doc)
             IsError = false;
             ErrorText = string.Empty;
             FixInternal();
-            MarkMediaDirty();
+            MarkMediaDirtyAsync();
             Doc.SetDirty();
         }
         catch (FixCheckException e)
@@ -54,7 +54,7 @@ internal abstract class SettingsCheck(TVDoc doc)
     /// <exception cref="FixCheckException">Can't fix movie as multiple Movie Library Folders are specified</exception>
     protected abstract void FixInternal();
 
-    protected abstract void MarkMediaDirty();
+    protected abstract void MarkMediaDirtyAsync();
 
     // ReSharper disable once UnusedMember.Global- Property is referred to by the ObjectListView
     public abstract MediaConfiguration.MediaType Type();

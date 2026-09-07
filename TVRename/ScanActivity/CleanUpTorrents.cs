@@ -1,6 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -15,12 +16,12 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
 
     public override bool Active() => TVSettings.Instance.RemoveCompletedTorrents;
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         DirFilesCache dfc = new();
         foreach (IDownloadProvider source in sources)
         {
-            List<TorrentEntry>? downloads = source.GetTorrentDownloads();
+            List<TorrentEntry>? downloads = await source.GetTorrentDownloadsAsync();
             if (downloads is null)
             {
                 continue;

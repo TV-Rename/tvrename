@@ -1,6 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -14,7 +15,7 @@ internal abstract class ActionDateTouchFile(FileInfo f, DateTime date) : ActionD
     public override string? DestinationFile => WhereFile.Name;
     public override string? TargetFolder => WhereFile.DirectoryName;
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {

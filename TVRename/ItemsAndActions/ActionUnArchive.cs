@@ -16,6 +16,7 @@ using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -84,7 +85,7 @@ public class ActionUnArchive : ActionFileOperation
         return string.Compare(archiveFile.FullName, nfo.archiveFile.FullName, StringComparison.Ordinal);
     }
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {

@@ -31,6 +31,8 @@ public class ShowSeasonMissing : ItemMissing, IEquatable<ShowSeasonMissing>
 
     private static string ConvertEpNumsToText(IReadOnlyCollection<ProcessedEpisode> value)
     {
+        if (value is null) return string.Empty;
+
         int? min = value.Min(e => e.AppropriateEpNum);
         int? max = value.Max(e => e.EpNum2);
         return $"{min}-{max}";

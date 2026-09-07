@@ -30,8 +30,8 @@ public partial class AutoAddMedia : Form, ICodeWindow
         tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
         movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
 
-        SingleTvShowFound = tvCodeFinder.SetHint(hint, TVSettings.Instance.DefaultProvider) && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
-        SingleMovieFound = movieCodeFinder.SetHint(hint, TVSettings.Instance.DefaultMovieProvider) && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && assumeMovie;
+        SingleTvShowFound = (tvCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultProvider).Result) && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
+        SingleMovieFound = ( movieCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultMovieProvider).Result) && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && assumeMovie;
 
         originalHint = hint;
 

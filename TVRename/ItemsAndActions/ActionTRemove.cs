@@ -1,6 +1,7 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -47,11 +48,11 @@ internal class ActionTRemove : Action
 
     public override long SizeOfWork => 1000000;
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {
-            client.RemoveCompletedDownload(name);
+            await client.RemoveCompletedDownloadAsync(name);
 
             return ActionOutcome.Success();
         }

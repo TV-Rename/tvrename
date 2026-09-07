@@ -11,11 +11,11 @@ public interface IDownloadProvider
     /// <exception cref="WebException">Condition.</exception>
     /// <exception cref="HttpRequestException">Condition.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
-    void RemoveCompletedDownload(TorrentEntry torrent);
+    Task RemoveCompletedDownloadAsync(TorrentEntry torrent);
 
     string Name();
 
-    List<TorrentEntry>? GetTorrentDownloads();
+    Task<List<TorrentEntry>?> GetTorrentDownloadsAsync();
 
     void StartUrlDownload(string torrentUrl);
 

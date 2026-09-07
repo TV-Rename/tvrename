@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TVRename.TMDB;
 
@@ -11,12 +12,12 @@ internal class TmdbAccuracyCheck(LocalCache localCache)
 
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-    public void ServerAccuracyCheck(CachedMovieInfo si)
+    public async Task ServerAccuracyCheckAsync(CachedMovieInfo si)
     {
         Logger.Info($"Accuracy Check for {si.Name} on TMDB");
         try
         {
-            CachedMovieInfo newSi = lc.DownloadMovieNow(si, false);
+            CachedMovieInfo newSi = await lc.DownloadMovieNowAsync(si, false);
 
             if (!Match(newSi, si))
             {
@@ -35,12 +36,12 @@ internal class TmdbAccuracyCheck(LocalCache localCache)
         }
     }
 
-    public void ServerAccuracyCheck(CachedSeriesInfo si)
+    public async Task ServerAccuracyCheckAsync(CachedSeriesInfo si)
     {
         Logger.Info($"Accuracy Check for {si.Name} on TMDB");
         try
         {
-            CachedSeriesInfo newSi = lc.DownloadSeriesNow(si, false);
+            CachedSeriesInfo newSi = await lc.DownloadSeriesNowAsync(si, false);
 
             if (!Match(newSi, si)) //NB - we use a match method as we can't rely on update time
             {

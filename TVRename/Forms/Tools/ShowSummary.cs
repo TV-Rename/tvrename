@@ -343,20 +343,20 @@ public partial class ShowSummary : Form, IDialogParent
             {
                 if (processedSeason.Show.IgnoreSeasons.Contains(processedSeason.SeasonNumber))
                 {
-                    gridSummary.rightClickMenu.Add("Stop Ignoring Season", (_, _) =>
+                    gridSummary.rightClickMenu.Add("Stop Ignoring Season", async (_, _) =>
                     {
                         processedSeason.Show.IgnoreSeasons.Remove(processedSeason.SeasonNumber);
-                        mDoc.TvAddedOrEdited(false, false, false, null, processedSeason.Show);
+                        await mDoc.TvAddedOrEditedAsync(false, false, false, null, processedSeason.Show);
                         gridSummary.PopulateGrid();
                         gridSummary.MainWindow.FillMyShows();
                     });
                 }
                 else
                 {
-                    gridSummary.rightClickMenu.Add("Ignore Season", (_, _) =>
+                    gridSummary.rightClickMenu.Add("Ignore Season", async (_, _) =>
                     {
                         processedSeason.Show.IgnoreSeasons.Add(processedSeason.SeasonNumber);
-                        mDoc.TvAddedOrEdited(false, false, false, null, processedSeason.Show);
+                        await mDoc.TvAddedOrEditedAsync(false, false, false, null, processedSeason.Show);
                         gridSummary.PopulateGrid();
                         gridSummary.MainWindow.FillMyShows();
                     });
@@ -365,20 +365,20 @@ public partial class ShowSummary : Form, IDialogParent
 
             if (show.DoMissingCheck)
             {
-                gridSummary.rightClickMenu.Add("Stop Checking TV Show", (_, _) =>
+                gridSummary.rightClickMenu.Add("Stop Checking TV Show", async (_, _) =>
                 {
                     show.DoMissingCheck = false;
-                    mDoc.TvAddedOrEdited(false, false, false, null, show);
+                    await mDoc.TvAddedOrEditedAsync(false, false, false, null, show);
                     gridSummary.PopulateGrid();
                     gridSummary.MainWindow.FillMyShows();
                 });
             }
             else
             {
-                gridSummary.rightClickMenu.Add("Start Checking TV Show", (_, _) =>
+                gridSummary.rightClickMenu.Add("Start Checking TV Show", async (_, _) =>
                 {
                     show.DoMissingCheck = true;
-                    mDoc.TvAddedOrEdited(false, false, false, null, show);
+                    await mDoc.TvAddedOrEditedAsync(false, false, false, null, show);
                     gridSummary.PopulateGrid();
                     gridSummary.MainWindow.FillMyShows();
                 });
@@ -388,9 +388,9 @@ public partial class ShowSummary : Form, IDialogParent
 
             if (processedSeason is null)
             {
-                gridSummary.rightClickMenu.Add("Force Refresh", (_, _) =>
+                gridSummary.rightClickMenu.Add("Force Refresh", async (_, _) =>
                 {
-                    gridSummary.MainWindow.ForceRefresh(show, false);
+                    await gridSummary.MainWindow.ForceRefreshAsync(show, false);
                 });
 
                 gridSummary.rightClickMenu.AddSeparator();
@@ -428,7 +428,7 @@ public partial class ShowSummary : Form, IDialogParent
             gridSummary.rightClickMenu.Show(sender.Grid.PointToScreen(pt));
         }
 
-        private void GenerateOpenMenu(ProcessedSeason seas, ICollection<string> added)
+        private void GenerateOpenMenu(ProcessedSeason seas, List<string> added)
         {
             Dictionary<int, SafeList<string>> afl = show.AllExistngFolderLocations();
 
@@ -457,7 +457,7 @@ public partial class ShowSummary : Form, IDialogParent
             }
         }
 
-        private void GenerateRightClickOpenMenu(ICollection<string> added)
+        private void GenerateRightClickOpenMenu(List<string> added)
         {
             bool first = true;
 
@@ -491,7 +491,7 @@ public partial class ShowSummary : Form, IDialogParent
             foreach (ProcessedEpisode epds in show.SeasonEpisodes[seas.SeasonNumber])
             {
                 List<FileInfo> fl = dfc.FindEpOnDisk(epds, false);
-                if (fl.Any())
+                if (fl.Count != 0)
                 {
                     if (first)
                     {

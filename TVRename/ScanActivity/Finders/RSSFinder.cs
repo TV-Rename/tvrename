@@ -7,6 +7,7 @@
 //
 
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -17,7 +18,7 @@ internal class RSSFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadFinde
 
     protected override string CheckName() => "Looked in the listed RSS URLs for download links for the missing files";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         if (TVSettings.Instance.SearchRSSManualScanOnly && Settings.Unattended)
         {
@@ -32,7 +33,7 @@ internal class RSSFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadFinde
         RssItemList RSSList = [];
         foreach (string s in TVSettings.Instance.RSSURLs)
         {
-            RSSList.DownloadRSS(s, TVSettings.Instance.RSSUseCloudflare, "RSS");
+            await RSSList.DownloadRSSAsync(s, TVSettings.Instance.RSSUseCloudflare, "RSS");
         }
 
         ItemList newItems = [];

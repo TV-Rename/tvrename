@@ -67,7 +67,7 @@ public class ActionTDownload : ActionDownload
 
     public override Item Becomes() => becomes;
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         bool isDownloadable = url.IsWebLink();
         try
@@ -76,7 +76,7 @@ public class ActionTDownload : ActionDownload
             {
                 if (TVSettings.Instance.CheckuTorrent && isDownloadable)
                 {
-                    FileInfo downloadedFile = DownloadFileAsync().GetAwaiter().GetResult();
+                    FileInfo downloadedFile = await DownloadFileAsync();
                     new uTorrent().StartTorrentDownload(downloadedFile);
                     return ActionOutcome.Success();
                 }
@@ -85,7 +85,7 @@ public class ActionTDownload : ActionDownload
                 {
                     if (isDownloadable && TVSettings.Instance.qBitTorrentDownloadFilesFirst)
                     {
-                        FileInfo downloadedFile = DownloadFileAsync().GetAwaiter().GetResult();
+                        FileInfo downloadedFile = await DownloadFileAsync();
                         new qBitTorrent().StartTorrentDownload(downloadedFile);
                         return ActionOutcome.Success();
                     }

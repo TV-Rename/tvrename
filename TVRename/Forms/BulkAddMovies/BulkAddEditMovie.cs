@@ -36,13 +36,13 @@ public partial class BulkAddEditMovie : Form, ICodeWindow
 
         if (hint.CodeKnown)
         {
-            codeFinderControl.SetHint(hint.ProviderCode.ToString(), hint.SourceProvider);
+            codeFinderControl.SetHintAsync(hint.ProviderCode.ToString(), hint.SourceProvider).GetAwaiter().GetResult();
         }
         else
         {
-            codeFinderControl.SetHint(string.IsNullOrWhiteSpace(hint.RefinedHint)
+            codeFinderControl.SetHintAsync(string.IsNullOrWhiteSpace(hint.RefinedHint)
                 ? hint.Directory.Name
-                : hint.RefinedHint, TVSettings.Instance.DefaultMovieProvider);
+                : hint.RefinedHint, TVSettings.Instance.DefaultMovieProvider).GetAwaiter().GetResult();
         }
         Code = -1;
         Provider = TVDoc.ProviderType.libraryDefault;
