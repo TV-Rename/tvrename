@@ -21,7 +21,7 @@ public class ActionEngine(TVRenameStats stats)
 {
     private readonly TVRenameStats mStats = stats; //reference to the main TVRenameStats, so we can update the counts
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-    private SafeList<ActionQueue> actionWorkers = [];
+    private List<ActionQueue> actionWorkers = [];
 
     /// <summary>
     /// Asks for execution to pause
@@ -48,16 +48,13 @@ public class ActionEngine(TVRenameStats stats)
     /// <param name="token"></param>
     public async Task DoActionsAsync(ItemList theList, CancellationTokenSource token)
     {
-        actionWorkers = [];
-
         Logger.Info("**********************");
         Logger.Info($"Doing Selected Actions.... ({theList.Count} items detected, {theList.Actions.Count} actions to be completed )");
 
         // Run tasks in parallel (as much as is sensible)
-
         try
         {
-            actionWorkers.AddRange(ActionProcessorMakeQueues(theList, token));
+            actionWorkers = ActionProcessorMakeQueues(theList, token);
 
             foreach (ActionQueue queue in actionWorkers)
             {
@@ -74,14 +71,14 @@ public class ActionEngine(TVRenameStats stats)
                 Logger.Warn(slia.Outcome.LastError, $"Failed to complete the following action: {slia.Name}, doing {slia}. Error was {slia.Outcome.LastError?.Message}");
             }
 
-            Logger.Info("Completed Selected Actions");
-            Logger.Info("**************************");
-
         }
         catch (Exception e)
         {
             Logger.Fatal(e, "Unhandled Exception in ActionProcessor");
         }
+
+        Logger.Info("Completed Selected Actions");
+        Logger.Info("**************************");
 
     }
    
@@ -96,11 +93,10 @@ public class ActionEngine(TVRenameStats stats)
         //     - #2 NFO Generator list
         //     - #3 Downloads (rss torrent, thumbnail, folder.jpg) across Settings.ParallelDownloads lists
         // We can discard any non-action items, as there is nothing to do for them
-        return [.. EnumerableExtensions.GetAllItems<Action.QueueName>().Select(q => CreateQueue(q, theList,cts))];
+        return EnumerableExtensions.GetAllItems<Action.QueueName>()
+            .Select(q => new ActionQueue(GetName(q), GetParallelLimit(q), theList.GetActionsForQueue(q), mStats, cts))
+            .ToList();
     }
-
-    private ActionQueue CreateQueue(Action.QueueName queue, ItemList theList, CancellationTokenSource cts)
-        => new(GetName(queue), GetParallelLimit(queue), theList.GetActionsForQueue(queue), mStats, cts);
 
     private static string GetName(Action.QueueName queue)
     {

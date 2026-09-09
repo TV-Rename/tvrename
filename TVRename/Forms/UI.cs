@@ -31,6 +31,7 @@ using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Properties;
 using TVRename.Utility.Helper;
+using static TVRename.TVDoc;
 using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
@@ -59,6 +60,8 @@ public partial class UI : Form, IDialogParent
     public delegate void ScanTypeDelegate(TVSettings.ScanType type);
 
     public readonly ScanTypeDelegate ScanAndDo;
+
+    private Task? ActionTask;
 
     #endregion Delegates
 
@@ -143,7 +146,7 @@ public partial class UI : Form, IDialogParent
         UpdateSplashStatus(splash, "Updating WTW", 75);
         mDoc.UpdateDenormalisations();
         UpdateSplashStatus(splash, "Updating WTW", 80);
-        FillWhenToWatchList();
+        FillWhenToWatchListAsync().GetAwaiter().GetResult();
         SortSchedule(3);
         UpdateSplashStatus(splash, "Write Upcoming", 85);
         mDoc.WriteUpcoming();
@@ -263,7 +266,7 @@ public partial class UI : Form, IDialogParent
 
     private delegate void ShowChildConsumer(Form childForm);
 
-    public void ShowChildDialog(Form childForm)
+    public void ShowChildDialog(Form? childForm)
     {
         if (InvokeRequired)
         {
@@ -274,11 +277,11 @@ public partial class UI : Form, IDialogParent
         {
             if (IsDisposed)
             {
-                childForm.ShowDialog();
+                childForm?.ShowDialog();
             }
             else
             {
-                childForm.ShowDialog(this);
+                childForm?.ShowDialog(this);
             }
         }
     }
@@ -694,7 +697,7 @@ public partial class UI : Form, IDialogParent
     private void ScanAndAction(TVSettings.ScanType type)
     {
         UiScanAsync(null, null, true, type, MediaConfiguration.MediaType.both).GetAwaiter().GetResult();
-        ActionAction(true, true, false);
+        ActionActionAsync(true, true, false).GetAwaiter().GetResult();
     }
 
     private static void UpdateSplashStatus(TVRenameSplash splashScreen, string text, int percent)
@@ -799,8 +802,7 @@ public partial class UI : Form, IDialogParent
 
         if (a.DoAll)
         {
-            ActionAction(true, UNATTENDED, true);
-            WaitFor(() => bwAction.IsBusy == false, 10000, "actions to execute", false);
+            await ActionActionAsync(true, UNATTENDED, true);
         }
 
         if (a.Save)
@@ -1055,12 +1057,12 @@ public partial class UI : Form, IDialogParent
             await TVmaze.LocalCache.Instance.ForgetEverythingAsync().ConfigureAwait(false);
             await TMDB.LocalCache.Instance.ForgetEverythingAsync().ConfigureAwait(false);
 
-            this.Invoke(new System.Action(() => 
+            this.Invoke(new System.Action(async () => 
             {
                 FillMyShows(true);
                 FillMyMovies();
                 FillEpGuideHtml();
-                FillWhenToWatchList();
+                await FillWhenToWatchListAsync();
                 BGDownloadTimer_QuickFire();
             }));
         }
@@ -1693,26 +1695,17 @@ public partial class UI : Form, IDialogParent
 
     private async void bnWhenToWatchCheck_Click(object? sender, EventArgs? e) => await RefreshWTWAsync(true, false);
 
-    private void FillWhenToWatchList()
+    private async Task FillWhenToWatchListAsync()
     {
-        if (bwUpdateSchedule.WorkerSupportsCancellation)
-        {
-            // Cancel the asynchronous operation.
-            bwUpdateSchedule.CancelAsync();
-        }
-
-        if (!bwUpdateSchedule.IsBusy)
-        {
-            bwUpdateSchedule.RunWorkerAsync();
-        }
+        await UpdateScheduleAsync();
     }
 
-    private List<ListViewItem> GenerateNewScheduleItems()
+    private async Task<List<ListViewItem>> GenerateNewScheduleItemsAsync()
     {
         int dd = TVSettings.Instance.WTWRecentDays;
         DirFilesCache dfc = new();
 
-        IEnumerable<ProcessedEpisode> recentEps = mDoc.TvLibrary.GetRecentAndFutureEps(dd);
+        IEnumerable<ProcessedEpisode> recentEps = await mDoc.TvLibrary.GetRecentAndFutureEpsAsync(dd);
         return [.. recentEps.Select(ei => GenerateLvi(dfc, ei))];
     }
 
@@ -1920,7 +1913,7 @@ public partial class UI : Form, IDialogParent
         FillMyShows(true);
         FillMyMovies();
 
-        FillWhenToWatchList();
+        await FillWhenToWatchListAsync();
     }
 
     private async Task UiDownloadAsync(bool doDownloads, bool unattended)
@@ -2443,7 +2436,7 @@ public partial class UI : Form, IDialogParent
             mDoc.SetDirty();
             await TVDoc.ReconnectAsync();
             ShowHideNotificationIcon();
-            FillWhenToWatchList();
+            await FillWhenToWatchListAsync();
             ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
             EnableDisableAccessibilty();
             FillEpGuideHtml();
@@ -2964,7 +2957,7 @@ public partial class UI : Form, IDialogParent
         await mDoc.TvAddedOrEditedAsync(download, unattended, WindowState == FormWindowState.Minimized, this, si);
 
         FillMyShows(updateSelectedNode);
-        FillWhenToWatchList();
+        await FillWhenToWatchListAsync();
     }
 
     private async void bnMyShowsDelete_Click(object sender, EventArgs e)
@@ -3593,7 +3586,7 @@ public partial class UI : Form, IDialogParent
                 e.Handled = true;
                 break;
             case Keys.D:
-                ActionAction(true, false, false);
+                await ActionActionAsync(true, false, false);
                 e.Handled = true;
                 break;
         }
@@ -3633,68 +3626,33 @@ public partial class UI : Form, IDialogParent
 
     private async Task UiScanAsync(List<ShowConfiguration>? shows, List<MovieConfiguration>? movies, bool unattended, TVSettings.ScanType st, MediaConfiguration.MediaType media)
     {
-        if (bwScan.IsBusy)
-        {
-            Logger.Warn("Can't start scan as it's already running");
-            return;
-        }
-        MoreBusy(); // cancelled in bwScan_RunWorkerCompleted
+        MoreBusy(); 
 
-        CancellationTokenSource cts = new();
         bool hidden = WindowState == FormWindowState.Minimized;
+        CancellationTokenSource scanCancellation = new();
 
-        TVDoc.ScanSettings initialSettings = new(shows ?? [],
-            movies ?? [], unattended, hidden, st, media, this, null, cts.Token);
-        mDoc.SetScanSettings(initialSettings);
-        SetupScanUi(hidden);
-
-        TVDoc.ScanSettings scanSettings = new(shows ?? [],
-            movies ?? [], unattended, hidden, st, media, this, scanProgDlg, cts.Token);
+        TVDoc.ScanSettings scanSettings = new(shows ?? [], movies ?? [], unattended, hidden, st, media, this,  scanCancellation.Token);
         mDoc.SetScanSettings(scanSettings);
 
+        SetupScanUi(hidden, scanCancellation);
+
         UiHelpers.SetProgressStateNormal(Handle);
-        bwScan.RunWorkerAsync(scanSettings);
-        ShowDialogAndWait(cts);
-    }
+        Task scan = mDoc.ScanAsync(scanSettings, scanProgDlg);
 
-    private void ShowDialogAndWait(CancellationTokenSource cts)
-    {
-        if (scanProgDlg == null)
-        {
-            return;
-        }
+        scanProgDlg?.Show(this);
 
-        ShowChildDialog(scanProgDlg);
+        await scan;
 
-        // ReSharper disable once PossibleNullReferenceException
-        if (scanProgDlg.DialogResult == DialogResult.Cancel)
-        {
-            cts.Cancel();
-        }
-    }
+        scanProgDlg?.Close();
 
-    private bool lastScanUnattended;
-    private void bwScan_DoWork(object sender, DoWorkEventArgs e)
-    {
-        Thread.CurrentThread.Name ??= "Main Scan Thread"; // Can only set it once
-        TVDoc.ScanSettings scanSettings = e.Argument as TVDoc.ScanSettings ?? throw new Exception();
-        mDoc.ScanAsync(scanSettings).Wait();
-        lastScanUnattended = scanSettings.Unattended;
-    }
-
-    private void bwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
-    {
-    }
-
-    private async void bwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
         if (!IsDisposed)
         {
             UiHelpers.SetProgressStateNone(Handle);
         }
-        await AskUserAboutShowProblemsAsync(lastScanUnattended);
-        LessBusy(); //Note this is set in UiScan()
-        scanProgDlg?.Close();
+        await AskUserAboutShowProblemsAsync(scanSettings.Unattended);
+
+        LessBusy(); 
+
         if (!IsDisposed)
         {
             FillMyShows(true); // scanning can download more info to be displayed in my shows
@@ -3705,7 +3663,7 @@ public partial class UI : Form, IDialogParent
         offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
     }
 
-    private void SetupScanUi(bool hidden)
+    private ScanProgress? SetupScanUi(bool hidden,CancellationTokenSource cancellationTokenSource)
     {
         if (!mDoc.Args.Hide && Environment.UserInteractive)
         {
@@ -3715,7 +3673,8 @@ public partial class UI : Form, IDialogParent
                 TVSettings.Instance.RemoveDownloadDirectoriesFiles || TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies || TVSettings.Instance.ReplaceWithBetterQuality || TVSettings.Instance.ReplaceMoviesWithBetterQuality,
                 mDoc.HasActiveLocalFinders,
                 mDoc.HasActiveDownloadFinders,
-                mDoc.HasActiveSearchFinders
+                mDoc.HasActiveSearchFinders,
+                cancellationTokenSource
             );
 
             if (hidden)
@@ -3727,6 +3686,7 @@ public partial class UI : Form, IDialogParent
         {
             scanProgDlg = null;
         }
+        return scanProgDlg;
     }
 
     private async Task AskUserAboutShowProblemsAsync(bool unattended)
@@ -3838,12 +3798,12 @@ public partial class UI : Form, IDialogParent
 
     private static string HeaderName(string name, int number, long filesize) => $"{name} ({PrettyPrint(number)}, {filesize.GBMB(1)})";
 
-    private void bnActionAction_Click(object sender, EventArgs e) => ActionAction(true, false, false);
+    private async void bnActionAction_Click(object sender, EventArgs e) => await ActionActionAsync(true, false, false);
 
-    private void ActionAction(bool checkedNotSelected, bool unattended, bool doAll)
+    private async Task ActionActionAsync(bool checkedNotSelected, bool unattended, bool doAll)
     {
         CancellationTokenSource actionCancellationToken = new();
-        if (bwAction.IsBusy)
+        if (ActionTask != null && !ActionTask.IsCompleted)
         {
             Logger.Warn("Can't do actions as they are already processing");
             return;
@@ -3860,23 +3820,11 @@ public partial class UI : Form, IDialogParent
             ShowChild(cmp);
         }
 
-        bwAction.RunWorkerAsync(sett);
-    }
+        ActionTask = mDoc.DoActionsAsync(sett);
+        await ActionTask;
 
-    private bool lastActionUnattended;
-    private void bwAction_DoWork(object sender, DoWorkEventArgs e)
-    {
-        Thread.CurrentThread.Name ??= "Main Action Thread"; // Can only set it once
-
-        TVDoc.ActionSettings set = e.Argument as TVDoc.ActionSettings ?? throw new Exception();
-        mDoc.DoActionsAsync(set).GetAwaiter().GetResult();
-        lastActionUnattended = set.Unattended;
-    }
-
-    private async void bwAction_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
         FillActionList();
-        await RefreshWTWAsync(false, lastActionUnattended);
+        await RefreshWTWAsync(false, sett.Unattended);
     }
 
     private async Task RevertAsync()
@@ -3962,7 +3910,7 @@ public partial class UI : Form, IDialogParent
         // Action related items
         if (lvr.Actions.Any()) // not just missing selected
         {
-            showRightClickMenu.Add("Action Selected", (_, _) => ActionAction(false, false, false));
+            showRightClickMenu.Add("Action Selected", async (_, _) => await ActionActionAsync(false, false, false));
         }
         if (lvr.CopyMove.Any() || lvr.DownloadTorrents.Any() || lvr.Downloading.Any())
         {
@@ -4350,7 +4298,8 @@ public partial class UI : Form, IDialogParent
         {
             Logger.Info("*******************************");
             Logger.Info(scanType + " fired");
-            ScanAndAction(TVSettings.Instance.MonitoredFoldersScanType);
+            await UiScanAsync(null, null, true, TVSettings.Instance.MonitoredFoldersScanType, MediaConfiguration.MediaType.both);
+            await ActionActionAsync(true, true, false);
             Logger.Info(scanType + " complete");
         }
         else
@@ -4719,18 +4668,9 @@ public partial class UI : Form, IDialogParent
         public readonly ChromiumWebBrowser Web = web;
     }
 
-    private void BwUpdateSchedule_DoWork(object sender, DoWorkEventArgs e)
+    private async Task UpdateScheduleAsync()
     {
-        Thread.CurrentThread.Name ??= "Update Schedule Thread"; // Can only set it once
-        e.Result = GenerateNewScheduleItems();
-    }
-
-    private void BwUpdateSchedule_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        if (e.Result is not List<ListViewItem> newContents)
-        {
-            return;
-        }
+        List<ListViewItem> newContents = await GenerateNewScheduleItemsAsync();
 
         calendarBeingUpdated++;
         lvWhenToWatch.BeginUpdate();
@@ -5130,7 +5070,7 @@ public partial class UI : Form, IDialogParent
         await ForceMovieRefreshAsync([sis], unattended);
     }
 
-    private void recommendationsToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void recommendationsToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
         mDoc.PreventAutoScan("Recommendations Open");
@@ -5140,7 +5080,7 @@ public partial class UI : Form, IDialogParent
         mDoc.AllowAutoScan();
         LessBusy();
         FillMyShows(true);
-        FillWhenToWatchList();
+        await FillWhenToWatchListAsync();
     }
 
     private void duplicateMoviesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5326,7 +5266,7 @@ public partial class UI : Form, IDialogParent
     private void requestANewFeatureToolStripMenuItem_Click(object sender, EventArgs e)
         => "https://tvrename.featureupvote.com/".OpenUrlInBrowser();
 
-    private void yTSMoviePreviewToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void yTSMoviePreviewToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
         mDoc.PreventAutoScan("YTS Preview Open");
@@ -5335,10 +5275,10 @@ public partial class UI : Form, IDialogParent
         mDoc.AllowAutoScan();
         LessBusy();
         FillMyShows(true);
-        FillWhenToWatchList();
+        await FillWhenToWatchListAsync();
     }
 
-    private void yTSMovieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void yTSMovieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
         mDoc.PreventAutoScan("YTS Recommendations Open");
@@ -5347,7 +5287,7 @@ public partial class UI : Form, IDialogParent
         mDoc.AllowAutoScan();
         LessBusy();
         FillMyShows(true);
-        FillWhenToWatchList();
+        await FillWhenToWatchListAsync();
     }
 
     public void ProcessReceivedArgs(string[] args)

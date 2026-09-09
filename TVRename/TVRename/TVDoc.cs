@@ -883,10 +883,8 @@ public class TVDoc : IDisposable
 
     public bool HasActiveSearchFinders => searchFinders?.Active() ?? false;
 
-    public async Task ScanAsync(ScanSettings settings)
+    public async Task ScanAsync(ScanSettings settings, ScanProgress? scanProgressDlg)
     {
-        ScanProgress? scanProgressDlg = settings.UpdateUi;
-
         try
         {
             Logger.Info("*******************************");
@@ -1046,7 +1044,7 @@ public class TVDoc : IDisposable
         public readonly ItemList Lvr = lvr;
         public readonly CancellationTokenSource Token = token;
     }
-    public class ScanSettings(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool hidden, TVSettings.ScanType st, MediaConfiguration.MediaType media, UI owner, ScanProgress? updateUi, CancellationToken tok)
+    public class ScanSettings(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool hidden, TVSettings.ScanType st, MediaConfiguration.MediaType media, UI owner, CancellationToken tok)
     {
         public readonly bool Unattended = unattended;
         public readonly bool Hidden = hidden;
@@ -1056,7 +1054,6 @@ public class TVDoc : IDisposable
         public readonly CancellationToken Token = tok;
         public readonly UI Owner = owner;
         public readonly MediaConfiguration.MediaType Media = media;
-        public readonly ScanProgress? UpdateUi = updateUi;
 
         public bool AnyMediaToUpdate => Shows.Any() || Movies.Any();
 
@@ -1331,7 +1328,7 @@ public class TVDoc : IDisposable
     {
         int dd = TVSettings.Instance.WTWRecentDays;
         DirFilesCache dfc = new();
-        return GetMissingEps(dfc, TvLibrary.GetRecentAndFutureEps(dd));
+        return GetMissingEps(dfc, TvLibrary.GetRecentAndFutureEpsAsync(dd).GetAwaiter().GetResult());
     }
 
     private static List<ProcessedEpisode> GetMissingEps(DirFilesCache dfc, List<ProcessedEpisode> lpe)

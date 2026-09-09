@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace TVRename;
@@ -756,7 +757,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         return nextAfterThat;
     }
 
-    public List<ProcessedEpisode> GetRecentAndFutureEps(int recentDays)
+    public async Task<List<ProcessedEpisode>> GetRecentAndFutureEpsAsync(int recentDays)
     {
         List<ProcessedEpisode> returnList = [];
         DateTime now = TimeHelpers.LocalNow();

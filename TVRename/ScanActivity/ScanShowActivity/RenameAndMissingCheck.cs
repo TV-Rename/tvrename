@@ -71,12 +71,6 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
             return;
         }
 
-        // base folder:
-        if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && si.AutoAddType != ShowConfiguration.AutomaticFolderType.none)
-        {
-            // main image for the folder itself
-            //Doc.TheActionList.Add(downloadIdentifiers.ProcessShow(si)); //TODO - clarify whether this is needed
-        }
 
         foreach (string folder in folders)
         {

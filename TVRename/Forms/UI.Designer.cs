@@ -284,7 +284,6 @@ namespace TVRename.Forms
             bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             bwScan = new System.ComponentModel.BackgroundWorker();
-            bwAction = new System.ComponentModel.BackgroundWorker();
             tableLayoutPanel3 = new TableLayoutPanel();
             panel1 = new Panel();
             menuStrip1.SuspendLayout();
@@ -2285,12 +2284,6 @@ namespace TVRename.Forms
             bwSeasonHTMLGenerator.DoWork += BwSeasonHTMLGenerator_DoWork;
             bwSeasonHTMLGenerator.RunWorkerCompleted += UpdateWeb;
             // 
-            // bwUpdateSchedule
-            // 
-            bwUpdateSchedule.WorkerSupportsCancellation = true;
-            bwUpdateSchedule.DoWork += BwUpdateSchedule_DoWork;
-            bwUpdateSchedule.RunWorkerCompleted += BwUpdateSchedule_RunWorkerCompleted;
-            // 
             // bwShowHTMLGenerator
             // 
             bwShowHTMLGenerator.WorkerSupportsCancellation = true;
@@ -2314,19 +2307,6 @@ namespace TVRename.Forms
             bwMovieHTMLGenerator.WorkerSupportsCancellation = true;
             bwMovieHTMLGenerator.DoWork += bwMovieHTMLGenerator_DoWork;
             bwMovieHTMLGenerator.RunWorkerCompleted += UpdateWeb;
-            // 
-            // bwScan
-            // 
-            bwScan.WorkerSupportsCancellation = true;
-            bwScan.DoWork += bwScan_DoWork;
-            bwScan.ProgressChanged += bwScan_ProgressChanged;
-            bwScan.RunWorkerCompleted += bwScan_RunWorkerCompleted;
-            // 
-            // bwAction
-            // 
-            bwAction.WorkerSupportsCancellation = true;
-            bwAction.DoWork += bwAction_DoWork;
-            bwAction.RunWorkerCompleted += bwAction_RunWorkerCompleted;
             // 
             // tableLayoutPanel3
             // 
@@ -2641,7 +2621,6 @@ namespace TVRename.Forms
         private TabPage tabPage3;
         private CefSharp.WinForms.ChromiumWebBrowser chrTvTrailer;
         private ToolStripMenuItem browserTestToolStripMenuItem;
-        private System.ComponentModel.BackgroundWorker bwAction;
         private ToolStripButton tsbScanTV;
         private ToolStripMenuItem cleanLibraryFoldersToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator18;

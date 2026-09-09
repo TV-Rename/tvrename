@@ -37,205 +37,216 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScanProgress));
-            this.bnCancel = new System.Windows.Forms.Button();
-            this.lbMediaLibrary = new System.Windows.Forms.Label();
-            this.pbMediaLib = new System.Windows.Forms.ProgressBar();
-            this.lbSearchLocally = new System.Windows.Forms.Label();
-            this.pbLocalSearch = new System.Windows.Forms.ProgressBar();
-            this.lbSearchRSS = new System.Windows.Forms.Label();
-            this.pbRSS = new System.Windows.Forms.ProgressBar();
-            this.lbCheckDownloading = new System.Windows.Forms.Label();
-            this.pbDownloading = new System.Windows.Forms.ProgressBar();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.pbDownloadFolder = new System.Windows.Forms.ProgressBar();
-            this.lbDownloadFolder = new System.Windows.Forms.Label();
-            this.lblMessage = new System.Windows.Forms.Label();
-            this.pbBulkAutoAdd = new System.Windows.Forms.ProgressBar();
-            this.lbBulkAutoAdd = new System.Windows.Forms.Label();
-            this.lblDetail = new System.Windows.Forms.Label();
-            this.SuspendLayout();
-            //
+            bnCancel = new System.Windows.Forms.Button();
+            lbMediaLibrary = new System.Windows.Forms.Label();
+            pbMediaLib = new System.Windows.Forms.ProgressBar();
+            lbSearchLocally = new System.Windows.Forms.Label();
+            pbLocalSearch = new System.Windows.Forms.ProgressBar();
+            lbSearchRSS = new System.Windows.Forms.Label();
+            pbRSS = new System.Windows.Forms.ProgressBar();
+            lbCheckDownloading = new System.Windows.Forms.Label();
+            pbDownloading = new System.Windows.Forms.ProgressBar();
+            timer1 = new System.Windows.Forms.Timer(components);
+            pbDownloadFolder = new System.Windows.Forms.ProgressBar();
+            lbDownloadFolder = new System.Windows.Forms.Label();
+            lblMessage = new System.Windows.Forms.Label();
+            pbBulkAutoAdd = new System.Windows.Forms.ProgressBar();
+            lbBulkAutoAdd = new System.Windows.Forms.Label();
+            lblDetail = new System.Windows.Forms.Label();
+            SuspendLayout();
+            // 
             // bnCancel
-            //
-            this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(285, 155);
-            this.bnCancel.Name = "bnCancel";
-            this.bnCancel.Size = new System.Drawing.Size(75, 23);
-            this.bnCancel.TabIndex = 0;
-            this.bnCancel.Text = "Cancel";
-            this.bnCancel.UseVisualStyleBackColor = true;
-            //
+            // 
+            bnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            bnCancel.Location = new System.Drawing.Point(332, 179);
+            bnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnCancel.Name = "bnCancel";
+            bnCancel.Size = new System.Drawing.Size(88, 27);
+            bnCancel.TabIndex = 0;
+            bnCancel.Text = "Cancel";
+            bnCancel.UseVisualStyleBackColor = true;
+            bnCancel.Click += bnCancel_Click;
+            // 
             // lbMediaLibrary
-            //
-            this.lbMediaLibrary.AutoSize = true;
-            this.lbMediaLibrary.Location = new System.Drawing.Point(12, 30);
-            this.lbMediaLibrary.Name = "lbMediaLibrary";
-            this.lbMediaLibrary.Size = new System.Drawing.Size(104, 13);
-            this.lbMediaLibrary.TabIndex = 1;
-            this.lbMediaLibrary.Text = "Media Library Check";
-            //
+            // 
+            lbMediaLibrary.AutoSize = true;
+            lbMediaLibrary.Location = new System.Drawing.Point(14, 35);
+            lbMediaLibrary.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbMediaLibrary.Name = "lbMediaLibrary";
+            lbMediaLibrary.Size = new System.Drawing.Size(115, 15);
+            lbMediaLibrary.TabIndex = 1;
+            lbMediaLibrary.Text = "Media Library Check";
+            // 
             // pbMediaLib
-            //
-            this.pbMediaLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbMediaLib.Location = new System.Drawing.Point(141, 30);
-            this.pbMediaLib.Name = "pbMediaLib";
-            this.pbMediaLib.Size = new System.Drawing.Size(219, 13);
-            this.pbMediaLib.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.pbMediaLib.TabIndex = 2;
-            //
+            // 
+            pbMediaLib.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            pbMediaLib.Location = new System.Drawing.Point(164, 35);
+            pbMediaLib.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pbMediaLib.Name = "pbMediaLib";
+            pbMediaLib.Size = new System.Drawing.Size(255, 15);
+            pbMediaLib.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            pbMediaLib.TabIndex = 2;
+            // 
             // lbSearchLocally
-            //
-            this.lbSearchLocally.AutoSize = true;
-            this.lbSearchLocally.Location = new System.Drawing.Point(12, 66);
-            this.lbSearchLocally.Name = "lbSearchLocally";
-            this.lbSearchLocally.Size = new System.Drawing.Size(77, 13);
-            this.lbSearchLocally.TabIndex = 1;
-            this.lbSearchLocally.Text = "Search Locally";
-            //
+            // 
+            lbSearchLocally.AutoSize = true;
+            lbSearchLocally.Location = new System.Drawing.Point(14, 76);
+            lbSearchLocally.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbSearchLocally.Name = "lbSearchLocally";
+            lbSearchLocally.Size = new System.Drawing.Size(82, 15);
+            lbSearchLocally.TabIndex = 1;
+            lbSearchLocally.Text = "Search Locally";
+            // 
             // pbLocalSearch
-            //
-            this.pbLocalSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbLocalSearch.Location = new System.Drawing.Point(141, 66);
-            this.pbLocalSearch.Name = "pbLocalSearch";
-            this.pbLocalSearch.Size = new System.Drawing.Size(219, 13);
-            this.pbLocalSearch.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.pbLocalSearch.TabIndex = 2;
-            //
+            // 
+            pbLocalSearch.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            pbLocalSearch.Location = new System.Drawing.Point(164, 76);
+            pbLocalSearch.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pbLocalSearch.Name = "pbLocalSearch";
+            pbLocalSearch.Size = new System.Drawing.Size(255, 15);
+            pbLocalSearch.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            pbLocalSearch.TabIndex = 2;
+            // 
             // lbSearchRSS
-            //
-            this.lbSearchRSS.AutoSize = true;
-            this.lbSearchRSS.Location = new System.Drawing.Point(12, 104);
-            this.lbSearchRSS.Name = "lbSearchRSS";
-            this.lbSearchRSS.Size = new System.Drawing.Size(67, 13);
-            this.lbSearchRSS.TabIndex = 1;
-            this.lbSearchRSS.Text = "Search Web";
-            //
+            // 
+            lbSearchRSS.AutoSize = true;
+            lbSearchRSS.Location = new System.Drawing.Point(14, 120);
+            lbSearchRSS.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbSearchRSS.Name = "lbSearchRSS";
+            lbSearchRSS.Size = new System.Drawing.Size(69, 15);
+            lbSearchRSS.TabIndex = 1;
+            lbSearchRSS.Text = "Search Web";
+            // 
             // pbRSS
-            //
-            this.pbRSS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbRSS.Location = new System.Drawing.Point(141, 104);
-            this.pbRSS.Name = "pbRSS";
-            this.pbRSS.Size = new System.Drawing.Size(219, 13);
-            this.pbRSS.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.pbRSS.TabIndex = 2;
-            //
+            // 
+            pbRSS.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            pbRSS.Location = new System.Drawing.Point(164, 120);
+            pbRSS.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pbRSS.Name = "pbRSS";
+            pbRSS.Size = new System.Drawing.Size(255, 15);
+            pbRSS.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            pbRSS.TabIndex = 2;
+            // 
             // lbCheckDownloading
-            //
-            this.lbCheckDownloading.AutoSize = true;
-            this.lbCheckDownloading.Location = new System.Drawing.Point(12, 85);
-            this.lbCheckDownloading.Name = "lbCheckDownloading";
-            this.lbCheckDownloading.Size = new System.Drawing.Size(106, 13);
-            this.lbCheckDownloading.TabIndex = 1;
-            this.lbCheckDownloading.Text = "Search Downloading";
-            //
+            // 
+            lbCheckDownloading.AutoSize = true;
+            lbCheckDownloading.Location = new System.Drawing.Point(14, 98);
+            lbCheckDownloading.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbCheckDownloading.Name = "lbCheckDownloading";
+            lbCheckDownloading.Size = new System.Drawing.Size(116, 15);
+            lbCheckDownloading.TabIndex = 1;
+            lbCheckDownloading.Text = "Search Downloading";
+            // 
             // pbDownloading
-            //
-            this.pbDownloading.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbDownloading.Location = new System.Drawing.Point(141, 85);
-            this.pbDownloading.Name = "pbDownloading";
-            this.pbDownloading.Size = new System.Drawing.Size(219, 13);
-            this.pbDownloading.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.pbDownloading.TabIndex = 2;
-            //
+            // 
+            pbDownloading.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            pbDownloading.Location = new System.Drawing.Point(164, 98);
+            pbDownloading.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pbDownloading.Name = "pbDownloading";
+            pbDownloading.Size = new System.Drawing.Size(255, 15);
+            pbDownloading.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            pbDownloading.TabIndex = 2;
+            // 
             // timer1
-            //
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            //
+            // 
+            timer1.Tick += timer1_Tick;
+            // 
             // pbDownloadFolder
-            //
-            this.pbDownloadFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbDownloadFolder.Location = new System.Drawing.Point(141, 48);
-            this.pbDownloadFolder.Name = "pbDownloadFolder";
-            this.pbDownloadFolder.Size = new System.Drawing.Size(219, 13);
-            this.pbDownloadFolder.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.pbDownloadFolder.TabIndex = 4;
-            //
+            // 
+            pbDownloadFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            pbDownloadFolder.Location = new System.Drawing.Point(164, 55);
+            pbDownloadFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pbDownloadFolder.Name = "pbDownloadFolder";
+            pbDownloadFolder.Size = new System.Drawing.Size(255, 15);
+            pbDownloadFolder.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            pbDownloadFolder.TabIndex = 4;
+            // 
             // lbDownloadFolder
-            //
-            this.lbDownloadFolder.AutoSize = true;
-            this.lbDownloadFolder.Location = new System.Drawing.Point(12, 48);
-            this.lbDownloadFolder.Name = "lbDownloadFolder";
-            this.lbDownloadFolder.Size = new System.Drawing.Size(114, 13);
-            this.lbDownloadFolder.TabIndex = 3;
-            this.lbDownloadFolder.Text = "Download Area Check";
-            //
+            // 
+            lbDownloadFolder.AutoSize = true;
+            lbDownloadFolder.Location = new System.Drawing.Point(14, 55);
+            lbDownloadFolder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbDownloadFolder.Name = "lbDownloadFolder";
+            lbDownloadFolder.Size = new System.Drawing.Size(124, 15);
+            lbDownloadFolder.TabIndex = 3;
+            lbDownloadFolder.Text = "Download Area Check";
+            // 
             // lblMessage
-            //
-            this.lblMessage.AutoSize = true;
-            this.lblMessage.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lblMessage.Location = new System.Drawing.Point(18, 129);
-            this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(0, 13);
-            this.lblMessage.TabIndex = 5;
-            //
+            // 
+            lblMessage.AutoSize = true;
+            lblMessage.ForeColor = System.Drawing.SystemColors.ControlDark;
+            lblMessage.Location = new System.Drawing.Point(21, 149);
+            lblMessage.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblMessage.Name = "lblMessage";
+            lblMessage.Size = new System.Drawing.Size(0, 15);
+            lblMessage.TabIndex = 5;
+            // 
             // pbBulkAutoAdd
-            //
-            this.pbBulkAutoAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbBulkAutoAdd.Location = new System.Drawing.Point(141, 11);
-            this.pbBulkAutoAdd.Name = "pbBulkAutoAdd";
-            this.pbBulkAutoAdd.Size = new System.Drawing.Size(219, 13);
-            this.pbBulkAutoAdd.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.pbBulkAutoAdd.TabIndex = 7;
-            //
+            // 
+            pbBulkAutoAdd.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            pbBulkAutoAdd.Location = new System.Drawing.Point(164, 13);
+            pbBulkAutoAdd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pbBulkAutoAdd.Name = "pbBulkAutoAdd";
+            pbBulkAutoAdd.Size = new System.Drawing.Size(255, 15);
+            pbBulkAutoAdd.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            pbBulkAutoAdd.TabIndex = 7;
+            // 
             // lbBulkAutoAdd
-            //
-            this.lbBulkAutoAdd.AutoSize = true;
-            this.lbBulkAutoAdd.Location = new System.Drawing.Point(12, 11);
-            this.lbBulkAutoAdd.Name = "lbBulkAutoAdd";
-            this.lbBulkAutoAdd.Size = new System.Drawing.Size(106, 13);
-            this.lbBulkAutoAdd.TabIndex = 6;
-            this.lbBulkAutoAdd.Text = "Scan Library for New";
-            //
+            // 
+            lbBulkAutoAdd.AutoSize = true;
+            lbBulkAutoAdd.Location = new System.Drawing.Point(14, 13);
+            lbBulkAutoAdd.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbBulkAutoAdd.Name = "lbBulkAutoAdd";
+            lbBulkAutoAdd.Size = new System.Drawing.Size(116, 15);
+            lbBulkAutoAdd.TabIndex = 6;
+            lbBulkAutoAdd.Text = "Scan Library for New";
+            // 
             // lblDetail
-            //
-            this.lblDetail.AutoSize = true;
-            this.lblDetail.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lblDetail.Location = new System.Drawing.Point(18, 155);
-            this.lblDetail.Name = "lblDetail";
-            this.lblDetail.Size = new System.Drawing.Size(0, 13);
-            this.lblDetail.TabIndex = 8;
-            //
+            // 
+            lblDetail.AutoSize = true;
+            lblDetail.ForeColor = System.Drawing.SystemColors.ControlDark;
+            lblDetail.Location = new System.Drawing.Point(21, 179);
+            lblDetail.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblDetail.Name = "lblDetail";
+            lblDetail.Size = new System.Drawing.Size(0, 15);
+            lblDetail.TabIndex = 8;
+            // 
             // ScanProgress
-            //
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(372, 190);
-            this.Controls.Add(this.lblDetail);
-            this.Controls.Add(this.pbBulkAutoAdd);
-            this.Controls.Add(this.lbBulkAutoAdd);
-            this.Controls.Add(this.lblMessage);
-            this.Controls.Add(this.pbDownloadFolder);
-            this.Controls.Add(this.lbDownloadFolder);
-            this.Controls.Add(this.pbDownloading);
-            this.Controls.Add(this.lbCheckDownloading);
-            this.Controls.Add(this.pbRSS);
-            this.Controls.Add(this.lbSearchRSS);
-            this.Controls.Add(this.pbLocalSearch);
-            this.Controls.Add(this.lbSearchLocally);
-            this.Controls.Add(this.pbMediaLib);
-            this.Controls.Add(this.lbMediaLibrary);
-            this.Controls.Add(this.bnCancel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "ScanProgress";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Scan Progress";
-            this.Load += new System.EventHandler(this.ScanProgress_Load);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            // 
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            CancelButton = bnCancel;
+            ClientSize = new System.Drawing.Size(434, 219);
+            Controls.Add(lblDetail);
+            Controls.Add(pbBulkAutoAdd);
+            Controls.Add(lbBulkAutoAdd);
+            Controls.Add(lblMessage);
+            Controls.Add(pbDownloadFolder);
+            Controls.Add(lbDownloadFolder);
+            Controls.Add(pbDownloading);
+            Controls.Add(lbCheckDownloading);
+            Controls.Add(pbRSS);
+            Controls.Add(lbSearchRSS);
+            Controls.Add(pbLocalSearch);
+            Controls.Add(lbSearchLocally);
+            Controls.Add(pbMediaLib);
+            Controls.Add(lbMediaLibrary);
+            Controls.Add(bnCancel);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "ScanProgress";
+            ShowInTaskbar = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "Scan Progress";
+            Load += ScanProgress_Load;
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

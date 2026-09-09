@@ -22,7 +22,7 @@ internal class ActionNfoMovie : ActionNfo
 
     protected override async Task<ActionOutcome> UpdateFileAsync()
     {
-        XDocument doc = XDocument.Load(Where.FullName);
+        XDocument doc = await XmlHelper.LoadXmlFromFileAsync(Where.FullName);
         XElement? root = doc.Root;
 
         if (root is null)

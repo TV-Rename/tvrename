@@ -26,7 +26,7 @@ namespace TVRename;
 /// <exception cref="WaitHandleCannotBeOpenedException">A synchronization object with the provided <paramref name="name" /> cannot be created. A synchronization object of a different type might have the same name.</exception>
 public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> actions, TVRenameStats mStats, CancellationTokenSource cts)
 {
-    private readonly List<Action> actions = [.. actions.OrderBy(a => a.Order)]; // The contents of this queue
+    private readonly List<Action> actions = actions.OrderBy(a => a.Order).ToList(); // The contents of this queue
     private readonly int parallelThreadLimit = parallelLimit; // Number of tasks in the queue than can be run at once
     public readonly string queueName = name; // Name of this queue
     SemaphoreSlim semaphore = new(parallelLimit, parallelLimit);
@@ -41,7 +41,7 @@ public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> act
     /// </summary>
     public void Pause()
     {
-        Logger.Info("Actions requested to be paused");
+        Logger.Info($"ActionQueue {name} requested to be paused");
         _pauseEvent.Reset(); // Wake up the thread
     }   
 
@@ -50,7 +50,7 @@ public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> act
     /// </summary>
     public void Resume()
     {
-        Logger.Info("Actions requested to be resumed");
+        Logger.Info($"ActionQueue {name} requested to be resumed");
         _pauseEvent.Set(); // Pause the thread again if set to false
     }
 
