@@ -278,12 +278,10 @@ namespace TVRename.Forms
             toolTip1 = new ToolTip(components);
             btnUpdateAvailable = new Button();
             bwSeasonHTMLGenerator = new System.ComponentModel.BackgroundWorker();
-            bwUpdateSchedule = new System.ComponentModel.BackgroundWorker();
             bwShowHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             bwShowSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
-            bwScan = new System.ComponentModel.BackgroundWorker();
             tableLayoutPanel3 = new TableLayoutPanel();
             panel1 = new Panel();
             menuStrip1.SuspendLayout();
@@ -2550,7 +2548,6 @@ namespace TVRename.Forms
         private ToolStripMenuItem thanksToolStripMenuItem;
         private ImageList ilNewIcons;
         private System.ComponentModel.BackgroundWorker bwSeasonHTMLGenerator;
-        private System.ComponentModel.BackgroundWorker bwUpdateSchedule;
         private System.ComponentModel.BackgroundWorker bwShowHTMLGenerator;
         private ToolStripButton tbFullScan;
         private ToolStripButton tpRecentScan;

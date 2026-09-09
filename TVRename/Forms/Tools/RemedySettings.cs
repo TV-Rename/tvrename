@@ -12,7 +12,7 @@ internal class RemedySettings(IEnumerable<SettingsCheck> selectedItems, Settings
 
     public override void Start(SetProgressDelegate? progress, CancellationToken sourceToken)
     {
-        int currentRecord = 0;
+        ThreadSafeCounter currentRecord = new();
         int totalRecords = selectedItems.Count();
         progress?.Invoke(0, "Fixing Issues", string.Empty);
 
@@ -30,7 +30,8 @@ internal class RemedySettings(IEnumerable<SettingsCheck> selectedItems, Settings
                     parent.Remove(selected);
                 }
             }
-            int position = 100 * currentRecord++ / (totalRecords + 1);
+            int position = 100 * currentRecord.Value / (totalRecords + 1);
+            currentRecord.Increment();
             progress?.Invoke(position, selected.CheckName, selected.MediaName);
         }
 

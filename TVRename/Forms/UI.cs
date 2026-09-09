@@ -68,7 +68,7 @@ public partial class UI : Form, IDialogParent
     private int busyDoingDownload = 0;
     private readonly TVDoc mDoc;
     private bool actionsListBeingUpdated = false;
-    private int calendarBeingUpdated = 0;
+    private bool calendarBeingUpdated = false;
     private Point mLastNonMaximizedLocation;
     private Size mLastNonMaximizedSize;
     private readonly AutoFolderMonitor? mAutoFolderMonitor;
@@ -1823,7 +1823,7 @@ public partial class UI : Form, IDialogParent
                 txtWhenToWatchSynopsis.Text = ei.Overview?.ToUiVersion();
             }
 
-            calendarBeingUpdated++;
+            calendarBeingUpdated = true;
             DateTime? dt = ei.GetAirDateDt();
             if (dt != null)
             {
@@ -1831,7 +1831,7 @@ public partial class UI : Form, IDialogParent
                 calCalendar.SelectionEnd = (DateTime)dt;
             }
 
-            calendarBeingUpdated--;
+            calendarBeingUpdated = false;
         }
     }
 
@@ -1873,7 +1873,7 @@ public partial class UI : Form, IDialogParent
 
     private void calCalendar_DateSelected(object sender, DateRangeEventArgs e)
     {
-        if (calendarBeingUpdated != 0)
+        if (calendarBeingUpdated)
         {
             return;
         }
@@ -4672,7 +4672,7 @@ public partial class UI : Form, IDialogParent
     {
         List<ListViewItem> newContents = await GenerateNewScheduleItemsAsync();
 
-        calendarBeingUpdated++;
+        calendarBeingUpdated = true;
         lvWhenToWatch.BeginUpdate();
 
         int dd = TVSettings.Instance.WTWRecentDays;
@@ -4738,7 +4738,7 @@ public partial class UI : Form, IDialogParent
         }
 
         UpdateToolstripWTW();
-        calendarBeingUpdated--;
+        calendarBeingUpdated = false;
     }
 
     private async void TbFullScan_Click(object sender, EventArgs e)

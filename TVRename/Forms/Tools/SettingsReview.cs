@@ -41,7 +41,7 @@ public partial class SettingsReview : Form
         Thread.CurrentThread.Name ??= "SettingsReview Scan Thread"; // Can only set it once
         BackgroundWorker bw = (BackgroundWorker)sender;
         int total = mDoc.FilmLibrary.Movies.Count() + mDoc.TvLibrary.Shows.Count();
-        int current = 0;
+        ThreadSafeCounter currentRecord = new();
 
         set.Clear();
 
@@ -66,7 +66,8 @@ public partial class SettingsReview : Form
             set.Add(new FolderBaseMovieCheck(movie, mDoc));
             set.Add(new MovieFolderTypeCheck(movie, mDoc));
 
-            bw.ReportProgress(100 * current++ / total, movie.ShowName);
+            bw.ReportProgress(100 * currentRecord.Value / total, movie.ShowName);
+            currentRecord.Increment();
         }
 
         foreach (ShowConfiguration show in mDoc.TvLibrary.GetSortedShowItems())
@@ -96,7 +97,8 @@ public partial class SettingsReview : Form
             set.Add(new FolderBaseLibraryDefaultTvCheck(show, mDoc));
             set.Add(new TvShowSubdiretoryFormatCheck(show, mDoc));
 
-            bw.ReportProgress(100 * current++ / total, show.ShowName);
+            bw.ReportProgress(100 * currentRecord.Value / total, show.ShowName);
+            currentRecord.Increment();
         }
     }
 

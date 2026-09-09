@@ -91,12 +91,13 @@ public partial class OrphanFiles : Form
     {
         List<string> doneFolders = [];
         int total = mDoc.TvLibrary.Shows.Count();
-        int current = 0;
+        ThreadSafeCounter currentRecord = new();
 
         foreach (ShowConfiguration show in mDoc.TvLibrary.Shows.OrderBy(item => item.ShowName))
         {
             Logger.Info($"Finding old eps for {show.ShowName}");
-            bw.ReportProgress(100 * current++ / total, show.ShowName);
+            bw.ReportProgress(100 * currentRecord.Value / total, show.ShowName);
+            currentRecord.Increment();
 
             Dictionary<int, SafeList<string>> folders = show.AllFolderLocations(true);
 

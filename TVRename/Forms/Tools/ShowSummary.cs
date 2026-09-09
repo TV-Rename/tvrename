@@ -59,12 +59,13 @@ public partial class ShowSummary : Form, IDialogParent
     private void GenerateData(BackgroundWorker bw)
     {
         int total = mDoc.TvLibrary.Shows.Count();
-        int current = 0;
+        ThreadSafeCounter currentRecord = new();
         showList.Clear();
 
         foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShowItems())
         {
-            bw.ReportProgress(100 * current++ / total, si.ShowName);
+            bw.ReportProgress(100 * currentRecord.Value / total, si.ShowName);
+            currentRecord.Increment();
             showList.Add(AddShowDetails(si));
         }
     }

@@ -82,7 +82,7 @@ public partial class CollectionsView : Form
         List<(int, string)> collectionIds = mDoc.FilmLibrary.Collections;
 
         int total = collectionIds.Count;
-        int current = 0;
+        ThreadSafeCounter current =new();
 
         collectionMovies.Clear();
         foreach ((int collectionId, string collectionName) in collectionIds)
@@ -96,7 +96,8 @@ public partial class CollectionsView : Form
                 collectionMovies.Add(c);
             }
 
-            bw.ReportProgress(100 * current++ / total, collectionName);
+            bw.ReportProgress(100 * current.Value / total, collectionName);
+            current.Increment();
         }
     }
 

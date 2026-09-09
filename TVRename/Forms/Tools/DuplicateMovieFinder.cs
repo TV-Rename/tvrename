@@ -40,14 +40,15 @@ public partial class DuplicateMovieFinder : Form
         Thread.CurrentThread.Name ??= "DuplicateMovie Scan Thread"; // Can only set it once
         BackgroundWorker bw = (BackgroundWorker)sender;
         int total = mDoc.FilmLibrary.Movies.Count();
-        int current = 0;
+        ThreadSafeCounter currentRecord = new();
 
         dupMovies.Clear();
         foreach (MovieConfiguration? movie in mDoc.FilmLibrary.Movies)
         {
             ProcessMovie(movie);
 
-            bw.ReportProgress(100 * current++ / total, movie.ShowName);
+            bw.ReportProgress(100 * currentRecord.Value / total, movie.ShowName);
+            currentRecord.Increment();
         }
     }
 
