@@ -11,6 +11,7 @@ using System.Drawing;
 namespace TVRename;
 
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 public partial class BulkAddEditShow : Form, ICodeWindow
@@ -20,9 +21,9 @@ public partial class BulkAddEditShow : Form, ICodeWindow
     private readonly CodeFinder codeFinderControl;
     public TVDoc.ProviderType ProviderType => codeFinderControl.Source;
     public Language? SelectedLanguage() => null;
-    public BulkAddEditShow(PossibleNewTvShow hint)
+    public BulkAddEditShow()
     {
-        codeFinderControl = new TvCodeFinder(string.Empty, TVSettings.Instance.DefaultProvider,this) { Dock = DockStyle.Fill };
+        codeFinderControl = new TvCodeFinder(string.Empty, TVSettings.Instance.DefaultProvider, this) { Dock = DockStyle.Fill };
         InitializeComponent();
 
         codeFinderControl.SelectionChanged += CodeChanged;
@@ -33,20 +34,26 @@ public partial class BulkAddEditShow : Form, ICodeWindow
         pnlCF.Controls.Add(codeFinderControl);
         pnlCF.ResumeLayout();
 
+        Code = -1;
+    }
+
+    public async Task SetHintAsync(PossibleNewTvShow hint)
+    {
         if (hint.CodeKnown)
         {
-            codeFinderControl.SetHintAsync(hint.ProviderCode.ToString(), hint.Provider).GetAwaiter().GetResult();
+            await codeFinderControl.SetHintAsync(hint.ProviderCode.ToString(), hint.Provider);
         }
         else
         {
             string s = hint.Folder.FullName;
             int p = s.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
-            codeFinderControl.SetHintAsync(string.IsNullOrWhiteSpace(hint.RefinedHint)
+
+            await codeFinderControl.SetHintAsync(string.IsNullOrWhiteSpace(hint.RefinedHint)
                 ? s.RemoveFirst(p + 1)
-                : hint.RefinedHint, TVDoc.ProviderType.libraryDefault).GetAwaiter().GetResult();
+                : hint.RefinedHint, TVDoc.ProviderType.libraryDefault);
         }
-        Code = -1;
     }
+
     protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
     {
         base.ScaleControl(factor, specified);

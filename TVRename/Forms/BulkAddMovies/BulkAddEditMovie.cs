@@ -11,6 +11,7 @@ using System.Drawing;
 namespace TVRename;
 
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 public partial class BulkAddEditMovie : Form, ICodeWindow
@@ -20,9 +21,9 @@ public partial class BulkAddEditMovie : Form, ICodeWindow
 
     private readonly CodeFinder codeFinderControl;
 
-    public BulkAddEditMovie(PossibleNewMovie hint)
+    public BulkAddEditMovie()
     {
-        codeFinderControl = new MovieCodeFinder(string.Empty, TVSettings.Instance.DefaultMovieProvider,this) { Dock = DockStyle.Fill };
+        codeFinderControl = new MovieCodeFinder(string.Empty, TVSettings.Instance.DefaultMovieProvider, this) { Dock = DockStyle.Fill };
         InitializeComponent();
 
         codeFinderControl.SelectionChanged += CodeChanged;
@@ -34,19 +35,24 @@ public partial class BulkAddEditMovie : Form, ICodeWindow
         pnlCF.Controls.Add(codeFinderControl);
         pnlCF.ResumeLayout();
 
-        if (hint.CodeKnown)
-        {
-            codeFinderControl.SetHintAsync(hint.ProviderCode.ToString(), hint.SourceProvider).GetAwaiter().GetResult();
-        }
-        else
-        {
-            codeFinderControl.SetHintAsync(string.IsNullOrWhiteSpace(hint.RefinedHint)
-                ? hint.Directory.Name
-                : hint.RefinedHint, TVSettings.Instance.DefaultMovieProvider).GetAwaiter().GetResult();
-        }
         Code = -1;
         Provider = TVDoc.ProviderType.libraryDefault;
     }
+
+    public async Task SetHintAsync(PossibleNewMovie hint)
+    {
+        if (hint.CodeKnown)
+        {
+            await codeFinderControl.SetHintAsync(hint.ProviderCode.ToString(), hint.SourceProvider);
+        }
+        else
+        {
+            await codeFinderControl.SetHintAsync(string.IsNullOrWhiteSpace(hint.RefinedHint)
+                ? hint.Directory.Name
+                : hint.RefinedHint, TVSettings.Instance.DefaultMovieProvider);
+        }
+    }
+
     protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
     {
         base.ScaleControl(factor, specified);

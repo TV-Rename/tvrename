@@ -14,6 +14,7 @@ public static class LoggerHelper
 
     public static string ErrorText(this Exception e)
     {
+        //TODO look at InnerException if it exists too
         StringBuilder returnValue = new();
         try
         {

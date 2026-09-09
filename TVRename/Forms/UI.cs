@@ -2441,7 +2441,7 @@ public partial class UI : Form, IDialogParent
         if (pref.ShowDialog(this) == DialogResult.OK)
         {
             mDoc.SetDirty();
-            TVDoc.Reconnect();
+            await TVDoc.ReconnectAsync();
             ShowHideNotificationIcon();
             FillWhenToWatchList();
             ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
@@ -3856,7 +3856,7 @@ public partial class UI : Form, IDialogParent
         // If not /hide, show CopyMoveProgress dialog
         if (showUi)
         {
-            CopyMoveProgress cmp = new(mDoc, sett, () => actionCancellationToken.Cancel());
+            CopyMoveProgress cmp = new(mDoc, sett, actionCancellationToken.Cancel);
             ShowChild(cmp);
         }
 
@@ -3869,7 +3869,7 @@ public partial class UI : Form, IDialogParent
         Thread.CurrentThread.Name ??= "Main Action Thread"; // Can only set it once
 
         TVDoc.ActionSettings set = e.Argument as TVDoc.ActionSettings ?? throw new Exception();
-        mDoc.DoActions(set);
+        mDoc.DoActionsAsync(set).GetAwaiter().GetResult();
         lastActionUnattended = set.Unattended;
     }
 

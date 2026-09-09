@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TVRename;
@@ -39,46 +40,44 @@ internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity
             MDoc.CurrentStats.NsNumberOfEpisodes = 0;
         }
 
-        //TODO - All these can happen in parallel
-
-        int c = 0;
-        UpdateStatus(c, Settings.Shows.Count, "Checking shows");
-        foreach (ShowConfiguration si in Settings.Shows.OrderBy(item => item.ShowName))
+        var options = new ParallelOptions
         {
-            if (Settings.Token.IsCancellationRequested)
-            {
-                return;
-            }
+            MaxDegreeOfParallelism = 4 // Only 4 tasks will run concurrently at any given time
+        };
 
-            DoCheckForShow(dfc, c, si);
-            c++;
-        } // for each show
+        ThreadSafeCounter c = new();
 
-        c = 0;
-        UpdateStatus(c, Settings.Movies.Count, "Checking movies");
-        foreach (MovieConfiguration si in Settings.Movies.OrderBy(item => item.ShowName))
+        UpdateStatus(0, Settings.Shows.Count, "Checking shows");
+        IEnumerable<(ShowConfiguration si, DirFilesCache dfc, ThreadSafeCounter c)> shows = Settings.Shows.OrderBy(item => item.ShowName).Select(si => (si, dfc, c));
+        await Parallel.ForEachAsync(shows, options, async (show, cancellationToken) =>
         {
-            if (Settings.Token.IsCancellationRequested)
-            {
-                return;
-            }
+            await DoCheckForShowAsync(show.dfc, show.c, show.si, settings.Token);
+        });// for each show
 
-            DoCheckMovie(dfc, c, si);
-            c++;
-        } // for each movie
+        c.Reset();
+        UpdateStatus(0, Settings.Movies.Count, "Checking movies");
+        IEnumerable<(MovieConfiguration si, DirFilesCache dfc, ThreadSafeCounter c)> movies = Settings.Movies.OrderBy(item => item.ShowName).Select(si => (si, dfc, c));
+        await Parallel.ForEachAsync(movies, options, async (movie, cancellationToken) =>
+        {
+            await DoCheckMovieAsync(movie.dfc, movie.c, movie.si, settings.Token);
+        }); // for each movie
 
         MDoc.RemoveIgnored();
     }
 
-    private void DoCheckMovie(DirFilesCache dfc, int c, MovieConfiguration si)
+    private async Task DoCheckMovieAsync(DirFilesCache dfc, ThreadSafeCounter c, MovieConfiguration si, CancellationToken token)
     {
-        UpdateStatus(c, Settings.Movies.Count, si.ShowName);
+        if (token.IsCancellationRequested)
+        {
+            return;
+        }
+        UpdateStatus(c.Value, Settings.Movies.Count, si.ShowName);
 
         LOGGER.Info("Rename and missing check: " + si.ShowName);
         try
         {
-            new CheckAllMovieFoldersExist(MDoc).CheckIfActive(si, dfc, Settings);
-            new RenameAndMissingMovieCheck(MDoc).CheckIfActive(si, dfc, Settings);
+            await new CheckAllMovieFoldersExist(MDoc).CheckIfActiveAsync(si, dfc, Settings);
+            await new RenameAndMissingMovieCheck(MDoc).CheckIfActiveAsync(si, dfc, Settings);
         }
         catch (TVRenameOperationInterruptedException)
         {
@@ -92,11 +91,19 @@ internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity
         {
             LOGGER.Error(e, $"Failed to scan {si.ShowName}. Please double check settings for this movie: {si.Code}: {si}");
         }
+        finally
+        {
+            c.Increment();
+        }
     }
 
-    private void DoCheckForShow(DirFilesCache dfc, int c, ShowConfiguration si)
+    private async Task DoCheckForShowAsync(DirFilesCache dfc, ThreadSafeCounter c, ShowConfiguration si, CancellationToken token)
     {
-        UpdateStatus(c, Settings.Shows.Count, si.ShowName);
+        if (token.IsCancellationRequested)
+        {
+            return;
+        }
+        UpdateStatus(c.Value, Settings.Shows.Count, si.ShowName);
 
         LOGGER.Info("Rename and missing check: " + si.ShowName);
         try
@@ -112,6 +119,10 @@ internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity
         catch (Exception e)
         {
             LOGGER.Error(e, $"Failed to scan {si.ShowName}. Please double check settings for this show: {si}: {si.AutoAddFolderBase}");
+        }
+        finally
+        {
+            c.Increment();
         }
     }
 

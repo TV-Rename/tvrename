@@ -70,7 +70,8 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
             return;
         }
 
-        using BulkAddEditShow ed = new(folder);
+        using BulkAddEditShow ed = new();
+        await ed.SetHintAsync(folder);
 
         owner.ShowChildDialog(ed);
         DialogResult x = ed.DialogResult;

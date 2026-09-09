@@ -157,6 +157,6 @@ public abstract class MediaCache
     public abstract Task SearchAsync(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, Locale locale);
     public abstract int PrimaryKey(ISeriesSpecifier ss);
     public abstract string CacheSourceName();
-    public abstract void ReConnect(bool b);
+    public abstract Task ReConnectAsync(bool b);
     public abstract Task<bool> GetUpdatesAsync(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts);
 }

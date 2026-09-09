@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms;
+using static TVRename.Helpers;
 
 namespace TVRename;
 
@@ -37,7 +38,7 @@ public partial class BulkAddMovie : Form
 
     //Thread safe counters to work out the progress
     //For auto id
-    private static volatile int VolatileCounter;
+    private static ThreadSafeCounter VolatileCounter = new();
 
     public BulkAddMovie(TVDoc doc, BulkAddMovieManager bam, UI mainUi)
     {
@@ -326,8 +327,9 @@ public partial class BulkAddMovie : Form
         }
 
         await ai.GuessMovieAsync(true);
-        Interlocked.Increment(ref VolatileCounter);
-        bw.ReportProgress((int)100.0 * VolatileCounter / total, ai);
+        VolatileCounter.Increment();
+
+        bw.ReportProgress((int)100.0 * VolatileCounter.Value / total, ai);
     }
 
     private void bnRemoveNewFolder_Click(object _, System.EventArgs e)
@@ -528,17 +530,17 @@ public partial class BulkAddMovie : Form
         DoCheck();
     }
 
-    private void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
+    private async void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
     {
-        EditEntry();
+        await EditEntryAsync();
     }
 
-    private void bnEditEntry_Click(object sender, System.EventArgs e)
+    private async void bnEditEntry_Click(object sender, System.EventArgs e)
     {
-        EditEntry();
+        await EditEntryAsync();
     }
 
-    private void EditEntry()
+    private async Task EditEntryAsync()
     {
         if (lvFMNewShows.SelectedItems.Count == 0)
         {
@@ -547,15 +549,16 @@ public partial class BulkAddMovie : Form
 
         if (lvFMNewShows.SelectedItems[0].Tag is PossibleNewMovie fme)
         {
-            EditEntry(fme);
+            await EditEntryAsync(fme);
             UpdateListItem(fme, true);
         }
         FillNewShowList(true);
     }
 
-    private void EditEntry(PossibleNewMovie fme)
+    private async Task EditEntryAsync(PossibleNewMovie fme)
     {
-        BulkAddEditMovie ed = new(fme);
+        BulkAddEditMovie ed = new();
+        await ed.SetHintAsync(fme);
         if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)
         {
             return;
@@ -606,7 +609,7 @@ public partial class BulkAddMovie : Form
         CancellationTokenSource cts = new();
         //TokenSource = cts;
 
-        VolatileCounter = 0;
+        VolatileCounter.Reset();
 
         Parallel.ForEach(engine.AddItems, async movie =>
         {

@@ -2,6 +2,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -11,7 +12,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
 
     protected override string ActivityName() => "Rename & Missing Movie Check";
 
-    protected override void Check(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+    protected override async Task CheckAsync(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
         List<string> allFolders = [.. si.Locations];
         if (allFolders.Count == 0) // no folders defined for this show
@@ -28,11 +29,11 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
                 return;
             }
 
-            CheckMovieFolder(si, dfc, settings, folder);
+            await CheckMovieFolderAsync(si, dfc, settings, folder);
         }
     }
 
-    private void CheckMovieFolder(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, string folder)
+    private async Task CheckMovieFolderAsync(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, string folder)
     {
         if (settings.Token.IsCancellationRequested)
         {

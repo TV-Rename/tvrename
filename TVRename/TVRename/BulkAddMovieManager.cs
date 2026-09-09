@@ -18,11 +18,10 @@ public class BulkAddMovieManager(TVDoc doc)
 
     //Thread safe counters to work out the progress
     //for scanning
-    private static int CurrentPhaseDirectory;
-
-    private static int CurrentPhaseTotalDirectory;
-    private static int CurrentPhase;
-    private static int CurrentPhaseTotal;
+    private static ThreadSafeCounter CurrentPhaseDirectory = new();
+    private static ThreadSafeCounter CurrentPhaseTotalDirectory = new();
+    private static ThreadSafeCounter CurrentPhase = new();
+    private static ThreadSafeCounter CurrentPhaseTotal = new();
 
     private static DirectoryInfo[]? GetValidDirectories(DirectoryInfo di)
     {
@@ -49,7 +48,7 @@ public class BulkAddMovieManager(TVDoc doc)
 
     public (bool finished, DirectoryInfo[]? subDirs) CheckFolderForMovies(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
     {
-        CurrentPhaseDirectory++;
+        CurrentPhaseDirectory.Increment();
         try
         {
             // ..and not already a folder for one of our shows
@@ -144,7 +143,7 @@ public class BulkAddMovieManager(TVDoc doc)
 
     private void CheckFolderForShows(DirectoryInfo di, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
-        int percentComplete = (int)(100.0 / CurrentPhaseTotal * (1.0 * CurrentPhase + 1.0 * CurrentPhaseDirectory / CurrentPhaseTotalDirectory));
+        int percentComplete = (int)(100.0 / CurrentPhaseTotal.Value * (1.0 * CurrentPhase.Value + 1.0 * CurrentPhaseDirectory.Value / CurrentPhaseTotalDirectory.Value ));
         bw.ReportProgress(percentComplete.Between(0, 100), di.Name);
 
         if (!di.Exists)
@@ -181,7 +180,7 @@ public class BulkAddMovieManager(TVDoc doc)
         }
 
         // recursively check a folder for new shows
-        CurrentPhaseTotalDirectory += subDirs.Length;
+        CurrentPhaseTotalDirectory.Increment(subDirs.Length);
 
         foreach (DirectoryInfo di2 in subDirs)
         {
@@ -297,18 +296,18 @@ public class BulkAddMovieManager(TVDoc doc)
 
         AddItems = [];
 
-        CurrentPhaseTotal = 1;
+        CurrentPhaseTotal.Reset(1);
         if (TVSettings.Instance.MovieLibraryFolders.Any())
         {
-            CurrentPhaseTotal = TVSettings.Instance.MovieLibraryFolders.Count;
+            CurrentPhaseTotal.Reset(TVSettings.Instance.MovieLibraryFolders.Count);
         }
 
-        CurrentPhase = 0;
+        CurrentPhase.Reset();
 
         foreach (string folder in TVSettings.Instance.MovieLibraryFolders)
         {
-            CurrentPhaseDirectory = 0;
-            CurrentPhaseTotalDirectory = 1;
+            CurrentPhaseDirectory.Reset();
+            CurrentPhaseTotalDirectory.Reset(1);
 
             DirectoryInfo di = new(folder);
             if (TVSettings.Instance.LibraryFolders.Contains(folder))
@@ -322,7 +321,7 @@ public class BulkAddMovieManager(TVDoc doc)
             {
                 break;
             }
-            Interlocked.Increment(ref CurrentPhase);
+            CurrentPhase.Increment();
         }
     }
 }

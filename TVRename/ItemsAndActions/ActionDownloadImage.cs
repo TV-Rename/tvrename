@@ -96,7 +96,7 @@ public class ActionDownloadImage : ActionDownload
         try
         {
             byte[]? theData = Si.Provider == TVDoc.ProviderType.TheTVDB
-                ? TheTVDB.API.GetTvdbDownload(path)
+                ? await TheTVDB.API.GetTvdbDownloadAsync(path)
                 : HttpHelper.Download(path);
 
             if (theData is null || theData.Length == 0)

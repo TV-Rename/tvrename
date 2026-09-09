@@ -293,7 +293,7 @@ public class LocalCache : MediaCache, iTVSource
     public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TVmaze;
     TVDoc.ProviderType iTVSource.SourceProvider() => TVDoc.ProviderType.TVmaze;
 
-    public override void ReConnect(bool b)
+    public override async Task ReConnectAsync(bool b)
     {
         //nothing to be done here
     }

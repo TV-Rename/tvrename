@@ -226,7 +226,7 @@ public partial class BulkAddShow : Form
 
         while (progressDialog is null || !progressDialog.Ready)
         {
-            Thread.Sleep(10);
+            await Task.Delay(10);
         }
 
         await engine.CheckFoldersAsync(UpdateProgress, true, true, cts.Token);
@@ -348,7 +348,7 @@ public partial class BulkAddShow : Form
 
         while (progressDialog is null || !progressDialog.Ready)
         {
-            Thread.Sleep(10);
+            await Task.Delay(10);
         }
 
         int n = 0;
@@ -580,17 +580,17 @@ public partial class BulkAddShow : Form
         await DoCheckAsync();
     }
 
-    private void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
+    private async void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
     {
-        EditEntry();
+        await EditEntryAsync();
     }
 
-    private void bnEditEntry_Click(object sender, System.EventArgs e)
+    private async void bnEditEntry_Click(object sender, System.EventArgs e)
     {
-        EditEntry();
+        await EditEntryAsync();
     }
 
-    private void EditEntry()
+    private async Task EditEntryAsync()
     {
         if (lvFMNewShows.SelectedItems.Count == 0)
         {
@@ -599,14 +599,15 @@ public partial class BulkAddShow : Form
 
         if (lvFMNewShows.SelectedItems[0].Tag is PossibleNewTvShow fme)
         {
-            EditEntry(fme);
+            await EditEntryAsync(fme);
             UpdateListItem(fme, true);
         }
     }
 
-    private void EditEntry(PossibleNewTvShow fme)
+    private async Task EditEntryAsync(PossibleNewTvShow fme)
     {
-        BulkAddEditShow ed = new(fme);
+        BulkAddEditShow ed = new();
+        await ed.SetHintAsync(fme);
         if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)
         {
             return;

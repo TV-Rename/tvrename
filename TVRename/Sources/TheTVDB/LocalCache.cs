@@ -256,12 +256,12 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LastErrorMessage = string.Empty;
     }
 
-    public override void ReConnect(bool showErrorMsgBox)
+    public override async Task ReConnectAsync(bool showErrorMsgBox)
     {
         Say("TheTVDB Reconnect");
         try
         {
-            TvdbWebApi.ReConnectAsync().GetAwaiter().GetResult();
+            await TvdbWebApi.ReConnectAsync();
         }
         catch (SourceConnectivityException e)
         {

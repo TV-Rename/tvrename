@@ -40,7 +40,7 @@ public abstract class ActionNfo : ActionWriteMetadata
                 CreateBlankFile();
             }
 
-            ActionOutcome actionOutcome = UpdateFile();
+            ActionOutcome actionOutcome = await UpdateFileAsync();
             Where.LastWriteTime = DateTimeOffset.FromUnixTimeSeconds(UpdateTime() ?? 0).UtcDateTime;
             return actionOutcome;
         }
@@ -91,7 +91,7 @@ public abstract class ActionNfo : ActionWriteMetadata
 
     protected abstract string RootName();
 
-    protected abstract ActionOutcome UpdateFile();
+    protected abstract Task<ActionOutcome> UpdateFileAsync();
 
     protected static void UpdateAmongstElements(XElement e, string elementName, string? value)
     {

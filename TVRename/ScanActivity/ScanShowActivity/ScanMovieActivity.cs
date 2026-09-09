@@ -1,14 +1,16 @@
+using System.Threading.Tasks;
+
 namespace TVRename;
 
 public abstract class ScanMovieActivity(TVDoc doc) : ScanMediaActivity(doc)
 {
-    protected abstract void Check(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings);
+    protected abstract Task CheckAsync(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings);
 
-    public void CheckIfActive(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+    public async Task CheckIfActiveAsync(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
         if (Active())
         {
-            Check(si, dfc, settings);
+            await CheckAsync(si, dfc, settings);
             LogActionListSummary();
         }
     }

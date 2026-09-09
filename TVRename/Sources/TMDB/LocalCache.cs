@@ -293,7 +293,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     $"Identified {Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Movies need updating");
             }
 
-            IEnumerable<TMDbLib.Objects.Changes.ChangesListItem> taskShows = Client.GetChangesShowsAsync(latestUpdateTime, cts).GetAwaiter().GetResult();
+            IEnumerable<TMDbLib.Objects.Changes.ChangesListItem> taskShows = await Client.GetChangesShowsAsync(latestUpdateTime, cts);
             List<int> showUpdates = [.. taskShows.Select(item => item.Id).Distinct()];  
 
             Say(
@@ -1491,7 +1491,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return true;
     }
 
-    public override void ReConnect(bool b)
+    public override async Task ReConnectAsync(bool b)
     {
         //nothing to be done here
     }

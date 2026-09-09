@@ -6,11 +6,11 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using NLog;
+using Polly;
 using System;
 using System.Linq;
 using System.Reflection;
-using Polly;
-using NLog;
 
 #pragma warning disable CS0162
 
@@ -52,7 +52,7 @@ public static class Helpers
             ? Version + DebugText
             : Version;
 
-    public static string Version => 
+    public static string Version =>
      Assembly.GetExecutingAssembly()
             .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false)
             .OfType<AssemblyInformationalVersionAttribute>()

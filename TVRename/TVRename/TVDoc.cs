@@ -374,13 +374,14 @@ public class TVDoc : IDisposable
         }
     }
 
-    private void DoActions(ItemList theList, CancellationToken token)
+    private async Task DoActionsAsync(ItemList theList, CancellationTokenSource token)
     {
         try
         {
             theList.Actions.ForEach(a=>a.ResetOutcome());
-            
-            ActionManager.DoActions(theList, token);
+
+            await ActionManager.DoActionsAsync(theList, token);
+
             List<Action> doneActions = [.. TheActionList.Actions.Where(a => a.Outcome is { Done: true, Error: false })];
             List<Item> subsequentItems = [.. doneActions.Select(a => a.Becomes()).OfType<Item>()];
 
@@ -910,7 +911,7 @@ public class TVDoc : IDisposable
 
             while (!Args.Hide && Environment.UserInteractive && (scanProgressDlg is null || !scanProgressDlg.Ready))
             {
-                Thread.Sleep(10); // wait for thread to create the dialog
+                await Task.Delay(10); // wait for thread to create the dialog
             }
 
             SetProgressDelegate noProgress = NoProgress;
@@ -2266,11 +2267,11 @@ public class TVDoc : IDisposable
         return null;
     }
 
-    public static void Reconnect()
+    public static async Task ReconnectAsync()
     {
-        TheTVDB.LocalCache.Instance.ReConnect(false);
-        TMDB.LocalCache.Instance.ReConnect(false);
-        TVmaze.LocalCache.Instance.ReConnect(false);
+        await TheTVDB.LocalCache.Instance.ReConnectAsync(false);
+        await TMDB.LocalCache.Instance.ReConnectAsync(false);
+        await TVmaze.LocalCache.Instance.ReConnectAsync(false);
     }
 
     public void SetScanSettings(ScanSettings settings)
@@ -2301,17 +2302,17 @@ public class TVDoc : IDisposable
         }
     }
 
-    public void DoActions(ActionSettings set)
+    public async Task DoActionsAsync(ActionSettings set)
     {
         if (set.DoAll)
         {
             PreventAutoScan("Do all actions");
-            DoActions(TheActionList, set.Token.Token);
+            await DoActionsAsync(TheActionList, set.Token);
         }
         else
         {
             PreventAutoScan($"Do selected actions ({set.Lvr.Count})");
-            DoActions(set.Lvr, set.Token.Token);
+            await DoActionsAsync(set.Lvr, set.Token);
         }
         AllowAutoScan();
     }

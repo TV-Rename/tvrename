@@ -55,12 +55,12 @@ public static class API
         return url.StartsWith("banners/", StringComparison.Ordinal) ? mirr + url : mirr + "banners/" + url;
     }
 
-    public static byte[]? GetTvdbDownload(string url)
+    public static async Task<byte[]?> GetTvdbDownloadAsync(string url)
     {
         try
         {
             System.Net.Http.HttpClient wc = new();
-            return Task.Run(() => wc.GetByteArrayAsync(url)).Result;
+            return await wc.GetByteArrayAsync(url);
         }
         catch (Exception e)
         {
