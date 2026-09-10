@@ -200,7 +200,7 @@ public partial class YtsViewerView : Form
         url?.OpenUrlInBrowser();
     }
 
-    private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+    private async void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
     {
         object? rowObject = (e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject;
         if (rowObject is YtsViewerRow rr)

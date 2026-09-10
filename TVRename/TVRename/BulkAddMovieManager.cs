@@ -184,7 +184,7 @@ public class BulkAddMovieManager(TVDoc doc)
 
         foreach (DirectoryInfo di2 in subDirs)
         {
-            CheckFolderForShowsAsync(di2, bw, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
+            await CheckFolderForShowsAsync(di2, bw, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
         } // for each directory
     }
 
@@ -286,7 +286,7 @@ public class BulkAddMovieManager(TVDoc doc)
         return found;
     }
 
-    public void CheckFolders(BackgroundWorker bw, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
+    public async Task CheckFoldersAsync(BackgroundWorker bw, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
     {
         // Check the  folder list, and build up a new "AddItems" list.
         // guessing what the shows actually are isn't done here.  That is done by
@@ -315,7 +315,7 @@ public class BulkAddMovieManager(TVDoc doc)
                 Logger.Warn($"Not loading {folder} as it is both a movie folder and a tv folder");
                 continue;
             }
-            CheckFolderForShowsAsync(di, bw, detailedLogging, showErrorMsgBox, token);
+            await CheckFolderForShowsAsync(di, bw, detailedLogging, showErrorMsgBox, token);
 
             if (token.IsCancellationRequested)
             {

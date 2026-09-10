@@ -93,9 +93,9 @@ public partial class CollectionsView : Form
             MaxDegreeOfParallelism = 8 // Limit to 8 concurrent downloads at a time
         };
 
-        Parallel.ForEach(collectionIds, options, async (collection) =>
+        Parallel.ForEach(collectionIds, options, (collection) =>
         {
-            Dictionary<int, CachedMovieInfo> shows = await TMDB.LocalCache.Instance.GetMovieIdsFromCollectionAsync(collection.Item1, TVSettings.Instance.TMDBLanguage.Abbreviation);
+            Dictionary<int, CachedMovieInfo> shows =  TMDB.LocalCache.Instance.GetMovieIdsFromCollectionAsync(collection.Item1, TVSettings.Instance.TMDBLanguage.Abbreviation).GetAwaiter().GetResult();
             foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
             {
                 CollectionMember c = new(collection.Item2, neededShow.Value);

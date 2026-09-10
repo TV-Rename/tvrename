@@ -593,7 +593,7 @@ public partial class BulkAddMovie : Form
         Thread.CurrentThread.Name ??= "BulkAddMovie Scan Thread"; // Can only set it once
 
         CancellationTokenSource cts = new();
-        engine.CheckFolders((BackgroundWorker)sender, true, true, cts.Token);
+        engine.CheckFoldersAsync((BackgroundWorker)sender, true, true, cts.Token).GetAwaiter().GetResult();
         cts.Cancel();
     }
 

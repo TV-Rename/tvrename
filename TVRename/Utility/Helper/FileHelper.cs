@@ -934,6 +934,12 @@ public static class FileHelper
         public double Percentage => TotalBytes > 0 ? (double)BytesTransferred / TotalBytes * 100 : 0;
     }
 
+    public static async Task<bool> CheckDirectoryExistsAsync(string path)
+    {
+        // Offloads the synchronous OS call to a ThreadPool thread
+        return await Task.Run(() => Directory.Exists(path));
+    }
+
     public static async Task MoveFileWithProgressAsync(
                                         FileInfo From,
                                         FileInfo To,

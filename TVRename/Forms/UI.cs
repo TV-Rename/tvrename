@@ -2553,7 +2553,7 @@ public partial class UI : Form, IDialogParent
             Logger.Warn(ex, "Could not save app state file after update check!");
         }
 
-        uiDisp.Invoke(() => NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
+        await uiDisp.Invoke(() => NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
     }
 
     private async void BGDownloadTimer_Tick(object sender, EventArgs e)
@@ -4293,7 +4293,7 @@ public partial class UI : Form, IDialogParent
         Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
         ServerRelease? result = await tuv.ConfigureAwait(false);
 
-        uiDisp.Invoke(() => NotifyUpdatesAsync(result, true, false));
+        await uiDisp.Invoke(() => NotifyUpdatesAsync(result, true, false));
     }
 
     private async void tmrPeriodicScan_Tick(object sender, EventArgs e) => await RunAutoScanAsync("Periodic Scan");

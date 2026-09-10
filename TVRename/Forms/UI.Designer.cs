@@ -2612,7 +2612,6 @@ namespace TVRename.Forms
         private CefSharp.WinForms.ChromiumWebBrowser chrImages;
         private CefSharp.WinForms.ChromiumWebBrowser chrSummary;
         private CefSharp.WinForms.ChromiumWebBrowser chrMovieImages;
-        private System.ComponentModel.BackgroundWorker bwScan;
         private TabPage tpMovieTrailer;
         private CefSharp.WinForms.ChromiumWebBrowser chrMovieTrailer;
         private TabPage tabPage3;
