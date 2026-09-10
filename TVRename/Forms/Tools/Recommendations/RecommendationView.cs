@@ -137,7 +137,7 @@ public partial class RecommendationView : Form
         }
 
         newShow.AutoAddFolderBase = f.DirectoryFullPath;
-
+        //TOD need to mark dirty?? newShow.CachedData.
         mDoc.Add(newShow.AsList(), true);
         addedShows.Add(newShow);
     }
@@ -196,11 +196,13 @@ public partial class RecommendationView : Form
             recs = media switch
             {
                 MediaConfiguration.MediaType.tv => TMDB.LocalCache.Instance
-                    .GetRecommendationsAsync((BackgroundWorker)sender, tvShows.ToList(), languageCode)
-                    .Result,
+                    .GetTVRecommendationsAsync((BackgroundWorker)sender, tvShows.ToList(), languageCode)
+                    .GetAwaiter()
+                    .GetResult(),
                 MediaConfiguration.MediaType.movie => TMDB.LocalCache.Instance
-                    .GetRecommendationsAsync((BackgroundWorker)sender, movies.ToList(), languageCode)
-                    .Result,
+                    .GetMovieRecommendationsAsync((BackgroundWorker)sender, movies.ToList(), languageCode)
+                    .GetAwaiter()
+                    .GetResult(),
                 _ => throw new NotSupportedException($"media = {media} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}")
             };
         }

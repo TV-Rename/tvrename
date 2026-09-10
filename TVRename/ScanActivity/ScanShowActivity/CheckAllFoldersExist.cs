@@ -155,7 +155,7 @@ internal class CheckAllFoldersExist(TVDoc doc) : ScanShowActivity(doc)
                 using MissingFolderAction mfa = new(si.ShowName, snum + " of " + si.MaxSeason(), folder);
 
                 owner.ShowChildDialog(mfa);
-                whatToDo = mfa.Result;
+                whatToDo = mfa.Outcome;
                 otherFolder = mfa.FolderName;
             }
 

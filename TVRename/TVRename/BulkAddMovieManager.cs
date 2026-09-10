@@ -46,7 +46,7 @@ public class BulkAddMovieManager(TVDoc doc)
         return null;
     }
 
-    public (bool finished, DirectoryInfo[]? subDirs) CheckFolderForMovies(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
+    public async Task<(bool finished, DirectoryInfo[]? subDirs)> CheckFolderForMoviesAsync(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
     {
         CurrentPhaseDirectory.Increment();
         try
@@ -103,7 +103,7 @@ public class BulkAddMovieManager(TVDoc doc)
                 PossibleNewMovie ai = new(newFilm, showErrorMsgBox);
                 if (andGuess)
                 {
-                    ai.GuessMovieAsync(showErrorMsgBox).Wait();
+                    await ai.GuessMovieAsync(showErrorMsgBox);
                 }
                 AddItems.AddIfNew(ai);
             }
@@ -141,7 +141,7 @@ public class BulkAddMovieManager(TVDoc doc)
         return [.. directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Where(file => file.IsMovieFile())];
     }
 
-    private void CheckFolderForShows(DirectoryInfo di, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
+    private async Task CheckFolderForShowsAsync(DirectoryInfo di, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
         int percentComplete = (int)(100.0 / CurrentPhaseTotal.Value * (1.0 * CurrentPhase.Value + 1.0 * CurrentPhaseDirectory.Value / CurrentPhaseTotalDirectory.Value ));
         bw.ReportProgress(percentComplete.Between(0, 100), di.Name);
@@ -167,7 +167,7 @@ public class BulkAddMovieManager(TVDoc doc)
             return;
         }
 
-        (bool finished, DirectoryInfo[]? subDirs) = CheckFolderForMovies(di, false, fullLogging, showErrorMsgBox);
+        (bool finished, DirectoryInfo[]? subDirs) = await CheckFolderForMoviesAsync(di, false, fullLogging, showErrorMsgBox);
 
         if (finished)
         {
@@ -184,7 +184,7 @@ public class BulkAddMovieManager(TVDoc doc)
 
         foreach (DirectoryInfo di2 in subDirs)
         {
-            CheckFolderForShows(di2, bw, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
+            CheckFolderForShowsAsync(di2, bw, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
         } // for each directory
     }
 
@@ -315,7 +315,7 @@ public class BulkAddMovieManager(TVDoc doc)
                 Logger.Warn($"Not loading {folder} as it is both a movie folder and a tv folder");
                 continue;
             }
-            CheckFolderForShows(di, bw, detailedLogging, showErrorMsgBox, token);
+            CheckFolderForShowsAsync(di, bw, detailedLogging, showErrorMsgBox, token);
 
             if (token.IsCancellationRequested)
             {

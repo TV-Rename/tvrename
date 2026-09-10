@@ -30,8 +30,7 @@ internal class RemedySettings(IEnumerable<SettingsCheck> selectedItems, Settings
                     parent.Remove(selected);
                 }
             }
-            int position = 100 * currentRecord.Value / (totalRecords + 1);
-            currentRecord.Increment();
+            int position = 100 * currentRecord.Increment() / (totalRecords + 1);
             progress?.Invoke(position, selected.CheckName, selected.MediaName);
         }
 

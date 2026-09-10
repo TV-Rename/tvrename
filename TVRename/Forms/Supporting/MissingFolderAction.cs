@@ -14,13 +14,13 @@ namespace TVRename;
 public partial class MissingFolderAction : Form
 {
     public string FolderName { get; private set; }
-    public FaResult Result { get; private set; }
+    public FaResult Outcome { get; private set; }
 
     public MissingFolderAction(string? showName, string? season, string folderName)
     {
         InitializeComponent();
 
-        Result = FaResult.kfaCancel;
+        Outcome = FaResult.kfaCancel;
         FolderName = folderName;
         txtShow.Text = showName?.ToUiVersion();
         txtSeason.Text = season?.ToUiVersion();
@@ -36,31 +36,31 @@ public partial class MissingFolderAction : Form
 
     private void bnIgnoreOnce_Click(object sender, System.EventArgs e)
     {
-        Result = FaResult.kfaIgnoreOnce;
+        Outcome = FaResult.kfaIgnoreOnce;
         Close();
     }
 
     private void bnIgnoreAlways_Click(object sender, System.EventArgs e)
     {
-        Result = FaResult.kfaIgnoreAlways;
+        Outcome = FaResult.kfaIgnoreAlways;
         Close();
     }
 
     private void bnCreate_Click(object sender, System.EventArgs e)
     {
-        Result = FaResult.kfaCreate;
+        Outcome = FaResult.kfaCreate;
         Close();
     }
 
     private void bnRetry_Click(object sender, System.EventArgs e)
     {
-        Result = FaResult.kfaRetry;
+        Outcome = FaResult.kfaRetry;
         Close();
     }
 
     private void bnCancel_Click(object sender, System.EventArgs e)
     {
-        Result = FaResult.kfaCancel;
+        Outcome = FaResult.kfaCancel;
         Close();
     }
 
@@ -69,7 +69,7 @@ public partial class MissingFolderAction : Form
         folderBrowser.SelectedPath = FolderName;
         if (UiHelpers.ShowDialogAndOk(folderBrowser,this))
         {
-            Result = FaResult.kfaDifferentFolder;
+            Outcome = FaResult.kfaDifferentFolder;
             FolderName = folderBrowser.SelectedPath;
             Close();
         }
@@ -95,7 +95,7 @@ public partial class MissingFolderAction : Form
                     if (di.Exists)
                     {
                         FolderName = path;
-                        Result = FaResult.kfaDifferentFolder;
+                        Outcome = FaResult.kfaDifferentFolder;
                         Close();
                         return;
                     }

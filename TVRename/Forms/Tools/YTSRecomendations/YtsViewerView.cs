@@ -127,7 +127,9 @@ public partial class YtsViewerView : Form
         try
         {
             recs = [.. YTS.API
-                    .GetMoviesAsync((BackgroundWorker)sender, quality, minRating).Result
+                    .GetMoviesAsync((BackgroundWorker)sender, quality, minRating)
+                    .GetAwaiter()
+                    .GetResult()
                     .Select(x => new YtsViewerRow(x, mDoc))];
         }
         catch (Exception ex)

@@ -32,7 +32,7 @@ internal class SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downloadi
         }
 
         // get list of files being downloaded by SABnzbd
-        XElement? x = GetSabDownload(TVSettings.Instance.SABHostPort, TVSettings.Instance.SABAPIKey);
+        XElement? x = await GetSabDownloadAsync(TVSettings.Instance.SABHostPort, TVSettings.Instance.SABAPIKey);
 
         if (x is null)
         {
@@ -75,7 +75,7 @@ internal class SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downloadi
         ActionList.Replace(toRemove, newList);
     }
 
-    private static XElement? GetSabDownload(string hostPort, string key)
+    private static async Task<XElement?> GetSabDownloadAsync(string hostPort, string key)
     {
         // Something like:
         // http://localhost:8080/sabnzbd/api?mode=queue&apikey=xxx&start=0&limit=8888&output=xml
@@ -85,10 +85,10 @@ internal class SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downloadi
         try
         {
             using HttpClient client = new();
-            using HttpResponseMessage response = client.GetAsync(theUrl).Result;
+            using HttpResponseMessage response = await client.GetAsync(theUrl);
             using HttpContent content = response.Content;
 
-            responseText = content.ReadAsStringAsync().Result;
+            responseText = await content.ReadAsStringAsync();
         }
         catch (Exception e)
         {

@@ -102,7 +102,7 @@ internal class CheckAllMovieFoldersExist(TVDoc doc) : ScanMovieActivity(doc)
                 using MissingFolderAction mfa = new(si.ShowName, "", folder);
 
                 owner.ShowChildDialog(mfa);
-                whatToDo = mfa.Result;
+                whatToDo = mfa.Outcome;
                 otherFolder = mfa.FolderName;
             }
 

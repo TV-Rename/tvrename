@@ -228,7 +228,7 @@ public partial class BulkAddMovie : Form
         AddDraggedFiles(e, TVSettings.Instance.MovieLibraryFolders);
     }
 
-    private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
+    private async void lvFMNewShows_DragDrop(object _, DragEventArgs e)
     {
         if (e.Data is not null)
         {
@@ -241,7 +241,7 @@ public partial class BulkAddMovie : Form
                         DirectoryInfo di = new(path);
                         if (di.Exists)
                         {
-                            engine.CheckFolderForMovies(di, true, true, true);
+                            await engine.CheckFolderForMoviesAsync(di, true, true, true);
                             FillNewShowList(true);
                         }
                     }
@@ -327,9 +327,8 @@ public partial class BulkAddMovie : Form
         }
 
         await ai.GuessMovieAsync(true);
-        VolatileCounter.Increment();
 
-        bw.ReportProgress((int)100.0 * VolatileCounter.Value / total, ai);
+        bw.ReportProgress((int)100.0 * VolatileCounter.Increment() / total, ai);
     }
 
     private void bnRemoveNewFolder_Click(object _, System.EventArgs e)

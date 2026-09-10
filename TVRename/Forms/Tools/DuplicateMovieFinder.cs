@@ -47,8 +47,7 @@ public partial class DuplicateMovieFinder : Form
         {
             ProcessMovie(movie);
 
-            bw.ReportProgress(100 * currentRecord.Value / total, movie.ShowName);
-            currentRecord.Increment();
+            bw.ReportProgress(100 * currentRecord.Increment() / total, movie.ShowName);
         }
     }
 

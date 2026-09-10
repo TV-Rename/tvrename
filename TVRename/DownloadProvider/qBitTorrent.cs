@@ -74,7 +74,7 @@ public class qBitTorrent : IDownloadProvider
             List<TorrentEntry> ret = [];
             foreach (JToken torrent in currentDownloads.Children())
             {
-                AddFilesFromTorrent(ret, torrent, savePath.EnsureEndsWithSeparator());
+                await AddFilesFromTorrentAsync(ret, torrent, savePath.EnsureEndsWithSeparator());
             }
             return ret;
         }
@@ -110,7 +110,7 @@ public class qBitTorrent : IDownloadProvider
         return null;
     }
 
-    private static void AddFilesFromTorrent(ICollection<TorrentEntry> ret, JToken torrent, string savePath)
+    private static async Task AddFilesFromTorrentAsync(ICollection<TorrentEntry> ret, JToken torrent, string savePath)
     {
         string torrentDetailsString = string.Empty;
         try
@@ -118,7 +118,7 @@ public class qBitTorrent : IDownloadProvider
             (string? hashCode, string? torrentName, bool completed) = ExtractTorrentDetails(torrent);
 
             string url = GetApiUrl(qBitTorrentAPIPath.torrentDetails) + hashCode;
-            torrentDetailsString = HttpHelper.ObtainAsync(url).Result;
+            torrentDetailsString = await HttpHelper.ObtainAsync(url);
             JArray torrentDetails = JArray.Parse(torrentDetailsString);
 
             if (!torrentDetails.Children().Any())
@@ -224,7 +224,7 @@ public class qBitTorrent : IDownloadProvider
         }
     }
 
-    public void StartUrlDownload(string torrentUrl)
+    public async Task StartUrlDownloadAsync(string torrentUrl)
     {
         if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
         {
@@ -232,17 +232,17 @@ public class qBitTorrent : IDownloadProvider
             return;
         }
 
-        DownloadUrl(torrentUrl, GetApiUrl(qBitTorrentAPIPath.addUrl));
+        await DownloadUrlAsync(torrentUrl, GetApiUrl(qBitTorrentAPIPath.addUrl));
     }
 
-    public void StartTorrentDownload(FileInfo torrentFile)
+    public async Task StartTorrentDownloadAsync(FileInfo torrentFile)
     {
-        StartTorrent(torrentFile.FullName);
+        await StartTorrentAsync(torrentFile.FullName);
     }
 
     public DownloadingFinder.DownloadApp Application => DownloadingFinder.DownloadApp.qBitTorrent;
 
-    private static void StartTorrent(string torrentFileName)
+    private static async Task StartTorrentAsync(string torrentFileName)
     {
         if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
         {
@@ -250,17 +250,17 @@ public class qBitTorrent : IDownloadProvider
             return;
         }
 
-        AddFile(torrentFileName, GetApiUrl(qBitTorrentAPIPath.addFile));
+        await AddFileAsync(torrentFileName, GetApiUrl(qBitTorrentAPIPath.addFile));
     }
 
-    private static void AddFile(string torrentName, string url)
+    private static async Task AddFileAsync(string torrentName, string url)
     {
         try
         {
             using HttpClient client = new();
             using MultipartFormDataContent m = [];
             m.AddFile("torrents", torrentName, "application/x-bittorrent");
-            HttpResponseMessage response = client.PostAsync(url, m).Result;
+            HttpResponseMessage response = await client.PostAsync(url, m);
             if (!response.IsSuccessStatusCode)
             {
                 Logger.Warn(
@@ -314,14 +314,14 @@ public class qBitTorrent : IDownloadProvider
         }
     }
 
-    private static void DownloadUrl(string torrentUrl, string url)
+    private static async Task DownloadUrlAsync(string torrentUrl, string url)
     {
         try
         {
             using HttpClient client = new();
             Dictionary<string, string> values = new() { { "urls", torrentUrl } };
             using FormUrlEncodedContent content = new(values);
-            HttpResponseMessage response = client.PostAsync(url, content).Result;
+            HttpResponseMessage response = await client.PostAsync(url, content);
             if (!response.IsSuccessStatusCode)
             {
                 string message =
@@ -376,7 +376,7 @@ public class qBitTorrent : IDownloadProvider
         if (TVSettings.Instance.qBitTorrentAPIVersion == qBitTorrentAPIVersion.v1)
         {
             string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string?> { { "hashes", name.Key } });
-            HttpHelper.HttpRequestAsync("POST", url, parametersString.RemoveCharactersFrom("?"), "application/x-www-form-urlencoded", null, null).Wait();
+            await HttpHelper.HttpRequestAsync("POST", url, parametersString.RemoveCharactersFrom("?"), "application/x-www-form-urlencoded", null, null);
         }
         else
         {

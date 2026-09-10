@@ -1856,4 +1856,18 @@ internal static class ShowHtmlHelper
     {
         return si?.TrailerUrl?.Replace("/watch?v=", "/embed/");
     }
+
+    public static string YoutubePage(string YoutubeURL)
+    {
+        string iframe = $"""<iframe width="560" height="315" src="{YoutubeURL}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>""";
+
+        Color col = Color.FromName("ButtonFace");
+        StringBuilder sb = new();
+        sb.AppendLine(HTMLHeader(10, col));
+        sb.AppendLine(iframe);
+        sb.AppendLine(HTMLFooter());
+        return sb.ToString();
+
+        
+    }
 }

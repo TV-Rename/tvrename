@@ -54,8 +54,9 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         SplashScreen.SafeInvoke(
             () => ((TVRenameSplash)SplashScreen).UpdateStatus("Initializing"), true);
 
-        doc = LoadSettingsAsync(parameters).Result;
+        Task.Run(async () => { doc = await LoadSettingsAsync(parameters); }).Wait();
 
+        
         if (TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs)
         {
             SetupLogging();
@@ -64,7 +65,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         RegisterForSystemEvents();
 
         // Show user interface
-        ui = new(doc, (TVRenameSplash)SplashScreen, !parameters.Unattended && !parameters.Hide && Environment.UserInteractive);
+        ui = new(doc!, (TVRenameSplash)SplashScreen, !parameters.Unattended && !parameters.Hide && Environment.UserInteractive);
         ui.Text = ui.Text + " " + Helpers.DisplayVersion;
 
         MainForm = ui;

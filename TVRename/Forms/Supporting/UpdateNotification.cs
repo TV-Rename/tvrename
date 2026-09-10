@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TVRename.Forms;
@@ -29,12 +30,15 @@ public partial class UpdateNotification : Form
         InitializeComponent();
         tbReleaseNotes.Text = newVersion.ReleaseNotesText.ToUiVersion();
         lblStatus.Text = $@"There is new version {update} available since {update.ReleaseDate.ToLocalTime()}.";
-
-        //If this call is slow then we can put it in a new thread and update the control as it comes back from GH
-        UpdateWithMarkdown();
     }
 
-    private void UpdateWithMarkdown()
+    public async Task UpdateMarkup()
+    {
+        //If this call is slow then we can put it in a new thread and update the control as it comes back from GH
+        await UpdateWithMarkdown().ConfigureAwait(false);
+    }
+
+    private async Task UpdateWithMarkdown()
     {
         using HttpClient client = new();
         try
@@ -49,7 +53,7 @@ public partial class UpdateNotification : Form
             client.DefaultRequestHeaders.Accept
                 .Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
 
-            HttpResponseMessage response = client.PostAsJsonAsync(GITHUB_CONVERSION_URL, request).Result;
+            HttpResponseMessage response = await client.PostAsJsonAsync(GITHUB_CONVERSION_URL, request).ConfigureAwait(false);
             using System.IO.StreamReader reader = new(response.Content.ReadAsStream());
             string result = reader.ReadToEnd();
 

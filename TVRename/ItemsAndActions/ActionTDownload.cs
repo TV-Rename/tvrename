@@ -77,7 +77,7 @@ public class ActionTDownload : ActionDownload
                 if (TVSettings.Instance.CheckuTorrent && isDownloadable)
                 {
                     FileInfo downloadedFile = await DownloadFileAsync();
-                    new uTorrent().StartTorrentDownload(downloadedFile);
+                    await new uTorrent().StartTorrentDownloadAsync(downloadedFile);
                     return ActionOutcome.Success();
                 }
 
@@ -86,12 +86,12 @@ public class ActionTDownload : ActionDownload
                     if (isDownloadable && TVSettings.Instance.qBitTorrentDownloadFilesFirst)
                     {
                         FileInfo downloadedFile = await DownloadFileAsync();
-                        new qBitTorrent().StartTorrentDownload(downloadedFile);
+                        await new qBitTorrent().StartTorrentDownloadAsync(downloadedFile);
                         return ActionOutcome.Success();
                     }
                     else
                     {
-                        new qBitTorrent().StartUrlDownload(url);
+                        await new qBitTorrent().StartUrlDownloadAsync(url);
                         return ActionOutcome.Success();
                     }
                 }

@@ -57,9 +57,9 @@ public partial class UI : Form, IDialogParent
 
     #region Delegates
 
-    public delegate void ScanTypeDelegate(TVSettings.ScanType type);
+    public delegate Task AsyncScanDelegate(TVSettings.ScanType type);
 
-    public readonly ScanTypeDelegate ScanAndDo;
+    public readonly AsyncScanDelegate ScanAndDo;
 
     private Task? ActionTask;
 
@@ -104,7 +104,7 @@ public partial class UI : Form, IDialogParent
 
         tabControl1.ItemSize = LogicalToDeviceUnits(tabControl1.ItemSize);
 
-        ScanAndDo = ScanAndAction;
+        ScanAndDo = ScanAndActionAsync;
 
         try
         {
@@ -146,12 +146,12 @@ public partial class UI : Form, IDialogParent
         UpdateSplashStatus(splash, "Updating WTW", 75);
         mDoc.UpdateDenormalisations();
         UpdateSplashStatus(splash, "Updating WTW", 80);
-        FillWhenToWatchListAsync().GetAwaiter().GetResult();
-        SortSchedule(3);
+        //this.Load += async (s, e) => await FillWhenToWatchListAsync();
+        //SortSchedule(3);
         UpdateSplashStatus(splash, "Write Upcoming", 85);
-        mDoc.WriteUpcoming();
+        //mDoc.WriteUpcoming();
         UpdateSplashStatus(splash, "Write Recent", 88);
-        mDoc.WriteRecent();
+        //mDoc.WriteRecent();
         UpdateSplashStatus(splash, "Setting Notifications", 90);
         ShowHideNotificationIcon();
 
@@ -694,10 +694,10 @@ public partial class UI : Form, IDialogParent
         mDoc.Args.RevertFromTempUse();
     }
 
-    private void ScanAndAction(TVSettings.ScanType type)
+    private async Task ScanAndActionAsync(TVSettings.ScanType type)
     {
-        UiScanAsync(null, null, true, type, MediaConfiguration.MediaType.both).GetAwaiter().GetResult();
-        ActionActionAsync(true, true, false).GetAwaiter().GetResult();
+        await UiScanAsync(null, null, true, type, MediaConfiguration.MediaType.both);
+        await ActionActionAsync(true, true, false);
     }
 
     private static void UpdateSplashStatus(TVRenameSplash splashScreen, string text, int percent)
@@ -907,6 +907,11 @@ public partial class UI : Form, IDialogParent
 
     private async void UI_LoadAsync(object sender, EventArgs e)
     {
+        await FillWhenToWatchListAsync();
+        SortSchedule(3);
+        mDoc.WriteUpcoming();
+        mDoc.WriteRecent();
+
         foreach (TabPage tp in tabControl1.TabPages) // grr! why does it go white?
         {
             tp.BackColor = SystemColors.Control;
@@ -2548,7 +2553,7 @@ public partial class UI : Form, IDialogParent
             Logger.Warn(ex, "Could not save app state file after update check!");
         }
 
-        uiDisp.Invoke(() => NotifyUpdates(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
+        uiDisp.Invoke(() => NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
     }
 
     private async void BGDownloadTimer_Tick(object sender, EventArgs e)
@@ -4219,13 +4224,12 @@ public partial class UI : Form, IDialogParent
     {
         Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
 
-        Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
-        ServerRelease? result = await tuv.ConfigureAwait(false);
+        ServerRelease? result = await VersionUpdater.CheckForUpdatesAsync().ConfigureAwait(false);
 
-        uiDisp.Invoke(() => NotifyUpdates(result, true, false));
+        await uiDisp.Invoke(() => NotifyUpdatesAsync(result, true, false));
     }
 
-    private void NotifyUpdates(ServerRelease? update, bool manuallyTriggered, bool inSilentMode)
+    private async Task NotifyUpdatesAsync(ServerRelease? update, bool manuallyTriggered, bool inSilentMode)
     {
         btnUpdateAvailable.Visible = update is not null;
 
@@ -4252,6 +4256,7 @@ public partial class UI : Form, IDialogParent
         }
 
         UpdateNotification unForm = new(update);
+        var updateMarkup = unForm.UpdateMarkup().ConfigureAwait(false);
 
         if (IsDisposed || !IsHandleCreated)
         {
@@ -4261,6 +4266,7 @@ public partial class UI : Form, IDialogParent
         unForm.ShowDialog(this);
         if (unForm.DialogResult != DialogResult.Abort)
         {
+            await updateMarkup;
             return;
         }
 
@@ -4269,6 +4275,7 @@ public partial class UI : Form, IDialogParent
 
         //We need to quit!
         Close();
+        await updateMarkup;
     }
 
     private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4286,7 +4293,7 @@ public partial class UI : Form, IDialogParent
         Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
         ServerRelease? result = await tuv.ConfigureAwait(false);
 
-        uiDisp.Invoke(() => NotifyUpdates(result, true, false));
+        uiDisp.Invoke(() => NotifyUpdatesAsync(result, true, false));
     }
 
     private async void tmrPeriodicScan_Tick(object sender, EventArgs e) => await RunAutoScanAsync("Periodic Scan");
@@ -5348,7 +5355,8 @@ public static class TvWebExtensions
         if (si?.CachedShow?.TrailerUrl?.HasValue() ?? false)
         {
             // ReSharper disable once AssignNullToNotNullAttribute
-            SetHtmlEmbed(web, ShowHtmlHelper.YoutubeTrailer(si.CachedShow!));
+            //TODO Chek SetHtmlEmbed(web, ShowHtmlHelper.YoutubeTrailer(si.CachedShow!));
+            SetHtmlBody(web, ShowHtmlHelper.YoutubePage(ShowHtmlHelper.YoutubeTrailer(si.CachedShow!) ?? ""));
         }
         else
         {

@@ -207,6 +207,13 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
             Dirty = true;
             IsSearchResultOnly = false;
         }
+        if (this is CachedSeriesInfo si)
+        {
+            if (si.Seasons.Count() == 0)
+            {
+                Dirty = true;
+            }
+        }
     }
 
     protected static string ChooseBetter(string? encumbant, bool betterLanguage, string? newValue)

@@ -39,7 +39,7 @@ internal class MovieCheckEmptyManualFolders(MovieConfiguration movie, TVDoc doc)
             RemoveEmptyDirectory(directory);
         }
 
-        if (!Movie.ManualLocations.Any())
+        if (Movie.ManualLocations.Count == 0)
         {
             Movie.UseManualLocations = false;
         }

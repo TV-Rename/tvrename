@@ -66,8 +66,7 @@ public partial class SettingsReview : Form
             set.Add(new FolderBaseMovieCheck(movie, mDoc));
             set.Add(new MovieFolderTypeCheck(movie, mDoc));
 
-            bw.ReportProgress(100 * currentRecord.Value / total, movie.ShowName);
-            currentRecord.Increment();
+            bw.ReportProgress(100 * currentRecord.Increment() / total, movie.ShowName);
         }
 
         foreach (ShowConfiguration show in mDoc.TvLibrary.GetSortedShowItems())
@@ -97,8 +96,7 @@ public partial class SettingsReview : Form
             set.Add(new FolderBaseLibraryDefaultTvCheck(show, mDoc));
             set.Add(new TvShowSubdiretoryFormatCheck(show, mDoc));
 
-            bw.ReportProgress(100 * currentRecord.Value / total, show.ShowName);
-            currentRecord.Increment();
+            bw.ReportProgress(100 * currentRecord.Increment() / total, show.ShowName);
         }
     }
 

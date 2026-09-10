@@ -16,13 +16,17 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
+using FileAccess = System.IO.FileAccess;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using Path = Alphaleonis.Win32.Filesystem.Path;
 
@@ -922,4 +926,83 @@ public static class FileHelper
 
     public static FileSystemProperties GetFileSystemProperties(string volume)
         => NativeMethods.GetProperties(volume);
+
+    public class CopyMoveProgress
+    {
+        public long BytesTransferred { get; set; }
+        public long TotalBytes { get; set; }
+        public double Percentage => TotalBytes > 0 ? (double)BytesTransferred / TotalBytes * 100 : 0;
+    }
+
+    public static async Task MoveFileWithProgressAsync(
+                                        FileInfo From,
+                                        FileInfo To,
+                                        IProgress<CopyMoveProgress> progress,
+                                        CancellationToken cancellationToken = default)
+    {
+        long totalBytes = From.Length;
+        long bytesTransferred = 0;
+        int bufferSize = 81920; // 80 KB large buffer
+
+        using (var sourceStream = new FileStream(From.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, useAsync: true))
+        using (var destStream = new FileStream(To.FullName, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, useAsync: true))
+        {
+            var buffer = new byte[bufferSize];
+            int bytesRead;
+
+            while ((bytesRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+            {
+                await destStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
+                bytesTransferred += bytesRead;
+
+                progress.Report(new CopyMoveProgress
+                {
+                    BytesTransferred = bytesTransferred,
+                    TotalBytes = totalBytes
+                });
+            }
+        }
+
+        // Complete the "move" by deleting the source file after a successful copy
+        From.Delete(); //todo use soemthing safer!
+    }
+
+    private static string TempFor(Alphaleonis.Win32.Filesystem.FileSystemInfo f) => f.FullName + ".tvrenametemp";
+    public static void CopyMoveFile(FileInfo From, FileInfo To, bool isMove, CopyMoveProgressRoutine callback)
+    {
+        //we use a temp name just in case we are interrupted or some other problem occurs
+        string tempName = TempFor(To);
+
+        if (!Directory.Exists(To.Directory.FullName))
+        {
+            Directory.CreateDirectory(To.Directory.FullName);
+        }
+
+        // If both full filenames are the same then we want to move it away and back
+        //This deals with an issue on some systems (XP?) that case insensitive moves did not occur
+        if (isMove || FileHelper.Same(From, To))
+        {
+            // This step could be slow, so report progress - TODO - make async
+            CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.WriteThrough | MoveOptions.ReplaceExisting, callback, null);
+            if (moveResult.ErrorCode != 0)
+            {
+                throw new ActionFailedException(moveResult.ErrorMessage);
+            }
+        }
+        else
+        {
+            //we are copying
+
+            // This step could be slow, so report progress
+            CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, callback, null);
+            if (copyResult.ErrorCode != 0)
+            {
+                throw new ActionFailedException(copyResult.ErrorMessage);
+            }
+        }
+
+        // Copying the temp file into the correct name is very quick, so no progress reporting
+        File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
+    }
+
 }

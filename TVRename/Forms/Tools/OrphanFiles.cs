@@ -96,8 +96,7 @@ public partial class OrphanFiles : Form
         foreach (ShowConfiguration show in mDoc.TvLibrary.Shows.OrderBy(item => item.ShowName))
         {
             Logger.Info($"Finding old eps for {show.ShowName}");
-            bw.ReportProgress(100 * currentRecord.Value / total, show.ShowName);
-            currentRecord.Increment();
+            bw.ReportProgress(100 * currentRecord.Increment() / total, show.ShowName);
 
             Dictionary<int, SafeList<string>> folders = show.AllFolderLocations(true);
 

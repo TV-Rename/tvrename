@@ -133,8 +133,6 @@ public partial class YtsRecommendationView : Form
         {
             foreach (MovieConfiguration existingMovie in inputMovies)
             {
-                page.Increment(); 
-
                 API.YtsMovie? ytsMovie = await API.GetMovieByImdbAsync(existingMovie.ImdbCode);
                 if (ytsMovie is null || ytsMovie.Id==0)
                 {
@@ -153,7 +151,7 @@ public partial class YtsRecommendationView : Form
                     source.Add(relatedMovie,existingMovie, ytsMovie);
                 }
 
-                ((BackgroundWorker)sender).ReportProgress(100 * page.Value / inputMovies.Count,existingMovie.Name);
+                ((BackgroundWorker)sender).ReportProgress(100 * page.Increment() / inputMovies.Count,existingMovie.Name);
             }
 
             recs = source.AsRecommendationRows(mDoc);

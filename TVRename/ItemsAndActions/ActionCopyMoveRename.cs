@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Security.AccessControl;
 using System.Threading;
 
@@ -86,40 +85,10 @@ public class ActionCopyMoveRename : ActionFileOperation
 
         try
         {
-            //we use a temp name just in case we are interrupted or some other problem occurs
-            string tempName = TempFor(To);
+            //SYNC Version FileHelper.CopyMoveFile(From, To, IsMoveRename(), CopyProgressCallback);
 
-            if (!Directory.Exists(To.Directory.FullName))
-            {
-                Directory.CreateDirectory(To.Directory.FullName);
-            }
+            await FileHelper.MoveFileWithProgressAsync(From, To, new Progress<FileHelper.CopyMoveProgress>((info) => { PercentDone = info.Percentage; }), cancellationToken);
 
-            // If both full filenames are the same then we want to move it away and back
-            //This deals with an issue on some systems (XP?) that case insensitive moves did not occur
-            if (IsMoveRename() || FileHelper.Same(From, To))
-            {
-                // This step could be slow, so report progress
-                CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.WriteThrough | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
-                if (moveResult.ErrorCode != 0)
-                {
-                    throw new ActionFailedException(moveResult.ErrorMessage);
-                }
-            }
-            else
-            {
-                //we are copying
-                Debug.Assert(Operation == Op.copy);
-
-                // This step could be slow, so report progress
-                CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
-                if (copyResult.ErrorCode != 0)
-                {
-                    throw new ActionFailedException(copyResult.ErrorMessage);
-                }
-            }
-
-            // Copying the temp file into the correct name is very quick, so no progress reporting
-            File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
             LOGGER.Info($"{Name} completed: {From.FullName} to {To.FullName} ");
 
             UpdateStats(stats);
@@ -187,6 +156,7 @@ public class ActionCopyMoveRename : ActionFileOperation
         return ActionOutcome.Success();
     }
 
+    
     private void UpdateStats(TVRenameStats stats)
     {
         switch (Operation)
@@ -268,8 +238,6 @@ public class ActionCopyMoveRename : ActionFileOperation
 
     #endregion Item Members
 
-    private static string TempFor(FileSystemInfo f) => f.FullName + ".tvrenametemp";
-
     public bool QuickOperation()
     {
         if (From.Directory is null || To.Directory is null)
@@ -303,7 +271,11 @@ public class ActionCopyMoveRename : ActionFileOperation
     }
 
     private bool IsMoveRename() // same thing to the OS
-        => Operation == Op.move || Operation == Op.rename;
+        => IsMoveRename(Operation);
+
+    private static bool IsMoveRename(ActionCopyMoveRename.Op operation) // same thing to the OS
+        => operation == Op.move || operation  == Op.rename;
+
 
     public bool SameSource(ActionCopyMoveRename o) => FileHelper.Same(From, o.From);
 

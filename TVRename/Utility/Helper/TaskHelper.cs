@@ -49,8 +49,7 @@ internal static class TaskHelper
             }
         });
 
-        if (waitTask != await Task.WhenAny(waitTask,
-                Task.Delay(timeout)).ConfigureAwait(false))
+        if (waitTask != await Task.WhenAny(waitTask, Task.Delay(timeout)).ConfigureAwait(false))
         {
             throw new TimeoutException();
         }

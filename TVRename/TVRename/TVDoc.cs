@@ -26,7 +26,7 @@ using TVRename.Settings.AppState;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-public class TVDoc : IDisposable
+public class TVDoc : IDisposable, IAsyncDisposable
 {
     public enum ProviderType
     {
@@ -892,7 +892,7 @@ public class TVDoc : IDisposable
 
             PreventAutoScan("Scan " + settings.Type.PrettyPrint());
 
-            UpdateMediaToScan(settings);
+            await UpdateMediaToScanAsync(settings);
             if (settings.Type != TVSettings.ScanType.Incremental)
             {
                 TheActionList.Clear();
@@ -921,7 +921,7 @@ public class TVDoc : IDisposable
 
                 await Task.WhenAll(x, y);
 
-                UpdateMediaToScan(settings);
+                await UpdateMediaToScanAsync(settings);
             }
 
             //If still null then return
@@ -1025,10 +1025,10 @@ public class TVDoc : IDisposable
         }
     }
 
-    private void UpdateMediaToScan(ScanSettings settings)
+    private async Task UpdateMediaToScanAsync(ScanSettings settings)
     {
         //Get the default set of shows defined by the specified type
-        List<ShowConfiguration> shows = [.. GetShowList(settings.Type, settings.Media, settings.Shows)];
+        List<ShowConfiguration> shows = (await GetShowListAsync(settings.Type, settings.Media, settings.Shows)).ToList();
         //Get the default set of shows defined by the specified type
         List<MovieConfiguration> movies = [.. GetMovieList(settings.Type, settings.Media, settings.Movies)];
 
@@ -1073,7 +1073,7 @@ public class TVDoc : IDisposable
         }
     }
 
-    private IEnumerable<ShowConfiguration> GetShowList(TVSettings.ScanType st, MediaConfiguration.MediaType mt, IEnumerable<ShowConfiguration>? passedShows)
+    private async Task<IEnumerable<ShowConfiguration>> GetShowListAsync(TVSettings.ScanType st, MediaConfiguration.MediaType mt, IEnumerable<ShowConfiguration>? passedShows)
     {
         if (mt == MediaConfiguration.MediaType.movie)
         {
@@ -1082,7 +1082,7 @@ public class TVDoc : IDisposable
         return st switch
         {
             TVSettings.ScanType.Full => TvLibrary.GetSortedShowItems(),
-            TVSettings.ScanType.Quick => GetQuickShowsToScan(true, true),
+            TVSettings.ScanType.Quick => await GetQuickShowsToScanAsync(true, true),
             TVSettings.ScanType.Recent => TvLibrary.GetRecentShows(),
             TVSettings.ScanType.SingleShow => passedShows ?? [],
             TVSettings.ScanType.Incremental => passedShows ?? [],
@@ -1109,7 +1109,7 @@ public class TVDoc : IDisposable
         };
     }
 
-    private List<ShowConfiguration> GetQuickShowsToScan(bool doRecentMissing, bool doFilesInDownloadDir)
+    private async Task<List<ShowConfiguration>> GetQuickShowsToScanAsync(bool doRecentMissing, bool doFilesInDownloadDir)
     {
         List<ShowConfiguration> showsToScan = [];
         if (doFilesInDownloadDir)
@@ -1119,7 +1119,7 @@ public class TVDoc : IDisposable
 
         if (doRecentMissing)
         {
-            IEnumerable<ProcessedEpisode> lpe = GetMissingEps();
+            IEnumerable<ProcessedEpisode> lpe = await GetMissingEps();
             foreach (ProcessedEpisode pe in lpe.Where(pe => !showsToScan.Contains(pe.Show)))
             {
                 showsToScan.Add(pe.Show);
@@ -1324,11 +1324,11 @@ public class TVDoc : IDisposable
         //Nothing to do - Method is called if we have no UI
     }
 
-    private List<ProcessedEpisode> GetMissingEps()
+    private async Task<List<ProcessedEpisode>> GetMissingEps()
     {
         int dd = TVSettings.Instance.WTWRecentDays;
         DirFilesCache dfc = new();
-        return GetMissingEps(dfc, TvLibrary.GetRecentAndFutureEpsAsync(dd).GetAwaiter().GetResult());
+        return GetMissingEps(dfc, await TvLibrary.GetRecentAndFutureEpsAsync(dd));
     }
 
     private static List<ProcessedEpisode> GetMissingEps(DirFilesCache dfc, List<ProcessedEpisode> lpe)
@@ -1712,24 +1712,25 @@ public class TVDoc : IDisposable
         await cacheManager.DownloadThreadAsync();
     }
 
-    private async Task Dispose(bool disposing)
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
     {
         await ReleaseUnmanagedResources();
+        await Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    private async Task Dispose(bool disposing)
+    {
         if (disposing)
         {
             cacheManager.Dispose();
         }
+        Dispose();
     }
 
     public void Dispose()
     {
-        Dispose(true).GetAwaiter().GetResult();
         GC.SuppressFinalize(this);
-    }
-
-    ~TVDoc()
-    {
-        Dispose(false).GetAwaiter().GetResult();
     }
 
     public void PreventAutoScan(string v)
@@ -2189,7 +2190,7 @@ public class TVDoc : IDisposable
         }
         else
         {
-            Logger.Warn($"User elected todo nothing with {fi.FullName}");
+            Logger.Warn($"User elected to do nothing with {fi.FullName}");
         }
     }
 

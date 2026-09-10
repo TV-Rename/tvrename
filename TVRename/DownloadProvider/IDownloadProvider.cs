@@ -17,8 +17,8 @@ public interface IDownloadProvider
 
     Task<List<TorrentEntry>?> GetTorrentDownloadsAsync();
 
-    void StartUrlDownload(string torrentUrl);
+    Task StartUrlDownloadAsync(string torrentUrl);
 
-    void StartTorrentDownload(FileInfo torrentFile);
+    Task StartTorrentDownloadAsync(FileInfo torrentFile);
     DownloadingFinder.DownloadApp Application { get; }
 }

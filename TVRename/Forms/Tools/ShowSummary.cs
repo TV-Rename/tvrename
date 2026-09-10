@@ -64,8 +64,7 @@ public partial class ShowSummary : Form, IDialogParent
 
         foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShowItems())
         {
-            bw.ReportProgress(100 * currentRecord.Value / total, si.ShowName);
-            currentRecord.Increment();
+            bw.ReportProgress(100 * currentRecord.Increment() / total, si.ShowName);
             showList.Add(AddShowDetails(si));
         }
     }

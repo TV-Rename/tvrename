@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
 
@@ -85,20 +87,25 @@ public partial class CollectionsView : Form
         ThreadSafeCounter current =new();
 
         collectionMovies.Clear();
-        foreach ((int collectionId, string collectionName) in collectionIds)
+
+        var options = new ParallelOptions
         {
-            Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collectionId, TVSettings.Instance.TMDBLanguage.Abbreviation);
+            MaxDegreeOfParallelism = 8 // Limit to 8 concurrent downloads at a time
+        };
+
+        Parallel.ForEach(collectionIds, options, async (collection) =>
+        {
+            Dictionary<int, CachedMovieInfo> shows = await TMDB.LocalCache.Instance.GetMovieIdsFromCollectionAsync(collection.Item1, TVSettings.Instance.TMDBLanguage.Abbreviation);
             foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
             {
-                CollectionMember c = new(collectionName, neededShow.Value);
+                CollectionMember c = new(collection.Item2, neededShow.Value);
 
                 c.IsInLibrary = mDoc.FilmLibrary.Movies.Any(configuration => configuration.TmdbCode == c.TmdbCode);
                 collectionMovies.Add(c);
             }
 
-            bw.ReportProgress(100 * current.Value / total, collectionName);
-            current.Increment();
-        }
+            bw.ReportProgress(100 * current.Increment() / total, collection.Item2);
+        });
     }
 
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)

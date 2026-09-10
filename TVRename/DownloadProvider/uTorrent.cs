@@ -20,7 +20,7 @@ internal class uTorrent : IDownloadProvider
     public string Name() => "uTorrent";
 
     /// <exception cref="NotSupportedException">Condition.</exception>
-    public void StartUrlDownload(string torrentUrl)
+    public async Task StartUrlDownloadAsync(string torrentUrl)
     {
         throw new NotSupportedException();
     }
@@ -60,7 +60,7 @@ internal class uTorrent : IDownloadProvider
     /// <exception cref="Win32Exception">An error occurred when opening the associated file</exception>
     /// <exception cref="ObjectDisposedException">The process object has already been disposed.</exception>
     /// <exception cref="System.IO.FileNotFoundException">The PATH environment variable has a string containing quotes.</exception>
-    public void StartTorrentDownload(FileInfo torrentFile)
+    public async Task StartTorrentDownloadAsync(FileInfo torrentFile)
     {
         System.Diagnostics.Process.Start(TVSettings.Instance.uTorrentPath, torrentFile.FullName.InDoubleQuotes());
     }

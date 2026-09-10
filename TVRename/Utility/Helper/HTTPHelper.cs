@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace TVRename;
 
@@ -264,10 +265,10 @@ public static class HttpHelper
 
     /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
-    public static byte[] Download(string url)
+    public static async Task<byte[]> DownloadAsync(string url, CancellationToken token)
     {
         using HttpClient wc = new();
-        return wc.GetByteArrayAsync(url).Result;
+        return await wc.GetByteArrayAsync(url,token);
     }
 
     public static string LoggableDetails(this System.IO.IOException ex)
@@ -412,7 +413,7 @@ public static class HttpHelper
 
                 Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.ErrorText()}");
 
-                Task.Delay(delay).Wait();
+                await Task.Delay(delay).ConfigureAwait(false);
                 try
                 {
                     updateOperation?.Invoke();
