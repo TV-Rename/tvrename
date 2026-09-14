@@ -3962,7 +3962,7 @@ public partial class UI : Form, IDialogParent
         {
             if (lvr.Count == 1) // only one selected
             {
-                showRightClickMenu.Add("Browse For...", (_, _) => BrowseForMissingItem((ItemMissing)lvr[0]));
+                showRightClickMenu.Add("Browse For...", (_, _) => BrowseForMissingItem((ItemMissing)lvr.First()));
             }
             if (episode != null)
             {
