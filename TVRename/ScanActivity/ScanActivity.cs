@@ -85,11 +85,11 @@ public abstract class ScanActivity(TVDoc doc, TVDoc.ScanSettings settings)
         try
         {
             LOGGER.Info($"Summary of known actions after check: {CheckName()}");
-            LOGGER.Info($"   Total Items: {MDoc.TheActionList.ToList().Count}");
-            LOGGER.Info($"   Missing Items: {MDoc.TheActionList.Missing.ToList().Count}");
-            LOGGER.Info($"   Copy/Move Items: {MDoc.TheActionList.CopyMoveRename.ToList().Count}");
-            LOGGER.Info($"   Downloading Items: {MDoc.TheActionList.Downloading.ToList().Count}");
-            LOGGER.Info($"   Total Actions: {MDoc.TheActionList.Actions.ToList().Count}");
+            LOGGER.Info($"   Total Items: {MDoc.TheActionList.Count}");
+            LOGGER.Info($"   Missing Items: {MDoc.TheActionList.Missing.Count}");
+            LOGGER.Info($"   Copy/Move Items: {MDoc.TheActionList.CopyMoveRename.Count}");
+            LOGGER.Info($"   Downloading Items: {MDoc.TheActionList.Downloading.Count}");
+            LOGGER.Info($"   Total Actions: {MDoc.TheActionList.Actions.Count}");
         }
         catch (InvalidOperationException)
         {

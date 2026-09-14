@@ -25,9 +25,9 @@ internal class RSSFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadFinde
             LOGGER.Info("Searching RSS Feeds is cancelled as this is an unattended scan");
             return;
         }
-        int c = ActionList.Missing.Count + 2;
-        int n = 1;
-        UpdateStatus(n, c, "Searching on RSS Feed...");
+        int c = ActionList.Missing.Count + 1;
+        ThreadSafeCounter n = new();
+        UpdateStatus(0, c, "Searching on RSS Feed...");
 
         // ReSharper disable once InconsistentNaming
         RssItemList RSSList = [];
@@ -46,7 +46,7 @@ internal class RSSFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadFinde
                 return;
             }
 
-            UpdateStatus(n++, c, action.Filename);
+            UpdateStatus(n.Increment(), c, action.Filename);
 
             ProcessedEpisode pe = action.MissingEpisode;
             ItemList newItemsForThisMissingEpisode = [];

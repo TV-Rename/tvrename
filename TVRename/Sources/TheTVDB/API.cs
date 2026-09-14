@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -160,26 +161,28 @@ public static class API
 
     public static async Task ReloadEpisodesAsync(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
     {
-        await Task.WhenAll(si.Seasons.Select(async s =>
-        {
-            Thread.CurrentThread.Name ??= $"Download Season {s.SeasonNumber} for {si.Name}"; // Can only set it once
-            try
+        await Parallel.ForEachAsync(si.Seasons,
+            new ParallelOptions { MaxDegreeOfParallelism = 4 },
+            async (s, token) =>
             {
-                await ReloadEpisodeAsync(code, locale, si, order, s);
-            }
-            catch (SourceConsistencyException sce)
-            {
-                Logger.Error(sce);
-            }
-            catch (SourceConnectivityException sce)
-            {
-                Logger.Warn(sce.ErrorText());
-            }
-            catch (MediaNotFoundException mnfe)
-            {
-                Logger.Error($"Season Issue: {mnfe.ErrorText()}");
-            }
-        }));
+                Thread.CurrentThread.Name ??= $"Download Season {s.SeasonNumber} for {si.Name}"; // Can only set it once
+                try
+                {
+                    await ReloadEpisodeAsync(code, locale, si, order, s);
+                }
+                catch (SourceConsistencyException sce)
+                {
+                    Logger.Error(sce);
+                }
+                catch (SourceConnectivityException sce)
+                {
+                    Logger.Warn(sce.ErrorText());
+                }
+                catch (MediaNotFoundException mnfe)
+                {
+                    Logger.Error($"Season Issue: {mnfe.ErrorText()}");
+                }
+            });
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
@@ -193,8 +196,9 @@ public static class API
 
         if (episodeData != null)
         {
-            Parallel.ForEach(episodeData,
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, async x =>
+            await Parallel.ForEachAsync(episodeData,
+                new ParallelOptions { MaxDegreeOfParallelism = 3 },
+                async (x,token) =>
                 {
                     int? epNumber = x["number"]?.ToObject<int>();
                     Thread.CurrentThread.Name ??=
@@ -274,8 +278,10 @@ public static class API
                 return;
             }
 
-            Parallel.ForEach(neededEpisodes,
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },async  x =>
+            //todo set parallel cancellation source
+            await Parallel.ForEachAsync(neededEpisodes,
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }
+                ,async  (x,token) =>
                 {
                     int? epNumber = x.jsonData["number"]?.ToObject<int>();
                     Thread.CurrentThread.Name ??=
@@ -407,11 +413,15 @@ public static class API
 
         result.LatestTime = updatesResponses.Max(API.GetUpdateTime);
 
-        Parallel.ForEach(updatesResponses, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, o =>
-        {
-            Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
-            result.AddRange(ProcessUpdate(o));
-        });
+        //todo set parallel cancellation source
+        await Parallel.ForEachAsync
+            (updatesResponses,
+            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+            async (o,token) =>
+                {
+                    Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
+                    result.AddRange(ProcessUpdate(o));
+                });
 
         if (auditUpdates && updatesResponses.Any())
         {
@@ -1596,13 +1606,16 @@ public static class API
     public class TvdbUpdateResponse
     {
         public long LatestTime;
-        private readonly SafeList<UpdateRecord> updates = [];
+        private readonly ConcurrentBag<UpdateRecord> updates = [];
 
         public IEnumerable<UpdateRecord> Updates => updates;
 
         public void AddRange(IEnumerable<UpdateRecord> update)
         {
-            updates.AddRange(update);
+            foreach (UpdateRecord u in update)
+            {
+                updates.Add(u);
+            }
         }
     }
 }

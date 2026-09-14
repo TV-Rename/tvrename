@@ -160,9 +160,9 @@ public static class HttpHelper
 
     private static async Task<string> TaskObtainStringFromUrl(string url, HttpClient client)
     {
-        var x = ObtainStringFromUrlFuncAsync(url, client);
-        var y = await x();
-        return y;
+        //var x = ObtainStringFromUrlFuncAsync(url, client);
+        //var y = await x();
+        return await ObtainStringFromUrlFuncAsync(url, client)();
     }
         
     

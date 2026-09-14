@@ -23,6 +23,20 @@ public static class UiHelpers
         tsi.Click += command;
         items.Add(tsi);
     }
+
+    public static void SetProgress(this ProgressBar pb, int value)
+    {
+        if (value >= pb.Maximum)
+        {
+            pb.Maximum = value;
+        }
+        if (value < pb.Minimum)
+        {
+            pb.Minimum = value;
+        }
+        pb.Value = value;
+    }
+
     public static bool ShowDialogAndOk(FolderBrowserDialogEx d, IWin32Window owner)
     {
         try

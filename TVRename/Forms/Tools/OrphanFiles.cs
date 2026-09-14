@@ -135,7 +135,8 @@ public partial class OrphanFiles : Form
         }
         else
         {
-            if (!show.SeasonEpisodes.TryGetValue(seasonNumber, out List<ProcessedEpisode>? episodes))
+            var episodes = show.EpisodesForSeason(seasonNumber);
+            if (episodes == null)
             {
                 issues.Add(new FileIssue(show, file, "Season not found", seasonNumber));
             }
@@ -153,7 +154,7 @@ public partial class OrphanFiles : Form
 
     private void BwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 

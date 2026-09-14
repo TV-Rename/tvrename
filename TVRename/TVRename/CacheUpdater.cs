@@ -41,7 +41,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
     {
         if (!DownloadIsHappening())
         {
-            downloadStopOnError = stopOnError;
+            downloadStopOnError = stopOnError; //TODO - Work out what this was for
             showErrorMsgBox = showMsgBox;
             DownloadPct = 0;
             downloadOk = true;
@@ -216,11 +216,11 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
                 return;
             }
 
-            Task<bool> tvmazeTask = await GetUpdates(TVDoc.ProviderType.TVmaze, p, cts).ConfigureAwait(false);
-            Task<bool> tvdbTask = await GetUpdates(TVDoc.ProviderType.TheTVDB, p, cts).ConfigureAwait(false);
-            Task<bool> tmdbTask = await GetUpdates(TVDoc.ProviderType.TMDB, p, cts).ConfigureAwait(false);
+            Task<bool> tvmazeTask = GetUpdates(TVDoc.ProviderType.TVmaze, p, cts);
+            Task<bool> tvdbTask = GetUpdates(TVDoc.ProviderType.TheTVDB, p, cts);
+            Task<bool> tmdbTask = GetUpdates(TVDoc.ProviderType.TMDB, p, cts);
 
-            Task.WaitAll(tvdbTask, tmdbTask, tvmazeTask);
+            await Task.WhenAll(tvdbTask, tmdbTask, tvmazeTask);
 
             if (tvdbTask.Result == false || tmdbTask.Result == false || tvmazeTask.Result == false) //one of the downloads that was needed failed, so we can't continue
             {
@@ -241,6 +241,16 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
             Logger.Info($"Working on {CountIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie)} TVDB and {CountIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie)} TMDB Movies.");
             Logger.Info($"Identified that {CountDirtyIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv)} TVDB, {CountDirtyIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv)} TMDB and {CountDirtyIdsFrom(TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv)} TV Maze shows need to be updated");
             Logger.Info($"Identified that {CountDirtyIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie)} TVDB and {CountDirtyIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie)} TMDB movies need to be updated");
+
+            /*
+            await Parallel.ForEachAsync(
+                downloadIds,
+                new ParallelOptions { MaxDegreeOfParallelism = numWorkers },
+                async (series,token) =>
+                {
+                    await GetThreadAsync(series, new SemaphoreSlim(numWorkers, numWorkers), p, cts);
+                }).ConfigureAwait(false);
+            */
 
             using (var semaphore = new SemaphoreSlim(numWorkers, numWorkers))
             {
@@ -285,9 +295,8 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
             }
         }
 
-        async Task<Task<bool>> GetUpdates(TVDoc.ProviderType provider, DownloadProgressStatus? p, CancellationToken cts)
+        async Task<bool> GetUpdates(TVDoc.ProviderType provider, DownloadProgressStatus? p, CancellationToken cts)
         {
-            Task<bool> task = Task.FromResult(true);
             if (downloadIds.Any(s => s.Provider == provider))
             {
                 if (p != null)
@@ -301,11 +310,10 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
                     ((IProgress<DownloadProgressReport>)p).Report(x);
                 }
 
-                task = TVDoc.GetMediaCache(provider).GetUpdatesAsync([.. downloadIds.Where(specifier => specifier.Provider == provider)], showErrorMsgBox, cts);
-                await task.ConfigureAwait(false);
+                return await TVDoc.GetMediaCache(provider).GetUpdatesAsync(p,downloadIds.Where(specifier => specifier.Provider == provider).ToList().ConvertAll(s=>s), showErrorMsgBox, cts);
             }
 
-            return task;
+            return true;
         }
     }
 

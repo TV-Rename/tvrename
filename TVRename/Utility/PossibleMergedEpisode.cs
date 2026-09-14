@@ -36,7 +36,7 @@ public class PossibleMergedEpisode(ProcessedEpisode episodeOne, ProcessedEpisode
             lvi.SubItems.Add(episodeOne.Name + " & " + episodeTwo.Name);
 
             List<string> names = [episodeOne.Name, episodeTwo.Name];
-            string combinedName = ShowLibrary.GetBestNameFor(names, "");
+            string combinedName = ShowConfiguration.GetBestNameFor(names, "");
             lvi.SubItems.Add(combinedName);
 
             lvi.Tag = this;

@@ -272,7 +272,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         {
             // ..and not already a folder for one of our shows
             string theFolder = di2.FullName.ToLower();
-            foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShowItems())
+            foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShows())
             {
                 if (RejectFolderIfIncludedInShow(fullLogging, si, theFolder))
                 {

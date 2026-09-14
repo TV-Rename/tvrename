@@ -152,7 +152,7 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
     private void LoadActors(XElement seriesXml)
     {
         ClearActors();
-        foreach (Actor a in seriesXml.Descendants("Actors").Descendants("Actor").Select(actorXml => new Actor(actorXml)))
+        foreach (Actor a in seriesXml.Descendants("Actors").First().Descendants("Actor").Select(actorXml => new Actor(actorXml)))
         {
             AddActor(a);
         }
@@ -161,7 +161,7 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
     private void LoadCrew(XElement seriesXml)
     {
         ClearCrew();
-        foreach (Crew c in seriesXml.Descendants("Crew").Descendants("CrewMember").Select(crewXml => new Crew(crewXml)))
+        foreach (Crew c in seriesXml.Descendants("Crew").First().Descendants("CrewMember").Select(crewXml => new Crew(crewXml)))
         {
             AddCrew(c);
         }
@@ -170,7 +170,7 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
     private void LoadAliases(XElement seriesXml)
     {
         Aliases = [];
-        foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
+        foreach (XElement aliasXml in seriesXml.Descendants("Aliases").First().Descendants("Alias"))
         {
             AddAlias(aliasXml.Value);
         }
@@ -179,7 +179,7 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
     private void LoadGenres(XElement seriesXml)
     {
         Genres = seriesXml
-            .Descendants("Genres")
+            .Descendants("Genres").First()
             .Descendants("Genre")
             .Select(g => g.Value.Trim()).Distinct()
             .ToSafeList();
@@ -209,7 +209,7 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
         }
         if (this is CachedSeriesInfo si)
         {
-            if (si.Seasons.Count() == 0)
+            if (!si.Seasons.Any())
             {
                 Dirty = true;
             }

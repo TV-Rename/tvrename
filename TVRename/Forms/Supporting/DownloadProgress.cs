@@ -79,7 +79,7 @@ public partial class DownloadProgress : Form
             TheTVDB.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ??
             TVmaze.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ??
             TMDB.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ?? string.Empty;
-        pbProgressBar.Value = mDoc.DownloadPct;
+        pbProgressBar.SetProgress(mDoc.DownloadPct);
         UiHelpers.SetProgress(mDoc.DownloadPct,ParentForm?.Handle ?? Handle);
     }
 }

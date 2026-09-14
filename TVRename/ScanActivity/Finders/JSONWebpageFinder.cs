@@ -30,8 +30,8 @@ internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downl
             return;
         }
         int c = ActionList.Missing.Count + 1;
-        int n = 0;
-        UpdateStatus(n, c, "Searching on JSON Page...");
+        ThreadSafeCounter n = new();
+        UpdateStatus(0, c, "Searching on JSON Page...");
 
         ItemList newItems = [];
         ItemList toRemove = [];
@@ -45,7 +45,7 @@ internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downl
                     return;
                 }
 
-                UpdateStatus(n++, c, action.Filename);
+                UpdateStatus(n.Increment(), c, action.Filename);
 
                 await FindMissingEpisodeAsync(action, toRemove, newItems, cache);
             }

@@ -68,7 +68,7 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
             return;
         }
 
-        List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
+        List<ProcessedEpisode> eps = si.EpisodesForSeason(snum);
 
         List<ShowRule> rulesToAdd = [];
 
@@ -142,7 +142,7 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
         if (rulesToAdd.Any())
         {
             //Regenerate the episodes with the new rule added
-            ShowLibrary.GenerateEpisodeDict(si);
+            si.UpdateEpisodeCaches();
         }
     }
 

@@ -25,7 +25,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
     protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         returnActions.Clear();
-        showList = MDoc.TvLibrary.GetSortedShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
+        showList = MDoc.TvLibrary.GetSortedShows(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
         movieList = MDoc.FilmLibrary.GetSortedMovies();
 
         //for each directory in settings directory
@@ -35,11 +35,11 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         //if so add show to list of files to be removed
 
         int totalDownloadFolders = TVSettings.Instance.DownloadFolders.Count;
-        int c = 0;
+        ThreadSafeCounter c = new();
 
         foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToList())
         {
-            UpdateStatus(c++, totalDownloadFolders, dirPath);
+            UpdateStatus(c.Increment(), totalDownloadFolders, dirPath);
 
             if (!Directory.Exists(dirPath) || Settings.Token.IsCancellationRequested)
             {
@@ -286,7 +286,9 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
     {
         FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE? re);
 
-        if (!si.SeasonEpisodes.TryGetValue(seasF, out List<ProcessedEpisode>? seasonEpisodes))
+        var seasonEpisodes = si.EpisodesForSeason(seasF);
+
+        if (!seasonEpisodes.Any())
         {
             LogError(fi, seasF, epF, re, si, "season");
             return (false, null);

@@ -70,6 +70,9 @@
     <Compile Update="Custom Controls\CodeFinder.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Forms\Tools\TaskNotifier.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\Tools\YTSRecomendations\YtsRecommendationView.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -34,9 +34,9 @@ internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadF
             return;
         }
 
-        int c = ActionList.Missing.Count + 2;
-        int n = 1;
-        UpdateStatus(n, c, "Searching with Jackett...");
+        int c = ActionList.Missing.Count + 1;
+        ThreadSafeCounter n = new();
+        UpdateStatus(0, c, "Searching with Jackett...");
 
         ItemList newItems = [];
         ItemList toRemove = [];
@@ -49,7 +49,7 @@ internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadF
                     return;
                 }
 
-                UpdateStatus(n++, c, action.Filename);
+                UpdateStatus(n.Increment(), c, action.Filename);
 
                 switch (action)
                 {

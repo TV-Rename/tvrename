@@ -151,7 +151,7 @@ public partial class AddEditSeasEpFinders : Form
         }
     }
 
-    private void FillGrid(IReadOnlyCollection<TVSettings.FilenameProcessorRE> list)
+    private void FillGrid(List<TVSettings.FilenameProcessorRE> list)
     {
         while (Grid1.Rows.Count > 1) // leave header row
         {

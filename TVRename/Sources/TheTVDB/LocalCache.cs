@@ -15,6 +15,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TVRename.Forms;
 using TVRename.Forms.Utilities;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -110,18 +111,19 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     public async Task<CachedMovieInfo?> GetMovieAsync(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) =>
         await this.GetMovieAsync(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
 
-    internal async Task<IEnumerable<CachedSeriesInfo>> ServerTvAccuracyCheckAsync()
+    internal async Task<IEnumerable<CachedSeriesInfo>> ServerTvAccuracyCheckAsync(DownloadProgressStatus? p = null)
     {
         TvdbAccuracyCheck check = new();
-
+        //TODO use DownloadProgressStatus
         Say($"TVDB Accuracy Check (TV) running for {FullShows().Count} shows.");
 
-        Parallel.ForEach(FullShows(),
+        //todo set parallel cancellation source
+        await Parallel.ForEachAsync(FullShows(),
             new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
-            async si =>
+            async (si,token) =>
             {
                 Thread.CurrentThread.Name ??= $"TVDB Consistency Check: {si.Name}"; // Can only set it once
-                await check.ServerAccuracyCheckAsync(si);
+                await check.ServerAccuracyCheckAsync(si,p);
             });
 
         foreach (string issue in check.Issues)
@@ -132,18 +134,19 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         SayNothing();
         return check.ShowsToUpdate;
     }
-    internal async Task<IEnumerable<CachedMovieInfo>> ServerMovieAccuracyCheckAsync()
+    internal async Task<IEnumerable<CachedMovieInfo>> ServerMovieAccuracyCheckAsync(DownloadProgressStatus? p = null)
     {
         TvdbAccuracyCheck check = new();
 
         Say($"TVDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
 
-        Parallel.ForEach(FullMovies(),
+        //todo set parallel cancellation source
+        await Parallel.ForEachAsync(FullMovies(),
             new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
-            async si =>
+            async (si, token) =>
             {
                 Thread.CurrentThread.Name ??= $"TVDB Consistency Check: {si.Name}"; // Can only set it once
-                await check.ServerAccuracyCheckAsync(si);
+                await check.ServerAccuracyCheckAsync(si, p);
             });
 
         foreach (string issue in check.Issues)
@@ -299,7 +302,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LOGGER.Info($"Forget everything, so we assume we have updates until {LatestUpdateTime}");
     }
 
-    public override async Task<bool> GetUpdatesAsync(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
+    public override async Task<bool> GetUpdatesAsync(DownloadProgressStatus? p, IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TheTVDB cache");
         AddPlaceholders(ss);
@@ -320,7 +323,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             LOGGER.Warn(
                 $"Not updating as update time is 0. Need to do a Full Refresh on {Series.Values.Count(info => !info.IsSearchResultOnly)} shows. {LatestUpdateTime}");
 
-            return await GetUpdatesManuallyAsync(); 
+            await ForgetEverythingAsync();
+            return true; // that's it for now
+
+            //return await GetUpdatesManuallyAsync(p); 
         }
 
         if (updateFromEpochTime == 0)
@@ -334,7 +340,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             SayNothing();
             LOGGER.Warn("Last update from TVDB was more than 10 weeks ago, so doing a full refresh.");
-            return await GetUpdatesManuallyAsync(); 
+            return await GetUpdatesManuallyAsync(p);
         }
 
         try
@@ -352,8 +358,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             }
 
             Say("Processing Updates from TVDB");
-            Parallel.ForEach(updatesResponse.Updates,
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, o =>
+
+            //todo set parallel cancellation source
+            await Parallel.ForEachAsync(updatesResponse.Updates,
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+                async (o,token) =>
                 {
                     Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
                     ProcessUpdate(o);
@@ -486,17 +495,19 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    private async Task<bool> GetUpdatesManuallyAsync()
+    private async Task<bool> GetUpdatesManuallyAsync(DownloadProgressStatus? p)
     {
         long time = TimeHelpers.UnixUtcNow();
-        IEnumerable<CachedSeriesInfo> seriesToUpdate = await ServerTvAccuracyCheckAsync();
+        p?.UpdateFromSource(TVDoc.ProviderType.TheTVDB, FullShows().Count + FullMovies().Count);
+
+        IEnumerable<CachedSeriesInfo> seriesToUpdate = await ServerTvAccuracyCheckAsync(p);
         foreach (CachedSeriesInfo s in seriesToUpdate)
         {
             this.ForgetShow(s);
             s.Dirty = true;
         }
        
-        IEnumerable<CachedMovieInfo> moviesToUpdate = await Instance.ServerMovieAccuracyCheckAsync();
+        IEnumerable<CachedMovieInfo> moviesToUpdate = await ServerMovieAccuracyCheckAsync(p);
         foreach (CachedMovieInfo s in moviesToUpdate)
         {
             this.ForgetMovie(s);
@@ -527,8 +538,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         // if more than x% of a show's episodes are marked as dirty, just download the entire show again
         foreach (KeyValuePair<int, CachedSeriesInfo> kvp in Series)
         {
-            int totaleps = kvp.Value.Episodes.Count;
-            int totaldirty = kvp.Value.Episodes.Count(episode => episode.Dirty);
+            CachedSeriesInfo cachedSeries = kvp.Value;
+
+            int totaleps = cachedSeries.Episodes.Count;
+            int totaldirty = cachedSeries.Episodes.Count(episode => episode.Dirty);
 
             float percentDirty = totaleps > 0
                 ? (float)totaldirty * 100 / totaleps
@@ -536,15 +549,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             if (totaleps > 0 && percentDirty >= TVSettings.Instance.PercentDirtyUpgrade()) // 10%
             {
-                kvp.Value.Dirty = true;
-                kvp.Value.ClearEpisodes();
+                cachedSeries.Dirty = true;
+                cachedSeries.ClearEpisodes();
                 LOGGER.Info(
-                    $"Planning to download all of {kvp.Value.Name} as {percentDirty}% of the episodes need to be updated");
+                    $"Planning to download all of {cachedSeries.Name} as {percentDirty}% of the episodes need to be updated");
             }
             else
             {
                 LOGGER.Trace(
-                    $"Not planning to download all of {kvp.Value.Name} as {percentDirty}% of the episodes need to be updated and that's less than the 10% limit to upgrade.");
+                    $"Not planning to download all of {cachedSeries.Name} as {percentDirty}% of the episodes need to be updated and that's less than the 10% limit to upgrade.");
             }
         }
     }
@@ -805,17 +818,20 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             extraEpisodes[e.EpisodeId].Done = false;
         }
 
-        Parallel.ForEach(extraEpisodes.Where(e => e.Value.SeriesId == code && !e.Value.Done), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },async ee =>
-        {
-            if (ee.Value.Done)
-            {
-                return;
-            }
-            Thread.CurrentThread.Name ??= $"Download Episode {ee.Value.EpisodeId}"; // Can only set it once
+        await Parallel.ForEachAsync(
+            extraEpisodes.Where(e => e.Value.SeriesId == code && !e.Value.Done),
+            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+            async (ee, token) =>
+                {
+                    if (ee.Value.Done)
+                    {
+                        return;
+                    }
+                    Thread.CurrentThread.Name ??= $"Download Episode {ee.Value.EpisodeId}"; // Can only set it once
 
-            ok = await DownloadEpisodeNowAsync(seriesd, ee.Key, seriesd.TargetLocale, ee.Value.Order) && ok;
-            ee.Value.Done = true;
-        });
+                    ok = await DownloadEpisodeNowAsync(seriesd, ee.Key, seriesd.TargetLocale, ee.Value.Order) && ok;
+                    ee.Value.Done = true;
+                });
 
         HaveReloaded(code);
 

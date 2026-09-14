@@ -379,7 +379,7 @@ public static class FileHelper
 
         //Important we have the longer ones first
         string[] regexPatterns =
-        {
+        [
             @"(?<ext>\.synced\.\w{2}-\w{2}\" + TOKEN + ")$",
             @"(?<ext>\.synced\.\w{2,3}\" + TOKEN + ")$",
             @"(?<ext>\.\w{2,3}\.synced\" + TOKEN + ")$",
@@ -402,7 +402,7 @@ public static class FileHelper
 
             @"(?<ext>\.\w{2,3}\" + TOKEN + ")$",
             @"(?<ext>\.\w{2}-\w{2}\" + TOKEN + ")$",
-        };
+        ];
 
         foreach (string subExtension in TVSettings.Instance.SubtitleExtensionsArray
                      .Where(subExtension => file.Name.EndsWith(subExtension, StringComparison.CurrentCultureIgnoreCase))
@@ -885,10 +885,10 @@ public static class FileHelper
     public static string FileFullNameNoExt(this FileInfo f) => f.FullName.RemoveAfter(f.Extension);
 
     private static readonly Regex[] MovieMultiPartRegex =
-    {
+    [
         new(@"(?<base>.*)[ _.-]+(cd|dvd|pt|part|disc|disk)[ _.-0]*(?<part>[0-9]|[A-D])$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         new(@"(?<base>.*)[ ._-]+(?<part>[A-D])$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
-    };
+    ];
 
     public static bool IsRecycleBin(this DirectoryInfo di2)
     {
@@ -956,9 +956,9 @@ public static class FileHelper
             var buffer = new byte[bufferSize];
             int bytesRead;
 
-            while ((bytesRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+            while ((bytesRead = await sourceStream.ReadAsync(buffer, cancellationToken)) > 0)
             {
-                await destStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
+                await destStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
                 bytesTransferred += bytesRead;
 
                 progress.Report(new CopyMoveProgress

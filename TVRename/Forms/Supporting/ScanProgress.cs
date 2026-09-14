@@ -34,8 +34,7 @@ public partial class ScanProgress : Form
     private string? msg;
     private string? lastUpdate;
     private readonly UI ui;
-
-    private CancellationTokenSource cancellationToken;
+    private readonly CancellationTokenSource cancellationToken;
     public ScanProgress(UI ui, bool autoBulkAdd, bool mediaLib, bool downloadFolder, bool searchLocal,
         bool downloading, bool rss, CancellationTokenSource cancellationToken)
     {
@@ -57,17 +56,17 @@ public partial class ScanProgress : Form
 
     private void UpdateProg()
     {
-        pbBulkAutoAdd.Value = pctAutoBulkAdd.Between(0, 100);
+        pbBulkAutoAdd.SetProgress(pctAutoBulkAdd);
         pbBulkAutoAdd.Update();
-        pbMediaLib.Value = pctMediaLib.Between(0, 100);
+        pbMediaLib.SetProgress(pctMediaLib);
         pbMediaLib.Update();
-        pbDownloadFolder.Value = pctDownloadFolder.Between(0, 100);
+        pbDownloadFolder.SetProgress(pctDownloadFolder);
         pbDownloadFolder.Update();
-        pbLocalSearch.Value = pctLocalSearch.Between(0, 100);
+        pbLocalSearch.SetProgress(pctLocalSearch);
         pbLocalSearch.Update();
-        pbRSS.Value = pctDownloading.Between(0, 100);
+        pbRSS.SetProgress(pctDownloading);
         pbRSS.Update();
-        pbDownloading.Value = pctuTorrent.Between(0, 100);
+        pbDownloading.SetProgress(pctuTorrent);
         pbDownloading.Update();
 
         if (!finished)

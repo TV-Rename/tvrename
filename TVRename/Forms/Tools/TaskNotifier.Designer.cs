@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace TVRename.Forms.Tools
 {
-    partial class Notifier
+    public partial class TaskNotifier
     {
         /// <summary>
         /// Required designer variable.
@@ -34,7 +34,6 @@ namespace TVRename.Forms.Tools
             this.btnCancel = new System.Windows.Forms.Button();
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.lblMessage = new System.Windows.Forms.Label();
-            this.bwDo = new System.ComponentModel.BackgroundWorker();
             this.lblLastUpdate = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -66,14 +65,6 @@ namespace TVRename.Forms.Tools
             this.lblMessage.Size = new System.Drawing.Size(520, 24);
             this.lblMessage.TabIndex = 3;
             this.lblMessage.Text = "";
-            // 
-            // bwDo
-            // 
-            this.bwDo.WorkerReportsProgress = true;
-            this.bwDo.WorkerSupportsCancellation = true;
-            this.bwDo.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwDo_DoWork);
-            this.bwDo.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwDo_ProgressChanged);
-            this.bwDo.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwDo_RunWorkerCompleted);
             // 
             // lblLastUpdate
             // 
@@ -116,7 +107,6 @@ namespace TVRename.Forms.Tools
 
         #endregion
 
-        private BackgroundWorker bwDo;
         private System.Windows.Forms.Label lblLastUpdate;
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TVRename.Forms;
 
 namespace TVRename;
 
@@ -158,5 +159,5 @@ public abstract class MediaCache
     public abstract int PrimaryKey(ISeriesSpecifier ss);
     public abstract string CacheSourceName();
     public abstract Task ReConnectAsync(bool b);
-    public abstract Task<bool> GetUpdatesAsync(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts);
+    public abstract Task<bool> GetUpdatesAsync(DownloadProgressStatus? p, IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts);
 }

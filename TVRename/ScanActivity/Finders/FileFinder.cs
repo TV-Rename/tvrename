@@ -270,12 +270,12 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
         LOGGER.Info($"Added new rule automatically for {sr}");
 
         //Regenerate the episodes with the new rule added
-        ShowLibrary.GenerateEpisodeDict(me.MissingEpisode.Show);
+        me.MissingEpisode.Show.UpdateEpisodeCaches();
 
         //Get the newly created processed episode we are after
         // ReSharper disable once InconsistentNaming
         ProcessedEpisode newPE = me.MissingEpisode;
-        foreach (ProcessedEpisode pe in me.MissingEpisode.Show.SeasonEpisodes[seasF])
+        foreach (ProcessedEpisode pe in me.MissingEpisode.Show.EpisodesForSeason(seasF))
         {
             if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp)
             {

@@ -25,29 +25,24 @@ namespace TVRename;
 /// </summary>
 public partial class EditSeason : Form
 {
-    private readonly CustomEpisodeName nameStyle;
     private readonly List<ShowRule> workingRuleSet;
-    private readonly List<ProcessedEpisode>? mOriginalEps;
+    private readonly List<ProcessedEpisode> mOriginalEps;
     private readonly ShowConfiguration show;
     private readonly int mSeasonNumber;
-    private readonly List<ProcessedEpisode> episodesToAddToSeen;
-    private readonly List<ProcessedEpisode> episodesToRemoveFromSeen;
+    private readonly List<ProcessedEpisode> episodesToAddToSeen = [];
+    private readonly List<ProcessedEpisode> episodesToRemoveFromSeen = [];
 
-    public EditSeason(ShowConfiguration si, int seasonNumber, CustomEpisodeName style)
+    public EditSeason(ShowConfiguration si, int seasonNumber)
     {
-        mOriginalEps = ShowLibrary.GenerateEpisodes(si, seasonNumber, false);
+        mOriginalEps = si.GetRawEpisodes(seasonNumber) ?? [];
 
-        nameStyle = style;
         InitializeComponent();
-
-        episodesToAddToSeen = [];
-        episodesToRemoveFromSeen = [];
 
         show = si;
         mSeasonNumber = seasonNumber;
 
         workingRuleSet = si.SeasonRules.TryGetValue(seasonNumber, out List<ShowRule>? rule)
-            ? [.. rule]
+            ? rule.ToList()
             : [];
 
         txtShowName.Text = si.ShowName.ToUiVersion();
@@ -79,15 +74,12 @@ public partial class EditSeason : Form
         }
 
         lvSeenEpisodes.Items.Clear();
-        if (mOriginalEps != null)
+        foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => ep.PreviouslySeen))
         {
-            foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => ep.PreviouslySeen))
-            {
-                ListViewItem lvi = new() { Text = ep.EpisodeNumbersAsText };
-                lvi.SubItems.Add(ep.Name);
-                lvi.Tag = ep;
-                lvSeenEpisodes.Items.Add(lvi);
-            }
+            ListViewItem lvi = new() { Text = ep.EpisodeNumbersAsText };
+            lvi.SubItems.Add(ep.Name);
+            lvi.Tag = ep;
+            lvSeenEpisodes.Items.Add(lvi);
         }
 
         if (keepSel)
@@ -108,7 +100,7 @@ public partial class EditSeason : Form
     private void bnAddRule_Click(object sender, System.EventArgs e)
     {
         ShowRule sr = new();
-        AddModifyRule ar = new(sr, show, ProcessedEpisodes());
+        AddModifyRule ar = new(sr, show, ProposedProcessedEpisodes());
 
         bool res = ar.ShowDialog(this) == DialogResult.OK;
         if (res)
@@ -177,7 +169,7 @@ public partial class EditSeason : Form
 
         if (sr is null) return;
 
-        AddModifyRule ar = new(sr, show, ProcessedEpisodes());
+        AddModifyRule ar = new(sr, show, ProposedProcessedEpisodes());
         ar.ShowDialog(this); // modifies rule in-place if OK'd
         FillRuleList(false, 0);
     }
@@ -243,7 +235,7 @@ public partial class EditSeason : Form
 
     private void bnOK_Click(object sender, System.EventArgs e)
     {
-        show.SeasonRules[mSeasonNumber] = workingRuleSet;
+        show.UpdateSeasonRules(mSeasonNumber, workingRuleSet);
         ApplyChangesToSeenEpisodes();
         Close();
     }
@@ -268,31 +260,28 @@ public partial class EditSeason : Form
 
     private void FillPreview()
     {
-        IEnumerable<ProcessedEpisode> pel = ProcessedEpisodes();
+        List<ProcessedEpisode> pel = ProposedProcessedEpisodes();
 
         lbEpsPreview.BeginUpdate();
         lbEpsPreview.Items.Clear();
         foreach (ProcessedEpisode pe in pel)
         {
-            lbEpsPreview.Items.Add(nameStyle.NameFor(pe));
+            lbEpsPreview.Items.Add(TVSettings.Instance.NamingStyle.NameFor(pe));
         }
 
         lbEpsPreview.EndUpdate();
     }
 
-    private IEnumerable<ProcessedEpisode> ProcessedEpisodes()
+    private List<ProcessedEpisode> ProposedProcessedEpisodes()
     {
         List<ProcessedEpisode> pel = [];
 
-        if (mOriginalEps != null)
+        foreach (ProcessedEpisode pe in mOriginalEps)
         {
-            foreach (ProcessedEpisode pe in mOriginalEps)
-            {
-                pel.Add(new ProcessedEpisode(pe));
-            }
-
-            ShowLibrary.ApplyRules(pel, workingRuleSet, show);
+            pel.Add(new ProcessedEpisode(pe));
         }
+
+        show.ApplyRules(pel, workingRuleSet);
 
         return pel;
     }
@@ -300,11 +289,7 @@ public partial class EditSeason : Form
     private void Button2_Click(object sender, System.EventArgs e)
     {
         List<ProcessedEpisode> possibleEpisodes = [];
-        if (mOriginalEps != null)
-        {
-            possibleEpisodes.AddRange(mOriginalEps.Where(testEp => !testEp.PreviouslySeen).Where(testEp => !episodesToAddToSeen.Contains(testEp)));
-        }
-
+        possibleEpisodes.AddRange(mOriginalEps.Where(testEp => !testEp.PreviouslySeen).Where(testEp => !episodesToAddToSeen.Contains(testEp)));
         possibleEpisodes.AddRange(episodesToRemoveFromSeen);
 
         NewSeenEpisode nse = new(possibleEpisodes);

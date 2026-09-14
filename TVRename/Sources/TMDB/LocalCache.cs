@@ -241,7 +241,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
     }
 
-    public override async Task<bool> GetUpdatesAsync(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
+    public override async Task<bool> GetUpdatesAsync(DownloadProgressStatus? p, IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TMDB cache");
         this.MarkPlaceHoldersDirty(ss);
@@ -1264,7 +1264,10 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         try
         {
-            Parallel.ForEach(FullShows(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, async si =>
+            await Parallel.ForEachAsync(
+                FullShows(),
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+                async (si,token) =>
             {
                 Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
                 await check.ServerAccuracyCheckAsync(si);
@@ -1295,11 +1298,15 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         try
         {
-            Parallel.ForEach(FullMovies(), new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, async si =>
-            {
-                Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
-                await check.ServerAccuracyCheckAsync(si);
-            });
+            //todo set parallel cancellation source
+            await Parallel.ForEachAsync(
+                FullMovies(),
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+                async (si, token) =>
+                {
+                    Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
+                    await check.ServerAccuracyCheckAsync(si);
+                });
         }
         catch (OperationCanceledException ex)
         {
@@ -1410,7 +1417,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         Task<SearchContainer<SearchTv>?> related = Client.GetTvShowRecommendationsAsync(arg.TmdbCode, languageCode);
         Task<SearchContainer<SearchTv>?> similar = Client.GetTvShowSimilarAsync(arg.TmdbCode, languageCode);
 
-        Task.WaitAll(related, similar);
+        await Task.WhenAll(related, similar);
+
         if (related.Result != null)
         {
             foreach (SearchTv? s in related.Result.Results ?? [])

@@ -17,9 +17,9 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
         ItemList toRemove = [];
         DirFilesCache dfc = new();
 
-        int currentItem = 0;
+        ThreadSafeCounter currentItem = new();
         int totalN = ActionList.Missing.Count + 1;
-        UpdateStatus(currentItem, totalN, "Starting searching through library looking for files");
+        UpdateStatus(currentItem.Increment(), totalN, "Starting searching through library looking for files");
 
         LOGGER.Info("Starting to look for missing items in the library");
 
@@ -30,7 +30,7 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
                 return;
             }
 
-            UpdateStatus(currentItem++, totalN, me.Filename);
+            UpdateStatus(currentItem.Increment(), totalN, me.Filename);
 
             if (me is ShowItemMissing sim)
             {

@@ -6,12 +6,13 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using System;
 using Alphaleonis.Win32.Filesystem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TVRename.Forms;
 
 // Talk to the TVmaze web API, and get tv cachedSeries info
 
@@ -122,7 +123,7 @@ public class LocalCache : MediaCache, iTVSource
         return true;
     }
 
-    public override async Task<bool> GetUpdatesAsync(List<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
+    public override async Task<bool> GetUpdatesAsync(DownloadProgressStatus? p, IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
         Say("Validating TVmaze cache");
         foreach (ISeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvMazeId)))
@@ -287,7 +288,7 @@ public class LocalCache : MediaCache, iTVSource
 
     public void LatestUpdateTimeIs(string time)
     {
-        //No Need to do anything aswe always refresh from scratch
+        //No Need to do anything as we always refresh from scratch
     }
 
     public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TVmaze;

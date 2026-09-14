@@ -35,9 +35,6 @@ public class ShowConfiguration : MediaConfiguration
     public bool AlternateOrder;
     public readonly List<int> IgnoreSeasons;
     public readonly ConcurrentDictionary<int, List<string>> ManualFolderLocations;
-    public readonly ConcurrentDictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
-    private readonly ConcurrentDictionary<int, ProcessedSeason> airedSeasons;
-    private readonly ConcurrentDictionary<int, ProcessedSeason> dvdSeasons;
     public readonly ConcurrentDictionary<int, List<ShowRule>> SeasonRules;
     public bool ShowNextAirdate;
     public bool UseSequentialMatch;
@@ -49,6 +46,8 @@ public class ShowConfiguration : MediaConfiguration
     public string CustomNamingFormat;
     public bool ManualFoldersReplaceAutomatic;
 
+    private readonly EpisodeDenormalisations EpisodeCaches = new ();
+
     public string ShowTimeZone { get; internal set; }
     private DateTimeZone? seriesTimeZone;
     private string lastFiguredTz;
@@ -57,6 +56,7 @@ public class ShowConfiguration : MediaConfiguration
         AlternateOrder ? ProcessedSeason.SeasonType.alternate :
         DvdOrder ? ProcessedSeason.SeasonType.dvd :
         ProcessedSeason.SeasonType.aired;
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
     #region AutomaticFolderType enum
 
@@ -74,9 +74,7 @@ public class ShowConfiguration : MediaConfiguration
     {
         ManualFolderLocations = new ConcurrentDictionary<int, List<string>>();
         SeasonRules = new ConcurrentDictionary<int, List<ShowRule>>();
-        SeasonEpisodes = new ConcurrentDictionary<int, List<ProcessedEpisode>>();
-        airedSeasons = new ConcurrentDictionary<int, ProcessedSeason>();
-        dvdSeasons = new ConcurrentDictionary<int, ProcessedSeason>();
+
         IgnoreSeasons = [];
 
         UseCustomRegion = false;
@@ -128,42 +126,7 @@ public class ShowConfiguration : MediaConfiguration
         SetId(type, code);
     }
 
-    public void AddEpisode(Episode e)
-    {
-        ProcessedSeason airedProcessedSeason = GetOrAddAiredSeason(e.AiredSeasonNumber, e.SeasonId);
-        airedProcessedSeason.AddUpdateEpisode(e);
-
-        ProcessedSeason dvdProcessedSeason = GetOrAddDvdSeason(e.DvdSeasonNumber, e.SeasonId);
-        dvdProcessedSeason.AddUpdateEpisode(e);
-    }
-
     public string ShowStatus => CachedShow?.Status ?? "Unknown";
-
-    public ProcessedSeason GetOrAddAiredSeason(int num, int seasonId)
-    {
-        if (airedSeasons.TryGetValue(num, out ProcessedSeason? airedSeason))
-        {
-            return airedSeason;
-        }
-
-        ProcessedSeason s = new(this, num, seasonId, ProcessedSeason.SeasonType.aired);
-        airedSeasons[num] = s;
-
-        return s;
-    }
-
-    public ProcessedSeason GetOrAddDvdSeason(int num, int seasonId)
-    {
-        if (dvdSeasons.TryGetValue(num, out ProcessedSeason? dvdSeason))
-        {
-            return dvdSeason;
-        }
-
-        ProcessedSeason s = new(this, num, seasonId, ProcessedSeason.SeasonType.dvd);
-        dvdSeasons[num] = s;
-
-        return s;
-    }
 
     public int GetSeasonIndex(int seasonNumber)
     {
@@ -184,14 +147,14 @@ public class ShowConfiguration : MediaConfiguration
     internal void RemoveEpisode(int episodeId)
     {
         //Remove from Aired and DVD Seasons
-        dvdSeasons.Values.ForEach(s => s.RemoveEpisode(episodeId));
-        airedSeasons.Values.ForEach(s => s.RemoveEpisode(episodeId));
+        EpisodeCaches.dvdSeasons.Values.ForEach(s => s.RemoveEpisode(episodeId));
+        EpisodeCaches.airedSeasons.Values.ForEach(s => s.RemoveEpisode(episodeId));
     }
 
     /// <exception cref="EpisodeNotFoundException">Condition.</exception>
     internal ProcessedEpisode GetEpisode(int seasF, int epF)
     {
-        if (SeasonEpisodes.TryGetValue(seasF, out List<ProcessedEpisode>? season))
+        if (EpisodeCaches.SeasonEpisodes.TryGetValue(seasF, out List<ProcessedEpisode>? season))
         {
             foreach (ProcessedEpisode pep in season.Where(pep => pep.AppropriateEpNum == epF))
             {
@@ -207,7 +170,7 @@ public class ShowConfiguration : MediaConfiguration
         get
         {
             DateTime? returnValue = null;
-            foreach (ProcessedSeason s in airedSeasons.Values) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+            foreach (ProcessedSeason s in EpisodeCaches.airedSeasons.Values) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
             {
                 DateTime? seasonLastAirDate = s.LastAiredDate();
 
@@ -499,7 +462,7 @@ public class ShowConfiguration : MediaConfiguration
                 return false;
             }
 
-            foreach (KeyValuePair<int, ProcessedSeason> s in airedSeasons)
+            foreach (KeyValuePair<int, ProcessedSeason> s in EpisodeCaches.airedSeasons)
             {
                 if (IgnoreSeasons.Contains(s.Key))
                 {
@@ -531,7 +494,7 @@ public class ShowConfiguration : MediaConfiguration
                 return false;
             }
 
-            foreach (KeyValuePair<int, ProcessedSeason> s in airedSeasons)
+            foreach (KeyValuePair<int, ProcessedSeason> s in EpisodeCaches.airedSeasons)
             {
                 if (IgnoreSeasons.Contains(s.Key))
                 {
@@ -556,7 +519,7 @@ public class ShowConfiguration : MediaConfiguration
     {
         get
         {
-            return SeasonEpisodes
+            return EpisodeCaches.SeasonEpisodes
                 .Where(pair => !IgnoreSeasons.Contains(pair.Key)) //not an ignored season
                 .Where(pair => !(pair.Key == 0 && TVSettings.Instance.IgnoreAllSpecials)) //not a specials where all specials are ignored
                 .Where(pair => !(pair.Key == 0 && CountSpecials)); //not a specials where this shows specials are ignored
@@ -632,7 +595,7 @@ public class ShowConfiguration : MediaConfiguration
     public int MaxSeason()
     {
         int max = 0;
-        foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in SeasonEpisodes)
+        foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in EpisodeCaches.SeasonEpisodes)
         {
             if (kvp.Key > max)
             {
@@ -732,26 +695,6 @@ public class ShowConfiguration : MediaConfiguration
         writer.WriteEndElement(); // ShowItem
     }
 
-    // ReSharper disable once UnusedMember.Global
-    public Dictionary<int, List<ProcessedEpisode>> GetDvdSeasons()
-    {
-        //We will create this on the fly
-        Dictionary<int, List<ProcessedEpisode>> returnValue = [];
-        foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in SeasonEpisodes)
-        {
-            foreach (ProcessedEpisode ep in kvp.Value)
-            {
-                if (!returnValue.ContainsKey(ep.DvdSeasonNumber))
-                {
-                    returnValue.Add(ep.DvdSeasonNumber, []);
-                }
-                returnValue[ep.DvdSeasonNumber].Add(ep);
-            }
-        }
-
-        return returnValue;
-    }
-
     protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
     {
         Dictionary<int, SafeList<string>> fld = [];
@@ -823,7 +766,7 @@ public class ShowConfiguration : MediaConfiguration
         value.Add(sr);
     }
 
-    public ConcurrentDictionary<int, ProcessedSeason> AppropriateSeasons() => DvdOrder ? dvdSeasons : airedSeasons;
+    public ConcurrentDictionary<int, ProcessedSeason> AppropriateSeasons() => DvdOrder ? EpisodeCaches.dvdSeasons : EpisodeCaches.airedSeasons;
 
     public ProcessedSeason? GetFirstAvailableSeason()
     {
@@ -832,7 +775,7 @@ public class ShowConfiguration : MediaConfiguration
 
     public ProcessedEpisode? GetFirstAvailableEpisode()
     {
-        return SeasonEpisodes.Values.SelectMany(season => season).FirstOrDefault();
+        return EpisodeCaches.SeasonEpisodes.Values.SelectMany(season => season).FirstOrDefault();
     }
 
     public bool InOneFolder() => AutoAddType == AutomaticFolderType.baseOnly;
@@ -843,7 +786,7 @@ public class ShowConfiguration : MediaConfiguration
 
     public bool NoAirdatesUntilNow(int maxSeasonNumber)
     {
-        int lastPossibleSeason = SeasonEpisodes.Keys.DefaultIfEmpty(1).Max();
+        int lastPossibleSeason = EpisodeCaches.SeasonEpisodes.Keys.DefaultIfEmpty(1).Max();
 
         // for specials "season", see if any season has any aired dates
         // otherwise, check only up to the season we are considering
@@ -853,12 +796,12 @@ public class ShowConfiguration : MediaConfiguration
             try
             {
                 LOGGER.Warn(
-                    $"{Name} has a problem with series in {Order.PrettyPrint()} order - max={maxSeasonToUse}, keys = {SeasonEpisodes.Keys.ToCsv()}, numberOfEps = {SeasonEpisodes.Count}");
+                    $"{Name} has a problem with series in {Order.PrettyPrint()} order - max={maxSeasonToUse}, keys = {EpisodeCaches.SeasonEpisodes.Keys.ToCsv()}, numberOfEps = {EpisodeCaches.SeasonEpisodes.Count}");
             }
             catch (OverflowException ex)
             {
                 LOGGER.Error(
-                    $"{Name} has a problem with series in {Order.PrettyPrint()} order - max={maxSeasonToUse}, keys = {SeasonEpisodes.Keys.ToCsv()}, numberOfEps = OVERFLOW",ex);
+                    $"{Name} has a problem with series in {Order.PrettyPrint()} order - max={maxSeasonToUse}, keys = {EpisodeCaches.SeasonEpisodes.Keys.ToCsv()}, numberOfEps = OVERFLOW",ex);
             }
 
             return true;
@@ -883,16 +826,9 @@ public class ShowConfiguration : MediaConfiguration
 
     public IEnumerable<int> GetSeasonKeys()
     {
-        int[] numbers = new int[SeasonEpisodes.Keys.Count];
-        SeasonEpisodes.Keys.CopyTo(numbers, 0);
+        int[] numbers = new int[EpisodeCaches.SeasonEpisodes.Keys.Count];
+        EpisodeCaches.SeasonEpisodes.Keys.CopyTo(numbers, 0);
         return numbers;
-    }
-
-    public void ClearEpisodes()
-    {
-        SeasonEpisodes.Clear();
-        airedSeasons.Clear();
-        dvdSeasons.Clear();
     }
 
     public IEnumerable<Episode> EpisodesToUse()
@@ -918,7 +854,562 @@ public class ShowConfiguration : MediaConfiguration
         return returnValue;
     }
 
+    internal void UpdateSeasonRules(int mSeasonNumber, List<ShowRule> workingRuleSet)
+    {
+        SeasonRules[mSeasonNumber] = workingRuleSet;
+    }
+    
+    internal void UpdateEpisodeCaches()
+    {
+        {
+            CachedSeriesInfo? ser = TVDoc.GetMediaCache(Provider).GetSeries(Code);
+
+            if (ser is null)
+            {
+                Logger.Warn($"Asked to generate episodes for {ShowName}, but this has not yet been downloaded from {Provider.PrettyPrint()}");
+                return;
+            }
+            if (ser != CachedShow)
+            {
+                Logger.Warn($"Asked to generate episodes for {ShowName}, but current prvider {Provider.PrettyPrint()} has returned different data {ser.Id()} vs {CachedShow?.Id()}");
+                return;
+            }
+
+            EpisodeCaches.UpdateEpisodeDictionary(ser,this);
+
+            foreach (int snum in AppropriateSeasons().Keys.ToList())
+            {
+                List<ProcessedEpisode>? pel = GenerateEpisodes(snum, true);
+                EpisodeCaches.SeasonEpisodes[snum] = pel ?? [];
+            }
+
+            {
+                // now, go through and number them all sequentially
+                List<int> theKeys = [.. AppropriateSeasons().Keys];
+                theKeys.Sort();
+
+                int overallCount = 1;
+                foreach (int snum in theKeys)
+                {
+                    if (snum == 0)
+                    {
+                        continue;
+                    }
+
+                    foreach (ProcessedEpisode pe in EpisodeCaches.SeasonEpisodes[snum])
+                    {
+                        pe.OverallNumber = overallCount;
+                        overallCount += 1 + pe.EpNum2 - pe.AppropriateEpNum;
+                    }
+                }
+            }
+        }
+
+    }
+
+    public List<ProcessedEpisode>? GetRawEpisodes(int snum) => GenerateEpisodes(snum, false);
+    public List<ProcessedEpisode>? GenerateEpisodes(int snum) => GenerateEpisodes(snum, true);
+
+    /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
+    private List<ProcessedEpisode>? GenerateEpisodes(int snum, bool applyRules)
+    {
+        if (!AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? seas))
+        {
+            Logger.Error($"Asked to update season {snum} of {ShowName}, but it does not exist");
+            return null;
+        }
+
+        List<ProcessedEpisode> eis = [.. seas.Episodes.Values.Select(e => new ProcessedEpisode(e, this))];
+
+        switch (Order)
+        {
+            case ProcessedSeason.SeasonType.dvd:
+                eis.Sort(ProcessedEpisode.DVDOrderSorter);
+                AutoMerge(eis);
+                Renumber(eis);
+                break;
+
+            case ProcessedSeason.SeasonType.aired:
+                eis.Sort(ProcessedEpisode.EpNumberSorter);
+                break;
+
+            case ProcessedSeason.SeasonType.alternate:
+                eis.Sort(ProcessedEpisode.EpNumberSorter);
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException("Order", $"GenerateEpisodes: si has invalid Order {Order}");
+        }
+
+        if (CountSpecials && AppropriateSeasons().ContainsKey(0) && !TVSettings.Instance.IgnoreAllSpecials)
+        {
+            // merge specials in
+            MergeSpecialsIn(this, snum, eis);
+        }
+
+        if (applyRules)
+        {
+            List<ShowRule>? rules = RulesForSeason(snum);
+            if (rules != null)
+            {
+                ApplyRules(eis, rules);
+            }
+        }
+
+        return eis;
+    }
+
+    private void AutoMerge(List<ProcessedEpisode> eis)
+    {
+        for (int i = 1; i < eis.Count; i++)
+        {
+            if (eis[i - 1].DvdEpNum == eis[i].DvdEpNum && eis[i].DvdEpNum > 0)
+            {
+                //We have a candidate to merge
+                MergeEpisodes(eis, RuleAction.kMerge, i - 1, i, null);
+            }
+        }
+    }
+
+    private static void MergeSpecialsIn(ShowConfiguration si, int snum, List<ProcessedEpisode> eis)
+    {
+        foreach (Episode ep in si.AppropriateSeasons()[0].Episodes.Values)
+        {
+            MergeEpisode(si, snum, ep, eis);
+        }
+
+        // renumber to allow for specials
+        int epnumr = 1;
+        foreach (ProcessedEpisode t in eis)
+        {
+            t.SetEpisodeNumbers(epnumr, epnumr + t.EpNum2 - t.AppropriateEpNum);
+            epnumr++;
+        }
+    }
+
+    private static void MergeEpisode(ShowConfiguration si, int snum, Episode ep, List<ProcessedEpisode> eis)
+    {
+        if (!ep.AirsBeforeSeason.HasValue)
+        {
+            return;
+        }
+
+        if (!ep.AirsBeforeEpisode.HasValue)
+        {
+            return;
+        }
+
+        int sease = ep.AirsBeforeSeason.Value;
+        if (sease != snum)
+        {
+            return;
+        }
+
+        int epnum = ep.AirsBeforeEpisode.Value;
+        for (int i = 0; i < eis.Count; i++)
+        {
+            if (eis[i].AppropriateSeasonNumber == sease && eis[i].AppropriateEpNum == epnum)
+            {
+                ProcessedEpisode pe = new(ep, si)
+                {
+                    TheAiredProcessedSeason = eis[i].TheAiredProcessedSeason,
+                    TheDvdProcessedSeason = eis[i].TheDvdProcessedSeason,
+                    SeasonId = eis[i].SeasonId
+                };
+
+                eis.Insert(i, pe);
+                break;
+            }
+        }
+    }
+
+    public  void ApplyRules(List<ProcessedEpisode> eis, IEnumerable<ShowRule> rules)
+    {
+        foreach (ShowRule sr in rules)
+        {
+            ApplyRule(eis, sr);
+        } // for each rule
+
+        RemoveIgnoredEpisodes(eis);
+    }
+
+    private void ApplyRule(List<ProcessedEpisode> episodes, ShowRule sr)
+    {
+        try
+        {
+            // turn nn1 and nn2 from ep number into position in array
+            int n1 = FindIndex(episodes, sr.First);
+            int n2 = FindIndex(episodes, sr.Second);
+
+            switch (sr.DoWhatNow)
+            {
+                case RuleAction.kRename:
+                    RenameEpisode(episodes, n1, sr.UserSuppliedText);
+                    break;
+
+                case RuleAction.kRemove:
+                    RemoveEpisode(episodes, n1, n2);
+                    break;
+
+                case RuleAction.kIgnoreEp:
+                    IgnoreEpisodes(episodes, n1, n2);
+                    break;
+
+                case RuleAction.kSplit:
+                    SplitEpisode(episodes, sr.Second, n1);
+                    break;
+
+                case RuleAction.kMerge:
+                case RuleAction.kCollapse:
+                    MergeEpisodes(episodes,  sr.DoWhatNow, n1, n2, sr.UserSuppliedText);
+                    break;
+
+                case RuleAction.kSwap:
+                    SwapEpisode(episodes, n1, n2);
+                    break;
+
+                case RuleAction.kInsert:
+                    InsertEpisode(episodes,  n1, sr.UserSuppliedText, sr);
+                    break;
+            }
+
+            if (sr.RenumberAfter)
+            {
+                Renumber(episodes);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(
+                $"Please review rules for {ShowName} season {episodes.FirstOrDefault()?.AppropriateSeasonNumber}");
+
+            Logger.Warn(e,
+                $"Could not process rule for {ShowName}, {sr.DoWhatNow}:{sr.First}:{sr.Second}:{sr.UserSuppliedText}");
+        }
+    }
+
+    private static void RemoveIgnoredEpisodes(List<ProcessedEpisode> eis)
+    {
+        // now, go through and remove the ignored ones (but don't renumber!!)
+        for (int i = eis.Count - 1; i >= 0; i--)
+        {
+            if (eis[i].Ignore)
+            {
+                eis.RemoveAt(i);
+            }
+        }
+    }
+
+    private static int FindIndex(List<ProcessedEpisode> eis, int episodeNumber)
+    {
+        for (int i = 0; i < eis.Count; i++)
+        {
+            if (eis[i].AppropriateEpNum == episodeNumber)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static void IgnoreEpisodes(List<ProcessedEpisode> eis, int fromIndex, int toIndex)
+    {
+        int ec = eis.Count;
+
+        if (toIndex == -1)
+        {
+            if (ValidIndex(toIndex, ec))
+            {
+                eis[toIndex].Ignore = true;
+            }
+        }
+        else
+        {
+            for (int i = fromIndex; i <= toIndex; i++)
+            {
+                if (ValidIndex(i, ec))
+                {
+                    eis[i].Ignore = true;
+                }
+            }
+        }
+    }
+
+    private static void RemoveEpisode(List<ProcessedEpisode> eis, int fromIndex, int toIndex)
+    {
+        int ec = eis.Count;
+        if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec))
+        {
+            eis.RemoveRange(fromIndex, 1 + toIndex - fromIndex);
+        }
+        else if (ValidIndex(fromIndex, ec) && toIndex == -1)
+        {
+            eis.RemoveAt(fromIndex);
+        }
+        // ReSharper disable once RedundantIfElseBlock
+        else
+        {
+            //arguments are not consistent, so we'll do nothing
+        }
+        Renumber(eis);
+    }
+
+    private static bool ValidIndex(int index, int maxIndex) => index < maxIndex && index >= 0;
+
+    private static void RenameEpisode(List<ProcessedEpisode> eis, int index, string txt)
+    {
+        int ec = eis.Count;
+        if (ValidIndex(index, ec))
+        {
+            eis[index].Name = txt;
+        }
+    }
+
+    private void SplitEpisode(List<ProcessedEpisode> eis, int numberOfNewParts, int index)
+    {
+        int ec = eis.Count;
+        // split one episode into a multi-parter
+        if (ValidIndex(index, ec))
+        {
+            ProcessedEpisode ei = eis[index];
+            string nameBase = ei.Name;
+            eis.RemoveAt(index); // remove old one
+
+            foreach (int i in Enumerable.Range(1, numberOfNewParts))
+            // make numberOfNewParts new parts
+            {
+                ProcessedEpisode pe2 =
+                    new(ei, this, ProcessedEpisode.ProcessedEpisodeType.split)
+                    {
+                        Name = $"{nameBase} (Part {i})",
+                        AiredEpNum = -2,
+                        DvdEpNum = -2,
+                        EpNum2 = -2
+                    };
+
+                eis.Insert(index + i - 1, pe2);
+            }
+        }
+    }
+
+    private void MergeEpisodes(List<ProcessedEpisode> eis,  RuleAction action, int fromIndex, int toIndex, string? newName)
+    {
+        int ec = eis.Count;
+        if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec) && fromIndex < toIndex)
+        {
+            ProcessedEpisode oldFirstEi = eis[fromIndex];
+            List<string> episodeNames = [eis[fromIndex].Name];
+            string defaultCombinedName = eis[fromIndex].Name + " + ";
+            string combinedSummary = eis[fromIndex].Overview + "<br/><br/>";
+            List<Episode> alleps = [eis[fromIndex]];
+            for (int i = fromIndex + 1; i <= toIndex; i++)
+            {
+                episodeNames.Add(eis[i].Name);
+                defaultCombinedName += eis[i].Name;
+                combinedSummary += eis[i].Overview;
+                alleps.Add(eis[i]);
+                if (i != toIndex)
+                {
+                    defaultCombinedName += " + ";
+                    combinedSummary += "<br/><br/>";
+                }
+            }
+
+            eis.RemoveRange(fromIndex, toIndex - fromIndex);
+
+            eis.RemoveAt(fromIndex);
+
+            string combinedName = GetBestNameFor(episodeNames, defaultCombinedName);
+
+            ProcessedEpisode pe2 = new(oldFirstEi, this, alleps)
+            {
+                Name = string.IsNullOrEmpty(newName) ? combinedName : newName,
+                AiredEpNum = oldFirstEi.AiredEpNum,
+                DvdEpNum = oldFirstEi.DvdEpNum,
+                EpNum2 = action == RuleAction.kMerge ? alleps.Max(episode => episode.GetEpisodeNumber(Order)) : oldFirstEi.AppropriateEpNum,
+                Overview = combinedSummary
+            };
+
+            eis.Insert(fromIndex, pe2);
+        }
+    }
+
+    private void InsertEpisode(List<ProcessedEpisode> eis, int index, string txt, ShowRule sr)
+    {
+        // this only applies for inserting an episode, at the end of the list
+        if (sr.First == eis[^1].AppropriateEpNum + 1) // after the last episode
+        {
+            index = eis.Count;
+        }
+
+        int ec = eis.Count;
+
+        if (ValidIndex(index, ec))
+        {
+            ProcessedEpisode t = eis[index];
+            ProcessedEpisode n = new(t, this, txt, t.AiredEpNum + 1, t.DvdEpNum + 1, t.EpNum2 + 1);
+            eis.Insert(index, n);
+        }
+        else if (index == ec)
+        {
+            ProcessedEpisode t = eis[index - 1];
+            ProcessedEpisode n = new(t, this, txt, t.AiredEpNum + 1, t.DvdEpNum + 1, t.EpNum2 + 1);
+            eis.Add(n);
+        }
+        // ReSharper disable once RedundantIfElseBlock
+        else
+        {
+            //Parameters are invalid, so we'll do nothing
+        }
+    }
+
+    private static void SwapEpisode(List<ProcessedEpisode> eis, int n1, int n2)
+    {
+        int ec = eis.Count;
+        if (ValidIndex(n1, ec) && ValidIndex(n2, ec))
+        {
+            (eis[n2], eis[n1]) = (eis[n1], eis[n2]);
+        }
+    }
+
+    public static string GetBestNameFor(List<string> episodeNames, string defaultName)
+    {
+        string root = StringExtensions.GetCommonStartString(episodeNames);
+        int shortestEpisodeName = episodeNames.Min(x => x.Length);
+        int longestEpisodeName = episodeNames.Max(x => x.Length);
+        bool namesSameLength = shortestEpisodeName == longestEpisodeName;
+        bool rootIsIgnored = root.Trim().StartsWith("Episode", StringComparison.OrdinalIgnoreCase) ||
+                             root.Trim().StartsWith("Part", StringComparison.OrdinalIgnoreCase);
+
+        if (!namesSameLength || rootIsIgnored || root.Length <= 3 || root.Length <= shortestEpisodeName / 2)
+        {
+            return defaultName;
+        }
+
+        char[] charsToTrim = [',', '.', ';', ':', '-', '('];
+        string[] wordsToTrim = ["part", "episode", "pt", "chapter"];
+
+        return root.Trim().TrimEnd(wordsToTrim).Trim().TrimEnd(charsToTrim).Trim();
+    }
+
+    private static void Renumber(List<ProcessedEpisode> eis)
+    {
+        if (eis.Count == 0)
+        {
+            return; // nothing to do
+        }
+
+        // renumber
+        // pay attention to specials etc.
+        int n = eis[0].AppropriateEpNum == 0 ? 0 : 1;
+
+        foreach (ProcessedEpisode t in eis)
+        {
+            if (t.AppropriateEpNum == -1)
+            {
+                continue;
+            }
+
+            int num = t.EpNum2 - t.AppropriateEpNum;
+            if ((t.AppropriateEpNum != n || t.EpNum2 != n + num) && !(t.Show.Order == ProcessedSeason.SeasonType.dvd && t.NotOnDvd()))
+            {
+                t.SetEpisodeNumbers(n, n + num);
+            }
+            n += num + 1;
+        }
+    }
+
+    internal List<ProcessedEpisode> EpisodesForSeason(int snum) => EpisodeCaches.SeasonEpisodes[snum];
+
+    internal int EpisodeCount() => EpisodeCaches.SeasonEpisodes.Values.Sum(episodes => episodes.Count);
+
+    internal int SeasonCount() => EpisodeCaches.SeasonEpisodes.Count;
+
+    internal ProcessedSeason GetOrAddSeason(int airedSeasonNumber, int seasonId, ProcessedSeason.SeasonType type) => EpisodeCaches.GetOrAddSeason(airedSeasonNumber, seasonId, type, this);
+
+    internal List<ProcessedEpisode>? GetRandomSeasonEpisodes() => EpisodeCaches.SeasonEpisodes.Values.FirstOrDefault(v => v.Count > 0);
+
+    internal List<List<ProcessedEpisode>> GetSortedSeasons() => EpisodeCaches.SeasonEpisodes.OrderBy(v => v.Key).Select(v => v.Value).ToList();
+
     public CachedSeriesInfo? CachedShow => CachedData as CachedSeriesInfo;
+
+    internal class EpisodeDenormalisations
+    {
+        internal readonly ConcurrentDictionary<int, List<ProcessedEpisode>> SeasonEpisodes = new(); // built up by applying rules.
+        internal readonly ConcurrentDictionary<int, ProcessedSeason> airedSeasons = new();
+        internal readonly ConcurrentDictionary<int, ProcessedSeason> dvdSeasons = new();
+
+
+        internal void UpdateEpisodeDictionary(CachedSeriesInfo ser, ShowConfiguration showConfig)
+        {
+            { //TODO Do we need to reload SeasonEpisodes too?
+
+
+                // Regenerate the seasons and episodes from the downloaded episodes info,
+                // applying any rules as necessary.This will populate the SeasonEpisodes, airedSeasons, and dvdSeasons dictionaries with the appropriate data.
+                ConcurrentDictionary<int, ProcessedSeason> NewAiredSeasons = new();
+                ConcurrentDictionary<int, ProcessedSeason> NewDvdSeasons = new();
+
+                foreach (Episode e in ser.Episodes)
+                {
+                    ProcessedSeason airedProcessedSeason = GetOrAddSeason(e.AiredSeasonNumber, e.SeasonId, showConfig, NewAiredSeasons, ProcessedSeason.SeasonType.aired);
+                    airedProcessedSeason.AddUpdateEpisode(e);
+
+                    ProcessedSeason dvdProcessedSeason = GetOrAddSeason(e.DvdSeasonNumber, e.SeasonId, showConfig, NewDvdSeasons, ProcessedSeason.SeasonType.dvd);
+                    dvdProcessedSeason.AddUpdateEpisode(e);
+                }
+
+                //We have a new version of the seasons and episodes, so we can replace the old ones with the new ones
+
+                foreach (KeyValuePair<int, ProcessedSeason> kvp in NewAiredSeasons)
+                {
+                    airedSeasons[kvp.Key] = kvp.Value;
+                }
+                foreach (var kvp in airedSeasons)
+                {
+                    if (!NewAiredSeasons.ContainsKey(kvp.Key))
+                    {
+                        airedSeasons.TryRemove(kvp.Key, out _);
+                    }
+                }
+                
+                foreach (KeyValuePair<int, ProcessedSeason> kvp in NewDvdSeasons)
+                {
+                    dvdSeasons[kvp.Key] = kvp.Value;
+                }
+                foreach (var kvp in dvdSeasons)
+                {
+                    if (!NewDvdSeasons.ContainsKey(kvp.Key))
+                    {
+                        dvdSeasons.TryRemove(kvp.Key, out _);
+                    }
+                }
+            }
+        }
+        
+        private static ProcessedSeason GetOrAddSeason(int num, int seasonId, ShowConfiguration showConfig, ConcurrentDictionary<int, ProcessedSeason> dict, ProcessedSeason.SeasonType type)
+        {
+            if (dict.TryGetValue(num, out ProcessedSeason? season))
+            {
+                return season;
+            }
+
+            ProcessedSeason s = new(showConfig, num, seasonId, type);
+            dict[num] = s;
+
+            return s;
+        }
+
+        internal ProcessedSeason GetOrAddSeason(int seasonNumber, int seasonId, ProcessedSeason.SeasonType type, ShowConfiguration showConfig)
+        {
+            return type switch
+            {
+                ProcessedSeason.SeasonType.aired => GetOrAddSeason(seasonNumber, seasonId, showConfig, airedSeasons, ProcessedSeason.SeasonType.aired),
+                ProcessedSeason.SeasonType.dvd => GetOrAddSeason(seasonNumber, seasonId, showConfig, dvdSeasons, ProcessedSeason.SeasonType.dvd),
+                _ => throw new ArgumentOutOfRangeException(nameof(type), $"Invalid season type {type}")
+            };
+        }
+    }
 }
 
 [Serializable]

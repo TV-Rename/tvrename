@@ -20,3 +20,4 @@ public class DoScanPartNotifier : Notifier
 
     protected override string ActionName() => activity.ActivityName();
 }
+

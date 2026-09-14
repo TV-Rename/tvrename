@@ -113,7 +113,8 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
         Dictionary<int, FileInfo> localEps = [];
         int maxEpNumFound = 0;
 
-        if (!si.SeasonEpisodes.TryGetValue(snum, out List<ProcessedEpisode>? eps))
+        List<ProcessedEpisode> eps = si.EpisodesForSeason(snum);
+        if (eps == null)
         {
             return;
         }

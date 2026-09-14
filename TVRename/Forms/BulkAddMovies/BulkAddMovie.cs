@@ -38,7 +38,7 @@ public partial class BulkAddMovie : Form
 
     //Thread safe counters to work out the progress
     //For auto id
-    private static ThreadSafeCounter VolatileCounter = new();
+    private static readonly ThreadSafeCounter VolatileCounter = new();
 
     public BulkAddMovie(TVDoc doc, BulkAddMovieManager bam, UI mainUi)
     {
@@ -610,6 +610,7 @@ public partial class BulkAddMovie : Form
 
         VolatileCounter.Reset();
 
+        //todo make proper multi-threaded, but for now just do it in parallel
         Parallel.ForEach(engine.AddItems, async movie =>
         {
             Thread.CurrentThread.Name ??= $" Identify {movie.Name}"; // Can only set it once
@@ -623,7 +624,7 @@ public partial class BulkAddMovie : Form
     {
         lvFMNewShows.Update();
 
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         lblStatusLabel.Text = (e.UserState as PossibleNewMovie)?.RefinedHint.ToUiVersion();
         UpdateListItem(e.UserState as PossibleNewMovie, false);
     }
@@ -637,7 +638,8 @@ public partial class BulkAddMovie : Form
 
     private void bwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
+
         lblStatusLabel.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 

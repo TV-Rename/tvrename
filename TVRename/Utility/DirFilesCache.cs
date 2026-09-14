@@ -38,13 +38,13 @@ public class DirFilesCache
         }
         catch
         {
-            cache[folder] = Array.Empty<FileInfo>();
-            return Array.Empty<FileInfo>();
+            cache[folder] = [];
+            return [];
         }
         if (!di.Exists)
         {
-            cache[folder] = Array.Empty<FileInfo>();
-            return Array.Empty<FileInfo>();
+            cache[folder] = [];
+            return [];
         }
 
         try
@@ -56,12 +56,12 @@ public class DirFilesCache
         catch (System.IO.IOException)
         {
             Logger.Warn("IOException occurred trying to access " + folder);
-            return Array.Empty<FileInfo>();
+            return [];
         }
         catch (UnauthorizedAccessException)
         {
             Logger.Warn("UnauthorizedAccessException occurred trying to access " + folder);
-            return Array.Empty<FileInfo>();
+            return [];
         }
     }
 }

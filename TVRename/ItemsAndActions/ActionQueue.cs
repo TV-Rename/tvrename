@@ -27,11 +27,8 @@ namespace TVRename;
 public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> actions, TVRenameStats mStats, CancellationTokenSource cts)
 {
     private readonly List<Action> actions = actions.OrderBy(a => a.Order).ToList(); // The contents of this queue
-    private readonly int parallelThreadLimit = parallelLimit; // Number of tasks in the queue than can be run at once
-    public readonly string queueName = name; // Name of this queue
     SemaphoreSlim semaphore = new(parallelLimit, parallelLimit);
-
-    public override string ToString() => $"'{queueName}' worker, with {parallelThreadLimit} threads.";
+    public override string ToString() => $"'{name}' worker, with {parallelLimit} threads.";
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private static readonly NLog.Logger ThreadsLogger = NLog.LogManager.GetLogger("threads");
 
@@ -58,7 +55,7 @@ public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> act
 
     internal void Start()
     {
-        semaphore = new SemaphoreSlim(parallelThreadLimit, parallelThreadLimit);
+        semaphore = new SemaphoreSlim(parallelLimit, parallelLimit);
         currentTasks = actions.Select(action => ProcessSingleActionAsync(action, semaphore, cts)).ToList();
     }
 
@@ -114,7 +111,7 @@ public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> act
         finally
         {
             int nfr = semaphore.Release(); // release our hold on the semaphore, so that worker can grab it
-            ThreadsLogger.Trace("ActionProcessor[" + queueName + "] pool has " + nfr + " free");
+            ThreadsLogger.Trace("ActionProcessor[" + name + "] pool has " + nfr + " free");
         }
     }
 }

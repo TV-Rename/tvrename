@@ -1640,61 +1640,65 @@ public sealed class TVSettings
                                                       "false")
         };
 
+        XElement? ShowFiltersNode = xmlSettings.Descendants("ShowFilters").FirstOrDefault();
+
         Filter = new ShowFilter
         {
-            ShowName = xmlSettings.Descendants("ShowFilters").Descendants("ShowNameFilter").Attributes("ShowName")
+            ShowName = ShowFiltersNode?.Descendants("ShowNameFilter").Attributes("ShowName")
                 .FirstOrDefault()?.Value,
 
-            ShowStatus = xmlSettings.Descendants("ShowFilters").Descendants("ShowStatusFilter").Attributes("ShowStatus")
+            ShowStatus = ShowFiltersNode?.Descendants("ShowStatusFilter").Attributes("ShowStatus")
                 .FirstOrDefault()?.Value,
-            ShowRating = xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRating")
+            ShowRating = ShowFiltersNode?.Descendants("ShowRatingFilter").Attributes("ShowRating")
                 .FirstOrDefault()?.Value,
-            ShowNetwork = xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
+            ShowNetwork = ShowFiltersNode?.Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
                 .FirstOrDefault()?.Value,
 
-            ShowStatusInclude = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
+            ShowStatusInclude = (bool?)ShowFiltersNode?.Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
                 .FirstOrDefault() ?? true,
-            ShowRatingInclude = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
+            ShowRatingInclude = (bool?)ShowFiltersNode?.Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
                 .FirstOrDefault() ?? true,
-            ShowNetworkInclude = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
+            ShowNetworkInclude = (bool?)ShowFiltersNode?.Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
                 .FirstOrDefault() ?? true,
 
-            IncludeBlankFields = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("IncludeBlankFields").Attributes("IncludeBlankFields")
+            IncludeBlankFields = (bool?)ShowFiltersNode?.Descendants("IncludeBlankFields").Attributes("IncludeBlankFields")
                 .FirstOrDefault() ?? true,
         };
 
-        foreach (XAttribute rep in xmlSettings.Descendants("ShowFilters").Descendants("GenreFilter").Attributes("Genre"))
+        foreach (XAttribute rep in ShowFiltersNode?.Descendants("GenreFilter").Attributes("Genre") ?? [])
         {
             Filter.Genres.Add(rep.Value);
         }
 
+        XElement? MovieFilterNode = xmlSettings.Descendants("MovieFilter").FirstOrDefault();
+
         MovieFilter = new MovieFilter
         {
-            ShowName = xmlSettings.Descendants("MovieFilter").Descendants("ShowNameFilter").Attributes("ShowName")
+            ShowName = MovieFilterNode?.Descendants("ShowNameFilter").Attributes("ShowName")
                 .FirstOrDefault()?.Value,
 
-            ShowStatus = xmlSettings.Descendants("MovieFilter").Descendants("ShowStatusFilter").Attributes("ShowStatus")
+            ShowStatus = MovieFilterNode?.Descendants("ShowStatusFilter").Attributes("ShowStatus")
                 .FirstOrDefault()?.Value,
-            ShowRating = xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRating")
+            ShowRating = MovieFilterNode?.Descendants("ShowRatingFilter").Attributes("ShowRating")
                 .FirstOrDefault()?.Value,
-            ShowNetwork = xmlSettings.Descendants("MovieFilter").Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
+            ShowNetwork = MovieFilterNode?.Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
                 .FirstOrDefault()?.Value,
-            ShowYear = xmlSettings.Descendants("MovieFilter").Descendants("ShowYearFilter").Attributes("ShowYear")
+            ShowYear = MovieFilterNode?.Descendants("ShowYearFilter").Attributes("ShowYear")
                 .FirstOrDefault()?.Value,
 
-            ShowStatusInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
+            ShowStatusInclude = (bool?)MovieFilterNode?.Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
                 .FirstOrDefault() ?? true,
-            ShowRatingInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
+            ShowRatingInclude = (bool?)MovieFilterNode?.Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
                 .FirstOrDefault() ?? true,
-            ShowNetworkInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
+            ShowNetworkInclude = (bool?)MovieFilterNode?.Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
                 .FirstOrDefault() ?? true,
-            ShowYearInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowYearFilter").Attributes("ShowYearInclude")
+            ShowYearInclude = (bool?)MovieFilterNode?.Descendants("ShowYearFilter").Attributes("ShowYearInclude")
                 .FirstOrDefault() ?? true,
-            IncludeBlankFields = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("IncludeBlankFields").Attributes("IncludeBlankFields")
+            IncludeBlankFields = (bool?)MovieFilterNode?.Descendants("IncludeBlankFields").Attributes("IncludeBlankFields")
                 .FirstOrDefault() ?? true
         };
 
-        foreach (XAttribute rep in xmlSettings.Descendants("MovieFilter").Descendants("GenreFilter").Attributes("Genre"))
+        foreach (XAttribute rep in MovieFilterNode?.Descendants("GenreFilter").Attributes("Genre") ?? [])
         {
             MovieFilter.Genres.Add(rep.Value);
         }

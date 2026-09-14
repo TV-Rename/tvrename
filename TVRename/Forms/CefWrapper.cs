@@ -160,7 +160,7 @@ public class CefWrapper
     }
 
     private static string VersionToString(VcRuntimeVersion arg) => $"{arg.MscVer}-{arg.Architecture}-{arg.Version}";
-    private static IEnumerable<string> Vc2015Installed()
+    private static List<string> Vc2015Installed()
     {
         const string DEPENDENCIES_PATH = @"SOFTWARE\Classes\Installer\Dependencies";
         List<string> returnValue = [];

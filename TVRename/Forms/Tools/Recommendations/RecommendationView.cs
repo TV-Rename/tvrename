@@ -214,7 +214,7 @@ public partial class RecommendationView : Form
 
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 

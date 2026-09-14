@@ -69,7 +69,7 @@ public partial class SettingsReview : Form
             bw.ReportProgress(100 * currentRecord.Increment() / total, movie.ShowName);
         }
 
-        foreach (ShowConfiguration show in mDoc.TvLibrary.GetSortedShowItems())
+        foreach (ShowConfiguration show in mDoc.TvLibrary.GetSortedShows())
         {
             set.Add(new CustomLanguageTvShowCheck(show, mDoc));
             set.Add(new CustomNameTvShowCheck(show, mDoc));
@@ -102,7 +102,7 @@ public partial class SettingsReview : Form
 
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
 
         UiHelpers.SetProgress(e.ProgressPercentage.Between(0, 100), mainUi.Handle);

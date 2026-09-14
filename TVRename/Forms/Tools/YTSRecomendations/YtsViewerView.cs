@@ -140,7 +140,7 @@ public partial class YtsViewerView : Form
 
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         DateTime completionDateTime = scanStartTime.Add((TimeHelpers.LocalNow() - scanStartTime) / (pbProgress.Value + 1) * 100);
         lblStatus.Text = $"ETC={completionDateTime} {e.UserState?.ToString()?.ToUiVersion()}";
     }

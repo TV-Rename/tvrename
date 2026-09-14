@@ -14,11 +14,11 @@ internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings
     protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         int totalDownloadFolders = TVSettings.Instance.DownloadFolders.Count;
-        int c = 0;
+        ThreadSafeCounter c = new(); 
 
         foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToList())
         {
-            UpdateStatus(c++, totalDownloadFolders, dirPath);
+            UpdateStatus(c.Increment(), totalDownloadFolders, dirPath);
 
             if (!Directory.Exists(dirPath) || Settings.Token.IsCancellationRequested)
             {
@@ -66,7 +66,7 @@ internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings
 
     private void ReviewArchive(FileInfo fi)
     {
-        List<ShowConfiguration> matchingShowsAll = [.. MDoc.TvLibrary.GetSortedShowItems().Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
+        List<ShowConfiguration> matchingShowsAll = [.. MDoc.TvLibrary.GetSortedShows().Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<ShowConfiguration> matchingShows = FinderHelper.RemoveShortShows(matchingShowsAll);
         List<MovieConfiguration> matchingMoviesAll = [.. MDoc.FilmLibrary.GetSortedMovies().Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<MovieConfiguration> matchingMovies = FinderHelper.RemoveShortShows(matchingMoviesAll);

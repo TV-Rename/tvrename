@@ -356,7 +356,7 @@ public static class TvdbWebApi
         string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/translations/{language.TVDBCode()}";
         string errorMessage = $"obtaining translations for {code} in {language.EnglishName}";
 
-        return await HandleWebErrorsForAsync(() => GetUrlAsync( uri, language, errorMessage),errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync( uri, language, errorMessage),errorMessage);
     }
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
@@ -365,7 +365,7 @@ public static class TvdbWebApi
         string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/translations/{language.TVDBCode()}";
         string errorMessage = $"obtaining translations for {code.TvdbId} in {language.EnglishName}";
 
-        return await HandleWebErrorsForAsync(() => GetUrlAsync(uri, language, errorMessage), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
@@ -377,7 +377,7 @@ public static class TvdbWebApi
         string requestLangCode = language.Abbreviation; //TODO - check this is right - should be TVDBv4() ?
 
         return await HandleWebErrorsForAsync(
-            () => JsonHttpGetRequestAsync(uri, null, TokenProvider, requestLangCode, true),
+            async () => await JsonHttpGetRequestAsync(uri, null, TokenProvider, requestLangCode, true),
             errorMessage);
     }
     // ReSharper disable once UnusedMember.Local
@@ -397,7 +397,7 @@ public static class TvdbWebApi
         string errorMessage = $"Error obtaining season {seasonId} in {language.EnglishName} episodes for [{code}]:";
         string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
 
-        return await HandleWebErrorsForAsync(() => GetUrlAsync(uri, language, errorMessage), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
@@ -407,7 +407,7 @@ public static class TvdbWebApi
         string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/episodes/{type.PrettyPrint()}";
         string errorMessage = $"Error obtaining {type.PrettyPrint()} episodes for [{code}] in {language.EnglishName}:";
 
-        return await HandleWebErrorsForAsync(() => GetUrlAsync(uri, language, errorMessage), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
@@ -417,7 +417,7 @@ public static class TvdbWebApi
         string errorMessage = $"Error obtaining episodes for [{code}] in {language.TVDBCode()} for season [{seasonId}]:";
         string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
 
-        return await HandleWebErrorsForAsync(() => GetUrlAsync(uri, language, errorMessage), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
     }
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
@@ -426,7 +426,7 @@ public static class TvdbWebApi
         string errorMessage = $"Error obtaining episode [{episodeId}] for [{code}] in {language.EnglishName}:";
         string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}/translations/{language.TVDBCode()}";
 
-        return await HandleWebErrorsForAsync(() => GetUrlAsync(uri, language, errorMessage), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
     }
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
@@ -437,7 +437,7 @@ public static class TvdbWebApi
         string notFoundMessage = $"Movie with Id {code} is no longer available from TVDB (got a 404), please update.";
         string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/extended";
 
-        return await HandleWebErrorsWithNotFoundForAsync(() => GetUrlAsync(uri, language, errorMessage), errorMessage, code, notFoundMessage);
+        return await HandleWebErrorsWithNotFoundForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage, code, notFoundMessage);
     }
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
@@ -448,7 +448,7 @@ public static class TvdbWebApi
         string notFoundMessage = $"Show with Id {code} is no longer available from TVDB (got a 404), please update.";
         string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/extended";
 
-        return await HandleWebErrorsWithNotFoundForAsync(() => GetUrlAsync(uri, language, errorMessage), errorMessage, code, notFoundMessage);
+        return await HandleWebErrorsWithNotFoundForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage, code, notFoundMessage);
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
@@ -460,7 +460,7 @@ public static class TvdbWebApi
         Dictionary<string, string?> parameters = new() { { "since", updateFromEpochTime.ToString() }, { "page", pageNumber.ToString() } };
 
         return await HandleWebErrorsForAsync(
-            () => JsonHttpGetRequestAsync(url, parameters, TokenProvider, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation, true)
+            async () => await JsonHttpGetRequestAsync(url, parameters, TokenProvider, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation, true)
             , errorMessage);
     }
     #endregion

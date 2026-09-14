@@ -110,7 +110,7 @@ public class qBitTorrent : IDownloadProvider
         return null;
     }
 
-    private static async Task AddFilesFromTorrentAsync(ICollection<TorrentEntry> ret, JToken torrent, string savePath)
+    private static async Task AddFilesFromTorrentAsync(List<TorrentEntry> ret, JToken torrent, string savePath)
     {
         string torrentDetailsString = string.Empty;
         try
@@ -370,6 +370,12 @@ public class qBitTorrent : IDownloadProvider
             return;
         }
 
+        if (name.Key is null)
+        {
+            Logger.Warn($"Could not remove {name.DownloadingTo} via qBitTorrent as the key was not set");
+            return;
+        }
+
         string url = GetApiUrl(qBitTorrentAPIPath.delete);
 
         //Annoyingly V1 uses POST, but V2 is a GET...
@@ -382,8 +388,22 @@ public class qBitTorrent : IDownloadProvider
         {
             try
             {
-                string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string?> { { "hashes", name.Key }, { "deleteFiles", "false" } });
-                await HttpHelper.HttpRequestAsync("GET", url + parametersString, null, null, null, string.Empty).ConfigureAwait(false);
+                using HttpClient client = new();
+                Dictionary<string, string> values = new() { { "hashes", name.Key }, { "deleteFiles", "false" } };
+                using FormUrlEncodedContent content = new(values);
+                HttpResponseMessage response = await client.PostAsync(url, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    string message =
+                        $"Tried to remove {name.DownloadingTo} from qBitTorrent via {url}. Got following response {response.StatusCode}";
+
+                    Logger.Warn(message);
+                }
+                else
+                {
+                    Logger.Info($"Removed {name.DownloadingTo} via qBitTorrent using {url}. Got following response {response.StatusCode}");
+                }
             }
             catch (WebException wex)
             {

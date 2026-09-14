@@ -26,7 +26,7 @@ internal static class MergedEpisodeFinderController
         output.AppendLine("##################################################");
 
         DirFilesCache dfc = new();
-        foreach (ShowConfiguration si in doc.TvLibrary.GetSortedShowItems())
+        foreach (ShowConfiguration si in doc.TvLibrary.GetSortedShows())
         {
             worker.ReportProgress(100 * current++ / total, si.ShowName);
 

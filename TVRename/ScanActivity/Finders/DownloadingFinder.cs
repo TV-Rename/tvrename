@@ -29,9 +29,9 @@ public abstract class DownloadingFinder(TVDoc doc, TVDoc.ScanSettings settings) 
     {
         ItemList newList = [];
         ItemList toRemove = [];
-        int c = ActionList.Missing.Count + 2;
-        int n = 1;
-        UpdateStatus(n, c, "Searching torrent queue...");
+        int c = ActionList.Missing.Count + 1;
+        ThreadSafeCounter n = new(); 
+        UpdateStatus(n.Increment(), c, "Searching torrent queue...");
         foreach (ItemMissing? action in ActionList.Missing.ToList())
         {
             if (Settings.Token.IsCancellationRequested)
@@ -39,7 +39,7 @@ public abstract class DownloadingFinder(TVDoc doc, TVDoc.ScanSettings settings) 
                 return;
             }
 
-            UpdateStatus(n++, c, action.Filename);
+            UpdateStatus(n.Increment(), c, action.Filename);
 
             foreach (TorrentEntry te in downloading)
             {

@@ -1,4 +1,5 @@
 using System.Windows.Forms;
+using TVRename.Forms;
 
 namespace TVRename;
 
@@ -29,7 +30,7 @@ public partial class TVRenameSplash : Form
     {
         if (IsHandleCreated)
         {
-            Invoke((MethodInvoker)delegate { prgComplete.Value = progress; });
+            Invoke((MethodInvoker)delegate { prgComplete.SetProgress(progress); });
         }
     }
 

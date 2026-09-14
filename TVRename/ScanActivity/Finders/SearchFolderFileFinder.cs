@@ -28,9 +28,9 @@ internal class SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : 
 
             dirCache.AddFolder(progress, 0, fileCount, s, true);
         }
-        int currentItem = 0;
+        ThreadSafeCounter currentItem = new();
         int totalN = ActionList.Missing.Count + 1;
-        UpdateStatus(currentItem, totalN, "Starting searching through files");
+        UpdateStatus(0, totalN, "Starting searching through files");
 
         foreach (ItemMissing? action in ActionList.Missing.ToList())
         {
@@ -39,7 +39,7 @@ internal class SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : 
                 return;
             }
 
-            UpdateStatus(currentItem++, totalN, action.Filename);
+            UpdateStatus(currentItem.Increment(), totalN, action.Filename);
 
             Dictionary<FileInfo, ItemList> thisRound = [];
             try

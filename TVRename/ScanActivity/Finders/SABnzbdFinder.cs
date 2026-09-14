@@ -42,7 +42,7 @@ internal class SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downloadi
         ItemList newList = [];
         ItemList toRemove = [];
         int c = ActionList.Missing.Count + 1;
-        int n = 0;
+        ThreadSafeCounter n = new();
 
         foreach (ShowItemMissing action in ActionList.MissingEpisodes)
         {
@@ -51,7 +51,7 @@ internal class SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downloadi
                 return;
             }
 
-            UpdateStatus(n++, c, action.Filename);
+            UpdateStatus(n.Increment(), c, action.Filename);
 
             string? simpleShowName = action.Episode?.Show.ShowName.CompareName();
 

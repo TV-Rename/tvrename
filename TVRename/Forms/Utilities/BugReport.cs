@@ -76,7 +76,7 @@ public partial class BugReport : Form
 
     private void ExtractShowDetails(StringBuilder txt)
     {
-        foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShowItems())
+        foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShows())
         {
             foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.ActiveSeasons)
             {

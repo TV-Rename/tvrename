@@ -47,7 +47,7 @@ internal class CheckAllFoldersExist(TVDoc doc) : ScanShowActivity(doc)
                 folders = floc;
             }
 
-            if (si.SeasonEpisodes[snum].All(episode => !MightWeProcess(episode, folders)))
+            if (si.EpisodesForSeason(snum).All(episode => !MightWeProcess(episode, folders)))
             {
                 //All episodes in this season are ignored
                 continue;

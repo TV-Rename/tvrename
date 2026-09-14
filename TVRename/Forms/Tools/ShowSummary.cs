@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
@@ -62,11 +63,14 @@ public partial class ShowSummary : Form, IDialogParent
         ThreadSafeCounter currentRecord = new();
         showList.Clear();
 
-        foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShowItems())
+        Parallel.ForEach(mDoc.TvLibrary.GetSortedShows(), new ParallelOptions { MaxDegreeOfParallelism = 12 }, si =>
         {
             bw.ReportProgress(100 * currentRecord.Increment() / total, si.ShowName);
             showList.Add(AddShowDetails(si));
         }
+        );
+
+        showList.Sort();
     }
 
     private void PopulateGrid()
@@ -254,13 +258,10 @@ public partial class ShowSummary : Form, IDialogParent
         int epGotCount = 0;
         int epAiredCount = 0;
         DirFilesCache dfc = new();
-        ProcessedSeason? processedSeason = null;
 
-        if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out processedSeason))
+        if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? processedSeason))
         {
-            List<ProcessedEpisode> eis = si.SeasonEpisodes[snum];
-
-            foreach (ProcessedEpisode ei in eis)
+            foreach (ProcessedEpisode ei in si.EpisodesForSeason(snum))
             {
                 epCount++;
 
@@ -276,11 +277,10 @@ public partial class ShowSummary : Form, IDialogParent
                     epGotCount++;
                 }
             }
-        }
-
-        if (processedSeason != null)
-        {
-            return new ShowSummaryData.ShowSummarySeasonData(snum, epCount, epAiredCount, epGotCount, processedSeason);
+            if (processedSeason != null)
+            {
+                return new ShowSummaryData.ShowSummarySeasonData(snum, epCount, epAiredCount, epGotCount, processedSeason);
+            }
         }
 
         return null;
@@ -488,7 +488,7 @@ public partial class ShowSummary : Form, IDialogParent
             // for each episode in season, find it on disk
             bool first = true;
             DirFilesCache dfc = new();
-            foreach (ProcessedEpisode epds in show.SeasonEpisodes[seas.SeasonNumber])
+            foreach (ProcessedEpisode epds in show.EpisodesForSeason(seas.SeasonNumber))
             {
                 List<FileInfo> fl = dfc.FindEpOnDisk(epds, false);
                 if (fl.Count != 0)
@@ -714,7 +714,7 @@ public partial class ShowSummary : Form, IDialogParent
 
     private void BwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         if (e.UserState is not null)
         {
             lblStatus.Text = e.UserState.ToString()?.ToUiVersion();

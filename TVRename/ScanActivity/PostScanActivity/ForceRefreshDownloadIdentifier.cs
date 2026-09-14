@@ -16,8 +16,8 @@ internal class ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc d
     protected override void DoCheck(PostScanProgressDelegate progress, CancellationToken token)
     {
         int totalRecords = MDoc.TvLibrary.Count + MDoc.FilmLibrary.Count;
-        int currentRecord = 1;
-        foreach (ShowConfiguration si in MDoc.TvLibrary.GetSortedShowItems())
+        ThreadSafeCounter currentRecord = new();
+        foreach (ShowConfiguration si in MDoc.TvLibrary.GetSortedShows())
         {
             if (token.IsCancellationRequested)
             {
@@ -31,7 +31,7 @@ internal class ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc d
 
             MDoc.TheActionList.AddNullableRange(cx.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadMetaData, si));
 
-            progress(currentRecord++, totalRecords,"Updating TV Shows" ,si.Name ?? string.Empty);
+            progress(currentRecord.Increment(), totalRecords,"Updating TV Shows" ,si.Name ?? string.Empty);
         }
 
         foreach (MovieConfiguration si in MDoc.FilmLibrary.GetSortedMovies())
@@ -50,7 +50,7 @@ internal class ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc d
                 MDoc.TheActionList.AddNullableRange(cx.ForceUpdateMovie(DownloadIdentifier.DownloadType.downloadMetaData, si,file));
             }
 
-            progress(currentRecord++, totalRecords, "Updating Movies",si.Name ?? string.Empty);
+            progress(currentRecord.Increment(), totalRecords, "Updating Movies",si.Name ?? string.Empty);
         }
     }
 }

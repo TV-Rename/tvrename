@@ -18,10 +18,10 @@ public class BulkAddMovieManager(TVDoc doc)
 
     //Thread safe counters to work out the progress
     //for scanning
-    private static ThreadSafeCounter CurrentPhaseDirectory = new();
-    private static ThreadSafeCounter CurrentPhaseTotalDirectory = new();
-    private static ThreadSafeCounter CurrentPhase = new();
-    private static ThreadSafeCounter CurrentPhaseTotal = new();
+    private static readonly ThreadSafeCounter CurrentPhaseDirectory = new();
+    private static readonly ThreadSafeCounter CurrentPhaseTotalDirectory = new();
+    private static readonly ThreadSafeCounter CurrentPhase = new();
+    private static readonly ThreadSafeCounter CurrentPhaseTotal = new();
 
     private static DirectoryInfo[]? GetValidDirectories(DirectoryInfo di)
     {

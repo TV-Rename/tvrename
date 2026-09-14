@@ -1,8 +1,10 @@
+using Newtonsoft.Json.Linq;
+using NLog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using NLog;
+using TVRename.Forms;
 
 namespace TVRename.TheTVDB;
 
@@ -16,14 +18,23 @@ internal class TvdbAccuracyCheck
 
     public TvdbAccuracyCheck()
     {
-        Issues = new SafeList<string>();
-        ShowsToUpdate = new SafeList<CachedSeriesInfo>();
-        MoviesToUpdate = new SafeList<CachedMovieInfo>();
+        Issues = [];
+        ShowsToUpdate = [];
+        MoviesToUpdate = [];
     }
 
-    public async Task ServerAccuracyCheckAsync(CachedMovieInfo si)
+    public async Task ServerAccuracyCheckAsync(CachedMovieInfo si, IProgress<DownloadProgressReport>? p)
     {
-        Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
+        Logger.Info($"Checking Accuracy of {si.Name}({si.Id()}) on TVDB");
+
+        p?.Report(new DownloadProgressReport
+        {
+            Provider = TVDoc.ProviderType.TheTVDB,
+            Message = si.Name ?? "Unknown Movie",
+            UpdateType = DownloadProgressReport.Type.EpisodeDownload
+        });
+
+
         try
         {
             CachedMovieInfo newSi = await API.DownloadMovieInfoAsync(si, si.TargetLocale);
@@ -55,9 +66,16 @@ internal class TvdbAccuracyCheck
         }
     }
     
-    public async Task ServerAccuracyCheckAsync(CachedSeriesInfo si)
+    public async Task ServerAccuracyCheckAsync(CachedSeriesInfo si, IProgress<DownloadProgressReport>? p)
     {
-        Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
+        Logger.Info($"Checking Accuracy of {si.Name}({si.Id()}) on TVDB");
+
+        p?.Report(new DownloadProgressReport
+        {
+            Provider = TVDoc.ProviderType.TheTVDB,
+            Message = si.Id().ToString() ?? "Unknown Show",
+            UpdateType = DownloadProgressReport.Type.EpisodeDownload
+        });
 
         try
         {
