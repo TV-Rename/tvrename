@@ -29,8 +29,8 @@ using System.Xml.Linq;
 using TVRename.Forms.Supporting;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
-using TVRename.Properties;
 using TVRename.Utility.Helper;
+
 using static TVRename.TVDoc;
 using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
@@ -1724,16 +1724,15 @@ public partial class UI : Form, IDialogParent
         await UpdateScheduleAsync();
     }
 
-    private async Task<List<ListViewItem>> GenerateNewScheduleItemsAsync()
+    private async Task<List<ListViewItem>> GenerateNewScheduleItemsAsync(DirFilesCache dfc, bool quick)
     {
         int dd = TVSettings.Instance.WTWRecentDays;
-        DirFilesCache dfc = new();
-
         IEnumerable<ProcessedEpisode> recentEps = await mDoc.TvLibrary.GetRecentAndFutureEpsAsync(dd);
-        return [.. recentEps.Select(ei => GenerateLvi(dfc, ei))];
+
+        return [.. recentEps.Select(ei => GenerateLvi(dfc, ei, quick))];
     }
 
-    private ListViewItem GenerateLvi(DirFilesCache dfc, ProcessedEpisode pe)
+    private ListViewItem GenerateLvi(DirFilesCache dfc, ProcessedEpisode pe, bool quick)
     {
         ListViewItem lvi = new()
         {
@@ -1760,7 +1759,7 @@ public partial class UI : Form, IDialogParent
         lvi.SubItems.Add(pe.Name);
 
         // icon..
-        int? iconNumbers = ChooseWtwIcon(dfc, pe);
+        int? iconNumbers = quick ? null: ChooseWtwIcon(dfc, pe);
         if (iconNumbers != null)
         {
             lvi.ImageIndex = iconNumbers.Value;
@@ -3663,6 +3662,8 @@ public partial class UI : Form, IDialogParent
         Task scan = mDoc.ScanAsync(scanSettings, scanProgDlg);
 
         scanProgDlg?.Show(this);
+        scanProgDlg?.Left = this.Left + 100;
+        scanProgDlg?.Top = this.Top + 250;
 
         await scan;
 
@@ -4705,7 +4706,9 @@ public partial class UI : Form, IDialogParent
 
     private async Task UpdateScheduleAsync()
     {
-        List<ListViewItem> newContents = await GenerateNewScheduleItemsAsync();
+        DirFilesCache dfc = new();
+
+        List<ListViewItem> newContents = await GenerateNewScheduleItemsAsync(dfc, true);
 
         calendarBeingUpdated = true;
         lvWhenToWatch.BeginUpdate();
@@ -4774,8 +4777,57 @@ public partial class UI : Form, IDialogParent
 
         UpdateToolstripWTW();
         calendarBeingUpdated = false;
+
+        await UpdateIconsAsync(dfc);
     }
 
+    private async Task UpdateIconsAsync(DirFilesCache dfc)
+    {
+
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = 8 // Only 4 tasks will run concurrently at any given time
+        };
+
+        ThreadSafeCounter c = new();
+        List<ListViewItem> rowsToUpdate =  [] ;
+
+        lvWhenToWatch.Invoke(new MethodInvoker(delegate
+        {
+            rowsToUpdate = lvWhenToWatch.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag is ProcessedEpisode).ToList();
+        }));
+
+        await Parallel.ForEachAsync(
+            rowsToUpdate,
+            options,
+            async (lvi, token) =>await UpdateIconAsync(lvi, dfc)
+        );
+    }
+
+    private async Task UpdateIconAsync(ListViewItem lvi, DirFilesCache dfc)
+    {
+        if (lvi.Tag is not ProcessedEpisode pe)
+        {
+            return;
+        }
+
+        // icon..
+        int? iconNumbers = ChooseWtwIcon(dfc, pe);
+        if (iconNumbers != null)
+        {
+            if (lvi.ListView?.InvokeRequired ?? false)
+            {
+                lvi.ListView.Invoke(new MethodInvoker(delegate
+                {
+                    lvi.ImageIndex = iconNumbers.Value;
+                }));
+            }
+            else
+            {
+                lvi.ImageIndex = iconNumbers.Value;
+            }
+        }
+    }
     private async void TbFullScan_Click(object sender, EventArgs e)
     {
         await UiScanAsync(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
@@ -4956,7 +5008,12 @@ public partial class UI : Form, IDialogParent
             Invoke((MethodInvoker)delegate
             {
                 UiHelpers.SetProgressStateNormal(Handle);
-                new DownloadProgress(cu, cts).Show(this);
+                var dl = new DownloadProgress(cu, cts);
+                dl.Show(this);
+
+                dl.Left = this.Left + 100;
+                dl.Top = this.Top + 100;
+
             });
         }
     }
@@ -5387,8 +5444,8 @@ public static class TvWebExtensions
         if (si?.CachedShow?.TrailerUrl?.HasValue() ?? false)
         {
             // ReSharper disable once AssignNullToNotNullAttribute
-            //TODO Chek SetHtmlEmbed(web, ShowHtmlHelper.YoutubeTrailer(si.CachedShow!));
-            SetHtmlBody(web, ShowHtmlHelper.YoutubePage(ShowHtmlHelper.YoutubeTrailer(si.CachedShow!) ?? ""));
+            SetHtmlEmbed(web, ShowHtmlHelper.YoutubeTrailer(si.CachedShow!));
+            //SetHtmlBody(web, ShowHtmlHelper.YoutubePage(ShowHtmlHelper.YoutubeTrailer(si.CachedShow!) ?? ""));
         }
         else
         {

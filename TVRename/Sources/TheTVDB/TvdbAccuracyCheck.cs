@@ -73,7 +73,7 @@ internal class TvdbAccuracyCheck
         p?.Report(new DownloadProgressReport
         {
             Provider = TVDoc.ProviderType.TheTVDB,
-            Message = si.Id().ToString() ?? "Unknown Show",
+            Message = $"{ si.Name }({ si.Id() })",
             UpdateType = DownloadProgressReport.Type.EpisodeDownload
         });
 
@@ -208,6 +208,7 @@ internal class TvdbAccuracyCheck
 
             if (jToken?.Children().Any() != true)
             {
+                Logger.Info($" BETA Update Checker: FINISHED");
                 return;
             }
 

@@ -55,6 +55,11 @@ public class CefWrapper
             settings.RootCachePath = PathManager.CefCachePath();
             settings.LogFile = PathManager.CefLogFile();
 
+            // Disable web security to allow custom headers to bypass strict CORS checks
+            settings.CefCommandLineArgs.Add("disable-web-security", "1");
+            // Optional: If you are making requests across different site protocols
+            settings.CefCommandLineArgs.Add("allow-running-insecure-content", "1");
+
             if (!Helpers.InDebug())
             {
                 SetArchitecturePaths(settings);

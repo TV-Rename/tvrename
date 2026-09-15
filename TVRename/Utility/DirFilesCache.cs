@@ -8,6 +8,7 @@
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 // Will cache the file lists of contents of single directories.  Will return the cached
@@ -17,7 +18,7 @@ namespace TVRename;
 
 public class DirFilesCache
 {
-    private readonly Dictionary<string, FileInfo[]> cache = [];
+    private readonly ConcurrentDictionary<string, FileInfo[]> cache = [];
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
     public IEnumerable<FileInfo> GetFilesIncludeSubDirs(string folder) => Get(folder, true);
