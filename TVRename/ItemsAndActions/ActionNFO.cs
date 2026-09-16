@@ -57,7 +57,8 @@ public abstract class ActionNfo : ActionWriteMetadata
             //Assume that the file needs to be recreated
             try
             {
-                Where.Delete(true);
+                LOGGER.Warn($"Removing {Where.FullName} as it does not contain valid XML - we'll recreate it.");
+                FileHelper.DeleteFile(Where, true);
                 return await GoAsync(stats, cancellationToken);
             }
             catch (System.IO.IOException ex)

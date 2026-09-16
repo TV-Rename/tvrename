@@ -103,7 +103,7 @@ public class ActionUnArchive : ActionFileOperation
                 }
             }
 
-            DeleteOrRecycleFile(archiveFile);
+            FileHelper.DeleteOrRecycleFile(archiveFile,Tidyup );
             return ActionOutcome.Success();
         }
         catch (System.IO.DirectoryNotFoundException e)

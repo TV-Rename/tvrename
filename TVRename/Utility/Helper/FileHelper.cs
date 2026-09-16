@@ -36,153 +36,27 @@ public static class FileHelper
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    internal static void DeleteOrRecycleFolder(DirectoryInfo? di, TVSettings.TidySettings? tidyup)
+    public static void DeleteOrRecycleFile(FileInfo? file, TVSettings.TidySettings? Tidyup)
     {
-        if (di is null)
+        if (file is null)
         {
             return;
         }
 
-        try
+        if (Tidyup is null || Tidyup.DeleteEmptyIsRecycle)
         {
-            if (tidyup == null || tidyup.DeleteEmptyIsRecycle)
-            {
-                //TODO make all one use of the folder removal
-                Logger.Info($"Recycling {di.FullName}");
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
-                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-            }
-            else
-            {
-                Logger.Info($"Deleting {di.FullName}");
-                    di.Delete(true, true);
-            }
+            Logger.Info($"Recycling {file.FullName}");
+            Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName,
+                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
         }
-        catch (System.IO.DirectoryNotFoundException ex)
+        else
         {
-            Logger.Warn(ex,$"Failed to remove {di.FullName}");
-        }
-        catch (System.IO.IOException ex)
-        {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
-        }
-        catch (ArgumentException ex)
-        {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
-        }
-        catch (SecurityException ex)
-        {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
-        }
-        catch (OperationCanceledException ex)
-        {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+            Logger.Info($"Deleting {file.FullName}");
+            file.Delete(true);
         }
     }
 
-    public static void DoTidyUp(DirectoryInfo? di, TVSettings.TidySettings? settings)
-    {
-        if (settings is null || !settings.DeleteEmpty)
-        {
-            return;
-        }
-
-        // See if we should now delete the folder we just moved that file from.
-        if (di is null)
-        {
-            return;
-        }
-
-        //if there are sub-directories then we shouldn't remove this one
-        try
-        {
-            DirectoryInfo[] directories = di.GetDirectories();
-            foreach (DirectoryInfo subdi in directories)
-            {
-                bool okToDelete = settings.EmptyIgnoreWordsArray.Any(word =>
-                    subdi.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
-
-                if (!okToDelete)
-                {
-                    Logger.Info($"Not Removing {di.FullName} as it contains {subdi.Name} which does not have {settings.EmptyIgnoreWordsArray.ToCsv()} in the directory name.");
-                    return;
-                }
-            }
-            //we know that each subfolder is OK to delete
-
-            //if the directory is the root download folder do not delete
-            if (TVSettings.Instance.DownloadFolders.Contains(di.FullName))
-            {
-                return;
-            }
-
-            // Do not delete any monitor folders either
-            if (TVSettings.Instance.LibraryFolders.Contains(di.FullName))
-            {
-                return;
-            }
-            if (TVSettings.Instance.MovieLibraryFolders.Contains(di.FullName))
-            {
-                return;
-            }
-
-            FileInfo[] files = di.GetFiles();
-            if (files.Length == 0)
-            {
-                // its empty, so just delete it
-                DeleteOrRecycleFolder(di, settings);
-                return;
-            }
-
-            if (settings.EmptyIgnoreExtensions && !settings.EmptyIgnoreWords)
-            {
-                return; // nope
-            }
-
-            foreach (FileInfo fi in files.Where(x => !CanDelete(x, settings)))
-            {
-                Logger.Info($"Not Removing {di.FullName} as it contains {fi.Name} which does not have {settings.EmptyIgnoreExtensionsArray.ToCsv()} as extension or {settings.EmptyIgnoreWordsArray.ToCsv()} in the filename.");
-                return;
-            }
-
-            if (settings.EmptyMaxSizeCheck)
-            {
-                // how many MB are we deleting?
-                long totalBytes = files.Sum(fi => fi.Length);
-
-                double mbytes = 1.0 * totalBytes / (1024 * 1024);
-                if (mbytes > settings.EmptyMaxSizeMB)
-                {
-                    Logger.Info(
-                        $"Not Removing {di.FullName} as it contains too much Mb of files [{mbytes} vs {settings.EmptyMaxSizeMB}]");
-                    return; // too much
-                }
-            }
-
-            DeleteOrRecycleFolder(di, settings);
-        }
-        catch (System.IO.DirectoryNotFoundException ex)
-        {
-            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
-        }
-        catch (System.IO.IOException ex)
-        {
-            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
-        }
-        catch (OverflowException ex)
-        {
-            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
-        }
-    }
 
     private static bool CanDelete(FileInfo fi, TVSettings.TidySettings settings)
     {
@@ -683,60 +557,7 @@ public static class FileHelper
 
     public static FileInfo FileInFolder(string dir, string fn) => new(dir.EnsureEndsWithSeparator() + fn);
 
-    public static void RemoveDirectory(string folderName)
-    {
-        try
-        {
-            Logger.Info($"Removing {folderName} as part of the library clean up");
-            foreach (string file in Directory.GetFiles(folderName, "*", System.IO.SearchOption.AllDirectories))
-            {
-                Logger.Info($"    Folder contains {file}");
-            }
-            foreach (string file in Directory.GetDirectories(folderName))
-            {
-                Logger.Info($"    Folder contains folder {file}");
-            }
-
-            //TODO make all one use of the folder removal
-            Logger.Info($"Recycling {folderName}");
-            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
-                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-        }
-        catch (FileReadOnlyException)
-        {
-            Logger.Warn($"Could not recycle {folderName} as we got a FileReadOnlyException");
-        }
-        catch (DirectoryReadOnlyException)
-        {
-            Logger.Warn($"Could not recycle {folderName} as we got a DirectoryReadOnlyException");
-        }
-        catch (UnauthorizedAccessException)
-        {
-            Logger.Warn($"Could not recycle {folderName} as we got a UnauthorizedAccessException");
-        }
-        catch (System.IO.PathTooLongException)
-        {
-            Logger.Warn($"Could not recycle {folderName} as we got a PathTooLongException");
-        }
-        catch (System.IO.DirectoryNotFoundException)
-        {
-            Logger.Info($"Could not recycle {folderName} as we got a DirectoryNotFoundException");
-        }
-        catch (DirectoryNotEmptyException)
-        {
-            Logger.Warn($"Could not recycle {folderName} as we got a DirectoryNotEmptyException");
-        }
-        catch (OperationCanceledException)
-        {
-            Logger.Info($"Could not recycle {folderName} as we got a OperationCanceledException");
-        }
-        catch (System.IO.IOException i)
-        {
-            Logger.Warn($"Could not find {folderName} as we got a IOException: {i.ErrorText()}");
-        }
-    }
-
+    
     public static FileInfo FileInFolder(DirectoryInfo di, string fn) => FileInFolder(di.FullName, fn);
 
     // see if showname is somewhere in filename
@@ -1011,4 +832,243 @@ public static class FileHelper
         File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
     }
 
+    internal static void RemoveDirectory(string folderName)
+    {
+        Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName, //TODO make all one use of the folder removal
+                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+    }
+
+    public static void RemoveDirectory(DirectoryInfo folderName, TVSettings.TidySettings? tidyup)
+    {
+        try
+        {
+            Logger.Info($"Removing {folderName.FullName} as part of the library clean up");
+            foreach (string file in Directory.GetFiles(folderName.FullName, "*", System.IO.SearchOption.AllDirectories))
+            {
+                Logger.Info($"    Folder contains {file}");
+            }
+            foreach (string file in Directory.GetDirectories(folderName.FullName))
+            {
+                Logger.Info($"    Folder contains folder {file}");
+            }
+
+            //TODO make all one use of the folder removal
+            Logger.Info($"Recycling {folderName.FullName}");
+            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName.FullName,
+                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+        }
+        catch (FileReadOnlyException)
+        {
+            Logger.Warn($"Could not recycle {folderName.FullName} as we got a FileReadOnlyException");
+        }
+        catch (DirectoryReadOnlyException)
+        {
+            Logger.Warn($"Could not recycle {folderName.FullName} as we got a DirectoryReadOnlyException");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Logger.Warn($"Could not recycle {folderName.FullName} as we got a UnauthorizedAccessException");
+        }
+        catch (System.IO.PathTooLongException)
+        {
+            Logger.Warn($"Could not recycle {folderName.FullName} as we got a PathTooLongException");
+        }
+        catch (System.IO.DirectoryNotFoundException)
+        {
+            Logger.Info($"Could not recycle {folderName.FullName} as we got a DirectoryNotFoundException");
+        }
+        catch (DirectoryNotEmptyException)
+        {
+            Logger.Warn($"Could not recycle {folderName.FullName} as we got a DirectoryNotEmptyException");
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.Info($"Could not recycle {folderName.FullName} as we got a OperationCanceledException");
+        }
+        catch (System.IO.IOException i)
+        {
+            Logger.Warn($"Could not find {folderName.FullName} as we got a IOException: {i.ErrorText()}");
+        }
+    }
+
+    internal static void DeleteOrRecycleFolder(DirectoryInfo? di, TVSettings.TidySettings? tidyup)
+    {
+        if (di is null)
+        {
+            return;
+        }
+
+        try
+        {
+            if (tidyup == null || tidyup.DeleteEmptyIsRecycle)
+            {
+                //TODO make all one use of the folder removal
+                Logger.Info($"Recycling {di.FullName}");
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            }
+            else
+            {
+                Logger.Info($"Deleting {di.FullName}");
+                di.Delete(true, true);
+            }
+        }
+        catch (System.IO.DirectoryNotFoundException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (System.IO.IOException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (ArgumentException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (SecurityException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (OperationCanceledException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+    }
+
+    public static void DoTidyUp(DirectoryInfo? di, TVSettings.TidySettings? settings)
+    {
+        if (settings is null || !settings.DeleteEmpty)
+        {
+            return;
+        }
+
+        // See if we should now delete the folder we just moved that file from.
+        if (di is null)
+        {
+            return;
+        }
+
+        //if there are sub-directories then we shouldn't remove this one
+        try
+        {
+            DirectoryInfo[] directories = di.GetDirectories();
+            foreach (DirectoryInfo subdi in directories)
+            {
+                bool okToDelete = settings.EmptyIgnoreWordsArray.Any(word =>
+                    subdi.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
+
+                if (!okToDelete)
+                {
+                    Logger.Info($"Not Removing {di.FullName} as it contains {subdi.Name} which does not have {settings.EmptyIgnoreWordsArray.ToCsv()} in the directory name.");
+                    return;
+                }
+            }
+            //we know that each subfolder is OK to delete
+
+            //if the directory is the root download folder do not delete
+            if (TVSettings.Instance.DownloadFolders.Contains(di.FullName))
+            {
+                return;
+            }
+
+            // Do not delete any monitor folders either
+            if (TVSettings.Instance.LibraryFolders.Contains(di.FullName))
+            {
+                return;
+            }
+            if (TVSettings.Instance.MovieLibraryFolders.Contains(di.FullName))
+            {
+                return;
+            }
+
+            FileInfo[] files = di.GetFiles();
+            if (files.Length == 0)
+            {
+                // its empty, so just delete it
+                DeleteOrRecycleFolder(di, settings);
+                return;
+            }
+
+            if (settings.EmptyIgnoreExtensions && !settings.EmptyIgnoreWords)
+            {
+                return; // nope
+            }
+
+            foreach (FileInfo fi in files.Where(x => !CanDelete(x, settings)))
+            {
+                Logger.Info($"Not Removing {di.FullName} as it contains {fi.Name} which does not have {settings.EmptyIgnoreExtensionsArray.ToCsv()} as extension or {settings.EmptyIgnoreWordsArray.ToCsv()} in the filename.");
+                return;
+            }
+
+            if (settings.EmptyMaxSizeCheck)
+            {
+                // how many MB are we deleting?
+                long totalBytes = files.Sum(fi => fi.Length);
+
+                double mbytes = 1.0 * totalBytes / (1024 * 1024);
+                if (mbytes > settings.EmptyMaxSizeMB)
+                {
+                    Logger.Info(
+                        $"Not Removing {di.FullName} as it contains too much Mb of files [{mbytes} vs {settings.EmptyMaxSizeMB}]");
+                    return; // too much
+                }
+            }
+
+            DeleteOrRecycleFolder(di, settings);
+        }
+        catch (System.IO.DirectoryNotFoundException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
+        catch (System.IO.IOException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
+        catch (OverflowException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
+    }
+
+    internal static void DeleteFile(FileInfo where, bool ignoreReadOnly)
+    {
+        where.Delete(ignoreReadOnly);
+    }
+
+    internal static void RemoveEmptyDirectory(string directory)
+    {
+        if (!directory.HasValue() || !DirectoryIsMissingEmpty(directory))
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.Delete(directory); //TODO Should use a safer version in FileHelper
+        }
+        catch (System.IO.DirectoryNotFoundException)
+        {
+            //Suppressed - we want it to be removed anyway
+        }
+    }
+
+    internal static bool DirectoryIsMissingEmpty(string path) => !DirectoryHasContents(path);
+
+    private static bool DirectoryHasContents(string path)
+    {
+        return path.HasValue()
+               && Directory.Exists(path)
+               && Directory.EnumerateFileSystemEntries(path).Any();
+    }
 }

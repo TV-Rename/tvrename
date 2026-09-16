@@ -3108,9 +3108,8 @@ public partial class UI : Form, IDialogParent
             }
 
             Logger.Info($"Recycling {folderName} as part of the removal of {si.Name}");
-            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName, //TODO make all one use of the folder removal
-                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+
+            FileHelper.RemoveDirectory(folderName);
         }
         catch (OperationCanceledException e)
         {
@@ -5443,8 +5442,7 @@ public static class TvWebExtensions
     {
         if (si?.CachedShow?.TrailerUrl?.HasValue() ?? false)
         {
-            // ReSharper disable once AssignNullToNotNullAttribute
-            SetHtmlEmbed(web, ShowHtmlHelper.YoutubeTrailer(si.CachedShow!));
+            SetHtmlEmbed(web, ShowHtmlHelper.YoutubeTrailer(si.CachedShow));
             //SetHtmlBody(web, ShowHtmlHelper.YoutubePage(ShowHtmlHelper.YoutubeTrailer(si.CachedShow!) ?? ""));
         }
         else

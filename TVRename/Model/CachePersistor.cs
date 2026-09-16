@@ -30,22 +30,7 @@ internal static class CachePersistor
 
             if (hours >= 24.0) // rotate the save file daily
             {
-                for (int i = 8; i >= 0; i--)
-                {
-                    string fn = cacheFile.FullName + "." + i;
-                    if (File.Exists(fn))
-                    {
-                        string fn2 = cacheFile.FullName + "." + (i + 1);
-                        if (File.Exists(fn2))
-                        {
-                            File.Delete(fn2);
-                        }
-
-                        File.Move(fn, fn2);
-                    }
-                }
-
-                File.Copy(cacheFile.FullName, cacheFile.FullName + ".0");
+                FileHelper.Rotate(cacheFile.FullName);
             }
         }
     }
