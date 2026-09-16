@@ -6,12 +6,14 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 using NLog;
+using NLog.Conditions;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NLog.Windows.Forms;
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -43,6 +45,15 @@ public partial class LogViewer : Form
             CreatedForm = false,
             AllowAccessoryFormCreation = false
         };
+
+        var warnColourRule = new RichTextBoxRowColoringRule
+        {
+            BackgroundColor = KnownColor.LightCoral.ToString(),
+            FontColor = KnownColor.Black.ToString(),
+            Condition = "level == LogLevel.Warn"
+        };
+
+        target.RowColoringRules.Add(warnColourRule);
 
         LogManager.Configuration.AddTarget(target);
         LogManager.Configuration.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug, target));
