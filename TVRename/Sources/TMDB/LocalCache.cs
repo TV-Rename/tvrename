@@ -8,6 +8,7 @@
 
 using Alphaleonis.Win32.Filesystem;
 using Humanizer;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -596,6 +597,17 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         {
             return await webCall.WithRetry(3,10.Seconds(),ex=>ex is RequestLimitExceededException ,errorMessage);
         }
+        
+        catch (JsonReaderException ioex)
+        {
+            LOGGER.Error($"Error {errorMessage}:", ioex);
+
+            SayNothing();
+            LastErrorMessage = ioex.Message;
+            throw new SourceConnectivityException(errorMessage, ioex);
+        }
+
+
         catch (System.IO.IOException ioex)
         {
             LOGGER.LogIoException($"Error {errorMessage}:", ioex);

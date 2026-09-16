@@ -3186,7 +3186,7 @@ public partial class UI : Form, IDialogParent
     internal async Task EditSeasonAsync(ShowConfiguration si, int seasnum)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Edit Season");
+        mDoc.PreventAutoScan($"Edit Season {si.Name}({seasnum})");
 
         EditSeason er = new(si, seasnum);
         DialogResult dr = er.ShowDialog(this);
@@ -3203,7 +3203,7 @@ public partial class UI : Form, IDialogParent
     internal async Task EditShowAsync(ShowConfiguration si)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Edit TV Show");
+        mDoc.PreventAutoScan($"Edit TV Show {si.Name}");
 
         AddEditShow aes = new(si, mDoc);
         DialogResult dr = aes.ShowDialog(this);
@@ -3223,7 +3223,7 @@ public partial class UI : Form, IDialogParent
     internal async Task EditMovieAsync(MovieConfiguration si)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Edit Movie");
+        mDoc.PreventAutoScan($"Edit Movie {si.Name}");
 
         AddEditMovie aes = new(si, mDoc);
         DialogResult dr = aes.ShowDialog(this);

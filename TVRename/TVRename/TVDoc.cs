@@ -1567,7 +1567,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             return;
         }
 
-        PreventAutoScan("Force Refresh");
+        PreventAutoScan($"Force Refresh ({sis.Select(s=>s.Name)?.ToCsv()})");
         List<ShowConfiguration> showConfigurations = [.. sis];
         showConfigurations.ForEach(ForgetShow);
 
@@ -1622,7 +1622,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             return;
         }
 
-        PreventAutoScan("Force Refresh");
+        PreventAutoScan($"Force Refresh ({sis.Select(s => s.Name)?.ToCsv()})");
 
         List<MovieConfiguration> movieConfigurations = [.. sis];
         movieConfigurations.ForEach(ForgetMovie);
