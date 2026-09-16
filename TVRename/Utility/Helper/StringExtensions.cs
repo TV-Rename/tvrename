@@ -60,6 +60,7 @@ public static class StringExtensions
         n = n.Replace(":", "");
         n = n.Replace(".", " ");
         n = n.Replace("'", "");
+        n = n.Replace("’", "");
         n = n.Replace("‘", "");
         n = n.Replace("\"", "");
         n = n.Replace("&", "and");
@@ -226,7 +227,7 @@ public static class StringExtensions
     {
         if (s.HasValue())
         {
-            return s.Length <= charsToDisplay ? s : new string(s.Take(charsToDisplay).ToArray());
+            return s.Length <= charsToDisplay ? s : new string([.. s.Take(charsToDisplay)]);
         }
 
         return string.Empty;
@@ -302,7 +303,7 @@ public static class StringExtensions
 
     public static string RemoveAfter(this string root, string ending)
     {
-        if (root.IndexOf(ending, StringComparison.OrdinalIgnoreCase) != -1)
+        if (root.Contains(ending, StringComparison.OrdinalIgnoreCase))
         {
             return root[..root.IndexOf(ending, StringComparison.OrdinalIgnoreCase)];
         }
@@ -340,7 +341,7 @@ public static class StringExtensions
     }
 
     public static string IntegerCharactersOnly(this string source)
-        => new(source.Where(char.IsDigit).ToArray());
+        => new([.. source.Where(char.IsDigit)]);
     public static bool ContainsOneOf(this string source, IEnumerable<string> terms) => terms.Any(source.Contains);
 
     public static int NumberContains(this string source, IEnumerable<string> terms) => terms.Count(source.Contains);
@@ -348,14 +349,14 @@ public static class StringExtensions
 
     public static string ToCsv(this IEnumerable<int> values) => string.Join(",", values);
 
-    public static string ToPsv(this IEnumerable<string> values) => string.Join("|", values);
+    public static string ToPsv(this IEnumerable<string?>? values) => values is null ? string.Empty : string.Join("|", values);
 
     public static IEnumerable<string> FromPsv(this string? aggregate) => aggregate.FromSepValues('|');
     public static IEnumerable<string> FromCsv(this string? aggregate) => aggregate.FromSepValues(',');
     private static IEnumerable<string> FromSepValues(this string? aggregate, char delimiter)
     {
         return string.IsNullOrEmpty(aggregate)
-            ? Array.Empty<string>()
+            ? []
             : aggregate.Split(delimiter).ValidStrings();
     }
 
@@ -364,7 +365,7 @@ public static class StringExtensions
         return possibleStrings?
             .Where(s => s.HasValue())
             .OfType<string>()
-            .Select(s => s.Trim()) ?? Array.Empty<string>();
+            .Select(s => s.Trim()) ?? [];
     }
 
     public static int? ToInt(this string? value)

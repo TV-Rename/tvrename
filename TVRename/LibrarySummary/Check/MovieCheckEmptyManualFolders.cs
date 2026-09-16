@@ -3,12 +3,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class MovieCheckEmptyManualFolders : MovieCheck
+internal class MovieCheckEmptyManualFolders(MovieConfiguration movie, TVDoc doc) : MovieCheck(movie, doc)
 {
-    public MovieCheckEmptyManualFolders(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     public override bool Check()
     {
         if (!Movie.UseManualLocations)
@@ -21,50 +17,27 @@ internal class MovieCheckEmptyManualFolders : MovieCheck
             return false;
         }
 
-        return Movie.ManualLocations.Any(DirectoryIsMissingEmpty);
+        return Movie.ManualLocations.Any(FileHelper.DirectoryIsMissingEmpty);
     }
 
-    private static bool DirectoryIsMissingEmpty(string path) => !DirectoryHasContents(path);
 
-    private static bool DirectoryHasContents(string path)
-    {
-        return path.HasValue()
-               && Directory.Exists(path)
-               && Directory.EnumerateFileSystemEntries(path).Any();
-    }
-
-    public override string Explain() => $"{Movie.Name} has manual folders set, these folders are missing or empty: {Movie.ManualLocations.Where(DirectoryIsMissingEmpty).ToCsv()}";
+    public override string Explain() => $"{Movie.Name} has manual folders set, these folders are missing or empty: {Movie.ManualLocations.Where(FileHelper.DirectoryIsMissingEmpty).ToCsv()}";
 
     protected override void FixInternal()
     {
-        foreach (string directory in Movie.ManualLocations.Where(DirectoryIsMissingEmpty).ToList())
+        foreach (string directory in Movie.ManualLocations.Where(FileHelper.DirectoryIsMissingEmpty).ToList())
         {
             Movie.ManualLocations.Remove(directory);
-            RemoveEmptyDirectory(directory);
+            FileHelper.RemoveEmptyDirectory(directory);
         }
 
-        if (!Movie.ManualLocations.Any())
+        if (Movie.ManualLocations.Count == 0)
         {
             Movie.UseManualLocations = false;
         }
     }
 
-    private static void RemoveEmptyDirectory(string directory)
-    {
-        if (!directory.HasValue() || !DirectoryIsMissingEmpty(directory))
-        {
-            return;
-        }
 
-        try
-        {
-            Directory.Delete(directory); //TODO Should use a safer version in FileHelper
-        }
-        catch (System.IO.DirectoryNotFoundException)
-        {
-            //Suppressed - we want it to be removed anyway
-        }
-    }
 
     protected override string MovieCheckName => "Movie has missing or empty manual folder";
 }

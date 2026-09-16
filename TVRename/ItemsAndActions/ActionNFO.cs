@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -30,7 +31,7 @@ public abstract class ActionNfo : ActionWriteMetadata
     }
     #endregion Action Members
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {
@@ -39,7 +40,7 @@ public abstract class ActionNfo : ActionWriteMetadata
                 CreateBlankFile();
             }
 
-            ActionOutcome actionOutcome = UpdateFile();
+            ActionOutcome actionOutcome = await UpdateFileAsync();
             Where.LastWriteTime = DateTimeOffset.FromUnixTimeSeconds(UpdateTime() ?? 0).UtcDateTime;
             return actionOutcome;
         }
@@ -56,8 +57,9 @@ public abstract class ActionNfo : ActionWriteMetadata
             //Assume that the file needs to be recreated
             try
             {
-                Where.Delete(true);
-                return Go(stats, cancellationToken);
+                LOGGER.Warn($"Removing {Where.FullName} as it does not contain valid XML - we'll recreate it.");
+                FileHelper.DeleteFile(Where, true);
+                return await GoAsync(stats, cancellationToken);
             }
             catch (System.IO.IOException ex)
             {
@@ -90,7 +92,7 @@ public abstract class ActionNfo : ActionWriteMetadata
 
     protected abstract string RootName();
 
-    protected abstract ActionOutcome UpdateFile();
+    protected abstract Task<ActionOutcome> UpdateFileAsync();
 
     protected static void UpdateAmongstElements(XElement e, string elementName, string? value)
     {
@@ -144,7 +146,7 @@ public abstract class ActionNfo : ActionWriteMetadata
         IEnumerable<XElement> appropriateNodes = root.Elements()
             .Where(node => node.Name == NODE_NAME && node.HasAttribute(NODE_ATTRIBUTE_TYPE, idType));
 
-        IEnumerable<XElement> xElements = appropriateNodes.ToList();
+        IEnumerable<XElement> xElements = [.. appropriateNodes];
         bool needToUpdate = xElements.Any();
 
         if (needToUpdate)
@@ -160,13 +162,13 @@ public abstract class ActionNfo : ActionWriteMetadata
 
     protected static void ReplaceActors(XElement root, IEnumerable<Actor> selectedShowActors)
     {
-        IEnumerable<Actor> showActors = selectedShowActors as Actor[] ?? selectedShowActors.ToArray();
+        IEnumerable<Actor> showActors = selectedShowActors as Actor[] ?? [.. selectedShowActors];
         if (!showActors.ToList().Any())
         {
             return;
         }
 
-        List<XElement> elemsToRemove = root.Elements("actor").ToList();
+        List<XElement> elemsToRemove = [.. root.Elements("actor")];
         foreach (XElement oldActor in elemsToRemove)
         {
             oldActor.Remove();
@@ -199,14 +201,13 @@ public abstract class ActionNfo : ActionWriteMetadata
     protected static void ReplaceThumbs(XElement root, string aspectAttributeName, IEnumerable<MediaImage> images)
     {
         {
-            List<MediaImage> newImages = images.ToList();
+            List<MediaImage> newImages = [.. images];
             if (!newImages.Any())
             {
                 return;
             }
 
-            List<XElement> elemsToRemove = root.Elements("thumb")
-                .Where(x => x.Attribute("aspect")?.Value.Equals(aspectAttributeName) ?? false).ToList();
+            List<XElement> elemsToRemove = [.. root.Elements("thumb").Where(x => x.Attribute("aspect")?.Value.Equals(aspectAttributeName) ?? false)];
 
             foreach (XElement oldActor in elemsToRemove)
             {
@@ -230,13 +231,13 @@ public abstract class ActionNfo : ActionWriteMetadata
     protected static void ReplaceFanart(XElement root, IEnumerable<MediaImage> images)
     {
         {
-            List<MediaImage> newImages = images.ToList();
+            List<MediaImage> newImages = [.. images];
             if (!newImages.Any())
             {
                 return;
             }
 
-            List<XElement> elemsToRemove = root.Elements("fanart").ToList();
+            List<XElement> elemsToRemove = [.. root.Elements("fanart")];
 
             foreach (XElement oldActor in elemsToRemove)
             {

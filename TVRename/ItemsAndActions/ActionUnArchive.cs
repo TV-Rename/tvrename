@@ -16,6 +16,7 @@ using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -84,7 +85,7 @@ public class ActionUnArchive : ActionFileOperation
         return string.Compare(archiveFile.FullName, nfo.archiveFile.FullName, StringComparison.Ordinal);
     }
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {
@@ -102,7 +103,7 @@ public class ActionUnArchive : ActionFileOperation
                 }
             }
 
-            DeleteOrRecycleFile(archiveFile);
+            FileHelper.DeleteOrRecycleFile(archiveFile,Tidyup );
             return ActionOutcome.Success();
         }
         catch (System.IO.DirectoryNotFoundException e)
@@ -142,21 +143,21 @@ public class ActionUnArchive : ActionFileOperation
     {
         if (archive.Name.EndsWith(".rar", StringComparison.OrdinalIgnoreCase))
         {
-            return RarArchive.Open(archive.FullName);
+            return RarArchive.OpenArchive(archive.FullName);
         }
         if (archive.Name.EndsWith(".7z", StringComparison.OrdinalIgnoreCase))
         {
-            return SevenZipArchive.Open(archive.FullName);
+            return SevenZipArchive.OpenArchive(archive.FullName);
         }
         if (archive.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
         {
-            return ZipArchive.Open(archive.FullName);
+            return ZipArchive.OpenArchive(archive.FullName);
         }
         if (archive.Name.EndsWith(".gzip", StringComparison.OrdinalIgnoreCase))
         {
-            return GZipArchive.Open(archive.FullName);
+            return GZipArchive.OpenArchive(archive.FullName);
         }
-        return TarArchive.Open(archive.FullName);
+        return TarArchive.OpenArchive(archive.FullName);
     }
 
     public override bool SameAs(Item o) => o is ActionUnArchive touch && touch.archiveFile == archiveFile;

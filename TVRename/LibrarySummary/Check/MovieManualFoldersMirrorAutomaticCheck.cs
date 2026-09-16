@@ -4,12 +4,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class MovieManualFoldersMirrorAutomaticCheck : MovieCheck
+internal class MovieManualFoldersMirrorAutomaticCheck(MovieConfiguration movie, TVDoc doc) : MovieCheck(movie, doc)
 {
-    public MovieManualFoldersMirrorAutomaticCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     public override bool Check()
     {
         return Movie.UseManualLocations && Movie.ManualLocations.Any(loc => LocationsMatch(Movie.AutoFolderNameForMovie(), loc));
@@ -28,7 +24,7 @@ internal class MovieManualFoldersMirrorAutomaticCheck : MovieCheck
     protected override void FixInternal()
     {
         IEnumerable<string> matchingLocations =
-            Movie.ManualLocations.Where(loc => LocationsMatch(Movie.AutoFolderNameForMovie(), loc)).ToList();
+            [.. Movie.ManualLocations.Where(loc => LocationsMatch(Movie.AutoFolderNameForMovie(), loc))];
 
         Movie.ManualLocations.RemoveNullableRange(matchingLocations);
 

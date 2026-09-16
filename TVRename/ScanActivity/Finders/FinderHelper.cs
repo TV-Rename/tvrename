@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Path = System.IO.Path;
 
@@ -86,11 +87,11 @@ internal static class FinderHelper
 
         string matchText = "X " + filename + " X"; // need to pad to let it match non-numbers at start and end
         string[] regexes =
-        {
+        [
             @"\D\s(E|e|Ep|ep|episode|Episode)\s?0*(?<sequencenumber>\d+)\s\D",
             @"\D\s0*(?<sequencenumber>\d+)\s\D",
             @"\D\s0*(?<sequencenumber>\d+)v\d+\s\D",
-        };
+        ];
 
         return regexes
             .Select(regex => Regex.Match(matchText, regex))
@@ -119,7 +120,7 @@ internal static class FinderHelper
             return false;
         }
 
-        string[] dateFormats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy", "MM-dd-yy" };
+        string[] dateFormats = ["yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy", "MM-dd-yy"];
 
         // force possible date separators to a dash
         filename = filename.Replace("/", "-");
@@ -203,15 +204,8 @@ internal static class FinderHelper
 
     private static bool MovieNeeded(MovieConfiguration si, DirFilesCache dfc, FileInfo fi)
     {
-        if (fi is null)
-        {
-            throw new ArgumentNullException(nameof(fi));
-        }
-
-        if (si is null)
-        {
-            throw new ArgumentNullException(nameof(si));
-        }
+        ArgumentNullException.ThrowIfNull(fi);
+        ArgumentNullException.ThrowIfNull(si);
 
         foreach (FileInfo testFileInfo in FindMovieOnDisk(dfc, si))
         {
@@ -230,15 +224,9 @@ internal static class FinderHelper
     /// <exception cref="ArgumentNullException"><paramref name="di"/> is <see langword="null"/></exception>
     public static bool FileNeeded(DirectoryInfo? di, ShowConfiguration? si, DirFilesCache dfc)
     {
-        if (di is null)
-        {
-            throw new ArgumentNullException(nameof(di));
-        }
+        ArgumentNullException.ThrowIfNull(di);
 
-        if (si is null)
-        {
-            throw new ArgumentNullException(nameof(si));
-        }
+        ArgumentNullException.ThrowIfNull(si);
 
         if (FindSeasEp(di, out int seasF, out int epF, si, out _))
         {
@@ -252,15 +240,9 @@ internal static class FinderHelper
     /// <exception cref="ArgumentNullException"><paramref name="di"/> is <see langword="null"/></exception>
     public static bool FileNeeded(DirectoryInfo? di, MovieConfiguration? si, DirFilesCache dfc)
     {
-        if (di is null)
-        {
-            throw new ArgumentNullException(nameof(di));
-        }
+        ArgumentNullException.ThrowIfNull(di);
 
-        if (si is null)
-        {
-            throw new ArgumentNullException(nameof(si));
-        }
+        ArgumentNullException.ThrowIfNull(si);
 
         foreach (FileInfo testFileInfo in FindMovieOnDisk(dfc, si))
         {
@@ -295,7 +277,7 @@ internal static class FinderHelper
     {
         DirFilesCache cache = dfc ?? new DirFilesCache();
 
-        List<FileInfo> ret = new();
+        List<FileInfo> ret = [];
 
         int seasWanted = epi.AppropriateSeasonNumber;
         int epWanted = epi.AppropriateEpNum;
@@ -337,15 +319,9 @@ internal static class FinderHelper
     private static bool EpisodeNeeded(ShowConfiguration si, DirFilesCache dfc, int seasF, int epF,
         FileSystemInfo fi)
     {
-        if (si is null)
-        {
-            throw new ArgumentNullException(nameof(si));
-        }
+        ArgumentNullException.ThrowIfNull(si);
 
-        if (fi is null)
-        {
-            throw new ArgumentNullException(nameof(fi));
-        }
+        ArgumentNullException.ThrowIfNull(fi);
 
         try
         {
@@ -397,7 +373,7 @@ internal static class FinderHelper
         {
             if (returnFilename.StartsWith(showNameHint, StringComparison.Ordinal))
             {
-                return returnFilename.Remove(0, showNameHint.Length);
+                return returnFilename[showNameHint.Length..];
             }
 
             if (showNameHint.IsNumeric() && returnFilename.Contains(showNameHint)) // e.g. "24", or easy exact match of show name at start of filename
@@ -526,12 +502,12 @@ internal static class FinderHelper
     {
         //Remove any shows from the list that are subsets of all the ohters
         //so that a file does not match CSI and CSI: New York
-        return matchingShows.Where(testShow => !IsInferiorTo(testShow, matchingShows)).ToList();
+        return [.. matchingShows.Where(testShow => !IsInferiorTo(testShow, matchingShows))];
     }
 
     public static List<T> RemoveShortMedia<T>(IEnumerable<T> matchingMovies, IEnumerable<MediaConfiguration> matchingShows) where T : MediaConfiguration
     {
-        return matchingMovies.Where(testShow => !IsContenedTo(testShow, matchingShows)).ToList();
+        return [.. matchingMovies.Where(testShow => !IsContenedTo(testShow, matchingShows))];
     }
 
     private static bool IsInferiorTo(MediaConfiguration testShow, IEnumerable<MediaConfiguration> matchingShows)
@@ -679,8 +655,7 @@ internal static class FinderHelper
     public static string RemoveSceneTerms(string refinedHint)
     {
         List<string> removeCrapAfterTerms =
-            new()
-            {
+            [
                 "2160p",
                 "1080p",
                 "720p",
@@ -699,7 +674,7 @@ internal static class FinderHelper
                 "3d",
                 "xvid",
                 "r6rip"
-            };
+            ];
 
         foreach (string removeCrapAfterTerm in removeCrapAfterTerms)
         {
@@ -717,15 +692,15 @@ internal static class FinderHelper
         return refinedHint;
     }
 
-    public static IEnumerable<PossibleMedia> FindMedia(IEnumerable<FileInfo> possibleShows,
+    public static async Task<IEnumerable<PossibleMedia>> FindMediaAsync(IEnumerable<FileInfo> possibleShows,
         TVDoc doc, IDialogParent owner)
     {
-        List<PossibleMedia> addedShows = new();
+        List<PossibleMedia> addedShows = [];
         try
         {
             foreach (FileInfo file in possibleShows)
             {
-                FindMedia(file, addedShows, doc, owner);
+                await FindMediaAsync(file, addedShows, doc, owner);
             }
 
             return addedShows;
@@ -736,7 +711,7 @@ internal static class FinderHelper
         }
     }
 
-    private static void FindMedia(FileInfo file, List<PossibleMedia> addedShows, TVDoc doc, IDialogParent owner)
+    private static async Task FindMediaAsync(FileInfo file, List<PossibleMedia> addedShows, TVDoc doc, IDialogParent owner)
     {
         //If the hint contains certain terms then we'll ignore it
         if (TVSettings.Instance.IgnoredAutoAddHints.Contains(file.RemoveExtension()))
@@ -769,7 +744,7 @@ internal static class FinderHelper
         }
 
         //if hint doesn't match existing added shows
-        List<MediaConfiguration> showConfigurations = addedShows.Select(x => x.Configuration).ToList();
+        List<MediaConfiguration> showConfigurations = [.. addedShows.Select(x => x.Configuration)];
 
         if (LookForSeries(refinedHint, showConfigurations))
         {
@@ -821,7 +796,7 @@ internal static class FinderHelper
             TVSettings.Instance.DefMovieUseDefaultLocation && TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
         {
             //TODO - Make generic, currently uses TMDB only
-            CachedMovieInfo? foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null, new Locale(), true, true);
+            CachedMovieInfo? foundMovie = await TMDB.LocalCache.Instance.GetMovieAsync(refinedHint, null, new Locale(), true, true);
             if (foundMovie != null)
             {
                 // no need to popup dialog
@@ -949,12 +924,12 @@ internal static class FinderHelper
 
     public static ShowConfiguration? FindBestMatchingShow(string filename, IEnumerable<ShowConfiguration> shows)
     {
-        IEnumerable<ShowConfiguration> showItems = shows as ShowConfiguration[] ?? shows.ToArray();
+        IEnumerable<ShowConfiguration> showItems = shows as ShowConfiguration[] ?? [.. shows];
 
         IEnumerable<ShowConfiguration> showsMatchAtStart = showItems
             .Where(item => FileHelper.SimplifyAndCheckFilenameAtStart(filename, item.ShowName));
 
-        IEnumerable<ShowConfiguration> matchAtStart = showsMatchAtStart as ShowConfiguration[] ?? showsMatchAtStart.ToArray();
+        IEnumerable<ShowConfiguration> matchAtStart = showsMatchAtStart as ShowConfiguration[] ?? [.. showsMatchAtStart];
 
         if (matchAtStart.Any())
         {
@@ -967,12 +942,12 @@ internal static class FinderHelper
 
     private static MovieConfiguration? FindBestMatchingShow(string filename, IEnumerable<MovieConfiguration> shows)
     {
-        IEnumerable<MovieConfiguration> showItems = shows as MovieConfiguration[] ?? shows.ToArray();
+        IEnumerable<MovieConfiguration> showItems = shows as MovieConfiguration[] ?? [.. shows];
 
         IEnumerable<MovieConfiguration> showsMatchAtStart = showItems
             .Where(item => FileHelper.SimplifyAndCheckFilenameAtStart(filename, item.ShowName));
 
-        IEnumerable<MovieConfiguration> matchAtStart = showsMatchAtStart as MovieConfiguration[] ?? showsMatchAtStart.ToArray();
+        IEnumerable<MovieConfiguration> matchAtStart = showsMatchAtStart as MovieConfiguration[] ?? [.. showsMatchAtStart];
 
         if (matchAtStart.Any())
         {

@@ -11,7 +11,7 @@ public class CachedMovieInfo : CachedMediaInfo
     public string? MovieType;
     public int? CollectionId;
     public string? CollectionName;
-    private readonly MovieImages images = new();
+    private readonly MovieImages images = [];
 
     public int? Year => FirstAired?.Year;
 

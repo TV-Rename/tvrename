@@ -1,13 +1,20 @@
 using CefSharp;
+using CefSharp.Handler;
 using System;
-using System.Security.Cryptography.X509Certificates;
 using TVRename.Forms;
 
 namespace TVRename;
 
-public class BrowserRequestHandler : IRequestHandler
+
+public class BrowserRequestHandler : RequestHandler
 {
-    public bool OnBeforeBrowse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)
+    protected override IResourceRequestHandler GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling)
+    {
+        // Return your custom resource handler instance here
+        return new BrowserResourceRequestHandler();
+    }
+
+    protected override bool OnBeforeBrowse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)
     {
         if (request.Url is null)
         {
@@ -54,52 +61,17 @@ public class BrowserRequestHandler : IRequestHandler
             url.OpenUrlInBrowser();
             return true;
         }
+
         return false;
     }
 
-    public void OnDocumentAvailableInMainFrame(IWebBrowser chromiumWebBrowser, IBrowser browser)
+}
+
+public class BrowserResourceRequestHandler : ResourceRequestHandler
+{
+    protected override CefReturnValue OnBeforeResourceLoad(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
     {
-    }
-
-    public bool OnOpenUrlFromTab(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl,
-        WindowOpenDisposition targetDisposition, bool userGesture)
-    {
-        return false;
-    }
-
-    public IResourceRequestHandler? GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame,
-        IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling) => null;
-
-    public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, bool isProxy, string host,
-        int port, string realm, string scheme, IAuthCallback callback)
-    {
-        callback.Dispose();
-        return false;
-    }
-
-    public bool OnCertificateError(IWebBrowser browserControl, IBrowser browser, CefErrorCode errorCode, string requestUrl,
-        ISslInfo sslInfo, IRequestCallback callback)
-    {
-        callback.Dispose();
-        return false;
-    }
-
-    public bool OnSelectClientCertificate(IWebBrowser chromiumWebBrowser, IBrowser browser, bool isProxy, string host, int port,
-        X509Certificate2Collection certificates, ISelectClientCertificateCallback callback) =>
-        false;
-
-    public void OnRenderProcessTerminated(IWebBrowser browserControl, IBrowser browser, CefTerminationStatus status)
-    {
-    }
-
-    public bool OnQuotaRequest(IWebBrowser browserControl, IBrowser browser, string originUrl, long newSize,
-        IRequestCallback callback)
-    {
-        callback.Dispose();
-        return false;
-    }
-
-    public void OnRenderViewReady(IWebBrowser browserControl, IBrowser browser)
-    {
+        request.SetReferrer("http://tvreanme.com", ReferrerPolicy.NeverClearReferrer);
+        return CefReturnValue.Continue; // Let the request continue normally
     }
 }

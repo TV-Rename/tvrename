@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class DefaultNoAirdateMovieCheck : DefaultMovieCheck
+internal class DefaultNoAirdateMovieCheck(MovieConfiguration show, TVDoc doc) : DefaultMovieCheck(show, doc)
 {
-    public DefaultNoAirdateMovieCheck(MovieConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override string FieldName => "No Airdate Movie Check";
 
     protected override bool Field => Movie.ForceCheckNoAirdate;

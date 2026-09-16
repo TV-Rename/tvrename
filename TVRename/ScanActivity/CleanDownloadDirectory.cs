@@ -2,24 +2,17 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal class CleanDownloadDirectory : ScanActivity
+internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    public CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-        filesThatMayBeNeeded = new List<FileInfo>();
-        returnActions = new ItemList();
-        showList = new List<ShowConfiguration>();
-        movieList = new List<MovieConfiguration>();
-    }
-
-    private List<FileInfo> filesThatMayBeNeeded;
+    private List<FileInfo> filesThatMayBeNeeded = [];
     private readonly DirFilesCache dfc = new();
-    private ICollection<ShowConfiguration> showList;
-    private ICollection<MovieConfiguration> movieList;
-    private readonly ItemList returnActions;
+    private ICollection<ShowConfiguration> showList = [];
+    private ICollection<MovieConfiguration> movieList = [];
+    private readonly ItemList returnActions = [];
 
     public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
                                      TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies ||
@@ -29,10 +22,10 @@ internal class CleanDownloadDirectory : ScanActivity
 
     protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         returnActions.Clear();
-        showList = MDoc.TvLibrary.GetSortedShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
+        showList = MDoc.TvLibrary.GetSortedShows(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
         movieList = MDoc.FilmLibrary.GetSortedMovies();
 
         //for each directory in settings directory
@@ -42,24 +35,24 @@ internal class CleanDownloadDirectory : ScanActivity
         //if so add show to list of files to be removed
 
         int totalDownloadFolders = TVSettings.Instance.DownloadFolders.Count;
-        int c = 0;
+        ThreadSafeCounter c = new();
 
         foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToList())
         {
-            UpdateStatus(c++, totalDownloadFolders, dirPath);
+            UpdateStatus(c.Increment(), totalDownloadFolders, dirPath);
 
             if (!Directory.Exists(dirPath) || Settings.Token.IsCancellationRequested)
             {
                 continue;
             }
 
-            filesThatMayBeNeeded = new List<FileInfo>();
+            filesThatMayBeNeeded = [];
 
             ReviewFilesInDownloadDirectory(dirPath, Settings.Owner);
             ReviewDirsInDownloadDirectory(dirPath);
         }
 
-        ItemList removeActions = new();
+        ItemList removeActions = [];
         //Remove any missing items we are planning to resolve
         foreach (ActionCopyMoveRename acmr in returnActions.OfType<ActionCopyMoveRename>())
         {
@@ -121,23 +114,23 @@ internal class CleanDownloadDirectory : ScanActivity
             return;
         }
 
-        List<MovieConfiguration> matchingMovies = movieList.Where(mi => mi.NameMatch(di, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<MovieConfiguration> matchingMovies = [.. movieList.Where(mi => mi.NameMatch(di, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
 
-        List<ShowConfiguration> matchingShows = showList.Where(si => si.NameMatch(di, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<ShowConfiguration> matchingShows = [.. showList.Where(si => si.NameMatch(di, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
 
         if (!matchingShows.Any() && !matchingMovies.Any())
         {
             return; // Some sort of random file - ignore
         }
 
-        List<ShowConfiguration> neededMatchingShows = matchingShows.Where(si => FinderHelper.FileNeeded(di, si, dfc)).ToList();
+        List<ShowConfiguration> neededMatchingShows = [.. matchingShows.Where(si => FinderHelper.FileNeeded(di, si, dfc))];
         if (neededMatchingShows.Any())
         {
             LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededMatchingShows.Select(x => x.ShowName).ToCsv()}");
             return;
         }
 
-        List<MovieConfiguration> neededMatchingMovie = matchingMovies.Where(si => FinderHelper.FileNeeded(di, si, dfc)).ToList();
+        List<MovieConfiguration> neededMatchingMovie = [.. matchingMovies.Where(si => FinderHelper.FileNeeded(di, si, dfc))];
         if (neededMatchingMovie.Any())
         {
             LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededMatchingMovie.Select(x => x.ShowName).ToCsv()}");
@@ -218,9 +211,9 @@ internal class CleanDownloadDirectory : ScanActivity
 
     private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, IDialogParent owner)
     {
-        List<ShowConfiguration> matchingShowsAll = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<ShowConfiguration> matchingShowsAll = [.. showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<ShowConfiguration> matchingShows = FinderHelper.RemoveShortShows(matchingShowsAll);
-        List<MovieConfiguration> matchingMoviesAll = movieList.Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<MovieConfiguration> matchingMoviesAll = [.. movieList.Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<MovieConfiguration> matchingMovies = FinderHelper.RemoveShortShows(matchingMoviesAll);
 
         List<MovieConfiguration> matchingMoviesNoShows =
@@ -252,7 +245,7 @@ internal class CleanDownloadDirectory : ScanActivity
             }
         }
 
-        List<MovieConfiguration> neededMatchingMovie = matchingMovies.Where(si => FinderHelper.FileNeeded(fi, si, dfc)).ToList();
+        List<MovieConfiguration> neededMatchingMovie = [.. matchingMovies.Where(si => FinderHelper.FileNeeded(fi, si, dfc))];
         if (neededMatchingMovie.Any())
         {
             LOGGER.Info($"Not removing {fi.FullName} as it may be needed for {neededMatchingMovie.Select(x => x.ShowName).ToCsv()}");
@@ -293,7 +286,9 @@ internal class CleanDownloadDirectory : ScanActivity
     {
         FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE? re);
 
-        if (!si.SeasonEpisodes.TryGetValue(seasF, out List<ProcessedEpisode>? seasonEpisodes))
+        var seasonEpisodes = si.EpisodesForSeason(seasF);
+
+        if (!seasonEpisodes.Any())
         {
             LogError(fi, seasF, epF, re, si, "season");
             return (false, null);
@@ -343,7 +338,7 @@ internal class CleanDownloadDirectory : ScanActivity
 
         foreach (MovieConfiguration testMovie in matchingMovies)
         {
-            List<FileInfo> encumbants = dfc.FindMovieOnDisk(testMovie).ToList();
+            List<FileInfo> encumbants = [.. dfc.FindMovieOnDisk(testMovie)];
 
             foreach (FileInfo existingFile in encumbants)
             {

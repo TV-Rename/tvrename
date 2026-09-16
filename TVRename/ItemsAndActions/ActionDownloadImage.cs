@@ -16,6 +16,7 @@ namespace TVRename;
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading.Tasks;
 
 public class ActionDownloadImage : ActionDownload
 {
@@ -90,13 +91,13 @@ public class ActionDownloadImage : ActionDownload
         return bmPhoto;
     }
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {
             byte[]? theData = Si.Provider == TVDoc.ProviderType.TheTVDB
-                ? TheTVDB.API.GetTvdbDownload(path)
-                : HttpHelper.Download(path);
+                ? await TheTVDB.API.GetTvdbDownloadAsync(path)
+                : await HttpHelper.DownloadAsync(path, cancellationToken);
 
             if (theData is null || theData.Length == 0)
             {

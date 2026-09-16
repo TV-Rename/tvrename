@@ -1,3 +1,5 @@
+using System.Drawing;
+
 namespace TVRename.Forms.Utilities
 {
     partial class LicenceInfoForm
@@ -55,7 +57,7 @@ namespace TVRename.Forms.Utilities
             // richTextBox1
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.richTextBox1.BackColor = SystemColors.Control;
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox1.Enabled = false;
             this.richTextBox1.Location = new System.Drawing.Point(32, 143);
@@ -67,7 +69,7 @@ namespace TVRename.Forms.Utilities
             // richTextBox2
             // 
             this.richTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox2.BackColor = System.Drawing.SystemColors.Control;
+            this.richTextBox2.BackColor = SystemColors.Control;
             this.richTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox2.Enabled = false;
             this.richTextBox2.Location = new System.Drawing.Point(32, 288);
@@ -133,7 +135,7 @@ namespace TVRename.Forms.Utilities
             // richTextBox3
             // 
             this.richTextBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox3.BackColor = System.Drawing.SystemColors.Control;
+            this.richTextBox3.BackColor = SystemColors.Control;
             this.richTextBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox3.Enabled = false;
             this.richTextBox3.Location = new System.Drawing.Point(32, 25);

@@ -10,23 +10,20 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using TVRename.SAB;
 
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class SABnzbdFinder : DownloadingFinder
+internal class SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadingFinder(doc, settings)
 {
-    public SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.CheckSABnzbd;
 
     protected override string CheckName() => "Looked in the listed SABnz queue to see if the episode is already being downloaded";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || string.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
         {
@@ -35,17 +32,17 @@ internal class SABnzbdFinder : DownloadingFinder
         }
 
         // get list of files being downloaded by SABnzbd
-        XElement? x = GetSabDownload(TVSettings.Instance.SABHostPort, TVSettings.Instance.SABAPIKey);
+        XElement? x = await GetSabDownloadAsync(TVSettings.Instance.SABHostPort, TVSettings.Instance.SABAPIKey);
 
         if (x is null)
         {
             return;
         }
 
-        ItemList newList = new();
-        ItemList toRemove = new();
+        ItemList newList = [];
+        ItemList toRemove = [];
         int c = ActionList.Missing.Count + 1;
-        int n = 0;
+        ThreadSafeCounter n = new();
 
         foreach (ShowItemMissing action in ActionList.MissingEpisodes)
         {
@@ -54,7 +51,7 @@ internal class SABnzbdFinder : DownloadingFinder
                 return;
             }
 
-            UpdateStatus(n++, c, action.Filename);
+            UpdateStatus(n.Increment(), c, action.Filename);
 
             string? simpleShowName = action.Episode?.Show.ShowName.CompareName();
 
@@ -78,7 +75,7 @@ internal class SABnzbdFinder : DownloadingFinder
         ActionList.Replace(toRemove, newList);
     }
 
-    private static XElement? GetSabDownload(string hostPort, string key)
+    private static async Task<XElement?> GetSabDownloadAsync(string hostPort, string key)
     {
         // Something like:
         // http://localhost:8080/sabnzbd/api?mode=queue&apikey=xxx&start=0&limit=8888&output=xml
@@ -88,10 +85,10 @@ internal class SABnzbdFinder : DownloadingFinder
         try
         {
             using HttpClient client = new();
-            using HttpResponseMessage response = client.GetAsync(theUrl).Result;
+            using HttpResponseMessage response = await client.GetAsync(theUrl);
             using HttpContent content = response.Content;
 
-            responseText = content.ReadAsStringAsync().Result;
+            responseText = await content.ReadAsStringAsync();
         }
         catch (Exception e)
         {

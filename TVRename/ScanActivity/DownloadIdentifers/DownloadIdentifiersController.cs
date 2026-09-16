@@ -23,8 +23,8 @@ internal class DownloadIdentifiersController
 
     public DownloadIdentifiersController()
     {
-        identifiers = new List<DownloadIdentifier>
-        {
+        identifiers =
+        [
             new DownloadFolderJpg(),
             new DownloadEpisodeJpg(),
             new DownloadFanartJpg(),
@@ -35,7 +35,8 @@ internal class DownloadIdentifiersController
             new DownloadKodiMetaData(),
             new DownloadKodiImages(),
             new IncorrectFileDates(),
-        };
+            //new MediaMetaData(),
+        ];
     }
 
     public void NotifyComplete(FileInfo file)
@@ -50,10 +51,10 @@ internal class DownloadIdentifiersController
     {
         if (si is null)
         {
-            return new ItemList();
+            return [];
         }
 
-        ItemList theActionList = new();
+        ItemList theActionList = [];
 
         foreach (DownloadIdentifier di in identifiers)
         {
@@ -64,7 +65,7 @@ internal class DownloadIdentifiersController
 
     public ItemList ProcessShow(ShowConfiguration? si)
     {
-        ItemList theActionList = new();
+        ItemList theActionList = [];
         if (si is null)
         {
             return theActionList;
@@ -79,7 +80,7 @@ internal class DownloadIdentifiersController
 
     public ItemList ProcessSeason(ShowConfiguration? si, string folder, int snum)
     {
-        ItemList theActionList = new();
+        ItemList theActionList = [];
         if (si is null)
         {
             return theActionList;
@@ -99,7 +100,7 @@ internal class DownloadIdentifiersController
             return null;
         }
 
-        ItemList theActionList = new();
+        ItemList theActionList = [];
         foreach (DownloadIdentifier di in identifiers)
         {
             theActionList.Add(di.ProcessEpisode(episode, filo));
@@ -117,7 +118,7 @@ internal class DownloadIdentifiersController
 
     public ItemList ForceUpdateMovie(DownloadIdentifier.DownloadType dt, MovieConfiguration? si, FileInfo filo)
     {
-        ItemList theActionList = new();
+        ItemList theActionList = [];
         if (si is null)
         {
             return theActionList;
@@ -132,7 +133,7 @@ internal class DownloadIdentifiersController
 
     public ItemList ForceUpdateShow(DownloadIdentifier.DownloadType dt, ShowConfiguration? si)
     {
-        ItemList theActionList = new();
+        ItemList theActionList = [];
         if (si is null)
         {
             return theActionList;
@@ -147,7 +148,7 @@ internal class DownloadIdentifiersController
 
     public ItemList ForceUpdateSeason(DownloadIdentifier.DownloadType dt, ShowConfiguration? si, string folder, int snum)
     {
-        ItemList theActionList = new();
+        ItemList theActionList = [];
         if (si is null)
         {
             return theActionList;
@@ -162,7 +163,7 @@ internal class DownloadIdentifiersController
 
     public ItemList ForceUpdateEpisode(DownloadIdentifier.DownloadType dt, ProcessedEpisode episode, FileInfo filo)
     {
-        ItemList theActionList = new();
+        ItemList theActionList = [];
         foreach (DownloadIdentifier di in identifiers.Where(di => dt == di.GetDownloadType()))
         {
             theActionList.Add(di.ProcessEpisode(episode, filo, true));

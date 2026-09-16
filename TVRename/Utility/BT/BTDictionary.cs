@@ -11,7 +11,7 @@ public class BTDictionary : BTItem
     public BTDictionary()
         : base(BTChunk.kDictionary)
     {
-        Items = new List<BTDictionaryItem>();
+        Items = [];
     }
 
     public BTItem? GetItem(string key) => GetItem(key, false);

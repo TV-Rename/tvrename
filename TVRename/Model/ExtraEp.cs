@@ -7,18 +7,10 @@
 //
 namespace TVRename;
 
-public class ExtraEp
+public class ExtraEp(int series, int episode, ProcessedSeason.SeasonType st)
 {
-    public bool Done;
-    public readonly int EpisodeId;
-    public readonly int SeriesId;
-    public readonly ProcessedSeason.SeasonType Order;
-
-    public ExtraEp(int series, int episode, ProcessedSeason.SeasonType st)
-    {
-        SeriesId = series;
-        EpisodeId = episode;
-        Done = false;
-        Order = st;
-    }
+    public bool Done = false;
+    public readonly int EpisodeId = episode;
+    public readonly int SeriesId = series;
+    public readonly ProcessedSeason.SeasonType Order = st;
 }

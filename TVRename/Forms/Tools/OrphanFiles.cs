@@ -20,7 +20,7 @@ public partial class OrphanFiles : Form
     {
         MainWindow = parent;
         this.mDoc = mDoc;
-        issues = new List<FileIssue>();
+        issues = [];
         InitializeComponent();
         olvSeason.GroupKeyGetter = GroupSeasonKeyDelegate;
         olvFileDirectory.GroupKeyGetter = GroupFolderTitleDelegate;
@@ -89,14 +89,14 @@ public partial class OrphanFiles : Form
 
     private void UpdateIssues(BackgroundWorker bw)
     {
-        List<string> doneFolders = new();
+        List<string> doneFolders = [];
         int total = mDoc.TvLibrary.Shows.Count();
-        int current = 0;
+        ThreadSafeCounter currentRecord = new();
 
         foreach (ShowConfiguration show in mDoc.TvLibrary.Shows.OrderBy(item => item.ShowName))
         {
             Logger.Info($"Finding old eps for {show.ShowName}");
-            bw.ReportProgress(100 * current++ / total, show.ShowName);
+            bw.ReportProgress(100 * currentRecord.Increment() / total, show.ShowName);
 
             Dictionary<int, SafeList<string>> folders = show.AllFolderLocations(true);
 
@@ -135,7 +135,8 @@ public partial class OrphanFiles : Form
         }
         else
         {
-            if (!show.SeasonEpisodes.TryGetValue(seasonNumber, out List<ProcessedEpisode>? episodes))
+            var episodes = show.EpisodesForSeason(seasonNumber);
+            if (episodes == null)
             {
                 issues.Add(new FileIssue(show, file, "Season not found", seasonNumber));
             }
@@ -153,7 +154,7 @@ public partial class OrphanFiles : Form
 
     private void BwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 

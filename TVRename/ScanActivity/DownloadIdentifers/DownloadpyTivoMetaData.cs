@@ -13,7 +13,7 @@ internal class DownloadpyTivoMetaData : DownloadIdentifier
             return null;
         }
 
-        ItemList theActionList = new();
+        ItemList theActionList = [];
         string fn = file.Name + ".txt";
 
         string folder = file.DirectoryName;

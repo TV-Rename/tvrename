@@ -50,7 +50,7 @@ public static class EnumerableExtensions
 
     public static IList<T> DeepClone<T>(this IEnumerable<T> listToClone) where T : ICloneable
     {
-        return listToClone.Select(item => (T)item.Clone()).ToList();
+        return [.. listToClone.Select(item => (T)item.Clone())];
     }
 
     public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
@@ -60,30 +60,68 @@ public static class EnumerableExtensions
 
     public static IEnumerable<int> Keys(this IEnumerable<KeyValuePair<int, List<ProcessedEpisode>>> source)
     {
-        return source.Select(pair => pair.Key).ToList();
+        return [.. source.Select(pair => pair.Key)];
     }
 
     public static int MaxOrDefault<T>(this IEnumerable<T> enumeration, Func<T, int> selector, int defaultValue)
     {
-        IEnumerable<T> enumerable = enumeration.ToList();
+        IEnumerable<T> enumerable = [.. enumeration];
         return enumerable.Any() ? enumerable.Max(selector) : defaultValue;
     }
 
     public static int MinOrDefault<T>(this IEnumerable<T> enumeration, Func<T, int> selector, int defaultValue)
     {
-        IEnumerable<T> enumerable = enumeration.ToList();
+        IEnumerable<T> enumerable = [.. enumeration];
         return enumerable.Any() ? enumerable.Min(selector) : defaultValue;
     }
 
     public static TProp? MinOrNull<TItem, TProp>(this IEnumerable<TItem> @this, Func<TItem, TProp> selector) where TProp : struct
     {
-        IEnumerable<TItem> list = @this.ToList();
+        IEnumerable<TItem> list = [.. @this];
 
         return list.Any() ? list.Min(selector) : null;
     }
     public static TProp? MaxOrNull<TItem, TProp>(this IEnumerable<TItem> @this, Func<TItem, TProp> selector) where TProp : struct
     {
-        IEnumerable<TItem> list = @this.ToList();
+        IEnumerable<TItem> list = [.. @this];
         return list.Any() ? list.Max(selector) : null;
+    }
+
+    //
+    // Summary:
+    //     Projects each element of a sequence to an System.Collections.Generic.IEnumerable`1
+    //     and flattens the resulting sequences into one sequence.
+    //
+    // Parameters:
+    //   source:
+    //     A sequence of values to project.
+    //
+    //   selector:
+    //     A transform function to apply to each element.
+    //
+    // Type parameters:
+    //   TSource:
+    //     The type of the elements of source.
+    //
+    //   TResult:
+    //     The type of the elements of the sequence returned by selector.
+    //
+    // Returns:
+    //     An System.Collections.Generic.IEnumerable`1 whose elements are the result of
+    //     invoking the one-to-many transform function on each element of the input sequence.
+    //
+    //
+    // Exceptions:
+    //   T:System.ArgumentNullException:
+    //     source is null.
+    public static IEnumerable<TResult> SelectManyOrNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>>? selector)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+
+        if (selector == null)
+        {
+            return [];
+        }
+        return source.SelectMany(selector);
     }
 }

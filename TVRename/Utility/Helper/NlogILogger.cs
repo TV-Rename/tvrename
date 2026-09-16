@@ -6,26 +6,16 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace TVRename;
 
-public class NlogILogger : ILogger
+public class NlogILogger(Logger baseLogger, string details, string source) : ILogger
 {
-    private string Details { get; }
-    private string Source{ get; }
-    private readonly Logger baseLogger;
-
-    public NlogILogger(Logger baseLogger, string details, string source)
-    {
-        Details = details;
-        this.baseLogger = baseLogger;
-        Source = source;
-    }
+    private string Details { get; } = details;
+    private string Source { get; } = source;
+    private readonly Logger baseLogger = baseLogger;
 
     /// <exception cref="ArgumentNullException"><paramref name="formatter"/> is <see langword="null"/></exception>
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
-        if (formatter == null)
-        {
-            throw new ArgumentNullException(nameof(formatter));
-        }
+        ArgumentNullException.ThrowIfNull(formatter);
 
         string message = $"{Source}: {formatter(state, exception)}: {Details}: {exception?.ErrorText()}";
         NLog.LogLevel convertedLogLevel = GetNLogLogLevel(logLevel);
@@ -51,7 +41,7 @@ public class NlogILogger : ILogger
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="state"/> is <see langword="null"/></exception>
-    public IDisposable BeginScope<TState>(TState state)
+    IDisposable ILogger.BeginScope<TState>(TState state)
     {
         if (state is null)
         {

@@ -2,25 +2,23 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal class UnArchiveDownloadDirectory : ScanActivity
+internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    public UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    { }
-
     public override bool Active() => TVSettings.Instance.UnArchiveFilesInDownloadDirectory;
     protected override string CheckName() => "Unarchived files in download directory";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         int totalDownloadFolders = TVSettings.Instance.DownloadFolders.Count;
-        int c = 0;
+        ThreadSafeCounter c = new(); 
 
         foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToList())
         {
-            UpdateStatus(c++, totalDownloadFolders, dirPath);
+            UpdateStatus(c.Increment(), totalDownloadFolders, dirPath);
 
             if (!Directory.Exists(dirPath) || Settings.Token.IsCancellationRequested)
             {
@@ -68,9 +66,9 @@ internal class UnArchiveDownloadDirectory : ScanActivity
 
     private void ReviewArchive(FileInfo fi)
     {
-        List<ShowConfiguration> matchingShowsAll = MDoc.TvLibrary.GetSortedShowItems().Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<ShowConfiguration> matchingShowsAll = [.. MDoc.TvLibrary.GetSortedShows().Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<ShowConfiguration> matchingShows = FinderHelper.RemoveShortShows(matchingShowsAll);
-        List<MovieConfiguration> matchingMoviesAll = MDoc.FilmLibrary.GetSortedMovies().Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+        List<MovieConfiguration> matchingMoviesAll = [.. MDoc.FilmLibrary.GetSortedMovies().Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<MovieConfiguration> matchingMovies = FinderHelper.RemoveShortShows(matchingMoviesAll);
 
         List<MovieConfiguration> matchingMoviesNoShows =

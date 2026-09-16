@@ -1,7 +1,10 @@
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -28,6 +31,15 @@ public static class XmlHelper
         }
     }
 
+    public static async Task<XDocument> LoadXmlFromFileAsync(string filePath, CancellationToken cancellationToken = default)
+    {
+        // Open an async-compatible file stream
+        using FileStream stream = File.OpenRead(filePath);
+        // Load the document asynchronously
+        XDocument doc = await XDocument.LoadAsync(stream, LoadOptions.None, cancellationToken);
+        return doc;
+    }
+
     public static string ReadStringFixQuotesAndSpaces(string s)
     {
         string res = s.Replace("\\'", "'");
@@ -35,11 +47,36 @@ public static class XmlHelper
         res = res.Trim();
         return res;
     }
-    public static string ValidXml(this string content) => new(content.Where(XmlConvert.IsXmlChar).ToArray());
+    public static string ValidXml(this string content) => new([.. content.Where(XmlConvert.IsXmlChar)]);
 
     public static void WriteElement(this XmlWriter writer, string elementName, string? value)
     {
         WriteElement(writer, elementName, value, false);
+    }
+
+    /// <summary>
+    /// Saves an XDocument to a file asynchronously.
+    /// </summary>
+    /// <param name="doc">The XDocument instance to save.</param>
+    /// <param name="filePath">The destination file path.</param>
+    /// <param name="cancellationToken">Optional token to cancel the operation.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    public static async Task SaveXmlAsync(this XDocument doc, string filePath, CancellationToken cancellationToken = default)
+    {
+        if (doc == null) throw new ArgumentNullException(nameof(doc));
+        if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("File path cannot be empty.", nameof(filePath));
+
+        // Use FileOptions.Asynchronous to ensure true non-blocking OS I/O
+        using (FileStream stream = new FileStream(
+            filePath,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.None,
+            bufferSize: 4096,
+            options: FileOptions.Asynchronous))
+        {
+            await doc.SaveAsync(stream, SaveOptions.None, cancellationToken);
+        }
     }
 
     public static void WriteElement(this XmlWriter writer, string elementName, string? value, bool ignoreIfBlank)
@@ -241,7 +278,7 @@ public static class XmlHelper
 
     public static void ReplaceElements(this XElement root, string key, IEnumerable<string> values)
     {
-        IEnumerable<XElement> elementsToRemove = root.Elements(key).ToList();
+        IEnumerable<XElement> elementsToRemove = [.. root.Elements(key)];
         foreach (XElement oldValue in elementsToRemove)
         {
             oldValue.Remove();
@@ -391,7 +428,7 @@ public static class XmlHelper
 
     private static T? ExtractNumber<T>(this XElement xmlSettings, string elementName, Func<string, T> functionToExtract) where T : struct
     {
-        IEnumerable<XElement> xElements = xmlSettings.Descendants(elementName).ToList();
+        IEnumerable<XElement> xElements = [.. xmlSettings.Descendants(elementName)];
 
         if (xElements.Any() && !string.IsNullOrWhiteSpace((string)xElements.First()))
         {
@@ -466,12 +503,12 @@ public static class XmlHelper
 
     internal static List<string> ReadStringsFromXml(this XElement rootElement, string token)
     {
-        return rootElement.Descendants(token).Select(n => n.Value.Trim()).ToList();
+        return [.. rootElement.Descendants(token).Select(n => n.Value.Trim())];
     }
 
     internal static List<IgnoreItem> ReadIiFromXml(this XElement rootElement, string token)
     {
-        return rootElement.Descendants(token).Select(n => new IgnoreItem(n.Value)).ToList();
+        return [.. rootElement.Descendants(token).Select(n => new IgnoreItem(n.Value))];
     }
 
     internal static void WriteStringsToXml(this XmlWriter writer, IEnumerable<IgnoreItem> ignores, string elementName, string stringName)

@@ -9,6 +9,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -62,7 +63,7 @@ public class ActionDeleteDirectory : ActionDelete, IEquatable<ActionDeleteDirect
 
     public bool IsFor(string folderName) => string.Equals(folderName, toRemove.FullName, StringComparison.OrdinalIgnoreCase);
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         //if the directory is the root download folder do not delete
         if (TVSettings.Instance.MonitorFolders &&

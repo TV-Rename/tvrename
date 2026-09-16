@@ -7,19 +7,19 @@ using System.Xml.Linq;
 
 namespace TVRename;
 
-public abstract class CachedMediaInfo : ISeriesSpecifier
+public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecifier
 {
-    public string Name;
+    public string Name = string.Empty;
     public string? Overview;
     public string? Runtime;
     public string? ContentRating;
     public float SiteRating;
     public int SiteRatingVotes;
     public string? Imdb;
-    public int TvdbCode;
-    public int TvMazeCode;
-    public int TvRageCode;
-    public int TmdbCode;
+    public int TvdbCode = -1;
+    public int TvMazeCode = -1;
+    public int TvRageCode = 0;
+    public int TmdbCode = -1;
     public string? WebUrl;
     public string? OfficialUrl;
     public string? TrailerUrl;
@@ -41,19 +41,19 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
 
     public IEnumerable<string> Networks => Network!.FromPsv();
 
-    public string? Status { get; set; }
+    public string? Status { get; set; } = "Unknown";
     public bool IsSearchResultOnly; // set to true if local info is known to be just certain fields found from search results. Do not need to be saved
 
-    public SafeList<Actor> Actors;
-    public SafeList<Crew> Crew;
-    public SafeList<string> Genres;
-    protected SafeList<string> Aliases;
+    public SafeList<Actor> Actors = [];
+    public SafeList<Crew> Crew = [];
+    public SafeList<string> Genres = [];
+    protected SafeList<string> Aliases = [];
 
-    public bool Dirty; // set to true if local info is known to be older than whats on the server
+    public bool Dirty = false; // set to true if local info is known to be older than whats on the server
     public long SrvLastUpdated;
 
     private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
-    protected internal readonly TVDoc.ProviderType Source;
+    protected internal readonly TVDoc.ProviderType Source = source;
 
     protected CachedMediaInfo(Locale locale, TVDoc.ProviderType source) : this(source)
     {
@@ -66,25 +66,6 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
         TvMazeCode = tvmaze;
         TvdbCode = tvdb;
         TmdbCode = tmdbId;
-    }
-
-    protected CachedMediaInfo(TVDoc.ProviderType source)
-    {
-        Actors = new SafeList<Actor>();
-        Crew = new SafeList<Crew>();
-        Aliases = new SafeList<string>();
-        Genres = new SafeList<string>();
-
-        Dirty = false;
-        Name = string.Empty;
-
-        TvdbCode = -1;
-        TvMazeCode = -1;
-        TvRageCode = 0;
-        TmdbCode = -1;
-
-        Status = "Unknown";
-        Source = source;
     }
 
     protected abstract MediaConfiguration.MediaType MediaType();
@@ -134,7 +115,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
 
     public void ClearActors()
     {
-        Actors = new SafeList<Actor>();
+        Actors = [];
     }
 
     public void AddActor(Actor actor)
@@ -148,7 +129,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
 
     public void ClearCrew()
     {
-        Crew = new SafeList<Crew>();
+        Crew = [];
     }
 
     public void AddCrew(Crew crew)
@@ -171,7 +152,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
     private void LoadActors(XElement seriesXml)
     {
         ClearActors();
-        foreach (Actor a in seriesXml.Descendants("Actors").Descendants("Actor").Select(actorXml => new Actor(actorXml)))
+        foreach (Actor a in seriesXml.Descendants("Actors").First().Descendants("Actor").Select(actorXml => new Actor(actorXml)))
         {
             AddActor(a);
         }
@@ -180,7 +161,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
     private void LoadCrew(XElement seriesXml)
     {
         ClearCrew();
-        foreach (Crew c in seriesXml.Descendants("Crew").Descendants("CrewMember").Select(crewXml => new Crew(crewXml)))
+        foreach (Crew c in seriesXml.Descendants("Crew").First().Descendants("CrewMember").Select(crewXml => new Crew(crewXml)))
         {
             AddCrew(c);
         }
@@ -188,8 +169,8 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
 
     private void LoadAliases(XElement seriesXml)
     {
-        Aliases = new SafeList<string>();
-        foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
+        Aliases = [];
+        foreach (XElement aliasXml in seriesXml.Descendants("Aliases").First().Descendants("Alias"))
         {
             AddAlias(aliasXml.Value);
         }
@@ -198,7 +179,7 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
     private void LoadGenres(XElement seriesXml)
     {
         Genres = seriesXml
-            .Descendants("Genres")
+            .Descendants("Genres").First()
             .Descendants("Genre")
             .Select(g => g.Value.Trim()).Distinct()
             .ToSafeList();
@@ -225,6 +206,13 @@ public abstract class CachedMediaInfo : ISeriesSpecifier
         {
             Dirty = true;
             IsSearchResultOnly = false;
+        }
+        if (this is CachedSeriesInfo si)
+        {
+            if (!si.Seasons.Any())
+            {
+                Dirty = true;
+            }
         }
     }
 

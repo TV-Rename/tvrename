@@ -15,6 +15,7 @@ namespace TVRename;
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading.Tasks;
 using System.Xml;
 
 // ReSharper disable once InconsistentNaming
@@ -37,7 +38,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
     public override string Name => "Write Mede8er Metadata";
 
     #region Action
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {
@@ -118,7 +119,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
 
         //Genres...taken from overall Series, not episode specific due to thetvdb
         writer.WriteStartElement("genres");
-        string genre = string.Join(" / ", Episode.Show.CachedShow?.Genres ?? new SafeList<string>());
+        string genre = string.Join(" / ", Episode.Show.CachedShow?.Genres ?? []);
         if (!string.IsNullOrEmpty(genre))
         {
             writer.WriteElement("genre", genre);
@@ -186,7 +187,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
         writer.WriteElement("title", SelectedShow!.ShowName);
 
         writer.WriteStartElement("genres");
-        string genre = string.Join(" / ", SelectedShow.CachedShow?.Genres ?? new SafeList<string>());
+        string genre = string.Join(" / ", SelectedShow.CachedShow?.Genres ?? []);
         if (!string.IsNullOrEmpty(genre))
         {
             writer.WriteElement("genre", genre);
@@ -220,7 +221,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
         // actors...
         foreach (string aa in
                  SelectedShow.CachedShow?.GetActorNames().Where(aa => !string.IsNullOrEmpty(aa)) ??
-                 new List<string>())
+                 [])
         {
             writer.WriteElement("actor", aa);
         }

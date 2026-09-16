@@ -9,7 +9,7 @@ public sealed class AutoFolderMonitor : IDisposable
 {
     private readonly TVDoc mDoc;
     private readonly UI mainForm;
-    private readonly List<System.IO.FileSystemWatcher> watchers = new();
+    private readonly List<System.IO.FileSystemWatcher> watchers = [];
     private readonly System.Timers.Timer mScanDelayTimer;
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 

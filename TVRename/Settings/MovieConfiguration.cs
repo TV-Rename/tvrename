@@ -41,7 +41,7 @@ public class MovieConfiguration : MediaConfiguration
         UseCustomFolderNameFormat = false;
         UseCustomRegion = false;
 
-        ManualLocations = new List<string>();
+        ManualLocations = [];
         CustomNamingFormat = string.Empty;
         CustomFolderNameFormat = string.Empty;
         CustomRegionCode = string.Empty;
@@ -140,7 +140,7 @@ public class MovieConfiguration : MediaConfiguration
     {
         Dictionary<int, SafeList<string>> fld = new()
         {
-            [0] = new SafeList<string>()
+            [0] = []
         };
 
         if (manualToo && UseManualLocations)
@@ -321,13 +321,12 @@ public class MovieConfiguration : MediaConfiguration
 
     public List<FileInfo> MovieFiles()
     {
-        return Locations
+        return [.. Locations
             .Where(location => location.HasValue())
             .Select(location => new DirectoryInfo(location))
             .Where(dir => dir.Exists)
             .SelectMany(dir => dir.GetFiles())
             .Where(f => f.IsMovieFile())
-            .Distinct()
-            .ToList();
+            .Distinct()];
     }
 }

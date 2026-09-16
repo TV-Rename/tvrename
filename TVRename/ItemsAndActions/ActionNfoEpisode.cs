@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using TVRename.Forms;
 
@@ -21,13 +22,13 @@ internal class ActionNfoEpisode : ActionNfo
 
     protected override string RootName() => "episodedetails";
 
-    private ActionOutcome ReplaceMultipartFile()
+    private async Task<ActionOutcome> ReplaceMultipartFileAsync()
     {
         ShowConfiguration? si = Episode?.Show ?? SelectedShow;
 
         //We will replace the file as too difficult to update multiparts
         //We can't use XDocument as it's not fully valid XML
-        List<XElement> episodeXmLs = new();
+        List<XElement> episodeXmLs = [];
 
         if (Episode != null)
         {
@@ -44,7 +45,7 @@ internal class ActionNfoEpisode : ActionNfo
             using System.IO.StreamWriter writer = File.CreateText(Where.FullName);
             foreach (XElement ep in episodeXmLs)
             {
-                writer?.WriteLine(ep);
+                await writer.WriteLineAsync(ep.ToString());
             }
         }
         catch (System.IO.IOException e)
@@ -97,7 +98,7 @@ internal class ActionNfoEpisode : ActionNfo
         string? epDirector = episode.EpisodeDirector;
         if (!string.IsNullOrEmpty(epDirector))
         {
-            IEnumerable<string> dirs = epDirector.FromPsv().ToArray();
+            IEnumerable<string> dirs = [.. epDirector.FromPsv()];
             if (dirs.Any())
             {
                 root.ReplaceElements("director", dirs);
@@ -108,7 +109,7 @@ internal class ActionNfoEpisode : ActionNfo
         string? epWriter = episode.Writer;
         if (!string.IsNullOrEmpty(epWriter))
         {
-            string[] writers = epWriter.FromPsv().ToArray();
+            string[] writers = [.. epWriter.FromPsv()];
             if (writers.Any())
             {
                 root.ReplaceElements("credits", writers);
@@ -135,16 +136,16 @@ internal class ActionNfoEpisode : ActionNfo
         }
     }
 
-    protected override ActionOutcome UpdateFile()
+    protected override async Task<ActionOutcome> UpdateFileAsync()
     {
         //We will replace the file as too difficult to update multiparts
         //We can't use XDocument as it's not fully valid XML
         if (Episode is { Type: ProcessedEpisode.ProcessedEpisodeType.merged })
         {
-            return ReplaceMultipartFile();
+            return await ReplaceMultipartFileAsync();
         }
 
-        XDocument doc = XDocument.Load(Where.FullName);
+        XDocument doc = await XmlHelper.LoadXmlFromFileAsync(Where.FullName);
         XElement? root = doc.Root;
 
         if (root is null)
@@ -155,7 +156,7 @@ internal class ActionNfoEpisode : ActionNfo
         ShowConfiguration si = Episode!.Show;
         UpdateEpisodeFields(Episode, si, root, false);
 
-        doc.Save(Where.FullName);
+        await doc.SaveXmlAsync(Where.FullName);
         return ActionOutcome.Success();
     }
 }

@@ -5,35 +5,29 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using TVRename.Forms;
 
 namespace TVRename;
 
-public class BulkAddMovieManager
+public class BulkAddMovieManager(TVDoc doc)
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-    public PossibleNewMovies AddItems;
-    private readonly TVDoc mDoc;
+    public PossibleNewMovies AddItems = [];
+    private readonly TVDoc mDoc = doc;
 
     //Thread safe counters to work out the progress
     //for scanning
-    private static int CurrentPhaseDirectory;
-
-    private static int CurrentPhaseTotalDirectory;
-    private static int CurrentPhase;
-    private static int CurrentPhaseTotal;
-
-    public BulkAddMovieManager(TVDoc doc)
-    {
-        AddItems = new PossibleNewMovies();
-        mDoc = doc;
-    }
+    private static readonly ThreadSafeCounter CurrentPhaseDirectory = new();
+    private static readonly ThreadSafeCounter CurrentPhaseTotalDirectory = new();
+    private static readonly ThreadSafeCounter CurrentPhase = new();
+    private static readonly ThreadSafeCounter CurrentPhaseTotal = new();
 
     private static DirectoryInfo[]? GetValidDirectories(DirectoryInfo di)
     {
         try
         {
-            return di.GetDirectories().Where(d => d.IsImportant()).ToArray();
+            return [.. di.GetDirectories().Where(d => d.IsImportant())];
         }
         catch (UnauthorizedAccessException)
         {
@@ -52,9 +46,9 @@ public class BulkAddMovieManager
         return null;
     }
 
-    public (bool finished, DirectoryInfo[]? subDirs) CheckFolderForMovies(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
+    public async Task<(bool finished, DirectoryInfo[]? subDirs)> CheckFolderForMoviesAsync(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
     {
-        CurrentPhaseDirectory++;
+        CurrentPhaseDirectory.Increment();
         try
         {
             // ..and not already a folder for one of our shows
@@ -98,7 +92,7 @@ public class BulkAddMovieManager
                 Logger.Warn($"Checked {di2.FullName} and it had no movie files.");
                 if (!di2.GetFiles().Any() && !di2.GetDirectories().Any())
                 {
-                    di2.Delete(false);
+                    di2.Delete(false); //TODO use FileHelper
                 }
             }
 
@@ -106,7 +100,11 @@ public class BulkAddMovieManager
             {
                 // ....its good!
                 Logger.Info($"Adding {newFilm.FullName} as a new Movie");
-                PossibleNewMovie ai = new(newFilm, andGuess, showErrorMsgBox);
+                PossibleNewMovie ai = new(newFilm, showErrorMsgBox);
+                if (andGuess)
+                {
+                    await ai.GuessMovieAsync(showErrorMsgBox);
+                }
                 AddItems.AddIfNew(ai);
             }
 
@@ -140,12 +138,12 @@ public class BulkAddMovieManager
 
     private static List<FileInfo> FilmFiles(DirectoryInfo directory)
     {
-        return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Where(file => file.IsMovieFile()).ToList();
+        return [.. directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Where(file => file.IsMovieFile())];
     }
 
-    private void CheckFolderForShows(DirectoryInfo di, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
+    private async Task CheckFolderForShowsAsync(DirectoryInfo di, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
-        int percentComplete = (int)(100.0 / CurrentPhaseTotal * (1.0 * CurrentPhase + 1.0 * CurrentPhaseDirectory / CurrentPhaseTotalDirectory));
+        int percentComplete = (int)(100.0 / CurrentPhaseTotal.Value * (1.0 * CurrentPhase.Value + 1.0 * CurrentPhaseDirectory.Value / CurrentPhaseTotalDirectory.Value ));
         bw.ReportProgress(percentComplete.Between(0, 100), di.Name);
 
         if (!di.Exists)
@@ -169,7 +167,7 @@ public class BulkAddMovieManager
             return;
         }
 
-        (bool finished, DirectoryInfo[]? subDirs) = CheckFolderForMovies(di, false, fullLogging, showErrorMsgBox);
+        (bool finished, DirectoryInfo[]? subDirs) = await CheckFolderForMoviesAsync(di, false, fullLogging, showErrorMsgBox);
 
         if (finished)
         {
@@ -182,25 +180,25 @@ public class BulkAddMovieManager
         }
 
         // recursively check a folder for new shows
-        CurrentPhaseTotalDirectory += subDirs.Length;
+        CurrentPhaseTotalDirectory.Increment(subDirs.Length);
 
         foreach (DirectoryInfo di2 in subDirs)
         {
-            CheckFolderForShows(di2, bw, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
+            await CheckFolderForShowsAsync(di2, bw, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
         } // for each directory
     }
 
-    public void AddAllToMyMovies(UI ui)
+    public async Task AddAllToMyMoviesAsync(UI ui)
     {
         List<MovieConfiguration> movies = AddToLibrary(AddItems.Where(ai => ai.CodeKnown));
 
-        mDoc.MoviesAddedOrEdited(true, false, false, ui, movies);
+        await mDoc.MoviesAddedOrEditedAsync(true, false, false, ui, movies);
         AddItems.Clear();
     }
 
     private List<MovieConfiguration> AddToLibrary(IEnumerable<PossibleNewMovie> ais)
     {
-        List<MovieConfiguration> movies = new();
+        List<MovieConfiguration> movies = [];
         foreach (PossibleNewMovie ai in ais.Where(a=>a.CodeKnown))
         {
             // see if there is a matching show item
@@ -221,7 +219,7 @@ public class BulkAddMovieManager
                 targetDirectoryName,
                 StringComparison.CurrentCultureIgnoreCase);
 
-            bool existingLocationIsDefaultToo = found.UseAutomaticFolders && found.AutomaticFolderRoot.In(TVSettings.Instance.MovieLibraryFolders.ToArray());
+            bool existingLocationIsDefaultToo = found.UseAutomaticFolders && found.AutomaticFolderRoot.In([.. TVSettings.Instance.MovieLibraryFolders]);
             string? matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s => ai.Directory.FullName.IsSubfolderOf(s));
             bool isInLibraryFolderFileFinder = matchingRoot.HasValue();
 
@@ -288,7 +286,7 @@ public class BulkAddMovieManager
         return found;
     }
 
-    public void CheckFolders(BackgroundWorker bw, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
+    public async Task CheckFoldersAsync(BackgroundWorker bw, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
     {
         // Check the  folder list, and build up a new "AddItems" list.
         // guessing what the shows actually are isn't done here.  That is done by
@@ -296,20 +294,20 @@ public class BulkAddMovieManager
         Logger.Info("*********************************************************************");
         Logger.Info("*Starting to find folders that contain files, but are not in library*");
 
-        AddItems = new PossibleNewMovies();
+        AddItems = [];
 
-        CurrentPhaseTotal = 1;
+        CurrentPhaseTotal.Reset(1);
         if (TVSettings.Instance.MovieLibraryFolders.Any())
         {
-            CurrentPhaseTotal = TVSettings.Instance.MovieLibraryFolders.Count;
+            CurrentPhaseTotal.Reset(TVSettings.Instance.MovieLibraryFolders.Count);
         }
 
-        CurrentPhase = 0;
+        CurrentPhase.Reset();
 
         foreach (string folder in TVSettings.Instance.MovieLibraryFolders)
         {
-            CurrentPhaseDirectory = 0;
-            CurrentPhaseTotalDirectory = 1;
+            CurrentPhaseDirectory.Reset();
+            CurrentPhaseTotalDirectory.Reset(1);
 
             DirectoryInfo di = new(folder);
             if (TVSettings.Instance.LibraryFolders.Contains(folder))
@@ -317,13 +315,13 @@ public class BulkAddMovieManager
                 Logger.Warn($"Not loading {folder} as it is both a movie folder and a tv folder");
                 continue;
             }
-            CheckFolderForShows(di, bw, detailedLogging, showErrorMsgBox, token);
+            await CheckFolderForShowsAsync(di, bw, detailedLogging, showErrorMsgBox, token);
 
             if (token.IsCancellationRequested)
             {
                 break;
             }
-            Interlocked.Increment(ref CurrentPhase);
+            CurrentPhase.Increment();
         }
     }
 }

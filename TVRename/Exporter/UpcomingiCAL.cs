@@ -17,12 +17,8 @@ using System.Text;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class UpcomingiCAL : UpcomingExporter
+internal class UpcomingiCAL(TVDoc i) : UpcomingExporter(i)
 {
-    public UpcomingiCAL(TVDoc i) : base(i)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportWTWICAL;
 
     protected override string Location() => TVSettings.Instance.ExportWTWICALTo;
@@ -40,7 +36,9 @@ internal class UpcomingiCAL : UpcomingExporter
 
             foreach (CalendarEvent? ev in episodes.Select(CreateEvent).Where(ev => ev is not null))
             {
-                calendar.Events.Add(ev);
+                if (ev is not null) { 
+                    calendar.Events.Add(ev);
+                }
             }
 
             CalendarSerializer serializer = new();
@@ -76,7 +74,7 @@ internal class UpcomingiCAL : UpcomingExporter
                 Start = new CalDateTime(startTime),
                 End = new CalDateTime(endTime),
                 Description = ei.Overview,
-                Comments = new List<string> { ei.Overview ?? string.Empty },
+                Comments = [ei.Overview ?? string.Empty],
                 Summary = niceName,
                 Location = ei.TheCachedSeries.Networks.ToCsv(),
                 Url = new Uri(ei.ProviderWebUrl()),

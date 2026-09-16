@@ -1,28 +1,25 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal class LibraryFolderFileFinder : FileFinder
+internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : FileFinder(doc, settings)
 {
-    public LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.RenameCheck && TVSettings.Instance.MissingCheck && TVSettings.Instance.MoveLibraryFiles;
 
     protected override string CheckName() => "Looked in the library for the missing files";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
-        ItemList newList = new();
-        ItemList toRemove = new();
+        ItemList newList = [];
+        ItemList toRemove = [];
         DirFilesCache dfc = new();
 
-        int currentItem = 0;
+        ThreadSafeCounter currentItem = new();
         int totalN = ActionList.Missing.Count + 1;
-        UpdateStatus(currentItem, totalN, "Starting searching through library looking for files");
+        UpdateStatus(currentItem.Increment(), totalN, "Starting searching through library looking for files");
 
         LOGGER.Info("Starting to look for missing items in the library");
 
@@ -33,7 +30,7 @@ internal class LibraryFolderFileFinder : FileFinder
                 return;
             }
 
-            UpdateStatus(currentItem++, totalN, me.Filename);
+            UpdateStatus(currentItem.Increment(), totalN, me.Filename);
 
             if (me is ShowItemMissing sim)
             {
@@ -104,7 +101,7 @@ internal class LibraryFolderFileFinder : FileFinder
 
     private void FindEpisode(ShowItemMissing me, DirFilesCache dfc, ItemList newList, ItemList toRemove)
     {
-        Dictionary<FileInfo, ItemList> thisRound = new();
+        Dictionary<FileInfo, ItemList> thisRound = [];
         if (me.Episode == null)
         {
             return;
@@ -132,13 +129,13 @@ internal class LibraryFolderFileFinder : FileFinder
     {
         if (string.IsNullOrWhiteSpace(baseFolder))
         {
-            return new List<FileInfo>();
+            return [];
         }
 
-        List<FileInfo> matchedFiles = new();
+        List<FileInfo> matchedFiles = [];
         foreach (FileInfo testFile in dfc.GetFilesIncludeSubDirs(baseFolder))
         {
-            ItemList actionsForThisFile = new();
+            ItemList actionsForThisFile = [];
             if (ReviewFile(me, actionsForThisFile, testFile, false, false, false,
                     TVSettings.Instance.UseFullPathNameToMatchLibraryFolders))
             {
@@ -158,7 +155,7 @@ internal class LibraryFolderFileFinder : FileFinder
 
         foreach (FileInfo testFile in files)
         {
-            ItemList actionsForThisFile = new();
+            ItemList actionsForThisFile = [];
             if (!ReviewFile(me, actionsForThisFile, testFile, false, false, false,
                     TVSettings.Instance.UseFullPathNameToMatchLibraryFolders))
             {

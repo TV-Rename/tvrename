@@ -9,7 +9,7 @@ internal class DownloadEpisodeJpg : DownloadIdentifier
     private const string DEFAULT_EXTENSION = ".jpg";
 
     public override DownloadType GetDownloadType() => DownloadType.downloadImage;
-    private List<string> doneJpg = new();
+    private List<string> doneJpg = [];
 
     public override void NotifyComplete(FileInfo file)
     {
@@ -44,7 +44,7 @@ internal class DownloadEpisodeJpg : DownloadIdentifier
                 return null;
             }
 
-            return new ItemList { new ActionDownloadImage(episode.Show, episode, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages) };
+            return [new ActionDownloadImage(episode.Show, episode, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages)];
         }
         catch (DirectoryNotFoundException ex)
         {
@@ -55,6 +55,6 @@ internal class DownloadEpisodeJpg : DownloadIdentifier
 
     public sealed override void Reset()
     {
-        doneJpg = new List<string>();
+        doneJpg = [];
     }
 }

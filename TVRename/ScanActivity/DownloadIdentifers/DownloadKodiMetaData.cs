@@ -35,7 +35,7 @@ internal class DownloadKodiMetaData : DownloadIdentifier
         // for each tv show, optionally write a tvshow.nfo file
         if (TVSettings.Instance.NFOShows)
         {
-            ItemList theActionList = new();
+            ItemList theActionList = [];
             FileInfo tvshownfo = FileHelper.FileInFolder(si.AutoAddFolderBase, "tvshow.nfo");
 
             CachedSeriesInfo? cachedSeriesInfo = si.CachedShow;
@@ -81,7 +81,7 @@ internal class DownloadKodiMetaData : DownloadIdentifier
              }
 
              DoneNfo.Add(nfo.FullName);
-             return new ItemList { new ActionNfoEpisode(nfo, episode) };
+             return [new ActionNfoEpisode(nfo, episode)];
         }
         catch (DirectoryNotFoundException ex)
         {
@@ -116,7 +116,7 @@ internal class DownloadKodiMetaData : DownloadIdentifier
             }
 
             DoneNfo.Add(nfo.FullName);
-            return new ItemList { new ActionNfoMovie(nfo, mc) };
+            return [new ActionNfoMovie(nfo, mc)];
         }
         catch (DirectoryNotFoundException ex)
         {
@@ -129,5 +129,5 @@ internal class DownloadKodiMetaData : DownloadIdentifier
         return null;
     }
 
-    public sealed override void Reset() => DoneNfo = new List<string>();
+    public sealed override void Reset() => DoneNfo = [];
 }

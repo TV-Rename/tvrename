@@ -65,7 +65,7 @@ public static class PathManager
             Logger.Warn(ex, $"Cannot access {pattern} files from directory {TVDocSettingsFile.FullName}");
         }
 
-        return Array.Empty<FileInfo>();
+        return [];
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/></exception>

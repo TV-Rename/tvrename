@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class CustomLanguageMovieCheck : CustomMovieCheck
+internal class CustomLanguageMovieCheck(MovieConfiguration movie, TVDoc doc) : CustomMovieCheck(movie, doc)
 {
-    public CustomLanguageMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     protected override void FixInternal()
     {
         Movie.UseCustomLanguage = false;

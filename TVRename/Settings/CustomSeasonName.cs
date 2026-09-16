@@ -18,8 +18,8 @@ public static class CustomSeasonName
 {
     public static string DefaultStyle() => Presets[0];
 
-    private static readonly List<string> Presets = new()
-    {
+    private static readonly List<string> Presets =
+    [
         "Season {Season:2}",
         "Season {Season}",
         "S{Season}",
@@ -33,10 +33,10 @@ public static class CustomSeasonName
         "{ShowName} - Season {SeasonNumber:2}",
         "{StartYear}-{EndYear}",
         "Season {SeasonNumber:2} - {SeasonName}"
-    };
+    ];
 
-    internal static readonly List<string> TAGS = new()
-    {
+    internal static readonly List<string> TAGS =
+    [
         "{ShowName}",
         "{ShowNameInitial}",
         "{ShowNameLower}",
@@ -50,11 +50,11 @@ public static class CustomSeasonName
         "{ShowImdb}",
         "{SeasonName}",
         "{TotalNumberOfEpisodes}"
-    };
+    ];
 
     public static List<string> ExamplePresets(ProcessedSeason s)
     {
-        return Presets.Select(example => NameFor(s, example)).ToList();
+        return [.. Presets.Select(example => NameFor(s, example))];
     }
 
     public static string NameFor(ProcessedSeason s, string styleString) => NameFor(s, styleString, false);

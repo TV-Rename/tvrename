@@ -10,14 +10,9 @@ namespace TVRename;
 
 using System;
 
-public abstract class ActionDateTouch : ActionFileMetaData
+public abstract class ActionDateTouch(DateTime time) : ActionFileMetaData
 {
-    protected readonly DateTime UpdateTime;
-
-    protected ActionDateTouch(DateTime time)
-    {
-        UpdateTime = time;
-    }
+    protected readonly DateTime UpdateTime = time;
 
     #region Action Members
 

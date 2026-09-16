@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class FilenameMovieCheck : MovieCheck
+internal class FilenameMovieCheck(MovieConfiguration movie, TVDoc doc) : MovieCheck(movie, doc)
 {
-    public FilenameMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     public override bool Check() => Movie.UseCustomNamingFormat;
 
     public override string Explain() => $"This movie does not use the standard file naming format '{TVSettings.Instance.MovieFilenameFormat}', it uses '{Movie.CustomNamingFormat}'";

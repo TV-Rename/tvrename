@@ -10,12 +10,7 @@ using System.Collections.Generic;
 
 namespace TVRename;
 
-internal abstract class MoviesExporter : Exporter
+internal abstract class MoviesExporter(List<MovieConfiguration> shows) : Exporter
 {
-    protected readonly List<MovieConfiguration> Shows;
-
-    protected MoviesExporter(List<MovieConfiguration> shows)
-    {
-        Shows = shows;
-    }
+    protected readonly List<MovieConfiguration> Shows = shows;
 }

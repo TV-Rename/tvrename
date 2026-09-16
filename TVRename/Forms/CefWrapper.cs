@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -18,7 +19,7 @@ public class CefWrapper
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
     private static volatile CefWrapper? InternalInstance;
-    private static readonly object SyncRoot = new();
+    private static readonly Lock SyncRoot = new();
 
     public static CefWrapper Instance
     {
@@ -51,8 +52,13 @@ public class CefWrapper
             using CefSettings settings = new();
 
             settings.CachePath = PathManager.CefCachePath();
-            settings.UserDataPath = PathManager.CefCachePath();
+            settings.RootCachePath = PathManager.CefCachePath();
             settings.LogFile = PathManager.CefLogFile();
+
+            // Disable web security to allow custom headers to bypass strict CORS checks
+            settings.CefCommandLineArgs.Add("disable-web-security", "1");
+            // Optional: If you are making requests across different site protocols
+            settings.CefCommandLineArgs.Add("allow-running-insecure-content", "1");
 
             if (!Helpers.InDebug())
             {
@@ -74,8 +80,6 @@ public class CefWrapper
             $"https://aka.ms/vs/17/release/{urlToDownload}".OpenUrlInBrowser();
         }
         CheckForBrowserDependencies(false);
-
-        Cef.EnableHighDPISupport();
     }
 
     public static void Shutdown()
@@ -161,10 +165,10 @@ public class CefWrapper
     }
 
     private static string VersionToString(VcRuntimeVersion arg) => $"{arg.MscVer}-{arg.Architecture}-{arg.Version}";
-    private static IEnumerable<string> Vc2015Installed()
+    private static List<string> Vc2015Installed()
     {
         const string DEPENDENCIES_PATH = @"SOFTWARE\Classes\Installer\Dependencies";
-        List<string> returnValue = new();
+        List<string> returnValue = [];
 
         using (RegistryKey? dependencies = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH))
         {

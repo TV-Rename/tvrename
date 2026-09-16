@@ -5,7 +5,7 @@ namespace TVRename;
 
 internal sealed class DownloadSeriesJpg : DownloadIdentifier
 {
-    private List<string> doneJpg = new();
+    private List<string> doneJpg = [];
     private const string DEFAULT_FILE_NAME = "series.jpg";
 
     public override DownloadType GetDownloadType() => DownloadType.downloadImage;
@@ -17,7 +17,7 @@ internal sealed class DownloadSeriesJpg : DownloadIdentifier
             return null;
         }
 
-        ItemList theActionList = new();
+        ItemList theActionList = [];
         FileInfo fi = FileHelper.FileInFolder(folder, DEFAULT_FILE_NAME);
         bool fileWorthDownloading = !doneJpg.Contains(fi.FullName) && !fi.Exists;
         if (forceRefresh || fileWorthDownloading)
@@ -33,5 +33,5 @@ internal sealed class DownloadSeriesJpg : DownloadIdentifier
         return theActionList;
     }
 
-    public override void Reset() => doneJpg = new List<string>();
+    public override void Reset() => doneJpg = [];
 }

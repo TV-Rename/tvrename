@@ -110,10 +110,9 @@ public partial class AddEditMovie : Form, ICodeWindow
     {
         cbFolderType.SuspendLayout();
         cbFolderType.Items.Clear();
-        cbFolderType.Items.AddRange(Enum.GetValues(typeof(MovieConfiguration.MovieFolderFormat))
+        cbFolderType.Items.AddRange([.. Enum.GetValues(typeof(MovieConfiguration.MovieFolderFormat))
             .OfType<MovieConfiguration.MovieFolderFormat>()
-            .Select(x => x.PrettyPrint())
-            .ToArray<object>());
+            .Select(x => x.PrettyPrint())]);
         cbFolderType.ResumeLayout();
         cbFolderType.Text = selectedShowFormat.PrettyPrint();
     }
@@ -447,7 +446,7 @@ public partial class AddEditMovie : Form, ICodeWindow
 
     private IEnumerable<string> GetFolders()
     {
-        List<string> folders = new();
+        List<string> folders = [];
         foreach (ListViewItem item in lvManualFolders.Items.OfType<ListViewItem>())
         {
             folders.Add(item.Text);

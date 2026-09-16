@@ -7,16 +7,12 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
 
-internal class RenameAndMissingCheck : ScanShowActivity
+internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
 {
-    private readonly DownloadIdentifiersController downloadIdentifiers;
+    private readonly DownloadIdentifiersController downloadIdentifiers = new();
 
     protected override string ActivityName() => "Rename & Missing Check";
     protected override bool Active() => true;
-    public RenameAndMissingCheck(TVDoc doc) : base(doc)
-    {
-        downloadIdentifiers = new DownloadIdentifiersController();
-    }
 
     protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
@@ -75,12 +71,6 @@ internal class RenameAndMissingCheck : ScanShowActivity
             return;
         }
 
-        // base folder:
-        if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && si.AutoAddType != ShowConfiguration.AutomaticFolderType.none)
-        {
-            // main image for the folder itself
-            Doc.TheActionList.Add(downloadIdentifiers.ProcessShow(si));
-        }
 
         foreach (string folder in folders)
         {
@@ -120,10 +110,11 @@ internal class RenameAndMissingCheck : ScanShowActivity
             return;
         }
 
-        Dictionary<int, FileInfo> localEps = new();
+        Dictionary<int, FileInfo> localEps = [];
         int maxEpNumFound = 0;
 
-        if (!si.SeasonEpisodes.TryGetValue(snum, out List<ProcessedEpisode>? eps))
+        List<ProcessedEpisode> eps = si.EpisodesForSeason(snum);
+        if (eps == null)
         {
             return;
         }

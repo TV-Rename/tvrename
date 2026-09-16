@@ -7,40 +7,37 @@
 //
 
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class RSSFinder : DownloadFinder
+internal class RSSFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadFinder(doc, settings)
 {
-    public RSSFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.SearchRSS;
 
     protected override string CheckName() => "Looked in the listed RSS URLs for download links for the missing files";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         if (TVSettings.Instance.SearchRSSManualScanOnly && Settings.Unattended)
         {
             LOGGER.Info("Searching RSS Feeds is cancelled as this is an unattended scan");
             return;
         }
-        int c = ActionList.Missing.Count + 2;
-        int n = 1;
-        UpdateStatus(n, c, "Searching on RSS Feed...");
+        int c = ActionList.Missing.Count + 1;
+        ThreadSafeCounter n = new();
+        UpdateStatus(0, c, "Searching on RSS Feed...");
 
         // ReSharper disable once InconsistentNaming
-        RssItemList RSSList = new();
+        RssItemList RSSList = [];
         foreach (string s in TVSettings.Instance.RSSURLs)
         {
-            RSSList.DownloadRSS(s, TVSettings.Instance.RSSUseCloudflare, "RSS");
+            await RSSList.DownloadRSSAsync(s, TVSettings.Instance.RSSUseCloudflare, "RSS");
         }
 
-        ItemList newItems = new();
-        ItemList toRemove = new();
+        ItemList newItems = [];
+        ItemList toRemove = [];
 
         foreach (ShowItemMissing action in ActionList.MissingEpisodes)
         {
@@ -49,10 +46,10 @@ internal class RSSFinder : DownloadFinder
                 return;
             }
 
-            UpdateStatus(n++, c, action.Filename);
+            UpdateStatus(n.Increment(), c, action.Filename);
 
             ProcessedEpisode pe = action.MissingEpisode;
-            ItemList newItemsForThisMissingEpisode = new();
+            ItemList newItemsForThisMissingEpisode = [];
 
             foreach (RSSItem rss in RSSList.Where(rss => RssMatch(rss, pe)))
             {

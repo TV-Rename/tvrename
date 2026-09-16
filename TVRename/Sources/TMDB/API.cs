@@ -16,20 +16,20 @@ internal static class API
     private const int MAX_NUMBER_OF_CALLS = 26;
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-    public static IEnumerable<ChangesListItem> GetChangesMovies(this TMDbClient client, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
-        => GetChanges(client.GetMoviesChangesAsync, latestUpdateTime, cts);
+    public static async Task<IEnumerable<ChangesListItem>> GetChangesMoviesAsync(this TMDbClient client, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
+        => await GetChangesAsync(client.GetMoviesChangesAsync, latestUpdateTime, cts);
 
-    public static IEnumerable<ChangesListItem> GetChangesShows(this TMDbClient client, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
-        => GetChanges(client.GetTvChangesAsync, latestUpdateTime, cts);
+    public static async Task<IEnumerable<ChangesListItem>> GetChangesShowsAsync(this TMDbClient client, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
+        => await GetChangesAsync(client.GetTvChangesAsync, latestUpdateTime, cts).ConfigureAwait(false);
 
-    private static IEnumerable<ChangesListItem> GetChanges(Func<int, DateTime?, DateTime?, CancellationToken, Task<SearchContainer<ChangesListItem>>> changeMethod, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
+    private static async Task<IEnumerable<ChangesListItem>> GetChangesAsync(Func<int, DateTime?, DateTime?, CancellationToken, Task<SearchContainer<ChangesListItem>?>> changeMethodAsync, UpdateTimeTracker latestUpdateTime, CancellationToken cts)
     {
         //We need to ask for updates in blocks of 14 days
         //We'll keep asking until we get to a date within 14 days of today
         //(up to a maximum of 52 - if you are this far behind then you may need multiple refreshes)
         try
         {
-            List<ChangesListItem> updatesResponses = new();
+            List<ChangesListItem> updatesResponses = [];
             int numberOfCallsMade = 0;
 
             for (DateTime time = latestUpdateTime.LastSuccessfulServerUpdateDateTime();
@@ -44,7 +44,13 @@ internal static class API
                     {
                         throw new TaskCanceledException("Manual Cancellation");
                     }
-                    SearchContainer<ChangesListItem> response = changeMethod(currentPage, time, null, cts).Result;
+                    SearchContainer<ChangesListItem>? response = await changeMethodAsync(currentPage, time, null, cts).ConfigureAwait(false);
+
+                    if (response?.Results is null)
+                    {
+                        throw new SourceConnectivityException("TMDB returned a null response");
+                    }
+
                     updatesResponses.AddRange(response.Results);
 
                     maxPage = response.TotalPages;

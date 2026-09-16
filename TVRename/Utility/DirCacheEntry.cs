@@ -10,14 +10,8 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
-public class DirCacheEntry
+public class DirCacheEntry(FileInfo f)
 {
-    public readonly long Length;
-    public readonly FileInfo TheFile;
-
-    public DirCacheEntry(FileInfo f)
-    {
-        TheFile = f;
-        Length = f.Length;
-    }
+    public readonly long Length = f.Length;
+    public readonly FileInfo TheFile = f;
 }

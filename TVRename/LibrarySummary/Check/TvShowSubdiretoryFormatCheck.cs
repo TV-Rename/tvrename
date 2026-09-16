@@ -2,12 +2,8 @@ using System;
 
 namespace TVRename;
 
-internal class TvShowSubdiretoryFormatCheck : TvShowCheck
+internal class TvShowSubdiretoryFormatCheck(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
 {
-    public TvShowSubdiretoryFormatCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     public override bool Check() => Show.AutoAddType != DefaultShowFormat();
 
     private static ShowConfiguration.AutomaticFolderType DefaultShowFormat()

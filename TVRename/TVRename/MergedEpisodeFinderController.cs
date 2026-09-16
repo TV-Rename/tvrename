@@ -18,7 +18,7 @@ internal static class MergedEpisodeFinderController
 
         doc.PreventAutoScan("Find Double Episodes");
         StringBuilder output = new();
-        List<PossibleMergedEpisode> returnValue = new();
+        List<PossibleMergedEpisode> returnValue = [];
 
         output.AppendLine("");
         output.AppendLine("##################################################");
@@ -26,7 +26,7 @@ internal static class MergedEpisodeFinderController
         output.AppendLine("##################################################");
 
         DirFilesCache dfc = new();
-        foreach (ShowConfiguration si in doc.TvLibrary.GetSortedShowItems())
+        foreach (ShowConfiguration si in doc.TvLibrary.GetSortedShows())
         {
             worker.ReportProgress(100 * current++ / total, si.ShowName);
 
@@ -117,7 +117,7 @@ internal static class MergedEpisodeFinderController
             //More than 40% longer
             FileInfo possibleDupFile = dfc.FindEpOnDisk(possibleDupEpisode)[0];
             int dupMovieLength = possibleDupFile.GetFilmLength();
-            List<int> otherMovieLengths = new();
+            List<int> otherMovieLengths = [];
             foreach (FileInfo file in possibleDupFile.Directory.EnumerateFiles())
             {
                 if (file.IsMovieFile())

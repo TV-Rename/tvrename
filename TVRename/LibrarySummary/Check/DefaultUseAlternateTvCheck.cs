@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class DefaultUseAlternateTvCheck : DefaultTvShowCheck
+internal class DefaultUseAlternateTvCheck(ShowConfiguration show, TVDoc doc) : DefaultTvShowCheck(show, doc)
 {
-    public DefaultUseAlternateTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override string FieldName => "Use Alternate Order Check";
 
     protected override bool Field => Show.AlternateOrder;

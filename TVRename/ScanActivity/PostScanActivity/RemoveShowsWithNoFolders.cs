@@ -5,27 +5,23 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
-internal class RemoveShowsWithNoFolders : PostScanActivity
+internal class RemoveShowsWithNoFolders(TVDoc doc) : PostScanActivity(doc)
 {
-    public RemoveShowsWithNoFolders(TVDoc doc) : base(doc)
-    {
-    }
-
     public override string ActivityName() => "Clean up shows with no folders that exist";
 
     protected override bool Active() => true;
     protected override void DoCheck(PostScanProgressDelegate progress, CancellationToken token)
     {
-        List<ShowConfiguration> libraryShows = MDoc.TvLibrary.GetSortedShowItems();
+        List<ShowConfiguration> libraryShows = MDoc.TvLibrary.GetSortedShows();
         List<MovieConfiguration> movieConfigurations = MDoc.FilmLibrary.GetSortedMovies();
 
         int totalRecords = libraryShows.Count + movieConfigurations.Count;
-        int n = 0;
+        ThreadSafeCounter n = new();
         string lastUpdate = string.Empty;
 
         foreach (ShowConfiguration si in libraryShows.Where(HasAiredEpisode))
         {
-            progress(n++, totalRecords, si.ShowName, lastUpdate);
+            progress(n.Increment(), totalRecords, si.ShowName, lastUpdate);
 
             if (token.IsCancellationRequested)
             {
@@ -51,7 +47,7 @@ internal class RemoveShowsWithNoFolders : PostScanActivity
     
         foreach (MovieConfiguration si in movieConfigurations.Where(IsReleased))
         {
-            progress(n++, totalRecords, si.ShowName, lastUpdate);
+            progress(n.Increment(), totalRecords, si.ShowName, lastUpdate);
 
             if (token.IsCancellationRequested)
             {

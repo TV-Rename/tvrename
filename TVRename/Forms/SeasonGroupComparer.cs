@@ -11,16 +11,12 @@ namespace TVRename.Forms;
 /// OLVGroups have a "SortValue" property,
 /// which is used if present. Otherwise, the titles of the groups will be compared.
 /// </summary>
-public class SeasonGroupComparer : IComparer<OLVGroup>
+/// <remarks>
+/// Create a group comparer
+/// </remarks>
+/// <param name="order">The ordering for column values</param>
+public class SeasonGroupComparer(SortOrder order) : IComparer<OLVGroup>
 {
-    /// <summary>
-    /// Create a group comparer
-    /// </summary>
-    /// <param name="order">The ordering for column values</param>
-    public SeasonGroupComparer(SortOrder order)
-    {
-        sortOrder = order;
-    }
 
     /// <summary>
     /// Compare the two groups. OLVGroups have a "SortValue" property,
@@ -62,5 +58,5 @@ public class SeasonGroupComparer : IComparer<OLVGroup>
 
     private static int CompareValue(OLVGroup x) => ((Item)x.Items.First().RowObject).SeasonNumberAsInt ?? 0;
 
-    private readonly SortOrder sortOrder;
+    private readonly SortOrder sortOrder = order;
 }

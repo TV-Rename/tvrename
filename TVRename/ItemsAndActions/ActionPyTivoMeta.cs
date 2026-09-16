@@ -12,6 +12,7 @@ namespace TVRename;
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading.Tasks;
 
 public class ActionPyTivoMeta : ActionWriteMetadata
 {
@@ -24,7 +25,7 @@ public class ActionPyTivoMeta : ActionWriteMetadata
 
     public override string Name => "Write pyTivo Meta";
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         if (Episode is null)
         {

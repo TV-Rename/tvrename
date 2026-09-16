@@ -500,7 +500,7 @@ public partial class AddEditShow : Form, ICodeWindow
             try
             {
                 int seas = int.Parse(lvi.Text);
-                selectedShow.ManualFolderLocations.TryAdd(seas, new List<string>());
+                selectedShow.ManualFolderLocations.TryAdd(seas, []);
                 selectedShow.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
             }
             catch
@@ -816,7 +816,7 @@ public partial class AddEditShow : Form, ICodeWindow
         if (addingNewShow && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation && cachedSeriesInfo != null)
         {
             txtBaseFolder.Text =
-                TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator()
+                TVSettings.Instance.DefShowLocation.ToNonNullString().EnsureEndsWithSeparator()
                 + TVSettings.Instance.DefaultTVShowFolder(cachedSeriesInfo);
         }
     }

@@ -23,6 +23,20 @@ public static class UiHelpers
         tsi.Click += command;
         items.Add(tsi);
     }
+
+    public static void SetProgress(this ProgressBar pb, int value)
+    {
+        if (value >= pb.Maximum)
+        {
+            pb.Maximum = value;
+        }
+        if (value < pb.Minimum)
+        {
+            pb.Minimum = value;
+        }
+        pb.Value = value;
+    }
+
     public static bool ShowDialogAndOk(FolderBrowserDialogEx d, IWin32Window owner)
     {
         try
@@ -97,10 +111,7 @@ public static class UiHelpers
     /// <exception cref="ObjectDisposedException">Control is already disposed.</exception>
     public static void SafeInvoke(this Control uiElement, System.Action updater, bool forceSynchronous)
     {
-        if (uiElement is null)
-        {
-            throw new ArgumentNullException(nameof(uiElement));
-        }
+        ArgumentNullException.ThrowIfNull(uiElement);
 
         if (uiElement.InvokeRequired)
         {

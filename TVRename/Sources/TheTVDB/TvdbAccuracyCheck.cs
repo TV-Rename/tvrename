@@ -1,7 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json.Linq;
 using NLog;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TVRename.Forms;
 
 namespace TVRename.TheTVDB;
 
@@ -15,17 +18,26 @@ internal class TvdbAccuracyCheck
 
     public TvdbAccuracyCheck()
     {
-        Issues = new SafeList<string>();
-        ShowsToUpdate = new SafeList<CachedSeriesInfo>();
-        MoviesToUpdate = new SafeList<CachedMovieInfo>();
+        Issues = [];
+        ShowsToUpdate = [];
+        MoviesToUpdate = [];
     }
 
-    public void ServerAccuracyCheck(CachedMovieInfo si)
+    public async Task ServerAccuracyCheckAsync(CachedMovieInfo si, IProgress<DownloadProgressReport>? p)
     {
-        Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
+        Logger.Info($"Checking Accuracy of {si.Name}({si.Id()}) on TVDB");
+
+        p?.Report(new DownloadProgressReport
+        {
+            Provider = TVDoc.ProviderType.TheTVDB,
+            Message = si.Name ?? "Unknown Movie",
+            UpdateType = DownloadProgressReport.Type.EpisodeDownload
+        });
+
+
         try
         {
-            CachedMovieInfo newSi = API.DownloadMovieInfo(si, si.TargetLocale);
+            CachedMovieInfo newSi = await API.DownloadMovieInfoAsync(si, si.TargetLocale);
 
             if (Match(newSi, si))
             {
@@ -54,16 +66,23 @@ internal class TvdbAccuracyCheck
         }
     }
     
-    public void ServerAccuracyCheck(CachedSeriesInfo si)
+    public async Task ServerAccuracyCheckAsync(CachedSeriesInfo si, IProgress<DownloadProgressReport>? p)
     {
-        Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
+        Logger.Info($"Checking Accuracy of {si.Name}({si.Id()}) on TVDB");
+
+        p?.Report(new DownloadProgressReport
+        {
+            Provider = TVDoc.ProviderType.TheTVDB,
+            Message = $"{ si.Name }({ si.Id() })",
+            UpdateType = DownloadProgressReport.Type.EpisodeDownload
+        });
 
         try
         {
-            CachedSeriesInfo newSi = API.DownloadSeriesInfo(si, si.TargetLocale);
+            CachedSeriesInfo newSi = await API.DownloadSeriesInfoAsync(si, si.TargetLocale);
             TvShowAccuracyCheck(si, newSi);
 
-            API.ReloadEpisodes(newSi, si.ActualLocale ?? new Locale(), newSi, si.SeasonOrder);
+            await API.ReloadEpisodesAsync(newSi, si.ActualLocale ?? new Locale(), newSi, si.SeasonOrder);
             foreach (Episode newEpisode in newSi.Episodes)
             {
                 EpisodeAccuracyCheck(si, newEpisode);
@@ -178,17 +197,18 @@ internal class TvdbAccuracyCheck
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    public static void InvestigateUpdatesSince(int targetId, long baseTime)
+    public static async Task InvestigateUpdatesSinceAsync(int targetId, long baseTime)
     {
         for (int page = 0; page < 10000; page++)
         {
             Logger.Info($" BETA Update Checker: {page}");
-            JObject currentDownload = TvdbWebApi.GetUpdates(baseTime, page)
+            JObject currentDownload = await TvdbWebApi.GetUpdatesAsync(baseTime, page)
                                       ?? throw new SourceConsistencyException("Could not get updates from TVDB", TVDoc.ProviderType.TheTVDB);
             JToken? jToken = currentDownload["data"];
 
             if (jToken?.Children().Any() != true)
             {
+                Logger.Info($" BETA Update Checker: FINISHED");
                 return;
             }
 

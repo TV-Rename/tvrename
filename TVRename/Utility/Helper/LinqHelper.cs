@@ -11,14 +11,11 @@ internal static class LinqHelper
 {
     public static bool In<T>(this T? item, params T[] items)
     {
-        if (items == null)
-        {
-            throw new ArgumentNullException(nameof(items));
-        }
+        ArgumentNullException.ThrowIfNull(items);
 
         return items.Contains(item);
     }
-    public static List<T> AsList<T>(this T? item) => item is null ? new List<T>() : new List<T> { item };
+    public static List<T> AsList<T>(this T? item) => item is null ? [] : [item];
 
     public static Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP = 4)
     {
@@ -54,12 +51,12 @@ internal static class LinqHelper
     {
         if (source is null)
         {
-            return new List<T>();
+            return [];
         }
-        IEnumerable<T> enumerable = source as T[] ?? source.ToArray();
+        IEnumerable<T> enumerable = source as T[] ?? [.. source];
         if (!enumerable.Any())
         {
-            return new List<T>();
+            return [];
         }
         TX targetValue = groupFunction(enumerable.Select(countFunction));
         return enumerable.Where(x => comparisionOperator(countFunction(x), targetValue));

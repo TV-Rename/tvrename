@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 // Control for searching for a source provider code, checking against local cache and
@@ -106,13 +107,13 @@ public abstract partial class CodeFinder : UserControl
 
     public event EventHandler<EventArgs>? SelectionChanged;
 
-    public bool SetHint(string s, TVDoc.ProviderType provider)
+    public async Task<bool> SetHintAsync(string s, TVDoc.ProviderType provider)
     {
         mInternal = true;
         txtFindThis.Text = s;
         SetSource(provider);
         mInternal = false;
-        Search(true);
+        await SearchAsync(true);
         return DoFind(true);
     }
 
@@ -225,12 +226,12 @@ public abstract partial class CodeFinder : UserControl
         return numberMatch || textMatch || numberTextMatch;
     }
 
-    private void bnGoSearch_Click(object sender, EventArgs e)
+    private async void bnGoSearch_Click(object sender, EventArgs e)
     {
-        Search(true);
+        await SearchAsync(true);
     }
 
-    private void Search(bool showErrorMsgBox)
+    private async Task SearchAsync(bool showErrorMsgBox)
     {
         // search on site
         txtSearchStatus.Text = GetLabel(Source);
@@ -244,7 +245,7 @@ public abstract partial class CodeFinder : UserControl
         try
         {
             Language toUse = parent.SelectedLanguage() ?? GetSourceLanguage(Source);
-            GetSourceInstance(Source).Search(txtFindThis.Text, showErrorMsgBox, Type, new Locale(toUse));
+            await GetSourceInstance(Source).SearchAsync(txtFindThis.Text, showErrorMsgBox, Type, new Locale(toUse));
         }
         catch (SourceConnectivityException scx)
         {
@@ -310,11 +311,11 @@ public abstract partial class CodeFinder : UserControl
         SelectionChanged?.Invoke(sender, e);
     }
 
-    private void txtFindThis_KeyDown(object sender, KeyEventArgs e)
+    private async void txtFindThis_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.KeyCode is Keys.Enter or Keys.Return)
         {
-            Search(true);
+            await SearchAsync(true);
 
             e.Handled = true;
         }

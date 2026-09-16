@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -42,12 +43,12 @@ public static class API
             return url;
         }
 
-        if (url.StartsWith("/", StringComparison.Ordinal))
+        if (url.StartsWith('/'))
         {
             url = url.RemoveFirstCharacter();
         }
 
-        if (!mirr.EndsWith("/", StringComparison.Ordinal))
+        if (!mirr.EndsWith('/'))
         {
             mirr += "/";
         }
@@ -55,12 +56,12 @@ public static class API
         return url.StartsWith("banners/", StringComparison.Ordinal) ? mirr + url : mirr + "banners/" + url;
     }
 
-    public static byte[]? GetTvdbDownload(string url)
+    public static async Task<byte[]?> GetTvdbDownloadAsync(string url)
     {
         try
         {
             System.Net.Http.HttpClient wc = new();
-            return Task.Run(() => wc.GetByteArrayAsync(url)).Result;
+            return await wc.GetByteArrayAsync(url);
         }
         catch (Exception e)
         {
@@ -158,49 +159,52 @@ public static class API
         }
     }
 
-    public static void ReloadEpisodes(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
+    public static async Task ReloadEpisodesAsync(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
     {
-        Parallel.ForEach(si.Seasons, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, s =>
-        {
-            Thread.CurrentThread.Name ??= $"Download Season {s.SeasonNumber} for {si.Name}"; // Can only set it once
-            try
+        await Parallel.ForEachAsync(si.Seasons,
+            new ParallelOptions { MaxDegreeOfParallelism = 4 },
+            async (s, token) =>
             {
-                ReloadEpisode(code, locale, si, order, s);
-            }
-            catch (SourceConsistencyException sce)
-            {
-                Logger.Error(sce);
-            }
-            catch (SourceConnectivityException sce)
-            {
-                Logger.Warn(sce.ErrorText());
-            }
-            catch (MediaNotFoundException mnfe)
-            {
-                Logger.Error($"Season Issue: {mnfe.ErrorText()}");
-            }
-        });
+                Thread.CurrentThread.Name ??= $"Download Season {s.SeasonNumber} for {si.Name}"; // Can only set it once
+                try
+                {
+                    await ReloadEpisodeAsync(code, locale, si, order, s);
+                }
+                catch (SourceConsistencyException sce)
+                {
+                    Logger.Error(sce);
+                }
+                catch (SourceConnectivityException sce)
+                {
+                    Logger.Warn(sce.ErrorText());
+                }
+                catch (MediaNotFoundException mnfe)
+                {
+                    Logger.Error($"Season Issue: {mnfe.ErrorText()}");
+                }
+            });
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    private static void ReloadEpisode(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order, Season s)
+    private static async Task ReloadEpisodeAsync(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order, Season s)
     {
-        JObject seasonInfo = TvdbWebApi.GetSeasonEpisodes(si,
+        JObject seasonInfo = await TvdbWebApi.GetSeasonEpisodesAsync(si,
             locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), s.SeasonId);
 
         JToken? episodeData = seasonInfo["data"]?["episodes"];
 
         if (episodeData != null)
         {
-            Parallel.ForEach(episodeData,
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, x =>
+            await Parallel.ForEachAsync(episodeData,
+                new ParallelOptions { MaxDegreeOfParallelism = 3 },
+                async (x,token) =>
                 {
                     int? epNumber = x["number"]?.ToObject<int>();
                     Thread.CurrentThread.Name ??=
                         $"Creating S{s.SeasonNumber}E{epNumber} Episode for {si.Name}"; // Can only set it once
 
-                    GenerateAddEpisode(code, locale, si, x, order);
+                    await GenerateAddEpisodeAsync(code, locale, si, x, order);
                 });
         }
 
@@ -219,12 +223,12 @@ public static class API
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    internal static CachedMovieInfo DownloadMovieInfo(ISeriesSpecifier code, Locale locale)
+    internal static async Task<CachedMovieInfo> DownloadMovieInfoAsync(ISeriesSpecifier code, Locale locale)
     {
-        (CachedMovieInfo si, Language? languageCode) = GenerateMovieInfo(TvdbWebApi.DownloadMovie(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB)), locale);
+        (CachedMovieInfo si, Language? languageCode) = GenerateMovieInfo(await TvdbWebApi.DownloadMovieAsync(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB)), locale);
         if (languageCode != null)
         {
-            si.AddTranslations(TvdbWebApi.DownloadMovieTranslations(code, languageCode));
+            si.AddTranslations(await TvdbWebApi.DownloadMovieTranslationsAsync(code, languageCode));
         }
 
         return si;
@@ -233,27 +237,27 @@ public static class API
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    internal static CachedSeriesInfo DownloadSeriesInfo(ISeriesSpecifier code, Locale locale)
+    internal static async Task<CachedSeriesInfo> DownloadSeriesInfoAsync(ISeriesSpecifier code, Locale locale)
     {
         ProcessedSeason.SeasonType st = code is ShowConfiguration showConfig
             ? showConfig.Order
             : ProcessedSeason.SeasonType.aired;
 
-        (CachedSeriesInfo si, Language? languageCodeToUse) = GenerateSeriesInfo(TvdbWebApi.DownloadSeries(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB)), locale, st);
+        (CachedSeriesInfo si, Language? languageCodeToUse) = GenerateSeriesInfo(await TvdbWebApi.DownloadSeriesAsync(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB)), locale, st);
         if (languageCodeToUse != null)
         {
-            si.AddTranslations(TvdbWebApi.DownloadSeriesTranslations(code, languageCodeToUse));
+            si.AddTranslations(await TvdbWebApi.DownloadSeriesTranslationsAsync(code, languageCodeToUse));
         }
 
         return si;
     }
 
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static void CheckForNewEpisodes(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType st)
+    internal static async Task CheckForNewEpisodesAsync(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType st)
     {
         try
         {
-            JObject episodeInfo = TvdbWebApi.GetSeriesEpisodesOfType(si,
+            JObject episodeInfo = await TvdbWebApi.GetSeriesEpisodesOfTypeAsync(si,
                 locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), st);
 
             JToken? episodeData = episodeInfo["data"]?["episodes"];
@@ -267,23 +271,23 @@ public static class API
                 episodeData.Select(x => (x["id"]?.ToObject<int>(), x)).Where(x => x.Item1.HasValue);
 
             List<(int? id, JToken jsonData)> neededEpisodes =
-                availableEpisodes
-                    .Where(x => x.id.HasValue && si.Episodes.All(e => e.EpisodeId != x.id))
-                    .ToList();
+                [.. availableEpisodes.Where(x => x.id.HasValue && si.Episodes.All(e => e.EpisodeId != x.id))];
 
             if (!neededEpisodes.Any())
             {
                 return;
             }
 
-            Parallel.ForEach(neededEpisodes,
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, x =>
+            //todo set parallel cancellation source
+            await Parallel.ForEachAsync(neededEpisodes,
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }
+                ,async  (x,token) =>
                 {
                     int? epNumber = x.jsonData["number"]?.ToObject<int>();
                     Thread.CurrentThread.Name ??=
                         $"Creating SE{epNumber} Episode for {si.Name}"; // Can only set it once
 
-                    GenerateAddEpisode(code, locale, si, x.jsonData, st);
+                    await GenerateAddEpisodeAsync(code, locale, si, x.jsonData, st);
                 });
         }
         catch (SourceConsistencyException sce)
@@ -296,14 +300,14 @@ public static class API
         }
     }
 
-    private static void GenerateAddEpisode(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, JToken x, ProcessedSeason.SeasonType order)
+    private static async Task GenerateAddEpisodeAsync(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, JToken x, ProcessedSeason.SeasonType order)
     {
         try
         {
             (Episode newEp, Language? bestLanguage) = GenerateCoreEpisode(x, code.TvdbId, si, locale, order);
             if (bestLanguage != null)
             {
-                newEp.AddTranslations(TvdbWebApi.GetEpisodeTranslations(code, bestLanguage, newEp.EpisodeId));
+                newEp.AddTranslations(await TvdbWebApi.GetEpisodeTranslationsAsync(code, bestLanguage, newEp.EpisodeId));
             }
 
             si.AddEpisode(newEp);
@@ -363,7 +367,7 @@ public static class API
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="UpdateCancelledException">Cancellation</exception>
     /// <exception cref="TooManyCallsException">Too much info</exception>
-    internal static TvdbUpdateResponse GetUpdates(long updateFromEpochTime,bool showConnectionIssues, CancellationToken cts)
+    internal static async Task<TvdbUpdateResponse> GetUpdatesAsync(long updateFromEpochTime, bool showConnectionIssues, CancellationToken cts)
     {
         //We need to ask for a number of pages
         //We'll keep asking until we get to a page until there is no next pages
@@ -374,7 +378,7 @@ public static class API
         const int OFFSET = 0;
         bool auditUpdates = Helpers.InDebug();
         long fromEpochTime = updateFromEpochTime - OFFSET;
-        List<JObject> updatesResponses = new();
+        List<JObject> updatesResponses = [];
         TvdbUpdateResponse result = new();
 
         while (moreUpdates)
@@ -385,7 +389,7 @@ public static class API
             }
 
             //TODO - get these in parallel;
-            JObject jsonUpdateResponse = TvdbWebApi.GetUpdates(fromEpochTime, pageNumber)
+            JObject jsonUpdateResponse = await TvdbWebApi.GetUpdatesAsync(fromEpochTime, pageNumber)
                                          ?? throw new SourceConsistencyException("Could not get updates from TVDB", TVDoc.ProviderType.TheTVDB);
 
             int numberOfResponses = GetNumResponses(jsonUpdateResponse, fromEpochTime.GetRequestedTime(),showConnectionIssues) ?? throw new SourceConsistencyException($"NumberOfResponses is null: {fromEpochTime}:{pageNumber}:{jsonUpdateResponse}", TVDoc.ProviderType.TheTVDB);
@@ -409,11 +413,15 @@ public static class API
 
         result.LatestTime = updatesResponses.Max(API.GetUpdateTime);
 
-        Parallel.ForEach(updatesResponses, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, o =>
-        {
-            Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
-            result.AddRange(ProcessUpdate(o));
-        });
+        //todo set parallel cancellation source
+        await Parallel.ForEachAsync
+            (updatesResponses,
+            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+            async (o,token) =>
+                {
+                    Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
+                    result.AddRange(ProcessUpdate(o));
+                });
 
         if (auditUpdates && updatesResponses.Any())
         {
@@ -450,7 +458,7 @@ public static class API
             Logger.Error(jToken.ToString());
         }
 
-        return new List<UpdateRecord>();
+        return [];
     }
 
     private static UpdateRecord? MapUpdate(JObject seriesResponse)
@@ -807,7 +815,7 @@ public static class API
             InstagramId = GetExternalIdSearchResult(r, "Instagram"),
             TwitterId = GetExternalIdSearchResult(r, "Twitter"),
             TmdbCode = GetExternalIdSearchResult(r, "TheMovieDB.com")?.ToInt() ?? -1,
-            Genres = r["genres"]?.ToObject<string[]>()?.ToSafeList() ?? new(),
+            Genres = r["genres"]?.ToObject<string[]>()?.ToSafeList() ?? [],
             Network = r["studios"]?.ToObject<string[]>()?.ToPsv() ?? string.Empty,
         };
 
@@ -822,7 +830,7 @@ public static class API
     private static IEnumerable<CachedSeriesInfo> GetEnumSeries(JToken jToken, Locale locale, bool b)
     {
         JArray ja = (JArray)jToken;
-        List<CachedSeriesInfo> ses = new();
+        List<CachedSeriesInfo> ses = [];
 
         foreach (JToken jt in ja.Children())
         {
@@ -840,7 +848,7 @@ public static class API
     private static IEnumerable<CachedMovieInfo> GetEnumMovies(JToken jToken, Locale locale, bool b)
     {
         JArray ja = (JArray)jToken;
-        List<CachedMovieInfo> ses = new();
+        List<CachedMovieInfo> ses = [];
 
         foreach (JToken jt in ja.Children())
         {
@@ -1260,7 +1268,7 @@ public static class API
             return;
         }
 
-        List<JToken> languageNodes = aliasNode.Where(x => x["language"]?.ToString() == lang.TVDBCode()).ToList();
+        List<JToken> languageNodes = [.. aliasNode.Where(x => x["language"]?.ToString() == lang.TVDBCode())];
         if (languageNodes.Any())
         {
             foreach (JToken? x in languageNodes)
@@ -1270,7 +1278,7 @@ public static class API
             return;
         }
 
-        languageNodes = aliasNode.Where(x => x["language"]?.ToString() == TVSettings.Instance.PreferredTVDBLanguage.TVDBCode()).ToList();
+        languageNodes = [.. aliasNode.Where(x => x["language"]?.ToString() == TVSettings.Instance.PreferredTVDBLanguage.TVDBCode())];
         if (languageNodes.Any())
         {
             foreach (JToken? x in languageNodes)
@@ -1371,7 +1379,7 @@ public static class API
     }
     private static SafeList<string> GetGenres(JObject r)
     {
-        return r["data"]?["genres"]?.Select(x => x["name"]?.ToString()).OfType<string>().ToSafeList() ?? new SafeList<string>();
+        return r["data"]?["genres"]?.Select(x => x["name"]?.ToString()).OfType<string>().ToSafeList() ?? [];
     }
 
     private static void AddCastAndCrew(JObject r, CachedSeriesInfo si)
@@ -1522,13 +1530,13 @@ public static class API
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    public static TvdbSearchResult Search(string text, Locale locale, MediaConfiguration.MediaType type)
+    public static async Task<TvdbSearchResult> SearchAsync(string text, Locale locale, MediaConfiguration.MediaType type)
     {
         // but, the number could also be a name, so continue searching as usual
         //text = text.Replace(".", " ");
         TvdbSearchResult result = new();
 
-        JObject? jsonSearchResponse = TvdbWebApi.SearchResponse(text, type, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB));
+        JObject? jsonSearchResponse = await TvdbWebApi.SearchResponseAsync(text, type, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB));
 
         if (jsonSearchResponse != null)
         {
@@ -1544,7 +1552,7 @@ public static class API
         }
 
         //we also want to search for search terms that match in default language
-        JObject? jsonSearchDefaultLangResponse = TvdbWebApi.SearchResponse(text, type, defaultLocale.LanguageToUse(TVDoc.ProviderType.TheTVDB));
+        JObject? jsonSearchDefaultLangResponse = await TvdbWebApi.SearchResponseAsync(text, type, defaultLocale.LanguageToUse(TVDoc.ProviderType.TheTVDB));
         if (jsonSearchDefaultLangResponse != null)
         {
             ProcessSearchResult(result, jsonSearchDefaultLangResponse,defaultLocale);
@@ -1583,34 +1591,34 @@ public static class API
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    public static void DownloadEpisodeNow(CachedSeriesInfo cachedSeriesInfo, int episodeId, Locale locale,
+    public static async Task DownloadEpisodeNowAsync(CachedSeriesInfo cachedSeriesInfo, int episodeId, Locale locale,
         ProcessedSeason.SeasonType order)
     {
-        JObject? jsonEpisodeResponse = TvdbWebApi.DownloadEpisode(cachedSeriesInfo.Name, episodeId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB));
+        JObject? jsonEpisodeResponse = await TvdbWebApi.DownloadEpisodeAsync(cachedSeriesInfo.Name, episodeId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB));
 
         JObject jsonResponseData = (JObject?)jsonEpisodeResponse?["data"] ??
                                    throw new SourceConsistencyException("No Data in Ep Response",
                                        TVDoc.ProviderType.TheTVDB);
 
-        GenerateAddEpisode(cachedSeriesInfo, locale, cachedSeriesInfo, jsonResponseData, order);
+        await GenerateAddEpisodeAsync(cachedSeriesInfo, locale, cachedSeriesInfo, jsonResponseData, order);
     }
 
     public class TvdbUpdateResponse
     {
         public long LatestTime;
-        private readonly SafeList<UpdateRecord> updates = new();
+        private readonly ConcurrentBag<UpdateRecord> updates = [];
 
         public IEnumerable<UpdateRecord> Updates => updates;
 
         public void AddRange(IEnumerable<UpdateRecord> update)
         {
-            updates.AddRange(update);
+            foreach (UpdateRecord u in update)
+            {
+                updates.Add(u);
+            }
         }
     }
 }
-public class TooManyCallsException : Exception
+public class TooManyCallsException(string s) : Exception(s)
 {
-    public TooManyCallsException(string s) :base(s)
-    {
-    }
 }

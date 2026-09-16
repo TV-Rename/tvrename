@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace TVRename.YTS;
 
@@ -71,17 +72,11 @@ public static class API
     private static string? GetString(this JToken r, string key)
         => (string?)r[key];
 
-    public class YtsMovie
+    public class YtsMovie(JObject x)
     {
-        private readonly JObject result;
-        public readonly IEnumerable<YtsDownload> Downloads;
-
-        public YtsMovie(JObject x)
-        {
-            result = x;
-            Downloads = x["torrents"]?.Children().OfType<JObject>().Select(j => new YtsDownload(j)) ??
-                        new List<YtsDownload>();
-        }
+        private readonly JObject result = x;
+        public readonly IEnumerable<YtsDownload> Downloads = x["torrents"]?.Children().OfType<JObject>().Select(j => new YtsDownload(j)) ??
+                        [];
 
         public string Name => result.GetMandatoryString("title");
         public string Overview => result.GetMandatoryString("summary");
@@ -107,29 +102,24 @@ public static class API
         public string TrailerUrl => $"https://www.youtube.com/embed/{result.GetMandatoryString("yt_trailer_code")}";
     }
 
-    public class YtsDownload
+    public class YtsDownload(JObject x)
     {
-        private readonly JObject result;
-
-        public YtsDownload(JObject x)
-        {
-            result = x;
-        }
+        private readonly JObject result = x;
 
         public string Url => result.GetMandatoryString("url");
         public string Quality => result.GetMandatoryString("quality");
         public string Size => result.GetMandatoryString("size");
     }
 
-    private static IEnumerable<YtsMovie> GetMoviesInternal(BackgroundWorker sender, string resolution, int minRating)
+    private static async Task<IEnumerable<YtsMovie>> GetMoviesInternalAsync(BackgroundWorker sender, string resolution, int minRating)
     {
-        List<YtsMovie> downloadedMovies = new();
+        List<YtsMovie> downloadedMovies = [];
         bool morePages = true;
         int page = 1;
 
         while (morePages)
         {
-            JObject updatesJson = HttpHelper.HttpGetRequestWithRetry(
+            JObject updatesJson = await HttpHelper.HttpGetRequestWithRetryAsync(
                 APIRoot +
                 $"list_movies.json?quality={resolution}&limit=50&page={page}&minimum_rating={minRating}&with_rt_ratings=true",
                 3, 2);
@@ -160,10 +150,10 @@ public static class API
         return downloadedMovies;
     }
 
-    private static YtsMovie? GetMovieByImdbInternal(string? imdbCode)
+    private static async Task<YtsMovie?> GetMovieByImdbInternalAsync(string? imdbCode)
     {
         JObject updatesJson =
-            HttpHelper.HttpGetRequestWithRetry(APIRoot + $"movie_details.json?imdb_id={imdbCode}", 3, 2);
+            await HttpHelper.HttpGetRequestWithRetryAsync(APIRoot + $"movie_details.json?imdb_id={imdbCode}", 3, 2);
 
         if (updatesJson["status"]?.ToString() is "ok" && updatesJson["data"]?["movie"] is JObject o)
         {
@@ -173,10 +163,10 @@ public static class API
         return null;
     }
 
-    private static IEnumerable<YtsMovie>? GetRelatedMoviesInternal(int ytsMovieId)
+    private static async Task<IEnumerable<YtsMovie>?> GetRelatedMoviesInternalAsync(int ytsMovieId)
     {
         JObject updatesJson =
-            HttpHelper.HttpGetRequestWithRetry(APIRoot + $"movie_suggestions.json?movie_id={ytsMovieId}", 3, 2);
+            await HttpHelper.HttpGetRequestWithRetryAsync(APIRoot + $"movie_suggestions.json?movie_id={ytsMovieId}", 3, 2);
 
         if (updatesJson["status"]?.ToString() is "ok" && updatesJson["data"]?["movies"] is JArray movies)
         {
@@ -186,16 +176,16 @@ public static class API
         return null;
     }
 
-    internal static YtsMovie? GetMovieByImdb(string? imdbCode)
+    internal static async Task<YtsMovie?> GetMovieByImdbAsync(string? imdbCode)
     {
-        return HandleErrorsFrom($"get IMDB {imdbCode} movie", () => GetMovieByImdbInternal(imdbCode));
+        return await HandleErrorsFrom($"get IMDB {imdbCode} movie", async () => await GetMovieByImdbInternalAsync(imdbCode));
     }
-    internal static IEnumerable<YtsMovie>? GetRelatedMovies(int id)
+    internal static async Task<IEnumerable<YtsMovie>?> GetRelatedMoviesAsync(int id)
     {
-        return HandleErrorsFrom($"get movies related to id {id}", () => GetRelatedMoviesInternal(id));
+        return await HandleErrorsFrom($"get movies related to id {id}", async () => await GetRelatedMoviesInternalAsync(id));
     }
-    internal static IEnumerable<YtsMovie> GetMovies(BackgroundWorker sender, string resolution, int minRating)
+    internal static async Task<IEnumerable<YtsMovie>> GetMoviesAsync(BackgroundWorker sender, string resolution, int minRating)
     {
-        return HandleErrorsFrom("get movies", () => GetMoviesInternal(sender, resolution, minRating));
+        return await HandleErrorsFrom("get movies", async () => await GetMoviesInternalAsync(sender, resolution, minRating));
     }
 }

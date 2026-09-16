@@ -11,6 +11,7 @@ using DaveChambers.FolderBrowserDialogEx;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms;
 
@@ -202,12 +203,12 @@ public partial class BulkAddShow : Form
         OpenSelectedFolder();
     }
 
-    private void bnCheck_Click(object sender, System.EventArgs e)
+    private async void bnCheck_Click(object sender, System.EventArgs e)
     {
-        DoCheck();
+        await DoCheckAsync();
     }
 
-    private void DoCheck()
+    private async Task DoCheckAsync()
     {
         tbResults.Parent = tabControl1;
 
@@ -225,10 +226,10 @@ public partial class BulkAddShow : Form
 
         while (progressDialog is null || !progressDialog.Ready)
         {
-            Thread.Sleep(10);
+            await Task.Delay(10);
         }
 
-        engine.CheckFolders(UpdateProgress, true, true, cts.Token);
+        await engine.CheckFoldersAsync(UpdateProgress, true, true, cts.Token);
         cts.Cancel();
         FillNewShowList(false);
     }
@@ -253,27 +254,28 @@ public partial class BulkAddShow : Form
         AddDraggedFiles(e, TVSettings.Instance.LibraryFolders);
     }
 
-    private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
+    private async void lvFMNewShows_DragDrop(object _, DragEventArgs e)
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string path in files)
-            {
-                try
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+            if (files  != null && files.Length > 0)
+                foreach (string path in files)
                 {
-                    DirectoryInfo di = new(path);
-                    if (di.Exists)
+                    try
                     {
-                        engine.CheckFolderForShows(di, true, true, true);
-                        FillNewShowList(true);
+                        DirectoryInfo di = new(path);
+                        if (di.Exists)
+                        {
+                            await engine.CheckFolderForShowsAsync(di, true, true, true);
+                            FillNewShowList(true);
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
                     }
                 }
-                catch
-                {
-                    // ignored
-                }
-            }
         }
     }
 
@@ -286,20 +288,24 @@ public partial class BulkAddShow : Form
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string path in files)
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+
+            if (files is not null)
             {
-                try
+                foreach (string path in files)
                 {
-                    DirectoryInfo di = new(path);
-                    if (di.Exists)
+                    try
                     {
-                        strings.Add(path.ToLower());
+                        DirectoryInfo di = new(path);
+                        if (di.Exists)
+                        {
+                            strings.Add(path.ToLower());
+                        }
                     }
-                }
-                catch
-                {
-                    // ignored
+                    catch
+                    {
+                        // ignored
+                    }
                 }
             }
         }
@@ -324,7 +330,7 @@ public partial class BulkAddShow : Form
         }
     }
 
-    private void bnFullAuto_Click(object _, System.EventArgs e)
+    private async void bnFullAuto_Click(object _, System.EventArgs e)
     {
         if (engine.AddItems.Count == 0)
         {
@@ -342,7 +348,7 @@ public partial class BulkAddShow : Form
 
         while (progressDialog is null || !progressDialog.Ready)
         {
-            Thread.Sleep(10);
+            await Task.Delay(10);
         }
 
         int n = 0;
@@ -362,7 +368,7 @@ public partial class BulkAddShow : Form
                 continue;
             }
 
-            BulkAddSeriesManager.GuessShowItem(ai, mDoc.TvLibrary, true);
+            await BulkAddSeriesManager.GuessShowItemAsync(ai, mDoc.TvLibrary, true);
 
             // update our display
             UpdateListItem(ai, true);
@@ -386,8 +392,9 @@ public partial class BulkAddShow : Form
 
         foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
         {
-            PossibleNewTvShow ai = (PossibleNewTvShow)lvi.Tag;
-            engine.AddItems.Remove(ai);
+            PossibleNewTvShow? ai = (PossibleNewTvShow?)lvi.Tag;
+            if (ai is not null)
+                engine.AddItems.Remove(ai);
         }
 
         FillNewShowList(false);
@@ -406,11 +413,14 @@ public partial class BulkAddShow : Form
             return;
         }
 
-        foreach (PossibleNewTvShow ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
-                     .Select(lvi => (PossibleNewTvShow)lvi.Tag))
+        foreach (PossibleNewTvShow? ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
+                     .Select(lvi => (PossibleNewTvShow?)lvi.Tag))
         {
-            TVSettings.Instance.IgnoreFolders.Add(ai.Folder.FullName.ToLower());
-            engine.AddItems.Remove(ai);
+            if (ai is not null)
+            {
+                TVSettings.Instance.IgnoreFolders.Add(ai.Folder.FullName.ToLower());
+                engine.AddItems.Remove(ai);
+            }
         }
         mDoc.SetDirty();
         FillNewShowList(false);
@@ -445,7 +455,7 @@ public partial class BulkAddShow : Form
 
     private void FillNewShowList(bool keepSel)
     {
-        List<int> sel = new();
+        List<int> sel = [];
         if (keepSel)
         {
             foreach (int i in lvFMNewShows.SelectedIndices)
@@ -516,7 +526,7 @@ public partial class BulkAddShow : Form
         }
     }
 
-    private void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
+    private async void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
     {
         if (engine.AddItems.Any())
         {
@@ -526,7 +536,7 @@ public partial class BulkAddShow : Form
                 return;
             }
 
-            engine.AddAllToMyShows(mainUi);
+            await engine.AddAllToMyShowsAsync(mainUi);
         }
 
         Close();
@@ -565,22 +575,22 @@ public partial class BulkAddShow : Form
         }
     }
 
-    private void bnCheck2_Click(object sender, System.EventArgs e)
+    private async void bnCheck2_Click(object sender, System.EventArgs e)
     {
-        DoCheck();
+        await DoCheckAsync();
     }
 
-    private void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
+    private async void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
     {
-        EditEntry();
+        await EditEntryAsync();
     }
 
-    private void bnEditEntry_Click(object sender, System.EventArgs e)
+    private async void bnEditEntry_Click(object sender, System.EventArgs e)
     {
-        EditEntry();
+        await EditEntryAsync();
     }
 
-    private void EditEntry()
+    private async Task EditEntryAsync()
     {
         if (lvFMNewShows.SelectedItems.Count == 0)
         {
@@ -589,14 +599,15 @@ public partial class BulkAddShow : Form
 
         if (lvFMNewShows.SelectedItems[0].Tag is PossibleNewTvShow fme)
         {
-            EditEntry(fme);
+            await EditEntryAsync(fme);
             UpdateListItem(fme, true);
         }
     }
 
-    private void EditEntry(PossibleNewTvShow fme)
+    private async Task EditEntryAsync(PossibleNewTvShow fme)
     {
-        BulkAddEditShow ed = new(fme);
+        BulkAddEditShow ed = new();
+        await ed.SetHintAsync(fme);
         if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)
         {
             return;

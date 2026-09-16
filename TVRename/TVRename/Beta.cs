@@ -33,7 +33,7 @@ internal static class Beta
         DirFilesCache dfc = new();
         foreach (ShowConfiguration si in doc.TvLibrary.Shows)
         {
-            foreach (List<ProcessedEpisode> episodes in si.SeasonEpisodes.Values.ToList())
+            foreach (List<ProcessedEpisode> episodes in si.GetSortedSeasons())
             {
                 foreach (ProcessedEpisode pep in episodes)
                 {

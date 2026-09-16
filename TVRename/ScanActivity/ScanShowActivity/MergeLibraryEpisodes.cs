@@ -13,12 +13,8 @@ using System.Threading;
 
 namespace TVRename;
 
-internal class MergeLibraryEpisodes : ScanShowActivity
+internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
 {
-    public MergeLibraryEpisodes(TVDoc doc) : base(doc)
-    {
-    }
-
     protected override string ActivityName() => "Created Merge Rules for episodes in the library";
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
@@ -72,9 +68,9 @@ internal class MergeLibraryEpisodes : ScanShowActivity
             return;
         }
 
-        List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
+        List<ProcessedEpisode> eps = si.EpisodesForSeason(snum);
 
-        List<ShowRule> rulesToAdd = new();
+        List<ShowRule> rulesToAdd = [];
 
         foreach (string folder in folders)
         {
@@ -146,7 +142,7 @@ internal class MergeLibraryEpisodes : ScanShowActivity
         if (rulesToAdd.Any())
         {
             //Regenerate the episodes with the new rule added
-            ShowLibrary.GenerateEpisodeDict(si);
+            si.UpdateEpisodeCaches();
         }
     }
 

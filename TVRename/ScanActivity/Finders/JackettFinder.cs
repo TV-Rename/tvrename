@@ -10,20 +10,17 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal class JackettFinder : DownloadFinder
+internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadFinder(doc, settings)
 {
-    public JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.SearchJackett;
 
     protected override string CheckName() => "Asked Jackett for download links for the missing files";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         if (Settings.Unattended && TVSettings.Instance.SearchJackettManualScanOnly)
         {
@@ -37,12 +34,12 @@ internal class JackettFinder : DownloadFinder
             return;
         }
 
-        int c = ActionList.Missing.Count + 2;
-        int n = 1;
-        UpdateStatus(n, c, "Searching with Jackett...");
+        int c = ActionList.Missing.Count + 1;
+        ThreadSafeCounter n = new();
+        UpdateStatus(0, c, "Searching with Jackett...");
 
-        ItemList newItems = new();
-        ItemList toRemove = new();
+        ItemList newItems = [];
+        ItemList toRemove = [];
         try
         {
             foreach (ItemMissing action in ActionList.Missing.ToList())
@@ -52,18 +49,18 @@ internal class JackettFinder : DownloadFinder
                     return;
                 }
 
-                UpdateStatus(n++, c, action.Filename);
+                UpdateStatus(n.Increment(), c, action.Filename);
 
                 switch (action)
                 {
                     case ShowItemMissing showItemMissing:
-                        FindMissingEpisode(showItemMissing, toRemove, newItems);
+                        await FindMissingEpisodeAsync(showItemMissing, toRemove, newItems);
                         break;
                     case MovieItemMissing movieItemMissing:
-                        FindMissingMovie(movieItemMissing, toRemove, newItems);
+                        await FindMissingMovieAsync(movieItemMissing, toRemove, newItems);
                         break;
                     case ShowSeasonMissing seasonMissing:
-                        FindMissingSeason(seasonMissing, toRemove, newItems);
+                        await FindMissingSeasonAsync(seasonMissing, toRemove, newItems);
                         break;
                 }
             }
@@ -87,14 +84,14 @@ internal class JackettFinder : DownloadFinder
         ActionList.Replace(toRemove, newItems);
     }
 
-    private static void FindMissingEpisode(ShowItemMissing action, ItemList toRemove, ItemList newItems)
+    private static async Task FindMissingEpisodeAsync(ShowItemMissing action, ItemList toRemove, ItemList newItems)
     {
         ProcessedEpisode processedEpisode = action.MissingEpisode;
         string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(processedEpisode) : NormalJackettUrl(processedEpisode);
 
-        RssItemList rssList = new();
-        rssList.DownloadRSS(url, false, "Jackett");
-        ItemList newItemsForThisMissingEpisode = new();
+        RssItemList rssList = [];
+        await rssList.DownloadRSSAsync(url, false, "Jackett");
+        ItemList newItemsForThisMissingEpisode = [];
 
         foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, processedEpisode)))
         {
@@ -111,13 +108,13 @@ internal class JackettFinder : DownloadFinder
         Replace(action, toRemove, newItems, newItemsForThisMissingEpisode);
     }
 
-    private static void FindMissingMovie(MovieItemMissing action, ItemList toRemove, ItemList newItems)
+    private static async Task FindMissingMovieAsync(MovieItemMissing action, ItemList toRemove, ItemList newItems)
     {
         string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.MovieConfig) : NormalJackettUrl(action.MovieConfig);
 
-        RssItemList rssList = new();
-        rssList.DownloadRSS(url, false, "Jackett");
-        ItemList newItemsForThisMissingEpisode = new();
+        RssItemList rssList = [];
+        await rssList.DownloadRSSAsync(url, false, "Jackett");
+        ItemList newItemsForThisMissingEpisode = [];
 
         foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, action.MovieConfig)))
         {
@@ -133,13 +130,13 @@ internal class JackettFinder : DownloadFinder
         Replace(action, toRemove, newItems, newItemsForThisMissingEpisode);
     }
 
-    private static void FindMissingSeason(ShowSeasonMissing action, ItemList toRemove, ItemList newItems)
+    private static async Task FindMissingSeasonAsync(ShowSeasonMissing action, ItemList toRemove, ItemList newItems)
     {
         string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.Series , action.SeasonNumberAsInt) : NormalJackettUrl(action.Series, action.SeasonNumberAsInt);
 
-        RssItemList rssList = new();
-        rssList.DownloadRSS(url, false, "Jackett");
-        ItemList newItemsForThisMissingEpisode = new();
+        RssItemList rssList = [];
+        await rssList.DownloadRSSAsync(url, false, "Jackett");
+        ItemList newItemsForThisMissingEpisode = [];
 
         foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, action.Series, action.SeasonNumberAsInt??0 )))
         {
@@ -210,8 +207,10 @@ internal class JackettFinder : DownloadFinder
         return $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
     }
 
-    public static void SearchForEpisode(ProcessedEpisode episode)
+    public static void SearchForEpisode(ProcessedEpisode? episode)
     {
+        if (episode == null) return;
+
         const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
         string searchTerm = CustomEpisodeName.NameForNoExt(episode, FORMAT, false);
         SearchFor(searchTerm);

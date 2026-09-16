@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class TvShowEpisodeNameCheck : TvShowCheck
+internal class TvShowEpisodeNameCheck(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
 {
-    public TvShowEpisodeNameCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     public override bool Check() => Show.UseCustomNamingFormat;
 
     public override string Explain() => $"TV Show does not use the standard episode naming format {TVSettings.Instance.NamingStyle.StyleString}, it uses {Show.CustomNamingFormat}";

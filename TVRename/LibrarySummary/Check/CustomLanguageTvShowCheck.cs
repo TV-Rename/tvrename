@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class CustomLanguageTvShowCheck : CustomTvShowCheck
+internal class CustomLanguageTvShowCheck(ShowConfiguration show, TVDoc doc) : CustomTvShowCheck(show, doc)
 {
-    public CustomLanguageTvShowCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override void FixInternal()
     {
         Show.UseCustomLanguage = false;

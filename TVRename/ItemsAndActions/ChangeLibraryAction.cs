@@ -1,16 +1,13 @@
 using System.Threading;
 using System;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal abstract class ActionChangeLibrary : Action
+internal abstract class ActionChangeLibrary(TVDoc doc) : Action
 {
-    protected readonly TVDoc Doc;
+    protected readonly TVDoc Doc = doc;
 
-    protected ActionChangeLibrary(TVDoc doc)
-    {
-        Doc = doc;
-    }
     public override string ScanListViewGroup => "lvgActionOther";
     public override long SizeOfWork => 1;
     public override IgnoreItem? Ignore => null;
@@ -32,12 +29,12 @@ internal class ActionChangeLibraryRemoveMovie : ActionChangeLibrary, IEquatable<
     public override string Produces => Movie?.Name ?? string.Empty;
     public override string Name => "Remove Movie Configuration";
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         if (Movie != null)
         {
             Doc.FilmLibrary.Remove(Movie);
-            Doc.MoviesAddedOrEdited(false, true, true, null, Movie);
+            await Doc.MoviesAddedOrEditedAsync(false, true, true, null, Movie);
         }
         return ActionOutcome.Success();
     }
@@ -71,24 +68,19 @@ internal class ActionChangeLibraryRemoveMovie : ActionChangeLibrary, IEquatable<
     #endregion
 }
 
-internal class ActionChangeLibraryRemoveShow : ActionChangeLibrary, IEquatable<ActionChangeLibraryRemoveShow>
+internal class ActionChangeLibraryRemoveShow(ShowConfiguration si, TVDoc doc) : ActionChangeLibrary(doc), IEquatable<ActionChangeLibraryRemoveShow>
 {
-    private readonly ShowConfiguration si;
-
-    public ActionChangeLibraryRemoveShow(ShowConfiguration si, TVDoc doc) : base(doc)
-    {
-        this.si = si;
-    }
+    private readonly ShowConfiguration si = si;
 
     public override string Name => "Remove TV Show Configuration";
     public override string Produces => si.Name ?? string.Empty;
     public override ShowConfiguration Series => si;
     public override string SeriesName => si.ShowName;
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         Doc.TvLibrary.Remove(si);
-        Doc.TvAddedOrEdited(false, true, true, null, si);
+        await Doc.TvAddedOrEditedAsync(false, true, true, null, si);
         return ActionOutcome.Success();
     }
 

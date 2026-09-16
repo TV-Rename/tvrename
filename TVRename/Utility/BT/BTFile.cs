@@ -11,12 +11,12 @@ public class BTFile
 
     public BTFile()
     {
-        Items = new List<BTItem>();
+        Items = [];
     }
 
     public List<string>? AllFilesInTorrent()
     {
-        List<string> r = new();
+        List<string> r = [];
 
         BTItem? bti = GetItem("info");
         if (bti is null || bti.Type != BTChunk.kDictionary)

@@ -5,12 +5,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class CheckAllFoldersExist : ScanShowActivity
+internal class CheckAllFoldersExist(TVDoc doc) : ScanShowActivity(doc)
 {
-    public CheckAllFoldersExist(TVDoc doc) : base(doc)
-    {
-    }
-
     protected override string ActivityName() => "Checked All Folders Exist";
 
     protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
@@ -22,7 +18,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
 
         Dictionary<int, SafeList<string>> flocs = si.AllProposedFolderLocations();
 
-        List<string> ignoredLocations = new();
+        List<string> ignoredLocations = [];
 
         foreach (int snum in si.GetSeasonKeys())
         {
@@ -44,14 +40,14 @@ internal class CheckAllFoldersExist : ScanShowActivity
                 continue;
             }
 
-            SafeList<string> folders = new();
+            SafeList<string> folders = [];
 
             if (flocs.TryGetValue(snum, out SafeList<string>? floc))
             {
                 folders = floc;
             }
 
-            if (si.SeasonEpisodes[snum].All(episode => !MightWeProcess(episode, folders)))
+            if (si.EpisodesForSeason(snum).All(episode => !MightWeProcess(episode, folders)))
             {
                 //All episodes in this season are ignored
                 continue;
@@ -159,7 +155,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
                 using MissingFolderAction mfa = new(si.ShowName, snum + " of " + si.MaxSeason(), folder);
 
                 owner.ShowChildDialog(mfa);
-                whatToDo = mfa.Result;
+                whatToDo = mfa.Outcome;
                 otherFolder = mfa.FolderName;
             }
 
@@ -212,7 +208,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
         {
             if (!si.ManualFolderLocations.ContainsKey(snum))
             {
-                si.ManualFolderLocations[snum] = new List<string>();
+                si.ManualFolderLocations[snum] = [];
             }
 
             si.ManualFolderLocations[snum].Add(folder);

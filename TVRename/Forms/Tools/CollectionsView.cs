@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
 
@@ -18,8 +20,8 @@ public partial class CollectionsView : Form
     public CollectionsView(TVDoc doc, UI main)
     {
         InitializeComponent();
-        collectionMovies = new List<CollectionMember>();
-        allAdded = new List<MovieConfiguration>();
+        collectionMovies = [];
+        allAdded = [];
         mDoc = doc;
         mainUi = main;
         Scan();
@@ -30,11 +32,11 @@ public partial class CollectionsView : Form
     {
         if (chkRemoveCompleted.Checked && !chkRemoveFuture.Checked)
         {
-            List<string> incompleteCollections = collectionMovies.GroupBy(member => member.CollectionName)
-                .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key).ToList();
+            List<string> incompleteCollections = [.. collectionMovies.GroupBy(member => member.CollectionName)
+                .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key)];
 
             List<CollectionMember> incompleteCollectionMovies =
-                collectionMovies.Where(member => incompleteCollections.Contains(member.CollectionName)).ToList();
+                [.. collectionMovies.Where(member => incompleteCollections.Contains(member.CollectionName))];
             olvCollections.SetObjects(incompleteCollectionMovies, true);
 
             return;
@@ -57,14 +59,13 @@ public partial class CollectionsView : Form
                 return;
             }
 
-            List<string> incompleteHistCollections = historicCollectionMovies.GroupBy(member => member.CollectionName)
-                .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key).ToList();
+            List<string> incompleteHistCollections = [.. historicCollectionMovies.GroupBy(member => member.CollectionName)
+                .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key)];
 
             List<CollectionMember> incompleteHistCollectionMovies =
-                collectionMovies
+                [.. collectionMovies
                     .Where(member => incompleteHistCollections.Contains(member.CollectionName))
-                    .Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < TimeHelpers.LocalNow() && m.MovieYear.HasValue)
-                    .ToList();
+                    .Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < TimeHelpers.LocalNow() && m.MovieYear.HasValue)];
 
             olvCollections.SetObjects(incompleteHistCollectionMovies, true);
         }
@@ -83,27 +84,33 @@ public partial class CollectionsView : Form
         List<(int, string)> collectionIds = mDoc.FilmLibrary.Collections;
 
         int total = collectionIds.Count;
-        int current = 0;
+        ThreadSafeCounter current =new();
 
         collectionMovies.Clear();
-        foreach ((int collectionId, string collectionName) in collectionIds)
+
+        var options = new ParallelOptions
         {
-            Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collectionId, TVSettings.Instance.TMDBLanguage.Abbreviation);
+            MaxDegreeOfParallelism = 8 // Limit to 8 concurrent downloads at a time
+        };
+
+        Parallel.ForEach(collectionIds, options, (collection) =>
+        {
+            Dictionary<int, CachedMovieInfo> shows =  TMDB.LocalCache.Instance.GetMovieIdsFromCollectionAsync(collection.Item1, TVSettings.Instance.TMDBLanguage.Abbreviation).GetAwaiter().GetResult();
             foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
             {
-                CollectionMember c = new(collectionName, neededShow.Value);
+                CollectionMember c = new(collection.Item2, neededShow.Value);
 
                 c.IsInLibrary = mDoc.FilmLibrary.Movies.Any(configuration => configuration.TmdbCode == c.TmdbCode);
                 collectionMovies.Add(c);
             }
 
-            bw.ReportProgress(100 * current++ / total, collectionName);
-        }
+            bw.ReportProgress(100 * current.Increment() / total, collection.Item2);
+        });
     }
 
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 
@@ -150,8 +157,8 @@ public partial class CollectionsView : Form
             MovieConfiguration? si = mDoc.FilmLibrary.GetMovie(mlastSelected.TmdbCode, providerToUse);
             if (si != null)
             {
-                rightClickMenu.Add("Force Refresh", (_, _) => mainUi.ForceMovieRefresh(si, false));
-                rightClickMenu.Add("Edit Movie", (_, _) => mainUi.EditMovie(si));
+                rightClickMenu.Add("Force Refresh", async (_, _) => await mainUi.ForceMovieRefreshAsync(si, false));
+                rightClickMenu.Add("Edit Movie", async (_, _) => await mainUi.EditMovieAsync(si));
             }
         }
         else
@@ -202,8 +209,8 @@ public partial class CollectionsView : Form
         UpdateUI();
     }
 
-    private void CollectionsView_FormClosing(object sender, FormClosingEventArgs e)
+    private async void CollectionsView_FormClosing(object sender, FormClosingEventArgs e)
     {
-        mDoc.MoviesAddedOrEdited(true, false, false, mainUi, allAdded);
+        await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, allAdded);
     }
 }

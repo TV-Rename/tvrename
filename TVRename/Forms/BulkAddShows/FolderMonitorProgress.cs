@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 using System.Windows.Forms;
+using TVRename.Forms;
 
 namespace TVRename;
 
@@ -38,7 +39,7 @@ public partial class FolderMonitorProgress : Form
 
         BringToFront();
 
-        pbProgress.Value = mainForm.FmpPercent;
+        pbProgress.SetProgress(mainForm.FmpPercent);
         lbMessage.Text = mainForm.FmpUpto.ToUiVersion();
 
         if (mainForm.TokenSource.IsCancellationRequested)

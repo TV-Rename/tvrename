@@ -8,9 +8,6 @@
 
 namespace TVRename;
 
-public class FutureTorrentEntry : TorrentEntry
+public class FutureTorrentEntry(string torrentFile, string to) : TorrentEntry(torrentFile, to, 0, false, string.Empty)
 {
-    public FutureTorrentEntry(string torrentFile, string to) : base(torrentFile, to, 0, false, string.Empty)
-    {
-    }
 }

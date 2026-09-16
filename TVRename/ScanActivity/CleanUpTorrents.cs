@@ -1,31 +1,27 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal class CleanUpTorrents : ScanActivity
+internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    private readonly List<IDownloadProvider> sources;
+    private readonly List<IDownloadProvider> sources = [new qBitTorrent(), new uTorrent()];
     private ProcessedEpisode? lastFoundEpisode;
     private MovieConfiguration? lastFoundMovie;
     private TorrentEntry? lastFoundEntry;
-
-    public CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-        sources = new List<IDownloadProvider> { new qBitTorrent(), new uTorrent() };
-    }
 
     protected override string CheckName() => "Cleaned up completed TV Torrents";
 
     public override bool Active() => TVSettings.Instance.RemoveCompletedTorrents;
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         DirFilesCache dfc = new();
         foreach (IDownloadProvider source in sources)
         {
-            List<TorrentEntry>? downloads = source.GetTorrentDownloads();
+            List<TorrentEntry>? downloads = await source.GetTorrentDownloadsAsync();
             if (downloads is null)
             {
                 continue;
@@ -118,7 +114,7 @@ internal class CleanUpTorrents : ScanActivity
             return null;
         }
 
-        return new List<MovieConfiguration> { bestShow };
+        return [bestShow];
     }
 
     private static bool IsFound(DirFilesCache dfc, ProcessedEpisode episode)
@@ -148,7 +144,7 @@ internal class CleanUpTorrents : ScanActivity
         {
             ProcessedEpisode episode = bestShow.GetEpisode(seasonNum, episodeNum);
 
-            return new List<ProcessedEpisode> { episode };
+            return [episode];
         }
         catch (EpisodeNotFoundException)
         {

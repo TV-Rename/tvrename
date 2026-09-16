@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class TvShowProviderCheck : TvShowCheck
+internal class TvShowProviderCheck(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
 {
-    public TvShowProviderCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     public override bool Check() => Show.ConfigurationProvider != TVDoc.ProviderType.libraryDefault;
 
     public override string Explain() => $"TV Show does not use the library default, ({TVSettings.Instance.DefaultProvider.PrettyPrint()}), it uses {Show.ConfigurationProvider.PrettyPrint()} (Hardcoded)";

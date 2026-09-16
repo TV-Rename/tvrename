@@ -8,12 +8,8 @@
 
 namespace TVRename;
 
-internal class RenamingXml : ActionListXml
+internal class RenamingXml(ItemList theActionList) : ActionListXml(theActionList)
 {
-    public RenamingXml(ItemList theActionList) : base(theActionList)
-    {
-    }
-
     protected override bool IsOutput(Item a) => a is ActionCopyMoveRename { Operation: ActionCopyMoveRename.Op.rename, Episode: { } };
 
     public override bool ApplicableFor(TVSettings.ScanType st) => true;

@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms;
+using static TVRename.Helpers;
 
 namespace TVRename;
 
@@ -37,7 +38,7 @@ public partial class BulkAddMovie : Form
 
     //Thread safe counters to work out the progress
     //For auto id
-    private static volatile int VolatileCounter;
+    private static readonly ThreadSafeCounter VolatileCounter = new();
 
     public BulkAddMovie(TVDoc doc, BulkAddMovieManager bam, UI mainUi)
     {
@@ -98,7 +99,7 @@ public partial class BulkAddMovie : Form
         DeleteSelectedFolder(lstFMMonitorFolders, TVSettings.Instance.MovieLibraryFolders);
     }
 
-    private void DeleteSelectedFolder(ListBox lb, IList<string> folders)
+    private void DeleteSelectedFolder(ListBox lb, SafeList<string> folders)
     {
         for (int i = lb.SelectedIndices.Count - 1; i >= 0; i--)
         {
@@ -227,27 +228,28 @@ public partial class BulkAddMovie : Form
         AddDraggedFiles(e, TVSettings.Instance.MovieLibraryFolders);
     }
 
-    private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
+    private async void lvFMNewShows_DragDrop(object _, DragEventArgs e)
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string path in files)
-            {
-                try
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+            if (files != null)
+                foreach (string path in files)
                 {
-                    DirectoryInfo di = new(path);
-                    if (di.Exists)
+                    try
                     {
-                        engine.CheckFolderForMovies(di, true, true, true);
-                        FillNewShowList(true);
+                        DirectoryInfo di = new(path);
+                        if (di.Exists)
+                        {
+                            await engine.CheckFolderForMoviesAsync(di, true, true, true);
+                            FillNewShowList(true);
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
                     }
                 }
-                catch
-                {
-                    // ignored
-                }
-            }
         }
     }
 
@@ -256,11 +258,12 @@ public partial class BulkAddMovie : Form
         AddDraggedFiles(e, TVSettings.Instance.IgnoreFolders);
     }
 
-    private void AddDraggedFiles(DragEventArgs e, ICollection<string> strings)
+    private void AddDraggedFiles(DragEventArgs e, SafeList<string> strings)
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+            if (files != null)
             foreach (string path in files)
             {
                 try
@@ -311,7 +314,7 @@ public partial class BulkAddMovie : Form
         bwIdentify.RunWorkerAsync();
     }
 
-    private static void AutoMatchMovie(CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
+    private static async Task AutoMatchMovieAsync(CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
     {
         if (cts.IsCancellationRequested)
         {
@@ -323,9 +326,9 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        ai.GuessMovie(true);
-        Interlocked.Increment(ref VolatileCounter);
-        bw.ReportProgress((int)100.0 * VolatileCounter / total, ai);
+        await ai.GuessMovieAsync(true);
+
+        bw.ReportProgress((int)100.0 * VolatileCounter.Increment() / total, ai);
     }
 
     private void bnRemoveNewFolder_Click(object _, System.EventArgs e)
@@ -362,11 +365,14 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        foreach (PossibleNewMovie ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
-                     .Select(lvi => (PossibleNewMovie)lvi.Tag))
+        foreach (PossibleNewMovie? ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
+                     .Select(lvi => (PossibleNewMovie?)lvi.Tag))
         {
-            TVSettings.Instance.IgnoreFolders.Add(ai.Directory.FullName.ToLower());
-            engine.AddItems.Remove(ai);
+            if (ai is not null)
+            {
+                TVSettings.Instance.IgnoreFolders.Add(ai.Directory.FullName.ToLower());
+                engine.AddItems.Remove(ai);
+            }
         }
         mDoc.SetDirty();
         FillNewShowList(false);
@@ -401,10 +407,10 @@ public partial class BulkAddMovie : Form
 
     private void FillNewShowList(bool keepSel)
     {
-        List<int> sel = new();
+        List<int> sel = [];
         if (keepSel)
         {
-            sel = lvFMNewShows.SelectedIndices.Cast<int>().ToList();
+            sel = [.. lvFMNewShows.SelectedIndices.Cast<int>()];
         }
 
         lvFMNewShows.BeginUpdate();
@@ -474,7 +480,7 @@ public partial class BulkAddMovie : Form
         }
     }
 
-    private void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
+    private async void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
     {
         int numberToAdd = engine.AddItems.Count(ai => ai.CodeKnown);
         if (numberToAdd > 0)
@@ -485,7 +491,7 @@ public partial class BulkAddMovie : Form
                 return;
             }
 
-            engine.AddAllToMyMovies(mainUi);
+            await engine.AddAllToMyMoviesAsync(mainUi);
         }
 
         Close();
@@ -523,17 +529,17 @@ public partial class BulkAddMovie : Form
         DoCheck();
     }
 
-    private void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
+    private async void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
     {
-        EditEntry();
+        await EditEntryAsync();
     }
 
-    private void bnEditEntry_Click(object sender, System.EventArgs e)
+    private async void bnEditEntry_Click(object sender, System.EventArgs e)
     {
-        EditEntry();
+        await EditEntryAsync();
     }
 
-    private void EditEntry()
+    private async Task EditEntryAsync()
     {
         if (lvFMNewShows.SelectedItems.Count == 0)
         {
@@ -542,15 +548,16 @@ public partial class BulkAddMovie : Form
 
         if (lvFMNewShows.SelectedItems[0].Tag is PossibleNewMovie fme)
         {
-            EditEntry(fme);
+            await EditEntryAsync(fme);
             UpdateListItem(fme, true);
         }
         FillNewShowList(true);
     }
 
-    private void EditEntry(PossibleNewMovie fme)
+    private async Task EditEntryAsync(PossibleNewMovie fme)
     {
-        BulkAddEditMovie ed = new(fme);
+        BulkAddEditMovie ed = new();
+        await ed.SetHintAsync(fme);
         if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)
         {
             return;
@@ -586,7 +593,7 @@ public partial class BulkAddMovie : Form
         Thread.CurrentThread.Name ??= "BulkAddMovie Scan Thread"; // Can only set it once
 
         CancellationTokenSource cts = new();
-        engine.CheckFolders((BackgroundWorker)sender, true, true, cts.Token);
+        engine.CheckFoldersAsync((BackgroundWorker)sender, true, true, cts.Token).GetAwaiter().GetResult();
         cts.Cancel();
     }
 
@@ -601,12 +608,13 @@ public partial class BulkAddMovie : Form
         CancellationTokenSource cts = new();
         //TokenSource = cts;
 
-        VolatileCounter = 0;
+        VolatileCounter.Reset();
 
-        Parallel.ForEach(engine.AddItems, movie =>
+        //todo make proper multi-threaded, but for now just do it in parallel
+        Parallel.ForEach(engine.AddItems, async movie =>
         {
             Thread.CurrentThread.Name ??= $" Identify {movie.Name}"; // Can only set it once
-            AutoMatchMovie(cts, movie, bw, engine.AddItems.Count);
+            await AutoMatchMovieAsync(cts, movie, bw, engine.AddItems.Count);
         });
 
         cts.Cancel();
@@ -616,7 +624,7 @@ public partial class BulkAddMovie : Form
     {
         lvFMNewShows.Update();
 
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         lblStatusLabel.Text = (e.UserState as PossibleNewMovie)?.RefinedHint.ToUiVersion();
         UpdateListItem(e.UserState as PossibleNewMovie, false);
     }
@@ -630,7 +638,8 @@ public partial class BulkAddMovie : Form
 
     private void bwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
+
         lblStatusLabel.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 

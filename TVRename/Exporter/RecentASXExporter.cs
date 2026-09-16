@@ -11,12 +11,8 @@ using Alphaleonis.Win32.Filesystem;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class RecentASXExporter : RecentExporter
+internal class RecentASXExporter(TVDoc doc) : RecentExporter(doc)
 {
-    public RecentASXExporter(TVDoc doc) : base(doc)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportRecentASX;
 
     protected override string Location() => TVSettings.Instance.ExportRecentASXTo;

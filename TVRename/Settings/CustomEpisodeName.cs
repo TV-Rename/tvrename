@@ -44,8 +44,8 @@ public class CustomEpisodeName
         return DefaultStyle();
     }
 
-    protected internal static readonly List<string> PRESETS = new()
-    {
+    protected internal static readonly List<string> PRESETS =
+    [
         "{ShowName} - {Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
         "{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
         "{ShowName} S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
@@ -57,10 +57,10 @@ public class CustomEpisodeName
         "{Episode}[-{Episode2}] - {ShowName} - 3 - {EpisodeName}",
         "{Episode}[-{Episode2}] - {EpisodeName}",
         "{ShowName} - S{Season:2}{AllEpisodes} - {EpisodeName}"
-    };
+    ];
 
-    protected internal static readonly List<string> TAGS = new()
-    {
+    protected internal static readonly List<string> TAGS =
+    [
         "{ShowName}",
         "{ShowNameInitial}",
         "{ShowNameLower}",
@@ -84,7 +84,7 @@ public class CustomEpisodeName
         "{SeasonYear}",
         "{Imdb}",
         "{ShowImdb}"
-    };
+    ];
 
     public string NameFor(ProcessedEpisode pe) => NameFor(pe, string.Empty, 0);
 

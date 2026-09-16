@@ -13,14 +13,9 @@ using System.Linq;
 
 namespace TVRename;
 
-internal abstract class RecentExporter : Exporter
+internal abstract class RecentExporter(TVDoc doc) : Exporter
 {
-    private readonly TVDoc doc;
-
-    protected RecentExporter(TVDoc doc)
-    {
-        this.doc = doc;
-    }
+    private readonly TVDoc doc = doc;
 
     /// <exception cref="ArgumentException">Locaiton is not valid.</exception>
     /// <exception cref="UnauthorizedAccessException">Access is denied.</exception>
@@ -31,7 +26,7 @@ internal abstract class RecentExporter : Exporter
     /// <exception cref="System.IO.PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length.</exception>
     protected override void Do()
     {
-        IEnumerable<ProcessedEpisode> lpe = doc.TvLibrary.RecentEpisodes(TVSettings.Instance.WTWRecentDays).ToList();
+        IEnumerable<ProcessedEpisode> lpe = [.. doc.TvLibrary.RecentEpisodes(TVSettings.Instance.WTWRecentDays)];
         DirFilesCache dfc = new();
 
         //Write Contents to file

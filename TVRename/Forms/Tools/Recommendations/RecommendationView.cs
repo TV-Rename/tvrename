@@ -28,15 +28,15 @@ public partial class RecommendationView : Form
     {
         InitializeComponent();
         recs = new Recomendations();
-        tvShows = new List<ShowConfiguration>();
-        movies = new List<MovieConfiguration>();
-        addedShows = new List<ShowConfiguration>();
-        addedMovies = new List<MovieConfiguration>();
+        tvShows = [];
+        movies = [];
+        addedShows = [];
+        addedMovies = [];
 
         mDoc = doc;
         mainUi = main;
 
-        olvScore.MakeGroupies(new[] { 0.1, 0.25, 0.5, 0.75 }, new[] { "0-10%", "10-25%", "25-50%", "50-75%", "75%+" });
+        olvScore.MakeGroupies([0.1, 0.25, 0.5, 0.75], ["0-10%", "10-25%", "25-50%", "50-75%", "75%+"]);
 
         olvRating.GroupKeyGetter = rowObject => (int)Math.Floor(((RecommendationRow)rowObject).StarScore);
         olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
@@ -89,9 +89,9 @@ public partial class RecommendationView : Form
     {
         List<RecommendationResult> recommendationRows = chkRemoveExisting.Checked
             ? media == MediaConfiguration.MediaType.movie
-                ? recs.Values.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.TmdbCode != x.Key)).ToList()
-                : recs.Values.Where(x => mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != x.Key)).ToList()
-            : recs.Values.ToList();
+                ? [.. recs.Values.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.TmdbCode != x.Key))]
+                : [.. recs.Values.Where(x => mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != x.Key))]
+            : [.. recs.Values];
 
         int maxRelated = recommendationRows.MaxOrDefault(x => x.Related.Count, 0);
         int maxSimilar = recommendationRows.MaxOrDefault(x => x.Similar.Count, 0);
@@ -137,7 +137,7 @@ public partial class RecommendationView : Form
         }
 
         newShow.AutoAddFolderBase = f.DirectoryFullPath;
-
+        //TOD need to mark dirty?? newShow.CachedData.
         mDoc.Add(newShow.AsList(), true);
         addedShows.Add(newShow);
     }
@@ -196,11 +196,13 @@ public partial class RecommendationView : Form
             recs = media switch
             {
                 MediaConfiguration.MediaType.tv => TMDB.LocalCache.Instance
-                    .GetRecommendationsAsync((BackgroundWorker)sender, tvShows.ToList(), languageCode)
-                    .Result,
+                    .GetTVRecommendationsAsync((BackgroundWorker)sender, tvShows.ToList(), languageCode)
+                    .GetAwaiter()
+                    .GetResult(),
                 MediaConfiguration.MediaType.movie => TMDB.LocalCache.Instance
-                    .GetRecommendationsAsync((BackgroundWorker)sender, movies.ToList(), languageCode)
-                    .Result,
+                    .GetMovieRecommendationsAsync((BackgroundWorker)sender, movies.ToList(), languageCode)
+                    .GetAwaiter()
+                    .GetResult(),
                 _ => throw new NotSupportedException($"media = {media} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}")
             };
         }
@@ -212,7 +214,7 @@ public partial class RecommendationView : Form
 
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 
@@ -283,10 +285,10 @@ public partial class RecommendationView : Form
             chrRecommendationPreview.SetHtmlBody(rr.Series.GetShowHtmlOverview(rr));
         }
     }
-    private void this_FormClosing(object sender, FormClosingEventArgs e)
+    private async void this_FormClosing(object sender, FormClosingEventArgs e)
     {
-        mDoc.MoviesAddedOrEdited(true, false, false, mainUi, addedMovies);
-        mDoc.TvAddedOrEdited(true, false, false, mainUi, addedShows);
+        await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, addedMovies);
+        await mDoc.TvAddedOrEditedAsync(true, false, false, mainUi, addedShows);
     }
 
     private void btnPreferences_Click(object sender, EventArgs e)

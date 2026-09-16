@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
@@ -35,7 +36,7 @@ public partial class ShowSummary : Form, IDialogParent
     {
         MainWindow = parent;
         mDoc = doc;
-        showList = new SafeList<ShowSummaryData>();
+        showList = [];
 
         InitializeComponent();
         InitializeCmbShowStatus();
@@ -59,21 +60,24 @@ public partial class ShowSummary : Form, IDialogParent
     private void GenerateData(BackgroundWorker bw)
     {
         int total = mDoc.TvLibrary.Shows.Count();
-        int current = 0;
+        ThreadSafeCounter currentRecord = new();
         showList.Clear();
 
-        foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShowItems())
+        Parallel.ForEach(mDoc.TvLibrary.GetSortedShows(), new ParallelOptions { MaxDegreeOfParallelism = 12 }, si =>
         {
-            bw.ReportProgress(100 * current++ / total, si.ShowName);
+            bw.ReportProgress(100 * currentRecord.Increment() / total, si.ShowName);
             showList.Add(AddShowDetails(si));
         }
+        );
+
+        showList.Sort();
     }
 
     private void PopulateGrid()
     {
         cmbShowStatus.Enabled = chkOnlyShow.Checked;
 
-        if (grid1.IsDisposed || !showList.Any())
+        if (grid1.IsDisposed || showList.Count == 0)
         {
             return;
         }
@@ -160,7 +164,7 @@ public partial class ShowSummary : Form, IDialogParent
             }
 
             if (chkOnlyShow.Checked &&
-                !show.ShowConfiguration.ShowStatus.Equals(cmbShowStatus.SelectedItem.ToString(), StringComparison.OrdinalIgnoreCase))
+                !show.ShowConfiguration.ShowStatus.Equals(cmbShowStatus.SelectedItem?.ToString().ToNonNullString(), StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -254,13 +258,10 @@ public partial class ShowSummary : Form, IDialogParent
         int epGotCount = 0;
         int epAiredCount = 0;
         DirFilesCache dfc = new();
-        ProcessedSeason? processedSeason = null;
 
-        if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out processedSeason))
+        if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? processedSeason))
         {
-            List<ProcessedEpisode> eis = si.SeasonEpisodes[snum];
-
-            foreach (ProcessedEpisode ei in eis)
+            foreach (ProcessedEpisode ei in si.EpisodesForSeason(snum))
             {
                 epCount++;
 
@@ -276,11 +277,10 @@ public partial class ShowSummary : Form, IDialogParent
                     epGotCount++;
                 }
             }
-        }
-
-        if (processedSeason != null)
-        {
-            return new ShowSummaryData.ShowSummarySeasonData(snum, epCount, epAiredCount, epGotCount, processedSeason);
+            if (processedSeason != null)
+            {
+                return new ShowSummaryData.ShowSummarySeasonData(snum, epCount, epAiredCount, epGotCount, processedSeason);
+            }
         }
 
         return null;
@@ -343,20 +343,20 @@ public partial class ShowSummary : Form, IDialogParent
             {
                 if (processedSeason.Show.IgnoreSeasons.Contains(processedSeason.SeasonNumber))
                 {
-                    gridSummary.rightClickMenu.Add("Stop Ignoring Season", (_, _) =>
+                    gridSummary.rightClickMenu.Add("Stop Ignoring Season", async (_, _) =>
                     {
                         processedSeason.Show.IgnoreSeasons.Remove(processedSeason.SeasonNumber);
-                        mDoc.TvAddedOrEdited(false, false, false, null, processedSeason.Show);
+                        await mDoc.TvAddedOrEditedAsync(false, false, false, null, processedSeason.Show);
                         gridSummary.PopulateGrid();
                         gridSummary.MainWindow.FillMyShows();
                     });
                 }
                 else
                 {
-                    gridSummary.rightClickMenu.Add("Ignore Season", (_, _) =>
+                    gridSummary.rightClickMenu.Add("Ignore Season", async (_, _) =>
                     {
                         processedSeason.Show.IgnoreSeasons.Add(processedSeason.SeasonNumber);
-                        mDoc.TvAddedOrEdited(false, false, false, null, processedSeason.Show);
+                        await mDoc.TvAddedOrEditedAsync(false, false, false, null, processedSeason.Show);
                         gridSummary.PopulateGrid();
                         gridSummary.MainWindow.FillMyShows();
                     });
@@ -365,20 +365,20 @@ public partial class ShowSummary : Form, IDialogParent
 
             if (show.DoMissingCheck)
             {
-                gridSummary.rightClickMenu.Add("Stop Checking TV Show", (_, _) =>
+                gridSummary.rightClickMenu.Add("Stop Checking TV Show", async (_, _) =>
                 {
                     show.DoMissingCheck = false;
-                    mDoc.TvAddedOrEdited(false, false, false, null, show);
+                    await mDoc.TvAddedOrEditedAsync(false, false, false, null, show);
                     gridSummary.PopulateGrid();
                     gridSummary.MainWindow.FillMyShows();
                 });
             }
             else
             {
-                gridSummary.rightClickMenu.Add("Start Checking TV Show", (_, _) =>
+                gridSummary.rightClickMenu.Add("Start Checking TV Show", async (_, _) =>
                 {
                     show.DoMissingCheck = true;
-                    mDoc.TvAddedOrEdited(false, false, false, null, show);
+                    await mDoc.TvAddedOrEditedAsync(false, false, false, null, show);
                     gridSummary.PopulateGrid();
                     gridSummary.MainWindow.FillMyShows();
                 });
@@ -388,9 +388,9 @@ public partial class ShowSummary : Form, IDialogParent
 
             if (processedSeason is null)
             {
-                gridSummary.rightClickMenu.Add("Force Refresh", (_, _) =>
+                gridSummary.rightClickMenu.Add("Force Refresh", async (_, _) =>
                 {
-                    gridSummary.MainWindow.ForceRefresh(show, false);
+                    await gridSummary.MainWindow.ForceRefreshAsync(show, false);
                 });
 
                 gridSummary.rightClickMenu.AddSeparator();
@@ -410,7 +410,7 @@ public partial class ShowSummary : Form, IDialogParent
                 }
             );
 
-            List<string> added = new();
+            List<string> added = [];
 
             if (processedSeason != null)
             {
@@ -428,7 +428,7 @@ public partial class ShowSummary : Form, IDialogParent
             gridSummary.rightClickMenu.Show(sender.Grid.PointToScreen(pt));
         }
 
-        private void GenerateOpenMenu(ProcessedSeason seas, ICollection<string> added)
+        private void GenerateOpenMenu(ProcessedSeason seas, List<string> added)
         {
             Dictionary<int, SafeList<string>> afl = show.AllExistngFolderLocations();
 
@@ -457,7 +457,7 @@ public partial class ShowSummary : Form, IDialogParent
             }
         }
 
-        private void GenerateRightClickOpenMenu(ICollection<string> added)
+        private void GenerateRightClickOpenMenu(List<string> added)
         {
             bool first = true;
 
@@ -488,10 +488,10 @@ public partial class ShowSummary : Form, IDialogParent
             // for each episode in season, find it on disk
             bool first = true;
             DirFilesCache dfc = new();
-            foreach (ProcessedEpisode epds in show.SeasonEpisodes[seas.SeasonNumber])
+            foreach (ProcessedEpisode epds in show.EpisodesForSeason(seas.SeasonNumber))
             {
                 List<FileInfo> fl = dfc.FindEpOnDisk(epds, false);
-                if (fl.Any())
+                if (fl.Count != 0)
                 {
                     if (first)
                     {
@@ -512,18 +512,12 @@ public partial class ShowSummary : Form, IDialogParent
 
     #region Nested type: ShowSummaryData
 
-    public class ShowSummaryData
+    public class ShowSummaryData(string showName, ShowConfiguration showConfiguration)
     {
         public int MaxSeason;
-        public readonly List<ShowSummarySeasonData> SeasonDataList = new();
-        public readonly ShowConfiguration ShowConfiguration;
-        public readonly string ShowName;
-
-        public ShowSummaryData(string showName, ShowConfiguration showConfiguration)
-        {
-            ShowName = showName;
-            ShowConfiguration = showConfiguration;
-        }
+        public readonly List<ShowSummarySeasonData> SeasonDataList = [];
+        public readonly ShowConfiguration ShowConfiguration = showConfiguration;
+        public readonly string ShowName = showName;
 
         public void AddSeason(ShowSummarySeasonData seasonData)
         {
@@ -538,22 +532,13 @@ public partial class ShowSummary : Form, IDialogParent
 
         #region Nested type: ShowSummarySeasonData
 
-        public class ShowSummarySeasonData
+        public class ShowSummarySeasonData(int seasonNumber, int episodeCount, int episodeAiredCount, int episodeGotCount, ProcessedSeason processedSeason)
         {
-            private readonly int episodeAiredCount;
-            private readonly int episodeCount;
-            private readonly int episodeGotCount;
-            public readonly ProcessedSeason ProcessedSeason;
-            public readonly int SeasonNumber;
-
-            public ShowSummarySeasonData(int seasonNumber, int episodeCount, int episodeAiredCount, int episodeGotCount, ProcessedSeason processedSeason)
-            {
-                SeasonNumber = seasonNumber;
-                this.episodeCount = episodeCount;
-                this.episodeAiredCount = episodeAiredCount;
-                this.episodeGotCount = episodeGotCount;
-                ProcessedSeason = processedSeason;
-            }
+            private readonly int episodeAiredCount = episodeAiredCount;
+            private readonly int episodeCount = episodeCount;
+            private readonly int episodeGotCount = episodeGotCount;
+            public readonly ProcessedSeason ProcessedSeason = processedSeason;
+            public readonly int SeasonNumber = seasonNumber;
 
             public bool IsSpecial => SeasonNumber == 0;
             public bool Ignored => ProcessedSeason.Show.IgnoreSeasons.Contains(SeasonNumber);
@@ -619,18 +604,12 @@ public partial class ShowSummary : Form, IDialogParent
 
         #region Nested type: SummaryOutput
 
-        public class SummaryOutput
+        public class SummaryOutput(bool ignored, bool special)
         {
             public Color Color;
             public string? Details;
-            public readonly bool Ignored;
-            public readonly bool Special;
-
-            public SummaryOutput(bool ignored, bool special)
-            {
-                Ignored = ignored;
-                Special = special;
-            }
+            public readonly bool Ignored = ignored;
+            public readonly bool Special = special;
         }
 
         #endregion Nested type: SummaryOutput
@@ -735,7 +714,7 @@ public partial class ShowSummary : Form, IDialogParent
 
     private void BwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         if (e.UserState is not null)
         {
             lblStatus.Text = e.UserState.ToString()?.ToUiVersion();

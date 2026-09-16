@@ -11,30 +11,22 @@ using Alphaleonis.Win32.Filesystem;
 namespace TVRename;
 
 // "PossibleNewTVShow" represents a folder found by doing a Check in the 'Bulk Add TV Shows' dialog
-public class PossibleNewTvShow : ISeriesSpecifier
+public class PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, string folderFormat) : ISeriesSpecifier
 {
-    public readonly DirectoryInfo Folder;
+    public readonly DirectoryInfo Folder = directory;
 
     // ReSharper disable once InconsistentNaming
-    internal int ProviderCode;
+    internal int ProviderCode = -1;
 
     internal TVDoc.ProviderType SourceProvider;
-    public readonly bool HasSeasonFoldersGuess;
-    public readonly string SeasonFolderFormat;
+    public readonly bool HasSeasonFoldersGuess = seasonFolders;
+    public readonly string SeasonFolderFormat = folderFormat;
     public string? RefinedHint;
 
     public bool CodeKnown => !CodeUnknown;
     public bool CodeUnknown => ProviderCode == -1;
 
     public CachedSeriesInfo? CachedSeries => TVDoc.GetTVCache(Provider).GetSeries(ProviderCode);
-
-    public PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, string folderFormat)
-    {
-        Folder = directory;
-        ProviderCode = -1;
-        HasSeasonFoldersGuess = seasonFolders;
-        SeasonFolderFormat = folderFormat;
-    }
 
     public ProcessedSeason.SeasonType SeasonOrder => ProcessedSeason.SeasonType.aired; //Just assume for now
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
 
@@ -21,8 +22,8 @@ public partial class YtsViewerView : Form
     public YtsViewerView(TVDoc doc, UI main)
     {
         InitializeComponent();
-        recs = new List<YtsViewerRow>();
-        addedMovies = new List<MovieConfiguration>();
+        recs = [];
+        addedMovies = [];
 
         mDoc = doc;
         mainUi = main;
@@ -45,8 +46,8 @@ public partial class YtsViewerView : Form
     private void PopulateGrid()
     {
         List<YtsViewerRow> recommendationRows = chkRemoveExisting.Checked
-            ? recs.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.ImdbCode != x.ImdbCode)).ToList()
-            : recs.ToList();
+            ? [.. recs.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.ImdbCode != x.ImdbCode))]
+            : [.. recs];
 
         lvRecommendations.SetObjects(recommendationRows, true);
     }
@@ -63,12 +64,12 @@ public partial class YtsViewerView : Form
         UpdateUI();
     }
 
-    private void AddMovieToLibrary(YtsViewerRow addedMovie)
+    private async Task AddMovieToLibraryAsync(YtsViewerRow addedMovie)
     {
         string imdbCode = addedMovie.ImdbCode;
         string name = addedMovie.Name;
 
-        CachedMovieInfo? movie = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbCode, new Locale());
+        CachedMovieInfo? movie = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync(imdbCode, new Locale());
         if (movie is null)
         {
             Logger.Info($"Not adding {imdbCode}:{name} as the IMDB code is not found on TMDB");
@@ -125,10 +126,11 @@ public partial class YtsViewerView : Form
         scanStartTime = TimeHelpers.LocalNow();
         try
         {
-            recs = YTS.API
-                    .GetMovies((BackgroundWorker)sender, quality, minRating)
-                    .Select(x => new YtsViewerRow(x, mDoc))
-                    .ToList();
+            recs = [.. YTS.API
+                    .GetMoviesAsync((BackgroundWorker)sender, quality, minRating)
+                    .GetAwaiter()
+                    .GetResult()
+                    .Select(x => new YtsViewerRow(x, mDoc))];
         }
         catch (Exception ex)
         {
@@ -138,7 +140,7 @@ public partial class YtsViewerView : Form
 
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         DateTime completionDateTime = scanStartTime.Add((TimeHelpers.LocalNow() - scanStartTime) / (pbProgress.Value + 1) * 100);
         lblStatus.Text = $"ETC={completionDateTime} {e.UserState?.ToString()?.ToUiVersion()}";
     }
@@ -180,13 +182,13 @@ public partial class YtsViewerView : Form
 
         rightClickMenu.Items.Clear();
 
-        rightClickMenu.Add("Add Movie to Library and Download", (_, _) =>
+        rightClickMenu.Add("Add Movie to Library and Download", async (_, _) =>
         {
-            AddMovieToLibrary(lastSelected);
+            await AddMovieToLibraryAsync(lastSelected);
             Download(lastSelected, quality);
         });
 
-        rightClickMenu.Add("Add Movie to Library", (_, _) => AddMovieToLibrary(lastSelected));
+        rightClickMenu.Add("Add Movie to Library", async (_, _) => await AddMovieToLibraryAsync(lastSelected));
         rightClickMenu.Add("Download Movie", (_, _) => Download(lastSelected, quality));
     }
 
@@ -198,7 +200,7 @@ public partial class YtsViewerView : Form
         url?.OpenUrlInBrowser();
     }
 
-    private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+    private async void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
     {
         object? rowObject = (e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject;
         if (rowObject is YtsViewerRow rr)
@@ -208,9 +210,9 @@ public partial class YtsViewerView : Form
                     : rr.YtsMovie.GetMovieHtmlOverview());
         }
     }
-    private void this_FormClosing(object sender, FormClosingEventArgs e)
+    private async void this_FormClosing(object sender, FormClosingEventArgs e)
     {
-        mDoc.MoviesAddedOrEdited(true, false, false, mainUi, addedMovies);
+        await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, addedMovies);
     }
 
     private void btnPreferences_Click(object sender, EventArgs e)

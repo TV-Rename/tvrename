@@ -10,12 +10,8 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-public abstract class ListViewItemDateSorter : ListViewItemSorter
+public abstract class ListViewItemDateSorter(int column) : ListViewItemSorter(column)
 {
-    protected ListViewItemDateSorter(int column) : base(column)
-    {
-    }
-
     protected override int CompareListViewItem(ListViewItem x, ListViewItem y)
     {
         DateTime? d1 = GetDate(x);

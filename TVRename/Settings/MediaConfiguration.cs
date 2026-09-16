@@ -72,7 +72,7 @@ public abstract class MediaConfiguration : ISeriesSpecifier
     public bool UseCustomRegion;
     public string? CustomRegionCode;
 
-    public readonly List<string> AliasNames = new();
+    public readonly List<string> AliasNames = [];
     protected internal TVDoc.ProviderType ConfigurationProvider;
 
     protected abstract MediaType GetMediaType();
@@ -183,13 +183,13 @@ public abstract class MediaConfiguration : ISeriesSpecifier
 
     protected abstract TVDoc.ProviderType DefaultProvider();
 
-    public IEnumerable<string> Genres => CachedData?.Genres.Distinct() ?? new List<string>();
+    public IEnumerable<string> Genres => CachedData?.Genres.Distinct() ?? [];
 
-    public IEnumerable<Actor> Actors => CachedData?.GetActors() ?? new List<Actor>();
+    public IEnumerable<Actor> Actors => CachedData?.GetActors() ?? [];
 
     protected IEnumerable<string> GetSimplifiedPossibleShowNames()
     {
-        List<string> possibles = new();
+        List<string> possibles = [];
 
         string simplifiedShowName = ShowName.CompareName();
         if (simplifiedShowName != "") { possibles.Add(simplifiedShowName); }

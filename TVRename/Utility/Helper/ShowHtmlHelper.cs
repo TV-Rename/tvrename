@@ -222,7 +222,8 @@ internal static class ShowHtmlHelper
 
         foreach (ProcessedSeason season in si.AppropriateSeasons().OrderBy(pair => pair.Key).Select(pair => pair.Value))
         {
-            if (si.SeasonEpisodes.TryGetValue(season.SeasonNumber, out List<ProcessedEpisode>? seasonEpisodes))
+            List<ProcessedEpisode> seasonEpisodes = si.EpisodesForSeason(season.SeasonNumber);
+            if (seasonEpisodes.Any())
             {
                 tableRows.AppendSeasonShowSummary(dfc, si, season, includeDirectoryLinks, seasonEpisodes);
             }
@@ -1030,13 +1031,11 @@ internal static class ShowHtmlHelper
         sb.AppendLine(HTMLHeader(10, col));
         sb.AppendSeason(s, si, col, includeDirectoryLinks);
 
-        if (si.SeasonEpisodes.TryGetValue(s.SeasonNumber, out List<ProcessedEpisode>? siSeasonEpisode))
+        List<ProcessedEpisode> seasonEpisodes = si.EpisodesForSeason(s.SeasonNumber);
+        foreach (ProcessedEpisode ep in seasonEpisodes)
         {
-            foreach (ProcessedEpisode ep in siSeasonEpisode)
-            {
-                List<FileInfo>? fl = includeDirectoryLinks ? dfc.FindEpOnDisk(ep) : null;
-                sb.AppendEpisode(ep, fl, col);
-            }
+            List<FileInfo>? fl = includeDirectoryLinks ? dfc.FindEpOnDisk(ep) : null;
+            sb.AppendEpisode(ep, fl, col);
         }
 
         sb.AppendLine(HTMLFooter());
@@ -1122,7 +1121,11 @@ internal static class ShowHtmlHelper
             return;
         }
 
-        string tableRows = si.SeasonEpisodes[s.SeasonNumber].ToList().Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc)).Concat();
+        string tableRows = si
+            .EpisodesForSeason(s.SeasonNumber)
+            .ToList()
+            .Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc))
+            .Concat();
 
         string seasonHeaderDiv = CreateSeasonHeaderDiv(si, s, includeDirectoryLinks);
         string table = CreateEpisodeTableHeader(tableRows);
@@ -1224,7 +1227,7 @@ internal static class ShowHtmlHelper
         return string.Empty;
     }
 
-    private static void AppendEpisode(this StringBuilder sb, ProcessedEpisode ep, IReadOnlyCollection<FileInfo>? fl, Color backgroundColour)
+    private static void AppendEpisode(this StringBuilder sb, ProcessedEpisode ep, List<FileInfo>? fl, Color backgroundColour)
     {
         string stars = StarRating(ep.EpisodeRating);
         string tvdbEpisodeUrl = ep.Show.Provider == TVDoc.ProviderType.TheTVDB ? ep.TVDBWebsiteUrl : string.Empty;
@@ -1469,11 +1472,11 @@ internal static class ShowHtmlHelper
     internal static string GenreIconHtml(string genre)
     {
         string[] availableIcons =
-        {
+        [
             "Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama", "Family",
             "Fantasy", "Food", "Horror", "Mini-Series", "Mystery", "Reality", "Romance", "Science-Fiction", "Soap",
             "Talk Show", "Thriller", "Travel", "War", "Western"
-        };
+        ];
 
         const string ROOT = "https://www.tvrename.com/assets/images/GenreIcons/";
 
@@ -1604,21 +1607,21 @@ internal static class ShowHtmlHelper
         string siteRating = PrettyPrint(ser?.SiteRating);
         string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si) : string.Empty;
 
-        string tableHtml = string.Empty;
+        StringBuilder tableHtml = new();
 
-        tableHtml += GetOverviewLinkPart("thetvdb.com", tvdbLink);
-        tableHtml += GetOverviewLinkPart("imdb.com", ser?.Imdb.ToImdbLink());
-        tableHtml += GetOverviewPart("Runtime", ser?.Runtime);
-        tableHtml += GetOverviewPart("Aliases", si.AliasNames.ToCsv());
-        tableHtml += GetOverviewPart("Genres", si.Genres.ToCsv());
-        tableHtml += GetOverviewPart("Rating", ser?.ContentRating);
-        tableHtml += GetOverviewPart("User Rating", $"{siteRating}{AddRatingCount(ser?.SiteRatingVotes ?? 0)}");
-        tableHtml += GetOverviewPart("Active From", yearRange);
-        tableHtml += GetOverviewPart("Status", ser?.Status);
+        tableHtml.Append(GetOverviewLinkPart("thetvdb.com", tvdbLink));
+        tableHtml.Append(GetOverviewLinkPart("imdb.com", ser?.Imdb.ToImdbLink()));
+        tableHtml.Append(GetOverviewPart("Runtime", ser?.Runtime));
+        tableHtml.Append(GetOverviewPart("Aliases", si.AliasNames.ToCsv()));
+        tableHtml.Append(GetOverviewPart("Genres", si.Genres.ToCsv()));
+        tableHtml.Append(GetOverviewPart("Rating", ser?.ContentRating));
+        tableHtml.Append(GetOverviewPart("User Rating", $"{siteRating}{AddRatingCount(ser?.SiteRatingVotes ?? 0)}"));
+        tableHtml.Append(GetOverviewPart("Active From", yearRange));
+        tableHtml.Append(GetOverviewPart("Status", ser?.Status));
 
-        if (tableHtml.HasValue())
+        if (tableHtml.Length > 0)
         {
-            body += "<h2>Information<table border=0>" + tableHtml + "</table>";
+            body += "<h2>Information<table border=0>" + tableHtml.ToString() + "</table>";
         }
 
         return body;
@@ -1657,7 +1660,7 @@ internal static class ShowHtmlHelper
             body += $"<img width=758 height=140 src=\"{widePosterUrl}\"><br/>";
         }
 
-        List<ProcessedEpisode> eis = si.SeasonEpisodes[snum];
+        List<ProcessedEpisode> eis = si.EpisodesForSeason(snum);
 
         string seasText = SeasonName(si, snum);
         string? seasonUrl = s.WebsiteUrl;
@@ -1826,18 +1829,18 @@ internal static class ShowHtmlHelper
 
     private static string GetOverview(ProcessedEpisode ei)
     {
-        string overviewString = string.Empty;
+        StringBuilder overviewString = new();
 
-        overviewString += GetOverviewLinkPart("imdb.com", ei.ImdbCode);
-        overviewString += GetOverviewLinkPart("Link", ei.ShowUrl);
-        overviewString += GetOverviewPart("Director", ei.EpisodeDirector);
-        overviewString += GetOverviewPart("Guest Stars", ei.EpisodeGuestStars);
-        overviewString += GetOverviewPart("Production Code", ei.ProductionCode);
-        overviewString += GetOverviewPart("Writer", ei.Writer);
+        overviewString.Append(GetOverviewLinkPart("imdb.com", ei.ImdbCode));
+        overviewString.Append(GetOverviewLinkPart("Link", ei.ShowUrl));
+        overviewString.Append(GetOverviewPart("Director", ei.EpisodeDirector));
+        overviewString.Append(GetOverviewPart("Guest Stars", ei.EpisodeGuestStars));
+        overviewString.Append(GetOverviewPart("Production Code", ei.ProductionCode));
+        overviewString.Append(GetOverviewPart("Writer", ei.Writer));
 
-        if (!string.IsNullOrWhiteSpace(overviewString))
+        if (overviewString.Length>0)
         {
-            return ei.HiddenOverview() + "<table border=0>" + overviewString + "</table>";
+            return ei.HiddenOverview() + "<table border=0>" + overviewString.ToString() + "</table>";
         }
 
         return ei.HiddenOverview();
@@ -1855,5 +1858,19 @@ internal static class ShowHtmlHelper
     public static string? YoutubeTrailer(CachedMediaInfo? si)
     {
         return si?.TrailerUrl?.Replace("/watch?v=", "/embed/");
+    }
+
+    public static string YoutubePage(string YoutubeURL)
+    {
+        string iframe = $"""<iframe width="560" height="315" src="{YoutubeURL}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>""";
+
+        Color col = Color.FromName("ButtonFace");
+        StringBuilder sb = new();
+        sb.AppendLine(HTMLHeader(10, col));
+        sb.AppendLine(iframe);
+        sb.AppendLine(HTMLFooter());
+        return sb.ToString();
+
+        
     }
 }

@@ -2,12 +2,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class UseManualFoldersTvShowCheck : CustomTvShowCheck
+internal class UseManualFoldersTvShowCheck(ShowConfiguration show, TVDoc doc) : CustomTvShowCheck(show, doc)
 {
-    public UseManualFoldersTvShowCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override string FieldName => "[TV] Use Manual season Folders for TV Show";
     protected override bool Field => Show.UsesManualFolders();
 

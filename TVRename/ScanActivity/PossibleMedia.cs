@@ -8,15 +8,9 @@
 
 namespace TVRename
 {
-    internal class PossibleMedia
+    internal class PossibleMedia(MediaConfiguration configuration, string hint)
     {
-        internal readonly MediaConfiguration Configuration;
-        internal readonly string Hint;
-
-        public PossibleMedia(MediaConfiguration configuration, string hint)
-        {
-            Configuration = configuration;
-            Hint = hint;
-        }
+        internal readonly MediaConfiguration Configuration = configuration;
+        internal readonly string Hint = hint;
     }
 }

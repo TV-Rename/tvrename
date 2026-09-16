@@ -8,15 +8,15 @@ public static class CustomTvShowName
 {
     public static string DefaultStyle() => Presets[0];
 
-    private static readonly List<string> Presets = new()
-    {
+    private static readonly List<string> Presets =
+    [
         "{ShowName} ({Year})",
         "{ShowNameNoYear} ({Year})",
         "{ShowName}"
-    };
+    ];
 
-    internal static readonly List<string> TAGS = new()
-    {
+    internal static readonly List<string> TAGS =
+    [
         "{ShowName}",
         "{ShowNameInitial}",
         "{ShowNameLower}",
@@ -24,11 +24,11 @@ public static class CustomTvShowName
         "{Year}",
         "{ContentRating}",
         "{Imdb}",
-    };
+    ];
 
     public static List<string> ExamplePresets(ShowConfiguration s)
     {
-        return Presets.Select(example => NameFor(s, example)).ToList();
+        return [.. Presets.Select(example => NameFor(s, example))];
     }
 
     public static string NameFor(ShowConfiguration? m, string styleString) => NameFor(m, styleString, false, true);

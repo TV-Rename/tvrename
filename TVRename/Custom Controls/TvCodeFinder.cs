@@ -43,9 +43,7 @@ public class TvCodeFinder : CodeFinder
         List<KeyValuePair<int, CachedSeriesInfo>> lvis;
         lock (cache.SERIES_LOCK)
         {
-            lvis = cache.CachedShowData
-                .Where(kvp => Matches(kvp.Key, kvp.Value, numeric, what, matchnum))
-                .ToList();
+            lvis = [.. cache.CachedShowData.Where(kvp => Matches(kvp.Key, kvp.Value, numeric, what, matchnum))];
         }
         foreach (ListViewItem lvi in lvis.Select(kvp => NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum)))
         {

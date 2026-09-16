@@ -2,23 +2,19 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal class RenameAndMissingMovieCheck : ScanMovieActivity
+internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
 {
-    private readonly DownloadIdentifiersController downloadIdentifiers;
+    private readonly DownloadIdentifiersController downloadIdentifiers = new();
 
     protected override string ActivityName() => "Rename & Missing Movie Check";
 
-    public RenameAndMissingMovieCheck(TVDoc doc) : base(doc)
+    protected override async Task CheckAsync(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
-        downloadIdentifiers = new DownloadIdentifiersController();
-    }
-
-    protected override void Check(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
-    {
-        List<string> allFolders = si.Locations.ToList();
+        List<string> allFolders = [.. si.Locations];
         if (allFolders.Count == 0) // no folders defined for this show
         {
             LOGGER.Warn($"No Folders defined for {si.Name}, please review the configuration for that movie.");
@@ -33,11 +29,11 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
                 return;
             }
 
-            CheckMovieFolder(si, dfc, settings, folder);
+            await CheckMovieFolderAsync(si, dfc, settings, folder);
         }
     }
 
-    private void CheckMovieFolder(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, string folder)
+    private async Task CheckMovieFolderAsync(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, string folder)
     {
         if (settings.Token.IsCancellationRequested)
         {
@@ -74,8 +70,8 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
     private void CheckSingleMovieFolder(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, DirFilesCache dfc, bool renCheck)
     {
         FileInfo[] files = dfc.GetFiles(folder);
-        FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).Where(f => !f.IsSampleFile()).ToArray();
-        List<string> bases = movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct().ToList();
+        FileInfo[] movieFiles = [.. files.Where(f => f.IsMovieFile()).Where(f => !f.IsSampleFile())];
+        List<string> bases = [.. movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct()];
         string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
 
         if (movieFiles.Length == 0)
@@ -168,8 +164,8 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
         bool renCheck, bool missCheck)
     {
         FileInfo[] files = dfc.GetFiles(folder);
-        FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).ToArray();
-        List<string> bases = movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct().ToList();
+        FileInfo[] movieFiles = [.. files.Where(f => f.IsMovieFile())];
+        List<string> bases = [.. movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct()];
         string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
 
         if (movieFiles.Length == 0)
@@ -190,7 +186,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
         if (renCheck)
         {
             //This section deals with files that have had a 1 year rename
-            List<string> matchingBases = bases.Where(x => IsClose(x, si)).ToList();
+            List<string> matchingBases = [.. bases.Where(x => IsClose(x, si))];
             if (matchingBases.Any())
             {
                 foreach (string baseString in matchingBases)
@@ -202,7 +198,7 @@ internal class RenameAndMissingMovieCheck : ScanMovieActivity
                 return;
             }
 
-            List<string> matchingBases2 = bases.Where(x => MatchesBase(x, newBase)).ToList();
+            List<string> matchingBases2 = [.. bases.Where(x => MatchesBase(x, newBase))];
             if (matchingBases2.Any())
             {
                 foreach (string baseString in matchingBases2)

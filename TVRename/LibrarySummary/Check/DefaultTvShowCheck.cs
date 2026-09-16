@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal abstract class DefaultTvShowCheck : TvShowCheck
+internal abstract class DefaultTvShowCheck(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
 {
-    protected DefaultTvShowCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     public override string CheckName => "[TV] " + FieldName;
     protected abstract string FieldName { get; }
     protected abstract bool Field { get; }

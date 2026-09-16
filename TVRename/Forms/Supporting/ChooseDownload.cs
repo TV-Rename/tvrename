@@ -23,7 +23,7 @@ public partial class ChooseDownload : Form
             return $"{(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}";
         };
 
-        IEnumerable<ActionTDownload> actionTDownloads = options.ToList();
+        IEnumerable<ActionTDownload> actionTDownloads = [.. options];
         olvChooseDownload.SetObjects(actionTDownloads);
         SetButtonVisibility();
         olvChooseDownload.Sort(olvSeeders, SortOrder.Descending);

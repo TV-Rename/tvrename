@@ -16,10 +16,10 @@ namespace TVRename;
 
 internal class DownloadKodiImages : DownloadIdentifier
 {
-    private List<string> donePosterJpg = new();
-    private List<string> doneBannerJpg = new();
-    private List<string> doneFanartJpg = new();
-    private List<string> doneThumbnails = new();
+    private List<string> donePosterJpg = [];
+    private List<string> doneBannerJpg = [];
+    private List<string> doneFanartJpg = [];
+    private List<string> doneThumbnails = [];
 
     public DownloadKodiImages() => Reset();
 
@@ -42,7 +42,7 @@ internal class DownloadKodiImages : DownloadIdentifier
 
         if (TVSettings.Instance.KODIImages)
         {
-            ItemList theActionList = new();
+            ItemList theActionList = [];
             string baseFileName = file.MovieFileNameBase();
             try
             {
@@ -112,7 +112,7 @@ internal class DownloadKodiImages : DownloadIdentifier
 
         if (TVSettings.Instance.KODIImages)
         {
-            ItemList theActionList = new();
+            ItemList theActionList = [];
             // base folder:
             if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && si.AllFolderLocations(false).Any())
             {
@@ -159,7 +159,7 @@ internal class DownloadKodiImages : DownloadIdentifier
     {
         if (TVSettings.Instance.KODIImages)
         {
-            ItemList theActionList = new();
+            ItemList theActionList = [];
             //If we have KODI New style images being downloaded then we want to check that 3 files exist
             //for the cachedSeries:
             //http://wiki.xbmc.org/index.php?title=XBMC_v12_(Frodo)_FAQ#Local_images
@@ -215,7 +215,7 @@ internal class DownloadKodiImages : DownloadIdentifier
     {
         if (TVSettings.Instance.EpThumbnails)
         {
-            ItemList theActionList = new();
+            ItemList theActionList = [];
             if (episode.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
             {
                 //We have a merged episode, so we'll also download the images for the episodes had they been separate.
@@ -268,9 +268,9 @@ internal class DownloadKodiImages : DownloadIdentifier
 
     public sealed override void Reset()
     {
-        doneBannerJpg = new List<string>();
-        donePosterJpg = new List<string>();
-        doneFanartJpg = new List<string>();
-        doneThumbnails = new List<string>();
+        doneBannerJpg = [];
+        donePosterJpg = [];
+        doneFanartJpg = [];
+        doneThumbnails = [];
     }
 }

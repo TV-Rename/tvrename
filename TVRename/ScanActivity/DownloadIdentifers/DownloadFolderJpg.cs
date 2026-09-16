@@ -6,7 +6,7 @@ namespace TVRename;
 
 internal class DownloadFolderJpg : DownloadIdentifier
 {
-    private List<string> doneFolderJpg = new();
+    private List<string> doneFolderJpg = [];
     private const string DEFAULT_FILE_NAME = "folder.jpg";
 
     public DownloadFolderJpg() => Reset();
@@ -17,7 +17,7 @@ internal class DownloadFolderJpg : DownloadIdentifier
     {
         if (!TVSettings.Instance.FolderJpg)
         {
-            return new ItemList();
+            return [];
         }
 
         try
@@ -29,17 +29,17 @@ internal class DownloadFolderJpg : DownloadIdentifier
 
             if (!forceRefresh && !fileDoesntExist)
             {
-                return new ItemList();
+                return [];
             }
 
             CachedMovieInfo? cachedMovie = mc.CachedMovie;
 
             if (cachedMovie is null)
             {
-                return new ItemList();
+                return [];
             }
 
-            ItemList theActionList = new();
+            ItemList theActionList = [];
 
             //default to poster
             string? downloadPath = cachedMovie.PosterUrl;
@@ -55,13 +55,13 @@ internal class DownloadFolderJpg : DownloadIdentifier
         catch (DirectoryNotFoundException ex)
         {
             LOGGER.Warn(ex, "Failed to find directory to look for images for folder");
-            return new ItemList();
+            return [];
         }
     }
 
     public override ItemList ProcessShow(ShowConfiguration si, bool forceRefresh)
     {
-        ItemList theActionList = new();
+        ItemList theActionList = [];
 
         if (!TVSettings.Instance.FolderJpg)
         {
@@ -103,7 +103,7 @@ internal class DownloadFolderJpg : DownloadIdentifier
         }
 
         // season folders JPGs
-        ItemList theActionList = new();
+        ItemList theActionList = [];
         FileInfo fi = FileHelper.FileInFolder(folder, DEFAULT_FILE_NAME);
 
         if (!doneFolderJpg.Contains(fi.FullName) && (!fi.Exists || forceRefresh))
@@ -126,6 +126,6 @@ internal class DownloadFolderJpg : DownloadIdentifier
 
     public sealed override void Reset()
     {
-        doneFolderJpg = new List<string>();
+        doneFolderJpg = [];
     }
 }

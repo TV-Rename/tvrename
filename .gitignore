@@ -1,6 +1,7 @@
-﻿/.vs
+/.vs
 /packages
 /TVRename/obj
 /TVRename/bin
 /TVRename/publish
 /TVRename#/obj/Debug
+/*.md

@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading;
 
 namespace TVRename;
 
@@ -10,7 +11,7 @@ public class Languages : SafeList<Language>
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
     private static volatile Languages? InternalInstance;
-    private static readonly object SyncRoot = new();
+    private static readonly Lock SyncRoot = new();
 
     public static Languages Instance
     {
@@ -106,6 +107,7 @@ public class Languages : SafeList<Language>
         Add(new Language(262, "zu", "zul", "Zulu (South Africa)", "isiZulu", "zu-ZA", true));
         Add(new Language(999, "af", "afr", "Afrikaans", "Afrikaans", "af-ZA", true));
         Add(new Language(998, "xh", "xho", "Xhosa", "Xhosa", "xh-ZA", true));
+        Add(new Language(997, "hr", "hrv", "Croatian", "Hrvatska", "hr-HR", true));
     }
 
     public Language? GetLanguageFromCode(string? languageAbbreviation)

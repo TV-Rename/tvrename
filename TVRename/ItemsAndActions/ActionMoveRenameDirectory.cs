@@ -2,6 +2,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -58,7 +59,7 @@ public class ActionMoveRenameDirectory : ActionFileOperation
 
     public override long SizeOfWork => 10;
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         DirectoryInfo source = new(sourceFolder);
         DirectoryInfo target = new(targetFolder);
@@ -67,7 +68,7 @@ public class ActionMoveRenameDirectory : ActionFileOperation
         {
             try
             {
-                target.Delete();
+                target.Delete(); //TODO use FileHelper
             }
             catch (System.IO.DirectoryNotFoundException)
             {
@@ -114,7 +115,7 @@ public class ActionMoveRenameDirectory : ActionFileOperation
 
                 if (Directory.IsEmpty(source.FullName))
                 {
-                    source.Delete(false);
+                    source.Delete(false); //TODO use FileHelper
                     LOGGER.Info($"Deleted empty directory {source.FullName}");
                 }
                 return ActionOutcome.Success();

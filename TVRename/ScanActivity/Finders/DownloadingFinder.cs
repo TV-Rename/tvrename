@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace TVRename;
 
-public abstract class DownloadingFinder : Finder
+public abstract class DownloadingFinder(TVDoc doc, TVDoc.ScanSettings settings) : Finder(doc, settings)
 {
     public enum DownloadApp
     {
@@ -27,11 +27,11 @@ public abstract class DownloadingFinder : Finder
 
     protected void SearchForAppropriateDownloads(List<TorrentEntry> downloading, DownloadApp tApp)
     {
-        ItemList newList = new();
-        ItemList toRemove = new();
-        int c = ActionList.Missing.Count + 2;
-        int n = 1;
-        UpdateStatus(n, c, "Searching torrent queue...");
+        ItemList newList = [];
+        ItemList toRemove = [];
+        int c = ActionList.Missing.Count + 1;
+        ThreadSafeCounter n = new(); 
+        UpdateStatus(n.Increment(), c, "Searching torrent queue...");
         foreach (ItemMissing? action in ActionList.Missing.ToList())
         {
             if (Settings.Token.IsCancellationRequested)
@@ -39,7 +39,7 @@ public abstract class DownloadingFinder : Finder
                 return;
             }
 
-            UpdateStatus(n++, c, action.Filename);
+            UpdateStatus(n.Increment(), c, action.Filename);
 
             foreach (TorrentEntry te in downloading)
             {
@@ -88,9 +88,5 @@ public abstract class DownloadingFinder : Finder
             }
         }
         ActionList.Replace(toRemove, newList);
-    }
-
-    protected DownloadingFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
     }
 }

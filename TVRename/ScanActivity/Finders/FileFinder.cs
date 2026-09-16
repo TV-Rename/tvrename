@@ -14,12 +14,8 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-internal abstract class FileFinder : Finder
+internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Finder(doc, settings)
 {
-    protected FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override FinderDisplayType DisplayType() => FinderDisplayType.local;
 
     // ReSharper disable once FunctionComplexityOverflow
@@ -274,12 +270,12 @@ internal abstract class FileFinder : Finder
         LOGGER.Info($"Added new rule automatically for {sr}");
 
         //Regenerate the episodes with the new rule added
-        ShowLibrary.GenerateEpisodeDict(me.MissingEpisode.Show);
+        me.MissingEpisode.Show.UpdateEpisodeCaches();
 
         //Get the newly created processed episode we are after
         // ReSharper disable once InconsistentNaming
         ProcessedEpisode newPE = me.MissingEpisode;
-        foreach (ProcessedEpisode pe in me.MissingEpisode.Show.SeasonEpisodes[seasF])
+        foreach (ProcessedEpisode pe in me.MissingEpisode.Show.EpisodesForSeason(seasF))
         {
             if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp)
             {
@@ -312,7 +308,7 @@ internal abstract class FileFinder : Finder
     {
         // for each of the items in rcl, do the same copy/move if for other items with the same
         // base name, but different extensions
-        ItemList extras = new();
+        ItemList extras = [];
 
         foreach (ActionCopyMoveRename action in actionlist.CopyMoveRename)
         {
@@ -347,7 +343,7 @@ internal abstract class FileFinder : Finder
         {
             //Does not really make sense for shows (multiple episodes in one directory).
             //If we only have one file we can rename it
-            List<FileInfo> subFiles = subtitleFolder.GetFiles().Where(IsSubTitleFile).ToList();
+            List<FileInfo> subFiles = [.. subtitleFolder.GetFiles().Where(IsSubTitleFile)];
             if (subFiles.Count == 1)
             {
                 FileInfo fi = subFiles.Single();
@@ -397,7 +393,7 @@ internal abstract class FileFinder : Finder
     {
         // for each of the items in rcl, do the same copy/move if for other items with the same
         // base name, but different extensions
-        ItemList extras = new();
+        ItemList extras = [];
 
         foreach (ActionCopyMoveRename action in actionlist.CopyMoveRename)
         {
@@ -618,7 +614,7 @@ internal abstract class FileFinder : Finder
     private static List<FileInfo> IdentifyBestMatches(List<FileInfo> matchedFiles)
     {
         //See whether there are any of the matched files that stand out
-        List<FileInfo> bestMatchedFiles = new();
+        List<FileInfo> bestMatchedFiles = [];
         foreach (FileInfo matchedFile in matchedFiles)
         {
             //test first file against all the others
@@ -655,7 +651,7 @@ internal abstract class FileFinder : Finder
                 continue;
             }
 
-            if (ReviewFile(testMissingAction, new ItemList(), matchedFile, false, false, false, useFullPath))
+            if (ReviewFile(testMissingAction, [], matchedFile, false, false, false, useFullPath))
             {
                 //We have 2 options that match  me and testAction - See whether one is subset of the other
                 if (me.Episode != null && me.Episode.Show.ShowName.Contains(testMissingAction.MissingEpisode.Show.ShowName))

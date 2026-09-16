@@ -1,13 +1,14 @@
 ---
 name: Feature request
-about: Suggest an idea for this project - please add to 'Feature Upvote'
+about: 'Suggest an idea for this project '
 title: "[Feature Request]"
-labels: Tracked on 'Feature Upvote'
+labels: ''
 assignees: ''
+type: Feature
 
 ---
 
-These should be raised on the [Feature Upvote](https://tvrename.featureupvote.com/) and linked to here. Unprioritised new features will not be worked on.
+Unprioritised new features will not be worked on.
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]

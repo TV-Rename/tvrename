@@ -5,6 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+using System.Threading;
 using System.Windows.Forms;
 using TVRename.Forms;
 
@@ -33,13 +34,15 @@ public partial class ScanProgress : Form
     private string? msg;
     private string? lastUpdate;
     private readonly UI ui;
-
+    private readonly CancellationTokenSource cancellationToken;
     public ScanProgress(UI ui, bool autoBulkAdd, bool mediaLib, bool downloadFolder, bool searchLocal,
-        bool downloading, bool rss)
+        bool downloading, bool rss, CancellationTokenSource cancellationToken)
     {
         Ready = false;
         finished = false;
         this.ui = ui;
+        this.cancellationToken = cancellationToken;
+
         InitializeComponent();
 
         lbBulkAutoAdd.Enabled = autoBulkAdd;
@@ -48,27 +51,28 @@ public partial class ScanProgress : Form
         lbSearchLocally.Enabled = searchLocal;
         lbCheckDownloading.Enabled = downloading;
         lbSearchRSS.Enabled = rss;
+
     }
 
     private void UpdateProg()
     {
-        pbBulkAutoAdd.Value = pctAutoBulkAdd.Between(0, 100);
+        pbBulkAutoAdd.SetProgress(pctAutoBulkAdd);
         pbBulkAutoAdd.Update();
-        pbMediaLib.Value = pctMediaLib.Between(0, 100);
+        pbMediaLib.SetProgress(pctMediaLib);
         pbMediaLib.Update();
-        pbDownloadFolder.Value = pctDownloadFolder.Between(0, 100);
+        pbDownloadFolder.SetProgress(pctDownloadFolder);
         pbDownloadFolder.Update();
-        pbLocalSearch.Value = pctLocalSearch.Between(0, 100);
+        pbLocalSearch.SetProgress(pctLocalSearch);
         pbLocalSearch.Update();
-        pbRSS.Value = pctDownloading.Between(0, 100);
+        pbRSS.SetProgress(pctDownloading);
         pbRSS.Update();
-        pbDownloading.Value = pctuTorrent.Between(0, 100);
+        pbDownloading.SetProgress(pctuTorrent);
         pbDownloading.Update();
 
         if (!finished)
         {
             UiHelpers.SetProgress(
-                (pbBulkAutoAdd.Value + pbMediaLib.Value + pbDownloadFolder.Value + pbLocalSearch.Value + pbRSS.Value + pbDownloading.Value)/6
+                (pbBulkAutoAdd.Value + pbMediaLib.Value + pbDownloadFolder.Value + pbLocalSearch.Value + pbRSS.Value + pbDownloading.Value) / 6
                 , ui.Handle);
         }
         lblMessage.Text = msg?.ToUiVersion();
@@ -136,5 +140,11 @@ public partial class ScanProgress : Form
         pctAutoBulkAdd = p;
         msg = message;
         lastUpdate = lastUpdated;
+    }
+
+    private void bnCancel_Click(object sender, System.EventArgs e)
+    {
+        cancellationToken.Cancel();
+        Close();
     }
 }

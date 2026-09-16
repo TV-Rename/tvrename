@@ -11,12 +11,8 @@ using Alphaleonis.Win32.Filesystem;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class RecentM3UExporter : RecentExporter
+internal class RecentM3UExporter(TVDoc doc) : RecentExporter(doc)
 {
-    public RecentM3UExporter(TVDoc doc) : base(doc)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportRecentM3U;
 
     protected override string Location() => TVSettings.Instance.ExportRecentM3UTo;

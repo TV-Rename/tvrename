@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace TVRename.Forms.Tools
 {
@@ -65,7 +65,7 @@ namespace TVRename.Forms.Tools
             this.lblMessage.Name = "lblMessage";
             this.lblMessage.Size = new System.Drawing.Size(520, 24);
             this.lblMessage.TabIndex = 3;
-            this.lblMessage.Text = "label1";
+            this.lblMessage.Text = "";
             // 
             // bwDo
             // 
@@ -82,7 +82,7 @@ namespace TVRename.Forms.Tools
             this.lblLastUpdate.Name = "lblLastUpdate";
             this.lblLastUpdate.Size = new System.Drawing.Size(520, 24);
             this.lblLastUpdate.TabIndex = 4;
-            this.lblLastUpdate.Text = "label1";
+            this.lblLastUpdate.Text = "";
             // 
             // Notifier
             // 

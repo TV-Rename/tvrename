@@ -1,27 +1,24 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal class SearchFolderFileFinder : FileFinder
+internal class SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : FileFinder(doc, settings)
 {
-    public SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.SearchLocally;
 
     protected override string CheckName() => "Looked in the search folders for the missing files";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
-        ItemList newList = new();
-        ItemList toRemove = new();
+        ItemList newList = [];
+        ItemList toRemove = [];
 
         int fileCount = CountFilesInDownloadDirs();
 
-        DirCache dirCache = new();
+        DirCache dirCache = [];
         foreach (string s in TVSettings.Instance.DownloadFolders.ToList())
         {
             if (Settings.Token.IsCancellationRequested)
@@ -31,9 +28,9 @@ internal class SearchFolderFileFinder : FileFinder
 
             dirCache.AddFolder(progress, 0, fileCount, s, true);
         }
-        int currentItem = 0;
+        ThreadSafeCounter currentItem = new();
         int totalN = ActionList.Missing.Count + 1;
-        UpdateStatus(currentItem, totalN, "Starting searching through files");
+        UpdateStatus(0, totalN, "Starting searching through files");
 
         foreach (ItemMissing? action in ActionList.Missing.ToList())
         {
@@ -42,9 +39,9 @@ internal class SearchFolderFileFinder : FileFinder
                 return;
             }
 
-            UpdateStatus(currentItem++, totalN, action.Filename);
+            UpdateStatus(currentItem.Increment(), totalN, action.Filename);
 
-            Dictionary<FileInfo, ItemList> thisRound = new();
+            Dictionary<FileInfo, ItemList> thisRound = [];
             try
             {
                 if (action is ShowItemMissing showMissingAction)
@@ -86,11 +83,11 @@ internal class SearchFolderFileFinder : FileFinder
 
     private List<FileInfo> FindMatchedFiles(DirCache dirCache, MovieItemMissing movieMissingAction, Dictionary<FileInfo, ItemList> thisRound)
     {
-        List<FileInfo> matchedFiles = new();
+        List<FileInfo> matchedFiles = [];
 
         foreach (DirCacheEntry dce in dirCache)
         {
-            ItemList actionsForThisFile = new();
+            ItemList actionsForThisFile = [];
 
             if (thisRound.ContainsKey(dce.TheFile))
             {
@@ -111,7 +108,7 @@ internal class SearchFolderFileFinder : FileFinder
 
     private List<FileInfo> FindMatchedFiles(DirCache dirCache, ShowItemMissing me, Dictionary<FileInfo, ItemList> thisRound)
     {
-        List<FileInfo> matchedFiles = new();
+        List<FileInfo> matchedFiles = [];
 
         foreach (DirCacheEntry dce in dirCache)
         {
@@ -119,7 +116,7 @@ internal class SearchFolderFileFinder : FileFinder
             {
                 continue;
             }
-            ItemList actionsForThisFile = new();
+            ItemList actionsForThisFile = [];
             if (!ReviewFile(me, actionsForThisFile, dce.TheFile, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
             {
                 continue;

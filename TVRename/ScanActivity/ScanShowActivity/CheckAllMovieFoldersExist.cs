@@ -2,18 +2,15 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal class CheckAllMovieFoldersExist : ScanMovieActivity
+internal class CheckAllMovieFoldersExist(TVDoc doc) : ScanMovieActivity(doc)
 {
-    public CheckAllMovieFoldersExist(TVDoc doc) : base(doc)
-    {
-    }
-
     protected override string ActivityName() => "Checked All movie Folders Exist";
 
-    protected override void Check(MovieConfiguration movie, DirFilesCache dfc, TVDoc.ScanSettings settings)
+    protected override async Task CheckAsync(MovieConfiguration movie, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
         if (!movie.DoMissingCheck && !movie.DoRename)
         {
@@ -28,9 +25,9 @@ internal class CheckAllMovieFoldersExist : ScanMovieActivity
             }
         }
 
-        List<string> folders = movie.Locations.ToList();
+        List<string> folders = [.. movie.Locations];
 
-        List<string> ignoredLocations = new();
+        List<string> ignoredLocations = [];
 
         foreach (string folderExists in folders)
         {
@@ -105,7 +102,7 @@ internal class CheckAllMovieFoldersExist : ScanMovieActivity
                 using MissingFolderAction mfa = new(si.ShowName, "", folder);
 
                 owner.ShowChildDialog(mfa);
-                whatToDo = mfa.Result;
+                whatToDo = mfa.Outcome;
                 otherFolder = mfa.FolderName;
             }
 

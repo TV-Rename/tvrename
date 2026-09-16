@@ -1,17 +1,13 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal abstract class ActionDateTouchDirectory : ActionDateTouch
+internal abstract class ActionDateTouchDirectory(DirectoryInfo dir, DateTime date) : ActionDateTouch(date)
 {
-    private readonly DirectoryInfo whereDirectory;
-
-    protected ActionDateTouchDirectory(DirectoryInfo dir, DateTime date) : base(date)
-    {
-        whereDirectory = dir;
-    }
+    private readonly DirectoryInfo whereDirectory = dir;
 
     public override string Produces => whereDirectory.FullName;
     public override string ProgressText => whereDirectory.Name;
@@ -21,7 +17,7 @@ internal abstract class ActionDateTouchDirectory : ActionDateTouch
         return o is ActionDateTouchDirectory touch && touch.whereDirectory == whereDirectory;
     }
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {

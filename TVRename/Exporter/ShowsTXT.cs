@@ -12,12 +12,8 @@ using System.Collections.Generic;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class ShowsTXT : ShowsExporter
+internal class ShowsTXT(List<ShowConfiguration> shows) : ShowsExporter(shows)
 {
-    public ShowsTXT(List<ShowConfiguration> shows) : base(shows)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportShowsTXT;
 
     protected override string Location() => TVSettings.Instance.ExportShowsTXTTo;

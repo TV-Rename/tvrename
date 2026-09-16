@@ -13,34 +13,28 @@ using System.Threading.Tasks;
 
 namespace TVRename;
 
-public abstract class ScanActivity
+public abstract class ScanActivity(TVDoc doc, TVDoc.ScanSettings settings)
 {
     protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
-    protected readonly TVDoc MDoc;
+    protected readonly TVDoc MDoc = doc;
     private SetProgressDelegate? progressDelegate;
     private int startPosition;
     private int endPosition;
-    protected readonly TVDoc.ScanSettings Settings;
-
-    protected ScanActivity(TVDoc doc, TVDoc.ScanSettings settings)
-    {
-        MDoc = doc;
-        Settings = settings;
-    }
+    protected readonly TVDoc.ScanSettings Settings = settings;
 
     protected abstract string CheckName();
 
     public abstract bool Active();
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
-    protected abstract void DoCheck(SetProgressDelegate progress);
+    protected abstract Task DoCheckAsync(SetProgressDelegate progress);
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
-    public void Check(SetProgressDelegate prog) =>
-        Check(prog, 0, 100);
+    public async Task CheckAsync(SetProgressDelegate prog) =>
+        await CheckAsync(prog, 0, 100);
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
-    public void Check(SetProgressDelegate prog, int startpct, int totPct)
+    public async Task CheckAsync(SetProgressDelegate prog, int startpct, int totPct)
     {
         startPosition = startpct;
         endPosition = totPct;
@@ -59,7 +53,7 @@ public abstract class ScanActivity
                 return;
             }
 
-            DoCheck(prog);
+            await DoCheckAsync(prog);
             LogActionListSummary();
         }
         catch (TVRenameOperationInterruptedException)
@@ -91,11 +85,11 @@ public abstract class ScanActivity
         try
         {
             LOGGER.Info($"Summary of known actions after check: {CheckName()}");
-            LOGGER.Info($"   Total Items: {MDoc.TheActionList.ToList().Count}");
-            LOGGER.Info($"   Missing Items: {MDoc.TheActionList.Missing.ToList().Count}");
-            LOGGER.Info($"   Copy/Move Items: {MDoc.TheActionList.CopyMoveRename.ToList().Count}");
-            LOGGER.Info($"   Downloading Items: {MDoc.TheActionList.Downloading.ToList().Count}");
-            LOGGER.Info($"   Total Actions: {MDoc.TheActionList.Actions.ToList().Count}");
+            LOGGER.Info($"   Total Items: {MDoc.TheActionList.Count}");
+            LOGGER.Info($"   Missing Items: {MDoc.TheActionList.Missing.Count}");
+            LOGGER.Info($"   Copy/Move Items: {MDoc.TheActionList.CopyMoveRename.Count}");
+            LOGGER.Info($"   Downloading Items: {MDoc.TheActionList.Downloading.Count}");
+            LOGGER.Info($"   Total Actions: {MDoc.TheActionList.Actions.Count}");
         }
         catch (InvalidOperationException)
         {

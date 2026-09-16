@@ -39,7 +39,7 @@ internal sealed class IncorrectFileDates : DownloadIdentifier
         }
 
         doneFilesAndFolders.Add(di.FullName);
-        return new ItemList { new ActionDateTouchMedia(di, si, newUpdateTime) };
+        return [new ActionDateTouchMedia(di, si, newUpdateTime)];
     }
 
     /// <exception cref="System.IO.DirectoryNotFoundException">Condition.</exception>
@@ -53,7 +53,7 @@ internal sealed class IncorrectFileDates : DownloadIdentifier
 
         DateTime newUpdateTime = FileHelper.GetMinWindowsTime(updateTime.Value);
         DirectoryInfo di = file.Directory;
-        ItemList returnItems = new();
+        ItemList returnItems = [];
 
         if (ShouldUpdate(di, newUpdateTime))
         {
@@ -107,7 +107,7 @@ internal sealed class IncorrectFileDates : DownloadIdentifier
         }
 
         doneFilesAndFolders.Add(di.FullName);
-        return new ItemList { new ActionDateTouchSeason(di, processedSeason, newUpdateTime) };
+        return [new ActionDateTouchSeason(di, processedSeason, newUpdateTime)];
     }
 
     public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
@@ -125,8 +125,8 @@ internal sealed class IncorrectFileDates : DownloadIdentifier
         }
 
         doneFilesAndFolders.Add(file.FullName);
-        return new ItemList { new ActionDateTouchEpisode(file, episode, newUpdateTime) };
+        return [new ActionDateTouchEpisode(file, episode, newUpdateTime)];
     }
 
-    public override void Reset() => doneFilesAndFolders = new List<string>();
+    public override void Reset() => doneFilesAndFolders = [];
 }

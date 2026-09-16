@@ -18,7 +18,7 @@ public partial class SettingsReview : Form
     public SettingsReview(TVDoc doc, UI main)
     {
         InitializeComponent();
-        set = new List<SettingsCheck>();
+        set = [];
         mDoc = doc;
         mainUi = main;
         Scan();
@@ -41,7 +41,7 @@ public partial class SettingsReview : Form
         Thread.CurrentThread.Name ??= "SettingsReview Scan Thread"; // Can only set it once
         BackgroundWorker bw = (BackgroundWorker)sender;
         int total = mDoc.FilmLibrary.Movies.Count() + mDoc.TvLibrary.Shows.Count();
-        int current = 0;
+        ThreadSafeCounter currentRecord = new();
 
         set.Clear();
 
@@ -66,10 +66,10 @@ public partial class SettingsReview : Form
             set.Add(new FolderBaseMovieCheck(movie, mDoc));
             set.Add(new MovieFolderTypeCheck(movie, mDoc));
 
-            bw.ReportProgress(100 * current++ / total, movie.ShowName);
+            bw.ReportProgress(100 * currentRecord.Increment() / total, movie.ShowName);
         }
 
-        foreach (ShowConfiguration show in mDoc.TvLibrary.GetSortedShowItems())
+        foreach (ShowConfiguration show in mDoc.TvLibrary.GetSortedShows())
         {
             set.Add(new CustomLanguageTvShowCheck(show, mDoc));
             set.Add(new CustomNameTvShowCheck(show, mDoc));
@@ -96,13 +96,13 @@ public partial class SettingsReview : Form
             set.Add(new FolderBaseLibraryDefaultTvCheck(show, mDoc));
             set.Add(new TvShowSubdiretoryFormatCheck(show, mDoc));
 
-            bw.ReportProgress(100 * current++ / total, show.ShowName);
+            bw.ReportProgress(100 * currentRecord.Increment() / total, show.ShowName);
         }
     }
 
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
 
         UiHelpers.SetProgress(e.ProgressPercentage.Between(0, 100), mainUi.Handle);
@@ -152,9 +152,9 @@ public partial class SettingsReview : Form
             {
                 MovieConfiguration si = mcheck.Movie;
                 rightClickMenu.Add("Force Refresh",
-                    (_, _) => mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false));
+                    async (_, _) => await mainUi.ForceMovieRefreshAsync([si], false));
 
-                rightClickMenu.Add("Edit Movie", (_, _) => mainUi.EditMovie(si));
+                rightClickMenu.Add("Edit Movie", async (_, _) => await mainUi.EditMovieAsync(si));
 
                 rightClickMenu.AddSeparator();
                 foreach (string? f in si.Locations)
@@ -166,9 +166,9 @@ public partial class SettingsReview : Form
             {
                 ShowConfiguration si = tcheck.Show;
                 rightClickMenu.Add("Force Refresh",
-                    (_, _) => mainUi.ForceRefresh(new List<ShowConfiguration> { si }, false));
+                    async (_, _) => await mainUi.ForceRefreshAsync([si], false));
 
-                rightClickMenu.Add("Edit TV Show", (_, _) => mainUi.EditShow(si));
+                rightClickMenu.Add("Edit TV Show", async (_, _) => await mainUi.EditShowAsync(si));
             }
 
             rightClickMenu.AddSeparator();
