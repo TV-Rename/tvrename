@@ -222,7 +222,7 @@ public sealed class TVSettings
     public bool RSSUseCloudflare = true;
     public bool SearchJSONUseCloudflare = true;
     public bool qBitTorrentDownloadFilesFirst = true;
-    public TVDoc.ProviderType DefaultProvider = TVDoc.ProviderType.TheTVDB;
+    public TVDoc.ProviderType DefaultProvider = TVDoc.ProviderType.TMDB;
 
     public Language TMDBLanguage;
     public Region TMDBRegion;
@@ -1483,7 +1483,7 @@ public sealed class TVSettings
         FolderJpg = xmlSettings.ExtractBool("FolderJpg", false);
         FolderJpgIs = xmlSettings.ExtractEnum("FolderJpgIs", FolderJpgIsType.Poster);
         MonitoredFoldersScanType = xmlSettings.ExtractEnum("MonitoredFoldersScanType", ScanType.Full);
-        DefaultProvider = xmlSettings.ExtractEnum("DefaultProvider", TVDoc.ProviderType.TheTVDB);
+        DefaultProvider = xmlSettings.ExtractEnum("DefaultProvider", TVDoc.ProviderType.TMDB);
         RenameCheck = xmlSettings.ExtractBool("RenameCheck", true);
         PreventMove = xmlSettings.ExtractBool("PreventMove", false);
         CheckuTorrent = xmlSettings.ExtractBool("CheckuTorrent", false);
