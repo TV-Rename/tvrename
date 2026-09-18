@@ -1422,7 +1422,8 @@ namespace TVRename.Forms
             tsbMyShowsContextMenu.Click += TsbMyShowsContextMenu_Click;
             // 
             // tbAllInOne
-            // 
+            //
+            tbAllInOne.Controls.Add(olvAction);
             tbAllInOne.Controls.Add(tsScanResults);
             tbAllInOne.ImageKey = "322497-48 (1).png";
             tbAllInOne.Location = new System.Drawing.Point(104, 4);
@@ -1480,6 +1481,7 @@ namespace TVRename.Forms
             olvAction.KeyDown += lvAction_KeyDown;
             olvAction.MouseClick += lvAction_MouseClick;
             olvAction.MouseDoubleClick += lvAction_MouseDoubleClick;
+            //
             // tsScanResults
             // 
             tsScanResults.GripStyle = ToolStripGripStyle.Hidden;
@@ -2451,12 +2453,14 @@ namespace TVRename.Forms
             tsMyShows.PerformLayout();
             tbAllInOne.ResumeLayout(false);
             tbAllInOne.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)olvAction).EndInit();
             tsScanResults.ResumeLayout(false);
             tsScanResults.PerformLayout();
             tbWTW.ResumeLayout(false);
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
+            toolStripContainer3.ContentPanel.ResumeLayout(false);
             toolStripContainer3.TopToolStripPanel.ResumeLayout(false);
             toolStripContainer3.TopToolStripPanel.PerformLayout();
             toolStripContainer3.ResumeLayout(false);
