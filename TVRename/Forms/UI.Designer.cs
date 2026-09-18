@@ -183,6 +183,17 @@ namespace TVRename.Forms
             toolStripSeparator13 = new ToolStripSeparator();
             tsbMyShowsContextMenu = new ToolStripButton();
             tbAllInOne = new TabPage();
+            olvAction = new ObjectListViewFlickerFree();
+            olvShowColumn = new OLVColumn();
+            olvSeason = new OLVColumn();
+            olvEpisode = new OLVColumn();
+            olvDate = new OLVColumn();
+            olvFolder = new OLVColumn();
+            olvFilename = new OLVColumn();
+            olvSource = new OLVColumn();
+            olvErrors = new OLVColumn();
+            olvType = new OLVColumn();
+            ilIcons = new ImageList(components);
             tsScanResults = new ToolStrip();
             btnScan = new ToolStripSplitButton();
             fullToolStripMenuItem = new ToolStripMenuItem();
@@ -219,23 +230,6 @@ namespace TVRename.Forms
             txtWhenToWatchSynopsis = new TextBox();
             toolStripContainer3 = new ToolStripContainer();
             lvWhenToWatch = new ObjectListViewFlickerFree();
-            tsWtW = new ToolStrip();
-            btnWhenToWatchCheck = new ToolStripButton();
-            btnScheduleBTSearch = new ToolStripSplitButton();
-            tsbScheduleJackettSearch = new ToolStripButton();
-            toolStripSeparator12 = new ToolStripSeparator();
-            btnScheduleRightClick = new ToolStripButton();
-            ilNewIcons = new ImageList(components);
-            olvShowColumn = new OLVColumn();
-            olvSeason = new OLVColumn();
-            olvEpisode = new OLVColumn();
-            olvDate = new OLVColumn();
-            olvFolder = new OLVColumn();
-            olvFilename = new OLVColumn();
-            olvSource = new OLVColumn();
-            olvErrors = new OLVColumn();
-            olvType = new OLVColumn();
-            ilIcons = new ImageList(components);
             olvWTWShowColumn = new OLVColumn();
             olvWTWSeason = new OLVColumn();
             olvWTWEpisode = new OLVColumn();
@@ -245,6 +239,13 @@ namespace TVRename.Forms
             olvWTWLength = new OLVColumn();
             olvWTWNetwork = new OLVColumn();
             olvWTWName = new OLVColumn();
+            tsWtW = new ToolStrip();
+            btnWhenToWatchCheck = new ToolStripButton();
+            btnScheduleBTSearch = new ToolStripSplitButton();
+            tsbScheduleJackettSearch = new ToolStripButton();
+            toolStripSeparator12 = new ToolStripSeparator();
+            btnScheduleRightClick = new ToolStripButton();
+            ilNewIcons = new ImageList(components);
             columnHeader29 = new ColumnHeader();
             columnHeader30 = new ColumnHeader();
             columnHeader31 = new ColumnHeader();
@@ -287,7 +288,6 @@ namespace TVRename.Forms
             bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             tableLayoutPanel3 = new TableLayoutPanel();
-            olvAction = new ObjectListViewFlickerFree();
             panel1 = new Panel();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -319,12 +319,15 @@ namespace TVRename.Forms
             tabPage3.SuspendLayout();
             tsMyShows.SuspendLayout();
             tbAllInOne.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)olvAction).BeginInit();
             tsScanResults.SuspendLayout();
             tbWTW.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
+            toolStripContainer3.ContentPanel.SuspendLayout();
             toolStripContainer3.TopToolStripPanel.SuspendLayout();
             toolStripContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)lvWhenToWatch).BeginInit();
             tsWtW.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             panel1.SuspendLayout();
@@ -1422,7 +1425,7 @@ namespace TVRename.Forms
             tsbMyShowsContextMenu.Click += TsbMyShowsContextMenu_Click;
             // 
             // tbAllInOne
-            //
+            // 
             tbAllInOne.Controls.Add(olvAction);
             tbAllInOne.Controls.Add(tsScanResults);
             tbAllInOne.ImageKey = "322497-48 (1).png";
@@ -1433,7 +1436,7 @@ namespace TVRename.Forms
             tbAllInOne.TabIndex = 11;
             tbAllInOne.Text = "Scan";
             tbAllInOne.UseVisualStyleBackColor = true;
-            //
+            // 
             // olvAction
             // 
             olvAction.AllColumns.Add(olvShowColumn);
@@ -1481,7 +1484,116 @@ namespace TVRename.Forms
             olvAction.KeyDown += lvAction_KeyDown;
             olvAction.MouseClick += lvAction_MouseClick;
             olvAction.MouseDoubleClick += lvAction_MouseDoubleClick;
-            //
+            // 
+            // olvShowColumn
+            // 
+            olvShowColumn.AspectName = "SeriesName";
+            olvShowColumn.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvShowColumn.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvShowColumn.Hideable = false;
+            olvShowColumn.MinimumWidth = 10;
+            olvShowColumn.Text = "Show";
+            olvShowColumn.Width = 70;
+            // 
+            // olvSeason
+            // 
+            olvSeason.AspectName = "SeasonNumber";
+            olvSeason.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvSeason.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvSeason.IsEditable = false;
+            olvSeason.MinimumWidth = 10;
+            olvSeason.Searchable = false;
+            olvSeason.Text = "Season";
+            olvSeason.Width = 70;
+            // 
+            // olvEpisode
+            // 
+            olvEpisode.AspectName = "EpisodeString";
+            olvEpisode.Groupable = false;
+            olvEpisode.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvEpisode.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvEpisode.IsEditable = false;
+            olvEpisode.MinimumWidth = 10;
+            olvEpisode.Text = "Episode";
+            olvEpisode.Width = 70;
+            // 
+            // olvDate
+            // 
+            olvDate.AspectName = "AirDateString";
+            olvDate.AspectToStringFormat = "";
+            olvDate.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvDate.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvDate.MinimumWidth = 10;
+            olvDate.Text = "Date";
+            olvDate.Width = 70;
+            // 
+            // olvFolder
+            // 
+            olvFolder.AspectName = "DestinationFolder";
+            olvFolder.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvFolder.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvFolder.MinimumWidth = 10;
+            olvFolder.Text = "Folder";
+            olvFolder.Width = 70;
+            // 
+            // olvFilename
+            // 
+            olvFilename.AspectName = "DestinationFile";
+            olvFilename.Groupable = false;
+            olvFilename.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvFilename.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvFilename.MinimumWidth = 10;
+            olvFilename.Text = "Filename";
+            olvFilename.Width = 70;
+            // 
+            // olvSource
+            // 
+            olvSource.AspectName = "SourceDetails";
+            olvSource.Groupable = false;
+            olvSource.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvSource.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvSource.MinimumWidth = 10;
+            olvSource.Text = "Source";
+            olvSource.Width = 70;
+            // 
+            // olvErrors
+            // 
+            olvErrors.AspectName = "ErrorText";
+            olvErrors.Groupable = false;
+            olvErrors.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvErrors.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvErrors.MinimumWidth = 30;
+            olvErrors.Text = "Errors";
+            olvErrors.Width = 70;
+            // 
+            // olvType
+            // 
+            olvType.AspectName = "Name";
+            olvType.DisplayIndex = 8;
+            olvType.GroupWithItemCountFormat = "{0}";
+            olvType.GroupWithItemCountSingularFormat = "{0}";
+            olvType.IsVisible = false;
+            olvType.Text = "Type";
+            // 
+            // ilIcons
+            // 
+            ilIcons.ColorDepth = ColorDepth.Depth24Bit;
+            ilIcons.ImageStream = (ImageListStreamer)resources.GetObject("ilIcons.ImageStream");
+            ilIcons.TransparentColor = System.Drawing.Color.Transparent;
+            ilIcons.Images.SetKeyName(0, "OnDisk.bmp");
+            ilIcons.Images.SetKeyName(1, "MagGlass.bmp");
+            ilIcons.Images.SetKeyName(2, "uTorrent.bmp");
+            ilIcons.Images.SetKeyName(3, "copy.bmp");
+            ilIcons.Images.SetKeyName(4, "move.bmp");
+            ilIcons.Images.SetKeyName(5, "download.bmp");
+            ilIcons.Images.SetKeyName(6, "RSS.bmp");
+            ilIcons.Images.SetKeyName(7, "NFO.bmp");
+            ilIcons.Images.SetKeyName(8, "sab.png");
+            ilIcons.Images.SetKeyName(9, "tk1[1].png");
+            ilIcons.Images.SetKeyName(10, "qBitTorrent.png");
+            ilIcons.Images.SetKeyName(11, "zip.png");
+            ilIcons.Images.SetKeyName(12, "blank.png");
+            // 
             // tsScanResults
             // 
             tsScanResults.GripStyle = ToolStripGripStyle.Hidden;
@@ -1831,9 +1943,9 @@ namespace TVRename.Forms
             // toolStripContainer3.TopToolStripPanel
             // 
             toolStripContainer3.TopToolStripPanel.Controls.Add(tsWtW);
-            //
+            // 
             // lvWhenToWatch
-            //
+            // 
             lvWhenToWatch.AllColumns.Add(olvWTWShowColumn);
             lvWhenToWatch.AllColumns.Add(olvWTWSeason);
             lvWhenToWatch.AllColumns.Add(olvWTWEpisode);
@@ -1843,17 +1955,15 @@ namespace TVRename.Forms
             lvWhenToWatch.AllColumns.Add(olvWTWLength);
             lvWhenToWatch.AllColumns.Add(olvWTWNetwork);
             lvWhenToWatch.AllColumns.Add(olvWTWName);
-            lvWhenToWatch.AllowColumnReorder = false;
             lvWhenToWatch.Columns.AddRange(new ColumnHeader[] { olvWTWShowColumn, olvWTWSeason, olvWTWEpisode, olvWTWDate, olvWTWTime, olvWTWDay, olvWTWLength, olvWTWNetwork, olvWTWName });
             lvWhenToWatch.Dock = DockStyle.Fill;
-            lvWhenToWatch.IncludeColumnHeadersInCopy = true;
             lvWhenToWatch.FullRowSelect = true;
             lvWhenToWatch.GroupWithItemCountFormat = "{0} ({1} items)";
             lvWhenToWatch.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            lvWhenToWatch.IncludeColumnHeadersInCopy = true;
             lvWhenToWatch.Location = new System.Drawing.Point(0, 0);
             lvWhenToWatch.Margin = new Padding(4, 3, 4, 3);
             lvWhenToWatch.Name = "lvWhenToWatch";
-            lvWhenToWatch.ShowItemToolTips = true;
             lvWhenToWatch.ShowCommandMenuOnRightClick = true;
             lvWhenToWatch.ShowGroups = false;
             lvWhenToWatch.ShowImagesOnSubItems = true;
@@ -1867,190 +1977,11 @@ namespace TVRename.Forms
             lvWhenToWatch.UseFiltering = true;
             lvWhenToWatch.UseNotifyPropertyChanged = true;
             lvWhenToWatch.View = View.Details;
+            lvWhenToWatch.BeforeCreatingGroups += lvWhenToWatch_BeforeCreatingGroups;
+            lvWhenToWatch.FormatRow += lvWhenToWatch_FormatRow;
             lvWhenToWatch.SelectedIndexChanged += lvWhenToWatch_Click;
             lvWhenToWatch.DoubleClick += lvWhenToWatch_DoubleClick;
             lvWhenToWatch.MouseClick += lvWhenToWatch_MouseClick;
-            lvWhenToWatch.BeforeCreatingGroups += lvWhenToWatch_BeforeCreatingGroups;
-            lvWhenToWatch.FormatRow += lvWhenToWatch_FormatRow;
-            //
-            // tsWtW
-            // 
-            tsWtW.Dock = DockStyle.None;
-            tsWtW.GripStyle = ToolStripGripStyle.Hidden;
-            tsWtW.ImageScalingSize = new System.Drawing.Size(28, 28);
-            tsWtW.Items.AddRange(new ToolStripItem[] { btnWhenToWatchCheck, btnScheduleBTSearch, tsbScheduleJackettSearch, toolStripSeparator12, btnScheduleRightClick });
-            tsWtW.Location = new System.Drawing.Point(0, 0);
-            tsWtW.Name = "tsWtW";
-            tsWtW.Padding = new Padding(0, 0, 4, 0);
-            tsWtW.Size = new System.Drawing.Size(990, 39);
-            tsWtW.Stretch = true;
-            tsWtW.TabIndex = 6;
-            tsWtW.Text = "toolStrip1";
-            // 
-            // btnWhenToWatchCheck
-            // 
-            btnWhenToWatchCheck.Image = (System.Drawing.Image)resources.GetObject("btnWhenToWatchCheck.Image");
-            btnWhenToWatchCheck.ImageScaling = ToolStripItemImageScaling.None;
-            btnWhenToWatchCheck.Name = "btnWhenToWatchCheck";
-            btnWhenToWatchCheck.Size = new System.Drawing.Size(82, 36);
-            btnWhenToWatchCheck.Text = "&Refresh";
-            btnWhenToWatchCheck.Click += bnWhenToWatchCheck_Click;
-            // 
-            // btnScheduleBTSearch
-            // 
-            btnScheduleBTSearch.DropDownButtonWidth = 20;
-            btnScheduleBTSearch.Image = (System.Drawing.Image)resources.GetObject("btnScheduleBTSearch.Image");
-            btnScheduleBTSearch.ImageScaling = ToolStripItemImageScaling.None;
-            btnScheduleBTSearch.Name = "btnScheduleBTSearch";
-            btnScheduleBTSearch.Size = new System.Drawing.Size(115, 36);
-            btnScheduleBTSearch.Text = "BT Search";
-            btnScheduleBTSearch.ButtonClick += bnWTWBTSearch_Click;
-            btnScheduleBTSearch.DropDownOpening += BTSearch_DropDownOpening;
-            btnScheduleBTSearch.DropDownItemClicked += menuSearchSites_ItemClicked;
-            // 
-            // tsbScheduleJackettSearch
-            // 
-            tsbScheduleJackettSearch.Image = (System.Drawing.Image)resources.GetObject("tsbScheduleJackettSearch.Image");
-            tsbScheduleJackettSearch.ImageScaling = ToolStripItemImageScaling.None;
-            tsbScheduleJackettSearch.Name = "tsbScheduleJackettSearch";
-            tsbScheduleJackettSearch.Size = new System.Drawing.Size(117, 36);
-            tsbScheduleJackettSearch.Text = "Jackett Search";
-            tsbScheduleJackettSearch.Click += tsbScheduleJackettSearch_Click;
-            // 
-            // toolStripSeparator12
-            // 
-            toolStripSeparator12.Name = "toolStripSeparator12";
-            toolStripSeparator12.Size = new System.Drawing.Size(6, 39);
-            // 
-            // btnScheduleRightClick
-            // 
-            btnScheduleRightClick.Image = (System.Drawing.Image)resources.GetObject("btnScheduleRightClick.Image");
-            btnScheduleRightClick.ImageScaling = ToolStripItemImageScaling.None;
-            btnScheduleRightClick.Name = "btnScheduleRightClick";
-            btnScheduleRightClick.Size = new System.Drawing.Size(118, 36);
-            btnScheduleRightClick.Text = "Context Menu";
-            btnScheduleRightClick.Click += ToolStripButton1_Click;
-            // 
-            // ilNewIcons
-            // 
-            ilNewIcons.ColorDepth = ColorDepth.Depth32Bit;
-            ilNewIcons.ImageStream = (ImageListStreamer)resources.GetObject("ilNewIcons.ImageStream");
-            ilNewIcons.TransparentColor = System.Drawing.Color.Transparent;
-            ilNewIcons.Images.SetKeyName(0, "322497-48 (1).png");
-            ilNewIcons.Images.SetKeyName(1, "353430-48.png");
-            ilNewIcons.Images.SetKeyName(2, "1587498-48.png");
-            ilNewIcons.Images.SetKeyName(3, "115762-48.png");
-            ilNewIcons.Images.SetKeyName(4, "3790574-48.png");
-            ilNewIcons.Images.SetKeyName(5, "4632196-48.png");
-            // 
-            // olvShowColumn
-            // 
-            olvShowColumn.AspectName = "SeriesName";
-            olvShowColumn.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvShowColumn.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvShowColumn.Hideable = false;
-            olvShowColumn.MinimumWidth = 10;
-            olvShowColumn.Text = "Show";
-            olvShowColumn.Width = 70;
-            // 
-            // olvSeason
-            // 
-            olvSeason.AspectName = "SeasonNumber";
-            olvSeason.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvSeason.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvSeason.IsEditable = false;
-            olvSeason.MinimumWidth = 10;
-            olvSeason.Searchable = false;
-            olvSeason.Text = "Season";
-            olvSeason.Width = 70;
-            // 
-            // olvEpisode
-            // 
-            olvEpisode.AspectName = "EpisodeString";
-            olvEpisode.Groupable = false;
-            olvEpisode.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvEpisode.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvEpisode.IsEditable = false;
-            olvEpisode.MinimumWidth = 10;
-            olvEpisode.Text = "Episode";
-            olvEpisode.Width = 70;
-            // 
-            // olvDate
-            // 
-            olvDate.AspectName = "AirDateString";
-            olvDate.AspectToStringFormat = "";
-            olvDate.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvDate.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvDate.MinimumWidth = 10;
-            olvDate.Text = "Date";
-            olvDate.Width = 70;
-            // 
-            // olvFolder
-            // 
-            olvFolder.AspectName = "DestinationFolder";
-            olvFolder.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvFolder.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvFolder.MinimumWidth = 10;
-            olvFolder.Text = "Folder";
-            olvFolder.Width = 70;
-            // 
-            // olvFilename
-            // 
-            olvFilename.AspectName = "DestinationFile";
-            olvFilename.Groupable = false;
-            olvFilename.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvFilename.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvFilename.MinimumWidth = 10;
-            olvFilename.Text = "Filename";
-            olvFilename.Width = 70;
-            // 
-            // olvSource
-            // 
-            olvSource.AspectName = "SourceDetails";
-            olvSource.Groupable = false;
-            olvSource.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvSource.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvSource.MinimumWidth = 10;
-            olvSource.Text = "Source";
-            olvSource.Width = 70;
-            // 
-            // olvErrors
-            // 
-            olvErrors.AspectName = "ErrorText";
-            olvErrors.Groupable = false;
-            olvErrors.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvErrors.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvErrors.MinimumWidth = 30;
-            olvErrors.Text = "Errors";
-            olvErrors.Width = 70;
-            // 
-            // olvType
-            // 
-            olvType.AspectName = "Name";
-            olvType.DisplayIndex = 8;
-            olvType.GroupWithItemCountFormat = "{0}";
-            olvType.GroupWithItemCountSingularFormat = "{0}";
-            olvType.IsVisible = false;
-            olvType.Text = "Type";
-            // 
-            // ilIcons
-            // 
-            ilIcons.ColorDepth = ColorDepth.Depth24Bit;
-            ilIcons.ImageStream = (ImageListStreamer)resources.GetObject("ilIcons.ImageStream");
-            ilIcons.TransparentColor = System.Drawing.Color.Transparent;
-            ilIcons.Images.SetKeyName(0, "OnDisk.bmp");
-            ilIcons.Images.SetKeyName(1, "MagGlass.bmp");
-            ilIcons.Images.SetKeyName(2, "uTorrent.bmp");
-            ilIcons.Images.SetKeyName(3, "copy.bmp");
-            ilIcons.Images.SetKeyName(4, "move.bmp");
-            ilIcons.Images.SetKeyName(5, "download.bmp");
-            ilIcons.Images.SetKeyName(6, "RSS.bmp");
-            ilIcons.Images.SetKeyName(7, "NFO.bmp");
-            ilIcons.Images.SetKeyName(8, "sab.png");
-            ilIcons.Images.SetKeyName(9, "tk1[1].png");
-            ilIcons.Images.SetKeyName(10, "qBitTorrent.png");
-            ilIcons.Images.SetKeyName(11, "zip.png");
-            ilIcons.Images.SetKeyName(12, "blank.png");
             // 
             // olvWTWShowColumn
             // 
@@ -2141,7 +2072,77 @@ namespace TVRename.Forms
             olvWTWName.GroupWithItemCountSingularFormat = "{0}";
             olvWTWName.Text = "Epsiode Name";
             olvWTWName.Width = 420;
-            //
+            // 
+            // tsWtW
+            // 
+            tsWtW.Dock = DockStyle.None;
+            tsWtW.GripStyle = ToolStripGripStyle.Hidden;
+            tsWtW.ImageScalingSize = new System.Drawing.Size(28, 28);
+            tsWtW.Items.AddRange(new ToolStripItem[] { btnWhenToWatchCheck, btnScheduleBTSearch, tsbScheduleJackettSearch, toolStripSeparator12, btnScheduleRightClick });
+            tsWtW.Location = new System.Drawing.Point(0, 0);
+            tsWtW.Name = "tsWtW";
+            tsWtW.Padding = new Padding(0, 0, 4, 0);
+            tsWtW.Size = new System.Drawing.Size(990, 39);
+            tsWtW.Stretch = true;
+            tsWtW.TabIndex = 6;
+            tsWtW.Text = "toolStrip1";
+            // 
+            // btnWhenToWatchCheck
+            // 
+            btnWhenToWatchCheck.Image = (System.Drawing.Image)resources.GetObject("btnWhenToWatchCheck.Image");
+            btnWhenToWatchCheck.ImageScaling = ToolStripItemImageScaling.None;
+            btnWhenToWatchCheck.Name = "btnWhenToWatchCheck";
+            btnWhenToWatchCheck.Size = new System.Drawing.Size(82, 36);
+            btnWhenToWatchCheck.Text = "&Refresh";
+            btnWhenToWatchCheck.Click += bnWhenToWatchCheck_Click;
+            // 
+            // btnScheduleBTSearch
+            // 
+            btnScheduleBTSearch.DropDownButtonWidth = 20;
+            btnScheduleBTSearch.Image = (System.Drawing.Image)resources.GetObject("btnScheduleBTSearch.Image");
+            btnScheduleBTSearch.ImageScaling = ToolStripItemImageScaling.None;
+            btnScheduleBTSearch.Name = "btnScheduleBTSearch";
+            btnScheduleBTSearch.Size = new System.Drawing.Size(115, 36);
+            btnScheduleBTSearch.Text = "BT Search";
+            btnScheduleBTSearch.ButtonClick += bnWTWBTSearch_Click;
+            btnScheduleBTSearch.DropDownOpening += BTSearch_DropDownOpening;
+            btnScheduleBTSearch.DropDownItemClicked += menuSearchSites_ItemClicked;
+            // 
+            // tsbScheduleJackettSearch
+            // 
+            tsbScheduleJackettSearch.Image = (System.Drawing.Image)resources.GetObject("tsbScheduleJackettSearch.Image");
+            tsbScheduleJackettSearch.ImageScaling = ToolStripItemImageScaling.None;
+            tsbScheduleJackettSearch.Name = "tsbScheduleJackettSearch";
+            tsbScheduleJackettSearch.Size = new System.Drawing.Size(117, 36);
+            tsbScheduleJackettSearch.Text = "Jackett Search";
+            tsbScheduleJackettSearch.Click += tsbScheduleJackettSearch_Click;
+            // 
+            // toolStripSeparator12
+            // 
+            toolStripSeparator12.Name = "toolStripSeparator12";
+            toolStripSeparator12.Size = new System.Drawing.Size(6, 39);
+            // 
+            // btnScheduleRightClick
+            // 
+            btnScheduleRightClick.Image = (System.Drawing.Image)resources.GetObject("btnScheduleRightClick.Image");
+            btnScheduleRightClick.ImageScaling = ToolStripItemImageScaling.None;
+            btnScheduleRightClick.Name = "btnScheduleRightClick";
+            btnScheduleRightClick.Size = new System.Drawing.Size(118, 36);
+            btnScheduleRightClick.Text = "Context Menu";
+            btnScheduleRightClick.Click += ToolStripButton1_Click;
+            // 
+            // ilNewIcons
+            // 
+            ilNewIcons.ColorDepth = ColorDepth.Depth32Bit;
+            ilNewIcons.ImageStream = (ImageListStreamer)resources.GetObject("ilNewIcons.ImageStream");
+            ilNewIcons.TransparentColor = System.Drawing.Color.Transparent;
+            ilNewIcons.Images.SetKeyName(0, "322497-48 (1).png");
+            ilNewIcons.Images.SetKeyName(1, "353430-48.png");
+            ilNewIcons.Images.SetKeyName(2, "1587498-48.png");
+            ilNewIcons.Images.SetKeyName(3, "115762-48.png");
+            ilNewIcons.Images.SetKeyName(4, "3790574-48.png");
+            ilNewIcons.Images.SetKeyName(5, "4632196-48.png");
+            // 
             // imageList1
             // 
             imageList1.ColorDepth = ColorDepth.Depth8Bit;
@@ -2465,6 +2466,7 @@ namespace TVRename.Forms
             toolStripContainer3.TopToolStripPanel.PerformLayout();
             toolStripContainer3.ResumeLayout(false);
             toolStripContainer3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)lvWhenToWatch).EndInit();
             tsWtW.ResumeLayout(false);
             tsWtW.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
