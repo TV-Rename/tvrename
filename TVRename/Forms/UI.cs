@@ -30,7 +30,6 @@ using TVRename.Forms.Supporting;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Utility.Helper;
-
 using static TVRename.TVDoc;
 using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
@@ -120,8 +119,11 @@ public partial class UI : Form, IDialogParent
             Logger.Info(e, "Error loading layout XML");
         }
 
+        //TODO fix this, it doesn't work with the new object list view
         lvwScheduleColumnSorter = new ListViewColumnSorter(new DateSorterWtw(3));
-        lvWhenToWatch.ListViewItemSorter = lvwScheduleColumnSorter;
+        //lvWhenToWatch.ListViewItemSorter = lvwScheduleColumnSorter;
+
+        //lvWhenToWatch.
 
         //lvwActionColumnSorter = new ListViewActionItemSorter();
 
@@ -167,6 +169,7 @@ public partial class UI : Form, IDialogParent
         tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
 
         SetupObjectListForScanResults();
+        SetupObjectListForWhenToWatch();
 
         if (mDoc.Args.Hide || !showUi)
         {
@@ -334,13 +337,33 @@ public partial class UI : Form, IDialogParent
         olvAction.CustomSorter = delegate (OLVColumn column, SortOrder order)
         {
             olvAction.ListViewItemSorter = new ColumnComparer(
-                MapToSortColumn(column), order);
+                MapActionViewColumnToSortColumn(column), order);
         };
         olvAction.ShowSortIndicator();
     }
+
+
+    private void SetupObjectListForWhenToWatch()
+    {
+        lvWhenToWatch.SetObjects(recentEps);
+
+        olvWTWDate.GroupKeyGetter = GroupWTWDateKeyDelegate;
+        olvWTWDate.GroupKeyToTitleConverter = GroupWTWDateTitleDelegate;
+        olvWTWDate.DataType = typeof(DateTime);
+
+        lvWhenToWatch.SortGroupItemsByPrimaryColumn = false;
+
+        lvWhenToWatch.CustomSorter = delegate (OLVColumn column, SortOrder order)
+        {
+            lvWhenToWatch.ListViewItemSorter = new ColumnComparer(
+                MapEpisodeColumnToSortColumn(column), order);
+        };
+        lvWhenToWatch.ShowSortIndicator();
+    }
+
     private void olvAction_BeforeCreatingGroups(object sender, CreateGroupsEventArgs e)
     {
-        e.Parameters.ItemComparer = new OlvActionGroupComparer(MapColumnToSorter(e.Parameters.PrimarySort), e.Parameters.PrimarySortOrder);
+        e.Parameters.ItemComparer = new OlvGroupComparer<Item>(MapItemColumnToSorter(e.Parameters.PrimarySort), e.Parameters.PrimarySortOrder);
 
         if (e.Parameters.PrimarySort == olvEpisode || e.Parameters.PrimarySort == olvSeason)
         {
@@ -348,49 +371,41 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private ActionItemSorter MapColumnToSorter(OLVColumn column)
+    private ListSorter<Item> MapItemColumnToSorter(OLVColumn column)
     {
-        if (column == olvDate)
+        return column switch
         {
-            return new ActionItemDateSorter();
-        }
-        if (column == olvShowColumn)
-        {
-            return new ActionItemNameSorter();
-        }
-        if (column == olvEpisode)
-        {
-            return new ActionItemEpisodeSorter();
-        }
-        if (column == olvSeason)
-        {
-            return new ActionItemSeasonSorter();
-        }
-        if (column == olvErrors)
-        {
-            return new ActionItemErrorsSorter();
-        }
-        if (column == olvFolder)
-        {
-            return new ActionItemFolderSorter();
-        }
-        if (column == olvFilename)
-        {
-            return new ActionItemFilenameSorter();
-        }
-        if (column == olvSource)
-        {
-            return new ActionItemSourceSorter();
-        }
-        if (column == olvType)
-        {
-            return new DefaultActionItemSorter();
-        }
-
-        return new DefaultActionItemSorter();
+            _ when column == olvDate => new ActionItemDateSorter(),
+            _ when column == olvShowColumn => new ActionItemNameSorter(),
+            _ when column == olvEpisode => new ActionItemEpisodeSorter(),
+            _ when column == olvSeason => new ActionItemSeasonSorter(),
+            _ when column == olvErrors => new ActionItemErrorsSorter(),
+            _ when column == olvFolder => new ActionItemFolderSorter(),
+            _ when column == olvFilename => new ActionItemFilenameSorter(),
+            _ when column == olvSource => new ActionItemSourceSorter(),
+            _ when column == olvType => new DefaultActionItemSorter(),
+            _ => new DefaultActionItemSorter()
+        };
     }
 
-    private void DefaultOlvView()
+    private ListSorter<ProcessedEpisode> MapEpisodeColumnToSorter(OLVColumn column)
+    {
+        return column switch
+        {
+            _ when column == olvWTWDate => new EpisodeDateSorter(),
+            _ when column == olvWTWShowColumn => new EpisodeSeriesSorter(),
+            _ when column == olvWTWEpisode => new EpisodeNumberSorter(),
+            _ when column == olvWTWSeason => new SeasonNumberSorter(),
+            _ when column == olvWTWDay => new EpisodeDateSorter(),
+            _ when column == olvWTWTime => new EpisodeDateSorter(),
+            _ when column == olvWTWLength => new EpisodeLengthSorter(),
+            _ when column == olvWTWNetwork => new EpisodeNetworkSorter(),
+            _ when column == olvWTWName => new EpisodeNameSorter(),
+            _ => new DefaultProcessedEpisodeSorter()
+        };
+    }
+
+    private void DefaultOlvActionView()
     {
         olvAction.BeginUpdate();
         olvAction.ShowGroups = true;
@@ -451,7 +466,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private OLVColumn MapToSortColumn(OLVColumn source)
+    private OLVColumn MapActionViewColumnToSortColumn(OLVColumn source)
     {
         if (source == olvDate)
         {
@@ -462,6 +477,24 @@ public partial class UI : Form, IDialogParent
             return new OLVColumn("RawEp", "EpisodeString");
         }
         if (source == olvSeason)
+        {
+            return new OLVColumn("RawSe", "SeasonNumberAsInt");
+        }
+
+        return source;
+    }
+
+    private OLVColumn MapEpisodeColumnToSortColumn(OLVColumn source)
+    {
+        if (source == olvWTWDate)
+        {
+            return new OLVColumn("RawDate", "AirDate");
+        }
+        if (source == olvWTWEpisode)
+        {
+            return new OLVColumn("RawEp", "EpisodeString");
+        }
+        if (source == olvWTWSeason)
         {
             return new OLVColumn("RawSe", "SeasonNumberAsInt");
         }
@@ -580,6 +613,34 @@ public partial class UI : Form, IDialogParent
         }
 
         return new DateTime(episodeTime.Value.Year, 1, 1);
+    }
+
+    private static object? GroupWTWDateKeyDelegate(object rowObject)
+    {
+        DateTime? episodeTime = ((ProcessedEpisode)rowObject).GetAirDateDt();
+        if (episodeTime is null)
+        {
+            return string.Empty;
+        }
+        return CalculateWtwlviGroup((ProcessedEpisode)rowObject, episodeTime.Value);
+    }
+
+    private static string GroupWTWDateTitleDelegate(object? groupKey)
+    {
+        string? key = (string?)groupKey;
+
+        if (key is null) return string.Empty;
+
+        int dd = TVSettings.Instance.WTWRecentDays;
+
+        return key switch
+        {
+            "1-justPassed" => "Aired in the last " + dd + " day" + (dd == 1 ? "" : "s"),
+            "2-next7days" => "Next 7 Days",
+            "3-futureEps" => "Returning Series",
+            "4-later" => "Other Planned Episodes",
+            _ => string.Empty
+        };
     }
 
     private string GroupItemsTitleDelegate(object groupKey)
@@ -830,7 +891,7 @@ public partial class UI : Form, IDialogParent
             async () =>
             {
                 var progress = new DownloadProgressStatus(pbProgressBarx, txtDLStatusLabel);
-                await mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this,progress);
+                await mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this, progress);
             }, "TVDB Accuracy Check"
         );
         LessBusy();
@@ -843,10 +904,10 @@ public partial class UI : Form, IDialogParent
         bool enabled = name.HasValue() && searchers.Any();
 
         btnScheduleBTSearch.Enabled = enabled;
-        btnScheduleBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
+        btnScheduleBTSearch.Text = UseCustomObject(lvWhenToWatch) ? "Search" : name;
 
         btnActionBTSearch.Enabled = enabled;
-        btnActionBTSearch.Text = UseCustomObject(olvAction) ? "Search" : name;
+        btnActionBTSearch.Text = UseCustomEpisodeObject(olvAction) ? "Search" : name;
     }
 
     private Searchers GetUsedSearchers()
@@ -883,6 +944,10 @@ public partial class UI : Form, IDialogParent
     {
         return view.SelectedObjects.OfType<Item>().Any(i => i.Episode?.Show.UseCustomSearchUrl == true && i.Episode.Show.CustomSearchUrl.HasValue());
     }
+    private static bool UseCustomEpisodeObject(ObjectListView view)
+    {
+        return view.SelectedObjects.OfType<ProcessedEpisode>().Any(pe => !string.IsNullOrWhiteSpace(pe.Show.CustomSearchUrl));
+    }
 
     private static bool UseCustom(ListView view)
     {
@@ -912,7 +977,7 @@ public partial class UI : Form, IDialogParent
     private async void UI_LoadAsync(object sender, EventArgs e)
     {
         await FillWhenToWatchListAsync();
-        SortSchedule(3);
+        //SortSchedule(3);
         mDoc.WriteUpcoming();
         mDoc.WriteRecent();
 
@@ -1044,8 +1109,8 @@ public partial class UI : Form, IDialogParent
         var progressUI = new TaskNotifier("Refresh all images", cts);
         TaskCompletionProgress progress = new(progressUI.UpdateProgress);
 
-        var task =  mDoc.UpdateImagesScanAsync(mDoc.TvLibrary.GetSortedShows(),mDoc.FilmLibrary.GetSortedMovies(),progress,cts);
-        
+        var task = mDoc.UpdateImagesScanAsync(mDoc.TvLibrary.GetSortedShows(), mDoc.FilmLibrary.GetSortedMovies(), progress, cts);
+
 
         progressUI.Start(task);
         await task;
@@ -1080,7 +1145,7 @@ public partial class UI : Form, IDialogParent
             await TVmaze.LocalCache.Instance.ForgetEverythingAsync().ConfigureAwait(false);
             await TMDB.LocalCache.Instance.ForgetEverythingAsync().ConfigureAwait(false);
 
-            this.Invoke(new System.Action(async () => 
+            this.Invoke(new System.Action(async () =>
             {
                 FillMyShows(true);
                 FillMyMovies();
@@ -1153,11 +1218,18 @@ public partial class UI : Form, IDialogParent
 
         SetWindowSize(layoutNode.Descendants("Window").First());
 
-        string? actionLayout = layoutNode.Descendants("ActionLayout").First().Attribute("State")?.Value;
+        string? actionLayout = layoutNode.Descendants("ActionLayout").FirstOrDefault()?.Attribute("State")?.Value;
         if (actionLayout.HasValue())
         {
             olvAction.RestoreState(Convert.FromBase64String(actionLayout));
         }
+
+        string? wtwLayout = layoutNode.Descendants("WTWLayout").FirstOrDefault()?.Attribute("State")?.Value;
+        if (wtwLayout.HasValue())
+        {
+            lvWhenToWatch.RestoreState(Convert.FromBase64String(wtwLayout));
+        }
+
 
         foreach (XElement widthXmlElement in layoutNode.Descendants("ColumnWidths"))
         {
@@ -1274,6 +1346,11 @@ public partial class UI : Form, IDialogParent
         writer.WriteStartElement("ActionLayout");
         writer.WriteAttributeToXml("State", Convert.ToBase64String(olvAction.SaveState()));
         writer.WriteEndElement(); // ActionLayout
+
+        writer.WriteStartElement("WTWLayout");
+        writer.WriteAttributeToXml("State", Convert.ToBase64String(lvWhenToWatch.SaveState()));
+        writer.WriteEndElement(); // ActionLayout
+
 
         writer.WriteEndElement(); // Layout
         writer.WriteEndElement(); // tvrename
@@ -1717,123 +1794,53 @@ public partial class UI : Form, IDialogParent
         UpdateSearchButtons();
     }
 
-    private async void bnWhenToWatchCheck_Click(object? sender, EventArgs? e) => await RefreshWTWAsync(true, false);
+    private async void bnWhenToWatchCheck_Click(object? sender, EventArgs? e) =>
+        await RefreshWTWAsync(true, false);
 
     private async Task FillWhenToWatchListAsync()
     {
         await UpdateScheduleAsync();
     }
+    IEnumerable<ProcessedEpisode> recentEps = [];
 
-    private async Task<List<ListViewItem>> GenerateNewScheduleItemsAsync(DirFilesCache dfc, bool quick)
+    private void lvWhenToWatch_FormatRow(object sender, FormatRowEventArgs e)
     {
-        int dd = TVSettings.Instance.WTWRecentDays;
-        IEnumerable<ProcessedEpisode> recentEps = await mDoc.TvLibrary.GetRecentAndFutureEpsAsync(dd);
-
-        return [.. recentEps.Select(ei => GenerateLvi(dfc, ei, quick))];
-    }
-
-    private ListViewItem GenerateLvi(DirFilesCache dfc, ProcessedEpisode pe, bool quick)
-    {
-        ListViewItem lvi = new()
+        if (!TVSettings.Instance.UseColoursOnWtw)
         {
-            Text = GenerateShowUIName(pe),
-            Tag = pe
-        };
+            return;
+        }
 
+        ProcessedEpisode pe = (ProcessedEpisode)e.Model;
         DateTime? airdt = pe.GetAirDateDt();
         if (airdt is null)
         {
-            return lvi;
+            return;
         }
         DateTime dt = airdt.Value;
 
-        lvi.Group = lvWhenToWatch.Groups[CalculateWtwlviGroup(pe, dt)];
-
-        lvi.SubItems.Add(pe.SeasonNumberAsText);
-        lvi.SubItems.Add(pe.EpisodeNumbersAsText);
-        lvi.SubItems.Add(dt.ToShortDateString());
-        lvi.SubItems.Add(dt.ToString("t"));
-        lvi.SubItems.Add(dt.ToString("ddd"));
-        lvi.SubItems.Add(pe.HowLong());
-        lvi.SubItems.Add(pe.TheCachedSeries.Networks.FirstOrDefault());
-        lvi.SubItems.Add(pe.Name);
-
-        // icon..
-        int? iconNumbers = quick ? null: ChooseWtwIcon(dfc, pe);
-        if (iconNumbers != null)
-        {
-            lvi.ImageIndex = iconNumbers.Value;
-        }
-
-        if (TVSettings.Instance.UseColoursOnWtw)
-        {
-            (Color back, Color fore) = GetWtwColour(pe, dt);
-            lvi.BackColor = back;
-            lvi.ForeColor = fore;
-        }
-        return lvi;
-    }
-
-    private void lvWhenToWatch_ColumnClick(object sender, ColumnClickEventArgs e)
-    {
-        SortSchedule(e.Column);
-    }
-
-    private void SortSchedule(int col)
-    {
-        // 3 - 6 = do date sort on 3
-        // 1 or 2 = number sort
-        // all others, text sort
-
-        lvwScheduleColumnSorter.ClickedOn(col);
-        lvWhenToWatch.ShowGroups = false;
-
-        switch (col)
-        {
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-                lvWhenToWatch.ShowGroups = true;
-                lvwScheduleColumnSorter.ListViewItemSorter = new DateSorterWtw(col);
-                break;
-
-            case 1:
-            case 2:
-                lvwScheduleColumnSorter.ListViewItemSorter = new NumberAsTextSorter(col);
-                break;
-
-            default:
-                lvwScheduleColumnSorter.ListViewItemSorter = new TextSorter(col);
-                break;
-        }
-
-        lvWhenToWatch.BeginUpdate();
-        lvWhenToWatch.Sort();
-        lvWhenToWatch.Refresh();
-        lvWhenToWatch.EndUpdate();
+        (Color back, Color fore) = GetWtwColour(pe, dt);
+        e.Item.BackColor = back;
+        e.Item.ForeColor = fore;
     }
 
     private void lvWhenToWatch_Click(object sender, EventArgs e)
     {
         UpdateSearchButtons();
 
-        if (lvWhenToWatch.SelectedIndices.Count == 0)
+        if (lvWhenToWatch.SelectedObjects.Count == 0)
         {
             txtWhenToWatchSynopsis.Text = string.Empty;
             switchToWhenOpenMyShows = null;
             return;
         }
 
-        int n = lvWhenToWatch.SelectedIndices[0];
-
-        ProcessedEpisode? ei = (ProcessedEpisode?)lvWhenToWatch.Items[n].Tag;
+        ProcessedEpisode? ei = lvWhenToWatch.SelectedObjects.OfType<ProcessedEpisode>().FirstOrDefault();
         if (ei != null)
         {
             switchToWhenOpenMyShows = ei;
 
             if (TVSettings.Instance.HideWtWSpoilers &&
-                (ei.HowLong() != "Aired" || lvWhenToWatch.Items[n].ImageIndex == 1))
+                (ei.HowLong() != "Aired" || (ei.ImageTypeName == 1)))
             {
                 txtWhenToWatchSynopsis.Text = Resources.Spoilers_Hidden_Text;
             }
@@ -2432,13 +2439,13 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        if (lvWhenToWatch.SelectedItems.Count == 0)
+        if (lvWhenToWatch.SelectedObjects.Count == 0)
         {
             return;
         }
 
         Point pt = lvWhenToWatch.PointToScreen(new Point(e.X, e.Y));
-        List<ProcessedEpisode> eis = [.. lvWhenToWatch.SelectedItems.Cast<ListViewItem>().Select(lvi => lvi.Tag).OfType<ProcessedEpisode>()];
+        List<ProcessedEpisode> eis = lvWhenToWatch.SelectedObjects.OfType<ProcessedEpisode>().ToList();
 
         WtwRightClickOnShow(eis, pt);
     }
@@ -2567,6 +2574,8 @@ public partial class UI : Form, IDialogParent
         {
             Logger.Warn(ex, "Could not save app state file after update check!");
         }
+
+        await uiDisp.InvokeAsync(() => UpdateScheduleAsync());
 
         await uiDisp.Invoke(() => NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
     }
@@ -2759,7 +2768,7 @@ public partial class UI : Form, IDialogParent
     }
 
     // ReSharper disable once InconsistentNaming
-    private static string GenerateShowUIName(ProcessedEpisode? episode) => GenerateShowUIName(episode?.TheCachedSeries, episode?.Show);
+    public static string GenerateShowUIName(ProcessedEpisode? episode) => GenerateShowUIName(episode?.TheCachedSeries, episode?.Show);
 
     // ReSharper disable once InconsistentNaming
     private static string GenerateShowUIName(ShowConfiguration si)
@@ -2823,22 +2832,35 @@ public partial class UI : Form, IDialogParent
         return (Color.LightBlue, Color.Black);
     }
 
-    private static string CalculateWtwlviGroup(ProcessedEpisode pe, DateTime dt)
+    public static string CalculateWtwlviGroup(ProcessedEpisode pe, DateTime dt)
     {
         double ttn = dt.Subtract(TimeHelpers.LocalNow()).TotalHours;
 
         if (ttn < 0)
         {
-            return "justPassed";
+            return "1-justPassed";
         }
         if (ttn < 7 * 24)
         {
-            return "next7days";
+            return "2-next7days";
         }
-        return !pe.NextToAir ? "later" : "futureEps";
+        return !pe.NextToAir ? "4-later" : "3-futureEps";
     }
 
-    private static int? ChooseWtwIcon(DirFilesCache dfc, ProcessedEpisode pe)
+    internal static int ChooseWtwIcon(ProcessedEpisode.FoundStatus airedStatus)
+    {
+        return airedStatus switch
+        {
+            ProcessedEpisode.FoundStatus.Future => 12,
+            ProcessedEpisode.FoundStatus.OnDisk => 0,
+            ProcessedEpisode.FoundStatus.PreviouslySeen => 9,
+            ProcessedEpisode.FoundStatus.Missing => 1,
+            ProcessedEpisode.FoundStatus.Unknown => 12,
+            _ => 12
+        };
+    }
+
+    public static int ChooseWtwIcon(DirFilesCache dfc, ProcessedEpisode pe)
     {
         List<FileInfo> fl = dfc.FindEpOnDisk(pe);
         bool appropriateFileNameFound = !TVSettings.Instance.RenameCheck
@@ -2847,23 +2869,23 @@ public partial class UI : Form, IDialogParent
 
         if (fl.Any() && appropriateFileNameFound)
         {
-            return 0; //Disk
+            return ChooseWtwIcon(ProcessedEpisode.FoundStatus.OnDisk);
         }
 
         if (TVSettings.Instance.IgnorePreviouslySeen && pe.PreviouslySeen)
         {
-            return 9; //tick
+            return ChooseWtwIcon(ProcessedEpisode.FoundStatus.PreviouslySeen);
         }
 
         if (pe.HasAired())
         {
             if (pe.Show.DoMissingCheck)
             {
-                return 1; //Search
+                return ChooseWtwIcon(ProcessedEpisode.FoundStatus.Missing);
             }
         }
 
-        return null;
+        return ChooseWtwIcon(ProcessedEpisode.FoundStatus.Future);
     }
 
     private void SelectSeason(ProcessedSeason seas)
@@ -3281,7 +3303,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        await mDoc.UpdateShowImagesScanAsync(sis,null, new CancellationTokenSource());
+        await mDoc.UpdateShowImagesScanAsync(sis, null, new CancellationTokenSource());
 
         tabControl1.SelectTab(tbAllInOne);
         FillActionList();
@@ -3294,7 +3316,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        await mDoc.UpdateMovieImagesScanAsync(sis,null, new CancellationTokenSource());
+        await mDoc.UpdateMovieImagesScanAsync(sis, null, new CancellationTokenSource());
 
         tabControl1.SelectTab(tbAllInOne);
         FillActionList();
@@ -3647,12 +3669,12 @@ public partial class UI : Form, IDialogParent
 
     private async Task UiScanAsync(List<ShowConfiguration>? shows, List<MovieConfiguration>? movies, bool unattended, TVSettings.ScanType st, MediaConfiguration.MediaType media)
     {
-        MoreBusy(); 
+        MoreBusy();
 
         bool hidden = WindowState == FormWindowState.Minimized;
         CancellationTokenSource scanCancellation = new();
 
-        TVDoc.ScanSettings scanSettings = new(shows ?? [], movies ?? [], unattended, hidden, st, media, this,  scanCancellation.Token);
+        TVDoc.ScanSettings scanSettings = new(shows ?? [], movies ?? [], unattended, hidden, st, media, this, scanCancellation.Token);
         mDoc.SetScanSettings(scanSettings);
 
         SetupScanUi(hidden, scanCancellation);
@@ -3674,7 +3696,7 @@ public partial class UI : Form, IDialogParent
         }
         await AskUserAboutShowProblemsAsync(scanSettings.Unattended);
 
-        LessBusy(); 
+        LessBusy();
 
         if (!IsDisposed)
         {
@@ -3686,7 +3708,7 @@ public partial class UI : Form, IDialogParent
         offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
     }
 
-    private ScanProgress? SetupScanUi(bool hidden,CancellationTokenSource cancellationTokenSource)
+    private ScanProgress? SetupScanUi(bool hidden, CancellationTokenSource cancellationTokenSource)
     {
         if (!mDoc.Args.Hide && Environment.UserInteractive)
         {
@@ -4705,19 +4727,21 @@ public partial class UI : Form, IDialogParent
 
     private async Task UpdateScheduleAsync()
     {
+        int dd = TVSettings.Instance.WTWRecentDays;
+        recentEps = await mDoc.TvLibrary.GetRecentAndFutureEpsAsync(dd);
+        lvWhenToWatch.SetObjects(recentEps, true);
+        lvWhenToWatch.Refresh();
         DirFilesCache dfc = new();
 
-        List<ListViewItem> newContents = await GenerateNewScheduleItemsAsync(dfc, true);
 
-        calendarBeingUpdated = true;
-        lvWhenToWatch.BeginUpdate();
+        //calendarBeingUpdated = true;
+        //lvWhenToWatch.BeginUpdate();
 
-        int dd = TVSettings.Instance.WTWRecentDays;
-
+        /*
         lvWhenToWatch.Groups["justPassed"]?.Header =
                 "Aired in the last " + dd + " day" + (dd == 1 ? "" : "s");
 
-        // try to maintain selections if we can
+         try to maintain selections if we can
         List<ProcessedEpisode> selections = [];
         foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
         {
@@ -4776,6 +4800,8 @@ public partial class UI : Form, IDialogParent
 
         UpdateToolstripWTW();
         calendarBeingUpdated = false;
+        */
+        UpdateToolstripWTW();
 
         await UpdateIconsAsync(dfc);
     }
@@ -4789,44 +4815,27 @@ public partial class UI : Form, IDialogParent
         };
 
         ThreadSafeCounter c = new();
-        List<ListViewItem> rowsToUpdate =  [] ;
+        List<ProcessedEpisode> rowsToUpdate = [];
 
         lvWhenToWatch.Invoke(new MethodInvoker(delegate
         {
-            rowsToUpdate = lvWhenToWatch.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag is ProcessedEpisode).ToList();
+            rowsToUpdate = lvWhenToWatch.Objects.OfType<ProcessedEpisode>().ToList();
         }));
 
         await Parallel.ForEachAsync(
             rowsToUpdate,
             options,
-            async (lvi, token) =>await UpdateIconAsync(lvi, dfc)
+            async (episode, token) => await UpdateIconAsync(episode, dfc)
         );
     }
 
-    private async Task UpdateIconAsync(ListViewItem lvi, DirFilesCache dfc)
+    private static async Task UpdateIconAsync(ProcessedEpisode episode, DirFilesCache dfc)
     {
-        if (lvi.Tag is not ProcessedEpisode pe)
-        {
-            return;
-        }
-
+        // Implementation for updating icon based on ProcessedEpisode
         // icon..
-        int? iconNumbers = ChooseWtwIcon(dfc, pe);
-        if (iconNumbers != null)
-        {
-            if (lvi.ListView?.InvokeRequired ?? false)
-            {
-                lvi.ListView.Invoke(new MethodInvoker(delegate
-                {
-                    lvi.ImageIndex = iconNumbers.Value;
-                }));
-            }
-            else
-            {
-                lvi.ImageIndex = iconNumbers.Value;
-            }
-        }
+        await episode.UpdateSeenStatusAsync(dfc);
     }
+
     private async void TbFullScan_Click(object sender, EventArgs e)
     {
         await UiScanAsync(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
@@ -4864,7 +4873,7 @@ public partial class UI : Form, IDialogParent
 
     private void BtnRevertView_Click(object sender, EventArgs e)
     {
-        DefaultOlvView();
+        DefaultOlvActionView();
     }
 
     private void BwShowSummaryHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
@@ -4916,11 +4925,7 @@ public partial class UI : Form, IDialogParent
 
         if (pt is null) return;
 
-        List<ProcessedEpisode> eis = [.. lvWhenToWatch
-            .SelectedItems
-            .Cast<ListViewItem>()
-            .Select(lvi => lvi.Tag as ProcessedEpisode)
-            .OfType<ProcessedEpisode>()];
+        List<ProcessedEpisode> eis = lvWhenToWatch.SelectedObjects.OfType<ProcessedEpisode>().ToList();
 
         WtwRightClickOnShow(eis, pt.Value);
     }
@@ -4993,9 +4998,9 @@ public partial class UI : Form, IDialogParent
     {
         if (TVSettings.Instance.SearchJackettButton)
         {
-            foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
+            foreach (var lvi in lvWhenToWatch.SelectedObjects)
             {
-                JackettFinder.SearchForEpisode((ProcessedEpisode?)lvi.Tag);
+                JackettFinder.SearchForEpisode((ProcessedEpisode?)lvi);
             }
         }
     }
@@ -5102,7 +5107,7 @@ public partial class UI : Form, IDialogParent
             async () =>
             {
                 var progress = new DownloadProgressStatus(pbProgressBarx, txtDLStatusLabel);
-                await mDoc.TMDBServerAccuracyCheckAsync(unattended, WindowState == FormWindowState.Minimized, this,progress);
+                await mDoc.TMDBServerAccuracyCheckAsync(unattended, WindowState == FormWindowState.Minimized, this, progress);
             },
             "TMDB Accuracy Check"
         );
@@ -5169,7 +5174,6 @@ public partial class UI : Form, IDialogParent
     {
         MoreBusy();
         mDoc.PreventAutoScan("Recommendations Open");
-        //RecommendationView form = new RecommendationView(mDoc, this, mDoc.TvLibrary.Shows.Take(20));
         RecommendationView form = new(mDoc, this, MediaConfiguration.MediaType.tv);
         form.ShowDialog(this);
         mDoc.AllowAutoScan();
@@ -5192,7 +5196,6 @@ public partial class UI : Form, IDialogParent
     {
         MoreBusy();
         mDoc.PreventAutoScan("Recommendations Open");
-        //RecommendationView form = new RecommendationView(mDoc, this, mDoc.FilmLibrary.Movies.Take(20));
         RecommendationView form = new(mDoc, this, MediaConfiguration.MediaType.movie);
         form.ShowDialog(this);
         FillMyMovies();
@@ -5430,6 +5433,21 @@ public partial class UI : Form, IDialogParent
     }
 
     private void txtDLStatusLabel_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void lvWhenToWatch_BeforeCreatingGroups(object sender, CreateGroupsEventArgs e)
+    {
+        e.Parameters.ItemComparer = new OlvGroupComparer<ProcessedEpisode>(MapEpisodeColumnToSorter(e.Parameters.PrimarySort), e.Parameters.PrimarySortOrder);
+        /*
+        if (e.Parameters.PrimarySort == olvEpisode || e.Parameters.PrimarySort == olvSeason)
+        {
+            e.Parameters.GroupComparer = new SeasonGroupComparer(e.Parameters.GroupByOrder);
+        }*/
+    }
+
+    private void lvWhenToWatch_SelectedIndexChanged(object sender, EventArgs e)
     {
 
     }

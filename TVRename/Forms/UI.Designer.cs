@@ -57,10 +57,6 @@ namespace TVRename.Forms
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
-            ListViewGroup listViewGroup1 = new ListViewGroup("Recently Aired", HorizontalAlignment.Left);
-            ListViewGroup listViewGroup2 = new ListViewGroup("Next 7 Days", HorizontalAlignment.Left);
-            ListViewGroup listViewGroup3 = new ListViewGroup("Returning Series", HorizontalAlignment.Left);
-            ListViewGroup listViewGroup4 = new ListViewGroup("Other Planned Episodes", HorizontalAlignment.Left);
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             exportToolStripMenuItem = new ToolStripMenuItem();
@@ -187,17 +183,6 @@ namespace TVRename.Forms
             toolStripSeparator13 = new ToolStripSeparator();
             tsbMyShowsContextMenu = new ToolStripButton();
             tbAllInOne = new TabPage();
-            olvAction = new ObjectListViewFlickerFree();
-            olvShowColumn = new OLVColumn();
-            olvSeason = new OLVColumn();
-            olvEpisode = new OLVColumn();
-            olvDate = new OLVColumn();
-            olvFolder = new OLVColumn();
-            olvFilename = new OLVColumn();
-            olvSource = new OLVColumn();
-            olvErrors = new OLVColumn();
-            olvType = new OLVColumn();
-            ilIcons = new ImageList(components);
             tsScanResults = new ToolStrip();
             btnScan = new ToolStripSplitButton();
             fullToolStripMenuItem = new ToolStripMenuItem();
@@ -233,7 +218,33 @@ namespace TVRename.Forms
             calCalendar = new MonthCalendar();
             txtWhenToWatchSynopsis = new TextBox();
             toolStripContainer3 = new ToolStripContainer();
-            lvWhenToWatch = new ListViewFlickerFree();
+            lvWhenToWatch = new ObjectListViewFlickerFree();
+            tsWtW = new ToolStrip();
+            btnWhenToWatchCheck = new ToolStripButton();
+            btnScheduleBTSearch = new ToolStripSplitButton();
+            tsbScheduleJackettSearch = new ToolStripButton();
+            toolStripSeparator12 = new ToolStripSeparator();
+            btnScheduleRightClick = new ToolStripButton();
+            ilNewIcons = new ImageList(components);
+            olvShowColumn = new OLVColumn();
+            olvSeason = new OLVColumn();
+            olvEpisode = new OLVColumn();
+            olvDate = new OLVColumn();
+            olvFolder = new OLVColumn();
+            olvFilename = new OLVColumn();
+            olvSource = new OLVColumn();
+            olvErrors = new OLVColumn();
+            olvType = new OLVColumn();
+            ilIcons = new ImageList(components);
+            olvWTWShowColumn = new OLVColumn();
+            olvWTWSeason = new OLVColumn();
+            olvWTWEpisode = new OLVColumn();
+            olvWTWDate = new OLVColumn();
+            olvWTWTime = new OLVColumn();
+            olvWTWDay = new OLVColumn();
+            olvWTWLength = new OLVColumn();
+            olvWTWNetwork = new OLVColumn();
+            olvWTWName = new OLVColumn();
             columnHeader29 = new ColumnHeader();
             columnHeader30 = new ColumnHeader();
             columnHeader31 = new ColumnHeader();
@@ -243,13 +254,6 @@ namespace TVRename.Forms
             columnHeader34 = new ColumnHeader();
             columnHeader1 = new ColumnHeader();
             columnHeader35 = new ColumnHeader();
-            tsWtW = new ToolStrip();
-            btnWhenToWatchCheck = new ToolStripButton();
-            btnScheduleBTSearch = new ToolStripSplitButton();
-            tsbScheduleJackettSearch = new ToolStripButton();
-            toolStripSeparator12 = new ToolStripSeparator();
-            btnScheduleRightClick = new ToolStripButton();
-            ilNewIcons = new ImageList(components);
             imageList1 = new ImageList(components);
             tableLayoutPanel2 = new TableLayoutPanel();
             pbProgressBarx = new ProgressBar();
@@ -314,12 +318,10 @@ namespace TVRename.Forms
             tabPage3.SuspendLayout();
             tsMyShows.SuspendLayout();
             tbAllInOne.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)olvAction).BeginInit();
             tsScanResults.SuspendLayout();
             tbWTW.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
-            toolStripContainer3.ContentPanel.SuspendLayout();
             toolStripContainer3.TopToolStripPanel.SuspendLayout();
             toolStripContainer3.SuspendLayout();
             tsWtW.SuspendLayout();
@@ -1420,7 +1422,6 @@ namespace TVRename.Forms
             // 
             // tbAllInOne
             // 
-            tbAllInOne.Controls.Add(olvAction);
             tbAllInOne.Controls.Add(tsScanResults);
             tbAllInOne.ImageKey = "322497-48 (1).png";
             tbAllInOne.Location = new System.Drawing.Point(104, 4);
@@ -1430,7 +1431,7 @@ namespace TVRename.Forms
             tbAllInOne.TabIndex = 11;
             tbAllInOne.Text = "Scan";
             tbAllInOne.UseVisualStyleBackColor = true;
-            // 
+            //
             // olvAction
             // 
             olvAction.AllColumns.Add(olvShowColumn);
@@ -1478,115 +1479,6 @@ namespace TVRename.Forms
             olvAction.KeyDown += lvAction_KeyDown;
             olvAction.MouseClick += lvAction_MouseClick;
             olvAction.MouseDoubleClick += lvAction_MouseDoubleClick;
-            // 
-            // olvShowColumn
-            // 
-            olvShowColumn.AspectName = "SeriesName";
-            olvShowColumn.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvShowColumn.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvShowColumn.Hideable = false;
-            olvShowColumn.MinimumWidth = 10;
-            olvShowColumn.Text = "Show";
-            olvShowColumn.Width = 70;
-            // 
-            // olvSeason
-            // 
-            olvSeason.AspectName = "SeasonNumber";
-            olvSeason.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvSeason.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvSeason.IsEditable = false;
-            olvSeason.MinimumWidth = 10;
-            olvSeason.Searchable = false;
-            olvSeason.Text = "Season";
-            olvSeason.Width = 70;
-            // 
-            // olvEpisode
-            // 
-            olvEpisode.AspectName = "EpisodeString";
-            olvEpisode.Groupable = false;
-            olvEpisode.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvEpisode.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvEpisode.IsEditable = false;
-            olvEpisode.MinimumWidth = 10;
-            olvEpisode.Text = "Episode";
-            olvEpisode.Width = 70;
-            // 
-            // olvDate
-            // 
-            olvDate.AspectName = "AirDateString";
-            olvDate.AspectToStringFormat = "";
-            olvDate.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvDate.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvDate.MinimumWidth = 10;
-            olvDate.Text = "Date";
-            olvDate.Width = 70;
-            // 
-            // olvFolder
-            // 
-            olvFolder.AspectName = "DestinationFolder";
-            olvFolder.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvFolder.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvFolder.MinimumWidth = 10;
-            olvFolder.Text = "Folder";
-            olvFolder.Width = 70;
-            // 
-            // olvFilename
-            // 
-            olvFilename.AspectName = "DestinationFile";
-            olvFilename.Groupable = false;
-            olvFilename.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvFilename.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvFilename.MinimumWidth = 10;
-            olvFilename.Text = "Filename";
-            olvFilename.Width = 70;
-            // 
-            // olvSource
-            // 
-            olvSource.AspectName = "SourceDetails";
-            olvSource.Groupable = false;
-            olvSource.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvSource.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvSource.MinimumWidth = 10;
-            olvSource.Text = "Source";
-            olvSource.Width = 70;
-            // 
-            // olvErrors
-            // 
-            olvErrors.AspectName = "ErrorText";
-            olvErrors.Groupable = false;
-            olvErrors.GroupWithItemCountFormat = "{0} ({1} items)";
-            olvErrors.GroupWithItemCountSingularFormat = "{0} (1 Item)";
-            olvErrors.MinimumWidth = 30;
-            olvErrors.Text = "Errors";
-            olvErrors.Width = 70;
-            // 
-            // olvType
-            // 
-            olvType.AspectName = "Name";
-            olvType.DisplayIndex = 8;
-            olvType.GroupWithItemCountFormat = "{0}";
-            olvType.GroupWithItemCountSingularFormat = "{0}";
-            olvType.IsVisible = false;
-            olvType.Text = "Type";
-            // 
-            // ilIcons
-            // 
-            ilIcons.ColorDepth = ColorDepth.Depth24Bit;
-            ilIcons.ImageStream = (ImageListStreamer)resources.GetObject("ilIcons.ImageStream");
-            ilIcons.TransparentColor = System.Drawing.Color.Transparent;
-            ilIcons.Images.SetKeyName(0, "OnDisk.bmp");
-            ilIcons.Images.SetKeyName(1, "MagGlass.bmp");
-            ilIcons.Images.SetKeyName(2, "uTorrent.bmp");
-            ilIcons.Images.SetKeyName(3, "copy.bmp");
-            ilIcons.Images.SetKeyName(4, "move.bmp");
-            ilIcons.Images.SetKeyName(5, "download.bmp");
-            ilIcons.Images.SetKeyName(6, "RSS.bmp");
-            ilIcons.Images.SetKeyName(7, "NFO.bmp");
-            ilIcons.Images.SetKeyName(8, "sab.png");
-            ilIcons.Images.SetKeyName(9, "tk1[1].png");
-            ilIcons.Images.SetKeyName(10, "qBitTorrent.png");
-            ilIcons.Images.SetKeyName(11, "zip.png");
-            // 
             // tsScanResults
             // 
             tsScanResults.GripStyle = ToolStripGripStyle.Hidden;
@@ -1936,23 +1828,12 @@ namespace TVRename.Forms
             // toolStripContainer3.TopToolStripPanel
             // 
             toolStripContainer3.TopToolStripPanel.Controls.Add(tsWtW);
-            // 
+            //
             // lvWhenToWatch
             // 
             lvWhenToWatch.Columns.AddRange(new ColumnHeader[] { columnHeader29, columnHeader30, columnHeader31, columnHeader32, columnHeader36, columnHeader33, columnHeader34, columnHeader1, columnHeader35 });
             lvWhenToWatch.Dock = DockStyle.Fill;
             lvWhenToWatch.FullRowSelect = true;
-            listViewGroup1.Header = "Recently Aired";
-            listViewGroup1.Name = "justPassed";
-            listViewGroup2.Header = "Next 7 Days";
-            listViewGroup2.Name = "next7days";
-            listViewGroup2.Tag = "1";
-            listViewGroup3.Header = "Returning Series";
-            listViewGroup3.Name = "futureEps";
-            listViewGroup4.Header = "Other Planned Episodes";
-            listViewGroup4.Name = "later";
-            listViewGroup4.Tag = "2";
-            lvWhenToWatch.Groups.AddRange(new ListViewGroup[] { listViewGroup1, listViewGroup2, listViewGroup3, listViewGroup4 });
             lvWhenToWatch.Location = new System.Drawing.Point(0, 0);
             lvWhenToWatch.Margin = new Padding(4, 3, 4, 3);
             lvWhenToWatch.Name = "lvWhenToWatch";
@@ -1962,56 +1843,9 @@ namespace TVRename.Forms
             lvWhenToWatch.TabIndex = 3;
             lvWhenToWatch.UseCompatibleStateImageBehavior = false;
             lvWhenToWatch.View = View.Details;
-            lvWhenToWatch.ColumnClick += lvWhenToWatch_ColumnClick;
             lvWhenToWatch.SelectedIndexChanged += lvWhenToWatch_Click;
             lvWhenToWatch.DoubleClick += lvWhenToWatch_DoubleClick;
             lvWhenToWatch.MouseClick += lvWhenToWatch_MouseClick;
-            // 
-            // columnHeader29
-            // 
-            columnHeader29.Text = "Show";
-            columnHeader29.Width = 218;
-            // 
-            // columnHeader30
-            // 
-            columnHeader30.Text = "Season";
-            columnHeader30.Width = 59;
-            // 
-            // columnHeader31
-            // 
-            columnHeader31.Text = "Episode";
-            columnHeader31.Width = 64;
-            // 
-            // columnHeader32
-            // 
-            columnHeader32.Text = "Air Date";
-            columnHeader32.Width = 94;
-            // 
-            // columnHeader36
-            // 
-            columnHeader36.Text = "Time";
-            columnHeader36.Width = 70;
-            // 
-            // columnHeader33
-            // 
-            columnHeader33.Text = "Day";
-            columnHeader33.Width = 49;
-            // 
-            // columnHeader34
-            // 
-            columnHeader34.Text = "How Long";
-            columnHeader34.Width = 80;
-            // 
-            // columnHeader1
-            // 
-            columnHeader1.Text = "Network";
-            columnHeader1.Width = 117;
-            // 
-            // columnHeader35
-            // 
-            columnHeader35.Text = "Episode Name";
-            columnHeader35.Width = 420;
-            // 
             // tsWtW
             // 
             tsWtW.Dock = DockStyle.None;
@@ -2082,6 +1916,205 @@ namespace TVRename.Forms
             ilNewIcons.Images.SetKeyName(4, "3790574-48.png");
             ilNewIcons.Images.SetKeyName(5, "4632196-48.png");
             // 
+            // olvShowColumn
+            // 
+            olvShowColumn.AspectName = "SeriesName";
+            olvShowColumn.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvShowColumn.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvShowColumn.Hideable = false;
+            olvShowColumn.MinimumWidth = 10;
+            olvShowColumn.Text = "Show";
+            olvShowColumn.Width = 70;
+            // 
+            // olvSeason
+            // 
+            olvSeason.AspectName = "SeasonNumber";
+            olvSeason.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvSeason.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvSeason.IsEditable = false;
+            olvSeason.MinimumWidth = 10;
+            olvSeason.Searchable = false;
+            olvSeason.Text = "Season";
+            olvSeason.Width = 70;
+            // 
+            // olvEpisode
+            // 
+            olvEpisode.AspectName = "EpisodeString";
+            olvEpisode.Groupable = false;
+            olvEpisode.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvEpisode.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvEpisode.IsEditable = false;
+            olvEpisode.MinimumWidth = 10;
+            olvEpisode.Text = "Episode";
+            olvEpisode.Width = 70;
+            // 
+            // olvDate
+            // 
+            olvDate.AspectName = "AirDateString";
+            olvDate.AspectToStringFormat = "";
+            olvDate.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvDate.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvDate.MinimumWidth = 10;
+            olvDate.Text = "Date";
+            olvDate.Width = 70;
+            // 
+            // olvFolder
+            // 
+            olvFolder.AspectName = "DestinationFolder";
+            olvFolder.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvFolder.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvFolder.MinimumWidth = 10;
+            olvFolder.Text = "Folder";
+            olvFolder.Width = 70;
+            // 
+            // olvFilename
+            // 
+            olvFilename.AspectName = "DestinationFile";
+            olvFilename.Groupable = false;
+            olvFilename.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvFilename.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvFilename.MinimumWidth = 10;
+            olvFilename.Text = "Filename";
+            olvFilename.Width = 70;
+            // 
+            // olvSource
+            // 
+            olvSource.AspectName = "SourceDetails";
+            olvSource.Groupable = false;
+            olvSource.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvSource.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvSource.MinimumWidth = 10;
+            olvSource.Text = "Source";
+            olvSource.Width = 70;
+            // 
+            // olvErrors
+            // 
+            olvErrors.AspectName = "ErrorText";
+            olvErrors.Groupable = false;
+            olvErrors.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvErrors.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvErrors.MinimumWidth = 30;
+            olvErrors.Text = "Errors";
+            olvErrors.Width = 70;
+            // 
+            // olvType
+            // 
+            olvType.AspectName = "Name";
+            olvType.DisplayIndex = 8;
+            olvType.GroupWithItemCountFormat = "{0}";
+            olvType.GroupWithItemCountSingularFormat = "{0}";
+            olvType.IsVisible = false;
+            olvType.Text = "Type";
+            // 
+            // ilIcons
+            // 
+            ilIcons.ColorDepth = ColorDepth.Depth24Bit;
+            ilIcons.ImageStream = (ImageListStreamer)resources.GetObject("ilIcons.ImageStream");
+            ilIcons.TransparentColor = System.Drawing.Color.Transparent;
+            ilIcons.Images.SetKeyName(0, "OnDisk.bmp");
+            ilIcons.Images.SetKeyName(1, "MagGlass.bmp");
+            ilIcons.Images.SetKeyName(2, "uTorrent.bmp");
+            ilIcons.Images.SetKeyName(3, "copy.bmp");
+            ilIcons.Images.SetKeyName(4, "move.bmp");
+            ilIcons.Images.SetKeyName(5, "download.bmp");
+            ilIcons.Images.SetKeyName(6, "RSS.bmp");
+            ilIcons.Images.SetKeyName(7, "NFO.bmp");
+            ilIcons.Images.SetKeyName(8, "sab.png");
+            ilIcons.Images.SetKeyName(9, "tk1[1].png");
+            ilIcons.Images.SetKeyName(10, "qBitTorrent.png");
+            ilIcons.Images.SetKeyName(11, "zip.png");
+            ilIcons.Images.SetKeyName(12, "blank.png");
+            // 
+            // olvWTWShowColumn
+            // 
+            olvWTWShowColumn.AspectName = "SeriesName";
+            olvWTWShowColumn.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWShowColumn.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWShowColumn.Hideable = false;
+            olvWTWShowColumn.ImageAspectName = "ImageTypeName";
+            olvWTWShowColumn.MinimumWidth = 10;
+            olvWTWShowColumn.Text = "Show";
+            olvWTWShowColumn.Width = 218;
+            // 
+            // olvWTWSeason
+            // 
+            olvWTWSeason.AspectName = "SeasonNumberAsText";
+            olvWTWSeason.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWSeason.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWSeason.IsEditable = false;
+            olvWTWSeason.MinimumWidth = 10;
+            olvWTWSeason.Searchable = false;
+            olvWTWSeason.Text = "Season";
+            olvWTWSeason.Width = 59;
+            // 
+            // olvWTWEpisode
+            // 
+            olvWTWEpisode.AspectName = "EpisodeNumbersAsText";
+            olvWTWEpisode.Groupable = false;
+            olvWTWEpisode.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWEpisode.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWEpisode.IsEditable = false;
+            olvWTWEpisode.MinimumWidth = 10;
+            olvWTWEpisode.Text = "Episode";
+            olvWTWEpisode.Width = 64;
+            // 
+            // olvWTWDate
+            // 
+            olvWTWDate.AspectName = "AirDateString";
+            olvWTWDate.AspectToStringFormat = "";
+            olvWTWDate.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWDate.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWDate.MinimumWidth = 10;
+            olvWTWDate.Text = "Air Date";
+            olvWTWDate.Width = 94;
+            // 
+            // olvWTWTime
+            // 
+            olvWTWTime.AspectName = "Time";
+            olvWTWTime.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWTime.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWTime.MinimumWidth = 10;
+            olvWTWTime.Text = "Time";
+            olvWTWTime.Width = 70;
+            // 
+            // olvWTWDay
+            // 
+            olvWTWDay.AspectName = "Day";
+            olvWTWDay.Groupable = false;
+            olvWTWDay.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWDay.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWDay.MinimumWidth = 10;
+            olvWTWDay.Text = "Day";
+            olvWTWDay.Width = 49;
+            // 
+            // olvWTWLength
+            // 
+            olvWTWLength.AspectName = "Length";
+            olvWTWLength.Groupable = false;
+            olvWTWLength.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWLength.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWLength.MinimumWidth = 10;
+            olvWTWLength.Text = "How Long";
+            olvWTWLength.Width = 80;
+            // 
+            // olvWTWNetwork
+            // 
+            olvWTWNetwork.AspectName = "Network";
+            olvWTWNetwork.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWNetwork.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWNetwork.MinimumWidth = 30;
+            olvWTWNetwork.Text = "Network";
+            olvWTWNetwork.Width = 117;
+            // 
+            // olvWTWName
+            // 
+            olvWTWName.AspectName = "Name";
+            olvWTWName.Groupable = false;
+            olvWTWName.GroupWithItemCountFormat = "{0}";
+            olvWTWName.GroupWithItemCountSingularFormat = "{0}";
+            olvWTWName.Text = "Epsiode Name";
+            olvWTWName.Width = 420;
+            //
             // imageList1
             // 
             imageList1.ColorDepth = ColorDepth.Depth8Bit;
@@ -2393,14 +2426,12 @@ namespace TVRename.Forms
             tsMyShows.PerformLayout();
             tbAllInOne.ResumeLayout(false);
             tbAllInOne.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)olvAction).EndInit();
             tsScanResults.ResumeLayout(false);
             tsScanResults.PerformLayout();
             tbWTW.ResumeLayout(false);
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
-            toolStripContainer3.ContentPanel.ResumeLayout(false);
             toolStripContainer3.TopToolStripPanel.ResumeLayout(false);
             toolStripContainer3.TopToolStripPanel.PerformLayout();
             toolStripContainer3.ResumeLayout(false);
@@ -2414,7 +2445,6 @@ namespace TVRename.Forms
         }
         #endregion
         private System.Windows.Forms.TabPage tbAllInOne;
-
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem folderMonitorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ignoreListToolStripMenuItem;
@@ -2430,7 +2460,6 @@ namespace TVRename.Forms
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.ColumnHeader columnHeader8;
-        private ListViewFlickerFree lvWhenToWatch;
         private System.Windows.Forms.ColumnHeader columnHeader29;
         private System.Windows.Forms.ColumnHeader columnHeader30;
         private System.Windows.Forms.ColumnHeader columnHeader31;
@@ -2561,6 +2590,15 @@ namespace TVRename.Forms
         private OLVColumn olvSource;
         private OLVColumn olvErrors;
         private OLVColumn olvType;
+        private OLVColumn olvWTWShowColumn;
+        private OLVColumn olvWTWSeason;
+        private OLVColumn olvWTWEpisode;
+        private OLVColumn olvWTWDate;
+        private OLVColumn olvWTWTime;
+        private OLVColumn olvWTWDay;
+        private OLVColumn olvWTWLength;
+        private OLVColumn olvWTWNetwork;
+        private OLVColumn olvWTWName;
         private ToolStripButton btnRevertView;
         private TabPage tpSummary;
         private System.ComponentModel.BackgroundWorker bwShowSummaryHTMLGenerator;
@@ -2640,5 +2678,6 @@ namespace TVRename.Forms
         private ToolStripMenuItem removeShowsWithNoFoldersToolStripMenuItem;
         private ToolStripMenuItem exportFilteredToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator25;
+        private ObjectListViewFlickerFree lvWhenToWatch;
     }
 }
