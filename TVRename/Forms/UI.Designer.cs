@@ -1830,22 +1830,46 @@ namespace TVRename.Forms
             toolStripContainer3.TopToolStripPanel.Controls.Add(tsWtW);
             //
             // lvWhenToWatch
-            // 
-            lvWhenToWatch.Columns.AddRange(new ColumnHeader[] { columnHeader29, columnHeader30, columnHeader31, columnHeader32, columnHeader36, columnHeader33, columnHeader34, columnHeader1, columnHeader35 });
+            //
+            lvWhenToWatch.AllColumns.Add(olvWTWShowColumn);
+            lvWhenToWatch.AllColumns.Add(olvWTWSeason);
+            lvWhenToWatch.AllColumns.Add(olvWTWEpisode);
+            lvWhenToWatch.AllColumns.Add(olvWTWDate);
+            lvWhenToWatch.AllColumns.Add(olvWTWTime);
+            lvWhenToWatch.AllColumns.Add(olvWTWDay);
+            lvWhenToWatch.AllColumns.Add(olvWTWLength);
+            lvWhenToWatch.AllColumns.Add(olvWTWNetwork);
+            lvWhenToWatch.AllColumns.Add(olvWTWName);
+            lvWhenToWatch.AllowColumnReorder = false;
+            lvWhenToWatch.Columns.AddRange(new ColumnHeader[] { olvWTWShowColumn, olvWTWSeason, olvWTWEpisode, olvWTWDate, olvWTWTime, olvWTWDay, olvWTWLength, olvWTWNetwork, olvWTWName });
             lvWhenToWatch.Dock = DockStyle.Fill;
+            lvWhenToWatch.IncludeColumnHeadersInCopy = true;
             lvWhenToWatch.FullRowSelect = true;
+            lvWhenToWatch.GroupWithItemCountFormat = "{0} ({1} items)";
+            lvWhenToWatch.GroupWithItemCountSingularFormat = "{0} (1 Item)";
             lvWhenToWatch.Location = new System.Drawing.Point(0, 0);
             lvWhenToWatch.Margin = new Padding(4, 3, 4, 3);
             lvWhenToWatch.Name = "lvWhenToWatch";
+            lvWhenToWatch.ShowItemToolTips = true;
+            lvWhenToWatch.ShowCommandMenuOnRightClick = true;
+            lvWhenToWatch.ShowGroups = false;
+            lvWhenToWatch.ShowImagesOnSubItems = true;
+            lvWhenToWatch.ShowItemCountOnGroups = true;
             lvWhenToWatch.ShowItemToolTips = true;
             lvWhenToWatch.Size = new System.Drawing.Size(990, 477);
             lvWhenToWatch.SmallImageList = ilIcons;
             lvWhenToWatch.TabIndex = 3;
             lvWhenToWatch.UseCompatibleStateImageBehavior = false;
+            lvWhenToWatch.UseFilterIndicator = true;
+            lvWhenToWatch.UseFiltering = true;
+            lvWhenToWatch.UseNotifyPropertyChanged = true;
             lvWhenToWatch.View = View.Details;
             lvWhenToWatch.SelectedIndexChanged += lvWhenToWatch_Click;
             lvWhenToWatch.DoubleClick += lvWhenToWatch_DoubleClick;
             lvWhenToWatch.MouseClick += lvWhenToWatch_MouseClick;
+            lvWhenToWatch.BeforeCreatingGroups += lvWhenToWatch_BeforeCreatingGroups;
+            lvWhenToWatch.FormatRow += lvWhenToWatch_FormatRow;
+            //
             // tsWtW
             // 
             tsWtW.Dock = DockStyle.None;

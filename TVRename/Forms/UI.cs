@@ -5446,11 +5446,6 @@ public partial class UI : Form, IDialogParent
             e.Parameters.GroupComparer = new SeasonGroupComparer(e.Parameters.GroupByOrder);
         }*/
     }
-
-    private void lvWhenToWatch_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
 }
 
 public static class TvWebExtensions
