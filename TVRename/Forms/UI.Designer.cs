@@ -287,6 +287,7 @@ namespace TVRename.Forms
             bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             tableLayoutPanel3 = new TableLayoutPanel();
+            olvAction = new ObjectListViewFlickerFree();
             panel1 = new Panel();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
