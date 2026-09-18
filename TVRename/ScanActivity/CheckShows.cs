@@ -51,7 +51,7 @@ internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity
         IEnumerable<(ShowConfiguration si, DirFilesCache dfc, ThreadSafeCounter c)> shows = Settings.Shows.OrderBy(item => item.ShowName).Select(si => (si, dfc, c));
         await Parallel.ForEachAsync(shows, options, async (show, cancellationToken) =>
         {
-            await DoCheckForShowAsync(show.dfc, show.c, show.si, settings.Token);
+            await DoCheckForShowAsync(show.dfc, show.c, show.si, Settings.Token);
         });// for each show
 
         c.Reset();
@@ -59,7 +59,7 @@ internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity
         IEnumerable<(MovieConfiguration si, DirFilesCache dfc, ThreadSafeCounter c)> movies = Settings.Movies.OrderBy(item => item.ShowName).Select(si => (si, dfc, c));
         await Parallel.ForEachAsync(movies, options, async (movie, cancellationToken) =>
         {
-            await DoCheckMovieAsync(movie.dfc, movie.c, movie.si, settings.Token);
+            await DoCheckMovieAsync(movie.dfc, movie.c, movie.si, Settings.Token);
         }); // for each movie
 
         MDoc.RemoveIgnored();

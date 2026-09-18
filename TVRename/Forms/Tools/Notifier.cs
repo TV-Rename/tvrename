@@ -7,7 +7,7 @@ namespace TVRename.Forms.Tools;
 
 public abstract partial class Notifier : Form
 {
-    protected Notifier()
+    public Notifier()
     {
         InitializeComponent();
     }

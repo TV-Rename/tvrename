@@ -12,6 +12,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using TimeZoneConverter;
@@ -730,7 +731,7 @@ public class ShowConfiguration : MediaConfiguration
                     continue;
                 }
 
-                if (checkExist && !Directory.Exists(newName))
+                if (checkExist && !Directory.Exists(newName)) //todo - make async
                 {
                     continue;
                 }
@@ -749,6 +750,62 @@ public class ShowConfiguration : MediaConfiguration
         }
         return fld;
     }
+
+
+    protected async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)
+    {
+        Dictionary<int, SafeList<string>> fld = [];
+
+        if (manualToo)
+        {
+            foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations.ToList())
+            {
+                if (!fld.ContainsKey(kvp.Key))
+                {
+                    fld[kvp.Key] = [];
+                }
+
+                foreach (string s in kvp.Value)
+                {
+                    fld[kvp.Key].Add(s.TrimSlash());
+                }
+            }
+        }
+
+        if (AutoAddNewSeasons() && !string.IsNullOrEmpty(AutoAddFolderBase))
+        {
+            foreach (int i in ActiveSeasons.Keys())
+            {
+                if (ManualFoldersReplaceAutomatic && fld.ContainsKey(i))
+                {
+                    continue;
+                }
+
+                string newName = AutoFolderNameForSeason(i);
+                if (string.IsNullOrEmpty(newName))
+                {
+                    continue;
+                }
+
+                if (checkExist && !await FileHelper.DirectoryExistsAsync(newName)) { 
+                    continue;
+                }
+
+                //Now we can add the automated one
+                if (!fld.ContainsKey(i))
+                {
+                    fld[i] = [];
+                }
+
+                if (!fld[i].Contains(newName))
+                {
+                    fld[i].Add(newName.TrimSlash());
+                }
+            }
+        }
+        return fld;
+    }
+
 
     public ProcessedSeason? GetSeason(int snum)
     {
@@ -1330,6 +1387,11 @@ public class ShowConfiguration : MediaConfiguration
     internal List<ProcessedEpisode>? GetRandomSeasonEpisodes() => EpisodeCaches.SeasonEpisodes.Values.FirstOrDefault(v => v.Count > 0);
 
     internal List<List<ProcessedEpisode>> GetSortedSeasons() => EpisodeCaches.SeasonEpisodes.OrderBy(v => v.Key).Select(v => v.Value).ToList();
+
+    internal async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsEpCheckAsync(bool checkDirectoryExist)
+    {
+        return await AllFolderLocationsAsync(true, checkDirectoryExist);
+    }
 
     public CachedSeriesInfo? CachedShow => CachedData as CachedSeriesInfo;
 

@@ -272,6 +272,54 @@ internal static class FinderHelper
         return FindEpOnDisk(dfc, pe.Show, pe, checkDirectoryExist);
     }
 
+    public static async Task<List<FileInfo>> FindEpOnDiskAsync(this DirFilesCache? dfc, ProcessedEpisode pe,
+        bool checkDirectoryExist = true)
+    {
+        return await FindEpOnDiskAsync(dfc, pe.Show, pe, true);
+    }
+
+    private static async Task<List<FileInfo>> FindEpOnDiskAsync(DirFilesCache? dfc, ShowConfiguration si, ProcessedEpisode epi,
+        bool checkDirectoryExist = true)
+    {
+        DirFilesCache cache = dfc ?? new DirFilesCache();
+
+        List<FileInfo> ret = [];
+
+        int seasWanted = epi.AppropriateSeasonNumber;
+        int epWanted = epi.AppropriateEpNum;
+
+        int snum = seasWanted;
+
+        Dictionary<int, SafeList<string>> dirs = await si.AllFolderLocationsEpCheckAsync(checkDirectoryExist);
+
+        if (!dirs.TryGetValue(snum, out SafeList<string>? folders))
+        {
+            return ret;
+        }
+
+        foreach (FileInfo fiTemp in folders
+                     .Select(folder => cache.GetFiles(folder))
+                     .SelectMany(files => files.Where(IsMovieFile)))
+        {
+            if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, out int _, si))
+            {
+                continue;
+            }
+
+            if (seasFound == -1)
+            {
+                seasFound = seasWanted;
+            }
+
+            if (seasFound == seasWanted && epFound == epWanted)
+            {
+                ret.Add(fiTemp);
+            }
+        }
+
+        return ret;
+    }
+
     private static List<FileInfo> FindEpOnDisk(DirFilesCache? dfc, ShowConfiguration si, ProcessedEpisode epi,
         bool checkDirectoryExist = true)
     {

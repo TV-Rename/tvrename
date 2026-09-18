@@ -177,7 +177,7 @@ public class CefWrapper
                 return returnValue;
             }
 
-            foreach (string subKeyName in dependencies.GetSubKeyNames().Where(n => !n.ToLower().Contains("dotnet") && !n.ToLower().Contains("microsoft")))
+            foreach (string subKeyName in dependencies.GetSubKeyNames().Where(n => !n.Contains("dotnet", StringComparison.CurrentCultureIgnoreCase) && !n.Contains("microsoft", StringComparison.CurrentCultureIgnoreCase)))
             {
                 using RegistryKey? subDir = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH + "\\" + subKeyName);
                 string? value = subDir?.GetValue("DisplayName")?.ToString();

@@ -214,7 +214,7 @@ public class BulkAddSeriesManager(TVDoc doc)
     {
         try
         {
-            subDirs = di.GetDirectories();
+            subDirs = di.GetDirectories(); //todo - make async
             // keep in sync with ProcessAddItems, etc.
             foreach (string sw in mDoc.TvLibrary.SeasonWords())
             {

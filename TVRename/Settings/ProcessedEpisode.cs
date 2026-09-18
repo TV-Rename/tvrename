@@ -1,9 +1,14 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-public class ProcessedEpisode : Episode
+public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyPropertyChanged, IEquatable<ProcessedEpisode>
 {
     public int
         EpNum2; // if we are a concatenation of episodes, this is the last one in the cachedSeries. Otherwise, same as EpNum
@@ -19,6 +24,42 @@ public class ProcessedEpisode : Episode
 
     // ReSharper disable once InconsistentNaming
     public string TVDBWebsiteUrl => TheTVDB.API.WebsiteEpisodeUrl(this);
+
+    public virtual string SeriesName => Forms.UI.GenerateShowUIName(this);
+    public virtual DateTime? AirDate => GetAirDateDt();
+    public virtual string AirDateString => GetAirDateDt()?.ToShortDateString() ?? string.Empty;
+    public virtual string Time => GetAirDateDt()?.ToString("t") ?? string.Empty;
+    public virtual string Day => GetAirDateDt()?.ToString("ddd") ?? string.Empty;
+    public virtual string Length => HowLong();
+    public virtual string Network => TheCachedSeries.Networks.FirstOrDefault() ?? string.Empty;
+    public virtual int ImageTypeName
+    {
+        get
+        {
+            if (TVSettings.Instance.IgnorePreviouslySeen && PreviouslySeen && !(_airedStatus==FoundStatus.OnDisk))
+            {
+                _airedStatus = FoundStatus.PreviouslySeen;
+                NotifyPropertyChanged("ImageTypeName");
+            }
+            if (!HasAired() && (_airedStatus == FoundStatus.Unknown || _airedStatus == FoundStatus.Missing))
+            {
+                _airedStatus = FoundStatus.Future;
+                NotifyPropertyChanged("ImageTypeName");
+            }
+
+            return Forms.UI.ChooseWtwIcon(_airedStatus);
+        }
+    }
+
+    private FoundStatus _airedStatus = FoundStatus.Unknown;
+    public enum FoundStatus
+    {
+        OnDisk,
+        PreviouslySeen,
+        Missing,
+        Future,
+        Unknown
+    }
 
     public enum ProcessedEpisodeType
     {
@@ -123,6 +164,16 @@ public class ProcessedEpisode : Episode
         TheAiredProcessedSeason = pe.TheAiredProcessedSeason;
         TheDvdProcessedSeason = pe.TheDvdProcessedSeason;
         SourceEpisodes = [];
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    // This method is called by the Set accessor of each property.
+    // The CallerMemberName attribute that is applied to the optional propertyName
+    // parameter causes the property name of the caller to be substituted as an argument.
+    protected void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     public int AppropriateSeasonNumber => Show.Order == ProcessedSeason.SeasonType.dvd ? DvdSeasonNumber : AiredSeasonNumber;
@@ -270,5 +321,52 @@ public class ProcessedEpisode : Episode
     {
         DateTime? dt = GetAirDateDt();
         return dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0;
+    }
+
+    internal async Task UpdateSeenStatusAsync(DirFilesCache dfc)
+    {
+        List<FileInfo> fl = await dfc.FindEpOnDiskAsync(this);
+        bool appropriateFileNameFound = !TVSettings.Instance.RenameCheck
+                                        || !Show.DoRename
+                                        || fl.All(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(this)), StringComparison.OrdinalIgnoreCase));
+
+        if (fl.Any() && appropriateFileNameFound)
+        {
+            _airedStatus = ProcessedEpisode.FoundStatus.OnDisk;
+            NotifyPropertyChanged("ImageTypeName");
+            return;
+        }
+
+        if (TVSettings.Instance.IgnorePreviouslySeen && PreviouslySeen)
+        {
+            _airedStatus = ProcessedEpisode.FoundStatus.PreviouslySeen;
+            NotifyPropertyChanged("ImageTypeName");
+            return;
+
+        }
+
+        if (HasAired())
+        {
+            if (Show.DoMissingCheck)
+            {
+                _airedStatus = ProcessedEpisode.FoundStatus.Missing;
+                NotifyPropertyChanged("ImageTypeName");
+                return;
+
+            }
+        }
+
+        _airedStatus = ProcessedEpisode.FoundStatus.Future;
+        NotifyPropertyChanged("ImageTypeName");
+    }
+
+    bool IEquatable<ProcessedEpisode>.Equals(ProcessedEpisode? other)
+    {
+        throw new NotImplementedException();
+    }
+
+    int IComparable<ProcessedEpisode>.CompareTo(ProcessedEpisode? other)
+    {
+        throw new NotImplementedException();
     }
 }

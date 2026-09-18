@@ -755,11 +755,44 @@ public static class FileHelper
         public double Percentage => TotalBytes > 0 ? (double)BytesTransferred / TotalBytes * 100 : 0;
     }
 
-    public static async Task<bool> CheckDirectoryExistsAsync(string path)
+
+    /// <summary>
+    /// Asynchronously checks whether the given directory path exists on disk.
+    /// </summary>
+    /// <param name="path">The path of the directory to check.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>A task that represents the asynchronous operation, containing true if the directory exists; otherwise, false.</returns>
+    public static async Task<bool> DirectoryExistsAsync(string path, CancellationToken cancellationToken = default)
     {
-        // Offloads the synchronous OS call to a ThreadPool thread
-        return await Task.Run(() => Directory.Exists(path));
+        // Fail-fast checks to avoid spinning up a thread unnecessarily
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return false;
+        }
+
+        try
+        {
+            // Offloads the synchronous disk check to the thread pool
+            return await Task.Run(() =>
+            {
+                // Regularly check for cancellation prior to hitting the disk
+                cancellationToken.ThrowIfCancellationRequested();
+
+                return Directory.Exists(path);
+            }, cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            // Propagate cancellation correctly
+            throw;
+        }
+        catch (Exception)
+        {
+            // Fallback for security exceptions, invalid characters, or path format errors
+            return false;
+        }
     }
+
 
     public static async Task MoveFileWithProgressAsync(
                                         FileInfo From,

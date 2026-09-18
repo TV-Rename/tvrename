@@ -827,7 +827,7 @@ public static class API
         return si;
     }
 
-    private static IEnumerable<CachedSeriesInfo> GetEnumSeries(JToken jToken, Locale locale, bool b)
+    private static List<CachedSeriesInfo> GetEnumSeries(JToken jToken, Locale locale, bool b)
     {
         JArray ja = (JArray)jToken;
         List<CachedSeriesInfo> ses = [];
@@ -845,7 +845,7 @@ public static class API
         return ses;
     }
 
-    private static IEnumerable<CachedMovieInfo> GetEnumMovies(JToken jToken, Locale locale, bool b)
+    private static List<CachedMovieInfo> GetEnumMovies(JToken jToken, Locale locale, bool b)
     {
         JArray ja = (JArray)jToken;
         List<CachedMovieInfo> ses = [];

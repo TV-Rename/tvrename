@@ -101,6 +101,8 @@ internal class ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : Cu
 
     private static void MoveFiles(IEnumerable<FileInfo> where, string destination)
     {
+        //TODO MOve to FileHelper
+
         Directory.CreateDirectory(destination);
         foreach (FileInfo? f in where)
         {
