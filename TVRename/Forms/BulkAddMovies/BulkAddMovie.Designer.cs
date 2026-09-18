@@ -436,14 +436,15 @@ namespace TVRename
             olvFMNewShows.Size = new System.Drawing.Size(982, 374);
             olvFMNewShows.SmallImageList = imagesPassFail;
             olvFMNewShows.TabIndex = 11;
+            olvFMNewShows.UseFilterIndicator = true;
+            olvFMNewShows.ShowCommandMenuOnRightClick = true;
+            olvFMNewShows.UseFiltering = true;
             olvFMNewShows.View = View.Details;
             olvFMNewShows.SelectedIndexChanged += lvFMNewShows_SelectedIndexChanged;
             olvFMNewShows.DragDrop += lvFMNewShows_DragDrop;
             olvFMNewShows.DragOver += lvFMNewShows_DragOver;
             olvFMNewShows.KeyDown += lvFMNewShows_KeyDown;
             olvFMNewShows.MouseDoubleClick += lvFMNewShows_MouseDoubleClick;
-            olvFMNewShows.UseFilterIndicator = true;
-            olvFMNewShows.UseFiltering = true;
             // 
             // olvFOlder
             // 
