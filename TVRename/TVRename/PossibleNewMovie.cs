@@ -1,7 +1,9 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -10,7 +12,7 @@ using TMDbLib.Objects.Exceptions;
 namespace TVRename;
 // "PossibleNewMovie" represents a folder found by doing a Check in the 'Bulk Add Movie' dialog
 
-public class PossibleNewMovie : ISeriesSpecifier
+public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
 {
     private readonly string movieStub;
     private readonly FileInfo movieFile;
@@ -21,6 +23,12 @@ public class PossibleNewMovie : ISeriesSpecifier
     internal TVDoc.ProviderType SourceProvider;
 
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+    public virtual string Folder => Directory.FullName;
+    public virtual string Movie => CodeKnown ? CachedMovie?.Name ?? string.Empty : RefinedHint;
+    public virtual string Year => CodeKnown ? CachedMovie?.FirstAired?.Year.ToString() ?? string.Empty : PossibleYear?.ToString() ?? string.Empty;
+    public virtual string SourceCode => CodeKnown ? CodeString : string.Empty;
+    public virtual int ImageTypeName => CodeKnown && HasStub ? 1 : 0;
 
     public DirectoryInfo Directory => movieFile.Directory;
     public CachedMovieInfo? CachedMovie => TVDoc.GetMovieCache(SourceProvider).GetMovie(ProviderCode);
@@ -38,6 +46,16 @@ public class PossibleNewMovie : ISeriesSpecifier
 
         RefinedHint = fileRefinedHint.HasValue() ? fileRefinedHint : directoryRefinedHint;
         PossibleYear = filePossibleYear ?? directoryPossibleYear;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    // This method is called by the Set accessor of each property.
+    // The CallerMemberName attribute that is applied to the optional propertyName
+    // parameter causes the property name of the caller to be substituted as an argument.
+    protected void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     public async Task GuessMovieAsync(bool showErrorMsgBox)

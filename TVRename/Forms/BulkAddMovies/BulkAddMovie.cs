@@ -8,6 +8,7 @@
 
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
+using SharpCompress.Common;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -39,6 +40,13 @@ public partial class BulkAddMovie : Form
     //For auto id
     private static readonly ThreadSafeCounter VolatileCounter = new();
 
+    public class ProgressReport
+    {
+        public int NumberComplete { get; set; }
+        public int Total { get; set; }
+        public PossibleNewMovie? LatestItemProcessed { get; set; }
+    }
+
     public BulkAddMovie(TVDoc doc, BulkAddMovieManager bam, UI mainUi)
     {
         mDoc = doc;
@@ -47,6 +55,7 @@ public partial class BulkAddMovie : Form
         InitializeComponent();
         FillFolderStringLists();
         tbResults.Parent = null;
+        olvFMNewShows.ShowGroups = false;
     }
 
     private void bnClose_Click(object sender, System.EventArgs e)
@@ -306,7 +315,7 @@ public partial class BulkAddMovie : Form
         }
     }
 
-    private void bnFullAuto_Click(object sender, System.EventArgs e)
+    private async void bnFullAuto_Click(object sender, System.EventArgs e)
     {
         if (engine.AddItems.Count == 0)
         {
@@ -316,24 +325,65 @@ public partial class BulkAddMovie : Form
         bnFullAuto.Enabled = false;
         pbProgress.Visible = true;
         lblStatusLabel.Visible = true;
-        bwIdentify.RunWorkerAsync();
-    }
 
-    private static async Task AutoMatchMovieAsync(CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
-    {
-        if (cts.IsCancellationRequested)
+        CancellationTokenSource cts = new();
+
+        pbProgress.SetProgress(0);
+        pbProgress.Maximum = engine.AddItems.Count;
+
+        var progressHandler = new Progress<ProgressReport>(report =>
         {
-            return;
-        }
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(report.NumberComplete);
+            if (report.LatestItemProcessed is null)
+            {
+                return;
+            }
+            lblStatusLabel.Text = report.LatestItemProcessed.Movie?.ToUiVersion();
+        });
 
-        if (ai.CodeKnown)
+        var options = new ParallelOptions
         {
-            return;
-        }
+            MaxDegreeOfParallelism = 4, // Limit concurrent tasks
+            CancellationToken = cts.Token // Pass token to the loop mechanism
+        };
 
-        await ai.GuessMovieAsync(true);
+        VolatileCounter.Reset();
 
-        bw.ReportProgress((int)100.0 * VolatileCounter.Increment() / total, ai);
+        await Parallel.ForEachAsync(
+            engine.AddItems,
+            options,
+            async (movie,token) =>
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                if (movie.CodeKnown)
+                {
+                    return;
+                }
+
+                await movie.GuessMovieAsync(true);
+
+                var report = new ProgressReport
+                {
+                    NumberComplete = VolatileCounter.Increment(),
+                    LatestItemProcessed = movie
+                };
+
+                ((IProgress<ProgressReport>)progressHandler).Report(report);
+            }
+            );
+
+        cts.Cancel();
+
+        olvFMNewShows.UpdateObjects(engine.AddItems );
+        olvFMNewShows.Update();
+        bnFullAuto.Enabled = true;
+        pbProgress.Visible = false;
+        lblStatusLabel.Visible = false;
     }
 
     private void bnRemoveNewFolder_Click(object _, System.EventArgs e)
@@ -538,38 +588,6 @@ public partial class BulkAddMovie : Form
         CancellationTokenSource cts = new();
         engine.CheckFoldersAsync((BackgroundWorker)sender, true, true, cts.Token).GetAwaiter().GetResult();
         cts.Cancel();
-    }
-
-    private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-    {
-        Thread.CurrentThread.Name ??= "BulkAddMovie Identify Thread"; // Can only set it once
-        IdentifyAll((BackgroundWorker)sender);
-    }
-
-    private void IdentifyAll(BackgroundWorker bw)
-    {
-        CancellationTokenSource cts = new();
-        //TokenSource = cts;
-
-        VolatileCounter.Reset();
-
-        //todo make proper multi-threaded, but for now just do it in parallel
-        Parallel.ForEach(engine.AddItems, async movie =>
-        {
-            Thread.CurrentThread.Name ??= $" Identify {movie.Name}"; // Can only set it once
-            await AutoMatchMovieAsync(cts, movie, bw, engine.AddItems.Count);
-        });
-
-        cts.Cancel();
-    }
-
-    private void bwIdentify_ProgressChanged(object sender, ProgressChangedEventArgs e)
-    {
-        UpdateShowList();
-
-        pbProgress.SetProgress(e.ProgressPercentage);
-        lblStatusLabel.Text = (e.UserState as PossibleNewMovie)?.RefinedHint.ToUiVersion();
-        UpdateListItem(e.UserState as PossibleNewMovie, false);
     }
 
     private void UpdateShowList()

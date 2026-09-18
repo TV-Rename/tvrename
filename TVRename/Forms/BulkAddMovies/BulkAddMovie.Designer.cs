@@ -42,47 +42,44 @@ namespace TVRename
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BulkAddMovie));
-            bnCheck1 = new System.Windows.Forms.Button();
-            bnOpenMonFolder = new System.Windows.Forms.Button();
-            bnRemoveMonFolder = new System.Windows.Forms.Button();
-            label2 = new System.Windows.Forms.Label();
-            lstFMMonitorFolders = new System.Windows.Forms.ListBox();
-            bnAddMonFolder = new System.Windows.Forms.Button();
-            label7 = new System.Windows.Forms.Label();
-            bnOpenIgFolder = new System.Windows.Forms.Button();
-            bnAddIgFolder = new System.Windows.Forms.Button();
-            bnRemoveIgFolder = new System.Windows.Forms.Button();
-            lstFMIgnoreFolders = new System.Windows.Forms.ListBox();
-            bnVisitTVcom = new System.Windows.Forms.Button();
-            bnFullAuto = new System.Windows.Forms.Button();
-            bnFolderMonitorDone = new System.Windows.Forms.Button();
-            label6 = new System.Windows.Forms.Label();
-            bnRemoveNewFolder = new System.Windows.Forms.Button();
-            bnNewFolderOpen = new System.Windows.Forms.Button();
-            bnIgnoreNewFolder = new System.Windows.Forms.Button();
-            folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
-            tabControl1 = new System.Windows.Forms.TabControl();
-            tbFolders = new System.Windows.Forms.TabPage();
-            label1 = new System.Windows.Forms.Label();
-            tbIgnore = new System.Windows.Forms.TabPage();
-            bnCheck2 = new System.Windows.Forms.Button();
-            label3 = new System.Windows.Forms.Label();
-            tbResults = new System.Windows.Forms.TabPage();
-            bnEditEntry = new System.Windows.Forms.Button();
-            label4 = new System.Windows.Forms.Label();
-            imagesPassFail = new System.Windows.Forms.ImageList(components);
-            bnClose = new System.Windows.Forms.Button();
-            bwRescan = new System.ComponentModel.BackgroundWorker();
-            bwIdentify = new System.ComponentModel.BackgroundWorker();
-            pbProgress = new System.Windows.Forms.ProgressBar();
-            lblStatusLabel = new System.Windows.Forms.Label();
+            bnCheck1 = new Button();
+            bnOpenMonFolder = new Button();
+            bnRemoveMonFolder = new Button();
+            label2 = new Label();
+            lstFMMonitorFolders = new ListBox();
+            bnAddMonFolder = new Button();
+            label7 = new Label();
+            bnOpenIgFolder = new Button();
+            bnAddIgFolder = new Button();
+            bnRemoveIgFolder = new Button();
+            lstFMIgnoreFolders = new ListBox();
+            bnVisitTVcom = new Button();
+            bnFullAuto = new Button();
+            bnFolderMonitorDone = new Button();
+            label6 = new Label();
+            bnRemoveNewFolder = new Button();
+            bnNewFolderOpen = new Button();
+            bnIgnoreNewFolder = new Button();
+            folderBrowser = new FolderBrowserDialog();
+            tabControl1 = new TabControl();
+            tbFolders = new TabPage();
+            label1 = new Label();
+            tbIgnore = new TabPage();
+            bnCheck2 = new Button();
+            label3 = new Label();
+            tbResults = new TabPage();
             olvFMNewShows = new ObjectListViewFlickerFree();
             olvFOlder = new OLVColumn();
             olvMovie = new OLVColumn();
             olvYear = new OLVColumn();
             olvSourceCode = new OLVColumn();
-
-
+            imagesPassFail = new ImageList(components);
+            bnEditEntry = new Button();
+            label4 = new Label();
+            bnClose = new Button();
+            bwRescan = new System.ComponentModel.BackgroundWorker();
+            pbProgress = new ProgressBar();
+            lblStatusLabel = new Label();
             tabControl1.SuspendLayout();
             tbFolders.SuspendLayout();
             tbIgnore.SuspendLayout();
@@ -92,9 +89,9 @@ namespace TVRename
             // 
             // bnCheck1
             // 
-            bnCheck1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            bnCheck1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             bnCheck1.Location = new System.Drawing.Point(898, 443);
-            bnCheck1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnCheck1.Margin = new Padding(4, 3, 4, 3);
             bnCheck1.Name = "bnCheck1";
             bnCheck1.Size = new System.Drawing.Size(88, 27);
             bnCheck1.TabIndex = 10;
@@ -104,10 +101,10 @@ namespace TVRename
             // 
             // bnOpenMonFolder
             // 
-            bnOpenMonFolder.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            bnOpenMonFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnOpenMonFolder.Enabled = false;
             bnOpenMonFolder.Location = new System.Drawing.Point(196, 443);
-            bnOpenMonFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnOpenMonFolder.Margin = new Padding(4, 3, 4, 3);
             bnOpenMonFolder.Name = "bnOpenMonFolder";
             bnOpenMonFolder.Size = new System.Drawing.Size(88, 27);
             bnOpenMonFolder.TabIndex = 9;
@@ -117,10 +114,10 @@ namespace TVRename
             // 
             // bnRemoveMonFolder
             // 
-            bnRemoveMonFolder.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            bnRemoveMonFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnRemoveMonFolder.Enabled = false;
             bnRemoveMonFolder.Location = new System.Drawing.Point(102, 443);
-            bnRemoveMonFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnRemoveMonFolder.Margin = new Padding(4, 3, 4, 3);
             bnRemoveMonFolder.Name = "bnRemoveMonFolder";
             bnRemoveMonFolder.Size = new System.Drawing.Size(88, 27);
             bnRemoveMonFolder.TabIndex = 8;
@@ -132,7 +129,7 @@ namespace TVRename
             // 
             label2.AutoSize = true;
             label2.Location = new System.Drawing.Point(4, 45);
-            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(94, 15);
             label2.TabIndex = 5;
@@ -141,14 +138,14 @@ namespace TVRename
             // lstFMMonitorFolders
             // 
             lstFMMonitorFolders.AllowDrop = true;
-            lstFMMonitorFolders.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            lstFMMonitorFolders.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lstFMMonitorFolders.FormattingEnabled = true;
             lstFMMonitorFolders.IntegralHeight = false;
             lstFMMonitorFolders.Location = new System.Drawing.Point(7, 63);
-            lstFMMonitorFolders.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            lstFMMonitorFolders.Margin = new Padding(4, 3, 4, 3);
             lstFMMonitorFolders.Name = "lstFMMonitorFolders";
             lstFMMonitorFolders.ScrollAlwaysVisible = true;
-            lstFMMonitorFolders.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            lstFMMonitorFolders.SelectionMode = SelectionMode.MultiExtended;
             lstFMMonitorFolders.Size = new System.Drawing.Size(978, 372);
             lstFMMonitorFolders.TabIndex = 6;
             lstFMMonitorFolders.SelectedIndexChanged += lstFMMonitorFolders_SelectedIndexChanged;
@@ -159,9 +156,9 @@ namespace TVRename
             // 
             // bnAddMonFolder
             // 
-            bnAddMonFolder.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            bnAddMonFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnAddMonFolder.Location = new System.Drawing.Point(7, 443);
-            bnAddMonFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnAddMonFolder.Margin = new Padding(4, 3, 4, 3);
             bnAddMonFolder.Name = "bnAddMonFolder";
             bnAddMonFolder.Size = new System.Drawing.Size(88, 27);
             bnAddMonFolder.TabIndex = 7;
@@ -173,7 +170,7 @@ namespace TVRename
             // 
             label7.AutoSize = true;
             label7.Location = new System.Drawing.Point(4, 45);
-            label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label7.Margin = new Padding(4, 0, 4, 0);
             label7.Name = "label7";
             label7.Size = new System.Drawing.Size(85, 15);
             label7.TabIndex = 5;
@@ -181,10 +178,10 @@ namespace TVRename
             // 
             // bnOpenIgFolder
             // 
-            bnOpenIgFolder.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            bnOpenIgFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnOpenIgFolder.Enabled = false;
             bnOpenIgFolder.Location = new System.Drawing.Point(197, 443);
-            bnOpenIgFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnOpenIgFolder.Margin = new Padding(4, 3, 4, 3);
             bnOpenIgFolder.Name = "bnOpenIgFolder";
             bnOpenIgFolder.Size = new System.Drawing.Size(88, 27);
             bnOpenIgFolder.TabIndex = 9;
@@ -194,9 +191,9 @@ namespace TVRename
             // 
             // bnAddIgFolder
             // 
-            bnAddIgFolder.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            bnAddIgFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnAddIgFolder.Location = new System.Drawing.Point(7, 443);
-            bnAddIgFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnAddIgFolder.Margin = new Padding(4, 3, 4, 3);
             bnAddIgFolder.Name = "bnAddIgFolder";
             bnAddIgFolder.Size = new System.Drawing.Size(88, 27);
             bnAddIgFolder.TabIndex = 7;
@@ -206,10 +203,10 @@ namespace TVRename
             // 
             // bnRemoveIgFolder
             // 
-            bnRemoveIgFolder.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            bnRemoveIgFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnRemoveIgFolder.Enabled = false;
             bnRemoveIgFolder.Location = new System.Drawing.Point(103, 443);
-            bnRemoveIgFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnRemoveIgFolder.Margin = new Padding(4, 3, 4, 3);
             bnRemoveIgFolder.Name = "bnRemoveIgFolder";
             bnRemoveIgFolder.Size = new System.Drawing.Size(88, 27);
             bnRemoveIgFolder.TabIndex = 8;
@@ -220,14 +217,14 @@ namespace TVRename
             // lstFMIgnoreFolders
             // 
             lstFMIgnoreFolders.AllowDrop = true;
-            lstFMIgnoreFolders.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            lstFMIgnoreFolders.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lstFMIgnoreFolders.FormattingEnabled = true;
             lstFMIgnoreFolders.IntegralHeight = false;
             lstFMIgnoreFolders.Location = new System.Drawing.Point(7, 63);
-            lstFMIgnoreFolders.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            lstFMIgnoreFolders.Margin = new Padding(4, 3, 4, 3);
             lstFMIgnoreFolders.Name = "lstFMIgnoreFolders";
             lstFMIgnoreFolders.ScrollAlwaysVisible = true;
-            lstFMIgnoreFolders.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            lstFMIgnoreFolders.SelectionMode = SelectionMode.MultiExtended;
             lstFMIgnoreFolders.Size = new System.Drawing.Size(978, 372);
             lstFMIgnoreFolders.TabIndex = 6;
             lstFMIgnoreFolders.SelectedIndexChanged += lstFMIgnoreFolders_SelectedIndexChanged;
@@ -237,10 +234,10 @@ namespace TVRename
             // 
             // bnVisitTVcom
             // 
-            bnVisitTVcom.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            bnVisitTVcom.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnVisitTVcom.Enabled = false;
             bnVisitTVcom.Location = new System.Drawing.Point(404, 443);
-            bnVisitTVcom.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnVisitTVcom.Margin = new Padding(4, 3, 4, 3);
             bnVisitTVcom.Name = "bnVisitTVcom";
             bnVisitTVcom.Size = new System.Drawing.Size(88, 27);
             bnVisitTVcom.TabIndex = 26;
@@ -250,9 +247,9 @@ namespace TVRename
             // 
             // bnFullAuto
             // 
-            bnFullAuto.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            bnFullAuto.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnFullAuto.Location = new System.Drawing.Point(7, 443);
-            bnFullAuto.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnFullAuto.Margin = new Padding(4, 3, 4, 3);
             bnFullAuto.Name = "bnFullAuto";
             bnFullAuto.Size = new System.Drawing.Size(88, 27);
             bnFullAuto.TabIndex = 24;
@@ -262,9 +259,9 @@ namespace TVRename
             // 
             // bnFolderMonitorDone
             // 
-            bnFolderMonitorDone.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            bnFolderMonitorDone.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             bnFolderMonitorDone.Location = new System.Drawing.Point(898, 443);
-            bnFolderMonitorDone.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnFolderMonitorDone.Margin = new Padding(4, 3, 4, 3);
             bnFolderMonitorDone.Name = "bnFolderMonitorDone";
             bnFolderMonitorDone.Size = new System.Drawing.Size(88, 27);
             bnFolderMonitorDone.TabIndex = 10;
@@ -276,7 +273,7 @@ namespace TVRename
             // 
             label6.AutoSize = true;
             label6.Location = new System.Drawing.Point(4, 45);
-            label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label6.Margin = new Padding(4, 0, 4, 0);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(72, 15);
             label6.TabIndex = 5;
@@ -284,10 +281,10 @@ namespace TVRename
             // 
             // bnRemoveNewFolder
             // 
-            bnRemoveNewFolder.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            bnRemoveNewFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnRemoveNewFolder.Enabled = false;
             bnRemoveNewFolder.Location = new System.Drawing.Point(204, 443);
-            bnRemoveNewFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnRemoveNewFolder.Margin = new Padding(4, 3, 4, 3);
             bnRemoveNewFolder.Name = "bnRemoveNewFolder";
             bnRemoveNewFolder.Size = new System.Drawing.Size(88, 27);
             bnRemoveNewFolder.TabIndex = 9;
@@ -297,10 +294,10 @@ namespace TVRename
             // 
             // bnNewFolderOpen
             // 
-            bnNewFolderOpen.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            bnNewFolderOpen.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnNewFolderOpen.Enabled = false;
             bnNewFolderOpen.Location = new System.Drawing.Point(498, 443);
-            bnNewFolderOpen.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnNewFolderOpen.Margin = new Padding(4, 3, 4, 3);
             bnNewFolderOpen.Name = "bnNewFolderOpen";
             bnNewFolderOpen.Size = new System.Drawing.Size(88, 27);
             bnNewFolderOpen.TabIndex = 9;
@@ -310,10 +307,10 @@ namespace TVRename
             // 
             // bnIgnoreNewFolder
             // 
-            bnIgnoreNewFolder.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            bnIgnoreNewFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnIgnoreNewFolder.Enabled = false;
             bnIgnoreNewFolder.Location = new System.Drawing.Point(299, 443);
-            bnIgnoreNewFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnIgnoreNewFolder.Margin = new Padding(4, 3, 4, 3);
             bnIgnoreNewFolder.Name = "bnIgnoreNewFolder";
             bnIgnoreNewFolder.Size = new System.Drawing.Size(88, 27);
             bnIgnoreNewFolder.TabIndex = 9;
@@ -327,12 +324,12 @@ namespace TVRename
             // 
             // tabControl1
             // 
-            tabControl1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControl1.Controls.Add(tbFolders);
             tabControl1.Controls.Add(tbIgnore);
             tabControl1.Controls.Add(tbResults);
             tabControl1.Location = new System.Drawing.Point(0, 0);
-            tabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tabControl1.Margin = new Padding(4, 3, 4, 3);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new System.Drawing.Size(1002, 503);
@@ -348,9 +345,9 @@ namespace TVRename
             tbFolders.Controls.Add(bnRemoveMonFolder);
             tbFolders.Controls.Add(lstFMMonitorFolders);
             tbFolders.Location = new System.Drawing.Point(4, 24);
-            tbFolders.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbFolders.Margin = new Padding(4, 3, 4, 3);
             tbFolders.Name = "tbFolders";
-            tbFolders.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbFolders.Padding = new Padding(4, 3, 4, 3);
             tbFolders.Size = new System.Drawing.Size(994, 475);
             tbFolders.TabIndex = 0;
             tbFolders.Text = "Folders";
@@ -359,7 +356,7 @@ namespace TVRename
             // label1
             // 
             label1.Location = new System.Drawing.Point(4, 3);
-            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(656, 42);
             label1.TabIndex = 5;
@@ -375,9 +372,9 @@ namespace TVRename
             tbIgnore.Controls.Add(bnRemoveIgFolder);
             tbIgnore.Controls.Add(bnAddIgFolder);
             tbIgnore.Location = new System.Drawing.Point(4, 24);
-            tbIgnore.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbIgnore.Margin = new Padding(4, 3, 4, 3);
             tbIgnore.Name = "tbIgnore";
-            tbIgnore.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbIgnore.Padding = new Padding(4, 3, 4, 3);
             tbIgnore.Size = new System.Drawing.Size(994, 475);
             tbIgnore.TabIndex = 1;
             tbIgnore.Text = "Ignore";
@@ -385,9 +382,9 @@ namespace TVRename
             // 
             // bnCheck2
             // 
-            bnCheck2.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            bnCheck2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             bnCheck2.Location = new System.Drawing.Point(896, 443);
-            bnCheck2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnCheck2.Margin = new Padding(4, 3, 4, 3);
             bnCheck2.Name = "bnCheck2";
             bnCheck2.Size = new System.Drawing.Size(88, 27);
             bnCheck2.TabIndex = 11;
@@ -398,7 +395,7 @@ namespace TVRename
             // label3
             // 
             label3.Location = new System.Drawing.Point(4, 3);
-            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(568, 42);
             label3.TabIndex = 10;
@@ -417,112 +414,36 @@ namespace TVRename
             tbResults.Controls.Add(bnFolderMonitorDone);
             tbResults.Controls.Add(bnRemoveNewFolder);
             tbResults.Location = new System.Drawing.Point(4, 24);
-            tbResults.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbResults.Margin = new Padding(4, 3, 4, 3);
             tbResults.Name = "tbResults";
             tbResults.Size = new System.Drawing.Size(994, 475);
             tbResults.TabIndex = 2;
             tbResults.Text = "Scan Results";
             tbResults.UseVisualStyleBackColor = true;
             // 
-            // bnEditEntry
-            // 
-            bnEditEntry.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            bnEditEntry.Enabled = false;
-            bnEditEntry.Location = new System.Drawing.Point(108, 443);
-            bnEditEntry.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            bnEditEntry.Name = "bnEditEntry";
-            bnEditEntry.Size = new System.Drawing.Size(88, 27);
-            bnEditEntry.TabIndex = 28;
-            bnEditEntry.Text = "&Edit";
-            bnEditEntry.UseVisualStyleBackColor = true;
-            bnEditEntry.Click += bnEditEntry_Click;
-            // 
-            // label4
-            // 
-            label4.Location = new System.Drawing.Point(4, 3);
-            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(752, 37);
-            label4.TabIndex = 12;
-            label4.Text = resources.GetString("label4.Text");
-            // 
-            // imagesPassFail
-            // 
-            imagesPassFail.ColorDepth = System.Windows.Forms.ColorDepth.Depth24Bit;
-            imagesPassFail.ImageStream = (System.Windows.Forms.ImageListStreamer)resources.GetObject("imagesPassFail.ImageStream");
-            imagesPassFail.TransparentColor = System.Drawing.Color.Transparent;
-            imagesPassFail.Images.SetKeyName(0, "fail");
-            imagesPassFail.Images.SetKeyName(1, "pass");
-            // 
-            // bnClose
-            // 
-            bnClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            bnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            bnClose.Location = new System.Drawing.Point(903, 510);
-            bnClose.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            bnClose.Name = "bnClose";
-            bnClose.Size = new System.Drawing.Size(88, 27);
-            bnClose.TabIndex = 27;
-            bnClose.Text = "Close";
-            bnClose.UseVisualStyleBackColor = true;
-            bnClose.Click += bnClose_Click;
-            // 
-            // bwRescan
-            // 
-            bwRescan.WorkerReportsProgress = true;
-            bwRescan.DoWork += bwRescan_DoWork;
-            bwRescan.ProgressChanged += bwRescan_ProgressChanged;
-            bwRescan.RunWorkerCompleted += bwRescan_RunWorkerCompleted;
-            // 
-            // bwIdentify
-            // 
-            bwIdentify.WorkerReportsProgress = true;
-            bwIdentify.DoWork += backgroundWorker1_DoWork;
-            bwIdentify.ProgressChanged += bwIdentify_ProgressChanged;
-            bwIdentify.RunWorkerCompleted += bwIdentify_RunWorkerCompleted;
-            // 
-            // pbProgress
-            // 
-            pbProgress.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            pbProgress.Location = new System.Drawing.Point(5, 510);
-            pbProgress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            pbProgress.Name = "pbProgress";
-            pbProgress.Size = new System.Drawing.Size(196, 27);
-            pbProgress.TabIndex = 28;
-            pbProgress.Visible = false;
-            // 
-            // lblStatusLabel
-            // 
-            lblStatusLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            lblStatusLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
-            lblStatusLabel.Location = new System.Drawing.Point(208, 510);
-            lblStatusLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            lblStatusLabel.Name = "lblStatusLabel";
-            lblStatusLabel.Size = new System.Drawing.Size(363, 27);
-            lblStatusLabel.TabIndex = 29;
-            lblStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // olvFMNewShows
-            //
+            // 
             olvFMNewShows.AllColumns.Add(olvFOlder);
             olvFMNewShows.AllColumns.Add(olvMovie);
             olvFMNewShows.AllColumns.Add(olvYear);
             olvFMNewShows.AllColumns.Add(olvSourceCode);
-            olvFMNewShows.Columns.AddRange(new ColumnHeader[] { olvFOlder, olvMovie, olvYear, olvSourceCode});
             olvFMNewShows.AllowDrop = true;
-            olvFMNewShows.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            olvFMNewShows.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            olvFMNewShows.Columns.AddRange(new ColumnHeader[] { olvFOlder, olvMovie, olvYear, olvSourceCode });
             olvFMNewShows.FullRowSelect = true;
             olvFMNewShows.Location = new System.Drawing.Point(4, 63);
             olvFMNewShows.Name = "olvFMNewShows";
             olvFMNewShows.Size = new System.Drawing.Size(982, 374);
             olvFMNewShows.SmallImageList = imagesPassFail;
             olvFMNewShows.TabIndex = 11;
-            olvFMNewShows.View = System.Windows.Forms.View.Details;
-            olvFMNewShows.SelectedIndexChanged += new System.EventHandler(this.lvFMNewShows_SelectedIndexChanged);
-            olvFMNewShows.DragDrop += new System.Windows.Forms.DragEventHandler(this.lvFMNewShows_DragDrop);
-            olvFMNewShows.DragOver += new System.Windows.Forms.DragEventHandler(this.lvFMNewShows_DragOver);
-            olvFMNewShows.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvFMNewShows_KeyDown);
-            olvFMNewShows.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvFMNewShows_MouseDoubleClick);
+            olvFMNewShows.View = View.Details;
+            olvFMNewShows.SelectedIndexChanged += lvFMNewShows_SelectedIndexChanged;
+            olvFMNewShows.DragDrop += lvFMNewShows_DragDrop;
+            olvFMNewShows.DragOver += lvFMNewShows_DragOver;
+            olvFMNewShows.KeyDown += lvFMNewShows_KeyDown;
+            olvFMNewShows.MouseDoubleClick += lvFMNewShows_MouseDoubleClick;
+            olvFMNewShows.UseFilterIndicator = true;
+            olvFMNewShows.UseFiltering = true;
             // 
             // olvFOlder
             // 
@@ -558,23 +479,94 @@ namespace TVRename
             olvSourceCode.Text = "Source Code";
             olvSourceCode.Width = 94;
             // 
+            // imagesPassFail
+            // 
+            imagesPassFail.ColorDepth = ColorDepth.Depth24Bit;
+            imagesPassFail.ImageStream = (ImageListStreamer)resources.GetObject("imagesPassFail.ImageStream");
+            imagesPassFail.TransparentColor = System.Drawing.Color.Transparent;
+            imagesPassFail.Images.SetKeyName(0, "fail");
+            imagesPassFail.Images.SetKeyName(1, "pass");
+            // 
+            // bnEditEntry
+            // 
+            bnEditEntry.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            bnEditEntry.Enabled = false;
+            bnEditEntry.Location = new System.Drawing.Point(108, 443);
+            bnEditEntry.Margin = new Padding(4, 3, 4, 3);
+            bnEditEntry.Name = "bnEditEntry";
+            bnEditEntry.Size = new System.Drawing.Size(88, 27);
+            bnEditEntry.TabIndex = 28;
+            bnEditEntry.Text = "&Edit";
+            bnEditEntry.UseVisualStyleBackColor = true;
+            bnEditEntry.Click += bnEditEntry_Click;
+            // 
+            // label4
+            // 
+            label4.Location = new System.Drawing.Point(4, 3);
+            label4.Margin = new Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(752, 37);
+            label4.TabIndex = 12;
+            label4.Text = resources.GetString("label4.Text");
+            // 
+            // bnClose
+            // 
+            bnClose.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            bnClose.DialogResult = DialogResult.Cancel;
+            bnClose.Location = new System.Drawing.Point(903, 510);
+            bnClose.Margin = new Padding(4, 3, 4, 3);
+            bnClose.Name = "bnClose";
+            bnClose.Size = new System.Drawing.Size(88, 27);
+            bnClose.TabIndex = 27;
+            bnClose.Text = "Close";
+            bnClose.UseVisualStyleBackColor = true;
+            bnClose.Click += bnClose_Click;
+            // 
+            // bwRescan
+            // 
+            bwRescan.WorkerReportsProgress = true;
+            bwRescan.DoWork += bwRescan_DoWork;
+            bwRescan.ProgressChanged += bwRescan_ProgressChanged;
+            bwRescan.RunWorkerCompleted += bwRescan_RunWorkerCompleted;
+            // 
+            // pbProgress
+            // 
+            pbProgress.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            pbProgress.Location = new System.Drawing.Point(5, 510);
+            pbProgress.Margin = new Padding(4, 3, 4, 3);
+            pbProgress.Name = "pbProgress";
+            pbProgress.Size = new System.Drawing.Size(196, 27);
+            pbProgress.TabIndex = 28;
+            pbProgress.Visible = false;
+            // 
+            // lblStatusLabel
+            // 
+            lblStatusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            lblStatusLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+            lblStatusLabel.Location = new System.Drawing.Point(208, 510);
+            lblStatusLabel.Margin = new Padding(4, 0, 4, 0);
+            lblStatusLabel.Name = "lblStatusLabel";
+            lblStatusLabel.Size = new System.Drawing.Size(363, 27);
+            lblStatusLabel.TabIndex = 29;
+            lblStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // BulkAddMovie
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1002, 550);
             Controls.Add(lblStatusLabel);
             Controls.Add(pbProgress);
             Controls.Add(bnClose);
             Controls.Add(tabControl1);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
-            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Margin = new Padding(4, 3, 4, 3);
             MinimizeBox = false;
             MinimumSize = new System.Drawing.Size(872, 340);
             Name = "BulkAddMovie";
             ShowInTaskbar = false;
-            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            SizeGripStyle = SizeGripStyle.Show;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Bulk Add Movies";
             tabControl1.ResumeLayout(false);
             tbFolders.ResumeLayout(false);
@@ -622,7 +614,6 @@ namespace TVRename
         private System.Windows.Forms.Button bnCheck2;
         private System.Windows.Forms.ImageList imagesPassFail;
         private System.ComponentModel.BackgroundWorker bwRescan;
-        private System.ComponentModel.BackgroundWorker bwIdentify;
         private System.Windows.Forms.ProgressBar pbProgress;
         private System.Windows.Forms.Label lblStatusLabel;
         private ObjectListViewFlickerFree olvFMNewShows;

@@ -429,6 +429,7 @@ namespace TVRename
             this.lvFMNewShows.DragOver += new System.Windows.Forms.DragEventHandler(this.lvFMNewShows_DragOver);
             this.lvFMNewShows.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvFMNewShows_KeyDown);
             this.lvFMNewShows.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvFMNewShows_MouseDoubleClick);
+            this.lvFMNewShows.ShowGroups = false;
             //
             // columnHeader42
             //

@@ -160,7 +160,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     private async Task<bool> DownloadEpisodeNowAsync(ISeriesSpecifier series, int episodeId, Locale locale, ProcessedSeason.SeasonType order)
     {
-        if (episodeId == 0)
+        if (episodeId == 0 || episodeId == -1)
         {
             LOGGER.Warn($"Asked to download episodeId = 0 for cachedSeries {series.Name}:{series.TvdbId}");
             SayNothing();
@@ -616,7 +616,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     private async Task<CachedSeriesInfo?> DownloadSeriesNowAsync(ISeriesSpecifier code, bool episodesToo, bool bannersToo, Locale locale,
         bool showErrorMsgBox)
     {
-        if (code.TvdbId == 0)
+        if (code.TvdbId == 0 || code.TvdbId == -1)
         {
             SayNothing();
             return null;
@@ -941,7 +941,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private async Task<CachedMovieInfo?> DownloadMovieNowAsync(ISeriesSpecifier tvdbId, Locale locale, bool showErrroMsgBox)
     {
-        if (tvdbId.TvdbId == 0)
+        if (tvdbId.TvdbId == 0 || tvdbId.TvdbId == -1)
         {
             SayNothing();
             return null;
