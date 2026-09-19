@@ -19,7 +19,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
                                      TVSettings.Instance.ReplaceWithBetterQuality ||
                                      TVSettings.Instance.ReplaceMoviesWithBetterQuality ||
                                      TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders;
-
+    
     protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
     protected override async Task DoCheckAsync(SetProgressDelegate progress)
@@ -433,7 +433,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
 
             case FileHelper.VideoComparison.cantTell:
             case FileHelper.VideoComparison.similar:
-                if (unattended)
+                if (unattended || !TVSettings.Instance.ReplaceWithBetterQuality)
                 {
                     LOGGER.Info(
                         $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
@@ -502,7 +502,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
 
             case FileHelper.VideoComparison.cantTell:
             case FileHelper.VideoComparison.similar:
-                if (unattended)
+                if (unattended || !TVSettings.Instance.ReplaceMoviesWithBetterQuality)
                 {
                     LOGGER.Info(
                         $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
