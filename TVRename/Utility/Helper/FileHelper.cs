@@ -1110,4 +1110,9 @@ public static class FileHelper
                && Directory.Exists(path)
                && Directory.EnumerateFileSystemEntries(path).Any();
     }
+
+    internal static bool FileExists(string destination)
+    {
+        return File.Exists(destination);
+    }
 }

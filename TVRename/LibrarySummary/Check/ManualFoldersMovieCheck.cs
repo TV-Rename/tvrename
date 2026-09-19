@@ -107,6 +107,12 @@ internal class ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : Cu
         foreach (FileInfo? f in where)
         {
             string destinationPath = System.IO.Path.Combine(destination, f.Name);
+
+            if (FileHelper.FileExists(destinationPath))
+            {
+                throw new FixCheckException($"Could not move {f.Name} to {destinationPath} as it already exists. Please remove one manually and retry.");
+            }
+
             f.MoveTo(destinationPath);
             LOGGER.Info($"Moved {f.FullName} to {destinationPath}");
         }
