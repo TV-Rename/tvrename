@@ -8,6 +8,7 @@
 
 using System;
 using System.Windows.Forms;
+using TVRename.Forms;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 namespace TVRename;
@@ -27,10 +28,13 @@ public partial class CopyMoveProgress : Form
     private readonly ItemList mToDo;
     private readonly System.Action mDoOnClose;
 
-    public CopyMoveProgress(TVDoc engine, TVDoc.ActionSettings settings, System.Action doOnClose)
+    public CopyMoveProgress(TVDoc engine, System.Action doOnClose) : this(engine, engine.TheActionList, doOnClose)
+    {}
+
+    public CopyMoveProgress(TVDoc engine, ItemList shows, System.Action doOnClose)
     {
         mDoc = engine.ActionManager;
-        mToDo = settings.DoAll ? engine.TheActionList : settings.Lvr;
+        mToDo = shows;
         mDoOnClose = doOnClose;
         InitializeComponent();
         copyTimer.Start();
@@ -190,7 +194,7 @@ public partial class CopyMoveProgress : Form
             }
         }
 
-        pbDiskSpace.Value = diskValue.Between(pbDiskSpace.Minimum, pbDiskSpace.Maximum);
+        pbDiskSpace.SetProgress(diskValue);
         txtDiskSpace.Text = diskText;
     }
 
@@ -256,10 +260,7 @@ public partial class CopyMoveProgress : Form
             return;
         }
 
-        Form parentWindow = childWindow.Owner;
-        if (parentWindow != null)
-        {
-            parentWindow.WindowState = FormWindowState.Minimized;
-        }
+        Form? parentWindow = childWindow.Owner;
+        parentWindow?.WindowState = FormWindowState.Minimized;
     }
 }

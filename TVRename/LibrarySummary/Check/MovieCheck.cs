@@ -1,15 +1,10 @@
 namespace TVRename;
 
-internal abstract class MovieCheck : SettingsCheck
+internal abstract class MovieCheck(MovieConfiguration movie, TVDoc doc) : SettingsCheck(doc)
 {
-    public readonly MovieConfiguration Movie;
+    public readonly MovieConfiguration Movie = movie;
 
-    protected MovieCheck(MovieConfiguration movie, TVDoc doc) : base(doc)
-    {
-        Movie = movie;
-    }
-
-    protected override void MarkMediaDirty()
+    protected override async void MarkMediaDirtyAsync()
     {
         if (Movie.CachedMovie == null)
         {
@@ -17,7 +12,7 @@ internal abstract class MovieCheck : SettingsCheck
         }
 
         Movie.CachedMovie.Dirty = true;
-        Doc.MoviesAddedOrEdited(false, true, true, null, Movie);
+        await Doc.MoviesAddedOrEditedAsync(false, true, true, null, Movie);
     }
 
     public override MediaConfiguration.MediaType Type() => MediaConfiguration.MediaType.movie;

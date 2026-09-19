@@ -2,6 +2,7 @@ using Humanizer;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
+using System.Threading.Tasks;
 
 namespace TVRename.TheTVDB;
 
@@ -57,35 +58,35 @@ internal class TokenProvider
         lastRefreshTime = DateTime.MinValue;
     }
 
-    public string GetToken()
+    public async Task<string> GetTokenAsync()
     {
         //If we have not logged on at all then logon
         if (!IsTokenAcquired())
         {
-            AcquireToken();
+            await AcquireTokenAsync().ConfigureAwait(false);
         }
         //If we have logged in but the token has expired so logon again
         if (!TokenIsValid())
         {
-            AcquireToken();
+            await AcquireTokenAsync().ConfigureAwait(false);
         }
         //If we have logged on and have a valid token that is nearing its use-by date then refresh
         if (ShouldRefreshToken())
         {
             if (ApiVersion.v4 == TVSettings.Instance.TvdbVersion)
             {
-                AcquireToken();
+                await AcquireTokenAsync();
             }
             else
             {
                 try
                 {
-                    RefreshToken();
+                    await RefreshTokenAsync();
                 }
                 catch (Exception e)
                 {
                     Logger.Error($"Could not refresh Token: {e.ErrorText()}");
-                    AcquireToken();
+                    await AcquireTokenAsync();
                 }
             }
         }
@@ -93,16 +94,16 @@ internal class TokenProvider
         return lastKnownToken;
     }
 
-    public void EnsureValid()
+    public async Task EnsureValidAsync()
     {
-        GetToken();
+        await GetTokenAsync();
     }
 
-    private void AcquireToken()
+    private async Task AcquireTokenAsync()
     {
         Logger.Info("Acquire a TheTVDB token... ");
         JObject request = new(new JProperty("apikey", TVDB_API_KEY), new JProperty("pin", "TVDB_API_KEY"));
-        JObject jsonResponse = HttpHelper.JsonHttpPostRequest($"{TVDB_API_URL}/login", request, true);
+        JObject jsonResponse = await HttpHelper.JsonHttpPostRequestAsync($"{TVDB_API_URL}/login", request, true).ConfigureAwait(false);
 
         string? newToken = TVSettings.Instance.TvdbVersion == ApiVersion.v4 ? (string?)jsonResponse["data"]?["token"] : (string?)jsonResponse["token"];
         if (newToken == null)
@@ -116,10 +117,10 @@ internal class TokenProvider
         Logger.Info("New Token " + lastKnownToken);
     }
 
-    private void RefreshToken()
+    private async Task RefreshTokenAsync()
     {
         Logger.Info("Refreshing TheTVDB token... ");
-        JObject jsonResponse = HttpHelper.JsonHttpGetRequest($"{TVDB_API_URL}/refresh_token", lastKnownToken);
+        JObject jsonResponse = await HttpHelper.JsonHttpGetRequestAsync($"{TVDB_API_URL}/refresh_token", lastKnownToken);
 
         string? newToken = (string?)jsonResponse["token"];
         if (newToken == null)

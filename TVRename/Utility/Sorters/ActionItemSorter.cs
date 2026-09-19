@@ -10,9 +10,9 @@ using System;
 
 namespace TVRename;
 
-public abstract class ActionItemSorter : System.Collections.Generic.IComparer<Item>
+public abstract class ListSorter<T> : System.Collections.Generic.IComparer<T>
 {
-    public int Compare(Item? x, Item? y)
+    public int Compare(T? x, T? y)
     {
         if (x is null)
         {
@@ -27,9 +27,9 @@ public abstract class ActionItemSorter : System.Collections.Generic.IComparer<It
         return CompareItems(x,y);
     }
 
-    protected abstract int CompareItems(Item item, Item item1);
+    protected abstract int CompareItems(T item, T item1);
 }
-public class DefaultActionItemSorter:ActionItemSorter
+public class DefaultActionItemSorter: ListSorter<Item>
 {
     #region IComparer<Item> Members
 
@@ -76,18 +76,18 @@ public class DefaultActionItemSorter:ActionItemSorter
     }
 }
 
-public abstract class ActionItemStringSorter : ActionItemSorter
+public abstract class ActionItemStringSorter<T> : ListSorter<T>
 {
-    protected override int CompareItems(Item x, Item y) => string.Compare(GetString(x),GetString(y),StringComparison.CurrentCultureIgnoreCase);
+    protected override int CompareItems(T x, T y) => string.Compare(GetString(x), GetString(y), StringComparison.CurrentCultureIgnoreCase);
 
-    protected abstract string GetString(Item x);
+    protected abstract string GetString(T x);
 }
 
-public class ActionItemNameSorter : ActionItemStringSorter
+public class ActionItemNameSorter : ActionItemStringSorter<Item>
 {
     protected override string GetString(Item x) => x.SeriesName;
 }
-public class ActionItemDateSorter : ActionItemSorter
+public class ActionItemDateSorter : ListSorter<Item>
 {
     protected override int CompareItems(Item x, Item y)
     {
@@ -111,29 +111,116 @@ public class ActionItemDateSorter : ActionItemSorter
         return xIsNull ? -1 : 1;
     }
 }
-public class ActionItemFilenameSorter : ActionItemStringSorter
+public class ActionItemFilenameSorter : ActionItemStringSorter<Item>
 {
     protected override string GetString(Item x) => x.DestinationFile ?? string.Empty;
 }
-public class ActionItemFolderSorter : ActionItemStringSorter
+public class ActionItemFolderSorter : ActionItemStringSorter<Item>
 {
     protected override string GetString(Item x) => x.DestinationFolder ?? string.Empty;
 }
-public class ActionItemSourceSorter : ActionItemStringSorter
+public class ActionItemSourceSorter : ActionItemStringSorter<Item>
 {
     protected override string GetString(Item x) => x.SourceDetails;
 }
-public class ActionItemErrorsSorter : ActionItemStringSorter
+public class ActionItemErrorsSorter : ActionItemStringSorter<Item>
 {
     protected override string GetString(Item x) =>x.ErrorText ?? string.Empty;
 }
-public class ActionItemSeasonSorter : ActionItemSorter
+public class ActionItemSeasonSorter : ListSorter<Item>
 {
     protected override int CompareItems(Item x, Item y) => GetValue(x) - GetValue(y);
     private static int GetValue(Item x) => x.SeasonNumberAsInt ?? 0;
 }
-public class ActionItemEpisodeSorter : ActionItemSorter
+public class ActionItemEpisodeSorter : ListSorter<Item>
 {
     protected override int CompareItems(Item x, Item y) => GetValue(x) - GetValue(y);
     private static int GetValue(Item x) => x.EpisodeNumber ?? 0;
+}
+
+public class DefaultProcessedEpisodeSorter : ListSorter<ProcessedEpisode>
+{
+    #region IComparer<ProcessedEpisode> Members
+
+    protected override int CompareItems(ProcessedEpisode x, ProcessedEpisode y)
+    {
+        DateTime? XairDate = x.AirDate;
+        DateTime? YairDate = y.AirDate;
+        if (XairDate == null && YairDate == null)
+        {
+            return x.SeriesId.CompareTo(y.SeriesId);
+        }
+        if (XairDate == null)
+        {
+            return -1;
+        }
+        if (YairDate == null)
+        {
+            return 1;
+        }   
+        return DateTime.Compare(XairDate.Value, YairDate.Value);
+    }
+
+    #endregion IComparer<ProcessedEpisode> Members
+}
+
+
+public class EpisodeNetworkSorter : EpisodeStringSorter
+{
+    protected override string GetString(ProcessedEpisode x) => x.Network;
+}
+
+public class EpisodeSeriesSorter : EpisodeStringSorter
+{
+    protected override string GetString(ProcessedEpisode x) => x.SeriesName;
+}
+public class EpisodeNameSorter : EpisodeStringSorter
+{
+    protected override string GetString(ProcessedEpisode x) => x.Name;
+}
+
+public class EpisodeLengthSorter : EpisodeStringSorter
+{
+    protected override string GetString(ProcessedEpisode x) => x.Length;
+}
+public class EpisodeDateSorter : ListSorter<ProcessedEpisode>
+{
+    protected override int CompareItems(ProcessedEpisode x, ProcessedEpisode y)
+    {
+        DateTime? x1 = x.AirDate;
+        DateTime? y1 = y.AirDate;
+
+        // Handle nulls. Null values come last
+        bool xIsNull = x1 == null;
+        bool yIsNull = y1 == null;
+
+        if (x1 != null && y1 != null)
+        {
+            return DateTime.Compare(x1.Value, y1.Value);
+        }
+
+        if (xIsNull && yIsNull)
+        {
+            return 0;
+        }
+
+        return xIsNull ? -1 : 1;
+    }
+}
+
+public class SeasonNumberSorter : ListSorter<ProcessedEpisode>
+{
+    protected override int CompareItems(ProcessedEpisode x, ProcessedEpisode y) => GetValue(x) - GetValue(y);
+    private static int GetValue(ProcessedEpisode x) => x.AppropriateSeasonNumber;
+}
+public class EpisodeNumberSorter : ListSorter<ProcessedEpisode>
+{
+    protected override int CompareItems(ProcessedEpisode x, ProcessedEpisode y) => GetValue(x) - GetValue(y);
+    private static int GetValue(ProcessedEpisode x) => x.AppropriateEpNum;
+}
+public abstract class EpisodeStringSorter : ListSorter<ProcessedEpisode>
+{
+    protected override int CompareItems(ProcessedEpisode x, ProcessedEpisode y) => string.Compare(GetString(x), GetString(y), StringComparison.CurrentCultureIgnoreCase);
+
+    protected abstract string GetString(ProcessedEpisode x);
 }

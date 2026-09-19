@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 using TVRename.Forms;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -20,7 +21,7 @@ internal class ActionNfoShow : ActionNfo
 
     protected override string RootName() => "tvshow";
 
-    protected override ActionOutcome UpdateFile()
+    protected override async Task<ActionOutcome> UpdateFileAsync()
     {
         XDocument doc = XDocument.Load(Where.FullName);
         XElement? root = doc.Root;
@@ -69,7 +70,7 @@ internal class ActionNfoShow : ActionNfo
                 UpdateRatings(root, showRating.ToString(CultureInfo.InvariantCulture), cachedSeries.SiteRatingVotes);
             }
         }
-        doc.Save(Where.FullName);
+        await doc.SaveXmlAsync(Where.FullName);
         return ActionOutcome.Success();
     }
 

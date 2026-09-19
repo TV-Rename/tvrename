@@ -1,8 +1,9 @@
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace TVRename;
 
-public class PossibleNewMovies : SafeList<PossibleNewMovie>
+public class PossibleNewMovies : ConcurrentBag<PossibleNewMovie>
 {
     public void AddIfNew(PossibleNewMovie ai)
     {
@@ -11,5 +12,10 @@ public class PossibleNewMovies : SafeList<PossibleNewMovie>
             return;
         }
         Add(ai);
+    }
+
+    internal void Remove(PossibleNewMovie ai)
+    {
+        TryTake(out PossibleNewMovie? removed);
     }
 }

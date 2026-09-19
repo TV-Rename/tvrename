@@ -8,7 +8,11 @@ namespace TVRename;
 /// <summary>
 /// Parse and store command line arguments.
 /// </summary>
-public class CommandLineArgs
+/// <remarks>
+/// Initializes a new instance populated with values parsed from the command line arguments.
+/// </remarks>
+/// <param name="args">The command line arguments.</param>
+public class CommandLineArgs(IReadOnlyCollection<string> args)
 {
     /// <summary>
     /// Actions to perform when a missing folder is found.
@@ -20,53 +24,25 @@ public class CommandLineArgs
         create
     }
 
-    public bool Hide { get; }
-    public bool Focus { get; }
-    public MissingFolderBehavior MissingFolder { get; private set; }
-    public bool RenameCheck { get; }
-    public bool Quit { get; }
-    public bool ForceRecover { get; }
-    public bool Scan { get; }
-    public bool Save { get; }
-    public bool QuickScan { get; }
-    public bool RecentScan { get; }
-    public bool DoAll { get; }
-    public bool ForceRefresh { get; }
-    public bool ForceUpdate { get; }
-    public bool Unattended { get; }
-    public bool QuickUpdate { get; }
-    public bool Export { get; }
-    public string? UserFilePath { get; }
+    public bool Hide { get; } = args.Contains("/hide", StringComparer.OrdinalIgnoreCase);
+    public bool Focus { get; } = args.Contains("/focus", StringComparer.OrdinalIgnoreCase);
+    public MissingFolderBehavior MissingFolder { get; private set; } = DecodeMissingFolderType(args);
+    public bool RenameCheck { get; } = !args.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase);
+    public bool Quit { get; } = args.Contains("/quit", StringComparer.OrdinalIgnoreCase);
+    public bool ForceRecover { get; } = args.Contains("/recover", StringComparer.OrdinalIgnoreCase);
+    public bool Scan { get; } = args.Contains("/scan", StringComparer.OrdinalIgnoreCase);
+    public bool Save { get; } = args.Contains("/save", StringComparer.OrdinalIgnoreCase);
+    public bool QuickScan { get; } = args.Contains("/quickscan", StringComparer.OrdinalIgnoreCase);
+    public bool RecentScan { get; } = args.Contains("/recentscan", StringComparer.OrdinalIgnoreCase);
+    public bool DoAll { get; } = args.Contains("/doall", StringComparer.OrdinalIgnoreCase);
+    public bool ForceRefresh { get; } = args.Contains("/forcerefresh", StringComparer.OrdinalIgnoreCase);
+    public bool ForceUpdate { get; } = args.Contains("/forceupdate", StringComparer.OrdinalIgnoreCase);
+    public bool Unattended { get; } = args.Contains("/unattended", StringComparer.OrdinalIgnoreCase);
+    public bool QuickUpdate { get; } = args.Contains("/quickupdate", StringComparer.OrdinalIgnoreCase);
+    public bool Export { get; } = args.Contains("/export", StringComparer.OrdinalIgnoreCase);
+    public string? UserFilePath { get; } = args.Where(a => a.StartsWith("/userfilepath:", StringComparison.OrdinalIgnoreCase)).Select(a => a[(a.IndexOf(':') + 1)..]).FirstOrDefault();
 
     private MissingFolderBehavior previousMissingFolderBehavior;
-
-    /// <summary>
-    /// Initializes a new instance populated with values parsed from the command line arguments.
-    /// </summary>
-    /// <param name="args">The command line arguments.</param>
-    public CommandLineArgs(IReadOnlyCollection<string> args)
-    {
-        Hide = args.Contains("/hide", StringComparer.OrdinalIgnoreCase);
-        Focus = args.Contains("/focus", StringComparer.OrdinalIgnoreCase);
-        RenameCheck = !args.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase);
-        Quit = args.Contains("/quit", StringComparer.OrdinalIgnoreCase);
-        ForceRecover = args.Contains("/recover", StringComparer.OrdinalIgnoreCase);
-        DoAll = args.Contains("/doall", StringComparer.OrdinalIgnoreCase);
-        Scan = args.Contains("/scan", StringComparer.OrdinalIgnoreCase);
-        QuickScan = args.Contains("/quickscan", StringComparer.OrdinalIgnoreCase);
-        RecentScan = args.Contains("/recentscan", StringComparer.OrdinalIgnoreCase);
-        Unattended = args.Contains("/unattended", StringComparer.OrdinalIgnoreCase);
-        ForceRefresh = args.Contains("/forcerefresh", StringComparer.OrdinalIgnoreCase);
-        ForceUpdate = args.Contains("/forceupdate", StringComparer.OrdinalIgnoreCase);
-        QuickUpdate = args.Contains("/quickupdate", StringComparer.OrdinalIgnoreCase);
-        Export = args.Contains("/export", StringComparer.OrdinalIgnoreCase);
-
-        Save = args.Contains("/save", StringComparer.OrdinalIgnoreCase);
-
-        UserFilePath = args.Where(a => a.StartsWith("/userfilepath:", StringComparison.OrdinalIgnoreCase)).Select(a => a[(a.IndexOf(":", StringComparison.Ordinal) + 1)..]).FirstOrDefault();
-
-        MissingFolder = DecodeMissingFolderType(args);
-    }
 
     private static MissingFolderBehavior DecodeMissingFolderType(IReadOnlyCollection<string> args)
     {

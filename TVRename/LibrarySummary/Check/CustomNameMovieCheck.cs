@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class CustomNameMovieCheck : CustomMovieCheck
+internal class CustomNameMovieCheck(MovieConfiguration movie, TVDoc doc) : CustomMovieCheck(movie, doc)
 {
-    public CustomNameMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     protected override void FixInternal()
     {
         Movie.UseCustomShowName = false;

@@ -111,7 +111,7 @@ public partial class MergedEpisodeFinder : Form
             return;
         }
 
-        PossibleMergedEpisode? mlastSelected = (PossibleMergedEpisode)lvMergedEpisodes.SelectedItems[0].Tag;
+        PossibleMergedEpisode? mlastSelected = (PossibleMergedEpisode?)lvMergedEpisodes.SelectedItems[0].Tag;
         ListViewItem? mLastClicked = lvMergedEpisodes.SelectedItems[0];
         ShowConfiguration? si = mlastSelected?.ShowConfiguration;
 
@@ -125,15 +125,15 @@ public partial class MergedEpisodeFinder : Form
         rightClickMenu.Items.Clear();
 
         rightClickMenu.Add("Episode Guide", (_, _) => GotoEpGuide(si, mlastSelected));
-        rightClickMenu.Add("Force Refresh", (_, _) => mainUi.ForceRefresh(si, false));
-        rightClickMenu.Add("Edit TV Show", (_, _) => mainUi.EditShow(si));
+        rightClickMenu.Add("Force Refresh", async (_, _) => await mainUi.ForceRefreshAsync(si, false));
+        rightClickMenu.Add("Edit TV Show", async (_, _) => await mainUi.EditShowAsync(si));
 
         rightClickMenu.Add("Edit " + ProcessedSeason.UIFullSeasonWord(mlastSelected!.SeasonNumber),
-            (_, _) => mainUi.EditSeason(si, mlastSelected.SeasonNumber));
+            async (_, _) => await mainUi.EditSeasonAsync(si, mlastSelected.SeasonNumber));
 
         rightClickMenu.AddSeparator();
         rightClickMenu.Add("Add Rule", (_, _) => AddRule(mlastSelected, si, mLastClicked));
-
+        
         rightClickMenu.Show(pt);
     }
 
@@ -177,7 +177,7 @@ public partial class MergedEpisodeFinder : Form
 
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         lblStatus.Text = e.UserState?.ToString().ToUiVersion();
     }
 

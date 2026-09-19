@@ -40,14 +40,14 @@ public partial class DuplicateMovieFinder : Form
         Thread.CurrentThread.Name ??= "DuplicateMovie Scan Thread"; // Can only set it once
         BackgroundWorker bw = (BackgroundWorker)sender;
         int total = mDoc.FilmLibrary.Movies.Count();
-        int current = 0;
+        ThreadSafeCounter currentRecord = new();
 
         dupMovies.Clear();
         foreach (MovieConfiguration? movie in mDoc.FilmLibrary.Movies)
         {
             ProcessMovie(movie);
 
-            bw.ReportProgress(100 * current++ / total, movie.ShowName);
+            bw.ReportProgress(100 * currentRecord.Increment() / total, movie.ShowName);
         }
     }
 
@@ -72,7 +72,7 @@ public partial class DuplicateMovieFinder : Form
 
     private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
+        pbProgress.SetProgress(e.ProgressPercentage);
         lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
     }
 
@@ -114,18 +114,18 @@ public partial class DuplicateMovieFinder : Form
 
         rightClickMenu.Items.Clear();
 
-        rightClickMenu.Add("Force Refresh", (_, _) =>
+        rightClickMenu.Add("Force Refresh", async (_, _) =>
         {
-            mainUi.ForceMovieRefresh([si], false);
+            await mainUi.ForceMovieRefreshAsync([si], false);
             Update(mlastSelected);
         });
         rightClickMenu.Add("Update", (_, _) =>
         {
             Update(mlastSelected);
         });
-        rightClickMenu.Add("Edit Movie", (_, _) =>
+        rightClickMenu.Add("Edit Movie", async (_, _) =>
         {
-            mainUi.EditMovie(si);
+            await mainUi.EditMovieAsync(si);
             Update(mlastSelected);
         });
         rightClickMenu.Add("Choose Best", (_, _) => MergeItems(mlastSelected, mainUi));
@@ -144,10 +144,7 @@ public partial class DuplicateMovieFinder : Form
 
     private void Update(DuplicateMovie duplicate)
     {
-        if (dupMovies.Contains(duplicate))
-        {
-            dupMovies.Remove(duplicate);
-        }
+        dupMovies.Remove(duplicate);
         ProcessMovie(duplicate.Movie);
         UpdateUI();
     }
@@ -198,7 +195,7 @@ public partial class DuplicateMovieFinder : Form
         }
     }
 
-    private static void AskUserAboutFileReplacement(FileInfo file1, FileInfo file2, MovieConfiguration pep, IDialogParent owner)
+    private static void AskUserAboutFileReplacement(FileInfo file1, FileInfo file2, MovieConfiguration pep, UI owner)
     {
         try
         {
@@ -240,7 +237,7 @@ public partial class DuplicateMovieFinder : Form
                 movie.ManualLocations.Remove(removeFile.DirectoryName);
             }
 
-            removeFile.Delete();
+            removeFile.Delete(); //TODO use FileHelper
 
             if (removeFile.Directory.GetDirectories().Length > 0)
             {

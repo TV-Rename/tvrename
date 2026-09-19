@@ -8,14 +8,9 @@
 
 namespace TVRename;
 
-internal abstract class ActionListExporter : Exporter
+internal abstract class ActionListExporter(ItemList theActionList) : Exporter
 {
-    protected readonly ItemList TheActionList;
-
-    protected ActionListExporter(ItemList theActionList)
-    {
-        TheActionList = theActionList;
-    }
+    protected readonly ItemList TheActionList = theActionList;
 
     public abstract bool ApplicableFor(TVSettings.ScanType st);
 }

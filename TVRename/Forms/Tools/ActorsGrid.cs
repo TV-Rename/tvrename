@@ -377,14 +377,9 @@ public partial class ActorsGrid : Form
 
     #region Nested type: CellClickEvent
 
-    private class CellClickEvent : SourceGrid.Cells.Controllers.ControllerBase
+    private class CellClickEvent(string who) : SourceGrid.Cells.Controllers.ControllerBase
     {
-        private readonly string who;
-
-        public CellClickEvent(string who)
-        {
-            this.who = who;
-        }
+        private readonly string who = who;
 
         public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
         {
@@ -731,14 +726,9 @@ public partial class ActorsGrid : Form
 
     #region Nested type: RotatedText
 
-    public class RotatedText : DevAge.Drawing.VisualElements.TextGDI
+    public class RotatedText(float angle) : DevAge.Drawing.VisualElements.TextGDI
     {
-        private readonly float angle;
-
-        public RotatedText(float angle)
-        {
-            this.angle = angle;
-        }
+        private readonly float angle = angle;
 
         protected override void OnDraw(DevAge.Drawing.GraphicsCache graphics, RectangleF area)
         {
@@ -772,16 +762,10 @@ public partial class ActorsGrid : Form
 
     #region Nested type: SideClickEvent
 
-    private class SideClickEvent : SourceGrid.Cells.Controllers.ControllerBase
+    private class SideClickEvent(ActorsGrid g, string? show) : SourceGrid.Cells.Controllers.ControllerBase
     {
-        private readonly ActorsGrid g;
-        private readonly string? show;
-
-        public SideClickEvent(ActorsGrid g, string? show)
-        {
-            this.show = show;
-            this.g = g;
-        }
+        private readonly ActorsGrid g = g;
+        private readonly string? show = show;
 
         public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
         {
@@ -800,14 +784,9 @@ public partial class ActorsGrid : Form
 
     #region Nested type: SortColsByCountEvent
 
-    private class SortColsByCountEvent : SourceGrid.Cells.Controllers.ControllerBase
+    private class SortColsByCountEvent(ActorsGrid g) : SourceGrid.Cells.Controllers.ControllerBase
     {
-        private readonly ActorsGrid g;
-
-        public SortColsByCountEvent(ActorsGrid g)
-        {
-            this.g = g;
-        }
+        private readonly ActorsGrid g = g;
 
         public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
         {
@@ -819,14 +798,9 @@ public partial class ActorsGrid : Form
 
     #region Nested type: SortRowsByCountEvent
 
-    private class SortRowsByCountEvent : SourceGrid.Cells.Controllers.ControllerBase
+    private class SortRowsByCountEvent(ActorsGrid g) : SourceGrid.Cells.Controllers.ControllerBase
     {
-        private readonly ActorsGrid grid;
-
-        public SortRowsByCountEvent(ActorsGrid g)
-        {
-            grid = g;
-        }
+        private readonly ActorsGrid grid = g;
 
         public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
         {
@@ -838,16 +812,10 @@ public partial class ActorsGrid : Form
 
     #region Nested type: TopClickEvent
 
-    private class TopClickEvent : SourceGrid.Cells.Controllers.ControllerBase
+    private class TopClickEvent(ActorsGrid g, string act) : SourceGrid.Cells.Controllers.ControllerBase
     {
-        private readonly string actor;
-        private readonly ActorsGrid g;
-
-        public TopClickEvent(ActorsGrid g, string act)
-        {
-            this.g = g;
-            actor = act;
-        }
+        private readonly string actor = act;
+        private readonly ActorsGrid g = g;
 
         public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
         {

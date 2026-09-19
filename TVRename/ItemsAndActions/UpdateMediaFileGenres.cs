@@ -11,6 +11,7 @@ using System.Threading;
 namespace TVRename;
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading.Tasks;
 
 public class UpdateMediaFileGenres : UpdateMediaFileMetaData
 {
@@ -32,7 +33,7 @@ public class UpdateMediaFileGenres : UpdateMediaFileMetaData
 
     public override bool SameAs(Item o) => CompareTo(o) == 0;
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         TagLib.File tfile = TagLib.File.Create(Where.FullName);
         tfile.Tag.Genres = targetValue;

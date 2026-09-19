@@ -10,20 +10,15 @@ using System.Threading.Tasks;
 
 namespace TVRename.App;
 
-internal class SingleInstanceService
+internal class SingleInstanceService(Action<string[]> onArgumentsReceived)
 {
     private const string LOCAL_HOST = "127.0.0.1";
     private const int LOCAL_PORT = 19191;
-    private readonly Action<string[]> onArgumentsReceived;
+    private readonly Action<string[]> onArgumentsReceived = onArgumentsReceived;
     private static readonly NLog.Logger Log = NLog.LogManager.GetCurrentClassLogger();
     // ReSharper disable once NotAccessedField.Local
     private Semaphore? semaphore;
     private readonly string semaphoreName = $"Global\\{Environment.MachineName}-myAppName{Assembly.GetExecutingAssembly().GetName().Version}-sid{Process.GetCurrentProcess().SessionId}";
-
-    public SingleInstanceService(Action<string[]> onArgumentsReceived)
-    {
-        this.onArgumentsReceived = onArgumentsReceived;
-    }
 
     internal bool IsFirstInstance()
     {

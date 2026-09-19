@@ -2,12 +2,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class FolderBaseTvCheck : TvShowCheck
+internal class FolderBaseTvCheck(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
 {
-    public FolderBaseTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     public override bool Check() => !Show.AutoAddFolderBase.HasValue() && Show.AutoAddNewSeasons();
 
     public override string Explain() => "This TV show does not have an automatic folder base specified.";

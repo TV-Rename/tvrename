@@ -1,9 +1,7 @@
 namespace TVRename;
 
-internal class MovieFolderCheck : MovieCheck
+internal class MovieFolderCheck(MovieConfiguration movie, TVDoc doc) : MovieCheck(movie, doc)
 {
-    public MovieFolderCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc) { }
-
     protected override string MovieCheckName => "Use either manual or automatic folders";
 
     public override bool Check() => !Movie.UseAutomaticFolders && !Movie.UseManualLocations;

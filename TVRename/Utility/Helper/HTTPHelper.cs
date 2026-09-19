@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace TVRename;
 
@@ -41,7 +42,7 @@ public static class HttpHelper
         return @this;
     }
 
-    public static string GetUrl(string url, bool useCloudflareProtection)
+    public static async Task<string> GetUrlAsync(string url, bool useCloudflareProtection)
     {
         if (!url.IsWebLink())
         {
@@ -57,7 +58,7 @@ public static class HttpHelper
                 using HttpClient client = new(httpMessageHandler);
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
-                return TaskObtainStringFromUrl(url, client);
+                return await TaskObtainStringFromUrl(url, client);
             }
             catch (AggregateException ex) when (ex.InnerException is CloudFlareClearanceException)
             {
@@ -73,13 +74,13 @@ public static class HttpHelper
         {
             Client.DefaultRequestHeaders.UserAgent.Clear();
             Client.DefaultRequestHeaders.UserAgent.ParseAdd(TVSettings.USER_AGENT);
-            return TaskObtainStringFromUrl(url, Client);
+            return await TaskObtainStringFromUrl(url, Client);
         }
 
         return string.Empty;
     }
 
-    public static byte[] GetUrlBytes(string url, bool useCloudflareProtection)
+    public static Task<byte[]> GetUrlBytesAsync(string url, bool useCloudflareProtection)
     {
         if (useCloudflareProtection)
         {
@@ -87,11 +88,10 @@ public static class HttpHelper
             {
                 // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
                 using ClearanceHandler httpMessageHandler = new();
-                HttpClient cloudflareclient = new (httpMessageHandler);
+                HttpClient cloudflareclient = new(httpMessageHandler);
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
-                Task<byte[]> task = Task.Run(() => cloudflareclient.GetByteArrayAsync(url));
-                return task.Result;
+                return cloudflareclient.GetByteArrayAsync(url); 
             }
             catch (AggregateException ex) when (ex.InnerException is CloudFlareClearanceException)
             {
@@ -107,21 +107,20 @@ public static class HttpHelper
         {
             Client.DefaultRequestHeaders.UserAgent.Clear();
             Client.DefaultRequestHeaders.UserAgent.ParseAdd(TVSettings.USER_AGENT);
-            Task<byte[]> task = Task.Run(() => Client.GetByteArrayAsync(url));
-            return task.Result;
+            return Client.GetByteArrayAsync(url);
         }
 
-        return Array.Empty<byte>();
+        return Task.FromResult(Array.Empty<byte>());
     }
 
-    private static string HttpRequest(string method, string url, string json, string contentType, string? token)
+    private static async Task<string> HttpRequestAsync(string method, string url, string json, string contentType, string? token)
     {
-        return HttpRequest(method, url, json, contentType, token, string.Empty);
+        return await HttpRequestAsync(method, url, json, contentType, token, string.Empty).ConfigureAwait(false);
     }
 
     /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
-    public static string HttpRequest(string method, string url, string? postContent,
+    public static async Task<string> HttpRequestAsync(string method, string url, string? postContent,
         string? contentType, string? token, string? lang)
     {
         using HttpClient newClient = new();
@@ -150,23 +149,28 @@ public static class HttpHelper
             using StringContent content = new(postContent, Encoding.UTF8, "application/json");
 
             //POST the object to the specified URI
-            HttpResponseMessage response = newClient.PostAsync(newClientBaseAddress, content).Result;
+            HttpResponseMessage response = await newClient.PostAsync(newClientBaseAddress, content).ConfigureAwait(false);
 
             //Read back the answer from server
-            return response.Content.ReadAsStringAsync().Result;
+            return await response.Content.ReadAsStringAsync();
         }
 
-        return TaskObtainStringFromUrl(url, newClient);
+        return await TaskObtainStringFromUrl(url, newClient);
     }
 
-    private static string TaskObtainStringFromUrl(string url, HttpClient client)
-        => Task.Run(ObtainStringFromUrlFunc(url, client)).Result;
-
-    private static Func<Task<string>> ObtainStringFromUrlFunc(string url, HttpClient client)
+    private static async Task<string> TaskObtainStringFromUrl(string url, HttpClient client)
+    {
+        //var x = ObtainStringFromUrlFuncAsync(url, client);
+        //var y = await x();
+        return await ObtainStringFromUrlFuncAsync(url, client)();
+    }
+        
+    
+    private static Func<Task<string>> ObtainStringFromUrlFuncAsync(string url, HttpClient client)
     {
         try
         {
-            return () => client.GetStringAsync(url);
+            return async () => await client.GetStringAsync(url);
         }
         catch (HttpRequestException hre)
         {
@@ -180,7 +184,7 @@ public static class HttpHelper
         return () => Task.FromResult(string.Empty);
     }
 
-    public static string Obtain(string url) => GetUrl(url, false);
+    public static async Task<string> ObtainAsync(string url) => await GetUrlAsync(url, false);
 
     public static void LogWebException(this Logger l, string message, WebException wex)
     {
@@ -261,10 +265,10 @@ public static class HttpHelper
 
     /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
-    public static byte[] Download(string url)
+    public static async Task<byte[]> DownloadAsync(string url, CancellationToken token)
     {
         using HttpClient wc = new();
-        return wc.GetByteArrayAsync(url).Result;
+        return await wc.GetByteArrayAsync(url,token);
     }
 
     public static string LoggableDetails(this System.IO.IOException ex)
@@ -331,31 +335,33 @@ public static class HttpHelper
     /// <exception cref="JsonReaderException">Response is not valid JSON.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
-    public static JObject JsonHttpGetRequest(string url, string? authToken) =>
-        JObject.Parse(HttpRequest("GET", url, null, "application/json", authToken, string.Empty));
+    public static async Task<JObject> JsonHttpGetRequestAsync(string url, string? authToken) =>
+        JObject.Parse(await HttpRequestAsync("GET", url, null, "application/json", authToken, string.Empty));
 
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
-    public static JArray JsonListHttpGetRequest(string url, string? authToken) =>
-        JArray.Parse(HttpRequest("GET", url, null, "application/json", authToken, string.Empty));
+    public static async Task<JArray> JsonListHttpGetRequestAsync(string url, string? authToken) =>
+        JArray.Parse(await HttpRequestAsync("GET", url, null, "application/json", authToken, string.Empty));
 
     /// <exception cref="JsonReaderException">Response is not valid JSON.</exception>
-    public static JObject JsonHttpPostRequest(string url, JObject request, bool retry)
+    /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
+    /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
+    public static async Task<JObject> JsonHttpPostRequestAsync(string url, JObject request, bool retry)
     {
         string? response = null;
 
-        void Operation()
+        async Task OperationAsync()
         {
-            response = HttpRequest("POST", url, request.ToString(), "application/json", string.Empty);
+            response = await HttpRequestAsync("POST", url, request.ToString(), "application/json", string.Empty).ConfigureAwait(false);
         }
 
         if (retry)
         {
-            RetryOnException(3, 2.Seconds(), url, _ => true, Operation, null);
+            await RetryOnExceptionAsync(3, 2.Seconds(), url, _ => true, OperationAsync, null).ConfigureAwait(false);
         }
         else
         {
-            Operation();
+            await OperationAsync();
         }
 
         return JObject.Parse(response ?? string.Empty);
@@ -376,23 +382,17 @@ public static class HttpHelper
             sb.Append($"{item.Key}={WebUtility.UrlEncode(item.Value)}&");
         }
         string finalUrl = sb.ToString();
-        return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
+        return finalUrl.Remove(finalUrl.LastIndexOf('&'));
     }
 
     /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="operation"/> is <see langword="null"/></exception>
     /// <exception cref="Exception">If we still get an Exception after all retries.</exception>
-    public static void RetryOnException(int times, TimeSpan delay, string url, Func<Exception, bool> retryableException, System.Action operation, System.Action? updateOperation)
+    public static async Task RetryOnExceptionAsync(int times, TimeSpan delay, string url, Func<Exception, bool> retryableException, Func<Task> operation, System.Action? updateOperation)
     {
-        if (times <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(times));
-        }
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(times);
 
-        if (operation is null)
-        {
-            throw new ArgumentNullException(nameof(operation));
-        }
+        ArgumentNullException.ThrowIfNull(operation);
 
         int attempts = 0;
         do
@@ -400,7 +400,7 @@ public static class HttpHelper
             try
             {
                 attempts++;
-                operation();
+                await operation().ConfigureAwait(false);
                 break; // Success! Lets exit the loop!
             }
             catch (Exception ex)
@@ -413,7 +413,7 @@ public static class HttpHelper
 
                 Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.ErrorText()}");
 
-                Task.Delay(delay).Wait();
+                await Task.Delay(delay).ConfigureAwait(false);
                 try
                 {
                     updateOperation?.Invoke();
@@ -430,15 +430,9 @@ public static class HttpHelper
     /// <exception cref="ArgumentNullException"><paramref name="operation"/> is <see langword="null"/></exception>
     public static async Task RetryOnExceptionAsync<TException>(int times, TimeSpan delay, string url, Func<Task> operation) where TException : Exception
     {
-        if (times <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(times));
-        }
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(times);
 
-        if (operation is null)
-        {
-            throw new ArgumentNullException(nameof(operation));
-        }
+        ArgumentNullException.ThrowIfNull(operation);
 
         int attempts = 0;
         do
@@ -465,12 +459,12 @@ public static class HttpHelper
     }
 
     /// <exception cref="Exception">If we still get an Exception after all retries.</exception>
-    public static JObject HttpGetRequestWithRetry(string fullUrl, int times, int secondsGap)
+    public static async Task<JObject> HttpGetRequestWithRetryAsync(string fullUrl, int times, int secondsGap)
     {
         JObject? response = null;
-        RetryOnException(times, secondsGap.Seconds(), fullUrl,
+        await RetryOnExceptionAsync(times, secondsGap.Seconds(), fullUrl,
             RetryableWebException()
-            , () => { response = JsonHttpGetRequest(fullUrl, null); }
+            , async() => { response = await JsonHttpGetRequestAsync(fullUrl, null); }
             , null);
 
         return response!;
@@ -490,12 +484,12 @@ public static class HttpHelper
     /// <exception cref="Exception">If we still get an Exception after all retries.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
-    public static JArray HttpGetArrayRequestWithRetry(string fullUrl, int times, int secondsGap)
+    public static async Task<JArray> HttpGetArrayRequestWithRetryAsync(string fullUrl, int times, int secondsGap)
     {
         JArray? response = null;
-        RetryOnException(times, secondsGap.Seconds(), fullUrl,
+        await RetryOnExceptionAsync(times, secondsGap.Seconds(), fullUrl,
             RetryableWebException()
-            , () => { response = JsonListHttpGetRequest(fullUrl, null); }
+            , async () => { response = await JsonListHttpGetRequestAsync(fullUrl, null); }
             , null);
 
         return response!;

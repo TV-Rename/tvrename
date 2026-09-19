@@ -6,12 +6,14 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 using NLog;
+using NLog.Conditions;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NLog.Windows.Forms;
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -26,6 +28,8 @@ public partial class LogViewer : Form
 
     private void Form1_Load(object sender, EventArgs e)
     {
+        LogManager.Configuration ??= new();
+
         RichTextBoxTarget target = new()
         {
             Name = "UI Target",
@@ -42,6 +46,15 @@ public partial class LogViewer : Form
             AllowAccessoryFormCreation = false
         };
 
+        var warnColourRule = new RichTextBoxRowColoringRule
+        {
+            BackgroundColor = KnownColor.LightCoral.ToString(),
+            FontColor = KnownColor.Black.ToString(),
+            Condition = "level == LogLevel.Warn"
+        };
+
+        target.RowColoringRules.Add(warnColourRule);
+
         LogManager.Configuration.AddTarget(target);
         LogManager.Configuration.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug, target));
 
@@ -50,8 +63,15 @@ public partial class LogViewer : Form
 
     private void btnFullLog_Click(object sender, EventArgs e)
     {
-        FileTarget target = (FileTarget)LogManager.Configuration.FindTargetByName("logfile");
-        string logFileName = ((SimpleLayout)target.FileName).FixedText;
+        FileTarget? target = (FileTarget?)LogManager.Configuration?.FindTargetByName("logfile");
+        string? logFileName = ((SimpleLayout?)target?.FileName)?.FixedText;
+
+        if (logFileName.IsNullOrWhitespace())
+        {
+            Logger.Error($"Could not identify logfilename to open");
+            return;
+        }
+
         try
         {
             System.Diagnostics.Process.Start("notepad.exe", logFileName);

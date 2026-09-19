@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -267,9 +268,9 @@ public static class CacheHelper
         return matchingSeries;
     }
 
-    public static CachedSeriesInfo? GetSeries<T>(this T cache, string showName, bool showErrorMsgBox, Locale preferredLocale) where T : MediaCache, iTVSource
+    public static async Task<CachedSeriesInfo?> GetSeriesAsync<T>(this T cache, string showName, bool showErrorMsgBox, Locale preferredLocale) where T : MediaCache, iTVSource
     {
-        cache.Search(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
+        await cache.SearchAsync(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
 
         if (string.IsNullOrEmpty(showName))
         {
@@ -287,9 +288,9 @@ public static class CacheHelper
             _ => null
         };
     }
-    public static CachedMovieInfo? GetMovie<T>(this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch) where T : MediaCache, iMovieSource
+    public static async Task<CachedMovieInfo?> GetMovieAsync<T>(this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch) where T : MediaCache, iMovieSource
     {
-        cache.Search(hint, showErrorMsgBox, MediaConfiguration.MediaType.movie, preferredLocale);
+        await cache.SearchAsync(hint, showErrorMsgBox, MediaConfiguration.MediaType.movie, preferredLocale);
 
         if (string.IsNullOrEmpty(hint))
         {

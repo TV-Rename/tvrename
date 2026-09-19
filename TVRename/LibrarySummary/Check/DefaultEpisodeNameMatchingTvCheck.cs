@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class DefaultEpisodeNameMatchingTvCheck : DefaultTvShowCheck
+internal class DefaultEpisodeNameMatchingTvCheck(ShowConfiguration show, TVDoc doc) : DefaultTvShowCheck(show, doc)
 {
-    public DefaultEpisodeNameMatchingTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override string FieldName => "Do EpisodeName Matching Check";
 
     protected override bool Field => Show.UseEpNameMatch;

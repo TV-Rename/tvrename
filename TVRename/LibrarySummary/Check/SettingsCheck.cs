@@ -3,9 +3,9 @@ using System;
 
 namespace TVRename;
 
-internal abstract class SettingsCheck
+internal abstract class SettingsCheck(TVDoc doc)
 {
-    protected readonly TVDoc Doc;
+    protected readonly TVDoc Doc = doc;
 
     public abstract bool Check();
 
@@ -34,7 +34,7 @@ internal abstract class SettingsCheck
             IsError = false;
             ErrorText = string.Empty;
             FixInternal();
-            MarkMediaDirty();
+            MarkMediaDirtyAsync();
             Doc.SetDirty();
         }
         catch (FixCheckException e)
@@ -54,7 +54,7 @@ internal abstract class SettingsCheck
     /// <exception cref="FixCheckException">Can't fix movie as multiple Movie Library Folders are specified</exception>
     protected abstract void FixInternal();
 
-    protected abstract void MarkMediaDirty();
+    protected abstract void MarkMediaDirtyAsync();
 
     // ReSharper disable once UnusedMember.Global- Property is referred to by the ObjectListView
     public abstract MediaConfiguration.MediaType Type();
@@ -63,9 +63,4 @@ internal abstract class SettingsCheck
 
     public abstract string CheckName { get; }
     protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
-
-    protected SettingsCheck(TVDoc doc)
-    {
-        Doc = doc;
-    }
 }

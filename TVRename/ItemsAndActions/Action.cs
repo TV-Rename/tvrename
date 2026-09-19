@@ -7,6 +7,7 @@
 //
 
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -49,7 +50,7 @@ public abstract class Action : Item // Something we can do
         get;
     } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
 
-    public abstract ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false
+    public abstract Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false
 
     public abstract string Produces { get; } //What does this action produce? typically a filename
 

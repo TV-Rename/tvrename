@@ -3,12 +3,8 @@ using System.Xml;
 
 namespace TVRename;
 
-internal class MissingMovieXml : MissingActionListExporter
+internal class MissingMovieXml(ItemList theActionList) : MissingActionListExporter(theActionList)
 {
-    public MissingMovieXml(ItemList theActionList) : base(theActionList)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportMissingMoviesXML;
     protected override string Name() => "Missing Movie XML Exporter";
 
@@ -23,29 +19,27 @@ internal class MissingMovieXml : MissingActionListExporter
             Encoding = Encoding.ASCII
         };
 
-        using (XmlWriter writer = XmlWriter.Create(Location(), settings))
+        using XmlWriter writer = XmlWriter.Create(Location(), settings);
+        writer.WriteStartDocument();
+
+        writer.WriteStartElement("TVRename");
+        writer.WriteAttributeToXml("Version", "2.1");
+        writer.WriteStartElement("MissingMovieItems");
+
+        foreach (MovieItemMissing missing in TheActionList.MissingMovies)
         {
-            writer.WriteStartDocument();
+            writer.WriteStartElement("MissingMovieItem");
 
-            writer.WriteStartElement("TVRename");
-            writer.WriteAttributeToXml("Version", "2.1");
-            writer.WriteStartElement("MissingMovieItems");
+            writer.WriteElement("id", missing.MovieConfig.Code);
+            writer.WriteElement("title", missing.MovieConfig.ShowName);
+            writer.WriteElement("description", missing.MovieConfig.CachedData?.Overview);
+            writer.WriteElement("pubDate", missing.MovieConfig.CachedMovie?.Year);
 
-            foreach (MovieItemMissing missing in TheActionList.MissingMovies)
-            {
-                writer.WriteStartElement("MissingMovieItem");
-
-                writer.WriteElement("id", missing.MovieConfig.Code);
-                writer.WriteElement("title", missing.MovieConfig.ShowName);
-                writer.WriteElement("description", missing.MovieConfig.CachedData?.Overview);
-                writer.WriteElement("pubDate", missing.MovieConfig.CachedMovie?.Year);
-
-                writer.WriteEndElement(); // MissingMovieItem
-            }
-
-            writer.WriteEndElement(); // MissingMovieItems
-            writer.WriteEndElement(); // tvrename
-            writer.WriteEndDocument();
+            writer.WriteEndElement(); // MissingMovieItem
         }
+
+        writer.WriteEndElement(); // MissingMovieItems
+        writer.WriteEndElement(); // tvrename
+        writer.WriteEndDocument();
     }
 }

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -30,7 +31,7 @@ public abstract class ActionNfo : ActionWriteMetadata
     }
     #endregion Action Members
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         try
         {
@@ -39,7 +40,7 @@ public abstract class ActionNfo : ActionWriteMetadata
                 CreateBlankFile();
             }
 
-            ActionOutcome actionOutcome = UpdateFile();
+            ActionOutcome actionOutcome = await UpdateFileAsync();
             Where.LastWriteTime = DateTimeOffset.FromUnixTimeSeconds(UpdateTime() ?? 0).UtcDateTime;
             return actionOutcome;
         }
@@ -56,8 +57,9 @@ public abstract class ActionNfo : ActionWriteMetadata
             //Assume that the file needs to be recreated
             try
             {
-                Where.Delete(true);
-                return Go(stats, cancellationToken);
+                LOGGER.Warn($"Removing {Where.FullName} as it does not contain valid XML - we'll recreate it.");
+                FileHelper.DeleteFile(Where, true);
+                return await GoAsync(stats, cancellationToken);
             }
             catch (System.IO.IOException ex)
             {
@@ -90,7 +92,7 @@ public abstract class ActionNfo : ActionWriteMetadata
 
     protected abstract string RootName();
 
-    protected abstract ActionOutcome UpdateFile();
+    protected abstract Task<ActionOutcome> UpdateFileAsync();
 
     protected static void UpdateAmongstElements(XElement e, string elementName, string? value)
     {

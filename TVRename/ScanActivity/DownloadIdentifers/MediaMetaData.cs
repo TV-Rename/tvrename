@@ -89,7 +89,7 @@ internal sealed class MediaMetaData : DownloadIdentifier
         return returnActions;
     }
 
-    private bool NotEqual(string[] tagGenres, SafeList<string> dataGenres)
+    private static bool NotEqual(string[] tagGenres, SafeList<string> dataGenres)
     {
         if ( tagGenres.Length != dataGenres.Count)
         {

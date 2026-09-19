@@ -11,12 +11,8 @@ using System.Collections.Generic;
 
 namespace TVRename;
 
-internal class MoviesTxt : MoviesExporter
+internal class MoviesTxt(List<MovieConfiguration> shows) : MoviesExporter(shows)
 {
-    public MoviesTxt(List<MovieConfiguration> shows) : base(shows)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportMoviesTXT;
     protected override string Name() => "Movies TXT Exporter";
 

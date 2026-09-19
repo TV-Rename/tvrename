@@ -13,21 +13,15 @@ using TVRename.Forms.Tools;
 
 namespace TVRename;
 
-public abstract class PostScanActivity : LongOperation
+public abstract class PostScanActivity(TVDoc doc) : LongOperation
 {
     protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
-    protected readonly TVDoc MDoc;
+    protected readonly TVDoc MDoc = doc;
     private SetProgressDelegate? progressDelegate;
-    private int startPosition;
-    private int endPosition;
+    private int startPosition = 0;
+    private int endPosition = 100;
 
     protected delegate void PostScanProgressDelegate(int percent, int total, string message, string lastUpdate);
-    protected PostScanActivity(TVDoc doc)
-    {
-        MDoc = doc;
-        startPosition = 0;
-        endPosition = 100;
-    }
 
     public abstract string ActivityName();
 

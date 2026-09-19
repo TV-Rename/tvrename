@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using TVRename.Forms;
@@ -30,7 +31,7 @@ public sealed class TVSettings
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
     private static volatile TVSettings? instance;
-    private static readonly object syncRoot = new();
+    private static readonly Lock syncRoot = new();
 
     public static TVSettings Instance
     {
@@ -221,7 +222,7 @@ public sealed class TVSettings
     public bool RSSUseCloudflare = true;
     public bool SearchJSONUseCloudflare = true;
     public bool qBitTorrentDownloadFilesFirst = true;
-    public TVDoc.ProviderType DefaultProvider = TVDoc.ProviderType.TheTVDB;
+    public TVDoc.ProviderType DefaultProvider = TVDoc.ProviderType.TMDB;
 
     public Language TMDBLanguage;
     public Region TMDBRegion;
@@ -284,7 +285,7 @@ public sealed class TVSettings
 
     private static string[] Convert(string? propertyString)
     {
-        return string.IsNullOrWhiteSpace(propertyString) ? Array.Empty<string>() : propertyString.Split(';');
+        return string.IsNullOrWhiteSpace(propertyString) ? [] : propertyString.Split(';');
     }
 
     internal bool IncludeBetaUpdates() => mode == BetaMode.BetaToo;
@@ -429,7 +430,7 @@ public sealed class TVSettings
     public bool DefShowSpecialsCount = false;
     public bool DefShowAutoFolders = true;
     public bool DefShowUseDefLocation = false;
-    public string DefShowLocation;
+    public string? DefShowLocation;
     public string? DefaultShowTimezoneName;
     public bool DefShowUseBase = false;
     public bool DefShowUseSubFolders = true;
@@ -475,11 +476,12 @@ public sealed class TVSettings
         DefShowLocation = string.Empty;
 
         // have a guess at utorrent's path
-        string[] guesses = new string[3];
-        guesses[0] = System.Windows.Forms.Application.StartupPath + "\\..\\uTorrent\\uTorrent.exe";
-        guesses[1] = "c:\\Program Files\\uTorrent\\uTorrent.exe";
-        guesses[2] = "c:\\Program Files (x86)\\uTorrent\\uTorrent.exe";
-
+        string[] guesses =
+        [
+            System.Windows.Forms.Application.StartupPath + "\\..\\uTorrent\\uTorrent.exe",
+            "c:\\Program Files\\uTorrent\\uTorrent.exe",
+            "c:\\Program Files (x86)\\uTorrent\\uTorrent.exe",
+        ];
         uTorrentPath = string.Empty;
         foreach (FileInfo f in guesses.Select(g => new FileInfo(g)).Where(f => f.Exists))
         {
@@ -903,7 +905,7 @@ public sealed class TVSettings
         string[] t = s.Split(';');
         foreach (string s2 in t)
         {
-            if (string.IsNullOrEmpty(s2) || !s2.StartsWith(".", StringComparison.Ordinal) || s2.ContainsAnyCharactersFrom(CompulsoryReplacements()) || s2.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
+            if (string.IsNullOrEmpty(s2) || !s2.StartsWith('.') || s2.ContainsAnyCharactersFrom(CompulsoryReplacements()) || s2.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
             {
                 return false;
             }
@@ -1036,7 +1038,7 @@ public sealed class TVSettings
         return sl;
     }
 
-    private static string[] TabNames() => new[] { "MyMovies", "MyShows", "Scan", "WTW" };
+    private static string[] TabNames() => ["MyMovies", "MyShows", "Scan", "WTW"];
 
     private static string TabNameForNumber(int n)
     {
@@ -1230,20 +1232,13 @@ public sealed class TVSettings
         }
     }
 
-    public class Replacement
+    public class Replacement(string from, string? to, bool insens)
     {
         // used for invalid (and general) character (and string) replacements in file names
 
-        public readonly bool CaseInsensitive;
-        public readonly string That;
-        public readonly string This;
-
-        public Replacement(string from, string? to, bool insens)
-        {
-            This = from;
-            That = to ?? string.Empty;
-            CaseInsensitive = insens;
-        }
+        public readonly bool CaseInsensitive = insens;
+        public readonly string That = to ?? string.Empty;
+        public readonly string This = from;
 
         public string DoReplace(string fn)
         {
@@ -1258,32 +1253,20 @@ public sealed class TVSettings
         }
     }
 
-    public class FilenameProcessorRE
+    public class FilenameProcessorRE(bool enabled, string re, bool useFullPath, string notes)
     {
         // A regular expression to find the season and episode number in a filename
 
-        public readonly bool Enabled;
-        public readonly string Notes;
-        public readonly string RegExpression;
-        public readonly bool UseFullPath;
-
-        public FilenameProcessorRE(bool enabled, string re, bool useFullPath, string notes)
-        {
-            Enabled = enabled;
-            RegExpression = re;
-            UseFullPath = useFullPath;
-            Notes = notes;
-        }
+        public readonly bool Enabled = enabled;
+        public readonly string Notes = notes;
+        public readonly string RegExpression = re;
+        public readonly bool UseFullPath = useFullPath;
     }
 
     [Serializable]
     public class ShowStatusColoringTypeList : Dictionary<ColouringRule, System.Drawing.Color>
     {
         public ShowStatusColoringTypeList()
-        {
-        }
-
-        protected ShowStatusColoringTypeList(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
 
@@ -1331,14 +1314,9 @@ public sealed class TVSettings
         public abstract bool AppliesTo(ShowConfiguration s);
     }
 
-    public class ShowStatusColouringRule : ColouringRule
+    public class ShowStatusColouringRule(string status) : ColouringRule
     {
-        public ShowStatusColouringRule(string status)
-        {
-            this.status = status;
-        }
-
-        public readonly string status;
+        public readonly string status = status;
         public override string Text => "Show Status: " + status;
 
         public override bool AppliesTo(ProcessedSeason s) => false;
@@ -1346,14 +1324,9 @@ public sealed class TVSettings
         public override bool AppliesTo(ShowConfiguration s) => status == s.ShowStatus;
     }
 
-    public class ShowAirStatusColouringRule : ColouringRule
+    public class ShowAirStatusColouringRule(ShowConfiguration.ShowAirStatus status) : ColouringRule
     {
-        public ShowAirStatusColouringRule(ShowConfiguration.ShowAirStatus status)
-        {
-            this.status = status;
-        }
-
-        public readonly ShowConfiguration.ShowAirStatus status;
+        public readonly ShowConfiguration.ShowAirStatus status = status;
 
         public override string ToString()
         {
@@ -1375,14 +1348,9 @@ public sealed class TVSettings
         public override bool AppliesTo(ShowConfiguration s) => status == s.SeasonsAirStatus;
     }
 
-    public class SeasonStatusColouringRule : ColouringRule
+    public class SeasonStatusColouringRule(ProcessedSeason.SeasonStatus status) : ColouringRule
     {
-        public SeasonStatusColouringRule(ProcessedSeason.SeasonStatus status)
-        {
-            this.status = status;
-        }
-
-        public readonly ProcessedSeason.SeasonStatus status;
+        public readonly ProcessedSeason.SeasonStatus status = status;
 
         public override string Text => ToString();
 
@@ -1515,7 +1483,7 @@ public sealed class TVSettings
         FolderJpg = xmlSettings.ExtractBool("FolderJpg", false);
         FolderJpgIs = xmlSettings.ExtractEnum("FolderJpgIs", FolderJpgIsType.Poster);
         MonitoredFoldersScanType = xmlSettings.ExtractEnum("MonitoredFoldersScanType", ScanType.Full);
-        DefaultProvider = xmlSettings.ExtractEnum("DefaultProvider", TVDoc.ProviderType.TheTVDB);
+        DefaultProvider = xmlSettings.ExtractEnum("DefaultProvider", TVDoc.ProviderType.TMDB);
         RenameCheck = xmlSettings.ExtractBool("RenameCheck", true);
         PreventMove = xmlSettings.ExtractBool("PreventMove", false);
         CheckuTorrent = xmlSettings.ExtractBool("CheckuTorrent", false);
@@ -1658,7 +1626,7 @@ public sealed class TVSettings
         if (subElement != null)
         {
             UpdateCheckInterval = TimeSpan.Parse(subElement.ExtractString("Interval", 1.Hours().ToString()));
-            UpdateCheckType = (UpdateCheckMode)Enum.Parse(typeof(UpdateCheckMode), subElement.ExtractString("Mode", ((int)UpdateCheckMode.Everytime).ToString()));
+            UpdateCheckType = Enum.Parse<UpdateCheckMode>(subElement.ExtractString("Mode", ((int)UpdateCheckMode.Everytime).ToString()));
             SuppressUpdateAvailablePopup = subElement.ExtractBool("SuppressPopup", false);
         }
     }
@@ -1672,61 +1640,65 @@ public sealed class TVSettings
                                                       "false")
         };
 
+        XElement? ShowFiltersNode = xmlSettings.Descendants("ShowFilters").FirstOrDefault();
+
         Filter = new ShowFilter
         {
-            ShowName = xmlSettings.Descendants("ShowFilters").Descendants("ShowNameFilter").Attributes("ShowName")
+            ShowName = ShowFiltersNode?.Descendants("ShowNameFilter").Attributes("ShowName")
                 .FirstOrDefault()?.Value,
 
-            ShowStatus = xmlSettings.Descendants("ShowFilters").Descendants("ShowStatusFilter").Attributes("ShowStatus")
+            ShowStatus = ShowFiltersNode?.Descendants("ShowStatusFilter").Attributes("ShowStatus")
                 .FirstOrDefault()?.Value,
-            ShowRating = xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRating")
+            ShowRating = ShowFiltersNode?.Descendants("ShowRatingFilter").Attributes("ShowRating")
                 .FirstOrDefault()?.Value,
-            ShowNetwork = xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
+            ShowNetwork = ShowFiltersNode?.Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
                 .FirstOrDefault()?.Value,
 
-            ShowStatusInclude = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
+            ShowStatusInclude = (bool?)ShowFiltersNode?.Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
                 .FirstOrDefault() ?? true,
-            ShowRatingInclude = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
+            ShowRatingInclude = (bool?)ShowFiltersNode?.Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
                 .FirstOrDefault() ?? true,
-            ShowNetworkInclude = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
+            ShowNetworkInclude = (bool?)ShowFiltersNode?.Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
                 .FirstOrDefault() ?? true,
 
-            IncludeBlankFields = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("IncludeBlankFields").Attributes("IncludeBlankFields")
+            IncludeBlankFields = (bool?)ShowFiltersNode?.Descendants("IncludeBlankFields").Attributes("IncludeBlankFields")
                 .FirstOrDefault() ?? true,
         };
 
-        foreach (XAttribute rep in xmlSettings.Descendants("ShowFilters").Descendants("GenreFilter").Attributes("Genre"))
+        foreach (XAttribute rep in ShowFiltersNode?.Descendants("GenreFilter").Attributes("Genre") ?? [])
         {
             Filter.Genres.Add(rep.Value);
         }
 
+        XElement? MovieFilterNode = xmlSettings.Descendants("MovieFilter").FirstOrDefault();
+
         MovieFilter = new MovieFilter
         {
-            ShowName = xmlSettings.Descendants("MovieFilter").Descendants("ShowNameFilter").Attributes("ShowName")
+            ShowName = MovieFilterNode?.Descendants("ShowNameFilter").Attributes("ShowName")
                 .FirstOrDefault()?.Value,
 
-            ShowStatus = xmlSettings.Descendants("MovieFilter").Descendants("ShowStatusFilter").Attributes("ShowStatus")
+            ShowStatus = MovieFilterNode?.Descendants("ShowStatusFilter").Attributes("ShowStatus")
                 .FirstOrDefault()?.Value,
-            ShowRating = xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRating")
+            ShowRating = MovieFilterNode?.Descendants("ShowRatingFilter").Attributes("ShowRating")
                 .FirstOrDefault()?.Value,
-            ShowNetwork = xmlSettings.Descendants("MovieFilter").Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
+            ShowNetwork = MovieFilterNode?.Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
                 .FirstOrDefault()?.Value,
-            ShowYear = xmlSettings.Descendants("MovieFilter").Descendants("ShowYearFilter").Attributes("ShowYear")
+            ShowYear = MovieFilterNode?.Descendants("ShowYearFilter").Attributes("ShowYear")
                 .FirstOrDefault()?.Value,
 
-            ShowStatusInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
+            ShowStatusInclude = (bool?)MovieFilterNode?.Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
                 .FirstOrDefault() ?? true,
-            ShowRatingInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
+            ShowRatingInclude = (bool?)MovieFilterNode?.Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
                 .FirstOrDefault() ?? true,
-            ShowNetworkInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
+            ShowNetworkInclude = (bool?)MovieFilterNode?.Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
                 .FirstOrDefault() ?? true,
-            ShowYearInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowYearFilter").Attributes("ShowYearInclude")
+            ShowYearInclude = (bool?)MovieFilterNode?.Descendants("ShowYearFilter").Attributes("ShowYearInclude")
                 .FirstOrDefault() ?? true,
-            IncludeBlankFields = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("IncludeBlankFields").Attributes("IncludeBlankFields")
+            IncludeBlankFields = (bool?)MovieFilterNode?.Descendants("IncludeBlankFields").Attributes("IncludeBlankFields")
                 .FirstOrDefault() ?? true
         };
 
-        foreach (XAttribute rep in xmlSettings.Descendants("MovieFilter").Descendants("GenreFilter").Attributes("Genre"))
+        foreach (XAttribute rep in MovieFilterNode?.Descendants("GenreFilter").Attributes("Genre") ?? [])
         {
             MovieFilter.Genres.Add(rep.Value);
         }

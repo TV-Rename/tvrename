@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace TVRename;
 
-public class ProcessedSeason
+public class ProcessedSeason(ShowConfiguration theShow, int number, int seasonId, ProcessedSeason.SeasonType t)
 {
     protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
     public enum SeasonStatus
@@ -33,22 +33,13 @@ public class ProcessedSeason
         alternate
     }
 
-    public readonly ConcurrentDictionary<int, Episode> Episodes;
-    public readonly int SeasonId;
-    public readonly int SeasonNumber;
-    public readonly ShowConfiguration Show;
+    public readonly ConcurrentDictionary<int, Episode> Episodes = new();
+    public readonly int SeasonId = seasonId;
+    public readonly int SeasonNumber = number;
+    public readonly ShowConfiguration Show = theShow;
 
     // ReSharper disable once NotAccessedField.Local
-    public readonly SeasonType SeasonStyle;
-
-    public ProcessedSeason(ShowConfiguration theShow, int number, int seasonId, SeasonType t)
-    {
-        Show = theShow;
-        SeasonNumber = number;
-        SeasonId = seasonId;
-        Episodes = new ConcurrentDictionary<int, Episode>();
-        SeasonStyle = t;
-    }
+    public readonly SeasonType SeasonStyle = t;
 
     // ReSharper disable once InconsistentNaming
     public static string UISeasonWord(int season)

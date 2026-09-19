@@ -13,12 +13,8 @@ using System.Xml;
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class UpcomingRSS : UpcomingExporter
+internal class UpcomingRSS(TVDoc i) : UpcomingExporter(i)
 {
-    public UpcomingRSS(TVDoc i) : base(i)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.ExportWTWRSS;
 
     protected override string Location() => TVSettings.Instance.ExportWTWRSSTo;
@@ -39,41 +35,39 @@ internal class UpcomingRSS : UpcomingExporter
                 NewLineOnAttributes = true,
                 Encoding = System.Text.Encoding.ASCII
             };
-            using (XmlWriter writer = XmlWriter.Create(str, settings))
+            using XmlWriter writer = XmlWriter.Create(str, settings);
+            writer.WriteStartDocument();
+            writer.WriteStartElement("rss");
+            writer.WriteAttributeToXml("version", "2.0");
+            writer.WriteStartElement("channel");
+            writer.WriteElement("title", "Upcoming Shows");
+            writer.WriteElement("title", "http://tvrename.com");
+            writer.WriteElement("description", "Upcoming shows, exported by TVRename");
+
+            foreach (ProcessedEpisode ei in elist)
             {
-                writer.WriteStartDocument();
-                writer.WriteStartElement("rss");
-                writer.WriteAttributeToXml("version", "2.0");
-                writer.WriteStartElement("channel");
-                writer.WriteElement("title", "Upcoming Shows");
-                writer.WriteElement("title", "http://tvrename.com");
-                writer.WriteElement("description", "Upcoming shows, exported by TVRename");
+                string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
 
-                foreach (ProcessedEpisode ei in elist)
+                writer.WriteStartElement("item");
+
+                writer.WriteElement("title", ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + ei.Show.ShowName + " " + niceName);
+                writer.WriteElement("link", ei.ProviderWebUrl());
+                writer.WriteElement("description", ei.Show.ShowName + "<br/>" + niceName + "<br/>" + ei.Overview);
+
+                writer.WriteStartElement("pubDate");
+                DateTime? dt = ei.GetAirDateDt();
+                if (dt != null)
                 {
-                    string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
-
-                    writer.WriteStartElement("item");
-
-                    writer.WriteElement("title", ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + ei.Show.ShowName + " " + niceName);
-                    writer.WriteElement("link", ei.ProviderWebUrl());
-                    writer.WriteElement("description", ei.Show.ShowName + "<br/>" + niceName + "<br/>" + ei.Overview);
-
-                    writer.WriteStartElement("pubDate");
-                    DateTime? dt = ei.GetAirDateDt();
-                    if (dt != null)
-                    {
-                        writer.WriteValue(dt.Value.ToString("r"));
-                    }
-
-                    writer.WriteEndElement(); //pubDate
-
-                    writer.WriteEndElement(); // item
+                    writer.WriteValue(dt.Value.ToString("r"));
                 }
-                writer.WriteEndElement(); //channel
-                writer.WriteEndElement(); //rss
-                writer.WriteEndDocument();
+
+                writer.WriteEndElement(); //pubDate
+
+                writer.WriteEndElement(); // item
             }
+            writer.WriteEndElement(); //channel
+            writer.WriteEndElement(); //rss
+            writer.WriteEndDocument();
             return true;
         } // try
         catch (Exception e)

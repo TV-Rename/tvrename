@@ -8,8 +8,7 @@
 
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,15 +28,28 @@ namespace TVRename;
 /// </summary>
 public partial class BulkAddMovie : Form
 {
-    //public CancellationTokenSource TokenSource;
     private readonly TVDoc mDoc;
-
     private readonly BulkAddMovieManager engine;
     private readonly UI mainUi;
+    CancellationTokenSource cts = new();
+
 
     //Thread safe counters to work out the progress
     //For auto id
-    private static volatile int VolatileCounter;
+    private static readonly ThreadSafeCounter VolatileCounter = new();
+
+    public class ProgressReport
+    {
+        public int NumberComplete { get; set; }
+        public PossibleNewMovie? LatestItemProcessed { get; set; }
+    }
+
+    public class ScanProgressReport
+    {
+        public int ProgressPercentage { get; set; }
+        public string UpdateText { get; set; } = string.Empty;
+        public string LatestAction { get; set; } = string.Empty;
+    }
 
     public BulkAddMovie(TVDoc doc, BulkAddMovieManager bam, UI mainUi)
     {
@@ -47,10 +59,14 @@ public partial class BulkAddMovie : Form
         InitializeComponent();
         FillFolderStringLists();
         tbResults.Parent = null;
+        olvFMNewShows.ShowGroups = false;
+        ShowHideUpdateControls(false);
     }
 
     private void bnClose_Click(object sender, System.EventArgs e)
     {
+        cts.Cancel();
+
         if (!CanClose())
         {
             if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"My Movies\"?", "Bulk Add Movies", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
@@ -98,7 +114,7 @@ public partial class BulkAddMovie : Form
         DeleteSelectedFolder(lstFMMonitorFolders, TVSettings.Instance.MovieLibraryFolders);
     }
 
-    private void DeleteSelectedFolder(ListBox lb, IList<string> folders)
+    private void DeleteSelectedFolder(ListBox lb, SafeList<string> folders)
     {
         for (int i = lb.SelectedIndices.Count - 1; i >= 0; i--)
         {
@@ -131,7 +147,7 @@ public partial class BulkAddMovie : Form
             searchFolderBrowser.SelectedPath = TVSettings.Instance.MovieLibraryFolders[n];
         }
 
-        if (UiHelpers.ShowDialogAndOk(searchFolderBrowser,this))
+        if (UiHelpers.ShowDialogAndOk(searchFolderBrowser, this))
         {
             if (Directory.Exists(searchFolderBrowser.SelectedPath))
             {
@@ -141,7 +157,6 @@ public partial class BulkAddMovie : Form
             }
         }
     }
-
     private void bnAddIgFolder_Click(object sender, System.EventArgs e)
     {
         FolderBrowserDialogEx ignoreFolderBrowser = new()
@@ -157,14 +172,13 @@ public partial class BulkAddMovie : Form
             ignoreFolderBrowser.SelectedPath = TVSettings.Instance.IgnoreFolders[lstFMIgnoreFolders.SelectedIndex];
         }
 
-        if (UiHelpers.ShowDialogAndOk(ignoreFolderBrowser,this))
+        if (UiHelpers.ShowDialogAndOk(ignoreFolderBrowser, this))
         {
             TVSettings.Instance.IgnoreFolders.Add(ignoreFolderBrowser.SelectedPath.ToLower());
             mDoc.SetDirty();
             FillFolderStringLists();
         }
     }
-
     private void bnOpenMonFolder_Click(object sender, System.EventArgs e)
     {
         OpenSelectedFolder();
@@ -191,23 +205,62 @@ public partial class BulkAddMovie : Form
         OpenSelectedFolder();
     }
 
-    private void bnCheck_Click(object sender, System.EventArgs e)
+    private async void bnCheck_Click(object sender, System.EventArgs e)
     {
-        DoCheck();
+        await DoCheckAsync();
     }
 
-    private void DoCheck()
+    private async Task DoCheckAsync()
     {
         tbResults.Parent = tabControl1;
-
         tabControl1.SelectedTab = tbResults;
         tabControl1.Update();
 
-        bnFullAuto.Enabled = false;
-        pbProgress.Visible = true;
-        lblStatusLabel.Visible = true;
+        ShowHideUpdateControls(true);
 
-        bwRescan.RunWorkerAsync();
+        cts = new();
+
+        pbProgress.SetProgress(0);
+        pbProgress.Maximum = 100;
+        lblStatusLabel.Text = "Checking folders";
+
+        var progressHandler = new Progress<ScanProgressReport>(scanReport =>
+        {
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(scanReport.ProgressPercentage);
+            lblStatusLabel.Text = scanReport.UpdateText.ToUiVersion();
+        });
+
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = 4, // Limit concurrent tasks
+            CancellationToken = cts.Token // Pass token to the loop mechanism
+        };
+
+        VolatileCounter.Reset();
+
+        try
+        {
+            await engine.CheckFoldersAsync(options, VolatileCounter, progressHandler, true, true, cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            //OK
+        }
+        
+        olvFMNewShows.UpdateObjects(engine.AddItems);
+        olvFMNewShows.Update();
+
+        ShowHideUpdateControls(false);
+    }
+
+    private void ShowHideUpdateControls(bool show)
+    {
+        bnFullAuto.Enabled = !show;
+        pbProgress.Visible = show;
+        lblStatusLabel.Visible = show;
+        btnStopScan.Enabled = show;
+        btnStopScan.Visible = show;
     }
 
     private void lstFMMonitorFolders_DragOver(object _, DragEventArgs e)
@@ -227,28 +280,35 @@ public partial class BulkAddMovie : Form
         AddDraggedFiles(e, TVSettings.Instance.MovieLibraryFolders);
     }
 
-    private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
+    private async void lvFMNewShows_DragDrop(object _, DragEventArgs e)
     {
-        if (e.Data is not null)
+        if (e.Data is null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string path in files)
+            return;
+        }
+
+        string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+        if (files == null || files.Length == 0)
+        {
+            return;
+        }
+
+        foreach (string path in files)
+        {
+            try
             {
-                try
+                DirectoryInfo di = new(path);
+                if (di.Exists)
                 {
-                    DirectoryInfo di = new(path);
-                    if (di.Exists)
-                    {
-                        engine.CheckFolderForMovies(di, true, true, true);
-                        FillNewShowList(true);
-                    }
-                }
-                catch
-                {
-                    // ignored
+                    await engine.CheckFolderForMoviesAsync(di, true, true, true);
                 }
             }
+            catch
+            {
+                // ignored
+            }
         }
+        PopulateShowList();
     }
 
     private void lstFMIgnoreFolders_DragDrop(object _, DragEventArgs e)
@@ -256,26 +316,27 @@ public partial class BulkAddMovie : Form
         AddDraggedFiles(e, TVSettings.Instance.IgnoreFolders);
     }
 
-    private void AddDraggedFiles(DragEventArgs e, ICollection<string> strings)
+    private void AddDraggedFiles(DragEventArgs e, SafeList<string> strings)
     {
         if (e.Data is not null)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string path in files)
-            {
-                try
+            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+            if (files != null)
+                foreach (string path in files)
                 {
-                    DirectoryInfo di = new(path);
-                    if (di.Exists)
+                    try
                     {
-                        strings.Add(path.ToLower());
+                        DirectoryInfo di = new(path);
+                        if (di.Exists)
+                        {
+                            strings.Add(path.ToLower());
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
                     }
                 }
-                catch
-                {
-                    // ignored
-                }
-            }
         }
 
         mDoc.SetDirty();
@@ -298,34 +359,78 @@ public partial class BulkAddMovie : Form
         }
     }
 
-    private void bnFullAuto_Click(object sender, System.EventArgs e)
+    private async void bnFullAuto_Click(object sender, System.EventArgs e)
     {
         if (engine.AddItems.Count == 0)
         {
             return;
         }
 
-        bnFullAuto.Enabled = false;
-        pbProgress.Visible = true;
-        lblStatusLabel.Visible = true;
-        bwIdentify.RunWorkerAsync();
-    }
+        ShowHideUpdateControls(true);
 
-    private static void AutoMatchMovie(CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
-    {
-        if (cts.IsCancellationRequested)
+        cts = new();
+
+        pbProgress.SetProgress(0);
+        pbProgress.Maximum = engine.AddItems.Count;
+        lblStatusLabel.Text = "Identifying Movies...";
+
+        var progressHandler = new Progress<ProgressReport>(report =>
         {
-            return;
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(report.NumberComplete);
+            if (report.LatestItemProcessed is null)
+            {
+                return;
+            }
+            lblStatusLabel.Text = report.LatestItemProcessed.Movie?.ToUiVersion();
+        });
+
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = 4, // Limit concurrent tasks
+            CancellationToken = cts.Token // Pass token to the loop mechanism
+        };
+
+        VolatileCounter.Reset();
+
+        try
+        { 
+            await Parallel.ForEachAsync(
+                engine.AddItems,
+                options,
+                async (movie, token) =>
+                {
+                    if (cts.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    if (movie.CodeKnown)
+                    {
+                        return;
+                    }
+
+                    await movie.GuessMovieAsync(true);
+
+                    var report = new ProgressReport
+                    {
+                        NumberComplete = VolatileCounter.Increment(),
+                        LatestItemProcessed = movie
+                    };
+
+                    ((IProgress<ProgressReport>)progressHandler).Report(report);
+                }
+                );
+            }
+        catch (OperationCanceledException)
+        {
+            //OK
         }
 
-        if (ai.CodeKnown)
-        {
-            return;
-        }
 
-        ai.GuessMovie(true);
-        Interlocked.Increment(ref VolatileCounter);
-        bw.ReportProgress((int)100.0 * VolatileCounter / total, ai);
+        olvFMNewShows.UpdateObjects(engine.AddItems);
+        olvFMNewShows.Update();
+        ShowHideUpdateControls(false);
     }
 
     private void bnRemoveNewFolder_Click(object _, System.EventArgs e)
@@ -335,23 +440,21 @@ public partial class BulkAddMovie : Form
 
     private void RemoveNewFolder()
     {
-        if (lvFMNewShows.SelectedItems.Count == 0)
+        if (NothingSelected())
         {
             return;
         }
 
-        foreach (PossibleNewMovie ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
-                     .Select(lvi => lvi.Tag).Cast<PossibleNewMovie>())
+        foreach (PossibleNewMovie ai in olvFMNewShows.SelectedObjects.OfType<PossibleNewMovie>())
         {
             engine.AddItems.Remove(ai);
+            olvFMNewShows.RemoveObject(ai);
         }
-
-        FillNewShowList(false);
     }
 
     private void bnIgnoreNewFolder_Click(object _, System.EventArgs e)
     {
-        if (lvFMNewShows.SelectedItems.Count == 0)
+        if (NothingSelected())
         {
             return;
         }
@@ -362,14 +465,13 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        foreach (PossibleNewMovie ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
-                     .Select(lvi => (PossibleNewMovie)lvi.Tag))
+        foreach (PossibleNewMovie ai in olvFMNewShows.SelectedObjects.OfType<PossibleNewMovie>())
         {
             TVSettings.Instance.IgnoreFolders.Add(ai.Directory.FullName.ToLower());
             engine.AddItems.Remove(ai);
+            olvFMNewShows.RemoveObject(ai);
         }
         mDoc.SetDirty();
-        FillNewShowList(false);
         FillFolderStringLists();
     }
 
@@ -388,93 +490,38 @@ public partial class BulkAddMovie : Form
 
     private void bnNewFolderOpen_Click(object sender, System.EventArgs e)
     {
-        if (lvFMNewShows.SelectedItems.Count == 0)
+        if (NothingSelected())
         {
             return;
         }
 
-        if (lvFMNewShows.SelectedItems[0].Tag is PossibleNewMovie ai)
+        if (olvFMNewShows.SelectedObjects.OfType<PossibleNewMovie>().FirstOrDefault() is PossibleNewMovie ai)
         {
             ai.Directory.FullName.OpenFolder();
         }
     }
 
-    private void FillNewShowList(bool keepSel)
+    private bool NothingSelected()
     {
-        List<int> sel = [];
-        if (keepSel)
-        {
-            sel = [.. lvFMNewShows.SelectedIndices.Cast<int>()];
-        }
-
-        lvFMNewShows.BeginUpdate();
-        lvFMNewShows.Items.Clear();
-
-        foreach (PossibleNewMovie ai in engine.AddItems)
-        {
-            ListViewItem lvi = new();
-            UpdateResultEntry(ai, lvi);
-            lvFMNewShows.Items.Add(lvi);
-            lvi.ImageIndex = 0;
-        }
-
-        if (keepSel)
-        {
-            foreach (int i in sel)
-            {
-                if (i < lvFMNewShows.Items.Count)
-                {
-                    lvFMNewShows.Items[i].Selected = true;
-                    lvFMNewShows.Items[i].EnsureVisible();
-                }
-            }
-        }
-
-        lvFMNewShows.EndUpdate();
-        lvFMNewShows.Update();
+        return olvFMNewShows.SelectedObjects.Count == 0;
     }
 
-    private static void UpdateResultEntry(PossibleNewMovie? ai, ListViewItem lvi)
+    private void PopulateShowList()
     {
-        if (ai is null)
-        {
-            return;
-        }
-
-        lvi.SubItems.Clear();
-        lvi.Text = ai.Directory.FullName;
-        if (ai.CodeKnown)
-        {
-            CachedMovieInfo? x = ai.CachedMovie;
-            lvi.SubItems.Add(x?.Name);
-            string? val = x?.FirstAired?.Year.ToString();
-            lvi.SubItems.Add(val ?? string.Empty);
-            lvi.SubItems.Add(ai.CodeString);
-        }
-        else
-        {
-            lvi.SubItems.Add(ai.RefinedHint);
-            lvi.SubItems.Add(ai.PossibleYear.ToString());
-            lvi.SubItems.Add(string.Empty);
-        }
-        lvi.Tag = ai;
-        lvi.ImageIndex = ai.CodeKnown && ai.HasStub ? 1 : 0;
+        olvFMNewShows.SetObjects(engine.AddItems);
     }
 
-    private void UpdateListItem(PossibleNewMovie? ai, bool makevis)
+    private void UpdateListItem(PossibleNewMovie ai, bool makevis)
     {
-        foreach (ListViewItem lvi in lvFMNewShows.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag == ai))
-        {
-            UpdateResultEntry(ai, lvi);
+        olvFMNewShows.UpdateObject(ai);
 
-            if (makevis)
-            {
-                lvi.EnsureVisible();
-            }
+        if (makevis)
+        {
+            olvFMNewShows.EnsureModelVisible(ai);
         }
     }
 
-    private void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
+    private async void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
     {
         int numberToAdd = engine.AddItems.Count(ai => ai.CodeKnown);
         if (numberToAdd > 0)
@@ -485,7 +532,7 @@ public partial class BulkAddMovie : Form
                 return;
             }
 
-            engine.AddAllToMyMovies(mainUi);
+            await engine.AddAllToMyMoviesAsync(mainUi);
         }
 
         Close();
@@ -493,12 +540,12 @@ public partial class BulkAddMovie : Form
 
     private void bnVisitTVcom_Click(object sender, System.EventArgs e)
     {
-        if (lvFMNewShows.SelectedItems.Count == 0)
+        if (NothingSelected())
         {
             return;
         }
 
-        if (lvFMNewShows.SelectedItems[0].Tag is not PossibleNewMovie fme)
+        if (olvFMNewShows.SelectedObjects.OfType<PossibleNewMovie>().FirstOrDefault() is not PossibleNewMovie fme)
         {
             return;
         }
@@ -518,45 +565,46 @@ public partial class BulkAddMovie : Form
         }
     }
 
-    private void bnCheck2_Click(object sender, System.EventArgs e)
+    private async void bnCheck2_Click(object sender, System.EventArgs e)
     {
-        DoCheck();
+        await DoCheckAsync();
     }
 
-    private void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
+    private async void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
     {
-        EditEntry();
+        await EditEntryAsync();
     }
 
-    private void bnEditEntry_Click(object sender, System.EventArgs e)
+    private async void bnEditEntry_Click(object sender, System.EventArgs e)
     {
-        EditEntry();
+        await EditEntryAsync();
     }
 
-    private void EditEntry()
+    private async Task EditEntryAsync()
     {
-        if (lvFMNewShows.SelectedItems.Count == 0)
+        if (NothingSelected())
         {
             return;
         }
 
-        if (lvFMNewShows.SelectedItems[0].Tag is PossibleNewMovie fme)
+        if (olvFMNewShows.SelectedObjects.OfType<PossibleNewMovie>().FirstOrDefault() is PossibleNewMovie fme)
         {
-            EditEntry(fme);
+            await EditEntryAsync(fme);
             UpdateListItem(fme, true);
+            olvFMNewShows.RefreshObject(fme);
         }
-        FillNewShowList(true);
     }
 
-    private void EditEntry(PossibleNewMovie fme)
+    private async Task EditEntryAsync(PossibleNewMovie fme)
     {
-        BulkAddEditMovie ed = new(fme);
+        BulkAddEditMovie ed = new();
+        await ed.SetHintAsync(fme);
         if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)
         {
             return;
         }
 
-        fme.SetId(ed.Code, ed.Provider);
+        fme.UpdateId(ed.Code, ed.Provider);
     }
 
     private void lstFMMonitorFolders_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -573,7 +621,7 @@ public partial class BulkAddMovie : Form
 
     private void lvFMNewShows_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-        bool somethingSelected = lvFMNewShows.SelectedItems.Count > 0;
+        bool somethingSelected = olvFMNewShows.SelectedObjects.Count > 0;
         bnEditEntry.Enabled = somethingSelected;
         bnRemoveNewFolder.Enabled = somethingSelected;
         bnIgnoreNewFolder.Enabled = somethingSelected;
@@ -581,64 +629,8 @@ public partial class BulkAddMovie : Form
         bnNewFolderOpen.Enabled = somethingSelected;
     }
 
-    private void bwRescan_DoWork(object sender, DoWorkEventArgs e)
+    private void btnStopScan_Click(object sender, EventArgs e)
     {
-        Thread.CurrentThread.Name ??= "BulkAddMovie Scan Thread"; // Can only set it once
-
-        CancellationTokenSource cts = new();
-        engine.CheckFolders((BackgroundWorker)sender, true, true, cts.Token);
         cts.Cancel();
-    }
-
-    private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-    {
-        Thread.CurrentThread.Name ??= "BulkAddMovie Identify Thread"; // Can only set it once
-        IdentifyAll((BackgroundWorker)sender);
-    }
-
-    private void IdentifyAll(BackgroundWorker bw)
-    {
-        CancellationTokenSource cts = new();
-        //TokenSource = cts;
-
-        VolatileCounter = 0;
-
-        Parallel.ForEach(engine.AddItems, movie =>
-        {
-            Thread.CurrentThread.Name ??= $" Identify {movie.Name}"; // Can only set it once
-            AutoMatchMovie(cts, movie, bw, engine.AddItems.Count);
-        });
-
-        cts.Cancel();
-    }
-
-    private void bwIdentify_ProgressChanged(object sender, ProgressChangedEventArgs e)
-    {
-        lvFMNewShows.Update();
-
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        lblStatusLabel.Text = (e.UserState as PossibleNewMovie)?.RefinedHint.ToUiVersion();
-        UpdateListItem(e.UserState as PossibleNewMovie, false);
-    }
-
-    private void bwIdentify_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        bnFullAuto.Enabled = true;
-        pbProgress.Visible = false;
-        lblStatusLabel.Visible = false;
-    }
-
-    private void bwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
-    {
-        pbProgress.Value = e.ProgressPercentage.Between(0, 100);
-        lblStatusLabel.Text = e.UserState?.ToString()?.ToUiVersion();
-    }
-
-    private void bwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        bnFullAuto.Enabled = true;
-        pbProgress.Visible = false;
-        lblStatusLabel.Visible = false;
-        FillNewShowList(false);
     }
 }

@@ -133,7 +133,7 @@ public partial class MovieFilters : Form
             return true;
         }
 
-        if (IS_NOT.Equals(comboBox.SelectedItem.ToString()))
+        if (IS_NOT.Equals(comboBox.SelectedItem?.ToString()))
         {
             return false;
         }

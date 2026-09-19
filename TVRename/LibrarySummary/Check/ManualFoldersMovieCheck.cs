@@ -5,11 +5,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class ManualFoldersMovieCheck : CustomMovieCheck
+internal class ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : CustomMovieCheck(movie, doc)
 {
-    public ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
 
     /// <exception cref="FixCheckException">Can't fix ManualFoldersMovieCheck</exception>
     protected override void FixInternal()
@@ -49,7 +46,7 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
                     if (!source.EnumerateFiles().Any() && !source.EnumerateDirectories().Any())
                     {
                         //directory has nothing in it
-                        FileHelper.RemoveDirectory(source.FullName);
+                        FileHelper.RemoveDirectory(source,null);
                         Movie.UseManualLocations = false;
                         Movie.UseAutomaticFolders = true;
                         return;
@@ -104,10 +101,18 @@ internal class ManualFoldersMovieCheck : CustomMovieCheck
 
     private static void MoveFiles(IEnumerable<FileInfo> where, string destination)
     {
+        //TODO MOve to FileHelper
+
         Directory.CreateDirectory(destination);
         foreach (FileInfo? f in where)
         {
             string destinationPath = System.IO.Path.Combine(destination, f.Name);
+
+            if (FileHelper.FileExists(destinationPath))
+            {
+                throw new FixCheckException($"Could not move {f.Name} to {destinationPath} as it already exists. Please remove one manually and retry.");
+            }
+
             f.MoveTo(destinationPath);
             LOGGER.Info($"Moved {f.FullName} to {destinationPath}");
         }

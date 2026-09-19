@@ -1,20 +1,21 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: ''
+title: "[BUG]"
+labels: bug, Tracked on 'Feature Upvote'
 assignees: ''
+type: Bug
 
 ---
 
 # Prerequisites
 
-Please answer the following questions for yourself before submitting an issue. **YOU MAY DELETE THE PREREQUISITES SECTION.**
+Please answer the following questions for yourself before submitting an issue. **YOU MAY DELETE THE PREREQUISITES SECTION ONCE YOU HAVE CONFIRMED.**
 
 - [ ] I am running the latest [version](https://github.com/TV-Rename/tvrename/releases)
 - [ ] I checked the [documentation](https://www.tvrename.com/manual/user/) / [support forum](https://groups.google.com/forum/#!forum/tvrename) and found no answer
 - [ ] I checked to make sure that this issue has not already been [filed](https://github.com/TV-Rename/tvrename/issues)
-- [ ] It is a bug (i.e. something that is going wrong) and not a new feature (These should be raised on [Feature Upvote](https://tvrename.featureupvote.com/))
+- [ ] It is a bug (i.e. something that is going wrong) and not a new feature (These should be raised on [GitHub](https://github.com/TV-Rename/tvrename/issues/new?template=feature_request.md))
  - [ ] It is not a general question( these should be asked on the [support forum](https://groups.google.com/forum/#!forum/tvrename))
 
 # Bug Details

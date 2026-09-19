@@ -110,7 +110,7 @@ public partial class AddEditMovie : Form, ICodeWindow
     {
         cbFolderType.SuspendLayout();
         cbFolderType.Items.Clear();
-        cbFolderType.Items.AddRange([.. Enum.GetValues(typeof(MovieConfiguration.MovieFolderFormat))
+        cbFolderType.Items.AddRange([.. Enum.GetValues<MovieConfiguration.MovieFolderFormat>()
             .OfType<MovieConfiguration.MovieFolderFormat>()
             .Select(x => x.PrettyPrint())]);
         cbFolderType.ResumeLayout();
@@ -118,7 +118,7 @@ public partial class AddEditMovie : Form, ICodeWindow
     }
     private MovieConfiguration.MovieFolderFormat? GetFolderFormat()
     {
-        return Enum.GetValues(typeof(MovieConfiguration.MovieFolderFormat))
+        return Enum.GetValues<MovieConfiguration.MovieFolderFormat>()
             .Cast<MovieConfiguration.MovieFolderFormat>()
             .FirstOrDefault(format => format.PrettyPrint().Equals(cbFolderType.Text));
     }

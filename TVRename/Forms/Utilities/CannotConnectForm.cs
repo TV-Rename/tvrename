@@ -15,12 +15,6 @@ public partial class CannotConnectForm : Form
         Text = header;
     }
 
-    public sealed override string Text
-    {
-        get => base.Text;
-        set => base.Text = value;
-    }
-
     private void bnTVDB_Click(object sender, EventArgs e)
     {
         GetCoreUrl(provider).OpenUrlInBrowser();

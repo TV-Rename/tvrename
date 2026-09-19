@@ -1,6 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using TVRename.Forms;
 
@@ -19,9 +20,9 @@ internal class ActionNfoMovie : ActionNfo
 
     protected override string RootName() => "movie";
 
-    protected override ActionOutcome UpdateFile()
+    protected override async Task<ActionOutcome> UpdateFileAsync()
     {
-        XDocument doc = XDocument.Load(Where.FullName);
+        XDocument doc = await XmlHelper.LoadXmlFromFileAsync(Where.FullName);
         XElement? root = doc.Root;
 
         if (root is null)
@@ -79,7 +80,7 @@ internal class ActionNfoMovie : ActionNfo
 
             ReplaceFanart(root, cachedSeries.Images(MediaImage.ImageType.background));
         }
-        doc.Save(Where.FullName);
+        await doc.SaveXmlAsync(Where.FullName);
         return ActionOutcome.Success();
     }
 }

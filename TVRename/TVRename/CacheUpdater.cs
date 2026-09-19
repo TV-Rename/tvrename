@@ -16,18 +16,13 @@ namespace TVRename;
 /// Handles the update happening in the background and also presenting a UI and bringing the update into the
 /// foreground
 /// </summary>
-public class CacheUpdater : IDisposable
+public class CacheUpdater : IDisposable, IAsyncDisposable
 {
-    public bool DownloadDone;
-    public int DownloadsRemaining;
     public int DownloadPct;
-
     private bool downloadOk;
     private bool downloadStopOnError;
     private bool showErrorMsgBox;
-    private Semaphore? workerSemaphore;
-    private List<Thread> workers;
-    private Thread? mDownloaderThread;
+    private Task? mDownloaderThread;
     private ICollection<ISeriesSpecifier> downloadIds;
     public ConcurrentBag<MediaNotFoundException> Problems { get; }
 
@@ -36,37 +31,30 @@ public class CacheUpdater : IDisposable
 
     public CacheUpdater()
     {
-        DownloadDone = true;
         downloadOk = true;
         Problems = [];
-        workers = [];
         downloadIds = [];
     }
 
-    public void StartBgDownloadThread(bool stopOnError, ICollection<ISeriesSpecifier> shows, bool showMsgBox,
+    public void StartBackgroundDownloadAsync(bool stopOnError, ICollection<ISeriesSpecifier> shows, bool showMsgBox, DownloadProgressStatus? p,
         CancellationToken ctsToken)
     {
-        if (!DownloadDone)
+        if (!DownloadIsHappening())
         {
-            return;
+            downloadStopOnError = stopOnError; //TODO - Work out what this was for
+            showErrorMsgBox = showMsgBox;
+            DownloadPct = 0;
+            downloadOk = true;
+
+            downloadIds = shows;
+
+            ClearProblematicSeriesIds();
+
+            mDownloaderThread = DownloadAsync(p, ctsToken);
         }
-
-        downloadStopOnError = stopOnError;
-        showErrorMsgBox = showMsgBox;
-        DownloadPct = 0;
-        DownloadDone = false;
-        downloadOk = true;
-
-        downloadIds = shows;
-
-        ClearProblematicSeriesIds();
-
-        mDownloaderThread = new Thread(Downloader) { Name = "Download Thread" };
-        mDownloaderThread.SetApartmentState(ApartmentState.STA);
-        mDownloaderThread.Start(ctsToken);
     }
 
-    public bool DoDownloadsFg(bool showProgress, bool showMsgBox, ICollection<ISeriesSpecifier> shows, UI owner)
+    public async Task<bool> DoDownloadsFgAsync(bool showProgress, bool showMsgBox, ICollection<ISeriesSpecifier> shows, UI owner)
     {
         if (TVSettings.Instance.OfflineMode)
         {
@@ -77,21 +65,17 @@ public class CacheUpdater : IDisposable
         Logger.Info("Doing downloads in the foreground...");
 
         CancellationTokenSource cts = new();
-        StartBgDownloadThread(true, shows, showMsgBox, cts.Token);
+        StartBackgroundDownloadAsync(true, shows, showMsgBox, null, cts.Token); //todo hook up progress dialog
 
-        const int DELAY_STEP = 100;
-        int count = 1000 / DELAY_STEP; // one second
-        while (count-- > 0 && !DownloadDone)
-        {
-            Thread.Sleep(DELAY_STEP);
-        }
-
-        if (!DownloadDone && showProgress) // downloading still going on, so time to show the dialog if we're not in /hide mode
+        if (DownloadIsHappening() && showProgress) // downloading still going on, so time to show the dialog if we're not in /hide mode
         {
             owner.ShowFgDownloadProgress(this, cts);
         }
 
-        WaitForBgDownloadDone();
+        if (mDownloaderThread is not null)
+        {
+            await mDownloaderThread;
+        }
 
         if (downloadOk)
         {
@@ -114,9 +98,9 @@ public class CacheUpdater : IDisposable
             switch (ccresult)
             {
                 case DialogResult.Retry:
-                    TheTVDB.LocalCache.Instance.ReConnect(false);
-                    TVmaze.LocalCache.Instance.ReConnect(false);
-                    TMDB.LocalCache.Instance.ReConnect(false);
+                    await TheTVDB.LocalCache.Instance.ReConnectAsync(false);
+                    await TVmaze.LocalCache.Instance.ReConnectAsync(false);
+                    await TMDB.LocalCache.Instance.ReConnectAsync(false);
                     break;
                 case DialogResult.Abort:
                     TVSettings.Instance.OfflineMode = true;
@@ -151,41 +135,37 @@ public class CacheUpdater : IDisposable
         return TVSettings.Instance.DefaultProvider;
     }
 
-    public void StopBgDownloadThread()
+    public async Task DownloadThreadAsync()
     {
         if (mDownloaderThread is null)
         {
             return;
         }
 
-        DownloadDone = true;
-        mDownloaderThread.Join();
+        await mDownloaderThread;
         mDownloaderThread = null;
     }
 
-    private void GetThread(object? codeIn)
+    private async Task GetThreadAsync(ISeriesSpecifier series, SemaphoreSlim semaphore, IProgress<DownloadProgressReport>? p, CancellationToken cts)
     {
-        System.Diagnostics.Debug.Assert(workerSemaphore != null);
-
-        if (workerSemaphore is null)
-        {
-            return;
-        }
-
-        ISeriesSpecifier series = codeIn switch
-        {
-            ISeriesSpecifier ss => ss,
-            _ => throw new ArgumentException("GetThread started with invalid parameter")
-        };
+        await semaphore.WaitAsync(cts).ConfigureAwait(false); // blocks until there is an available slot
 
         try
         {
-            workerSemaphore.WaitOne(); // don't start until we're allowed to
+            if (cts.IsCancellationRequested) return;
+
+            p?.Report(new DownloadProgressReport
+            {
+                Provider = series.Provider,
+                Message = series.Name ?? "Unknown Show",
+                UpdateType = DownloadProgressReport.Type.EpisodeDownload    
+            });
+
 
             bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
             Threadslogger.Trace("  Downloading " + series.Name);
-            if (TVDoc.GetMediaCache(series.Provider).EnsureUpdated(series, bannersToo, true))
+            if (await TVDoc.GetMediaCache(series.Provider).EnsureUpdatedAsync(series, bannersToo, true))
             {
                 return;
             }
@@ -215,81 +195,45 @@ public class CacheUpdater : IDisposable
         finally
         {
             Threadslogger.Trace("  Finished " + series);
-            workerSemaphore.Release(1);
+            semaphore.Release();
         }
 
         //If we get to here the download failed
         downloadOk = false;
-        if (downloadStopOnError)
-        {
-            DownloadDone = true;
-        }
     }
 
-    private void WaitForAllThreadsAndTidyUp()
-    {
-        foreach (Thread t in workers.Where(t => t.IsAlive))
-        {
-            t.Join();
-        }
-
-        workers.Clear();
-        workerSemaphore = null;
-    }
-
-    private void Downloader(object? token)
+    private async Task DownloadAsync(DownloadProgressStatus? p, CancellationToken cts)
     {
         // do background downloads of webpages
         Logger.Info("*******************************");
         Logger.Info("Starting Background Download...");
 
-        CancellationToken cts = (CancellationToken)(token ?? throw new ArgumentNullException(nameof(token)));
         try
         {
             if (downloadIds.Count == 0)
             {
-                DownloadDone = true;
                 downloadOk = true;
                 return;
             }
 
-            if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TVmaze))
+            Task<bool> tvmazeTask = GetUpdates(TVDoc.ProviderType.TVmaze, p, cts);
+            Task<bool> tvdbTask = GetUpdates(TVDoc.ProviderType.TheTVDB, p, cts);
+            Task<bool> tmdbTask = GetUpdates(TVDoc.ProviderType.TMDB, p, cts);
+
+            await Task.WhenAll(tvdbTask, tmdbTask, tvmazeTask);
+
+            if (tvdbTask.Result == false || tmdbTask.Result == false || tvmazeTask.Result == false) //one of the downloads that was needed failed, so we can't continue
             {
-                if (!TVmaze.LocalCache.Instance.GetUpdates([.. downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TVmaze)], showErrorMsgBox,
-                        cts))
-                {
-                    DownloadDone = true;
-                    downloadOk = false;
-                    return;
-                }
+                downloadOk = false;
+                return;
             }
 
-            if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
-            {
-                if (!TheTVDB.LocalCache.Instance.GetUpdates([.. downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB)], showErrorMsgBox,
-                        cts))
-                {
-                    DownloadDone = true;
-                    downloadOk = false;
-                    return;
-                }
-            }
-
-            if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TMDB))
-            {
-                if (!TMDB.LocalCache.Instance.GetUpdates([.. downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TMDB)], showErrorMsgBox,
-                        cts))
-                {
-                    DownloadDone = true;
-                    downloadOk = false;
-                    return;
-                }
-            }
+            p?.UpdateFromSource(TVDoc.ProviderType.TVmaze, downloadIds.Count(s => s.Provider == TVDoc.ProviderType.TVmaze));
+            p?.UpdateFromSource(TVDoc.ProviderType.TheTVDB, downloadIds.Count(s => s.Provider == TVDoc.ProviderType.TheTVDB));
+            p?.UpdateFromSource(TVDoc.ProviderType.TMDB, downloadIds.Count(s => s.Provider == TVDoc.ProviderType.TMDB));
 
             // for each of the ShowItems, make sure we've got downloaded data for it
 
-            int totalItems = downloadIds.Count;
-            int n = 0;
 
             int numWorkers = TVSettings.Instance.ParallelDownloads;
             Logger.Info($"Setting up {numWorkers} threads to download information from TheTVDB, TMDB and TVMaze");
@@ -297,46 +241,22 @@ public class CacheUpdater : IDisposable
             Logger.Info($"Working on {CountIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie)} TVDB and {CountIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie)} TMDB Movies.");
             Logger.Info($"Identified that {CountDirtyIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv)} TVDB, {CountDirtyIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv)} TMDB and {CountDirtyIdsFrom(TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv)} TV Maze shows need to be updated");
             Logger.Info($"Identified that {CountDirtyIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie)} TVDB and {CountDirtyIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie)} TMDB movies need to be updated");
-            workers = [];
 
-            Semaphore newSemaphore = new(numWorkers, numWorkers); // allow up to numWorkers working at once
-            workerSemaphore = newSemaphore;
+            /*
+            await Parallel.ForEachAsync(
+                downloadIds,
+                new ParallelOptions { MaxDegreeOfParallelism = numWorkers },
+                async (series,token) =>
+                {
+                    await GetThreadAsync(series, new SemaphoreSlim(numWorkers, numWorkers), p, cts);
+                }).ConfigureAwait(false);
+            */
 
-            foreach (ISeriesSpecifier code in downloadIds)
+            using (var semaphore = new SemaphoreSlim(numWorkers, numWorkers))
             {
-                if (cts.IsCancellationRequested)
-                {
-                    break;
-                }
-                DownloadPct = 100 * (n + 1) / (totalItems + 1);
-                DownloadsRemaining = totalItems - n;
-                n++;
-
-                newSemaphore.WaitOne(); // blocks until there is an available slot
-                Thread t = new(GetThread);
-                workers.Add(t);
-                t.Name = "GetThread:" + code.Name;
-                t.Start(code); // will grab the semaphore as soon as we make it available
-                int nfr = newSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
-                Threadslogger.Trace("Started " + code + " pool has " + nfr + " free");
-                Thread.Sleep(1); // allow the other thread a chance to run and grab
-
-                // tidy up any finished workers
-                for (int i = workers.Count - 1; i >= 0; i--)
-                {
-                    if (!workers[i].IsAlive)
-                    {
-                        workers.RemoveAt(i); // remove dead worker
-                    }
-                }
-
-                if (DownloadDone)
-                {
-                    break;
-                }
+                var tasks = downloadIds.Select(code => GetThreadAsync(code, semaphore, p, cts)).ToArray();
+                await Task.WhenAll(tasks).ConfigureAwait(false);
             }
-
-            WaitForAllThreadsAndTidyUp();
 
             if (!cts.IsCancellationRequested)
             {
@@ -363,9 +283,37 @@ public class CacheUpdater : IDisposable
         }
         finally
         {
-            workers.Clear();
-            workerSemaphore = null;
-            DownloadDone = true;
+            if (p != null)
+            {
+                var x = new DownloadProgressReport
+                {
+                    UpdateType = DownloadProgressReport.Type.Final,
+                    Message = "Cleaning Up"
+                };
+
+                ((IProgress<DownloadProgressReport>)p).Report(x);
+            }
+        }
+
+        async Task<bool> GetUpdates(TVDoc.ProviderType provider, DownloadProgressStatus? p, CancellationToken cts)
+        {
+            if (downloadIds.Any(s => s.Provider == provider))
+            {
+                if (p != null)
+                {
+                    var x = new DownloadProgressReport
+                    {
+                        UpdateType = DownloadProgressReport.Type.ProviderUpdates,
+                        Provider = provider
+                    };
+
+                    ((IProgress<DownloadProgressReport>)p).Report(x);
+                }
+
+                return await TVDoc.GetMediaCache(provider).GetUpdatesAsync(p,downloadIds.Where(specifier => specifier.Provider == provider).ToList().ConvertAll(s=>s), showErrorMsgBox, cts);
+            }
+
+            return true;
         }
     }
 
@@ -381,33 +329,19 @@ public class CacheUpdater : IDisposable
             : downloadIds.Count(s => s.Provider == provider && s.Media == type && (TVDoc.GetMediaCache(provider).GetMovie(s.IdFor(provider))?.Dirty ?? true));
     }
 
-    private void WaitForBgDownloadDone()
+    
+    async ValueTask IAsyncDisposable.DisposeAsync()
     {
-        if (mDownloaderThread is { IsAlive: true })
-        {
-            mDownloaderThread.Join();
-        }
-
-        mDownloaderThread = null;
+        await DownloadThreadAsync();
+        Dispose(true);
     }
-
     private void Dispose(bool disposing)
     {
-        ReleaseUnmanagedResources();
-        if (disposing)
-        {
-            workerSemaphore?.Dispose();
-        }
-    }
-
-    private void ReleaseUnmanagedResources()
-    {
-        StopBgDownloadThread();
+        Dispose();
     }
 
     public void Dispose()
     {
-        Dispose(true);
         GC.SuppressFinalize(this);
     }
 
@@ -448,5 +382,10 @@ public class CacheUpdater : IDisposable
         {
             Problems.TryTake(out _);
         }
+    }
+
+    internal bool DownloadIsHappening()
+    {
+        return mDownloaderThread != null && !mDownloaderThread.IsCompleted;
     }
 }

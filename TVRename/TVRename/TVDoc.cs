@@ -16,16 +16,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using TVRename.Forms;
+using TVRename.Forms.Tools;
 using TVRename.Settings.AppState;
 
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-public class TVDoc : IDisposable
+public class TVDoc : IDisposable, IAsyncDisposable
 {
     public enum ProviderType
     {
@@ -117,12 +119,9 @@ public class TVDoc : IDisposable
 
         foreach (ShowConfiguration si in TvLibrary.Shows)
         {
-            foreach (List<ProcessedEpisode> k in si.SeasonEpisodes.Values)
-            {
-                CurrentStats.NsNumberOfEpisodesExpected += k.Count;
-            }
+            CurrentStats.NsNumberOfEpisodesExpected += si.EpisodeCount();
 
-            CurrentStats.NsNumberOfSeasons += si.SeasonEpisodes.Count;
+            CurrentStats.NsNumberOfSeasons += si.SeasonCount();
         }
 
         return CurrentStats;
@@ -149,7 +148,7 @@ public class TVDoc : IDisposable
     {
         UpdateIdsFromCache();
         UpdateNamesFromCache();
-        TvLibrary.GenDict();
+        TvLibrary.UpdateEpisodeCaches();
         FilmLibrary.UpdateCollectionInformation();
     }
 
@@ -373,13 +372,14 @@ public class TVDoc : IDisposable
         }
     }
 
-    private void DoActions(ItemList theList, CancellationToken token)
+    private async Task DoActionsAsync(ItemList theList, CancellationTokenSource token)
     {
         try
         {
             theList.Actions.ForEach(a=>a.ResetOutcome());
-            
-            ActionManager.DoActions(theList, token);
+
+            await ActionManager.DoActionsAsync(theList, token);
+
             List<Action> doneActions = [.. TheActionList.Actions.Where(a => a.Outcome is { Done: true, Error: false })];
             List<Item> subsequentItems = [.. doneActions.Select(a => a.Becomes()).OfType<Item>()];
 
@@ -392,30 +392,31 @@ public class TVDoc : IDisposable
         }
     }
 
-    private bool DoDownloadsFg(bool unattended, bool tvrMinimised, UI owner)
+    private async Task<bool> DoDownloadsFgAsync(bool unattended, bool tvrMinimised, UI owner)
     {
         List<ISeriesSpecifier> idsToDownload = [.. TvLibrary, .. FilmLibrary.Movies];
-        return DoDownloadsFGNow(unattended, tvrMinimised, owner, idsToDownload);
+        return await DoDownloadsFGNow(unattended, tvrMinimised, owner, idsToDownload);
     }
 
     // ReSharper disable once InconsistentNaming
-    private bool DoDownloadsFGNow(bool unattended, bool tvrMinimised, UI owner, List<ISeriesSpecifier> passedShows)
+    private async Task<bool> DoDownloadsFGNow(bool unattended, bool tvrMinimised, UI owner, List<ISeriesSpecifier> passedShows)
     {
         bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
         bool showMsgBox = !unattended && Args is { Unattended: false, Hide: false } && Environment.UserInteractive;
 
         ForceRefreshIdentifiedMedia();
-        bool returnValue = cacheManager.DoDownloadsFg(showProgress, showMsgBox, passedShows, owner);
+        bool returnValue = await cacheManager.DoDownloadsFgAsync(showProgress, showMsgBox, passedShows, owner);
         UpdateDenormalisations();
         return returnValue;
     }
 
     // ReSharper disable once InconsistentNaming
-    public void DoDownloadsBG()
+    public async Task DoDownloadsBG(DownloadProgressStatus? p)
     {
         ForceRefreshIdentifiedMedia();
         List<ISeriesSpecifier> idsToDownload = [.. TvLibrary.Shows, .. FilmLibrary.Movies];
-        cacheManager.StartBgDownloadThread(false, idsToDownload, false, CancellationToken.None);
+        cacheManager.StartBackgroundDownloadAsync(false, idsToDownload, false,p, CancellationToken.None);
+        await cacheManager.DownloadThreadAsync();
     }
 
     private void ForceRefreshIdentifiedMedia()
@@ -466,18 +467,21 @@ public class TVDoc : IDisposable
         }
     }
 
-    public int DownloadsRemaining() =>
-        cacheManager.DownloadDone ? 0 : cacheManager.DownloadsRemaining;
+    public bool DownloadsHappening() => cacheManager.DownloadIsHappening();
 
-    public void SetSearcher(SearchEngine s)
+    public void SetSearcher(SearchEngine? s)
     {
-        TVSettings.Instance.TheSearchers.SetSearchEngine(s);
+        if (s == null) return;
+
+        TVSettings.Instance.TheSearchers.SetSearchEngine(s.Value);
         SetDirty();
     }
 
-    public void SetMovieSearcher(SearchEngine s)
+    public void SetMovieSearcher(SearchEngine? s)
     {
-        TVSettings.Instance.TheMovieSearchers.SetSearchEngine(s);
+        if (s == null) return;
+
+        TVSettings.Instance.TheMovieSearchers.SetSearchEngine(s.Value);
         SetDirty();
     }
 
@@ -504,9 +508,9 @@ public class TVDoc : IDisposable
         TMDB.LocalCache.Instance.Tidy(TvLibrary.Shows);
     }
 
-    public void Closing()
+    public async Task ClosingAsync()
     {
-        cacheManager.StopBgDownloadThread();
+        await cacheManager.DownloadThreadAsync();
         Stats().Save();
     }
 
@@ -740,7 +744,7 @@ public class TVDoc : IDisposable
     private void ExportMovieInfo(MovieFilter filter)
         => ExportMovieInfo([.. FilmLibrary.GetSortedMovies().Where(filter.Filter)]);
     private void ExportShowInfo(ShowFilter filter)
-        => ExportShowInfo([.. TvLibrary.GetSortedShowItems().Where(filter.Filter)]);
+        => ExportShowInfo([.. TvLibrary.GetSortedShows().Where(filter.Filter)]);
 
     public void ExportMovieInfo() => ExportMovieInfo(FilmLibrary.GetSortedMovies());
 
@@ -750,7 +754,7 @@ public class TVDoc : IDisposable
         new MoviesHtml(movieConfigurations).RunAsThread();
     }
 
-    public void ExportShowInfo() => ExportShowInfo(TvLibrary.GetSortedShowItems());
+    public void ExportShowInfo() => ExportShowInfo(TvLibrary.GetSortedShows());
 
     public static void ExportShowInfo(List<ShowConfiguration> sortedShowItems)
     {
@@ -800,11 +804,11 @@ public class TVDoc : IDisposable
         ExportMovieInfo();
     }
 
-    internal void TvAddedOrEdited(bool download, bool unattended, bool hidden, UI? owner,
+    internal async Task TvAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner,
         ShowConfiguration show) =>
-        TvAddedOrEdited(download, unattended, hidden, owner, show.AsList());
+        await TvAddedOrEditedAsync(download, unattended, hidden, owner, show.AsList());
 
-    internal void TvAddedOrEdited(bool download, bool unattended, bool hidden, UI? owner, List<ShowConfiguration> shows)
+    internal async Task TvAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, List<ShowConfiguration> shows)
     {
         SetDirty();
 
@@ -813,7 +817,7 @@ public class TVDoc : IDisposable
 
         if (download && owner != null)
         {
-            if (!DoDownloadsFg(unattended, hidden, owner, shows))
+            if (!await DoDownloadsFgAsync(unattended, hidden, owner, shows))
             {
                 return;
             }
@@ -827,11 +831,11 @@ public class TVDoc : IDisposable
         SaveSettingsIfNeeded();
     }
 
-    internal void UpdateMedia(bool download, bool unattended, bool hidden, UI owner)
+    internal async Task UpdateMediaAsync(bool download, bool unattended, bool hidden, UI owner)
     {
         if (download)
         {
-            if (!DoDownloadsFg(unattended, hidden, owner))
+            if (!await DoDownloadsFgAsync(unattended, hidden, owner))
             {
                 return;
             }
@@ -843,11 +847,11 @@ public class TVDoc : IDisposable
         }
     }
 
-    internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI? owner,
+    internal async Task MoviesAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner,
         MovieConfiguration movie) =>
-        MoviesAddedOrEdited(download, unattended, hidden, owner, movie.AsList());
+        await MoviesAddedOrEditedAsync(download, unattended, hidden, owner, movie.AsList());
 
-    internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI? owner, List<MovieConfiguration> movies)
+    internal async Task MoviesAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, List<MovieConfiguration> movies)
     {
         SetDirty();
         forceMoviesRefresh.AddRange(movies);
@@ -855,7 +859,7 @@ public class TVDoc : IDisposable
 
         if (download && owner != null)
         {
-            if (!DoDownloadsFg(unattended, hidden, owner, movies))
+            if (!await DoDownloadsFgAsync(unattended, hidden, owner, movies))
             {
                 return;
             }
@@ -877,10 +881,8 @@ public class TVDoc : IDisposable
 
     public bool HasActiveSearchFinders => searchFinders?.Active() ?? false;
 
-    public void Scan(ScanSettings settings)
+    public async Task ScanAsync(ScanSettings settings, ScanProgress? scanProgressDlg)
     {
-        ScanProgress? scanProgressDlg = settings.UpdateUi;
-
         try
         {
             Logger.Info("*******************************");
@@ -888,7 +890,7 @@ public class TVDoc : IDisposable
 
             PreventAutoScan("Scan " + settings.Type.PrettyPrint());
 
-            UpdateMediaToScan(settings);
+            await UpdateMediaToScanAsync(settings);
             if (settings.Type != TVSettings.ScanType.Incremental)
             {
                 TheActionList.Clear();
@@ -896,7 +898,7 @@ public class TVDoc : IDisposable
 
             if (settings.Type != TVSettings.ScanType.FastSingleShow && settings.AnyMediaToUpdate)
             {
-                if (!DoDownloadsFg(settings.Unattended, settings.Hidden, settings.Owner))
+                if (!await DoDownloadsFgAsync(settings.Unattended, settings.Hidden, settings.Owner))
                 {
                     Logger.Warn("Scan stopped as updates failed");
                     return;
@@ -905,17 +907,19 @@ public class TVDoc : IDisposable
 
             while (!Args.Hide && Environment.UserInteractive && (scanProgressDlg is null || !scanProgressDlg.Ready))
             {
-                Thread.Sleep(10); // wait for thread to create the dialog
+                await Task.Delay(10); // wait for thread to create the dialog
             }
 
             SetProgressDelegate noProgress = NoProgress;
 
             if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow && settings.Type != TVSettings.ScanType.FastSingleShow && settings.Type != TVSettings.ScanType.Incremental)
             {
-                new FindNewItemsInDownloadFolders(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.AddNewProg, 0, 50);
-                new FindNewShowsInLibrary(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.AddNewProg, 50, 100);
+                var x = new FindNewItemsInDownloadFolders(this, settings).CheckAsync(scanProgressDlg is null ? noProgress : scanProgressDlg.AddNewProg, 0, 50);
+                var y = new FindNewShowsInLibrary(this, settings).CheckAsync(scanProgressDlg is null ? noProgress : scanProgressDlg.AddNewProg, 50, 100);
 
-                UpdateMediaToScan(settings);
+                await Task.WhenAll(x, y);
+
+                await UpdateMediaToScanAsync(settings);
             }
 
             //If still null then return
@@ -925,21 +929,30 @@ public class TVDoc : IDisposable
                 return;
             }
 
-            new CheckShows(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.MediaLibProg);
+            await new CheckShows(this, settings).CheckAsync(scanProgressDlg is null ? noProgress : scanProgressDlg.MediaLibProg);
 
             if (settings.Type != TVSettings.ScanType.FastSingleShow && settings.Type != TVSettings.ScanType.Incremental)
             {
-                new UnArchiveDownloadDirectory(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.DownloadFolderProg);
-                new CleanDownloadDirectory(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.DownloadFolderProg);
+                await new UnArchiveDownloadDirectory(this, settings).CheckAsync(scanProgressDlg is null ? noProgress : scanProgressDlg.DownloadFolderProg);
+                await new CleanDownloadDirectory(this, settings).CheckAsync(scanProgressDlg is null ? noProgress : scanProgressDlg.DownloadFolderProg);
             }
 
-            localFinders?.Check(scanProgressDlg is null ? noProgress : scanProgressDlg.LocalSearchProg);
-            downloadFinders?.Check(scanProgressDlg is null ? noProgress : scanProgressDlg.DownloadingProg);
-            searchFinders?.Check(scanProgressDlg is null ? noProgress : scanProgressDlg.ToBeDownloadedProg);
+            if (HasActiveLocalFinders)
+            {
+                await localFinders!.CheckAsync(scanProgressDlg is null ? noProgress : scanProgressDlg.LocalSearchProg);
+            }
+            if (HasActiveDownloadFinders)
+            {
+                await downloadFinders!.CheckAsync(scanProgressDlg is null ? noProgress : scanProgressDlg.DownloadingProg);
+            }
+            if (HasActiveSearchFinders)
+            {
+                await searchFinders!.CheckAsync(scanProgressDlg is null ? noProgress : scanProgressDlg.ToBeDownloadedProg);
+            }
 
             if (settings.Type != TVSettings.ScanType.FastSingleShow && settings.Type != TVSettings.ScanType.Incremental)
             {
-                new CleanUpTorrents(this, settings).Check(scanProgressDlg is null ? noProgress : scanProgressDlg.ToBeDownloadedProg);
+                await new CleanUpTorrents(this, settings).CheckAsync(scanProgressDlg is null ? noProgress : scanProgressDlg.ToBeDownloadedProg);
             }
 
             if (settings.Token.IsCancellationRequested)
@@ -1002,7 +1015,7 @@ public class TVDoc : IDisposable
 
             if (configuration != null && seasonNum != null)
             {
-                if (configuration.SeasonEpisodes[seasonNum.Value].Count == season.Count() && season.Count() > 1)
+                if (configuration.EpisodesForSeason(seasonNum.Value).Count == season.Count() && season.Count() > 1)
                 {
                     TheActionList.Replace(season, new ShowSeasonMissing(configuration, seasonNum.Value, season.First().TargetFolder, [.. season]));
                 }
@@ -1010,10 +1023,10 @@ public class TVDoc : IDisposable
         }
     }
 
-    private void UpdateMediaToScan(ScanSettings settings)
+    private async Task UpdateMediaToScanAsync(ScanSettings settings)
     {
         //Get the default set of shows defined by the specified type
-        List<ShowConfiguration> shows = [.. GetShowList(settings.Type, settings.Media, settings.Shows)];
+        List<ShowConfiguration> shows = (await GetShowListAsync(settings.Type, settings.Media, settings.Shows)).ToList();
         //Get the default set of shows defined by the specified type
         List<MovieConfiguration> movies = [.. GetMovieList(settings.Type, settings.Media, settings.Movies)];
 
@@ -1022,45 +1035,17 @@ public class TVDoc : IDisposable
             settings.UpdateShowsAndMovies([.. shows.Union(forceShowsScan.Where(m => TvLibrary.Contains(m)))], [.. movies.Union(forceMoviesScan.Where(m => FilmLibrary.Contains(m)))]);
         }
     }
-    public class ActionSettings
-    {
-        public readonly bool Unattended;
-        public readonly bool DoAll;
-        public readonly ItemList Lvr;
-        public readonly CancellationTokenSource Token;
 
-        public ActionSettings(bool unattended, bool doAll, ItemList lvr, CancellationTokenSource token)
-        {
-            Unattended = unattended;
-            DoAll = doAll;
-            Lvr = lvr;
-            Token = token;
-        }
-    }
-    public class ScanSettings
+    public class ScanSettings(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool hidden, TVSettings.ScanType st, MediaConfiguration.MediaType media, UI owner, CancellationToken tok)
     {
-        public readonly bool Unattended;
-        public readonly bool Hidden;
-        public readonly TVSettings.ScanType Type;
-        public List<ShowConfiguration> Shows;
-        public List<MovieConfiguration> Movies;
-        public readonly CancellationToken Token;
-        public readonly UI Owner;
-        public readonly MediaConfiguration.MediaType Media;
-        public readonly ScanProgress? UpdateUi;
-
-        public ScanSettings(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool hidden, TVSettings.ScanType st, MediaConfiguration.MediaType media, UI owner, ScanProgress? updateUi, CancellationToken tok)
-        {
-            Shows = shows;
-            Movies = movies;
-            Unattended = unattended;
-            Hidden = hidden;
-            Type = st;
-            Token = tok;
-            Owner = owner;
-            Media = media;
-            UpdateUi = updateUi;
-        }
+        public readonly bool Unattended = unattended;
+        public readonly bool Hidden = hidden;
+        public readonly TVSettings.ScanType Type = st;
+        public List<ShowConfiguration> Shows = shows;
+        public List<MovieConfiguration> Movies = movies;
+        public readonly CancellationToken Token = tok;
+        public readonly UI Owner = owner;
+        public readonly MediaConfiguration.MediaType Media = media;
 
         public bool AnyMediaToUpdate => Shows.Any() || Movies.Any();
 
@@ -1080,7 +1065,7 @@ public class TVDoc : IDisposable
         }
     }
 
-    private IEnumerable<ShowConfiguration> GetShowList(TVSettings.ScanType st, MediaConfiguration.MediaType mt, IEnumerable<ShowConfiguration>? passedShows)
+    private async Task<IEnumerable<ShowConfiguration>> GetShowListAsync(TVSettings.ScanType st, MediaConfiguration.MediaType mt, IEnumerable<ShowConfiguration>? passedShows)
     {
         if (mt == MediaConfiguration.MediaType.movie)
         {
@@ -1088,8 +1073,8 @@ public class TVDoc : IDisposable
         }
         return st switch
         {
-            TVSettings.ScanType.Full => TvLibrary.GetSortedShowItems(),
-            TVSettings.ScanType.Quick => GetQuickShowsToScan(true, true),
+            TVSettings.ScanType.Full => TvLibrary.GetSortedShows(),
+            TVSettings.ScanType.Quick => await GetQuickShowsToScanAsync(true, true),
             TVSettings.ScanType.Recent => TvLibrary.GetRecentShows(),
             TVSettings.ScanType.SingleShow => passedShows ?? [],
             TVSettings.ScanType.Incremental => passedShows ?? [],
@@ -1098,7 +1083,7 @@ public class TVDoc : IDisposable
         };
     }
 
-    private IEnumerable<MovieConfiguration> GetMovieList(TVSettings.ScanType st, MediaConfiguration.MediaType mt, IEnumerable<MovieConfiguration>? passedShows)
+    private List<MovieConfiguration> GetMovieList(TVSettings.ScanType st, MediaConfiguration.MediaType mt, List<MovieConfiguration>? passedShows)
     {
         if (mt == MediaConfiguration.MediaType.tv)
         {
@@ -1116,7 +1101,7 @@ public class TVDoc : IDisposable
         };
     }
 
-    private IEnumerable<ShowConfiguration> GetQuickShowsToScan(bool doRecentMissing, bool doFilesInDownloadDir)
+    private async Task<List<ShowConfiguration>> GetQuickShowsToScanAsync(bool doRecentMissing, bool doFilesInDownloadDir)
     {
         List<ShowConfiguration> showsToScan = [];
         if (doFilesInDownloadDir)
@@ -1126,7 +1111,7 @@ public class TVDoc : IDisposable
 
         if (doRecentMissing)
         {
-            IEnumerable<ProcessedEpisode> lpe = GetMissingEps();
+            IEnumerable<ProcessedEpisode> lpe = await GetMissingEps();
             foreach (ProcessedEpisode pe in lpe.Where(pe => !showsToScan.Contains(pe.Show)))
             {
                 showsToScan.Add(pe.Show);
@@ -1135,7 +1120,7 @@ public class TVDoc : IDisposable
         return showsToScan;
     }
 
-    private IEnumerable<MovieConfiguration> GetQuickMoviesToScan(bool doFilesInDownloadDir)
+    private List<MovieConfiguration> GetQuickMoviesToScan(bool doFilesInDownloadDir)
     {
         List<MovieConfiguration> showsToScan = [];
         if (doFilesInDownloadDir)
@@ -1188,9 +1173,27 @@ public class TVDoc : IDisposable
         }
     }
 
-    public void ForceUpdateImages(ShowConfiguration si)
+    public async Task ForceUpdateImagesAsync(MovieConfiguration si, IProgress<TaskProgress>? progress, ThreadSafeCounter c, CancellationToken token)
+    {
+        downloadIdentifiers.Reset();
+
+        Logger.Info("Force Update Images: " + si.ShowName);
+        progress?.Report(new TaskProgress(c.Increment(), "Force Update Movie Images: " + si.ShowName));
+
+        // process each folder for each movie...
+        foreach (FileInfo? file in si.MovieFiles())
+        {
+            TheActionList.Add(
+                downloadIdentifiers.ForceUpdateMovie(DownloadIdentifier.DownloadType.downloadImage, si, file));
+
+            SetDirty();
+        }
+    }
+
+    public async Task ForceUpdateImagesAsync(ShowConfiguration si, IProgress<TaskProgress>? progress,ThreadSafeCounter c, CancellationToken token)
     {
         Logger.Info("Force Update Images: " + si.ShowName);
+        progress?.Report(new TaskProgress(c.Increment() , "Force Update TV Images: " + si.ShowName));
 
         Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
 
@@ -1231,22 +1234,6 @@ public class TVDoc : IDisposable
                         snum));
             }
         } // for each season of this show
-    }
-
-    public void ForceUpdateImages(MovieConfiguration si)
-    {
-        downloadIdentifiers.Reset();
-
-        Logger.Info("Force Update Images: " + si.ShowName);
-
-        // process each folder for each movie...
-        foreach (FileInfo? file in si.MovieFiles())
-        {
-            TheActionList.Add(
-                downloadIdentifiers.ForceUpdateMovie(DownloadIdentifier.DownloadType.downloadImage, si, file));
-
-            SetDirty();
-        }
     }
 
     private void RemoveDuplicateDownloads(bool unattended, UI owner)
@@ -1331,14 +1318,14 @@ public class TVDoc : IDisposable
         //Nothing to do - Method is called if we have no UI
     }
 
-    private IEnumerable<ProcessedEpisode> GetMissingEps()
+    private async Task<List<ProcessedEpisode>> GetMissingEps()
     {
         int dd = TVSettings.Instance.WTWRecentDays;
         DirFilesCache dfc = new();
-        return GetMissingEps(dfc, TvLibrary.GetRecentAndFutureEps(dd));
+        return GetMissingEps(dfc, await TvLibrary.GetRecentAndFutureEpsAsync(dd));
     }
 
-    private static IEnumerable<ProcessedEpisode> GetMissingEps(DirFilesCache dfc, IEnumerable<ProcessedEpisode> lpe)
+    private static List<ProcessedEpisode> GetMissingEps(DirFilesCache dfc, List<ProcessedEpisode> lpe)
     {
         List<ProcessedEpisode> missing = [];
 
@@ -1569,24 +1556,24 @@ public class TVDoc : IDisposable
         return showsToScan;
     }
 
-    internal void ForceRefreshShows(IEnumerable<ShowConfiguration>? sis, bool unattended, bool tvrMinimised,
+    internal async Task ForceRefreshShowsAsync(IEnumerable<ShowConfiguration>? sis, bool unattended, bool tvrMinimised,
         UI owner) =>
-        ForceRefreshShows(sis, unattended, tvrMinimised, owner, true);
+        await ForceRefreshShowsAsync(sis, unattended, tvrMinimised, owner, true);
 
-    private void ForceRefreshShows(IEnumerable<ShowConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner, bool doDownloads)
+    private async Task ForceRefreshShowsAsync(IEnumerable<ShowConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner, bool doDownloads)
     {
         if (sis == null)
         {
             return;
         }
 
-        PreventAutoScan("Force Refresh");
+        PreventAutoScan($"Force Refresh ({sis.Select(s=>s.Name)?.ToCsv()})");
         List<ShowConfiguration> showConfigurations = [.. sis];
         showConfigurations.ForEach(ForgetShow);
 
         if (doDownloads)
         {
-            DoDownloadsFg(unattended, tvrMinimised, owner, showConfigurations);
+            await DoDownloadsFgAsync(unattended, tvrMinimised, owner, showConfigurations);
         }
         AllowAutoScan();
     }
@@ -1624,47 +1611,47 @@ public class TVDoc : IDisposable
         };
     }
 
-    internal void ForceRefreshMovies(IEnumerable<MovieConfiguration>? sis, bool unattended, bool tvrMinimised,
+    internal async Task ForceRefreshMoviesAsync(IEnumerable<MovieConfiguration>? sis, bool unattended, bool tvrMinimised,
         UI owner) =>
-        ForceRefreshMovies(sis, unattended, tvrMinimised, owner, true);
+        await ForceRefreshMoviesAsync(sis, unattended, tvrMinimised, owner, true);
 
-    private void ForceRefreshMovies(IEnumerable<MovieConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner, bool doDownloads)
+    private async Task ForceRefreshMoviesAsync(IEnumerable<MovieConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner, bool doDownloads)
     {
         if (sis == null)
         {
             return;
         }
 
-        PreventAutoScan("Force Refresh");
+        PreventAutoScan($"Force Refresh ({sis.Select(s => s.Name)?.ToCsv()})");
 
         List<MovieConfiguration> movieConfigurations = [.. sis];
         movieConfigurations.ForEach(ForgetMovie);
 
         if (doDownloads)
         {
-            DoDownloadsFg(unattended, tvrMinimised, owner, movieConfigurations);
+            await DoDownloadsFgAsync(unattended, tvrMinimised, owner, movieConfigurations);
         }
         AllowAutoScan();
     }
 
-    private bool DoDownloadsFg(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MediaConfiguration> passedShows)
-        => DoDownloadsFGNow(unattended, tvrMinimised, owner, [.. passedShows]);
+    private async Task<bool> DoDownloadsFgAsync(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MediaConfiguration> passedShows)
+        => await DoDownloadsFGNow(unattended, tvrMinimised, owner, [.. passedShows]);
 
     // ReSharper disable once InconsistentNaming
-    internal void TVDBServerAccuracyCheck(bool unattended, bool hidden, UI owner)
+    internal async Task TVDBServerAccuracyCheck(bool unattended, bool hidden, UI owner, DownloadProgressStatus? updateAction)
     {
         PreventAutoScan("TVDB Accuracy Check");
-        DoDownloadsFg(unattended, hidden, owner);
+        await DoDownloadsFgAsync(unattended, hidden, owner);
 
-        IEnumerable<CachedSeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerTvAccuracyCheck();
+        IEnumerable<CachedSeriesInfo> seriesToUpdate = await TheTVDB.LocalCache.Instance.ServerTvAccuracyCheckAsync(updateAction);
         IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode, ProviderType.TheTVDB)).OfType<ShowConfiguration>();
-        ForceRefreshShows(showsToUpdate, unattended, hidden, owner);
+        await ForceRefreshShowsAsync(showsToUpdate, unattended, hidden, owner);
 
-        IEnumerable<CachedMovieInfo> moviesToUpdate = TheTVDB.LocalCache.Instance.ServerMovieAccuracyCheck();
+        IEnumerable<CachedMovieInfo> moviesToUpdate = await TheTVDB.LocalCache.Instance.ServerMovieAccuracyCheckAsync(updateAction);
         IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TvdbCode, ProviderType.TheTVDB)).OfType<MovieConfiguration>();
-        ForceRefreshMovies(filmsToUpdate, unattended, hidden, owner);
+        await ForceRefreshMoviesAsync(filmsToUpdate, unattended, hidden, owner);
 
-        DoDownloadsBG();
+        await DoDownloadsBG(updateAction); 
         AllowAutoScan();
     }
 
@@ -1697,46 +1684,47 @@ public class TVDoc : IDisposable
 #pragma warning restore IDE0051
 
     // ReSharper disable once InconsistentNaming
-    internal void TMDBServerAccuracyCheck(bool unattended, bool hidden, UI owner)
+    internal async Task TMDBServerAccuracyCheckAsync(bool unattended, bool hidden, UI owner, DownloadProgressStatus? updateAction)
     {
         PreventAutoScan("TMDB Accuracy Check");
-        DoDownloadsFg(unattended, hidden, owner);
+        await DoDownloadsFgAsync(unattended, hidden, owner);
 
-        IEnumerable<CachedMovieInfo> moviesToUpdate = TMDB.LocalCache.Instance.ServerMovieAccuracyCheck();
+        IEnumerable<CachedMovieInfo> moviesToUpdate = await TMDB.LocalCache.Instance.ServerMovieAccuracyCheckAsync();
         IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TmdbCode, ProviderType.TMDB)).OfType<MovieConfiguration>();
-        ForceRefreshMovies(filmsToUpdate, unattended, hidden, owner);
+        await ForceRefreshMoviesAsync(filmsToUpdate, unattended, hidden, owner);
 
-        IEnumerable<CachedSeriesInfo> seriesToUpdate = TMDB.LocalCache.Instance.ServerTvAccuracyCheck();
+        IEnumerable<CachedSeriesInfo> seriesToUpdate = await TMDB.LocalCache.Instance.ServerTvAccuracyCheckAsync();
         IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(mov => TvLibrary.GetShowItem(mov.TmdbCode, ProviderType.TMDB)).OfType<ShowConfiguration>();
-        ForceRefreshShows(showsToUpdate, unattended, hidden, owner);
+        await ForceRefreshShowsAsync(showsToUpdate, unattended, hidden, owner);
 
-        DoDownloadsBG();
+        await DoDownloadsBG(updateAction);
         AllowAutoScan();
     }
 
-    private void ReleaseUnmanagedResources()
+    private async Task ReleaseUnmanagedResources()
     {
-        cacheManager.StopBgDownloadThread();
+        await cacheManager.DownloadThreadAsync();
     }
 
-    private void Dispose(bool disposing)
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
     {
-        ReleaseUnmanagedResources();
+        await ReleaseUnmanagedResources();
+        await Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    private async Task Dispose(bool disposing)
+    {
         if (disposing)
         {
             cacheManager.Dispose();
         }
+        Dispose();
     }
 
     public void Dispose()
     {
-        Dispose(true);
         GC.SuppressFinalize(this);
-    }
-
-    ~TVDoc()
-    {
-        Dispose(false);
     }
 
     public void PreventAutoScan(string v)
@@ -1901,7 +1889,7 @@ public class TVDoc : IDisposable
             TheActionList.Replace(ssm.AsList(), ssm.OriginalItems);
         }
     }
-    public void MovieFolderScan(UI ui, string downloadFolder)
+    public async Task MovieFolderScanAsync(UI ui, string downloadFolder)
     {
         if (!Directory.Exists(downloadFolder))
         {
@@ -1980,7 +1968,7 @@ public class TVDoc : IDisposable
             {
                 FileFinder.CopySubsFolders(TheActionList, this);
             }
-            MoviesAddedOrEdited(true, false, false, ui, []);
+            await MoviesAddedOrEditedAsync(true, false, false, ui, []);
         }
         catch (UnauthorizedAccessException ex)
         {
@@ -2196,7 +2184,7 @@ public class TVDoc : IDisposable
         }
         else
         {
-            Logger.Warn($"User elected todo nothing with {fi.FullName}");
+            Logger.Warn($"User elected to do nothing with {fi.FullName}");
         }
     }
 
@@ -2271,11 +2259,11 @@ public class TVDoc : IDisposable
         return null;
     }
 
-    public static void Reconnect()
+    public static async Task ReconnectAsync()
     {
-        TheTVDB.LocalCache.Instance.ReConnect(false);
-        TMDB.LocalCache.Instance.ReConnect(false);
-        TVmaze.LocalCache.Instance.ReConnect(false);
+        await TheTVDB.LocalCache.Instance.ReConnectAsync(false);
+        await TMDB.LocalCache.Instance.ReConnectAsync(false);
+        await TVmaze.LocalCache.Instance.ReConnectAsync(false);
     }
 
     public void SetScanSettings(ScanSettings settings)
@@ -2306,28 +2294,30 @@ public class TVDoc : IDisposable
         }
     }
 
-    public void DoActions(ActionSettings set)
+    public async Task DoAllActionsAsync( CancellationTokenSource token)
     {
-        if (set.DoAll)
-        {
-            PreventAutoScan("Do all actions");
-            DoActions(TheActionList, set.Token.Token);
-        }
-        else
-        {
-            PreventAutoScan($"Do selected actions ({set.Lvr.Count})");
-            DoActions(set.Lvr, set.Token.Token);
-        }
+        PreventAutoScan("Do all actions");
+        await DoActionsAsync(TheActionList, token);
         AllowAutoScan();
     }
 
-    public void ForceRefreshBeforeRescan(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool tvrMinimised, UI owner)
+    public async Task DoSelectedActionsAsync(ItemList shows, CancellationTokenSource token)
+    {
+        PreventAutoScan($"Do selected actions ({shows.Count})");
+        await DoActionsAsync(shows, token);
+        AllowAutoScan();
+    }
+
+
+    public async Task ForceRefreshBeforeRescanAsync(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool tvrMinimised, UI owner)
     {
         RemoveActionsFromShows(shows);
         RemoveActionsFromMovies(movies);
 
-        ForceRefreshShows(shows, unattended, tvrMinimised, owner, false);
-        ForceRefreshMovies(movies, unattended, tvrMinimised, owner, false);
+        var x = ForceRefreshShowsAsync(shows, unattended, tvrMinimised, owner, false);
+        var y = ForceRefreshMoviesAsync(movies, unattended, tvrMinimised, owner, false);
+
+        await Task.WhenAll(x, y);
     }
 
     private void RemoveActionsFromShows(IReadOnlyCollection<ShowConfiguration> shows)
@@ -2342,18 +2332,34 @@ public class TVDoc : IDisposable
         TheActionList.Remove(selectedActions);
     }
 
-    public void UpdateImagesScan(IReadOnlyCollection<ShowConfiguration> sis)
+    public async Task UpdateShowImagesScanAsync(IReadOnlyCollection<ShowConfiguration> sis, TaskCompletionProgress? progress, CancellationTokenSource cts)
+        => await UpdateImagesScanAsync(sis,[], progress, cts);
+    public async Task UpdateMovieImagesScanAsync(IReadOnlyCollection<MovieConfiguration> sis, TaskCompletionProgress? progress, CancellationTokenSource cts)
+        => await UpdateImagesScanAsync([], sis,progress,cts);
+
+    public async Task UpdateImagesScanAsync(IReadOnlyCollection<ShowConfiguration> sis,IReadOnlyCollection<MovieConfiguration> mis, TaskCompletionProgress? progress, CancellationTokenSource cancellationToken)
     {
+        //TODO - so much - do in parallel, hook up Up UI, Cancellation token etc
+
         TheActionList.Clear();
+        progress?.SetMaxProgress(sis.Count + mis.Count);
+        ThreadSafeCounter c= new();
         //update images for the showitem
-        sis.ForEach(ForceUpdateImages);
-        RemoveIgnored();
-    }
-    public void UpdateMovieImagesScan(IReadOnlyCollection<MovieConfiguration> sis)
-    {
-        TheActionList.Clear();
-        //update images for the showitem
-        sis.ForEach(ForceUpdateImages);
+
+        await Parallel.ForEachAsync(sis,
+            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+            async (si, token) =>
+            {
+                await ForceUpdateImagesAsync(si, progress,c, cancellationToken.Token);
+            });
+
+        await Parallel.ForEachAsync(mis,
+            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+            async (si, token) =>
+            {
+                await ForceUpdateImagesAsync(si, progress,c, cancellationToken.Token);
+            });
+
         RemoveIgnored();
     }
 

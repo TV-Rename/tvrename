@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class DefaultSpecialsAsEpisodesTvCheck : DefaultTvShowCheck
+internal class DefaultSpecialsAsEpisodesTvCheck(ShowConfiguration show, TVDoc doc) : DefaultTvShowCheck(show, doc)
 {
-    public DefaultSpecialsAsEpisodesTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override string FieldName => "Count Specials As Episodes Check";
 
     protected override bool Field => Show.CountSpecials;

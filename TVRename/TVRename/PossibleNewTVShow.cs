@@ -7,20 +7,27 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace TVRename;
 
 // "PossibleNewTVShow" represents a folder found by doing a Check in the 'Bulk Add TV Shows' dialog
-public class PossibleNewTvShow : ISeriesSpecifier
+public class PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, string folderFormat) : ISeriesSpecifier, INotifyPropertyChanged
 {
-    public readonly DirectoryInfo Folder;
-
     // ReSharper disable once InconsistentNaming
-    internal int ProviderCode;
+    internal int ProviderCode = -1;
+
+    public virtual string FolderName => directory.FullName;
+    public virtual string Show => (CodeKnown ? CachedSeries?.Name  : RefinedHint) ?? string.Empty;
+    public virtual string Type => HasSeasonFoldersGuess ? "Folder per season" : "Flat";
+    public virtual string SourceCode => CodeKnown ? ProviderCode.ToString() : string.Empty;
+    public virtual int ImageTypeName => CodeKnown && !string.IsNullOrWhiteSpace(FolderName) ? 1 : 0;
 
     internal TVDoc.ProviderType SourceProvider;
-    public readonly bool HasSeasonFoldersGuess;
-    public readonly string SeasonFolderFormat;
+    public readonly bool HasSeasonFoldersGuess = seasonFolders;
+    public readonly string SeasonFolderFormat = folderFormat;
     public string? RefinedHint;
 
     public bool CodeKnown => !CodeUnknown;
@@ -28,20 +35,16 @@ public class PossibleNewTvShow : ISeriesSpecifier
 
     public CachedSeriesInfo? CachedSeries => TVDoc.GetTVCache(Provider).GetSeries(ProviderCode);
 
-    public PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, string folderFormat)
-    {
-        Folder = directory;
-        ProviderCode = -1;
-        HasSeasonFoldersGuess = seasonFolders;
-        SeasonFolderFormat = folderFormat;
-    }
-
     public ProcessedSeason.SeasonType SeasonOrder => ProcessedSeason.SeasonType.aired; //Just assume for now
 
     public void UpdateId(int id, TVDoc.ProviderType source)
     {
         SourceProvider = source;
         ProviderCode = id;
+
+        NotifyPropertyChanged("Show");
+        NotifyPropertyChanged("SourceCode");
+        NotifyPropertyChanged("ImageTypeName");
     }
 
     public TVDoc.ProviderType Provider => SourceProvider;
@@ -59,4 +62,19 @@ public class PossibleNewTvShow : ISeriesSpecifier
     public string? ImdbCode => null;
 
     public Locale TargetLocale => new();
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    // This method is called by the Set accessor of each property.
+    // The CallerMemberName attribute that is applied to the optional propertyName
+    // parameter causes the property name of the caller to be substituted as an argument.
+    protected void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    internal IEnumerable<FileInfo> FindFiles(string fileName)
+    {
+        return directory.EnumerateFiles(fileName) ;
+    }
 }

@@ -1,15 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal abstract class FindMissingEpisodes : ScanActivity
+internal abstract class FindMissingEpisodes(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    private readonly List<Finder> finders;
-
-    protected FindMissingEpisodes(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-        finders =
+    private readonly List<Finder> finders =
         //These should be in order
         [
             new LibraryFolderFileFinder(doc,settings),
@@ -21,11 +18,10 @@ internal abstract class FindMissingEpisodes : ScanActivity
             new JSONWebpageFinder(doc,settings), //Except for JSON which is dead last
             new JackettFinder(doc,settings)
         ];
-    }
 
     protected abstract Finder.FinderDisplayType CurrentType();
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         // have a look around for any missing episodes
         List<Finder> appropriateFinders = [.. finders.Where(f => f.DisplayType() == CurrentType() && f.Active())];
@@ -49,7 +45,7 @@ internal abstract class FindMissingEpisodes : ScanActivity
             currentMatchingFinderId++;
             int startPos = 100 * (currentMatchingFinderId - 1) / totalMatchingFinders;
             int endPos = 100 * currentMatchingFinderId / totalMatchingFinders;
-            f.Check(progress, startPos, endPos);
+            await f.CheckAsync(progress, startPos, endPos);
         }
     }
 

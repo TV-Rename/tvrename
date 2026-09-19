@@ -11,12 +11,8 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-public sealed class NumberAsTextSorter : ListViewItemSorter
+public sealed class NumberAsTextSorter(int column) : ListViewItemSorter(column)
 {
-    public NumberAsTextSorter(int column) : base(column)
-    {
-    }
-
     protected override int CompareListViewItem(ListViewItem x, ListViewItem y) => ParseAsInt(x) - ParseAsInt(y);
 
     private int ParseAsInt(ListViewItem cellItem)

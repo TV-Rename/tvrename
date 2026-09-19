@@ -219,12 +219,12 @@ public class CachedSeriesInfo : CachedMediaInfo
 
     private void LoadSeasons(XElement seriesXml)
     {
-        seasons = [.. seriesXml.Descendants("Seasons").Descendants("Season").Select(xml => new Season(xml))];
+        seasons = [.. seriesXml.Descendants("Seasons").First().Descendants("Season").Select(xml => new Season(xml))];
     }
 
     private void LoadImages(XElement seriesXml)
     {
-        images = [.. seriesXml.Descendants("Images").Descendants("ShowImage").Select(xml => new ShowImage(Source, xml))];
+        images = [.. seriesXml.Descendants("Images").First().Descendants("ShowImage").Select(xml => new ShowImage(Source, xml))];
     }
 
     private void LoadJson(JObject r)

@@ -11,6 +11,7 @@ namespace TVRename;
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Threading.Tasks;
 
 // ReSharper disable once InconsistentNaming
 public class ActionTDownload : ActionDownload
@@ -66,7 +67,7 @@ public class ActionTDownload : ActionDownload
 
     public override Item Becomes() => becomes;
 
-    public override ActionOutcome Go(TVRenameStats stats, CancellationToken cancellationToken)
+    public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         bool isDownloadable = url.IsWebLink();
         try
@@ -75,8 +76,8 @@ public class ActionTDownload : ActionDownload
             {
                 if (TVSettings.Instance.CheckuTorrent && isDownloadable)
                 {
-                    FileInfo downloadedFile = DownloadFile();
-                    new uTorrent().StartTorrentDownload(downloadedFile);
+                    FileInfo downloadedFile = await DownloadFileAsync();
+                    await new uTorrent().StartTorrentDownloadAsync(downloadedFile);
                     return ActionOutcome.Success();
                 }
 
@@ -84,13 +85,13 @@ public class ActionTDownload : ActionDownload
                 {
                     if (isDownloadable && TVSettings.Instance.qBitTorrentDownloadFilesFirst)
                     {
-                        FileInfo downloadedFile = DownloadFile();
-                        new qBitTorrent().StartTorrentDownload(downloadedFile);
+                        FileInfo downloadedFile = await DownloadFileAsync();
+                        await new qBitTorrent().StartTorrentDownloadAsync(downloadedFile);
                         return ActionOutcome.Success();
                     }
                     else
                     {
-                        new qBitTorrent().StartUrlDownload(url);
+                        await new qBitTorrent().StartUrlDownloadAsync(url);
                         return ActionOutcome.Success();
                     }
                 }
@@ -113,16 +114,16 @@ public class ActionTDownload : ActionDownload
         }
     }
 
-    private FileInfo DownloadFile()
+    private async Task<FileInfo> DownloadFileAsync()
     {
-        byte[] r = HttpHelper.GetUrlBytes(url, true);
+        byte[] r = await HttpHelper.GetUrlBytesAsync(url, true);
 
         if (r.Length == 0)
         {
             throw new DownloadFailedException();
         }
 
-        string saveTemp = SaveDownloadedData(r, SourceName);
+        string saveTemp = await SaveDownloadedDataAsync(r, SourceName);
         FileInfo downloadedFile = new(saveTemp);
         return downloadedFile;
     }
@@ -131,15 +132,16 @@ public class ActionTDownload : ActionDownload
     {
     }
 
-    private static string SaveDownloadedData(byte[] r, string name)
+    private static async Task<string> SaveDownloadedDataAsync(byte[] r, string name)
     {
         string saveTemp = Path.GetTempPath().EnsureEndsWithSeparator() + TVSettings.Instance.FilenameFriendly(name);
-        if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
+        // Compare extensions with StringComparison to avoid culture-sensitive and null-related issues
+        if (!string.Equals(new FileInfo(saveTemp).Extension, ".torrent", StringComparison.OrdinalIgnoreCase))
         {
             saveTemp += ".torrent";
         }
 
-        File.WriteAllBytes(saveTemp, r);
+        await System.IO.File.WriteAllBytesAsync(saveTemp, r);
         return saveTemp;
     }
 

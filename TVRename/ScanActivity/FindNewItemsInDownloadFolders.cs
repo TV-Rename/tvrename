@@ -10,18 +10,15 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
-internal class FindNewItemsInDownloadFolders : ScanActivity
+internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
 {
-    public FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     protected override string CheckName() => "Looked in the Search Folders for any new series/movies that need to be added to the library";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         //for each directory in settings directory
         //for each file in directory
@@ -42,14 +39,14 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
         }
 
         IEnumerable<FileInfo> possibleShowNames = GetPossibleFiles();
-        IEnumerable<PossibleMedia> addedShows = FinderHelper.FindMedia(possibleShowNames, MDoc, Settings.Owner);
+        IEnumerable<PossibleMedia> addedShows = await FinderHelper.FindMediaAsync(possibleShowNames, MDoc, Settings.Owner);
         List<PossibleMedia> addedShowsUnique = RemoveExistingAndDups(addedShows);
 
         List<ShowConfiguration> addedTvShows = [.. addedShowsUnique.Select(x=>x.Configuration).OfType<ShowConfiguration>().Distinct()];
         if (addedTvShows.Any())
         {
             MDoc.Add(addedTvShows, true);
-            MDoc.TvAddedOrEdited(true, false, false, Settings.Owner, addedTvShows);
+            await MDoc.TvAddedOrEditedAsync(true, false, false, Settings.Owner, addedTvShows);
             //add each new show into the shows being scanned
             Settings.Shows.AddRange(addedTvShows);
             LOGGER.Info($"Added new shows called: {addedTvShows.Select(s => s.ShowName).ToCsv()}");
@@ -59,7 +56,7 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
         if (addedMovies.Any())
         {
             MDoc.Add(addedMovies, true);
-            MDoc.MoviesAddedOrEdited(true, false, false, Settings.Owner, addedMovies);
+            await MDoc.MoviesAddedOrEditedAsync(true, false, false, Settings.Owner, addedMovies);
             Settings.Movies.AddRange(addedMovies);
             LOGGER.Info($"Added new movies called: {addedMovies.Select(s => s.ShowName).ToCsv()}");
         }
@@ -89,7 +86,7 @@ internal class FindNewItemsInDownloadFolders : ScanActivity
         return returnList;
     }
 
-    private static IEnumerable<FileInfo> GetPossibleFiles()
+    private static List<FileInfo> GetPossibleFiles()
     {
         List<FileInfo> possibleShowNames = [];
 

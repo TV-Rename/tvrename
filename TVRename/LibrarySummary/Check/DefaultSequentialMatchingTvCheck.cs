@@ -1,11 +1,7 @@
 namespace TVRename;
 
-internal class DefaultSequentialMatchingTvCheck : DefaultTvShowCheck
+internal class DefaultSequentialMatchingTvCheck(ShowConfiguration show, TVDoc doc) : DefaultTvShowCheck(show, doc)
 {
-    public DefaultSequentialMatchingTvCheck(ShowConfiguration show, TVDoc doc) : base(show, doc)
-    {
-    }
-
     protected override string FieldName => "Do Sequential Matching Check";
 
     protected override bool Field => Show.UseSequentialMatch;

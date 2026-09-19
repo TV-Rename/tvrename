@@ -11,21 +11,18 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
-internal class JSONWebpageFinder : DownloadFinder
+internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadFinder(doc, settings)
 {
-    public JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
-    {
-    }
-
     public override bool Active() => TVSettings.Instance.SearchJSON;
 
     protected override string CheckName() => "Check JSON links for the missing files";
 
-    protected override void DoCheck(SetProgressDelegate progress)
+    protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         if (TVSettings.Instance.SearchJSONManualScanOnly && Settings.Unattended)
         {
@@ -33,8 +30,8 @@ internal class JSONWebpageFinder : DownloadFinder
             return;
         }
         int c = ActionList.Missing.Count + 1;
-        int n = 0;
-        UpdateStatus(n, c, "Searching on JSON Page...");
+        ThreadSafeCounter n = new();
+        UpdateStatus(0, c, "Searching on JSON Page...");
 
         ItemList newItems = [];
         ItemList toRemove = [];
@@ -48,9 +45,9 @@ internal class JSONWebpageFinder : DownloadFinder
                     return;
                 }
 
-                UpdateStatus(n++, c, action.Filename);
+                UpdateStatus(n.Increment(), c, action.Filename);
 
-                FindMissingEpisode(action, toRemove, newItems, cache);
+                await FindMissingEpisodeAsync(action, toRemove, newItems, cache);
             }
         }
         catch (WebException e)
@@ -83,7 +80,7 @@ internal class JSONWebpageFinder : DownloadFinder
         ActionList.Replace(toRemove, newItems);
     }
 
-    private static void FindMissingEpisode(ShowItemMissing action, ItemList toRemove, ItemList newItems, UrlCache cache)
+    private static async Task FindMissingEpisodeAsync(ShowItemMissing action, ItemList toRemove, ItemList newItems, UrlCache cache)
     {
         ProcessedEpisode pe = action.MissingEpisode;
 
@@ -97,7 +94,7 @@ internal class JSONWebpageFinder : DownloadFinder
         string simpleSeriesName = pe.TheCachedSeries.Name.CompareName();
         ItemList newItemsForThisMissingEpisode = [];
 
-        string response = cache.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}", TVSettings.Instance.SearchJSONUseCloudflare);
+        string response = await cache.GetUrlAsync($"{TVSettings.Instance.SearchJSONURL}{imdbId}", TVSettings.Instance.SearchJSONUseCloudflare);
 
         if (string.IsNullOrWhiteSpace(response))
         {

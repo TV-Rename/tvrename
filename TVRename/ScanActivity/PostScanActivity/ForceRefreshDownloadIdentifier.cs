@@ -4,16 +4,10 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
-internal class ForceRefreshDownloadIdentifier : PostScanActivity
+internal class ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc doc, string name) : PostScanActivity(doc)
 {
-    private readonly DownloadIdentifiersController cx;
-    private readonly string name;
-
-    public ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc doc, string name) : base(doc)
-    {
-        cx = new DownloadIdentifiersController(action);
-        this.name = name;
-    }
+    private readonly DownloadIdentifiersController cx = new(action);
+    private readonly string name = name;
 
     public override string ActivityName() => name;
 
@@ -22,8 +16,8 @@ internal class ForceRefreshDownloadIdentifier : PostScanActivity
     protected override void DoCheck(PostScanProgressDelegate progress, CancellationToken token)
     {
         int totalRecords = MDoc.TvLibrary.Count + MDoc.FilmLibrary.Count;
-        int currentRecord = 1;
-        foreach (ShowConfiguration si in MDoc.TvLibrary.GetSortedShowItems())
+        ThreadSafeCounter currentRecord = new();
+        foreach (ShowConfiguration si in MDoc.TvLibrary.GetSortedShows())
         {
             if (token.IsCancellationRequested)
             {
@@ -37,7 +31,7 @@ internal class ForceRefreshDownloadIdentifier : PostScanActivity
 
             MDoc.TheActionList.AddNullableRange(cx.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadMetaData, si));
 
-            progress(currentRecord++, totalRecords,"Updating TV Shows" ,si.Name ?? string.Empty);
+            progress(currentRecord.Increment(), totalRecords,"Updating TV Shows" ,si.Name ?? string.Empty);
         }
 
         foreach (MovieConfiguration si in MDoc.FilmLibrary.GetSortedMovies())
@@ -56,7 +50,7 @@ internal class ForceRefreshDownloadIdentifier : PostScanActivity
                 MDoc.TheActionList.AddNullableRange(cx.ForceUpdateMovie(DownloadIdentifier.DownloadType.downloadMetaData, si,file));
             }
 
-            progress(currentRecord++, totalRecords, "Updating Movies",si.Name ?? string.Empty);
+            progress(currentRecord.Increment(), totalRecords, "Updating Movies",si.Name ?? string.Empty);
         }
     }
 }

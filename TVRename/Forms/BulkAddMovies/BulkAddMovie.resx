@@ -1,4 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -63,53 +123,48 @@
   <data name="label1.Text" xml:space="preserve">
     <value>These are the folders at the "top" of your media library.  Add one or more folders here, either by dragging and dropping, or clicking "Add..." below.  Go to the "Ignore" tab, or click "Check &gt;&gt;" when done.</value>
   </data>
-  <data name="label4.Text" xml:space="preserve">
-    <value>These are the new folders that have been found.  Click "Auto ID All", or manually edit each to set the show.  "Ignore" to add the folder to the Ignore list.  You can also drag and drop folders into this list.  Click "Add &amp;&amp; Close" add all identified shows to your "My Shows" list.</value>
-  </data>
   <metadata name="imagesPassFail.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>144, 17</value>
   </metadata>
   <data name="imagesPassFail.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
-        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
-        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
-        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAACE
-        BgAAAk1TRnQBSQFMAgEBAgEAASABAAEgAQABDwEAARQBAAT/ARkBAAj/AUIBTQE2BwABNgMAASgDAAE8
-        AwABFAMAAQEBAAEYBQABEAEO/wD/AD8AA/8B9AHzAfgB7QHrAvUB9AH4A/8eAAP/AfQB9gHzAesB8QHr
-        AfQB9wH0A/9yAAP+AdMBzQHvAXoBYAHmAW0BUQHjAYQBagHmAW0BUQHjAXoBYQHmAdYBzwHvA/4SAAP+
-        Ac4B4wHNAWcBtwFhAVcBsQFSAXIBvAFrAVcBsQFSAWkBuAFhAdEB5AHQA/5pAAP9AZ8BjQHoAZoBhgHm
-        Ae4B7AH2A/8DAAP/Ae0B6wH1AZcBgwHnAaABkAHnA/0MAAP9AZEByQGNAYsBxwGHAe0B8gHsA/8DAAP/
-        AewB8gHrAYgBxAGEAZUBygGQA/1mAAGyAaMB6QGvAaEB6AH6AfkB+wH3AfYB+QkAAfcB9gH5AvoB+wGs
-        AZ0B6QG3AaoB6gwAAacB0gGkAaUB0QGhA/4ByAHgAcYB3wHrAd0JAAP+AaEBzwGdAa0B1QGqYwAB7wHt
-        AfYBeAFbAeQC/AH9AaIBkQHoAXwBYwHlAfcB9gH5AwAB9gH1AfkBegFhAeYBpQGVAegD/AF1AVcB4wHy
-        AfAB9wYAAe4B8wHtAWQBtQFbAfwB/QH8AcYB3wHEAUkBrQFBAUoBrgFCAd8B6wHeCQAD/AFhAbQBVwHx
-        AfUB8GAAAb8BswHrAcQBugHsAwAB9QH0AfkBegFgAeYBfAFjAeUB6QHnAfQBfAFgAeUBfAFgAeUB9gH1
-        AfkDAAHBAbYB7AHDAbkB7AYAAbcB2AG0Ab0B2wG7AcYB3wHEAUkBrQFBAWEBtAFXAVIBrgFIAUoBrgFC
-        Ad8B6wHeCQABuQHZAbYBvAHbAblgAAGcAYoB6AHgAdsB8QYAAfYB9QH5AXoBYQHmAWEBQAHkAXwBYAHl
-        AfcB9gH5BgAB3QHZAfEBoAGQAecGAAGQAcgBiwHdAeoB3AHBAd0BvgFiAbcBXAHzAfYB8wHoAe8B5wFS
-        Aa4BSAFKAa4BQgHfAesB3gYAAdoB6AHZAZUBygGQYAABnAGKAegB4AHcAfEGAAH2AfUB+QF6AWEB5gFh
-        AUAB5AF8AWMB5QH3AfYB+QYAAd0B2QHxAaABkAHnBgABkAHIAYsB3QHqAdwDAAP6BgAB6AHvAecBUgGu
-        AUgBSgGuAUIB4AHsAd8DAAHaAegB2QGVAcoBkGAAAb8BswHrAcUBuwHsAwAB9gH1AfkBegFhAeYBegFh
-        AeYB6AHlAfMBegFgAeYBfAFjAeUB9wH2AfkDAAHBAbYB7AHCAbgB7AYAAbcB2AG0Ab4B3AG7DwAB6AHv
-        AecBUgGuAUgBSgGuAUIB5gHvAeUBugHZAbcBuwHaAbhgAAHuAewB9gF6AV8B5gP9AaABkAHnAXoBYQHm
-        AfYB9QH5AwAB9gH1AfkBegFfAeYBpQGUAekC/AH9AXUBWgHjAfEB7wH2BgAB7QHzAewBZAG4AWAD/Q8A
-        AegB7wHnAYcBxQGBAfcB+QH3AWABtgFbAfAB9AHwYwABrgGgAeoBswGkAeoB+gH5AfsB9gH1AfkJAAH2
-        AfUB+QH6AfkB+wGuAaAB6gGzAaYB6gwAAaQB0AGgAagB0gGkA/4PAAP+AaQB0AGgAakB0wGmZgAC/AH9
-        AZsBiAHnAZ8BjQHoAfEB7wH2A/8DAAP/AfAB7gH2AZwBiQHoAZ4BjAHoA/0MAAH8Af0B/AGOAccBiAGR
-        AckBjQHvAfQB7wP/AwAD/wHvAfQB7gGNAcgBiQGRAckBjAP9aQAD/gHPAcgB7gF1AVoB4wFyAVcB5QGJ
-        AXEB5QFyAVcB5QF0AVsB4wHRAcoB7gP+EgAD/gHJAeEByAFgAbYBWwFfAbYBVwF4Ab8BcgFfAbYBVwFi
-        AbcBXAHMAeIBygP+/wD/AP8ANgABQgFNAT4HAAE+AwABKAMAATwDAAEUAwABAQEAAQEFAAGgFwAD/wEA
-        A/8B/AQAA/8B/AQAA/8B/AQAAfgBPwHwAXwEAAHgAQ8BwAEcBAABwQEHAYIBDAQAAcMBhwGDAYwEAAGB
-        AQMBAQHEBAABkAETAQAB5AQAAZgBMwEAAWQEAAGYATMBLAEkBAABkAETAT4BBAQAAYEBAwEfAQQEAAHD
-        AYcBjwGMBAABwQEHAYIBDAQAAeABDwHAARwEAAP/AfwEAAP/AfwEAAP/AfwEAAP/AfwEAAs=
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEZTeXN0ZW0uV2luZG93cy5Gb3JtcywgQ3VsdHVyZT1uZXV0cmFs
+        LCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5BQEAAAAmU3lzdGVtLldpbmRvd3MuRm9ybXMu
+        SW1hZ2VMaXN0U3RyZWFtZXIBAAAABERhdGEHAgIAAAAJAwAAAA8DAAAAhAYAAAJNU0Z0AUkBTAIBAQIB
+        AAFYAQABWAEAAQ8BAAEUAQAE/wEZAQAI/wFCAU0BNgcAATYDAAEoAwABPAMAARQDAAEBAQABGAUAARAB
+        Dv8A/wA/AAP/AfQB8wH4Ae0B6wL1AfQB+AP/HgAD/wH0AfYB8wHrAfEB6wH0AfcB9AP/cgAD/gHTAc0B
+        7wF6AWAB5gFtAVEB4wGEAWoB5gFtAVEB4wF6AWEB5gHWAc8B7wP+EgAD/gHOAeMBzQFnAbcBYQFXAbEB
+        UgFyAbwBawFXAbEBUgFpAbgBYQHRAeQB0AP+aQAD/QGfAY0B6AGaAYYB5gHuAewB9gP/AwAD/wHtAesB
+        9QGXAYMB5wGgAZAB5wP9DAAD/QGRAckBjQGLAccBhwHtAfIB7AP/AwAD/wHsAfIB6wGIAcQBhAGVAcoB
+        kAP9ZgABsgGjAekBrwGhAegB+gH5AfsB9wH2AfkJAAH3AfYB+QL6AfsBrAGdAekBtwGqAeoMAAGnAdIB
+        pAGlAdEBoQP+AcgB4AHGAd8B6wHdCQAD/gGhAc8BnQGtAdUBqmMAAe8B7QH2AXgBWwHkAvwB/QGiAZEB
+        6AF8AWMB5QH3AfYB+QMAAfYB9QH5AXoBYQHmAaUBlQHoA/wBdQFXAeMB8gHwAfcGAAHuAfMB7QFkAbUB
+        WwH8Af0B/AHGAd8BxAFJAa0BQQFKAa4BQgHfAesB3gkAA/wBYQG0AVcB8QH1AfBgAAG/AbMB6wHEAboB
+        7AMAAfUB9AH5AXoBYAHmAXwBYwHlAekB5wH0AXwBYAHlAXwBYAHlAfYB9QH5AwABwQG2AewBwwG5AewG
+        AAG3AdgBtAG9AdsBuwHGAd8BxAFJAa0BQQFhAbQBVwFSAa4BSAFKAa4BQgHfAesB3gkAAbkB2QG2AbwB
+        2wG5YAABnAGKAegB4AHbAfEGAAH2AfUB+QF6AWEB5gFhAUAB5AF8AWAB5QH3AfYB+QYAAd0B2QHxAaAB
+        kAHnBgABkAHIAYsB3QHqAdwBwQHdAb4BYgG3AVwB8wH2AfMB6AHvAecBUgGuAUgBSgGuAUIB3wHrAd4G
+        AAHaAegB2QGVAcoBkGAAAZwBigHoAeAB3AHxBgAB9gH1AfkBegFhAeYBYQFAAeQBfAFjAeUB9wH2AfkG
+        AAHdAdkB8QGgAZAB5wYAAZAByAGLAd0B6gHcAwAD+gYAAegB7wHnAVIBrgFIAUoBrgFCAeAB7AHfAwAB
+        2gHoAdkBlQHKAZBgAAG/AbMB6wHFAbsB7AMAAfYB9QH5AXoBYQHmAXoBYQHmAegB5QHzAXoBYAHmAXwB
+        YwHlAfcB9gH5AwABwQG2AewBwgG4AewGAAG3AdgBtAG+AdwBuw8AAegB7wHnAVIBrgFIAUoBrgFCAeYB
+        7wHlAboB2QG3AbsB2gG4YAAB7gHsAfYBegFfAeYD/QGgAZAB5wF6AWEB5gH2AfUB+QMAAfYB9QH5AXoB
+        XwHmAaUBlAHpAvwB/QF1AVoB4wHxAe8B9gYAAe0B8wHsAWQBuAFgA/0PAAHoAe8B5wGHAcUBgQH3AfkB
+        9wFgAbYBWwHwAfQB8GMAAa4BoAHqAbMBpAHqAfoB+QH7AfYB9QH5CQAB9gH1AfkB+gH5AfsBrgGgAeoB
+        swGmAeoMAAGkAdABoAGoAdIBpAP+DwAD/gGkAdABoAGpAdMBpmYAAvwB/QGbAYgB5wGfAY0B6AHxAe8B
+        9gP/AwAD/wHwAe4B9gGcAYkB6AGeAYwB6AP9DAAB/AH9AfwBjgHHAYgBkQHJAY0B7wH0Ae8D/wMAA/8B
+        7wH0Ae4BjQHIAYkBkQHJAYwD/WkAA/4BzwHIAe4BdQFaAeMBcgFXAeUBiQFxAeUBcgFXAeUBdAFbAeMB
+        0QHKAe4D/hIAA/4ByQHhAcgBYAG2AVsBXwG2AVcBeAG/AXIBXwG2AVcBYgG3AVwBzAHiAcoD/v8A/wD/
+        ADYAAUIBTQE+BwABPgMAASgDAAE8AwABFAMAAQEBAAEBBQABoBcAA/8BAAP/AfwEAAP/AfwEAAP/AfwE
+        AAH4AT8B8AF8BAAB4AEPAcABHAQAAcEBBwGCAQwEAAHDAYcBgwGMBAABgQEDAQEBxAQAAZABEwEAAeQE
+        AAGYATMBAAFkBAABmAEzASwBJAQAAZABEwE+AQQEAAGBAQMBHwEEBAABwwGHAY8BjAQAAcEBBwGCAQwE
+        AAHgAQ8BwAEcBAAD/wH8BAAD/wH8BAAD/wH8BAAD/wH8BAAL
 </value>
   </data>
-  <metadata name="bwRescan.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>395, 17</value>
-  </metadata>
-  <metadata name="bwIdentify.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>559, 17</value>
-  </metadata>
+  <data name="label4.Text" xml:space="preserve">
+    <value>These are the new folders that have been found.  Click "Auto ID All", or manually edit each to set the show.  "Ignore" to add the folder to the Ignore list.  You can also drag and drop folders into this list.  Click "Add &amp;&amp; Close" add all identified shows to your "My Shows" list.</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAIAICAQAAAABADoAgAAJgAAABAQEAAAAAQAKAEAAA4DAAAoAAAAIAAAAEAAAAABAAQAAAAAAAAC

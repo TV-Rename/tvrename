@@ -86,4 +86,42 @@ public static class EnumerableExtensions
         IEnumerable<TItem> list = [.. @this];
         return list.Any() ? list.Max(selector) : null;
     }
+
+    //
+    // Summary:
+    //     Projects each element of a sequence to an System.Collections.Generic.IEnumerable`1
+    //     and flattens the resulting sequences into one sequence.
+    //
+    // Parameters:
+    //   source:
+    //     A sequence of values to project.
+    //
+    //   selector:
+    //     A transform function to apply to each element.
+    //
+    // Type parameters:
+    //   TSource:
+    //     The type of the elements of source.
+    //
+    //   TResult:
+    //     The type of the elements of the sequence returned by selector.
+    //
+    // Returns:
+    //     An System.Collections.Generic.IEnumerable`1 whose elements are the result of
+    //     invoking the one-to-many transform function on each element of the input sequence.
+    //
+    //
+    // Exceptions:
+    //   T:System.ArgumentNullException:
+    //     source is null.
+    public static IEnumerable<TResult> SelectManyOrNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>>? selector)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+
+        if (selector == null)
+        {
+            return [];
+        }
+        return source.SelectMany(selector);
+    }
 }

@@ -16,13 +16,17 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
+using FileAccess = System.IO.FileAccess;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using Path = Alphaleonis.Win32.Filesystem.Path;
 
@@ -32,153 +36,33 @@ public static class FileHelper
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    internal static void DeleteOrRecycleFolder(DirectoryInfo? di, TVSettings.TidySettings? tidyup)
+
+    public static async Task<DirectoryInfo[]> GetDirectoriesAsync(this DirectoryInfo di)
     {
-        if (di is null)
+        return await Task.Run(() => di.GetDirectories());
+    }
+
+    public static void DeleteOrRecycleFile(FileInfo? file, TVSettings.TidySettings? Tidyup)
+    {
+        if (file is null)
         {
             return;
         }
 
-        try
+        if (Tidyup is null || Tidyup.DeleteEmptyIsRecycle)
         {
-            if (tidyup == null || tidyup.DeleteEmptyIsRecycle)
-            {
-                //TODO make all one use of the folder removal
-                Logger.Info($"Recycling {di.FullName}");
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
-                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-            }
-            else
-            {
-                Logger.Info($"Deleting {di.FullName}");
-                    di.Delete(true, true);
-            }
+            Logger.Info($"Recycling {file.FullName}");
+            Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName,
+                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
         }
-        catch (System.IO.DirectoryNotFoundException ex)
+        else
         {
-            Logger.Warn(ex,$"Failed to remove {di.FullName}");
-        }
-        catch (System.IO.IOException ex)
-        {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
-        }
-        catch (ArgumentException ex)
-        {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
-        }
-        catch (SecurityException ex)
-        {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
-        }
-        catch (OperationCanceledException ex)
-        {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+            Logger.Info($"Deleting {file.FullName}");
+            file.Delete(true);
         }
     }
 
-    public static void DoTidyUp(DirectoryInfo? di, TVSettings.TidySettings? settings)
-    {
-        if (settings is null || !settings.DeleteEmpty)
-        {
-            return;
-        }
-
-        // See if we should now delete the folder we just moved that file from.
-        if (di is null)
-        {
-            return;
-        }
-
-        //if there are sub-directories then we shouldn't remove this one
-        try
-        {
-            DirectoryInfo[] directories = di.GetDirectories();
-            foreach (DirectoryInfo subdi in directories)
-            {
-                bool okToDelete = settings.EmptyIgnoreWordsArray.Any(word =>
-                    subdi.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
-
-                if (!okToDelete)
-                {
-                    Logger.Info($"Not Removing {di.FullName} as it contains {subdi.Name} which does not have {settings.EmptyIgnoreWordsArray.ToCsv()} in the directory name.");
-                    return;
-                }
-            }
-            //we know that each subfolder is OK to delete
-
-            //if the directory is the root download folder do not delete
-            if (TVSettings.Instance.DownloadFolders.Contains(di.FullName))
-            {
-                return;
-            }
-
-            // Do not delete any monitor folders either
-            if (TVSettings.Instance.LibraryFolders.Contains(di.FullName))
-            {
-                return;
-            }
-            if (TVSettings.Instance.MovieLibraryFolders.Contains(di.FullName))
-            {
-                return;
-            }
-
-            FileInfo[] files = di.GetFiles();
-            if (files.Length == 0)
-            {
-                // its empty, so just delete it
-                DeleteOrRecycleFolder(di, settings);
-                return;
-            }
-
-            if (settings.EmptyIgnoreExtensions && !settings.EmptyIgnoreWords)
-            {
-                return; // nope
-            }
-
-            foreach (FileInfo fi in files.Where(x => !CanDelete(x, settings)))
-            {
-                Logger.Info($"Not Removing {di.FullName} as it contains {fi.Name} which does not have {settings.EmptyIgnoreExtensionsArray.ToCsv()} as extension or {settings.EmptyIgnoreWordsArray.ToCsv()} in the filename.");
-                return;
-            }
-
-            if (settings.EmptyMaxSizeCheck)
-            {
-                // how many MB are we deleting?
-                long totalBytes = files.Sum(fi => fi.Length);
-
-                double mbytes = 1.0 * totalBytes / (1024 * 1024);
-                if (mbytes > settings.EmptyMaxSizeMB)
-                {
-                    Logger.Info(
-                        $"Not Removing {di.FullName} as it contains too much Mb of files [{mbytes} vs {settings.EmptyMaxSizeMB}]");
-                    return; // too much
-                }
-            }
-
-            DeleteOrRecycleFolder(di, settings);
-        }
-        catch (System.IO.DirectoryNotFoundException ex)
-        {
-            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
-        }
-        catch (System.IO.IOException ex)
-        {
-            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
-        }
-        catch (OverflowException ex)
-        {
-            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
-        }
-    }
 
     private static bool CanDelete(FileInfo fi, TVSettings.TidySettings settings)
     {
@@ -375,7 +259,7 @@ public static class FileHelper
 
         //Important we have the longer ones first
         string[] regexPatterns =
-        {
+        [
             @"(?<ext>\.synced\.\w{2}-\w{2}\" + TOKEN + ")$",
             @"(?<ext>\.synced\.\w{2,3}\" + TOKEN + ")$",
             @"(?<ext>\.\w{2,3}\.synced\" + TOKEN + ")$",
@@ -398,7 +282,7 @@ public static class FileHelper
 
             @"(?<ext>\.\w{2,3}\" + TOKEN + ")$",
             @"(?<ext>\.\w{2}-\w{2}\" + TOKEN + ")$",
-        };
+        ];
 
         foreach (string subExtension in TVSettings.Instance.SubtitleExtensionsArray
                      .Where(subExtension => file.Name.EndsWith(subExtension, StringComparison.CurrentCultureIgnoreCase))
@@ -679,60 +563,7 @@ public static class FileHelper
 
     public static FileInfo FileInFolder(string dir, string fn) => new(dir.EnsureEndsWithSeparator() + fn);
 
-    public static void RemoveDirectory(string folderName)
-    {
-        try
-        {
-            Logger.Info($"Removing {folderName} as part of the library clean up");
-            foreach (string file in Directory.GetFiles(folderName, "*", System.IO.SearchOption.AllDirectories))
-            {
-                Logger.Info($"    Folder contains {file}");
-            }
-            foreach (string file in Directory.GetDirectories(folderName))
-            {
-                Logger.Info($"    Folder contains folder {file}");
-            }
-
-            //TODO make all one use of the folder removal
-            Logger.Info($"Recycling {folderName}");
-            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
-                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-        }
-        catch (FileReadOnlyException)
-        {
-            Logger.Warn($"Could not recycle {folderName} as we got a FileReadOnlyException");
-        }
-        catch (DirectoryReadOnlyException)
-        {
-            Logger.Warn($"Could not recycle {folderName} as we got a DirectoryReadOnlyException");
-        }
-        catch (UnauthorizedAccessException)
-        {
-            Logger.Warn($"Could not recycle {folderName} as we got a UnauthorizedAccessException");
-        }
-        catch (System.IO.PathTooLongException)
-        {
-            Logger.Warn($"Could not recycle {folderName} as we got a PathTooLongException");
-        }
-        catch (System.IO.DirectoryNotFoundException)
-        {
-            Logger.Info($"Could not recycle {folderName} as we got a DirectoryNotFoundException");
-        }
-        catch (DirectoryNotEmptyException)
-        {
-            Logger.Warn($"Could not recycle {folderName} as we got a DirectoryNotEmptyException");
-        }
-        catch (OperationCanceledException)
-        {
-            Logger.Info($"Could not recycle {folderName} as we got a OperationCanceledException");
-        }
-        catch (System.IO.IOException i)
-        {
-            Logger.Warn($"Could not find {folderName} as we got a IOException: {i.ErrorText()}");
-        }
-    }
-
+    
     public static FileInfo FileInFolder(DirectoryInfo di, string fn) => FileInFolder(di.FullName, fn);
 
     // see if showname is somewhere in filename
@@ -881,10 +712,10 @@ public static class FileHelper
     public static string FileFullNameNoExt(this FileInfo f) => f.FullName.RemoveAfter(f.Extension);
 
     private static readonly Regex[] MovieMultiPartRegex =
-    {
+    [
         new(@"(?<base>.*)[ _.-]+(cd|dvd|pt|part|disc|disk)[ _.-0]*(?<part>[0-9]|[A-D])$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         new(@"(?<base>.*)[ ._-]+(?<part>[A-D])$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
-    };
+    ];
 
     public static bool IsRecycleBin(this DirectoryInfo di2)
     {
@@ -922,4 +753,366 @@ public static class FileHelper
 
     public static FileSystemProperties GetFileSystemProperties(string volume)
         => NativeMethods.GetProperties(volume);
+
+    public class CopyMoveProgress
+    {
+        public long BytesTransferred { get; set; }
+        public long TotalBytes { get; set; }
+        public double Percentage => TotalBytes > 0 ? (double)BytesTransferred / TotalBytes * 100 : 0;
+    }
+
+
+    /// <summary>
+    /// Asynchronously checks whether the given directory path exists on disk.
+    /// </summary>
+    /// <param name="path">The path of the directory to check.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>A task that represents the asynchronous operation, containing true if the directory exists; otherwise, false.</returns>
+    public static async Task<bool> DirectoryExistsAsync(string path, CancellationToken cancellationToken = default)
+    {
+        // Fail-fast checks to avoid spinning up a thread unnecessarily
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return false;
+        }
+
+        try
+        {
+            // Offloads the synchronous disk check to the thread pool
+            return await Task.Run(() =>
+            {
+                // Regularly check for cancellation prior to hitting the disk
+                cancellationToken.ThrowIfCancellationRequested();
+
+                return Directory.Exists(path);
+            }, cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            // Propagate cancellation correctly
+            throw;
+        }
+        catch (Exception)
+        {
+            // Fallback for security exceptions, invalid characters, or path format errors
+            return false;
+        }
+    }
+
+
+    public static async Task MoveFileWithProgressAsync(
+                                        FileInfo From,
+                                        FileInfo To,
+                                        IProgress<CopyMoveProgress> progress,
+                                        CancellationToken cancellationToken = default)
+    {
+        long totalBytes = From.Length;
+        long bytesTransferred = 0;
+        int bufferSize = 81920; // 80 KB large buffer
+
+        using (var sourceStream = new FileStream(From.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, useAsync: true))
+        using (var destStream = new FileStream(To.FullName, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, useAsync: true))
+        {
+            var buffer = new byte[bufferSize];
+            int bytesRead;
+
+            while ((bytesRead = await sourceStream.ReadAsync(buffer, cancellationToken)) > 0)
+            {
+                await destStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
+                bytesTransferred += bytesRead;
+
+                progress.Report(new CopyMoveProgress
+                {
+                    BytesTransferred = bytesTransferred,
+                    TotalBytes = totalBytes
+                });
+            }
+        }
+
+        // Complete the "move" by deleting the source file after a successful copy
+        From.Delete(); //todo use soemthing safer!
+    }
+
+    private static string TempFor(Alphaleonis.Win32.Filesystem.FileSystemInfo f) => f.FullName + ".tvrenametemp";
+    public static void CopyMoveFile(FileInfo From, FileInfo To, bool isMove, CopyMoveProgressRoutine callback)
+    {
+        //we use a temp name just in case we are interrupted or some other problem occurs
+        string tempName = TempFor(To);
+
+        if (!Directory.Exists(To.Directory.FullName))
+        {
+            Directory.CreateDirectory(To.Directory.FullName);
+        }
+
+        // If both full filenames are the same then we want to move it away and back
+        //This deals with an issue on some systems (XP?) that case insensitive moves did not occur
+        if (isMove || FileHelper.Same(From, To))
+        {
+            // This step could be slow, so report progress - TODO - make async
+            CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.WriteThrough | MoveOptions.ReplaceExisting, callback, null);
+            if (moveResult.ErrorCode != 0)
+            {
+                throw new ActionFailedException(moveResult.ErrorMessage);
+            }
+        }
+        else
+        {
+            //we are copying
+
+            // This step could be slow, so report progress
+            CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, callback, null);
+            if (copyResult.ErrorCode != 0)
+            {
+                throw new ActionFailedException(copyResult.ErrorMessage);
+            }
+        }
+
+        // Copying the temp file into the correct name is very quick, so no progress reporting
+        File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
+    }
+
+    internal static void RemoveDirectory(string folderName)
+    {
+        Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName, //TODO make all one use of the folder removal
+                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+    }
+
+    public static void RemoveDirectory(DirectoryInfo folderName, TVSettings.TidySettings? tidyup)
+    {
+        try
+        {
+            Logger.Info($"Removing {folderName.FullName} as part of the library clean up");
+            foreach (string file in Directory.GetFiles(folderName.FullName, "*", System.IO.SearchOption.AllDirectories))
+            {
+                Logger.Info($"    Folder contains {file}");
+            }
+            foreach (string file in Directory.GetDirectories(folderName.FullName))
+            {
+                Logger.Info($"    Folder contains folder {file}");
+            }
+
+            //TODO make all one use of the folder removal
+            Logger.Info($"Recycling {folderName.FullName}");
+            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName.FullName,
+                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+        }
+        catch (FileReadOnlyException)
+        {
+            Logger.Warn($"Could not recycle {folderName.FullName} as we got a FileReadOnlyException");
+        }
+        catch (DirectoryReadOnlyException)
+        {
+            Logger.Warn($"Could not recycle {folderName.FullName} as we got a DirectoryReadOnlyException");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Logger.Warn($"Could not recycle {folderName.FullName} as we got a UnauthorizedAccessException");
+        }
+        catch (System.IO.PathTooLongException)
+        {
+            Logger.Warn($"Could not recycle {folderName.FullName} as we got a PathTooLongException");
+        }
+        catch (System.IO.DirectoryNotFoundException)
+        {
+            Logger.Info($"Could not recycle {folderName.FullName} as we got a DirectoryNotFoundException");
+        }
+        catch (DirectoryNotEmptyException)
+        {
+            Logger.Warn($"Could not recycle {folderName.FullName} as we got a DirectoryNotEmptyException");
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.Info($"Could not recycle {folderName.FullName} as we got a OperationCanceledException");
+        }
+        catch (System.IO.IOException i)
+        {
+            Logger.Warn($"Could not find {folderName.FullName} as we got a IOException: {i.ErrorText()}");
+        }
+    }
+
+    internal static void DeleteOrRecycleFolder(DirectoryInfo? di, TVSettings.TidySettings? tidyup)
+    {
+        if (di is null)
+        {
+            return;
+        }
+
+        try
+        {
+            if (tidyup == null || tidyup.DeleteEmptyIsRecycle)
+            {
+                //TODO make all one use of the folder removal
+                Logger.Info($"Recycling {di.FullName}");
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            }
+            else
+            {
+                Logger.Info($"Deleting {di.FullName}");
+                di.Delete(true, true);
+            }
+        }
+        catch (System.IO.DirectoryNotFoundException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (System.IO.IOException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (ArgumentException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (SecurityException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+        catch (OperationCanceledException ex)
+        {
+            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+        }
+    }
+
+    public static void DoTidyUp(DirectoryInfo? di, TVSettings.TidySettings? settings)
+    {
+        if (settings is null || !settings.DeleteEmpty)
+        {
+            return;
+        }
+
+        // See if we should now delete the folder we just moved that file from.
+        if (di is null)
+        {
+            return;
+        }
+
+        //if there are sub-directories then we shouldn't remove this one
+        try
+        {
+            DirectoryInfo[] directories = di.GetDirectories();
+            foreach (DirectoryInfo subdi in directories)
+            {
+                bool okToDelete = settings.EmptyIgnoreWordsArray.Any(word =>
+                    subdi.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
+
+                if (!okToDelete)
+                {
+                    Logger.Info($"Not Removing {di.FullName} as it contains {subdi.Name} which does not have {settings.EmptyIgnoreWordsArray.ToCsv()} in the directory name.");
+                    return;
+                }
+            }
+            //we know that each subfolder is OK to delete
+
+            //if the directory is the root download folder do not delete
+            if (TVSettings.Instance.DownloadFolders.Contains(di.FullName))
+            {
+                return;
+            }
+
+            // Do not delete any monitor folders either
+            if (TVSettings.Instance.LibraryFolders.Contains(di.FullName))
+            {
+                return;
+            }
+            if (TVSettings.Instance.MovieLibraryFolders.Contains(di.FullName))
+            {
+                return;
+            }
+
+            FileInfo[] files = di.GetFiles();
+            if (files.Length == 0)
+            {
+                // its empty, so just delete it
+                DeleteOrRecycleFolder(di, settings);
+                return;
+            }
+
+            if (settings.EmptyIgnoreExtensions && !settings.EmptyIgnoreWords)
+            {
+                return; // nope
+            }
+
+            foreach (FileInfo fi in files.Where(x => !CanDelete(x, settings)))
+            {
+                Logger.Info($"Not Removing {di.FullName} as it contains {fi.Name} which does not have {settings.EmptyIgnoreExtensionsArray.ToCsv()} as extension or {settings.EmptyIgnoreWordsArray.ToCsv()} in the filename.");
+                return;
+            }
+
+            if (settings.EmptyMaxSizeCheck)
+            {
+                // how many MB are we deleting?
+                long totalBytes = files.Sum(fi => fi.Length);
+
+                double mbytes = 1.0 * totalBytes / (1024 * 1024);
+                if (mbytes > settings.EmptyMaxSizeMB)
+                {
+                    Logger.Info(
+                        $"Not Removing {di.FullName} as it contains too much Mb of files [{mbytes} vs {settings.EmptyMaxSizeMB}]");
+                    return; // too much
+                }
+            }
+
+            DeleteOrRecycleFolder(di, settings);
+        }
+        catch (System.IO.DirectoryNotFoundException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
+        catch (System.IO.IOException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
+        catch (OverflowException ex)
+        {
+            Logger.Warn(ex, "Could not accurately assess tidyup, so ignoring");
+        }
+    }
+
+    internal static void DeleteFile(FileInfo where, bool ignoreReadOnly)
+    {
+        where.Delete(ignoreReadOnly);
+    }
+
+    internal static void RemoveEmptyDirectory(string directory)
+    {
+        if (!directory.HasValue() || !DirectoryIsMissingEmpty(directory))
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.Delete(directory); //TODO Should use a safer version in FileHelper
+        }
+        catch (System.IO.DirectoryNotFoundException)
+        {
+            //Suppressed - we want it to be removed anyway
+        }
+    }
+
+    internal static bool DirectoryIsMissingEmpty(string path) => !DirectoryHasContents(path);
+
+    private static bool DirectoryHasContents(string path)
+    {
+        return path.HasValue()
+               && Directory.Exists(path)
+               && Directory.EnumerateFileSystemEntries(path).Any();
+    }
+
+    internal static bool FileExists(string destination)
+    {
+        return File.Exists(destination);
+    }
 }

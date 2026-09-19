@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using TVRename.Forms;
 
@@ -21,19 +22,13 @@ namespace TVRename;
 /// Handles the logic behind the Bulk Add Function
 /// Works in conjunction with a UI to show outcomes to the user
 /// </summary>
-public class BulkAddSeriesManager
+public class BulkAddSeriesManager(TVDoc doc)
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-    public FolderMonitorEntryList AddItems;
-    private readonly TVDoc mDoc;
+    public FolderMonitorEntryList AddItems = [];
+    private readonly TVDoc mDoc = doc;
 
-    public BulkAddSeriesManager(TVDoc doc)
-    {
-        AddItems = [];
-        mDoc = doc;
-    }
-
-    public static void GuessShowItem(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
+    public static async Task GuessShowItemAsync(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
     {
         Language languageToUse = TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB
             ? TVSettings.Instance.TMDBLanguage
@@ -55,7 +50,7 @@ public class BulkAddSeriesManager
             try
             {
                 ai.UpdateId(tvdbId, TVDoc.ProviderType.TheTVDB);
-                CachedSeriesInfo? cachedSeries = TheTVDB.LocalCache.Instance.GetSeriesOrDownload(ai, showErrorMsgBox);
+                CachedSeriesInfo? cachedSeries = await TheTVDB.LocalCache.Instance.GetSeriesOrDownloadAsync(ai, showErrorMsgBox);
                 if (cachedSeries != null)
                 {
                     return;
@@ -67,7 +62,7 @@ public class BulkAddSeriesManager
             }
         }
 
-        CachedSeriesInfo? ser = TheTVDB.LocalCache.Instance.GetSeries(showName, showErrorMsgBox, localeToUse);
+        CachedSeriesInfo? ser = await TheTVDB.LocalCache.Instance.GetSeriesAsync(showName, showErrorMsgBox, localeToUse);
         if (ser != null)
         {
             ai.UpdateId(ser.TvdbId, TVDoc.ProviderType.TheTVDB);
@@ -85,7 +80,7 @@ public class BulkAddSeriesManager
             Logger.Info($"Ignoring {showName} as it refines to nothing.");
         }
 
-        ser = TheTVDB.LocalCache.Instance.GetSeries(refinedHint, showErrorMsgBox, localeToUse);
+        ser = await TheTVDB.LocalCache.Instance.GetSeriesAsync(refinedHint, showErrorMsgBox, localeToUse);
 
         ai.RefinedHint = refinedHint;
         if (ser != null)
@@ -101,7 +96,7 @@ public class BulkAddSeriesManager
         {
             try
             {
-                IEnumerable<FileInfo> files = [.. ai.Folder.EnumerateFiles(fileName)];
+                IEnumerable<FileInfo> files = ai.FindFiles(fileName);
                 if (files.Any())
                 {
                     foreach (int x in files.Select(FindTvdbShowCode).Where(x => x != -1))
@@ -186,12 +181,12 @@ public class BulkAddSeriesManager
     {
         // see if we can guess a season number and show name, too
         // Assume is blah\blah\blah\show\season X
-        string showName = ai.Folder.FullName;
+        string showName = ai.FolderName;
 
         foreach (string seasonWord in library.SeasonWords())
         {
             string seasonFinder = ".*" + seasonWord + "[ _\\.]+([0-9]+).*";
-            if (Regex.Matches(showName, seasonFinder, RegexOptions.IgnoreCase).Count == 0)
+            if (Regex.Count(showName, seasonFinder, RegexOptions.IgnoreCase) == 0)
             {
                 continue;
             }
@@ -215,11 +210,14 @@ public class BulkAddSeriesManager
         return showName;
     }
 
-    private bool HasSeasonFolders(DirectoryInfo di, out DirectoryInfo[]? subDirs, out string folderFormat)
+    private async Task<(bool, DirectoryInfo[]?, string)> HasSeasonFoldersAsync(DirectoryInfo di)
     {
+        var folderFormat = string.Empty;
+
         try
         {
-            subDirs = di.GetDirectories();
+            var subDirs = await di.GetDirectoriesAsync();
+
             // keep in sync with ProcessAddItems, etc.
             foreach (string sw in mDoc.TvLibrary.SeasonWords())
             {
@@ -234,7 +232,7 @@ public class BulkAddSeriesManager
                             continue;
                         }
                         //We have a match!
-                        folderFormat = m.Groups["prefix"].Value + m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0", StringComparison.Ordinal) ? "{Season:2}" : "{Season}");
+                        folderFormat = m.Groups["prefix"].Value + m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith('0') ? "{Season:2}" : "{Season}");
 
                         Logger.Info($"Assuming {di.FullName} contains a show because pattern '{folderFormat}' is found in subdirectory {subDir.FullName}");
                     }
@@ -243,41 +241,36 @@ public class BulkAddSeriesManager
                         Logger.Error(e, $"Could not parse {regex} to tell whether {subDir.Name} is a subfolder - ignoring this regex.");
                         continue;
                     }
-                    return true;
+                    return (true,subDirs,folderFormat);
                 }
             }
+
+            return (false, subDirs, string.Empty);
         }
         catch (UnauthorizedAccessException)
         {
             // e.g. recycle bin, system volume information
             Logger.Warn($"Could not access {di.FullName} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information");
-
-            subDirs = null;
         }
         catch (System.IO.DirectoryNotFoundException)
         {
             // e.g. recycle bin, system volume information
             Logger.Warn($"Could not access {di.FullName} (or a subdir), it is no longer found");
-
-            subDirs = null;
         }
         catch (System.IO.IOException)
         {
             Logger.Warn($"Could not access {di.FullName} (or a subdir), got an IO Exception");
-
-            subDirs = null;
         }
-        folderFormat = string.Empty;
-        return false;
+        return (false,null,string.Empty);
     }
 
-    public (bool finished, DirectoryInfo[]? subDirs) CheckFolderForShows(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
+    public async Task<(bool finished, DirectoryInfo[]? subDirs)> CheckFolderForShowsAsync(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
     {
         try
         {
             // ..and not already a folder for one of our shows
             string theFolder = di2.FullName.ToLower();
-            foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShowItems())
+            foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShows())
             {
                 if (RejectFolderIfIncludedInShow(fullLogging, si, theFolder))
                 {
@@ -286,7 +279,7 @@ public class BulkAddSeriesManager
             } // for each showitem
 
             //We don't have it already
-            bool hasSeasonFolders = HasSeasonFolders(di2, out DirectoryInfo[]? subDirectories, out string folderFormat);
+            (bool hasSeasonFolders, DirectoryInfo[]? subDirectories, string folderFormat)  = await HasSeasonFoldersAsync(di2);
 
             //This is an indication that something is wrong
             if (subDirectories is null)
@@ -317,7 +310,7 @@ public class BulkAddSeriesManager
             Logger.Info($"Adding {theFolder} as a new folder");
             if (andGuess)
             {
-                GuessShowItem(ai, mDoc.TvLibrary, showErrorMsgBox);
+                await GuessShowItemAsync(ai, mDoc.TvLibrary, showErrorMsgBox);
             }
             return (hasSeasonFolders, subDirectories);
         }
@@ -372,7 +365,7 @@ public class BulkAddSeriesManager
         return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
     }
 
-    private void CheckFolderForShows(DirectoryInfo di, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
+    private async Task CheckFolderForShowsAsync(IProgress<BulkAddMovie.ScanProgressReport>? handler, DirectoryInfo di, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
         if (!di.Exists)
         {
@@ -395,7 +388,7 @@ public class BulkAddSeriesManager
             return;
         }
 
-        (bool finished, DirectoryInfo[]? subDirs) = CheckFolderForShows(di, false, fullLogging, showErrorMsgBox);
+        (bool finished, DirectoryInfo[]? subDirs) = await CheckFolderForShowsAsync(di, false, fullLogging, showErrorMsgBox);
 
         if (finished)
         {
@@ -409,17 +402,25 @@ public class BulkAddSeriesManager
 
         // recursively check a folder for new shows
 
+        ThreadSafeCounter c = new();
+        int total = subDirs.Count();
         foreach (DirectoryInfo di2 in subDirs)
         {
-            CheckFolderForShows(di2, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
+            handler?.Report(new BulkAddMovie.ScanProgressReport
+            {
+                ProgressPercentage = (int) ((100 * c.Increment()) / total),
+                UpdateText = di2.Name
+            });
+
+            await CheckFolderForShowsAsync(handler, di2, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
         } // for each directory
     }
 
-    public void AddAllToMyShows(UI ui)
+    public async Task AddAllToMyShowsAsync(UI ui)
     {
         List<ShowConfiguration> shows = AddToLibrary(AddItems.Where(ai => ai.CodeKnown));
 
-        mDoc.TvAddedOrEdited(true, false, false, ui, shows);
+        await mDoc.TvAddedOrEditedAsync(true, false, false, ui, shows);
         AddItems.Clear();
     }
 
@@ -437,7 +438,7 @@ public class BulkAddSeriesManager
                 mDoc.Add(found.AsList(), true);
             }
 
-            found.AutoAddFolderBase = ai.Folder.FullName;
+            found.AutoAddFolderBase = ai.FolderName;
 
             if (ai.HasSeasonFoldersGuess)
             {
@@ -459,7 +460,7 @@ public class BulkAddSeriesManager
         return touchedShows;
     }
 
-    public void CheckFolders(SetProgressDelegate prog, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
+    public async Task CheckFoldersAsync(IProgress<BulkAddMovie.ScanProgressReport>? handler, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
     {
         // Check the  folder list, and build up a new "AddItems" list.
         // guessing what the shows actually are isn't done here.  That is done by
@@ -474,7 +475,12 @@ public class BulkAddSeriesManager
         int c2 = 0;
         foreach (string folder in TVSettings.Instance.LibraryFolders)
         {
-            prog.Invoke(100 * c2++ / c, folder, string.Empty);
+            handler?.Report(new BulkAddMovie.ScanProgressReport
+                {
+                    ProgressPercentage = (int)((100 * c2++) / c),
+                    UpdateText = folder
+                });
+
             DirectoryInfo di = new(folder);
             if (TVSettings.Instance.MovieLibraryFolders.Contains(folder))
             {
@@ -482,13 +488,17 @@ public class BulkAddSeriesManager
                 continue;
             }
 
-            CheckFolderForShows(di, detailedLogging, showErrorMsgBox, token);
+            await CheckFolderForShowsAsync(handler, di, detailedLogging, showErrorMsgBox, token);
 
             if (token.IsCancellationRequested)
             {
                 break;
             }
         }
-        prog.Invoke(100, string.Empty, string.Empty);
+        handler?.Report(new BulkAddMovie.ScanProgressReport
+            {
+                ProgressPercentage = 100,
+                UpdateText = "Complete"
+            });
     }
 }

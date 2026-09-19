@@ -11,14 +11,9 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-public abstract class ListViewItemSorter : IComparer
+public abstract class ListViewItemSorter(int column) : IComparer
 {
-    protected readonly int Col;
-
-    protected ListViewItemSorter(int column)
-    {
-        Col = column;
-    }
+    protected readonly int Col = column;
 
     /// <exception cref="InvalidOperationException">Condition.</exception>
     public int Compare(object? x, object? y)

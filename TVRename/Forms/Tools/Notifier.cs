@@ -7,7 +7,7 @@ namespace TVRename.Forms.Tools;
 
 public abstract partial class Notifier : Form
 {
-    protected Notifier()
+    public Notifier()
     {
         InitializeComponent();
     }
@@ -19,7 +19,7 @@ public abstract partial class Notifier : Form
 
     private void Update(int percent, string? message, string? lastUpdate)
     {
-        pbProgress.Value = percent.Between(0, 100);
+        pbProgress.SetProgress(percent);
         pbProgress.Update();
         lblMessage.Text = message?.ToUiVersion() ?? string.Empty;
         lblLastUpdate.Text = lastUpdate?.ToUiVersion() ?? string.Empty;

@@ -5,12 +5,8 @@ using System.Linq;
 
 namespace TVRename;
 
-internal class CheckAllFoldersExist : ScanShowActivity
+internal class CheckAllFoldersExist(TVDoc doc) : ScanShowActivity(doc)
 {
-    public CheckAllFoldersExist(TVDoc doc) : base(doc)
-    {
-    }
-
     protected override string ActivityName() => "Checked All Folders Exist";
 
     protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
@@ -51,7 +47,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
                 folders = floc;
             }
 
-            if (si.SeasonEpisodes[snum].All(episode => !MightWeProcess(episode, folders)))
+            if (si.EpisodesForSeason(snum).All(episode => !MightWeProcess(episode, folders)))
             {
                 //All episodes in this season are ignored
                 continue;
@@ -159,7 +155,7 @@ internal class CheckAllFoldersExist : ScanShowActivity
                 using MissingFolderAction mfa = new(si.ShowName, snum + " of " + si.MaxSeason(), folder);
 
                 owner.ShowChildDialog(mfa);
-                whatToDo = mfa.Result;
+                whatToDo = mfa.Outcome;
                 otherFolder = mfa.FolderName;
             }
 

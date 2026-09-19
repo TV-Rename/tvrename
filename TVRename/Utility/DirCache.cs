@@ -35,7 +35,7 @@ public class DirCache : List<DirCacheEntry>
             return n;
         }
 
-        DirectoryInfo[] dirs = Array.Empty<DirectoryInfo>();
+        DirectoryInfo[] dirs = [];
         try
         {
             DirectoryInfo di = new(folder);
@@ -135,12 +135,12 @@ public class DirCache : List<DirCacheEntry>
             Logger.Info(e);
         }
 
-        return Array.Empty<DirectoryInfo>();
+        return [];
     }
 
     private static IEnumerable<FileInfo> GetFiles(DirectoryInfo di)
     {
-        FileInfo[] f2 = Array.Empty<FileInfo>();
+        FileInfo[] f2 = [];
         try
         {
             f2 = di.GetFiles();

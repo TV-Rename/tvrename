@@ -3,12 +3,8 @@ using Directory = Alphaleonis.Win32.Filesystem.Directory;
 
 namespace TVRename;
 
-internal class SubdirectoryMovieCheck : MovieCheck
+internal class SubdirectoryMovieCheck(MovieConfiguration movie, TVDoc doc) : MovieCheck(movie, doc)
 {
-    public SubdirectoryMovieCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
-    {
-    }
-
     public override bool Check() => Movie.UseCustomFolderNameFormat;
 
     public override string Explain() => $"This movie does not use the standard folder naming format '{TVSettings.Instance.MovieFolderFormat}', it uses '{Movie.CustomFolderNameFormat}'";

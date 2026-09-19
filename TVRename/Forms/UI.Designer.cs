@@ -57,13 +57,11 @@ namespace TVRename.Forms
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
-            ListViewGroup listViewGroup1 = new ListViewGroup("Recently Aired", HorizontalAlignment.Left);
-            ListViewGroup listViewGroup2 = new ListViewGroup("Next 7 Days", HorizontalAlignment.Left);
-            ListViewGroup listViewGroup3 = new ListViewGroup("Returning Series", HorizontalAlignment.Left);
-            ListViewGroup listViewGroup4 = new ListViewGroup("Other Planned Episodes", HorizontalAlignment.Left);
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             exportToolStripMenuItem = new ToolStripMenuItem();
+            exportFilteredToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator25 = new ToolStripSeparator();
             saveToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             exitToolStripMenuItem = new ToolStripMenuItem();
@@ -231,7 +229,23 @@ namespace TVRename.Forms
             calCalendar = new MonthCalendar();
             txtWhenToWatchSynopsis = new TextBox();
             toolStripContainer3 = new ToolStripContainer();
-            lvWhenToWatch = new ListViewFlickerFree();
+            lvWhenToWatch = new ObjectListViewFlickerFree();
+            olvWTWShowColumn = new OLVColumn();
+            olvWTWSeason = new OLVColumn();
+            olvWTWEpisode = new OLVColumn();
+            olvWTWDate = new OLVColumn();
+            olvWTWTime = new OLVColumn();
+            olvWTWDay = new OLVColumn();
+            olvWTWLength = new OLVColumn();
+            olvWTWNetwork = new OLVColumn();
+            olvWTWName = new OLVColumn();
+            tsWtW = new ToolStrip();
+            btnWhenToWatchCheck = new ToolStripButton();
+            btnScheduleBTSearch = new ToolStripSplitButton();
+            tsbScheduleJackettSearch = new ToolStripButton();
+            toolStripSeparator12 = new ToolStripSeparator();
+            btnScheduleRightClick = new ToolStripButton();
+            ilNewIcons = new ImageList(components);
             columnHeader29 = new ColumnHeader();
             columnHeader30 = new ColumnHeader();
             columnHeader31 = new ColumnHeader();
@@ -241,13 +255,6 @@ namespace TVRename.Forms
             columnHeader34 = new ColumnHeader();
             columnHeader1 = new ColumnHeader();
             columnHeader35 = new ColumnHeader();
-            tsWtW = new ToolStrip();
-            btnWhenToWatchCheck = new ToolStripButton();
-            btnScheduleBTSearch = new ToolStripSplitButton();
-            tsbScheduleJackettSearch = new ToolStripButton();
-            toolStripSeparator12 = new ToolStripSeparator();
-            btnScheduleRightClick = new ToolStripButton();
-            ilNewIcons = new ImageList(components);
             imageList1 = new ImageList(components);
             tableLayoutPanel2 = new TableLayoutPanel();
             pbProgressBarx = new ProgressBar();
@@ -276,17 +283,12 @@ namespace TVRename.Forms
             toolTip1 = new ToolTip(components);
             btnUpdateAvailable = new Button();
             bwSeasonHTMLGenerator = new System.ComponentModel.BackgroundWorker();
-            bwUpdateSchedule = new System.ComponentModel.BackgroundWorker();
             bwShowHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             bwShowSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
-            bwScan = new System.ComponentModel.BackgroundWorker();
-            bwAction = new System.ComponentModel.BackgroundWorker();
             tableLayoutPanel3 = new TableLayoutPanel();
             panel1 = new Panel();
-            exportFilteredToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator25 = new ToolStripSeparator();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
             tbMyMovies.SuspendLayout();
@@ -325,6 +327,7 @@ namespace TVRename.Forms
             toolStripContainer3.ContentPanel.SuspendLayout();
             toolStripContainer3.TopToolStripPanel.SuspendLayout();
             toolStripContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)lvWhenToWatch).BeginInit();
             tsWtW.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             panel1.SuspendLayout();
@@ -353,29 +356,41 @@ namespace TVRename.Forms
             // 
             exportToolStripMenuItem.Name = "exportToolStripMenuItem";
             exportToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.E;
-            exportToolStripMenuItem.Size = new System.Drawing.Size(184, 26);
+            exportToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             exportToolStripMenuItem.Text = "&Export";
             exportToolStripMenuItem.Click += exportToolStripMenuItem_Click;
+            // 
+            // exportFilteredToolStripMenuItem
+            // 
+            exportFilteredToolStripMenuItem.Name = "exportFilteredToolStripMenuItem";
+            exportFilteredToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            exportFilteredToolStripMenuItem.Text = "Export Filtered";
+            exportFilteredToolStripMenuItem.Click += exportFilteredToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator25
+            // 
+            toolStripSeparator25.Name = "toolStripSeparator25";
+            toolStripSeparator25.Size = new System.Drawing.Size(146, 6);
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("saveToolStripMenuItem.Image");
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            saveToolStripMenuItem.Size = new System.Drawing.Size(184, 26);
+            saveToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             saveToolStripMenuItem.Text = "&Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(181, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(146, 6);
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
-            exitToolStripMenuItem.Size = new System.Drawing.Size(184, 26);
+            exitToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             exitToolStripMenuItem.Text = "E&xit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
@@ -474,20 +489,20 @@ namespace TVRename.Forms
             // 
             toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { flushCacheToolStripMenuItem, flushImageCacheToolStripMenuItem, backgroundDownloadNowToolStripMenuItem, toolStripSeparator17, folderMonitorToolStripMenuItem, bulkAddMoviesToolStripMenuItem, toolStripSeparator3, tsmiOrphanFiles, duplicateFinderLOGToolStripMenuItem, duplicateMoviesToolStripMenuItem, toolStripSeparator18, quickRenameToolStripMenuItem, scanMovieFolderToolStripMenuItem, toolStripSeparator21, movieRecommendationsToolStripMenuItem, tvRecommendationsToolStripMenuItem, toolStripSeparator121, cleanLibraryFoldersToolStripMenuItem, forceRefreshKodiTVShowNFOFIlesToolStripMenuItem, removeShowsWithNoFoldersToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             toolsToolStripMenuItem.Text = "&Tools";
             // 
             // flushCacheToolStripMenuItem
             // 
             flushCacheToolStripMenuItem.Name = "flushCacheToolStripMenuItem";
-            flushCacheToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            flushCacheToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             flushCacheToolStripMenuItem.Text = "&Force Refresh All";
             flushCacheToolStripMenuItem.Click += flushCacheToolStripMenuItem_Click;
             // 
             // flushImageCacheToolStripMenuItem
             // 
             flushImageCacheToolStripMenuItem.Name = "flushImageCacheToolStripMenuItem";
-            flushImageCacheToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            flushImageCacheToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             flushImageCacheToolStripMenuItem.Text = "&Force Refresh All Images";
             flushImageCacheToolStripMenuItem.Click += flushImageCacheToolStripMenuItem_Click;
             // 
@@ -496,117 +511,117 @@ namespace TVRename.Forms
             backgroundDownloadNowToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("backgroundDownloadNowToolStripMenuItem.Image");
             backgroundDownloadNowToolStripMenuItem.Name = "backgroundDownloadNowToolStripMenuItem";
             backgroundDownloadNowToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.B;
-            backgroundDownloadNowToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            backgroundDownloadNowToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             backgroundDownloadNowToolStripMenuItem.Text = "&Background Download Now";
             backgroundDownloadNowToolStripMenuItem.Click += backgroundDownloadNowToolStripMenuItem_Click;
             // 
             // toolStripSeparator17
             // 
             toolStripSeparator17.Name = "toolStripSeparator17";
-            toolStripSeparator17.Size = new System.Drawing.Size(270, 6);
+            toolStripSeparator17.Size = new System.Drawing.Size(271, 6);
             // 
             // folderMonitorToolStripMenuItem
             // 
             folderMonitorToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("folderMonitorToolStripMenuItem.Image");
             folderMonitorToolStripMenuItem.Name = "folderMonitorToolStripMenuItem";
-            folderMonitorToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            folderMonitorToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             folderMonitorToolStripMenuItem.Text = "Bulk &Add TV Shows...";
             folderMonitorToolStripMenuItem.Click += folderMonitorToolStripMenuItem_Click;
             // 
             // bulkAddMoviesToolStripMenuItem
             // 
             bulkAddMoviesToolStripMenuItem.Name = "bulkAddMoviesToolStripMenuItem";
-            bulkAddMoviesToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            bulkAddMoviesToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             bulkAddMoviesToolStripMenuItem.Text = "Bulk Add Movies...";
             bulkAddMoviesToolStripMenuItem.Click += bulkAddMoviesToolStripMenuItem_Click;
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new System.Drawing.Size(270, 6);
+            toolStripSeparator3.Size = new System.Drawing.Size(271, 6);
             // 
             // tsmiOrphanFiles
             // 
             tsmiOrphanFiles.Name = "tsmiOrphanFiles";
-            tsmiOrphanFiles.Size = new System.Drawing.Size(273, 22);
+            tsmiOrphanFiles.Size = new System.Drawing.Size(274, 22);
             tsmiOrphanFiles.Text = "Find Orphan Media Files....";
             tsmiOrphanFiles.Click += ToolStripMenuItem1_Click;
             // 
             // duplicateFinderLOGToolStripMenuItem
             // 
             duplicateFinderLOGToolStripMenuItem.Name = "duplicateFinderLOGToolStripMenuItem";
-            duplicateFinderLOGToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            duplicateFinderLOGToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             duplicateFinderLOGToolStripMenuItem.Text = "Find Merged Episodes...";
             duplicateFinderLOGToolStripMenuItem.Click += duplicateFinderLOGToolStripMenuItem_Click;
             // 
             // duplicateMoviesToolStripMenuItem
             // 
             duplicateMoviesToolStripMenuItem.Name = "duplicateMoviesToolStripMenuItem";
-            duplicateMoviesToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            duplicateMoviesToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             duplicateMoviesToolStripMenuItem.Text = "Find Duplicate Movies...";
             duplicateMoviesToolStripMenuItem.Click += duplicateMoviesToolStripMenuItem_Click;
             // 
             // toolStripSeparator18
             // 
             toolStripSeparator18.Name = "toolStripSeparator18";
-            toolStripSeparator18.Size = new System.Drawing.Size(270, 6);
+            toolStripSeparator18.Size = new System.Drawing.Size(271, 6);
             // 
             // quickRenameToolStripMenuItem
             // 
             quickRenameToolStripMenuItem.Name = "quickRenameToolStripMenuItem";
-            quickRenameToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            quickRenameToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             quickRenameToolStripMenuItem.Text = "Quick Rename TV Files...";
             quickRenameToolStripMenuItem.Click += QuickRenameToolStripMenuItem_Click;
             // 
             // scanMovieFolderToolStripMenuItem
             // 
             scanMovieFolderToolStripMenuItem.Name = "scanMovieFolderToolStripMenuItem";
-            scanMovieFolderToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            scanMovieFolderToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             scanMovieFolderToolStripMenuItem.Text = "Move Movies From...";
             scanMovieFolderToolStripMenuItem.Click += scanMovieFolderToolStripMenuItem_Click;
             // 
             // toolStripSeparator21
             // 
             toolStripSeparator21.Name = "toolStripSeparator21";
-            toolStripSeparator21.Size = new System.Drawing.Size(270, 6);
+            toolStripSeparator21.Size = new System.Drawing.Size(271, 6);
             // 
             // movieRecommendationsToolStripMenuItem
             // 
             movieRecommendationsToolStripMenuItem.Name = "movieRecommendationsToolStripMenuItem";
-            movieRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            movieRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             movieRecommendationsToolStripMenuItem.Text = "Movie Recommendations...";
             movieRecommendationsToolStripMenuItem.Click += movieRecommendationsToolStripMenuItem_Click;
             // 
             // tvRecommendationsToolStripMenuItem
             // 
             tvRecommendationsToolStripMenuItem.Name = "tvRecommendationsToolStripMenuItem";
-            tvRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            tvRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             tvRecommendationsToolStripMenuItem.Text = "TV Show Recommendations...";
             tvRecommendationsToolStripMenuItem.Click += recommendationsToolStripMenuItem_Click;
             // 
             // toolStripSeparator121
             // 
             toolStripSeparator121.Name = "toolStripSeparator121";
-            toolStripSeparator121.Size = new System.Drawing.Size(270, 6);
+            toolStripSeparator121.Size = new System.Drawing.Size(271, 6);
             // 
             // cleanLibraryFoldersToolStripMenuItem
             // 
             cleanLibraryFoldersToolStripMenuItem.Name = "cleanLibraryFoldersToolStripMenuItem";
-            cleanLibraryFoldersToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            cleanLibraryFoldersToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             cleanLibraryFoldersToolStripMenuItem.Text = "Clean Empty Library Folders...";
             cleanLibraryFoldersToolStripMenuItem.Click += cleanLibraryFoldersToolStripMenuItem_Click;
             // 
             // forceRefreshKodiTVShowNFOFIlesToolStripMenuItem
             // 
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Name = "forceRefreshKodiTVShowNFOFIlesToolStripMenuItem";
-            forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Text = "Force Refresh Kodi TV Show NFO FIles";
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Click += forceRefreshKodiTVShowNFOFIlesToolStripMenuItem_Click;
             // 
             // removeShowsWithNoFoldersToolStripMenuItem
             // 
             removeShowsWithNoFoldersToolStripMenuItem.Name = "removeShowsWithNoFoldersToolStripMenuItem";
-            removeShowsWithNoFoldersToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            removeShowsWithNoFoldersToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             removeShowsWithNoFoldersToolStripMenuItem.Text = "Remove Shows With No Folders...";
             removeShowsWithNoFoldersToolStripMenuItem.Click += removeShowsWithNoFoldersToolStripMenuItem_Click;
             // 
@@ -1109,7 +1124,7 @@ namespace TVRename.Forms
             tsbMyMoviesContextMenu.Image = (System.Drawing.Image)resources.GetObject("tsbMyMoviesContextMenu.Image");
             tsbMyMoviesContextMenu.ImageScaling = ToolStripItemImageScaling.None;
             tsbMyMoviesContextMenu.Name = "tsbMyMoviesContextMenu";
-            tsbMyMoviesContextMenu.Size = new System.Drawing.Size(119, 36);
+            tsbMyMoviesContextMenu.Size = new System.Drawing.Size(118, 36);
             tsbMyMoviesContextMenu.Text = "Context Menu";
             tsbMyMoviesContextMenu.Click += tsbMyMoviesContextMenu_Click;
             // 
@@ -1382,7 +1397,7 @@ namespace TVRename.Forms
             tsbScanTV.Image = (System.Drawing.Image)resources.GetObject("tsbScanTV.Image");
             tsbScanTV.ImageScaling = ToolStripItemImageScaling.None;
             tsbScanTV.Name = "tsbScanTV";
-            tsbScanTV.Size = new System.Drawing.Size(84, 36);
+            tsbScanTV.Size = new System.Drawing.Size(85, 36);
             tsbScanTV.Text = "Scan TV";
             tsbScanTV.Click += tsbScanTV_Click;
             // 
@@ -1405,7 +1420,7 @@ namespace TVRename.Forms
             tsbMyShowsContextMenu.Image = (System.Drawing.Image)resources.GetObject("tsbMyShowsContextMenu.Image");
             tsbMyShowsContextMenu.ImageScaling = ToolStripItemImageScaling.None;
             tsbMyShowsContextMenu.Name = "tsbMyShowsContextMenu";
-            tsbMyShowsContextMenu.Size = new System.Drawing.Size(119, 36);
+            tsbMyShowsContextMenu.Size = new System.Drawing.Size(118, 36);
             tsbMyShowsContextMenu.Text = "Context Menu";
             tsbMyShowsContextMenu.Click += TsbMyShowsContextMenu_Click;
             // 
@@ -1577,6 +1592,7 @@ namespace TVRename.Forms
             ilIcons.Images.SetKeyName(9, "tk1[1].png");
             ilIcons.Images.SetKeyName(10, "qBitTorrent.png");
             ilIcons.Images.SetKeyName(11, "zip.png");
+            ilIcons.Images.SetKeyName(12, "blank.png");
             // 
             // tsScanResults
             // 
@@ -1665,7 +1681,7 @@ namespace TVRename.Forms
             btnActionBTSearch.Image = (System.Drawing.Image)resources.GetObject("btnActionBTSearch.Image");
             btnActionBTSearch.ImageScaling = ToolStripItemImageScaling.None;
             btnActionBTSearch.Name = "btnActionBTSearch";
-            btnActionBTSearch.Size = new System.Drawing.Size(105, 42);
+            btnActionBTSearch.Size = new System.Drawing.Size(106, 42);
             btnActionBTSearch.Text = "BT Search";
             btnActionBTSearch.ButtonClick += bnActionBTSearch_Click;
             btnActionBTSearch.DropDownOpening += BTSearch_DropDownOpening;
@@ -1837,7 +1853,7 @@ namespace TVRename.Forms
             tsbScanContextMenu.Image = (System.Drawing.Image)resources.GetObject("tsbScanContextMenu.Image");
             tsbScanContextMenu.ImageScaling = ToolStripItemImageScaling.None;
             tsbScanContextMenu.Name = "tsbScanContextMenu";
-            tsbScanContextMenu.Size = new System.Drawing.Size(119, 36);
+            tsbScanContextMenu.Size = new System.Drawing.Size(118, 36);
             tsbScanContextMenu.Text = "Context Menu";
             tsbScanContextMenu.Click += TsbScanContextMenu_Click;
             // 
@@ -1930,78 +1946,132 @@ namespace TVRename.Forms
             // 
             // lvWhenToWatch
             // 
-            lvWhenToWatch.Columns.AddRange(new ColumnHeader[] { columnHeader29, columnHeader30, columnHeader31, columnHeader32, columnHeader36, columnHeader33, columnHeader34, columnHeader1, columnHeader35 });
+            lvWhenToWatch.AllColumns.Add(olvWTWShowColumn);
+            lvWhenToWatch.AllColumns.Add(olvWTWSeason);
+            lvWhenToWatch.AllColumns.Add(olvWTWEpisode);
+            lvWhenToWatch.AllColumns.Add(olvWTWDate);
+            lvWhenToWatch.AllColumns.Add(olvWTWTime);
+            lvWhenToWatch.AllColumns.Add(olvWTWDay);
+            lvWhenToWatch.AllColumns.Add(olvWTWLength);
+            lvWhenToWatch.AllColumns.Add(olvWTWNetwork);
+            lvWhenToWatch.AllColumns.Add(olvWTWName);
+            lvWhenToWatch.Columns.AddRange(new ColumnHeader[] { olvWTWShowColumn, olvWTWSeason, olvWTWEpisode, olvWTWDate, olvWTWTime, olvWTWDay, olvWTWLength, olvWTWNetwork, olvWTWName });
             lvWhenToWatch.Dock = DockStyle.Fill;
             lvWhenToWatch.FullRowSelect = true;
-            listViewGroup1.Header = "Recently Aired";
-            listViewGroup1.Name = "justPassed";
-            listViewGroup2.Header = "Next 7 Days";
-            listViewGroup2.Name = "next7days";
-            listViewGroup2.Tag = "1";
-            listViewGroup3.Header = "Returning Series";
-            listViewGroup3.Name = "futureEps";
-            listViewGroup4.Header = "Other Planned Episodes";
-            listViewGroup4.Name = "later";
-            listViewGroup4.Tag = "2";
-            lvWhenToWatch.Groups.AddRange(new ListViewGroup[] { listViewGroup1, listViewGroup2, listViewGroup3, listViewGroup4 });
+            lvWhenToWatch.GroupWithItemCountFormat = "{0} ({1} items)";
+            lvWhenToWatch.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            lvWhenToWatch.IncludeColumnHeadersInCopy = true;
             lvWhenToWatch.Location = new System.Drawing.Point(0, 0);
             lvWhenToWatch.Margin = new Padding(4, 3, 4, 3);
             lvWhenToWatch.Name = "lvWhenToWatch";
+            lvWhenToWatch.ShowCommandMenuOnRightClick = true;
+            lvWhenToWatch.ShowGroups = false;
+            lvWhenToWatch.ShowImagesOnSubItems = true;
+            lvWhenToWatch.ShowItemCountOnGroups = true;
             lvWhenToWatch.ShowItemToolTips = true;
             lvWhenToWatch.Size = new System.Drawing.Size(990, 477);
             lvWhenToWatch.SmallImageList = ilIcons;
             lvWhenToWatch.TabIndex = 3;
             lvWhenToWatch.UseCompatibleStateImageBehavior = false;
+            lvWhenToWatch.UseFilterIndicator = true;
+            lvWhenToWatch.UseFiltering = true;
+            lvWhenToWatch.UseNotifyPropertyChanged = true;
             lvWhenToWatch.View = View.Details;
-            lvWhenToWatch.ColumnClick += lvWhenToWatch_ColumnClick;
+            lvWhenToWatch.BeforeCreatingGroups += lvWhenToWatch_BeforeCreatingGroups;
+            lvWhenToWatch.FormatRow += lvWhenToWatch_FormatRow;
             lvWhenToWatch.SelectedIndexChanged += lvWhenToWatch_Click;
             lvWhenToWatch.DoubleClick += lvWhenToWatch_DoubleClick;
             lvWhenToWatch.MouseClick += lvWhenToWatch_MouseClick;
             // 
-            // columnHeader29
+            // olvWTWShowColumn
             // 
-            columnHeader29.Text = "Show";
-            columnHeader29.Width = 218;
+            olvWTWShowColumn.AspectName = "SeriesName";
+            olvWTWShowColumn.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWShowColumn.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWShowColumn.Hideable = false;
+            olvWTWShowColumn.ImageAspectName = "ImageTypeName";
+            olvWTWShowColumn.MinimumWidth = 10;
+            olvWTWShowColumn.Text = "Show";
+            olvWTWShowColumn.Width = 218;
             // 
-            // columnHeader30
+            // olvWTWSeason
             // 
-            columnHeader30.Text = "Season";
-            columnHeader30.Width = 59;
+            olvWTWSeason.AspectName = "SeasonNumberAsText";
+            olvWTWSeason.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWSeason.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWSeason.IsEditable = false;
+            olvWTWSeason.MinimumWidth = 10;
+            olvWTWSeason.Searchable = false;
+            olvWTWSeason.Text = "Season";
+            olvWTWSeason.Width = 59;
             // 
-            // columnHeader31
+            // olvWTWEpisode
             // 
-            columnHeader31.Text = "Episode";
-            columnHeader31.Width = 64;
+            olvWTWEpisode.AspectName = "EpisodeNumbersAsText";
+            olvWTWEpisode.Groupable = false;
+            olvWTWEpisode.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWEpisode.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWEpisode.IsEditable = false;
+            olvWTWEpisode.MinimumWidth = 10;
+            olvWTWEpisode.Text = "Episode";
+            olvWTWEpisode.Width = 64;
             // 
-            // columnHeader32
+            // olvWTWDate
             // 
-            columnHeader32.Text = "Air Date";
-            columnHeader32.Width = 94;
+            olvWTWDate.AspectName = "AirDateString";
+            olvWTWDate.AspectToStringFormat = "";
+            olvWTWDate.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWDate.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWDate.MinimumWidth = 10;
+            olvWTWDate.Text = "Air Date";
+            olvWTWDate.Width = 94;
             // 
-            // columnHeader36
+            // olvWTWTime
             // 
-            columnHeader36.Text = "Time";
-            columnHeader36.Width = 70;
+            olvWTWTime.AspectName = "Time";
+            olvWTWTime.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWTime.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWTime.MinimumWidth = 10;
+            olvWTWTime.Text = "Time";
+            olvWTWTime.Width = 70;
             // 
-            // columnHeader33
+            // olvWTWDay
             // 
-            columnHeader33.Text = "Day";
-            columnHeader33.Width = 49;
+            olvWTWDay.AspectName = "Day";
+            olvWTWDay.Groupable = false;
+            olvWTWDay.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWDay.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWDay.MinimumWidth = 10;
+            olvWTWDay.Text = "Day";
+            olvWTWDay.Width = 49;
             // 
-            // columnHeader34
+            // olvWTWLength
             // 
-            columnHeader34.Text = "How Long";
-            columnHeader34.Width = 80;
+            olvWTWLength.AspectName = "Length";
+            olvWTWLength.Groupable = false;
+            olvWTWLength.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWLength.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWLength.MinimumWidth = 10;
+            olvWTWLength.Text = "How Long";
+            olvWTWLength.Width = 80;
             // 
-            // columnHeader1
+            // olvWTWNetwork
             // 
-            columnHeader1.Text = "Network";
-            columnHeader1.Width = 117;
+            olvWTWNetwork.AspectName = "Network";
+            olvWTWNetwork.GroupWithItemCountFormat = "{0} ({1} items)";
+            olvWTWNetwork.GroupWithItemCountSingularFormat = "{0} (1 Item)";
+            olvWTWNetwork.MinimumWidth = 30;
+            olvWTWNetwork.Text = "Network";
+            olvWTWNetwork.Width = 117;
             // 
-            // columnHeader35
+            // olvWTWName
             // 
-            columnHeader35.Text = "Episode Name";
-            columnHeader35.Width = 420;
+            olvWTWName.AspectName = "Name";
+            olvWTWName.Groupable = false;
+            olvWTWName.GroupWithItemCountFormat = "{0}";
+            olvWTWName.GroupWithItemCountSingularFormat = "{0}";
+            olvWTWName.Text = "Epsiode Name";
+            olvWTWName.Width = 420;
             // 
             // tsWtW
             // 
@@ -2032,7 +2102,7 @@ namespace TVRename.Forms
             btnScheduleBTSearch.Image = (System.Drawing.Image)resources.GetObject("btnScheduleBTSearch.Image");
             btnScheduleBTSearch.ImageScaling = ToolStripItemImageScaling.None;
             btnScheduleBTSearch.Name = "btnScheduleBTSearch";
-            btnScheduleBTSearch.Size = new System.Drawing.Size(114, 36);
+            btnScheduleBTSearch.Size = new System.Drawing.Size(115, 36);
             btnScheduleBTSearch.Text = "BT Search";
             btnScheduleBTSearch.ButtonClick += bnWTWBTSearch_Click;
             btnScheduleBTSearch.DropDownOpening += BTSearch_DropDownOpening;
@@ -2057,7 +2127,7 @@ namespace TVRename.Forms
             btnScheduleRightClick.Image = (System.Drawing.Image)resources.GetObject("btnScheduleRightClick.Image");
             btnScheduleRightClick.ImageScaling = ToolStripItemImageScaling.None;
             btnScheduleRightClick.Name = "btnScheduleRightClick";
-            btnScheduleRightClick.Size = new System.Drawing.Size(119, 36);
+            btnScheduleRightClick.Size = new System.Drawing.Size(118, 36);
             btnScheduleRightClick.Text = "Context Menu";
             btnScheduleRightClick.Click += ToolStripButton1_Click;
             // 
@@ -2138,6 +2208,7 @@ namespace TVRename.Forms
             txtDLStatusLabel.TabIndex = 1;
             txtDLStatusLabel.Text = "Background Download: ---";
             txtDLStatusLabel.Visible = false;
+            txtDLStatusLabel.Click += txtDLStatusLabel_Click;
             // 
             // tsNextShowTxt
             // 
@@ -2272,12 +2343,6 @@ namespace TVRename.Forms
             bwSeasonHTMLGenerator.DoWork += BwSeasonHTMLGenerator_DoWork;
             bwSeasonHTMLGenerator.RunWorkerCompleted += UpdateWeb;
             // 
-            // bwUpdateSchedule
-            // 
-            bwUpdateSchedule.WorkerSupportsCancellation = true;
-            bwUpdateSchedule.DoWork += BwUpdateSchedule_DoWork;
-            bwUpdateSchedule.RunWorkerCompleted += BwUpdateSchedule_RunWorkerCompleted;
-            // 
             // bwShowHTMLGenerator
             // 
             bwShowHTMLGenerator.WorkerSupportsCancellation = true;
@@ -2302,19 +2367,6 @@ namespace TVRename.Forms
             bwMovieHTMLGenerator.DoWork += bwMovieHTMLGenerator_DoWork;
             bwMovieHTMLGenerator.RunWorkerCompleted += UpdateWeb;
             // 
-            // bwScan
-            // 
-            bwScan.WorkerSupportsCancellation = true;
-            bwScan.DoWork += bwScan_DoWork;
-            bwScan.ProgressChanged += bwScan_ProgressChanged;
-            bwScan.RunWorkerCompleted += bwScan_RunWorkerCompleted;
-            // 
-            // bwAction
-            // 
-            bwAction.WorkerSupportsCancellation = true;
-            bwAction.DoWork += bwAction_DoWork;
-            bwAction.RunWorkerCompleted += bwAction_RunWorkerCompleted;
-            // 
             // tableLayoutPanel3
             // 
             tableLayoutPanel3.ColumnCount = 1;
@@ -2337,18 +2389,6 @@ namespace TVRename.Forms
             panel1.Size = new System.Drawing.Size(1102, 690);
             panel1.TabIndex = 12;
             // 
-            // exportFilteredToolStripMenuItem
-            // 
-            exportFilteredToolStripMenuItem.Name = "exportFilteredToolStripMenuItem";
-            exportFilteredToolStripMenuItem.Size = new System.Drawing.Size(184, 26);
-            exportFilteredToolStripMenuItem.Text = "Export Filtered";
-            exportFilteredToolStripMenuItem.Click += exportFilteredToolStripMenuItem_Click;
-            // 
-            // toolStripSeparator25
-            // 
-            toolStripSeparator25.Name = "toolStripSeparator25";
-            toolStripSeparator25.Size = new System.Drawing.Size(181, 6);
-            // 
             // UI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -2369,7 +2409,7 @@ namespace TVRename.Forms
             StartPosition = FormStartPosition.Manual;
             Text = "TV Rename";
             FormClosing += UI_FormClosing;
-            Load += UI_Load;
+            Load += UI_LoadAsync;
             LocationChanged += UI_LocationChanged;
             SizeChanged += UI_SizeChanged;
             KeyDown += UI_KeyDown;
@@ -2426,6 +2466,7 @@ namespace TVRename.Forms
             toolStripContainer3.TopToolStripPanel.PerformLayout();
             toolStripContainer3.ResumeLayout(false);
             toolStripContainer3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)lvWhenToWatch).EndInit();
             tsWtW.ResumeLayout(false);
             tsWtW.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
@@ -2435,7 +2476,6 @@ namespace TVRename.Forms
         }
         #endregion
         private System.Windows.Forms.TabPage tbAllInOne;
-
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem folderMonitorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ignoreListToolStripMenuItem;
@@ -2451,7 +2491,6 @@ namespace TVRename.Forms
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.ColumnHeader columnHeader8;
-        private ListViewFlickerFree lvWhenToWatch;
         private System.Windows.Forms.ColumnHeader columnHeader29;
         private System.Windows.Forms.ColumnHeader columnHeader30;
         private System.Windows.Forms.ColumnHeader columnHeader31;
@@ -2569,7 +2608,6 @@ namespace TVRename.Forms
         private ToolStripMenuItem thanksToolStripMenuItem;
         private ImageList ilNewIcons;
         private System.ComponentModel.BackgroundWorker bwSeasonHTMLGenerator;
-        private System.ComponentModel.BackgroundWorker bwUpdateSchedule;
         private System.ComponentModel.BackgroundWorker bwShowHTMLGenerator;
         private ToolStripButton tbFullScan;
         private ToolStripButton tpRecentScan;
@@ -2583,6 +2621,15 @@ namespace TVRename.Forms
         private OLVColumn olvSource;
         private OLVColumn olvErrors;
         private OLVColumn olvType;
+        private OLVColumn olvWTWShowColumn;
+        private OLVColumn olvWTWSeason;
+        private OLVColumn olvWTWEpisode;
+        private OLVColumn olvWTWDate;
+        private OLVColumn olvWTWTime;
+        private OLVColumn olvWTWDay;
+        private OLVColumn olvWTWLength;
+        private OLVColumn olvWTWNetwork;
+        private OLVColumn olvWTWName;
         private ToolStripButton btnRevertView;
         private TabPage tpSummary;
         private System.ComponentModel.BackgroundWorker bwShowSummaryHTMLGenerator;
@@ -2634,13 +2681,11 @@ namespace TVRename.Forms
         private CefSharp.WinForms.ChromiumWebBrowser chrImages;
         private CefSharp.WinForms.ChromiumWebBrowser chrSummary;
         private CefSharp.WinForms.ChromiumWebBrowser chrMovieImages;
-        private System.ComponentModel.BackgroundWorker bwScan;
         private TabPage tpMovieTrailer;
         private CefSharp.WinForms.ChromiumWebBrowser chrMovieTrailer;
         private TabPage tabPage3;
         private CefSharp.WinForms.ChromiumWebBrowser chrTvTrailer;
         private ToolStripMenuItem browserTestToolStripMenuItem;
-        private System.ComponentModel.BackgroundWorker bwAction;
         private ToolStripButton tsbScanTV;
         private ToolStripMenuItem cleanLibraryFoldersToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator18;
@@ -2664,5 +2709,6 @@ namespace TVRename.Forms
         private ToolStripMenuItem removeShowsWithNoFoldersToolStripMenuItem;
         private ToolStripMenuItem exportFilteredToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator25;
+        private ObjectListViewFlickerFree lvWhenToWatch;
     }
 }
