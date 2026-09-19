@@ -452,7 +452,7 @@ namespace TVRename
             olvFolder.Hideable = false;
             olvFolder.ImageAspectName = "ImageTypeName";
             olvFolder.MinimumWidth = 10;
-            olvFolder.Text = "Folder";
+            olvFolder.Text = "FolderName";
             olvFolder.Width = 240;
             // 
             // olvShow
@@ -466,7 +466,7 @@ namespace TVRename
             // 
             // olvStructure
             // 
-            olvStructure.AspectName = "Year";
+            olvStructure.AspectName = "Type";
             olvStructure.IsEditable = false;
             olvStructure.MinimumWidth = 10;
             olvStructure.Searchable = false;

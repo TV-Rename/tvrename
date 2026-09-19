@@ -33,9 +33,6 @@
     <Compile Update="Forms\BulkAddShows\BulkAddShow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\BulkAddShows\FolderMonitorProgress.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="Forms\Preferences\AddEditSearchEngine.cs">
       <SubType>Form</SubType>
     </Compile>

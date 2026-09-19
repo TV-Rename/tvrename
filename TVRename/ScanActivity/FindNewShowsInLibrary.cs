@@ -6,10 +6,12 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static TVRename.BulkAddMovie;
 
 namespace TVRename;
 
@@ -20,7 +22,13 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
     protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         BulkAddSeriesManager bam = new(MDoc);
-        await bam.CheckFoldersAsync(progress, false, !Settings.Unattended, Settings.Token);
+
+        var progressHandler = new Progress<ScanProgressReport>(scanReport =>
+        {
+            progress.Invoke(scanReport.ProgressPercentage,scanReport.UpdateText,scanReport.LatestAction);    
+        });
+
+        await bam.CheckFoldersAsync(progressHandler, false, !Settings.Unattended, Settings.Token);
         await AskUserAboutShowsAsync(bam);
 
         if (!bam.AddItems.Any(s => s.CodeKnown))

@@ -49,6 +49,7 @@ public partial class BulkAddMovie : Form
     {
         public int ProgressPercentage { get; set; }
         public string UpdateText { get; set; } = string.Empty;
+        public string LatestAction { get; set; } = string.Empty;
     }
 
     public BulkAddMovie(TVDoc doc, BulkAddMovieManager bam, UI mainUi)

@@ -29,7 +29,6 @@ namespace TVRename;
 /// </summary>
 public partial class BulkAddShow : Form
 {
-    private FolderMonitorProgress? progressDialog;
     private readonly TVDoc mDoc;
     private readonly BulkAddSeriesManager engine;
     private readonly UI mainUi;
@@ -226,15 +225,9 @@ public partial class BulkAddShow : Form
             lblStatusLabel.Text = scanReport.UpdateText.ToUiVersion();
         });
 
-        var options = new ParallelOptions
-        {
-            MaxDegreeOfParallelism = 4, // Limit concurrent tasks
-            CancellationToken = cts.Token // Pass token to the loop mechanism
-        };
-
         VolatileCounter.Reset();
 
-        await engine.CheckFoldersAsync(options, VolatileCounter, progressHandler, true, true, cts.Token);
+        await engine.CheckFoldersAsync(progressHandler, true, true, cts.Token);
 
         cts.Cancel();
 
