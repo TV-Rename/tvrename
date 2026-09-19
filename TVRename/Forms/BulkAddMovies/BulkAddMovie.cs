@@ -9,7 +9,6 @@
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
 using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,11 +28,11 @@ namespace TVRename;
 /// </summary>
 public partial class BulkAddMovie : Form
 {
-    //public CancellationTokenSource TokenSource;
     private readonly TVDoc mDoc;
-
     private readonly BulkAddMovieManager engine;
     private readonly UI mainUi;
+    CancellationTokenSource cts = new();
+
 
     //Thread safe counters to work out the progress
     //For auto id
@@ -65,6 +64,8 @@ public partial class BulkAddMovie : Form
 
     private void bnClose_Click(object sender, System.EventArgs e)
     {
+        cts.Cancel();
+
         if (!CanClose())
         {
             if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"My Movies\"?", "Bulk Add Movies", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
@@ -145,7 +146,7 @@ public partial class BulkAddMovie : Form
             searchFolderBrowser.SelectedPath = TVSettings.Instance.MovieLibraryFolders[n];
         }
 
-        if (UiHelpers.ShowDialogAndOk(searchFolderBrowser,this))
+        if (UiHelpers.ShowDialogAndOk(searchFolderBrowser, this))
         {
             if (Directory.Exists(searchFolderBrowser.SelectedPath))
             {
@@ -155,7 +156,6 @@ public partial class BulkAddMovie : Form
             }
         }
     }
-
     private void bnAddIgFolder_Click(object sender, System.EventArgs e)
     {
         FolderBrowserDialogEx ignoreFolderBrowser = new()
@@ -171,14 +171,13 @@ public partial class BulkAddMovie : Form
             ignoreFolderBrowser.SelectedPath = TVSettings.Instance.IgnoreFolders[lstFMIgnoreFolders.SelectedIndex];
         }
 
-        if (UiHelpers.ShowDialogAndOk(ignoreFolderBrowser,this))
+        if (UiHelpers.ShowDialogAndOk(ignoreFolderBrowser, this))
         {
             TVSettings.Instance.IgnoreFolders.Add(ignoreFolderBrowser.SelectedPath.ToLower());
             mDoc.SetDirty();
             FillFolderStringLists();
         }
     }
-
     private void bnOpenMonFolder_Click(object sender, System.EventArgs e)
     {
         OpenSelectedFolder();
@@ -213,18 +212,16 @@ public partial class BulkAddMovie : Form
     private async Task DoCheckAsync()
     {
         tbResults.Parent = tabControl1;
-
         tabControl1.SelectedTab = tbResults;
         tabControl1.Update();
 
-        bnFullAuto.Enabled = false;
-        pbProgress.Visible = true;
-        lblStatusLabel.Visible = true;
+        ShowHideUpdateControls(true);
 
-        CancellationTokenSource cts = new();
+        cts = new();
 
         pbProgress.SetProgress(0);
         pbProgress.Maximum = 100;
+        lblStatusLabel.Text = "Checking folders";
 
         var progressHandler = new Progress<ScanProgressReport>(scanReport =>
         {
@@ -241,15 +238,22 @@ public partial class BulkAddMovie : Form
 
         VolatileCounter.Reset();
 
-        await engine.CheckFoldersAsync(options,VolatileCounter,progressHandler, true, true, cts.Token);
+        await engine.CheckFoldersAsync(options, VolatileCounter, progressHandler, true, true, cts.Token);
         cts.Cancel();
 
         olvFMNewShows.UpdateObjects(engine.AddItems);
         olvFMNewShows.Update();
 
-        bnFullAuto.Enabled = true;
-        pbProgress.Visible = false;
-        lblStatusLabel.Visible = false;
+        ShowHideUpdateControls(false);
+    }
+
+    private void ShowHideUpdateControls(bool show)
+    {
+        bnFullAuto.Enabled = !show;
+        pbProgress.Visible = show;
+        lblStatusLabel.Visible = show;
+        btnStopScan.Enabled = show;
+        btnStopScan.Visible = show;
     }
 
     private void lstFMMonitorFolders_DragOver(object _, DragEventArgs e)
@@ -311,21 +315,21 @@ public partial class BulkAddMovie : Form
         {
             string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
             if (files != null)
-            foreach (string path in files)
-            {
-                try
+                foreach (string path in files)
                 {
-                    DirectoryInfo di = new(path);
-                    if (di.Exists)
+                    try
                     {
-                        strings.Add(path.ToLower());
+                        DirectoryInfo di = new(path);
+                        if (di.Exists)
+                        {
+                            strings.Add(path.ToLower());
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
                     }
                 }
-                catch
-                {
-                    // ignored
-                }
-            }
         }
 
         mDoc.SetDirty();
@@ -355,14 +359,13 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        bnFullAuto.Enabled = false;
-        pbProgress.Visible = true;
-        lblStatusLabel.Visible = true;
+        ShowHideUpdateControls(true);
 
-        CancellationTokenSource cts = new();
+        cts = new();
 
         pbProgress.SetProgress(0);
         pbProgress.Maximum = engine.AddItems.Count;
+        lblStatusLabel.Text = "Identifying Movies...";
 
         var progressHandler = new Progress<ProgressReport>(report =>
         {
@@ -386,7 +389,7 @@ public partial class BulkAddMovie : Form
         await Parallel.ForEachAsync(
             engine.AddItems,
             options,
-            async (movie,token) =>
+            async (movie, token) =>
             {
                 if (cts.IsCancellationRequested)
                 {
@@ -410,13 +413,9 @@ public partial class BulkAddMovie : Form
             }
             );
 
-        cts.Cancel();
-
-        olvFMNewShows.UpdateObjects(engine.AddItems );
+        olvFMNewShows.UpdateObjects(engine.AddItems);
         olvFMNewShows.Update();
-        bnFullAuto.Enabled = true;
-        pbProgress.Visible = false;
-        lblStatusLabel.Visible = false;
+        ShowHideUpdateControls(false);
     }
 
     private void bnRemoveNewFolder_Click(object _, System.EventArgs e)
@@ -590,7 +589,7 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        fme.SetId(ed.Code, ed.Provider);
+        fme.UpdateId(ed.Code, ed.Provider);
     }
 
     private void lstFMMonitorFolders_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -613,5 +612,10 @@ public partial class BulkAddMovie : Form
         bnIgnoreNewFolder.Enabled = somethingSelected;
         bnVisitTVcom.Enabled = somethingSelected;
         bnNewFolderOpen.Enabled = somethingSelected;
+    }
+
+    private void btnStopScan_Click(object sender, EventArgs e)
+    {
+        cts.Cancel();
     }
 }

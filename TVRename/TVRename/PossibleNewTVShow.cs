@@ -42,6 +42,8 @@ public class PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, stri
     {
         SourceProvider = source;
         ProviderCode = id;
+
+        NotifyPropertyChanged();
     }
 
     public TVDoc.ProviderType Provider => SourceProvider;

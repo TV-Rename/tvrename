@@ -244,6 +244,8 @@ public class BulkAddSeriesManager(TVDoc doc)
                     return (true,subDirs,folderFormat);
                 }
             }
+
+            return (false, subDirs, string.Empty);
         }
         catch (UnauthorizedAccessException)
         {

@@ -71,7 +71,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
             int? tmdbCode = await ValidateOnTMDBAsync(tmdbId, preferredLocale);
             if (tmdbCode.HasValue)
             {
-                SetId(tmdbCode.Value, TVDoc.ProviderType.TMDB);
+                UpdateId(tmdbCode.Value, TVDoc.ProviderType.TMDB);
                 Logger.Info(
                     $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TMDB = {tmdbId} which validated to {tmdbCode}");
 
@@ -99,7 +99,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
                 CachedMovieInfo? s = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync(imdbToTest, preferredLocale);
                 if (s != null)
                 {
-                    SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
+                    UpdateId(s.TmdbCode, TVDoc.ProviderType.TMDB);
                     ImdbCode = imdbToTest;
                     Logger.Info(
                         $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on IMDB = {imdbToTest} which we looked up to get {s.TmdbCode}");
@@ -112,7 +112,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
             CachedMovieInfo? ser = await TMDB.LocalCache.Instance.GetMovieAsync(this, preferredLocale, showErrorMsgBox);
             if (ser != null)
             {
-                SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
+                UpdateId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
                 Logger.Info(
                     $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on Name = {RefinedHint} which we looked up to get {ser.TmdbCode}");
 
@@ -123,7 +123,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
             ser = await ParseHintsAsync(showErrorMsgBox);
             if (ser != null)
             {
-                SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
+                UpdateId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
                 Logger.Info(
                     $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on Name = {RefinedHint}({PossibleYear}) which we looked up to get {ser.TmdbCode}");
 
@@ -140,7 +140,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
                     Logger.Info(
                         $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TVDB = {tvdbId}({PossibleYear}) which we looked up to get {s2.TmdbCode}");
 
-                    SetId(s2.TmdbCode, TVDoc.ProviderType.TMDB);
+                    UpdateId(s2.TmdbCode, TVDoc.ProviderType.TMDB);
                 }
                 else
                 {
@@ -153,7 +153,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
                         Logger.Info(
                             $"BULK ADD AUTO ID: identified {Name} ({movieFile.Name}) based on TVDB(s3) = {tvdbId}({PossibleYear}) which we looked up to get {s3.TmdbCode}");
 
-                        SetId(s3.TvdbCode, TVDoc.ProviderType.TheTVDB);
+                        UpdateId(s3.TvdbCode, TVDoc.ProviderType.TheTVDB);
                     }
                 }
             }
@@ -184,12 +184,6 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
     public override string ToString()
     {
         return $"Possible New Movie: {movieFile.FullName} Estimated:{movieStub} Hint:{RefinedHint} Year:{PossibleYear} Provider:{SourceProvider.PrettyPrint()}:{ProviderCode}";
-    }
-
-    public void SetId(int code, TVDoc.ProviderType provider)
-    {
-        ProviderCode = code;
-        SourceProvider = provider;
     }
 
     public async Task<CachedMovieInfo?> ParseHintsAsync(bool showErrorMsgBox)
@@ -375,6 +369,8 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
     {
         SourceProvider = source;
         ProviderCode = id;
+
+        NotifyPropertyChanged();
     }
 
     public bool Matches(PossibleNewMovie ai) => movieStub.Equals(ai.movieStub, StringComparison.CurrentCultureIgnoreCase);

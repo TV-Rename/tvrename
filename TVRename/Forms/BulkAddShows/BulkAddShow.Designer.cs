@@ -80,6 +80,7 @@ namespace TVRename
             bnClose = new Button();
             lblStatusLabel = new Label();
             pbProgress = new ProgressBar();
+            btnStopScan = new Button();
             tabControl1.SuspendLayout();
             tbFolders.SuspendLayout();
             tbIgnore.SuspendLayout();
@@ -527,7 +528,7 @@ namespace TVRename
             // 
             lblStatusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             lblStatusLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
-            lblStatusLabel.Location = new System.Drawing.Point(216, 511);
+            lblStatusLabel.Location = new System.Drawing.Point(313, 510);
             lblStatusLabel.Margin = new Padding(4, 0, 4, 0);
             lblStatusLabel.Name = "lblStatusLabel";
             lblStatusLabel.Size = new System.Drawing.Size(363, 27);
@@ -544,11 +545,25 @@ namespace TVRename
             pbProgress.TabIndex = 30;
             pbProgress.Visible = false;
             // 
+            // btnStopScan
+            // 
+            btnStopScan.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnStopScan.DialogResult = DialogResult.Cancel;
+            btnStopScan.Location = new System.Drawing.Point(217, 511);
+            btnStopScan.Margin = new Padding(4, 3, 4, 3);
+            btnStopScan.Name = "btnStopScan";
+            btnStopScan.Size = new System.Drawing.Size(88, 27);
+            btnStopScan.TabIndex = 32;
+            btnStopScan.Text = "Stop Scan";
+            btnStopScan.UseVisualStyleBackColor = true;
+            btnStopScan.Click += btnStopScan_Click;
+            // 
             // BulkAddShow
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1002, 550);
+            Controls.Add(btnStopScan);
             Controls.Add(lblStatusLabel);
             Controls.Add(pbProgress);
             Controls.Add(bnClose);
@@ -562,7 +577,6 @@ namespace TVRename
             SizeGripStyle = SizeGripStyle.Show;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Bulk Add TV Shows";
-            Load += BulkAddShow_Load;
             tabControl1.ResumeLayout(false);
             tbFolders.ResumeLayout(false);
             tbFolders.PerformLayout();
@@ -615,5 +629,6 @@ namespace TVRename
         private OLVColumn olvSourceCode;
         private Label lblStatusLabel;
         private ProgressBar pbProgress;
+        private Button btnStopScan;
     }
 }

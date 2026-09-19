@@ -79,6 +79,7 @@ namespace TVRename
             bnClose = new Button();
             pbProgress = new ProgressBar();
             lblStatusLabel = new Label();
+            btnStopScan = new Button();
             tabControl1.SuspendLayout();
             tbFolders.SuspendLayout();
             tbIgnore.SuspendLayout();
@@ -536,18 +537,31 @@ namespace TVRename
             // 
             lblStatusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             lblStatusLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
-            lblStatusLabel.Location = new System.Drawing.Point(208, 510);
+            lblStatusLabel.Location = new System.Drawing.Point(301, 509);
             lblStatusLabel.Margin = new Padding(4, 0, 4, 0);
             lblStatusLabel.Name = "lblStatusLabel";
             lblStatusLabel.Size = new System.Drawing.Size(363, 27);
             lblStatusLabel.TabIndex = 29;
             lblStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // btnStopScan
+            // 
+            btnStopScan.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnStopScan.Location = new System.Drawing.Point(209, 509);
+            btnStopScan.Margin = new Padding(4, 3, 4, 3);
+            btnStopScan.Name = "btnStopScan";
+            btnStopScan.Size = new System.Drawing.Size(88, 27);
+            btnStopScan.TabIndex = 30;
+            btnStopScan.Text = "Stop Scan";
+            btnStopScan.UseVisualStyleBackColor = true;
+            btnStopScan.Click += btnStopScan_Click;
+            // 
             // BulkAddMovie
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1002, 550);
+            Controls.Add(btnStopScan);
             Controls.Add(lblStatusLabel);
             Controls.Add(pbProgress);
             Controls.Add(bnClose);
@@ -613,6 +627,6 @@ namespace TVRename
         private OLVColumn olvMovie;
         private OLVColumn olvYear;
         private OLVColumn olvSourceCode;
-
+        private Button btnStopScan;
     }
 }

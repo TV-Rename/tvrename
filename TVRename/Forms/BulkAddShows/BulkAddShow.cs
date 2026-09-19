@@ -32,6 +32,7 @@ public partial class BulkAddShow : Form
     private readonly TVDoc mDoc;
     private readonly BulkAddSeriesManager engine;
     private readonly UI mainUi;
+    CancellationTokenSource cts = new();
 
     //Thread safe counters to work out the progress
     //For auto id
@@ -58,6 +59,8 @@ public partial class BulkAddShow : Form
 
     private void bnClose_Click(object sender, System.EventArgs e)
     {
+        cts.Cancel();
+
         if (!CanClose())
         {
             if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"TV Shows\"?", "Bulk Add TV Shows", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
@@ -206,13 +209,12 @@ public partial class BulkAddShow : Form
     private async Task DoCheckAsync()
     {
         tbResults.Parent = tabControl1;
-
         tabControl1.SelectedTab = tbResults;
         tabControl1.Update();
-        bnFullAuto.Enabled = false;
-        pbProgress.Visible = true;
-        lblStatusLabel.Visible = true;
-        CancellationTokenSource cts = new();
+
+        ShowHideUpdateControls(true);
+
+        cts = new();
 
         pbProgress.SetProgress(0);
         pbProgress.Maximum = 100;
@@ -233,10 +235,16 @@ public partial class BulkAddShow : Form
 
         PopulateShowList();
 
-        bnFullAuto.Enabled = true;
-        pbProgress.Visible = false;
-        lblStatusLabel.Visible = false;
-        
+        ShowHideUpdateControls(false);
+    }
+
+    private void ShowHideUpdateControls(bool show)
+    {
+        bnFullAuto.Enabled = !show;
+        pbProgress.Visible = show;
+        lblStatusLabel.Visible = show;
+        btnStopScan.Enabled = show;
+        btnStopScan.Visible = show;
     }
 
     private void PopulateShowList()
@@ -346,11 +354,9 @@ public partial class BulkAddShow : Form
             return;
         }
 
-        bnFullAuto.Enabled = false;
-        pbProgress.Visible = true;
-        lblStatusLabel.Visible = true;
+        ShowHideUpdateControls(true);
 
-        CancellationTokenSource cts = new();
+        cts = new();
 
         pbProgress.SetProgress(0);
         pbProgress.Maximum = engine.AddItems.Count;
@@ -403,15 +409,10 @@ public partial class BulkAddShow : Form
             }
             );
 
-        cts.Cancel();
-
         olFMNewShows.UpdateObjects(engine.AddItems);
         olFMNewShows.Update();
-        bnFullAuto.Enabled = true;
-        pbProgress.Visible = false;
-        lblStatusLabel.Visible = false;
 
-        cts.Cancel();
+        ShowHideUpdateControls(false);
     }
 
     private void bnRemoveNewFolder_Click(object _, System.EventArgs e)
@@ -610,8 +611,8 @@ public partial class BulkAddShow : Form
         bnNewFolderOpen.Enabled = somethingSelected;
     }
 
-    private void BulkAddShow_Load(object sender, System.EventArgs e)
+    private void btnStopScan_Click(object sender, EventArgs e)
     {
-
+        cts.Cancel();
     }
 }
