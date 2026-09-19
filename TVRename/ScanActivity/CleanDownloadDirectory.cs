@@ -433,7 +433,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
 
             case FileHelper.VideoComparison.cantTell:
             case FileHelper.VideoComparison.similar:
-                if (unattended || !TVSettings.Instance.ReplaceWithBetterQuality)
+                if (unattended || (!TVSettings.Instance.ReplaceWithBetterQuality))
                 {
                     LOGGER.Info(
                         $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
