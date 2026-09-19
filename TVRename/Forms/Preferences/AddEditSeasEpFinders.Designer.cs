@@ -40,333 +40,352 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddEditSeasEpFinders));
-            this.bnOK = new System.Windows.Forms.Button();
-            this.bnCancel = new System.Windows.Forms.Button();
-            this.bnDelete = new System.Windows.Forms.Button();
-            this.bnAdd = new System.Windows.Forms.Button();
-            this.lvPreview = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.bnBrowse = new System.Windows.Forms.Button();
-            this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
-            this.label1 = new System.Windows.Forms.Label();
-            this.cbShowList = new System.Windows.Forms.ComboBox();
-            this.txtFolder = new System.Windows.Forms.TextBox();
-            this.tmrFillPreview = new System.Windows.Forms.Timer(this.components);
-            this.chkTestAll = new System.Windows.Forms.CheckBox();
-            this.bnDefaults = new System.Windows.Forms.Button();
-            this.Grid1 = new SourceGrid.Grid();
-            this.bnDown = new System.Windows.Forms.Button();
-            this.bnUp = new System.Windows.Forms.Button();
-            this.rdoFileSystem = new System.Windows.Forms.RadioButton();
-            this.rdoTorrentQueue = new System.Windows.Forms.RadioButton();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.txtTestString = new System.Windows.Forms.TextBox();
-            this.rdoTextString = new System.Windows.Forms.RadioButton();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            this.SuspendLayout();
+            bnOK = new System.Windows.Forms.Button();
+            bnCancel = new System.Windows.Forms.Button();
+            bnDelete = new System.Windows.Forms.Button();
+            bnAdd = new System.Windows.Forms.Button();
+            lvPreview = new System.Windows.Forms.ListView();
+            columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            columnHeader5 = new System.Windows.Forms.ColumnHeader();
+            columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            columnHeader4 = new System.Windows.Forms.ColumnHeader();
+            bnBrowse = new System.Windows.Forms.Button();
+            folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
+            label1 = new System.Windows.Forms.Label();
+            cbShowList = new System.Windows.Forms.ComboBox();
+            txtFolder = new System.Windows.Forms.TextBox();
+            tmrFillPreview = new System.Windows.Forms.Timer(components);
+            chkTestAll = new System.Windows.Forms.CheckBox();
+            bnDefaults = new System.Windows.Forms.Button();
+            Grid1 = new Grid();
+            bnDown = new System.Windows.Forms.Button();
+            bnUp = new System.Windows.Forms.Button();
+            rdoFileSystem = new System.Windows.Forms.RadioButton();
+            rdoTorrentQueue = new System.Windows.Forms.RadioButton();
+            splitContainer1 = new System.Windows.Forms.SplitContainer();
+            txtTestString = new System.Windows.Forms.TextBox();
+            rdoTextString = new System.Windows.Forms.RadioButton();
+            label2 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            SuspendLayout();
             // 
             // bnOK
             // 
-            this.bnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.bnOK.Location = new System.Drawing.Point(895, 693);
-            this.bnOK.Name = "bnOK";
-            this.bnOK.Size = new System.Drawing.Size(75, 23);
-            this.bnOK.TabIndex = 6;
-            this.bnOK.Text = "OK";
-            this.bnOK.UseVisualStyleBackColor = true;
-            this.bnOK.Click += new System.EventHandler(this.bnOK_Click);
+            bnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            bnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            bnOK.Location = new System.Drawing.Point(1044, 800);
+            bnOK.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnOK.Name = "bnOK";
+            bnOK.Size = new System.Drawing.Size(88, 27);
+            bnOK.TabIndex = 6;
+            bnOK.Text = "OK";
+            bnOK.UseVisualStyleBackColor = true;
+            bnOK.Click += bnOK_Click;
             // 
             // bnCancel
             // 
-            this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(976, 693);
-            this.bnCancel.Name = "bnCancel";
-            this.bnCancel.Size = new System.Drawing.Size(75, 23);
-            this.bnCancel.TabIndex = 7;
-            this.bnCancel.Text = "Cancel";
-            this.bnCancel.UseVisualStyleBackColor = true;
+            bnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            bnCancel.Location = new System.Drawing.Point(1139, 800);
+            bnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnCancel.Name = "bnCancel";
+            bnCancel.Size = new System.Drawing.Size(88, 27);
+            bnCancel.TabIndex = 7;
+            bnCancel.Text = "Cancel";
+            bnCancel.UseVisualStyleBackColor = true;
             // 
             // bnDelete
             // 
-            this.bnDelete.Location = new System.Drawing.Point(101, 0);
-            this.bnDelete.Name = "bnDelete";
-            this.bnDelete.Size = new System.Drawing.Size(75, 23);
-            this.bnDelete.TabIndex = 5;
-            this.bnDelete.Text = "&Delete";
-            this.bnDelete.UseVisualStyleBackColor = true;
-            this.bnDelete.Click += new System.EventHandler(this.bnDelete_Click);
+            bnDelete.Location = new System.Drawing.Point(118, 0);
+            bnDelete.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnDelete.Name = "bnDelete";
+            bnDelete.Size = new System.Drawing.Size(88, 27);
+            bnDelete.TabIndex = 5;
+            bnDelete.Text = "&Delete";
+            bnDelete.UseVisualStyleBackColor = true;
+            bnDelete.Click += bnDelete_Click;
             // 
             // bnAdd
             // 
-            this.bnAdd.Location = new System.Drawing.Point(20, 0);
-            this.bnAdd.Name = "bnAdd";
-            this.bnAdd.Size = new System.Drawing.Size(75, 23);
-            this.bnAdd.TabIndex = 4;
-            this.bnAdd.Text = "&Add";
-            this.bnAdd.UseVisualStyleBackColor = true;
-            this.bnAdd.Click += new System.EventHandler(this.bnAdd_Click);
+            bnAdd.Location = new System.Drawing.Point(23, 0);
+            bnAdd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnAdd.Name = "bnAdd";
+            bnAdd.Size = new System.Drawing.Size(88, 27);
+            bnAdd.TabIndex = 4;
+            bnAdd.Text = "&Add";
+            bnAdd.UseVisualStyleBackColor = true;
+            bnAdd.Click += bnAdd_Click;
             // 
             // lvPreview
             // 
-            this.lvPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvPreview.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader5,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4});
-            this.lvPreview.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lvPreview.HideSelection = false;
-            this.lvPreview.Location = new System.Drawing.Point(0, 85);
-            this.lvPreview.Name = "lvPreview";
-            this.lvPreview.Size = new System.Drawing.Size(1039, 314);
-            this.lvPreview.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lvPreview.TabIndex = 8;
-            this.lvPreview.UseCompatibleStateImageBehavior = false;
-            this.lvPreview.View = System.Windows.Forms.View.Details;
+            lvPreview.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            lvPreview.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { columnHeader1, columnHeader5, columnHeader2, columnHeader3, columnHeader4 });
+            lvPreview.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            lvPreview.Location = new System.Drawing.Point(0, 98);
+            lvPreview.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            lvPreview.Name = "lvPreview";
+            lvPreview.Size = new System.Drawing.Size(1212, 362);
+            lvPreview.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            lvPreview.TabIndex = 8;
+            lvPreview.UseCompatibleStateImageBehavior = false;
+            lvPreview.View = System.Windows.Forms.View.Details;
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "Filename";
-            this.columnHeader1.Width = 335;
+            columnHeader1.Text = "Filename";
+            columnHeader1.Width = 335;
             // 
             // columnHeader5
             // 
-            this.columnHeader5.Text = "Show(s)";
-            this.columnHeader5.Width = 175;
+            columnHeader5.Text = "Show(s)";
+            columnHeader5.Width = 175;
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "Season";
+            columnHeader2.Text = "Season";
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Episode";
+            columnHeader3.Text = "Episode";
             // 
             // columnHeader4
             // 
-            this.columnHeader4.Text = "Rule";
-            this.columnHeader4.Width = 250;
+            columnHeader4.Text = "Rule";
+            columnHeader4.Width = 250;
             // 
             // bnBrowse
             // 
-            this.bnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowse.Location = new System.Drawing.Point(964, 57);
-            this.bnBrowse.Name = "bnBrowse";
-            this.bnBrowse.Size = new System.Drawing.Size(75, 23);
-            this.bnBrowse.TabIndex = 9;
-            this.bnBrowse.Text = "&Browse...";
-            this.bnBrowse.UseVisualStyleBackColor = true;
-            this.bnBrowse.Click += new System.EventHandler(this.bnBrowse_Click);
+            bnBrowse.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            bnBrowse.Location = new System.Drawing.Point(1125, 66);
+            bnBrowse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnBrowse.Name = "bnBrowse";
+            bnBrowse.Size = new System.Drawing.Size(88, 27);
+            bnBrowse.TabIndex = 9;
+            bnBrowse.Text = "&Browse...";
+            bnBrowse.UseVisualStyleBackColor = true;
+            bnBrowse.Click += bnBrowse_Click;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(99, 33);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(37, 13);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "Show:";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(115, 38);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(39, 15);
+            label1.TabIndex = 10;
+            label1.Text = "Show:";
             // 
             // cbShowList
             // 
-            this.cbShowList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbShowList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbShowList.FormattingEnabled = true;
-            this.cbShowList.Location = new System.Drawing.Point(142, 30);
-            this.cbShowList.Name = "cbShowList";
-            this.cbShowList.Size = new System.Drawing.Size(352, 21);
-            this.cbShowList.TabIndex = 11;
-            this.cbShowList.SelectedIndexChanged += new System.EventHandler(this.cbShowList_SelectedIndexChanged);
+            cbShowList.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            cbShowList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cbShowList.FormattingEnabled = true;
+            cbShowList.Location = new System.Drawing.Point(166, 35);
+            cbShowList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cbShowList.Name = "cbShowList";
+            cbShowList.Size = new System.Drawing.Size(410, 23);
+            cbShowList.TabIndex = 11;
+            cbShowList.SelectedIndexChanged += cbShowList_SelectedIndexChanged;
             // 
             // txtFolder
             // 
-            this.txtFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFolder.Location = new System.Drawing.Point(586, 59);
-            this.txtFolder.Name = "txtFolder";
-            this.txtFolder.Size = new System.Drawing.Size(372, 20);
-            this.txtFolder.TabIndex = 12;
-            this.txtFolder.TextChanged += new System.EventHandler(this.txtFolder_TextChanged);
+            txtFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            txtFolder.Location = new System.Drawing.Point(684, 68);
+            txtFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            txtFolder.Name = "txtFolder";
+            txtFolder.Size = new System.Drawing.Size(433, 23);
+            txtFolder.TabIndex = 12;
+            txtFolder.TextChanged += txtFolder_TextChanged;
             // 
             // tmrFillPreview
             // 
-            this.tmrFillPreview.Interval = 500;
-            this.tmrFillPreview.Tick += new System.EventHandler(this.tmrFillPreview_Tick);
+            tmrFillPreview.Interval = 500;
+            tmrFillPreview.Tick += tmrFillPreview_Tick;
             // 
             // chkTestAll
             // 
-            this.chkTestAll.AutoSize = true;
-            this.chkTestAll.Checked = true;
-            this.chkTestAll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkTestAll.Location = new System.Drawing.Point(20, 32);
-            this.chkTestAll.Name = "chkTestAll";
-            this.chkTestAll.Size = new System.Drawing.Size(61, 17);
-            this.chkTestAll.TabIndex = 13;
-            this.chkTestAll.Text = "Test All";
-            this.chkTestAll.UseVisualStyleBackColor = true;
-            this.chkTestAll.CheckedChanged += new System.EventHandler(this.chkTestAll_CheckedChanged);
+            chkTestAll.AutoSize = true;
+            chkTestAll.Checked = true;
+            chkTestAll.CheckState = System.Windows.Forms.CheckState.Checked;
+            chkTestAll.Location = new System.Drawing.Point(23, 37);
+            chkTestAll.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            chkTestAll.Name = "chkTestAll";
+            chkTestAll.Size = new System.Drawing.Size(64, 19);
+            chkTestAll.TabIndex = 13;
+            chkTestAll.Text = "Test All";
+            chkTestAll.UseVisualStyleBackColor = true;
+            chkTestAll.CheckedChanged += chkTestAll_CheckedChanged;
             // 
             // bnDefaults
             // 
-            this.bnDefaults.Location = new System.Drawing.Point(182, 0);
-            this.bnDefaults.Name = "bnDefaults";
-            this.bnDefaults.Size = new System.Drawing.Size(75, 23);
-            this.bnDefaults.TabIndex = 14;
-            this.bnDefaults.Text = "D&efaults";
-            this.bnDefaults.UseVisualStyleBackColor = true;
-            this.bnDefaults.Click += new System.EventHandler(this.bnDefaults_Click);
+            bnDefaults.Location = new System.Drawing.Point(212, 0);
+            bnDefaults.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnDefaults.Name = "bnDefaults";
+            bnDefaults.Size = new System.Drawing.Size(88, 27);
+            bnDefaults.TabIndex = 14;
+            bnDefaults.Text = "D&efaults";
+            bnDefaults.UseVisualStyleBackColor = true;
+            bnDefaults.Click += bnDefaults_Click;
             // 
             // Grid1
             // 
-            this.Grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Grid1.BackColor = System.Drawing.SystemColors.Window;
-            this.Grid1.EnableSort = true;
-            this.Grid1.Location = new System.Drawing.Point(3, 10);
-            this.Grid1.Name = "Grid1";
-            this.Grid1.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
-            this.Grid1.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.Grid1.Size = new System.Drawing.Size(1036, 266);
-            this.Grid1.TabIndex = 15;
-            this.Grid1.TabStop = true;
-            this.Grid1.ToolTipText = "";
+            Grid1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            Grid1.BackColor = System.Drawing.SystemColors.Window;
+            Grid1.EnableSort = true;
+            Grid1.Location = new System.Drawing.Point(4, 12);
+            Grid1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Grid1.Name = "Grid1";
+            Grid1.OptimizeMode = CellOptimizeMode.ForRows;
+            Grid1.SelectionMode = GridSelectionMode.Cell;
+            Grid1.Size = new System.Drawing.Size(1209, 306);
+            Grid1.TabIndex = 15;
+            Grid1.TabStop = true;
+            Grid1.ToolTipText = "";
             // 
             // bnDown
             // 
-            this.bnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnDown.Location = new System.Drawing.Point(960, 0);
-            this.bnDown.Name = "bnDown";
-            this.bnDown.Size = new System.Drawing.Size(75, 23);
-            this.bnDown.TabIndex = 17;
-            this.bnDown.Text = "Move &Down";
-            this.bnDown.UseVisualStyleBackColor = true;
-            this.bnDown.Click += new System.EventHandler(this.bnDown_Click);
+            bnDown.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            bnDown.Location = new System.Drawing.Point(1120, 0);
+            bnDown.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnDown.Name = "bnDown";
+            bnDown.Size = new System.Drawing.Size(88, 27);
+            bnDown.TabIndex = 17;
+            bnDown.Text = "Move &Down";
+            bnDown.UseVisualStyleBackColor = true;
+            bnDown.Click += bnDown_Click;
             // 
             // bnUp
             // 
-            this.bnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnUp.Location = new System.Drawing.Point(879, 0);
-            this.bnUp.Name = "bnUp";
-            this.bnUp.Size = new System.Drawing.Size(75, 23);
-            this.bnUp.TabIndex = 16;
-            this.bnUp.Text = "Move &Up";
-            this.bnUp.UseVisualStyleBackColor = true;
-            this.bnUp.Click += new System.EventHandler(this.bnUp_Click);
+            bnUp.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            bnUp.Location = new System.Drawing.Point(1026, 0);
+            bnUp.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            bnUp.Name = "bnUp";
+            bnUp.Size = new System.Drawing.Size(88, 27);
+            bnUp.TabIndex = 16;
+            bnUp.Text = "Move &Up";
+            bnUp.UseVisualStyleBackColor = true;
+            bnUp.Click += bnUp_Click;
             // 
             // rdoFileSystem
             // 
-            this.rdoFileSystem.AutoSize = true;
-            this.rdoFileSystem.Checked = true;
-            this.rdoFileSystem.Location = new System.Drawing.Point(503, 61);
-            this.rdoFileSystem.Name = "rdoFileSystem";
-            this.rdoFileSystem.Size = new System.Drawing.Size(81, 17);
-            this.rdoFileSystem.TabIndex = 18;
-            this.rdoFileSystem.TabStop = true;
-            this.rdoFileSystem.Text = "Test Folder:";
-            this.rdoFileSystem.UseVisualStyleBackColor = true;
-            this.rdoFileSystem.CheckedChanged += new System.EventHandler(this.rdoFileSystem_CheckedChanged);
+            rdoFileSystem.AutoSize = true;
+            rdoFileSystem.Checked = true;
+            rdoFileSystem.Location = new System.Drawing.Point(587, 70);
+            rdoFileSystem.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            rdoFileSystem.Name = "rdoFileSystem";
+            rdoFileSystem.Size = new System.Drawing.Size(85, 19);
+            rdoFileSystem.TabIndex = 18;
+            rdoFileSystem.TabStop = true;
+            rdoFileSystem.Text = "Test Folder:";
+            rdoFileSystem.UseVisualStyleBackColor = true;
+            rdoFileSystem.CheckedChanged += rdoFileSystem_CheckedChanged;
             // 
             // rdoTorrentQueue
             // 
-            this.rdoTorrentQueue.AutoSize = true;
-            this.rdoTorrentQueue.Location = new System.Drawing.Point(403, 61);
-            this.rdoTorrentQueue.Name = "rdoTorrentQueue";
-            this.rdoTorrentQueue.Size = new System.Drawing.Size(94, 17);
-            this.rdoTorrentQueue.TabIndex = 19;
-            this.rdoTorrentQueue.Text = "Torrent Queue";
-            this.rdoTorrentQueue.UseVisualStyleBackColor = true;
-            this.rdoTorrentQueue.CheckedChanged += new System.EventHandler(this.RadioButton2_CheckedChanged);
+            rdoTorrentQueue.AutoSize = true;
+            rdoTorrentQueue.Location = new System.Drawing.Point(470, 70);
+            rdoTorrentQueue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            rdoTorrentQueue.Name = "rdoTorrentQueue";
+            rdoTorrentQueue.Size = new System.Drawing.Size(101, 19);
+            rdoTorrentQueue.TabIndex = 19;
+            rdoTorrentQueue.Text = "Torrent Queue";
+            rdoTorrentQueue.UseVisualStyleBackColor = true;
+            rdoTorrentQueue.CheckedChanged += RadioButton2_CheckedChanged;
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(12, 2);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            splitContainer1.Location = new System.Drawing.Point(14, 2);
+            splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer1.Name = "splitContainer1";
+            splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.Grid1);
+            splitContainer1.Panel1.Controls.Add(Grid1);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.txtTestString);
-            this.splitContainer1.Panel2.Controls.Add(this.rdoTextString);
-            this.splitContainer1.Panel2.Controls.Add(this.lvPreview);
-            this.splitContainer1.Panel2.Controls.Add(this.rdoTorrentQueue);
-            this.splitContainer1.Panel2.Controls.Add(this.bnAdd);
-            this.splitContainer1.Panel2.Controls.Add(this.rdoFileSystem);
-            this.splitContainer1.Panel2.Controls.Add(this.bnDelete);
-            this.splitContainer1.Panel2.Controls.Add(this.bnDown);
-            this.splitContainer1.Panel2.Controls.Add(this.bnBrowse);
-            this.splitContainer1.Panel2.Controls.Add(this.bnUp);
-            this.splitContainer1.Panel2.Controls.Add(this.label1);
-            this.splitContainer1.Panel2.Controls.Add(this.bnDefaults);
-            this.splitContainer1.Panel2.Controls.Add(this.cbShowList);
-            this.splitContainer1.Panel2.Controls.Add(this.chkTestAll);
-            this.splitContainer1.Panel2.Controls.Add(this.txtFolder);
-            this.splitContainer1.Size = new System.Drawing.Size(1047, 685);
-            this.splitContainer1.SplitterDistance = 279;
-            this.splitContainer1.TabIndex = 20;
+            splitContainer1.Panel2.Controls.Add(label2);
+            splitContainer1.Panel2.Controls.Add(txtTestString);
+            splitContainer1.Panel2.Controls.Add(rdoTextString);
+            splitContainer1.Panel2.Controls.Add(lvPreview);
+            splitContainer1.Panel2.Controls.Add(rdoTorrentQueue);
+            splitContainer1.Panel2.Controls.Add(bnAdd);
+            splitContainer1.Panel2.Controls.Add(rdoFileSystem);
+            splitContainer1.Panel2.Controls.Add(bnDelete);
+            splitContainer1.Panel2.Controls.Add(bnDown);
+            splitContainer1.Panel2.Controls.Add(bnBrowse);
+            splitContainer1.Panel2.Controls.Add(bnUp);
+            splitContainer1.Panel2.Controls.Add(label1);
+            splitContainer1.Panel2.Controls.Add(bnDefaults);
+            splitContainer1.Panel2.Controls.Add(cbShowList);
+            splitContainer1.Panel2.Controls.Add(chkTestAll);
+            splitContainer1.Panel2.Controls.Add(txtFolder);
+            splitContainer1.Size = new System.Drawing.Size(1222, 790);
+            splitContainer1.SplitterDistance = 321;
+            splitContainer1.SplitterWidth = 5;
+            splitContainer1.TabIndex = 20;
             // 
             // txtTestString
             // 
-            this.txtTestString.Location = new System.Drawing.Point(72, 59);
-            this.txtTestString.Name = "txtTestString";
-            this.txtTestString.Size = new System.Drawing.Size(325, 20);
-            this.txtTestString.TabIndex = 21;
-            this.txtTestString.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            txtTestString.Location = new System.Drawing.Point(84, 68);
+            txtTestString.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            txtTestString.Name = "txtTestString";
+            txtTestString.Size = new System.Drawing.Size(378, 23);
+            txtTestString.TabIndex = 21;
+            txtTestString.TextChanged += textBox1_TextChanged;
             // 
             // rdoTextString
             // 
-            this.rdoTextString.AutoSize = true;
-            this.rdoTextString.Location = new System.Drawing.Point(20, 59);
-            this.rdoTextString.Name = "rdoTextString";
-            this.rdoTextString.Size = new System.Drawing.Size(49, 17);
-            this.rdoTextString.TabIndex = 20;
-            this.rdoTextString.Text = "Text:";
-            this.rdoTextString.UseVisualStyleBackColor = true;
+            rdoTextString.AutoSize = true;
+            rdoTextString.Location = new System.Drawing.Point(23, 68);
+            rdoTextString.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            rdoTextString.Name = "rdoTextString";
+            rdoTextString.Size = new System.Drawing.Size(49, 19);
+            rdoTextString.TabIndex = 20;
+            rdoTextString.Text = "Text:";
+            rdoTextString.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(308, 6);
+            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(512, 15);
+            label2.TabIndex = 22;
+            label2.Text = "Valid Tags: <s> Season Number, <e> Episode Number, <f> Max Episode Number (for multipart)";
             // 
             // AddEditSeasEpFinders
             // 
-            this.AcceptButton = this.bnOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(1063, 728);
-            this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.bnOK);
-            this.Controls.Add(this.bnCancel);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(917, 430);
-            this.Name = "AddEditSeasEpFinders";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Filename Processors";
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AcceptButton = bnOK;
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            CancelButton = bnCancel;
+            ClientSize = new System.Drawing.Size(1240, 840);
+            Controls.Add(splitContainer1);
+            Controls.Add(bnOK);
+            Controls.Add(bnCancel);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MinimumSize = new System.Drawing.Size(1067, 490);
+            Name = "AddEditSeasEpFinders";
+            ShowInTaskbar = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "Filename Processors";
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            ResumeLayout(false);
 
         }
 
@@ -400,5 +419,6 @@ namespace TVRename
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox txtTestString;
         private System.Windows.Forms.RadioButton rdoTextString;
+        private System.Windows.Forms.Label label2;
     }
 }
