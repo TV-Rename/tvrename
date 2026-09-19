@@ -131,7 +131,7 @@
         AAEAAAD/////AQAAAAAAAAAMAgAAAEZTeXN0ZW0uV2luZG93cy5Gb3JtcywgQ3VsdHVyZT1uZXV0cmFs
         LCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5BQEAAAAmU3lzdGVtLldpbmRvd3MuRm9ybXMu
         SW1hZ2VMaXN0U3RyZWFtZXIBAAAABERhdGEHAgIAAAAJAwAAAA8DAAAAhAYAAAJNU0Z0AUkBTAIBAQIB
-        AAFAAQABQAEAAQ8BAAEUAQAE/wEZAQAI/wFCAU0BNgcAATYDAAEoAwABPAMAARQDAAEBAQABGAUAARAB
+        AAFIAQABSAEAAQ8BAAEUAQAE/wEZAQAI/wFCAU0BNgcAATYDAAEoAwABPAMAARQDAAEBAQABGAUAARAB
         Dv8A/wA/AAP/AfQB8wH4Ae0B6wL1AfQB+AP/HgAD/wH0AfYB8wHrAfEB6wH0AfcB9AP/cgAD/gHTAc0B
         7wF6AWAB5gFtAVEB4wGEAWoB5gFtAVEB4wF6AWEB5gHWAc8B7wP+EgAD/gHOAeMBzQFnAbcBYQFXAbEB
         UgFyAbwBawFXAbEBUgFpAbgBYQHRAeQB0AP+aQAD/QGfAY0B6AGaAYYB5gHuAewB9gP/AwAD/wHtAesB
@@ -164,9 +164,6 @@
   <data name="label4.Text" xml:space="preserve">
     <value>These are the new folders that have been found.  Click "Auto ID All", or manually edit each to set the show.  "Ignore" to add the folder to the Ignore list.  You can also drag and drop folders into this list.  Click "Add &amp;&amp; Close" add all identified shows to your "My Shows" list.</value>
   </data>
-  <metadata name="bwRescan.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>395, 17</value>
-  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

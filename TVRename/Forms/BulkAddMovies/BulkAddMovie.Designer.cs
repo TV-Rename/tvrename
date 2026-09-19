@@ -77,7 +77,6 @@ namespace TVRename
             bnEditEntry = new Button();
             label4 = new Label();
             bnClose = new Button();
-            bwRescan = new System.ComponentModel.BackgroundWorker();
             pbProgress = new ProgressBar();
             lblStatusLabel = new Label();
             tabControl1.SuspendLayout();
@@ -433,11 +432,11 @@ namespace TVRename
             olvFMNewShows.FullRowSelect = true;
             olvFMNewShows.Location = new System.Drawing.Point(4, 63);
             olvFMNewShows.Name = "olvFMNewShows";
+            olvFMNewShows.ShowCommandMenuOnRightClick = true;
             olvFMNewShows.Size = new System.Drawing.Size(982, 374);
             olvFMNewShows.SmallImageList = imagesPassFail;
             olvFMNewShows.TabIndex = 11;
             olvFMNewShows.UseFilterIndicator = true;
-            olvFMNewShows.ShowCommandMenuOnRightClick = true;
             olvFMNewShows.UseFiltering = true;
             olvFMNewShows.View = View.Details;
             olvFMNewShows.SelectedIndexChanged += lvFMNewShows_SelectedIndexChanged;
@@ -523,13 +522,6 @@ namespace TVRename
             bnClose.UseVisualStyleBackColor = true;
             bnClose.Click += bnClose_Click;
             // 
-            // bwRescan
-            // 
-            bwRescan.WorkerReportsProgress = true;
-            bwRescan.DoWork += bwRescan_DoWork;
-            bwRescan.ProgressChanged += bwRescan_ProgressChanged;
-            bwRescan.RunWorkerCompleted += bwRescan_RunWorkerCompleted;
-            // 
             // pbProgress
             // 
             pbProgress.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
@@ -614,7 +606,6 @@ namespace TVRename
         private System.Windows.Forms.Button bnEditEntry;
         private System.Windows.Forms.Button bnCheck2;
         private System.Windows.Forms.ImageList imagesPassFail;
-        private System.ComponentModel.BackgroundWorker bwRescan;
         private System.Windows.Forms.ProgressBar pbProgress;
         private System.Windows.Forms.Label lblStatusLabel;
         private ObjectListViewFlickerFree olvFMNewShows;

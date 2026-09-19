@@ -141,11 +141,8 @@ public class BulkAddMovieManager(TVDoc doc)
         return [.. directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Where(file => file.IsMovieFile())];
     }
 
-    private async Task CheckFolderForShowsAsync(DirectoryInfo di, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
+    private async Task CheckFolderForShowsAsync(DirectoryInfo di, IProgress<BulkAddMovie.ScanProgressReport> handler, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
-        int percentComplete = (int)(100.0 / CurrentPhaseTotal.Value * (1.0 * CurrentPhase.Value + 1.0 * CurrentPhaseDirectory.Value / CurrentPhaseTotalDirectory.Value ));
-        bw.ReportProgress(percentComplete.Between(0, 100), di.Name);
-
         if (!di.Exists)
         {
             return;
@@ -155,6 +152,15 @@ public class BulkAddMovieManager(TVDoc doc)
         {
             return;
         }
+
+        int percentComplete = (int)(100.0 / CurrentPhaseTotal.Value * (1.0 * CurrentPhase.Value + 1.0 * CurrentPhaseDirectory.Value / CurrentPhaseTotalDirectory.Value));
+
+        var x = new BulkAddMovie.ScanProgressReport
+        {
+            ProgressPercentage = percentComplete,
+            UpdateText = di.Name
+        };
+        handler.Report(x);
 
         // is it on the ''Bulk Add' ignore list?
         if (TVSettings.Instance.IgnoreFolders.Contains(di.FullName.ToLower()))
@@ -184,7 +190,7 @@ public class BulkAddMovieManager(TVDoc doc)
 
         foreach (DirectoryInfo di2 in subDirs)
         {
-            await CheckFolderForShowsAsync(di2, bw, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
+            await CheckFolderForShowsAsync(di2, handler, fullLogging, showErrorMsgBox, token); // not a season folder.. recurse!
         } // for each directory
     }
 
@@ -286,7 +292,7 @@ public class BulkAddMovieManager(TVDoc doc)
         return found;
     }
 
-    public async Task CheckFoldersAsync(BackgroundWorker bw, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
+    public async Task CheckFoldersAsync(ParallelOptions options, ThreadSafeCounter volatileCounter, IProgress<BulkAddMovie.ScanProgressReport> handler, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
     {
         // Check the  folder list, and build up a new "AddItems" list.
         // guessing what the shows actually are isn't done here.  That is done by
@@ -315,7 +321,7 @@ public class BulkAddMovieManager(TVDoc doc)
                 Logger.Warn($"Not loading {folder} as it is both a movie folder and a tv folder");
                 continue;
             }
-            await CheckFolderForShowsAsync(di, bw, detailedLogging, showErrorMsgBox, token);
+            await CheckFolderForShowsAsync(di, handler, detailedLogging, showErrorMsgBox, token);
 
             if (token.IsCancellationRequested)
             {

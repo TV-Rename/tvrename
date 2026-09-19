@@ -8,7 +8,6 @@
 
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
-using SharpCompress.Common;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -43,8 +42,13 @@ public partial class BulkAddMovie : Form
     public class ProgressReport
     {
         public int NumberComplete { get; set; }
-        public int Total { get; set; }
         public PossibleNewMovie? LatestItemProcessed { get; set; }
+    }
+
+    public class ScanProgressReport
+    {
+        public int ProgressPercentage { get; set; }
+        public string UpdateText { get; set; } = string.Empty;
     }
 
     public BulkAddMovie(TVDoc doc, BulkAddMovieManager bam, UI mainUi)
@@ -200,12 +204,12 @@ public partial class BulkAddMovie : Form
         OpenSelectedFolder();
     }
 
-    private void bnCheck_Click(object sender, System.EventArgs e)
+    private async void bnCheck_Click(object sender, System.EventArgs e)
     {
-        DoCheck();
+        await DoCheckAsync();
     }
 
-    private void DoCheck()
+    private async Task DoCheckAsync()
     {
         tbResults.Parent = tabControl1;
 
@@ -216,7 +220,35 @@ public partial class BulkAddMovie : Form
         pbProgress.Visible = true;
         lblStatusLabel.Visible = true;
 
-        bwRescan.RunWorkerAsync();
+        CancellationTokenSource cts = new();
+
+        pbProgress.SetProgress(0);
+        pbProgress.Maximum = 100;
+
+        var progressHandler = new Progress<ScanProgressReport>(scanReport =>
+        {
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(scanReport.ProgressPercentage);
+            lblStatusLabel.Text = scanReport.UpdateText.ToUiVersion();
+        });
+
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = 4, // Limit concurrent tasks
+            CancellationToken = cts.Token // Pass token to the loop mechanism
+        };
+
+        VolatileCounter.Reset();
+
+        await engine.CheckFoldersAsync(options,VolatileCounter,progressHandler, true, true, cts.Token);
+        cts.Cancel();
+
+        olvFMNewShows.UpdateObjects(engine.AddItems);
+        olvFMNewShows.Update();
+
+        bnFullAuto.Enabled = true;
+        pbProgress.Visible = false;
+        lblStatusLabel.Visible = false;
     }
 
     private void lstFMMonitorFolders_DragOver(object _, DragEventArgs e)
@@ -244,7 +276,7 @@ public partial class BulkAddMovie : Form
         }
 
         string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
-        if (files == null)
+        if (files == null || files.Length == 0)
         {
             return;
         }
@@ -393,7 +425,7 @@ public partial class BulkAddMovie : Form
 
     private void RemoveNewFolder()
     {
-        if (olvFMNewShows.SelectedObjects.Count == 0)
+        if (NothingSelected())
         {
             return;
         }
@@ -407,7 +439,7 @@ public partial class BulkAddMovie : Form
 
     private void bnIgnoreNewFolder_Click(object _, System.EventArgs e)
     {
-        if (olvFMNewShows.SelectedObjects.Count == 0)
+        if (NothingSelected())
         {
             return;
         }
@@ -443,7 +475,7 @@ public partial class BulkAddMovie : Form
 
     private void bnNewFolderOpen_Click(object sender, System.EventArgs e)
     {
-        if (olvFMNewShows.SelectedObjects.Count == 0)
+        if (NothingSelected())
         {
             return;
         }
@@ -454,17 +486,18 @@ public partial class BulkAddMovie : Form
         }
     }
 
+    private bool NothingSelected()
+    {
+        return olvFMNewShows.SelectedObjects.Count == 0;
+    }
+
     private void PopulateShowList()
     {
         olvFMNewShows.SetObjects(engine.AddItems);
     }
 
-    private void UpdateListItem(PossibleNewMovie? ai, bool makevis)
+    private void UpdateListItem(PossibleNewMovie ai, bool makevis)
     {
-        if (ai is null)
-        {
-            return;
-        }
         olvFMNewShows.UpdateObject(ai);
 
         if (makevis)
@@ -492,7 +525,7 @@ public partial class BulkAddMovie : Form
 
     private void bnVisitTVcom_Click(object sender, System.EventArgs e)
     {
-        if (olvFMNewShows.SelectedObjects.Count == 0)
+        if (NothingSelected())
         {
             return;
         }
@@ -517,9 +550,9 @@ public partial class BulkAddMovie : Form
         }
     }
 
-    private void bnCheck2_Click(object sender, System.EventArgs e)
+    private async void bnCheck2_Click(object sender, System.EventArgs e)
     {
-        DoCheck();
+        await DoCheckAsync();
     }
 
     private async void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -534,7 +567,7 @@ public partial class BulkAddMovie : Form
 
     private async Task EditEntryAsync()
     {
-        if (olvFMNewShows.SelectedObjects.Count == 0)
+        if (NothingSelected())
         {
             return;
         }
@@ -579,41 +612,5 @@ public partial class BulkAddMovie : Form
         bnIgnoreNewFolder.Enabled = somethingSelected;
         bnVisitTVcom.Enabled = somethingSelected;
         bnNewFolderOpen.Enabled = somethingSelected;
-    }
-
-    private void bwRescan_DoWork(object sender, DoWorkEventArgs e)
-    {
-        Thread.CurrentThread.Name ??= "BulkAddMovie Scan Thread"; // Can only set it once
-
-        CancellationTokenSource cts = new();
-        engine.CheckFoldersAsync((BackgroundWorker)sender, true, true, cts.Token).GetAwaiter().GetResult();
-        cts.Cancel();
-    }
-
-    private void UpdateShowList()
-    {
-        //Unclear what we need to do here
-    }
-
-    private void bwIdentify_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        bnFullAuto.Enabled = true;
-        pbProgress.Visible = false;
-        lblStatusLabel.Visible = false;
-    }
-
-    private void bwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
-    {
-        pbProgress.SetProgress(e.ProgressPercentage);
-
-        lblStatusLabel.Text = e.UserState?.ToString()?.ToUiVersion();
-    }
-
-    private void bwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        bnFullAuto.Enabled = true;
-        pbProgress.Visible = false;
-        lblStatusLabel.Visible = false;
-        PopulateShowList();
     }
 }

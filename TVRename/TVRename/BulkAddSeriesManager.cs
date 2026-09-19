@@ -454,7 +454,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         return touchedShows;
     }
 
-    public async Task CheckFoldersAsync(SetProgressDelegate prog, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
+    public async Task CheckFoldersAsync(ParallelOptions options, ThreadSafeCounter volatileCounter, IProgress<BulkAddMovie.ScanProgressReport>? handler, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
     {
         // Check the  folder list, and build up a new "AddItems" list.
         // guessing what the shows actually are isn't done here.  That is done by
@@ -469,7 +469,12 @@ public class BulkAddSeriesManager(TVDoc doc)
         int c2 = 0;
         foreach (string folder in TVSettings.Instance.LibraryFolders)
         {
-            prog.Invoke(100 * c2++ / c, folder, string.Empty);
+            handler?.Report(new BulkAddMovie.ScanProgressReport
+                {
+                    ProgressPercentage = (int)(100 * c2++ / c),
+                    UpdateText = folder
+                });
+
             DirectoryInfo di = new(folder);
             if (TVSettings.Instance.MovieLibraryFolders.Contains(folder))
             {
@@ -484,6 +489,10 @@ public class BulkAddSeriesManager(TVDoc doc)
                 break;
             }
         }
-        prog.Invoke(100, string.Empty, string.Empty);
+        handler?.Report(new BulkAddMovie.ScanProgressReport
+            {
+                ProgressPercentage = 100,
+                UpdateText = "Complete"
+            });
     }
 }

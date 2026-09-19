@@ -20,6 +20,12 @@ public class PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, stri
     // ReSharper disable once InconsistentNaming
     internal int ProviderCode = -1;
 
+    public virtual string FolderName => directory.FullName;
+    public virtual string Show => (CodeKnown ? CachedSeries?.Name  : RefinedHint) ?? string.Empty;
+    public virtual string Type => HasSeasonFoldersGuess ? "Folder per season" : "Flat";
+    public virtual string SourceCode => CodeKnown ? ProviderCode.ToString() : string.Empty;
+    public virtual int ImageTypeName => CodeKnown && !string.IsNullOrWhiteSpace(Folder.FullName) ? 1 : 0;
+
     internal TVDoc.ProviderType SourceProvider;
     public readonly bool HasSeasonFoldersGuess = seasonFolders;
     public readonly string SeasonFolderFormat = folderFormat;
