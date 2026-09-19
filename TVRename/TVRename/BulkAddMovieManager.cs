@@ -23,11 +23,12 @@ public class BulkAddMovieManager(TVDoc doc)
     private static readonly ThreadSafeCounter CurrentPhase = new();
     private static readonly ThreadSafeCounter CurrentPhaseTotal = new();
 
-    private static DirectoryInfo[]? GetValidDirectories(DirectoryInfo di)
+    private async static Task<DirectoryInfo[]?> GetValidDirectoriesAsync(DirectoryInfo di)
     {
         try
         {
-            return [.. di.GetDirectories().Where(d => d.IsImportant())];
+            var x = await di.GetDirectoriesAsync();
+            return x.Where(d => d.IsImportant()).ToArray();
         }
         catch (UnauthorizedAccessException)
         {
@@ -62,7 +63,7 @@ public class BulkAddMovieManager(TVDoc doc)
             } // for each showitem
 
             //We don't have it already
-            DirectoryInfo[]? subDirectories = GetValidDirectories(di2);
+            DirectoryInfo[]? subDirectories = await GetValidDirectoriesAsync(di2);
 
             //This is an indication that something is wrong
             if (subDirectories is null)

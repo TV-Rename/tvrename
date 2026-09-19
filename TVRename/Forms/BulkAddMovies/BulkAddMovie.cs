@@ -60,6 +60,7 @@ public partial class BulkAddMovie : Form
         FillFolderStringLists();
         tbResults.Parent = null;
         olvFMNewShows.ShowGroups = false;
+        ShowHideUpdateControls(false);
     }
 
     private void bnClose_Click(object sender, System.EventArgs e)
@@ -238,9 +239,15 @@ public partial class BulkAddMovie : Form
 
         VolatileCounter.Reset();
 
-        await engine.CheckFoldersAsync(options, VolatileCounter, progressHandler, true, true, cts.Token);
-        cts.Cancel();
-
+        try
+        {
+            await engine.CheckFoldersAsync(options, VolatileCounter, progressHandler, true, true, cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            //OK
+        }
+        
         olvFMNewShows.UpdateObjects(engine.AddItems);
         olvFMNewShows.Update();
 
@@ -386,32 +393,40 @@ public partial class BulkAddMovie : Form
 
         VolatileCounter.Reset();
 
-        await Parallel.ForEachAsync(
-            engine.AddItems,
-            options,
-            async (movie, token) =>
-            {
-                if (cts.IsCancellationRequested)
+        try
+        { 
+            await Parallel.ForEachAsync(
+                engine.AddItems,
+                options,
+                async (movie, token) =>
                 {
-                    return;
+                    if (cts.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    if (movie.CodeKnown)
+                    {
+                        return;
+                    }
+
+                    await movie.GuessMovieAsync(true);
+
+                    var report = new ProgressReport
+                    {
+                        NumberComplete = VolatileCounter.Increment(),
+                        LatestItemProcessed = movie
+                    };
+
+                    ((IProgress<ProgressReport>)progressHandler).Report(report);
                 }
-
-                if (movie.CodeKnown)
-                {
-                    return;
-                }
-
-                await movie.GuessMovieAsync(true);
-
-                var report = new ProgressReport
-                {
-                    NumberComplete = VolatileCounter.Increment(),
-                    LatestItemProcessed = movie
-                };
-
-                ((IProgress<ProgressReport>)progressHandler).Report(report);
+                );
             }
-            );
+        catch (OperationCanceledException)
+        {
+            //OK
+        }
+
 
         olvFMNewShows.UpdateObjects(engine.AddItems);
         olvFMNewShows.Update();

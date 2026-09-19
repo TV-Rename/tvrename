@@ -55,6 +55,7 @@ public partial class BulkAddShow : Form
         FillFolderStringLists();
         tbResults.Parent = null;
         olFMNewShows.ShowGroups = false;
+        ShowHideUpdateControls(false);
     }
 
     private void bnClose_Click(object sender, System.EventArgs e)
@@ -229,9 +230,14 @@ public partial class BulkAddShow : Form
 
         VolatileCounter.Reset();
 
-        await engine.CheckFoldersAsync(progressHandler, true, true, cts.Token);
-
-        cts.Cancel();
+        try
+        {
+            await engine.CheckFoldersAsync(progressHandler, true, true, cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            //OK for it to be cancelled
+        }
 
         PopulateShowList();
 
@@ -363,6 +369,8 @@ public partial class BulkAddShow : Form
 
         lblStatusLabel.Text = "Identifying Shows...";
 
+        ShowHideUpdateControls(true);
+
         var progressHandler = new Progress<ProgressReport>(report =>
         {
             // This body executes safely on the main thread
@@ -376,38 +384,45 @@ public partial class BulkAddShow : Form
 
         var options = new ParallelOptions
         {
-            MaxDegreeOfParallelism = 4, // Limit concurrent tasks
+            MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads, // Limit concurrent tasks
             CancellationToken = cts.Token // Pass token to the loop mechanism
         };
 
         VolatileCounter.Reset();
 
-        await Parallel.ForEachAsync(
-            engine.AddItems,
-            options,
-            async (ai, token) =>
-            {
-                if (cts.IsCancellationRequested)
+        try
+        {
+            await Parallel.ForEachAsync(
+                engine.AddItems,
+                options,
+                async (ai, token) =>
                 {
-                    return;
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    if (ai.CodeKnown)
+                    {
+                        return;
+                    }
+
+                    await BulkAddSeriesManager.GuessShowItemAsync(ai, mDoc.TvLibrary, true);
+
+                    var report = new ProgressReport
+                    {
+                        NumberComplete = VolatileCounter.Increment(),
+                        LatestItemProcessed = ai
+                    };
+
+                    ((IProgress<ProgressReport>)progressHandler).Report(report);
                 }
-
-                if (ai.CodeKnown)
-                {
-                    return;
-                }
-
-                await BulkAddSeriesManager.GuessShowItemAsync(ai, mDoc.TvLibrary, true);
-
-                var report = new ProgressReport
-                {
-                    NumberComplete = VolatileCounter.Increment(),
-                    LatestItemProcessed = ai
-                };
-
-                ((IProgress<ProgressReport>)progressHandler).Report(report);
-            }
-            );
+                );
+        }
+        catch (OperationCanceledException)
+        {
+            //do nothing it's oK for it to be cancelled
+        }
 
         olFMNewShows.UpdateObjects(engine.AddItems);
         olFMNewShows.Update();
@@ -449,7 +464,7 @@ public partial class BulkAddShow : Form
 
         foreach (PossibleNewTvShow? ai in olFMNewShows.SelectedObjects.OfType<PossibleNewTvShow>())
         {
-            TVSettings.Instance.IgnoreFolders.Add(ai.Folder.FullName.ToLower());
+            TVSettings.Instance.IgnoreFolders.Add(ai.FolderName.ToLower());
             engine.AddItems.Remove(ai);
             olFMNewShows.RemoveObject(ai);
         }
@@ -479,7 +494,7 @@ public partial class BulkAddShow : Form
 
         if (olFMNewShows.SelectedObjects.OfType<PossibleNewTvShow>().FirstOrDefault() is PossibleNewTvShow ai)
         {
-            ai.Folder.FullName.OpenFolder();
+            ai.FolderName.OpenFolder();
         }
     }
 

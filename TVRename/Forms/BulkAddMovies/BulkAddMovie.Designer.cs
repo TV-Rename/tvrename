@@ -546,7 +546,7 @@ namespace TVRename
             // 
             // btnStopScan
             // 
-            btnStopScan.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnStopScan.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             btnStopScan.Location = new System.Drawing.Point(209, 509);
             btnStopScan.Margin = new Padding(4, 3, 4, 3);
             btnStopScan.Name = "btnStopScan";

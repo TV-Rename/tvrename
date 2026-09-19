@@ -45,7 +45,7 @@ public partial class BulkAddEditShow : Form, ICodeWindow
         }
         else
         {
-            string s = hint.Folder.FullName;
+            string s = hint.FolderName;
             int p = s.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
 
             await codeFinderControl.SetHintAsync(string.IsNullOrWhiteSpace(hint.RefinedHint)
