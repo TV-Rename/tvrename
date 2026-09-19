@@ -626,7 +626,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
         catch (GeneralHttpException ex)
         {
-            LOGGER.Error($"Error {errorMessage}:", ex);
+            LOGGER.Warn($"Error {errorMessage}:", ex);
             SayNothing();
             LastErrorMessage = ex.Message + ex.InnerException?.Message;
             throw new SourceConnectivityException(errorMessage, ex);

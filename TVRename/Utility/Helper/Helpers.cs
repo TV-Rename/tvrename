@@ -214,7 +214,7 @@ public static class Helpers
         return value;
     }
 
-    public static string ToNonNullString(this string? text) => text is null ? string.Empty : text;
+    public static string ToNonNullString(this string? text) => text ?? string.Empty;
 
     #endregion
 
