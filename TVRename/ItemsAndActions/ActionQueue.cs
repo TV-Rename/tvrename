@@ -26,8 +26,7 @@ namespace TVRename;
 /// <exception cref="WaitHandleCannotBeOpenedException">A synchronization object with the provided <paramref name="name" /> cannot be created. A synchronization object of a different type might have the same name.</exception>
 public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> actions, TVRenameStats mStats, CancellationTokenSource cts)
 {
-    private readonly List<Action> actions = actions.OrderBy(a => a.Order).ToList(); // The contents of this queue
-    SemaphoreSlim semaphore = new(parallelLimit, parallelLimit);
+    //SemaphoreSlim semaphore = new(parallelLimit, parallelLimit);
     public override string ToString() => $"'{name}' worker, with {parallelLimit} threads.";
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private static readonly NLog.Logger ThreadsLogger = NLog.LogManager.GetLogger("threads");
@@ -53,25 +52,56 @@ public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> act
 
     public List<Task>? currentTasks; //Task that relates to all the actions in this queue, so that we can wait for it to finish if we need to
 
-    internal void Start()
+    internal async Task StartAsync()
     {
-        semaphore = new SemaphoreSlim(parallelLimit, parallelLimit);
-        currentTasks = actions.Select(action => ProcessSingleActionAsync(action, semaphore, cts)).ToList();
-    }
+        cts = new();
+        var currentActions = actions.OrderBy(a => a.Order).ToList();
+        currentTasks = [];
 
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = parallelLimit, // Limit concurrent tasks
+            CancellationToken = cts.Token // Pass token to the loop mechanism
+        };
+
+
+        try
+        {
+            await Parallel.ForEachAsync(
+                currentActions,
+                options,
+                async (action, token) =>
+                {
+                    if (cts.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    await ProcessSingleActionAsync(action, cts);
+
+                }
+                );
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.Trace($"Task Cancelled");
+            //OK
+        }
+    }
+    /*
     public async Task WaitForCompletionAsync()
     {
         if (currentTasks is not null)
         {
             await Task.WhenAll(currentTasks).ConfigureAwait(false);
         }
-        semaphore.Dispose();
+        //semaphore.Dispose();
     }
-
-    private async Task ProcessSingleActionAsync(Action action, SemaphoreSlim semaphore, CancellationTokenSource cts)
+    */
+    private async Task ProcessSingleActionAsync(Action action, CancellationTokenSource cts)
     {
         // don't start until we're allowed to
-        await semaphore.WaitAsync(cts.Token).ConfigureAwait(false); // blocks until there is an available slot
+        //await semaphore.WaitAsync(cts.Token).ConfigureAwait(false); // blocks until there is an available slot
 
         // Pause the thread until _pauseEvent is signaled, or throw if cancelled
         _pauseEvent.Wait(cts.Token);
@@ -110,8 +140,8 @@ public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> act
         }
         finally
         {
-            int nfr = semaphore.Release(); // release our hold on the semaphore, so that worker can grab it
-            ThreadsLogger.Trace("ActionProcessor[" + name + "] pool has " + nfr + " free");
+            //int nfr = semaphore.Release(); // release our hold on the semaphore, so that worker can grab it
+            //ThreadsLogger.Trace("ActionProcessor[" + name + "] pool has " + nfr + " free");
         }
     }
 }

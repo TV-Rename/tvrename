@@ -85,9 +85,7 @@ public class ActionCopyMoveRename : ActionFileOperation
 
         try
         {
-            //SYNC Version FileHelper.CopyMoveFile(From, To, IsMoveRename(), CopyProgressCallback);
-
-            await FileHelper.MoveFileWithProgressAsync(From, To, new Progress<FileHelper.CopyMoveProgress>((info) => { PercentDone = info.Percentage; }), cancellationToken);
+            await FileHelper.CopyMoveFileAsync(From, To, IsMoveRename(), new Progress<FileHelper.CopyMoveProgress>((info) => { PercentDone = info.Percentage; }),cancellationToken );
 
             LOGGER.Info($"{Name} completed: {From.FullName} to {To.FullName} ");
 

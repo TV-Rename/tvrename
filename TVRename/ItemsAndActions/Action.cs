@@ -68,6 +68,7 @@ public abstract class Action : Item // Something we can do
         slowFileOperation,
         quickFileOperation,
         writeMetadata,
-        download
+        download,
+        later
     }
 }

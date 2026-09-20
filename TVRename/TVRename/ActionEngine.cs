@@ -22,6 +22,7 @@ public class ActionEngine(TVRenameStats stats)
     private readonly TVRenameStats mStats = stats; //reference to the main TVRenameStats, so we can update the counts
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private List<ActionQueue> actionWorkers = [];
+    private List<Task> actionWorkerTasks = [];
 
     /// <summary>
     /// Asks for execution to pause
@@ -54,23 +55,22 @@ public class ActionEngine(TVRenameStats stats)
         // Run tasks in parallel (as much as is sensible)
         try
         {
+            //Do the main 4 queues
             actionWorkers = ActionProcessorMakeQueues(theList, token);
+            actionWorkerTasks = actionWorkers.Select(a => a.StartAsync()).ToList(); //todo add token
+            await Task.WhenAll(actionWorkerTasks);
 
-            foreach (ActionQueue queue in actionWorkers)
-            {
-                Logger.Info($"Starting {queue}");
-                queue.Start();
-            }
+            //Finish up wiht the later queue that needs to happen after the others
+            var q = Action.QueueName.later;
+            var laterQueue = new ActionQueue(GetName(q), GetParallelLimit(q), theList.GetActionsForQueue(q), mStats, token);
+            await laterQueue.StartAsync();
 
-            await Task.WhenAll(actionWorkers.Select(q => q.WaitForCompletionAsync()));
-
+            //Tidy Up
             theList.RemoveAll(x => x is Action { Outcome: { Done: true, Error: false } });
-
             foreach (Action slia in theList.Actions)
             {
                 Logger.Warn(slia.Outcome.LastError, $"Failed to complete the following action: {slia.Name}, doing {slia}. Error was {slia.Outcome.LastError?.Message}");
             }
-
         }
         catch (Exception e)
         {
@@ -92,8 +92,10 @@ public class ActionEngine(TVRenameStats stats)
         //     - #1 all quick "local" moves
         //     - #2 NFO Generator list
         //     - #3 Downloads (rss torrent, thumbnail, folder.jpg) across Settings.ParallelDownloads lists
-        // We can discard any non-action items, as there is nothing to do for them
+        // We can discard any non-action items, as there is nothing to
+        // /do for them
         return EnumerableExtensions.GetAllItems<Action.QueueName>()
+            .Where(q => !(q==Action.QueueName.later))
             .Select(q => new ActionQueue(GetName(q), GetParallelLimit(q), theList.GetActionsForQueue(q), mStats, cts))
             .ToList();
     }
@@ -106,6 +108,7 @@ public class ActionEngine(TVRenameStats stats)
             Action.QueueName.writeMetadata => "Write Metadata", // writing KODI NFO files, etc.
             Action.QueueName.slowFileOperation => "Move/Copy", // cross-filesystem moves (slow ones)
             Action.QueueName.quickFileOperation => "Rename/Delete", // local rename/moves
+            Action.QueueName.later => "Finish Up", // local rename/moves
             _ => throw new ArgumentOutOfRangeException(nameof(queue), queue, null)
         };
     }
@@ -117,6 +120,7 @@ public class ActionEngine(TVRenameStats stats)
             Action.QueueName.writeMetadata => 4,
             Action.QueueName.slowFileOperation => 1,
             Action.QueueName.quickFileOperation => 1,
+            Action.QueueName.later => 2,
             _ => throw new ArgumentOutOfRangeException(nameof(queue), queue, null)
         };
     }

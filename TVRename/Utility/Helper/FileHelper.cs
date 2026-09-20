@@ -11,6 +11,7 @@ using MediaInfo;
 using Microsoft.WindowsAPICodePack.COMNative.Shell.PropertySystem;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using Microsoft.WindowsAPICodePack.Win32Native.NamedPipe;
 using Microsoft.WindowsAPICodePack.Win32Native.Shell;
 using NLog;
 using System;
@@ -802,7 +803,7 @@ public static class FileHelper
 
     public static async Task MoveFileWithProgressAsync(
                                         FileInfo From,
-                                        FileInfo To,
+                                        string To,
                                         IProgress<CopyMoveProgress> progress,
                                         CancellationToken cancellationToken = default)
     {
@@ -811,7 +812,7 @@ public static class FileHelper
         int bufferSize = 81920; // 80 KB large buffer
 
         using (var sourceStream = new FileStream(From.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, useAsync: true))
-        using (var destStream = new FileStream(To.FullName, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, useAsync: true))
+        using (var destStream = new FileStream(To, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, useAsync: true))
         {
             var buffer = new byte[bufferSize];
             int bytesRead;
@@ -834,12 +835,12 @@ public static class FileHelper
     }
 
     private static string TempFor(Alphaleonis.Win32.Filesystem.FileSystemInfo f) => f.FullName + ".tvrenametemp";
-    public static void CopyMoveFile(FileInfo From, FileInfo To, bool isMove, CopyMoveProgressRoutine callback)
+    public async static Task CopyMoveFileAsync(FileInfo From, FileInfo To, bool isMove, IProgress<CopyMoveProgress> progress, CancellationToken cancellationToken)
     {
         //we use a temp name just in case we are interrupted or some other problem occurs
         string tempName = TempFor(To);
 
-        if (!Directory.Exists(To.Directory.FullName))
+        if (! await DirectoryExistsAsync(To.Directory.FullName))
         {
             Directory.CreateDirectory(To.Directory.FullName);
         }
@@ -848,11 +849,16 @@ public static class FileHelper
         //This deals with an issue on some systems (XP?) that case insensitive moves did not occur
         if (isMove || FileHelper.Same(From, To))
         {
-            // This step could be slow, so report progress - TODO - make async
-            CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.WriteThrough | MoveOptions.ReplaceExisting, callback, null);
-            if (moveResult.ErrorCode != 0)
+            if (SameFolder(From, To))
             {
-                throw new ActionFailedException(moveResult.ErrorMessage);
+                // Copying the temp file into the correct name is very quick, so no progress reporting
+                File.Move(From.FullName, tempName, MoveOptions.ReplaceExisting);
+            }
+            else
+            {
+                // This step could be slow, so report progress
+                //CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.WriteThrough | MoveOptions.ReplaceExisting, callback, null);
+                await FileHelper.MoveFileWithProgressAsync(From, tempName, progress, cancellationToken);
             }
         }
         else
@@ -860,15 +866,16 @@ public static class FileHelper
             //we are copying
 
             // This step could be slow, so report progress
-            CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, callback, null);
-            if (copyResult.ErrorCode != 0)
-            {
-                throw new ActionFailedException(copyResult.ErrorMessage);
-            }
+            await FileHelper.MoveFileWithProgressAsync(From, tempName, progress, cancellationToken);
         }
 
         // Copying the temp file into the correct name is very quick, so no progress reporting
         File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
+    }
+
+    private static bool SameFolder(FileInfo from, FileInfo to)
+    {
+        return from.DirectoryName == to.DirectoryName;
     }
 
     internal static void RemoveDirectory(string folderName)
