@@ -1911,25 +1911,25 @@ public partial class UI : Form, IDialogParent
         DateTime dt = calCalendar.SelectionStart;
         bool first = true;
 
-        foreach (ListViewItem lvi in lvWhenToWatch.Items)
-        {
-            lvi.Selected = false;
+        lvWhenToWatch.DeselectAll();
 
-            ProcessedEpisode? ei = (ProcessedEpisode?)lvi.Tag;
+        foreach(ProcessedEpisode ei in lvWhenToWatch.Objects)
+        {
             DateTime? dt2 = ei?.GetAirDateDt();
             if (dt2 != null)
             {
                 double h = dt2.Value.Subtract(dt).TotalHours;
                 if (h is >= 0 and < 24.0)
                 {
-                    lvi.Selected = true;
+                    lvWhenToWatch.SelectObject(ei);
                     if (first)
                     {
-                        lvi.EnsureVisible();
+                        lvWhenToWatch.EnsureModelVisible(ei);
                         first = false;
                     }
                 }
             }
+
         }
 
         lvWhenToWatch.Focus();
