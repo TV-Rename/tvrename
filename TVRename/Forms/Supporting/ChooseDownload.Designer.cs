@@ -33,7 +33,7 @@ namespace TVRename.Forms.Supporting
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.bnCancelAll = new System.Windows.Forms.Button();
-            this.olvChooseDownload = new TVRename.ObjectListViewFlickerFree();
+            this.olvChooseDownload = new TVRename.ObjectListViewFlickerFree<ActionTDownload>();
             this.olvName = new BrightIdeasSoftware.OLVColumn();
             this.olvSize = new BrightIdeasSoftware.OLVColumn();
             this.olvSeeders = new BrightIdeasSoftware.OLVColumn();
@@ -246,7 +246,7 @@ namespace TVRename.Forms.Supporting
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
-        private ObjectListViewFlickerFree olvChooseDownload;
+        private ObjectListViewFlickerFree<ActionTDownload> olvChooseDownload;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lblEpisodeName;
         private System.Windows.Forms.Label label1;

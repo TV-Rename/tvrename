@@ -11,10 +11,13 @@ using System.Drawing;
 
 namespace TVRename;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 // Thanks to http://stackoverflow.com/questions/442817/c-flickering-listview-on-update
-public class ObjectListViewFlickerFree : ObjectListView
+public class ObjectListViewFlickerFree<T> : ObjectListView
 {
     public ObjectListViewFlickerFree()
     {
@@ -39,5 +42,23 @@ public class ObjectListViewFlickerFree : ObjectListView
     {
         base.ScaleControl(factor, specified);
         this.ScaleListViewColumns(factor);
+    }
+
+
+    public List<T> Selected()
+    {
+        return this.SelectedObjects.OfType<T>().ToList();
+    }
+
+    public T? FirstSelected()
+    {
+        return this.Selected().FirstOrDefault();
+    }
+
+    public bool AnySelected() => SelectedObjects.Count != 0;
+
+    internal List<T> AllObjects()
+    {
+        return Objects.OfType<T>().ToList();
     }
 }

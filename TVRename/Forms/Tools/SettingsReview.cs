@@ -178,7 +178,7 @@ public partial class SettingsReview : Form
         {
             rightClickMenu.Add("Fix Issues", (_, _) =>
             {
-                Remedy(olvDuplicates.SelectedObjects.OfType<SettingsCheck>());
+                Remedy(olvDuplicates.Selected());
                 mDoc.SetDirty();
             });
         }

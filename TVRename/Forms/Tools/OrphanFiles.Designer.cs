@@ -29,7 +29,7 @@ namespace TVRename.Forms.Tools
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.olvFileIssues = new TVRename.ObjectListViewFlickerFree();
+            this.olvFileIssues = new TVRename.ObjectListViewFlickerFree<FileIssue>();
             this.olvShow = new BrightIdeasSoftware.OLVColumn();
             this.olvFileName = new BrightIdeasSoftware.OLVColumn();
             this.olvMessage = new BrightIdeasSoftware.OLVColumn();

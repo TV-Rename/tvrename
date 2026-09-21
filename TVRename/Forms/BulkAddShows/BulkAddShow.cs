@@ -442,7 +442,7 @@ public partial class BulkAddShow : Form
             return;
         }
 
-        foreach (PossibleNewTvShow ai in olFMNewShows.SelectedObjects.OfType<PossibleNewTvShow>())
+        foreach (PossibleNewTvShow ai in olFMNewShows.Selected())
         {
             engine.AddItems.Remove(ai);
             olFMNewShows.RemoveObject(ai);
@@ -462,7 +462,7 @@ public partial class BulkAddShow : Form
             return;
         }
 
-        foreach (PossibleNewTvShow? ai in olFMNewShows.SelectedObjects.OfType<PossibleNewTvShow>())
+        foreach (PossibleNewTvShow? ai in olFMNewShows.Selected())
         {
             TVSettings.Instance.IgnoreFolders.Add(ai.FolderName.ToLower());
             engine.AddItems.Remove(ai);
@@ -492,7 +492,7 @@ public partial class BulkAddShow : Form
             return;
         }
 
-        if (olFMNewShows.SelectedObjects.OfType<PossibleNewTvShow>().FirstOrDefault() is PossibleNewTvShow ai)
+        if (olFMNewShows.FirstSelected() is PossibleNewTvShow ai)
         {
             ai.FolderName.OpenFolder();
         }
@@ -500,7 +500,7 @@ public partial class BulkAddShow : Form
 
     private bool NothingSelected()
     {
-        return olFMNewShows.SelectedObjects.Count == 0;
+        return ! olFMNewShows.AnySelected();
     }
 
     private void UpdateListItem(PossibleNewTvShow ai, bool makevis)
@@ -536,7 +536,7 @@ public partial class BulkAddShow : Form
             return;
         }
 
-        if (olFMNewShows.SelectedObjects.OfType<PossibleNewTvShow>().FirstOrDefault() is not PossibleNewTvShow fme)
+        if (olFMNewShows.FirstSelected() is not PossibleNewTvShow fme)
         {
             return;
         }
@@ -584,7 +584,7 @@ public partial class BulkAddShow : Form
             return;
         }
 
-        if (olFMNewShows.SelectedObjects.OfType<PossibleNewTvShow>().FirstOrDefault() is PossibleNewTvShow fme)
+        if (olFMNewShows.FirstSelected() is PossibleNewTvShow fme)
         {
             await EditEntryAsync(fme);
             UpdateListItem(fme, true);
@@ -618,7 +618,7 @@ public partial class BulkAddShow : Form
 
     private void lvFMNewShows_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-        bool somethingSelected = olFMNewShows.SelectedObjects.Count > 0;
+        bool somethingSelected = olFMNewShows.AnySelected();
         bnEditEntry.Enabled = somethingSelected;
         bnRemoveNewFolder.Enabled = somethingSelected;
         bnIgnoreNewFolder.Enabled = somethingSelected;

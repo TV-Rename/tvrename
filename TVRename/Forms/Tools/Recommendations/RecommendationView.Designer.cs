@@ -37,7 +37,7 @@ namespace TVRename.Forms
             this.lblStatus = new System.Windows.Forms.Label();
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.lvRecommendations = new TVRename.ObjectListViewFlickerFree();
+            this.lvRecommendations = new TVRename.ObjectListViewFlickerFree<RecommendationResult>();
             this.olvId = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvScore = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -316,7 +316,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.ProgressBar pbProgress;
         private System.Windows.Forms.Button btnRefresh;
-        private ObjectListViewFlickerFree lvRecommendations;
+        private ObjectListViewFlickerFree<RecommendationResult> lvRecommendations;
         private BrightIdeasSoftware.OLVColumn olvName;
         private BrightIdeasSoftware.OLVColumn olvScore;
         private BrightIdeasSoftware.OLVColumn olvYear;

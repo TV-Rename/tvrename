@@ -445,7 +445,7 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        foreach (PossibleNewMovie ai in olvFMNewShows.SelectedObjects.OfType<PossibleNewMovie>())
+        foreach (PossibleNewMovie ai in olvFMNewShows.Selected())
         {
             engine.AddItems.Remove(ai);
             olvFMNewShows.RemoveObject(ai);
@@ -465,7 +465,7 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        foreach (PossibleNewMovie ai in olvFMNewShows.SelectedObjects.OfType<PossibleNewMovie>())
+        foreach (PossibleNewMovie ai in olvFMNewShows.Selected())
         {
             TVSettings.Instance.IgnoreFolders.Add(ai.Directory.FullName.ToLower());
             engine.AddItems.Remove(ai);
@@ -495,7 +495,7 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        if (olvFMNewShows.SelectedObjects.OfType<PossibleNewMovie>().FirstOrDefault() is PossibleNewMovie ai)
+        if (olvFMNewShows.FirstSelected() is PossibleNewMovie ai)
         {
             ai.Directory.FullName.OpenFolder();
         }
@@ -503,7 +503,7 @@ public partial class BulkAddMovie : Form
 
     private bool NothingSelected()
     {
-        return olvFMNewShows.SelectedObjects.Count == 0;
+        return !olvFMNewShows.AnySelected();
     }
 
     private void PopulateShowList()
@@ -545,7 +545,7 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        if (olvFMNewShows.SelectedObjects.OfType<PossibleNewMovie>().FirstOrDefault() is not PossibleNewMovie fme)
+        if (olvFMNewShows.FirstSelected() is not PossibleNewMovie fme)
         {
             return;
         }
@@ -587,7 +587,7 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        if (olvFMNewShows.SelectedObjects.OfType<PossibleNewMovie>().FirstOrDefault() is PossibleNewMovie fme)
+        if (olvFMNewShows.FirstSelected() is PossibleNewMovie fme)
         {
             await EditEntryAsync(fme);
             UpdateListItem(fme, true);
@@ -621,7 +621,7 @@ public partial class BulkAddMovie : Form
 
     private void lvFMNewShows_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-        bool somethingSelected = olvFMNewShows.SelectedObjects.Count > 0;
+        bool somethingSelected = olvFMNewShows.AnySelected();
         bnEditEntry.Enabled = somethingSelected;
         bnRemoveNewFolder.Enabled = somethingSelected;
         bnIgnoreNewFolder.Enabled = somethingSelected;

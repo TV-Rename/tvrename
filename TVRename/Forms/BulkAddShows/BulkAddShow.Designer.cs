@@ -69,7 +69,7 @@ namespace TVRename
             bnCheck2 = new Button();
             label3 = new Label();
             tbResults = new TabPage();
-            olFMNewShows = new ObjectListViewFlickerFree();
+            olFMNewShows = new ObjectListViewFlickerFree<PossibleNewTvShow>();
             olvFolder = new OLVColumn();
             olvShow = new OLVColumn();
             olvStructure = new OLVColumn();
@@ -621,7 +621,7 @@ namespace TVRename
         private System.Windows.Forms.Button bnEditEntry;
         private System.Windows.Forms.Button bnCheck2;
         private System.Windows.Forms.ImageList imagesPassFail;
-        private ObjectListViewFlickerFree olFMNewShows;
+        private ObjectListViewFlickerFree<PossibleNewTvShow> olFMNewShows;
         private OLVColumn olvFolder;
         private OLVColumn olvShow;
         private OLVColumn olvStructure;

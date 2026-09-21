@@ -38,7 +38,7 @@ namespace TVRename.Forms
             this.lblStatus = new System.Windows.Forms.Label();
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.olvDuplicates = new BrightIdeasSoftware.ObjectListView();
+            this.olvDuplicates = new ObjectListViewFlickerFree<SettingsCheck>();
             this.olvType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvCheck = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -223,7 +223,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.ProgressBar pbProgress;
         private System.Windows.Forms.Button btnRefresh;
-        private BrightIdeasSoftware.ObjectListView olvDuplicates;
+        private ObjectListViewFlickerFree<SettingsCheck> olvDuplicates;
         private BrightIdeasSoftware.OLVColumn olvName;
         private BrightIdeasSoftware.OLVColumn olvCheck;
         private BrightIdeasSoftware.OLVColumn olvType;

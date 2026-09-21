@@ -904,10 +904,10 @@ public partial class UI : Form, IDialogParent
         bool enabled = name.HasValue() && searchers.Any();
 
         btnScheduleBTSearch.Enabled = enabled;
-        btnScheduleBTSearch.Text = UseCustomObject(lvWhenToWatch) ? "Search" : name;
+        btnScheduleBTSearch.Text = lvWhenToWatch.Selected().Any(pe => !string.IsNullOrWhiteSpace(pe.Show.CustomSearchUrl)) ? "Search" : name;
 
         btnActionBTSearch.Enabled = enabled;
-        btnActionBTSearch.Text = UseCustomEpisodeObject(olvAction) ? "Search" : name;
+        btnActionBTSearch.Text = olvAction.Selected().Any(i => i.Episode?.Show.UseCustomSearchUrl == true && i.Episode.Show.CustomSearchUrl.HasValue()) ? "Search" : name;
     }
 
     private Searchers GetUsedSearchers()
@@ -919,9 +919,9 @@ public partial class UI : Form, IDialogParent
         return searchers;
     }
 
-    private static MediaConfiguration.MediaType GetSelectedObjectType(ObjectListView list)
+    private static MediaConfiguration.MediaType GetSelectedObjectType(ObjectListViewFlickerFree<Item> list)
     {
-        IList listSelectedObjects = list.SelectedObjects;
+        IList listSelectedObjects = list.Selected();
         if (listSelectedObjects.Count == listSelectedObjects.OfType<MovieItemMissing>().Count())
         {
             return MediaConfiguration.MediaType.movie;
@@ -939,15 +939,6 @@ public partial class UI : Form, IDialogParent
         "http://tvrename.com".OpenUrlInBrowser();
 
     private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
-
-    private static bool UseCustomObject(ObjectListView view)
-    {
-        return view.SelectedObjects.OfType<Item>().Any(i => i.Episode?.Show.UseCustomSearchUrl == true && i.Episode.Show.CustomSearchUrl.HasValue());
-    }
-    private static bool UseCustomEpisodeObject(ObjectListView view)
-    {
-        return view.SelectedObjects.OfType<ProcessedEpisode>().Any(pe => !string.IsNullOrWhiteSpace(pe.Show.CustomSearchUrl));
-    }
 
     private static bool UseCustom(ListView view)
     {
@@ -1827,14 +1818,14 @@ public partial class UI : Form, IDialogParent
     {
         UpdateSearchButtons();
 
-        if (lvWhenToWatch.SelectedObjects.Count == 0)
+        if (! lvWhenToWatch.AnySelected())
         {
             txtWhenToWatchSynopsis.Text = string.Empty;
             switchToWhenOpenMyShows = null;
             return;
         }
 
-        ProcessedEpisode? ei = lvWhenToWatch.SelectedObjects.OfType<ProcessedEpisode>().FirstOrDefault();
+        ProcessedEpisode? ei = lvWhenToWatch.FirstSelected();
         if (ei != null)
         {
             switchToWhenOpenMyShows = ei;
@@ -1867,14 +1858,17 @@ public partial class UI : Form, IDialogParent
 
     private async void lvWhenToWatch_DoubleClick(object sender, EventArgs e)
     {
-        if (lvWhenToWatch.SelectedItems.Count == 0)
+        if (! lvWhenToWatch.AnySelected())
         {
             return;
         }
 
-        ProcessedEpisode? ei = (ProcessedEpisode?)lvWhenToWatch.SelectedItems[0].Tag;
+        ProcessedEpisode? ei = lvWhenToWatch.FirstSelected();
 
-        if (ei is null) return;
+        if (ei is null)
+        {
+            return;
+        }
 
         List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, ei);
         if (fl.Count != 0)
@@ -1981,9 +1975,9 @@ public partial class UI : Form, IDialogParent
 
     private void bnWTWBTSearch_Click(object? sender, EventArgs? e)
     {
-        foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
+        foreach (ProcessedEpisode pe in lvWhenToWatch.Selected())
         {
-            TVDoc.SearchForEpisode((ProcessedEpisode?)lvi.Tag);
+            TVDoc.SearchForEpisode(pe);
         }
     }
 
@@ -2071,13 +2065,15 @@ public partial class UI : Form, IDialogParent
         BuildshowRightClickMenu(pt, null, [seas.Show], seas);
     }
 
-    private void WtwRightClickOnShow(List<ProcessedEpisode> eps, Point pt)
+    private void WtwRightClickOnShow( Point pt)
     {
+        List<ProcessedEpisode> eps = lvWhenToWatch.Selected();
+
         if (eps.Count == 0)
         {
             return;
         }
-
+        
         ProcessedEpisode? ep = eps.Count == 1 ? eps[0] : null;
 
         List<ShowConfiguration> sis = [.. eps.Select(e => e.Show)];
@@ -2334,7 +2330,7 @@ public partial class UI : Form, IDialogParent
         showRightClickMenu.Close();
     }
 
-    private ItemList GetSelectedItems() => new() { olvAction.SelectedObjects.OfType<Item>() };
+    private ItemList GetSelectedItems() => new() { olvAction.Selected() };
 
     private ItemList GetCheckedItems() => new() { mDoc.TheActionList.Checked.Intersect(olvAction.FilteredObjects.OfType<Item>()) };
 
@@ -2401,10 +2397,8 @@ public partial class UI : Form, IDialogParent
     private void GotoWtwFor(ShowConfiguration show)
     {
         tabControl1.SelectTab(tbWTW);
-        foreach (ListViewItem lvi in lvWhenToWatch.Items)
-        {
-            lvi.Selected = lvi.Tag is ProcessedEpisode ei && ei.TheCachedSeries.IsCacheFor(show);
-        }
+        var y = lvWhenToWatch.AllObjects().Where(ei => ei.TheCachedSeries.IsCacheFor(show)).ToList();
+        lvWhenToWatch.SelectObjects(y);
         lvWhenToWatch.Focus();
     }
 
@@ -2439,15 +2433,13 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        if (lvWhenToWatch.SelectedObjects.Count == 0)
+        if (! lvWhenToWatch.AnySelected())
         {
             return;
         }
 
         Point pt = lvWhenToWatch.PointToScreen(new Point(e.X, e.Y));
-        List<ProcessedEpisode> eis = lvWhenToWatch.SelectedObjects.OfType<ProcessedEpisode>().ToList();
-
-        WtwRightClickOnShow(eis, pt);
+        WtwRightClickOnShow(pt);
     }
 
     private void preferencesToolStripMenuItem_Click(object sender, EventArgs e) => DoPrefs(false);
@@ -4729,65 +4721,25 @@ public partial class UI : Form, IDialogParent
     {
         int dd = TVSettings.Instance.WTWRecentDays;
         recentEps = await mDoc.TvLibrary.GetRecentAndFutureEpsAsync(dd);
+
+        //try to maintain selections if we can
+        List<ProcessedEpisode> selections = lvWhenToWatch.Selected();
+
+        calendarBeingUpdated = true;
+        lvWhenToWatch.BeginUpdate();
+
         lvWhenToWatch.SetObjects(recentEps, true);
         lvWhenToWatch.Refresh();
-        DirFilesCache dfc = new();
 
+        List<DateTime> bolded = recentEps.Select(ei => ei.GetAirDateDt()).OfType<DateTime>().ToList();
+        calCalendar.BoldedDates = [.. bolded];
 
-        //calendarBeingUpdated = true;
-        //lvWhenToWatch.BeginUpdate();
-
-        /*
-        lvWhenToWatch.Groups["justPassed"]?.Header =
-                "Aired in the last " + dd + " day" + (dd == 1 ? "" : "s");
-
-         try to maintain selections if we can
-        List<ProcessedEpisode> selections = [];
-        foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
-        {
-            ProcessedEpisode? tag = (ProcessedEpisode?)lvi.Tag;
-
-            if (tag != null) { selections.Add(tag); }
-        }
-
-        ProcessedSeason? currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
-        ShowConfiguration? currentShowConfiguration = TreeNodeToShowItem(MyShowTree.SelectedNode);
-
-        lvWhenToWatch.Items.Clear();
-
-        List<DateTime> bolded = [];
-
-        foreach (ListViewItem lvi in newContents)
-        {
-            if (lvi.Tag is not ProcessedEpisode ei)
-            {
-                continue;
-            }
-
-            DateTime? dt = ei.GetAirDateDt();
-            if (dt != null)
-            {
-                bolded.Add(dt.Value);
-            }
-
-            lvWhenToWatch.Items.Add(lvi);
-
-            foreach (ProcessedEpisode pe in selections)
-            {
-                if (!pe.SameAs(ei))
-                {
-                    continue;
-                }
-
-                lvi.Selected = true;
-                break;
-            }
-        }
+        UpdateToolstripWTW();
 
         lvWhenToWatch.Sort();
 
-        lvWhenToWatch.EndUpdate();
-        calCalendar.BoldedDates = [.. bolded];
+        ProcessedSeason? currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
+        ShowConfiguration? currentShowConfiguration = TreeNodeToShowItem(MyShowTree.SelectedNode);
 
         if (currentSeas != null)
         {
@@ -4798,12 +4750,11 @@ public partial class UI : Form, IDialogParent
             SelectShow(currentShowConfiguration);
         }
 
-        UpdateToolstripWTW();
-        calendarBeingUpdated = false;
-        */
-        UpdateToolstripWTW();
 
-        await UpdateIconsAsync(dfc);
+        lvWhenToWatch.EndUpdate();
+        calendarBeingUpdated = false;
+
+        await UpdateIconsAsync(new DirFilesCache());
     }
 
     private async Task UpdateIconsAsync(DirFilesCache dfc)
@@ -4819,7 +4770,7 @@ public partial class UI : Form, IDialogParent
 
         lvWhenToWatch.Invoke(new MethodInvoker(delegate
         {
-            rowsToUpdate = lvWhenToWatch.Objects.OfType<ProcessedEpisode>().ToList();
+            rowsToUpdate = lvWhenToWatch.AllObjects();
         }));
 
         await Parallel.ForEachAsync(
@@ -4914,7 +4865,7 @@ public partial class UI : Form, IDialogParent
 
     private void ToolStripButton1_Click(object sender, EventArgs e)
     {
-        if (lvWhenToWatch.SelectedItems.Count == 0)
+        if (!lvWhenToWatch.AnySelected())
         {
             return;
         }
@@ -4925,9 +4876,7 @@ public partial class UI : Form, IDialogParent
 
         if (pt is null) return;
 
-        List<ProcessedEpisode> eis = lvWhenToWatch.SelectedObjects.OfType<ProcessedEpisode>().ToList();
-
-        WtwRightClickOnShow(eis, pt.Value);
+        WtwRightClickOnShow(pt.Value);
     }
 
     private void TsbMyShowsContextMenu_Click(object sender, EventArgs e)
@@ -4998,9 +4947,9 @@ public partial class UI : Form, IDialogParent
     {
         if (TVSettings.Instance.SearchJackettButton)
         {
-            foreach (var lvi in lvWhenToWatch.SelectedObjects)
+            foreach (ProcessedEpisode pe in lvWhenToWatch.Selected())
             {
-                JackettFinder.SearchForEpisode((ProcessedEpisode?)lvi);
+                JackettFinder.SearchForEpisode(pe);
             }
         }
     }

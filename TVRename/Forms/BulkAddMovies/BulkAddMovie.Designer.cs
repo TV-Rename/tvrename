@@ -68,7 +68,7 @@ namespace TVRename
             bnCheck2 = new Button();
             label3 = new Label();
             tbResults = new TabPage();
-            olvFMNewShows = new ObjectListViewFlickerFree();
+            olvFMNewShows = new ObjectListViewFlickerFree<PossibleNewMovie>();
             olvFOlder = new OLVColumn();
             olvMovie = new OLVColumn();
             olvYear = new OLVColumn();
@@ -622,7 +622,7 @@ namespace TVRename
         private System.Windows.Forms.ImageList imagesPassFail;
         private System.Windows.Forms.ProgressBar pbProgress;
         private System.Windows.Forms.Label lblStatusLabel;
-        private ObjectListViewFlickerFree olvFMNewShows;
+        private ObjectListViewFlickerFree<PossibleNewMovie> olvFMNewShows;
         private OLVColumn olvFOlder;
         private OLVColumn olvMovie;
         private OLVColumn olvYear;
