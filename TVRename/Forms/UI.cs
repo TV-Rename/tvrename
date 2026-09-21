@@ -5401,11 +5401,6 @@ public partial class UI : Form, IDialogParent
     private void lvWhenToWatch_BeforeCreatingGroups(object sender, CreateGroupsEventArgs e)
     {
         e.Parameters.ItemComparer = new OlvGroupComparer<ProcessedEpisode>(MapEpisodeColumnToSorter(e.Parameters.PrimarySort), e.Parameters.PrimarySortOrder);
-        /*
-        if (e.Parameters.PrimarySort == olvEpisode || e.Parameters.PrimarySort == olvSeason)
-        {
-            e.Parameters.GroupComparer = new SeasonGroupComparer(e.Parameters.GroupByOrder);
-        }*/
     }
 }
 

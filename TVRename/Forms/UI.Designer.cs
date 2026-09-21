@@ -2029,6 +2029,7 @@ namespace TVRename.Forms
             // olvWTWTime
             // 
             olvWTWTime.AspectName = "Time";
+            olvWTWTime.Groupable = false;
             olvWTWTime.GroupWithItemCountFormat = "{0} ({1} items)";
             olvWTWTime.GroupWithItemCountSingularFormat = "{0} (1 Item)";
             olvWTWTime.MinimumWidth = 10;
