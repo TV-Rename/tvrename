@@ -148,8 +148,7 @@ public partial class UI : Form, IDialogParent
         UpdateSplashStatus(splash, "Updating WTW", 75);
         mDoc.UpdateDenormalisations();
         UpdateSplashStatus(splash, "Updating WTW", 80);
-        //this.Load += async (s, e) => await FillWhenToWatchListAsync();
-        //SortSchedule(3);
+        // TODO SortSchedule(3);
         UpdateSplashStatus(splash, "Write Upcoming", 85);
         //mDoc.WriteUpcoming();
         UpdateSplashStatus(splash, "Write Recent", 88);
@@ -351,6 +350,8 @@ public partial class UI : Form, IDialogParent
         olvWTWDate.GroupKeyToTitleConverter = GroupWTWDateTitleDelegate;
         olvWTWDate.DataType = typeof(DateTime);
 
+        olvWTWSeason.GroupKeyGetter = GroupWTWSeasonKeyDelegate;
+
         lvWhenToWatch.SortGroupItemsByPrimaryColumn = false;
 
         lvWhenToWatch.CustomSorter = delegate (OLVColumn column, SortOrder order)
@@ -392,13 +393,13 @@ public partial class UI : Form, IDialogParent
     {
         return column switch
         {
-            _ when column == olvWTWDate => new EpisodeDateSorter(),
+            _ when column == olvWTWDate => new DefaultProcessedEpisodeSorter(),
             _ when column == olvWTWShowColumn => new EpisodeSeriesSorter(),
             _ when column == olvWTWEpisode => new EpisodeNumberSorter(),
             _ when column == olvWTWSeason => new SeasonNumberSorter(),
-            _ when column == olvWTWDay => new EpisodeDateSorter(),
-            _ when column == olvWTWTime => new EpisodeDateSorter(),
-            _ when column == olvWTWLength => new EpisodeLengthSorter(),
+            _ when column == olvWTWDay => new DefaultProcessedEpisodeSorter(),
+            _ when column == olvWTWTime => new DefaultProcessedEpisodeSorter(),
+            _ when column == olvWTWLength => new DefaultProcessedEpisodeSorter(),
             _ when column == olvWTWNetwork => new EpisodeNetworkSorter(),
             _ when column == olvWTWName => new EpisodeNameSorter(),
             _ => new DefaultProcessedEpisodeSorter()
@@ -541,6 +542,17 @@ public partial class UI : Form, IDialogParent
         if (ep.Series != null)
         {
             return ep.SeasonNumber.HasValue() ? $"{GenerateShowUiName(ep.Series)} - Season {ep.SeasonNumber}" : GenerateShowUiName(ep.Series);
+        }
+
+        return string.Empty;
+    }
+
+    private static object GroupWTWSeasonKeyDelegate(object rowObject)
+    {
+        ProcessedEpisode ep = (ProcessedEpisode)rowObject;
+        if (ep.SeriesName != null)
+        {
+            return $"{PostpendTheIfNeeded(ep.SeriesName).ToUiVersion()} - Season {ep.AppropriateSeasonNumber}" ;
         }
 
         return string.Empty;

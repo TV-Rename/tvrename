@@ -183,7 +183,7 @@ namespace TVRename.Forms
             toolStripSeparator13 = new ToolStripSeparator();
             tsbMyShowsContextMenu = new ToolStripButton();
             tbAllInOne = new TabPage();
-            olvAction = new ObjectListViewFlickerFree<Item>();
+            olvAction = new TVRename.ObjectListViewFlickerFree<TVRename.Item>();
             olvShowColumn = new OLVColumn();
             olvSeason = new OLVColumn();
             olvEpisode = new OLVColumn();
@@ -229,7 +229,7 @@ namespace TVRename.Forms
             calCalendar = new MonthCalendar();
             txtWhenToWatchSynopsis = new TextBox();
             toolStripContainer3 = new ToolStripContainer();
-            lvWhenToWatch = new ObjectListViewFlickerFree<ProcessedEpisode>();
+            lvWhenToWatch = new TVRename.ObjectListViewFlickerFree<TVRename.ProcessedEpisode>();
             olvWTWShowColumn = new OLVColumn();
             olvWTWSeason = new OLVColumn();
             olvWTWEpisode = new OLVColumn();

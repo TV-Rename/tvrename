@@ -157,8 +157,23 @@ public class DefaultProcessedEpisodeSorter : ListSorter<ProcessedEpisode>
         if (YairDate == null)
         {
             return 1;
-        }   
-        return DateTime.Compare(XairDate.Value, YairDate.Value);
+        }
+        if (XairDate.Value != YairDate.Value)
+        {
+            return DateTime.Compare(XairDate.Value, YairDate.Value);
+        }
+
+        if(x.SeriesName != y.SeriesName)
+        {
+            return x.SeriesName.CompareTo(y.SeriesName);
+        }
+
+        if (x.AppropriateSeasonNumber != y.AppropriateSeasonNumber)
+        {
+            return x.AppropriateSeasonNumber.CompareTo(y.AppropriateSeasonNumber);
+        }
+
+        return x.AppropriateEpNum.CompareTo(y.AppropriateEpNum);
     }
 
     #endregion IComparer<ProcessedEpisode> Members
