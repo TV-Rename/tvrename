@@ -55,7 +55,7 @@ internal static class CachePersistor
                 MessageBoxButtons.YesNo, MessageBoxIcon.Error);
             if (dr != DialogResult.No)
             {
-                SaveCache(series,movies,cacheFile,timestamp);
+                SaveCache(series, movies, cacheFile, timestamp);
             }
         }
     }
