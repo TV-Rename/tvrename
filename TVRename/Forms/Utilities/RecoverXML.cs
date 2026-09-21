@@ -65,7 +65,7 @@ public partial class RecoverXml : Form
         {
             foreach (FileInfo fi in files)
             {
-                lb.Items.Add(fi.LastWriteTime.ToString("g"));
+                lb.Items.Add($"{fi.LastWriteTime:g} - ({fi.Length.GBMB()})");
             }
 
             lb.SelectedIndex = 0;
