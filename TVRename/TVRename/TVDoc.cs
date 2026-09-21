@@ -243,7 +243,6 @@ public class TVDoc : IDisposable, IAsyncDisposable
     private void CheckForUsefulTVIds(MediaCache cache, ProviderType provider)
     {
         List<CachedSeriesInfo> x;
-        lock (cache.SERIES_LOCK)
         {
             x = [.. cache.CachedShowData.Values.Where(show => show.IdCode(provider) > 0)];
         }
@@ -266,7 +265,6 @@ public class TVDoc : IDisposable, IAsyncDisposable
     private void CheckForUsefulMovieIds(MediaCache cache, ProviderType provider)
     {
         IEnumerable<CachedMovieInfo> x;
-        lock (cache.MOVIE_LOCK)
         {
             x = [.. cache.CachedMovieData.Values.Where(show => show.IdCode(provider) > 0)];
         }
@@ -394,7 +392,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     private async Task<bool> DoDownloadsFgAsync(bool unattended, bool tvrMinimised, UI owner)
     {
-        List<ISeriesSpecifier> idsToDownload = [.. TvLibrary, .. FilmLibrary.Movies];
+        List<ISeriesSpecifier> idsToDownload = [.. TvLibrary.Shows, .. FilmLibrary.Movies];
         return await DoDownloadsFGNow(unattended, tvrMinimised, owner, idsToDownload);
     }
 
@@ -785,7 +783,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         {
             UpdateIdsFromCache(show);
             TvLibrary.AddShow(show, showErrors);
-            if (TvLibrary.Contains(show)) //It might not as it may be a duplicate
+            if (TvLibrary.Shows.Contains(show)) //It might not as it may be a duplicate
             {
                 forceShowsRefresh.Add(show);
                 forceShowsScan.Add(show);
@@ -1032,7 +1030,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
         if (settings.Type != TVSettings.ScanType.FastSingleShow)
         {
-            settings.UpdateShowsAndMovies([.. shows.Union(forceShowsScan.Where(m => TvLibrary.Contains(m)))], [.. movies.Union(forceMoviesScan.Where(m => FilmLibrary.Contains(m)))]);
+            settings.UpdateShowsAndMovies([.. shows.Union(forceShowsScan.Where(m => TvLibrary.Shows.Contains(m)))], [.. movies.Union(forceMoviesScan.Where(m => FilmLibrary.Movies.Contains(m)))]);
         }
     }
 
@@ -2171,7 +2169,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         //do an auto add
         MovieConfiguration? selectedShow = AutoAddMovieFile(fi, owner);
 
-        if (selectedShow != null && ContainsMedia(FilmLibrary, selectedShow))
+        if (selectedShow != null && ContainsMedia(FilmLibrary.Movies, selectedShow))
         {
             //if user selects existing movie then do a compare for that new file for the show
             MergeMovieFileIntoMovieConfig(fi, selectedShow, owner);

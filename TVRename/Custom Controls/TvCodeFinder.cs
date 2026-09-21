@@ -41,7 +41,6 @@ public class TvCodeFinder : CodeFinder
     protected override int FindMedia(MediaCache cache, bool numeric, int matchnum, string what)
     {
         List<KeyValuePair<int, CachedSeriesInfo>> lvis;
-        lock (cache.SERIES_LOCK)
         {
             lvis = [.. cache.CachedShowData.Where(kvp => Matches(kvp.Key, kvp.Value, numeric, what, matchnum))];
         }

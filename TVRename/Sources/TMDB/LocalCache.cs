@@ -66,11 +66,9 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     }
     public async Task ForgetEverythingAsync()
     {
-        lock (MOVIE_LOCK)
         {
             Movies.Clear();
         }
-        lock (SERIES_LOCK)
         {
             Series.Clear();
         }
@@ -112,9 +110,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     public void SaveCache()
     {
-        lock (MOVIE_LOCK)
         {
-            lock (SERIES_LOCK)
             {
                 CachePersistor.SaveCache(Series, Movies, CacheFile!, latestUpdateTime.LastSuccessfulServerUpdateTimecode());
             }
@@ -141,7 +137,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     private async Task<bool> EnsureSeriesUpdatedAsync(ISeriesSpecifier s)
     {
-        lock (SERIES_LOCK)
         {
             if (Series.TryGetValue(s.TmdbId,out CachedSeriesInfo? si) && !si.Dirty)
             {
@@ -156,7 +151,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
             if (downloadedSi.TmdbCode != s.TmdbId && s.TmdbId == -1)
             {
-                lock (SERIES_LOCK)
                 {
                     Series.TryRemove(-1, out _);
                 }
@@ -164,7 +158,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
             if (downloadedSi.TmdbCode != s.TmdbId && s.TmdbId == 0)
             {
-                lock (SERIES_LOCK)
                 {
                     Series.TryRemove(0, out _);
                 }
@@ -200,7 +193,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id)
     {
-        lock (MOVIE_LOCK)
         {
             if (Movies.TryGetValue(id.TmdbId, out CachedMovieInfo? movie) && !movie.Dirty)
             {
@@ -215,7 +207,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
             if (downloadedSi.TmdbCode != id.TmdbId && id.TmdbId == -1)
             {
-                lock (MOVIE_LOCK)
                 {
                     Movies.TryRemove(-1, out _);
                 }
@@ -267,7 +258,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             Say(
                 $"Processing {movieUpdates.Count} movie updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
 
-            lock (MOVIE_LOCK)
             {
                 foreach (int id in movieUpdates)
                 {
@@ -301,7 +291,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             Say(
                 $"Processing {showUpdates.Count} show updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
 
-            lock (SERIES_LOCK)
             {
                 foreach (int id in showUpdates)
                 {
@@ -379,7 +368,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     public void AddOrUpdateEpisode(Episode e)
     {
-        lock (SERIES_LOCK)
         {
             if (!Series.TryGetValue(e.SeriesId, out CachedSeriesInfo? ser))
             {
@@ -1172,7 +1160,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         if (results.MovieResults!.Count == 1)
         {
-            lock (MOVIE_LOCK)
             {
                 return Movies[results.MovieResults.First().Id];
             }
@@ -1253,7 +1240,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
             if (numMovies == 1)
             {
-                lock (MOVIE_LOCK)
                 {
                     return Movies[results!.MovieResults!.First().Id];
                 }

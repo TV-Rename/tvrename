@@ -24,27 +24,18 @@ public abstract class MediaCache
 
     protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
-    // ReSharper disable once InconsistentNaming
-    public readonly object MOVIE_LOCK = new();
 
     protected readonly ConcurrentDictionary<int, CachedMovieInfo> Movies = new();
 
     protected List<CachedMovieInfo> FullMovies()
     {
-        lock (MOVIE_LOCK)
-        {
             return [.. Movies.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name)];
-        }
     }
-
-    // ReSharper disable once InconsistentNaming
-    public readonly object SERIES_LOCK = new();
 
     protected readonly ConcurrentDictionary<int, CachedSeriesInfo> Series = new();
 
     protected List<CachedSeriesInfo> FullShows()
     {
-        lock (SERIES_LOCK)
         {
             return [.. Series.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name)];
         }
@@ -86,7 +77,6 @@ public abstract class MediaCache
     {
         get
         {
-            lock (MOVIE_LOCK)
             {
                 return Movies;
             }
@@ -97,7 +87,6 @@ public abstract class MediaCache
     {
         get
         {
-            lock (SERIES_LOCK)
             {
                 return Series;
             }
@@ -110,7 +99,6 @@ public abstract class MediaCache
         {
             return null;
         }
-        lock (SERIES_LOCK)
         {
             return Series.TryGetValue(id.Value, out CachedSeriesInfo? si) ? si : null;
         }
@@ -118,7 +106,6 @@ public abstract class MediaCache
 
     public bool HasSeries(int id)
     {
-        lock (SERIES_LOCK)
         {
             return Series.ContainsKey(id);
         }
@@ -126,7 +113,6 @@ public abstract class MediaCache
 
     public bool HasMovie(int id)
     {
-        lock (MOVIE_LOCK)
         {
             return Movies.ContainsKey(id);
         }
@@ -139,7 +125,6 @@ public abstract class MediaCache
             return null;
         }
 
-        lock (MOVIE_LOCK)
         {
             return Movies.TryGetValue(id.Value, out CachedMovieInfo? mi) ? mi : null;
         }

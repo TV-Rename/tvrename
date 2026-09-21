@@ -67,7 +67,6 @@ public class LocalCache : MediaCache, iTVSource
 
     public void SaveCache()
     {
-        lock (SERIES_LOCK)
         {
             CachePersistor.SaveCache(Series, Movies, CacheFile!, 0);
         }
@@ -84,7 +83,6 @@ public class LocalCache : MediaCache, iTVSource
                 TVDoc.ProviderType.TVmaze);
         }
 
-        lock (SERIES_LOCK)
         {
             if (Series.TryGetValue(s.TmdbId, out CachedSeriesInfo? si) && !si.Dirty)
             {
@@ -99,7 +97,6 @@ public class LocalCache : MediaCache, iTVSource
 
             if (downloadedSi.TvMazeCode != s.TvMazeId && s.TvMazeId == -1)
             {
-                lock (SERIES_LOCK)
                 {
                     Series.TryRemove(-1, out _);
                 }
@@ -262,7 +259,6 @@ public class LocalCache : MediaCache, iTVSource
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     public void AddOrUpdateEpisode(Episode e)
     {
-        lock (SERIES_LOCK)
         {
             if (!Series.TryGetValue(e.SeriesId, out CachedSeriesInfo? ser))
             {
@@ -277,7 +273,6 @@ public class LocalCache : MediaCache, iTVSource
 
     public async Task ForgetEverythingAsync()
     {
-        lock (SERIES_LOCK)
         {
             Series.Clear();
         }

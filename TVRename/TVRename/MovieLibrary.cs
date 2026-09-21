@@ -1,15 +1,16 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
 namespace TVRename;
 
-public class MovieLibrary : SafeList<MovieConfiguration>
+public class MovieLibrary : ConcurrentDictionary<MovieConfiguration,int>
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-    public IEnumerable<MovieConfiguration> Movies => this;
+    public IEnumerable<MovieConfiguration> Movies => this.Keys;
 
     public List<(int, string)> Collections => [.. Movies
         .Where(a => a.InCollection)
@@ -54,7 +55,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
 
     public void AddMovie(MovieConfiguration newShow, bool showErrors)
     {
-        if (Contains(newShow))
+        if (this.Movies.Contains(newShow))
         {
             return;
         }
@@ -80,7 +81,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
             return;
         }
 
-        Add(newShow);
+        TryAdd(newShow,0);
     }
     public void AddMovies(List<MovieConfiguration>? newMovie, bool showErrors)
     {
@@ -198,7 +199,7 @@ public class MovieLibrary : SafeList<MovieConfiguration>
 
     internal void AddAlias(MovieConfiguration mc, string hint)
     {
-        if (Contains(mc))
+        if (this.Movies.Contains(mc))
         {
             mc.CheckHintExists(hint);
         }
@@ -215,5 +216,10 @@ public class MovieLibrary : SafeList<MovieConfiguration>
                 Logger.Warn($"Asked to add {hint} to {mc.Name}, butmultple shows match {matchingShows.Select(x => x.Name).ToCsv()}");
             }
         }
+    }
+
+    internal void Remove(MovieConfiguration si)
+    {
+        this.TryRemove(si, out _);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace TVRename;
 /// Handles a thread-safe implementation of the 'library' this will hold all the ShowItem configuration as well
 /// many methods that provide summaries of the data in the library
 /// </summary>
-public class ShowLibrary : SafeList<ShowConfiguration>
+public class ShowLibrary : ConcurrentDictionary<ShowConfiguration,int>
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-    public IEnumerable<ShowConfiguration> Shows => this;
+    public IEnumerable<ShowConfiguration> Shows => this.Keys;
 
     public IEnumerable<string> ShowStatuses => Shows.Select(item => item.ShowStatus).Distinct().OrderBy(s => s);
 
@@ -38,7 +39,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
     public void AddShow(ShowConfiguration newShow, bool showErrors)
     {
-        if (Contains(newShow))
+        if (this.ContainsKey(newShow))
         {
             return;
         }
@@ -46,7 +47,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         List<ShowConfiguration> matchingShows = [.. Shows.Where(configuration => configuration.AnyIdsMatch(newShow))];
         if (matchingShows.Count == 0)
         {
-            Add(newShow);
+            TryAdd(newShow,0);
         }
         else
         {
@@ -146,7 +147,6 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     public List<ShowConfiguration> GetSortedShows()
     {
         List<ShowConfiguration> returnList;
-        lock (Shows)
         {
             returnList = [.. Shows];
         }
@@ -224,7 +224,6 @@ public class ShowLibrary : SafeList<ShowConfiguration>
         TimeSpan howClose = TimeSpan.MaxValue;
         foreach (ShowConfiguration si in GetSortedShows())
         {
-            lock (TVDoc.GetMediaCache(si.Provider).SERIES_LOCK)
             {
                 if (!si.ShowNextAirdate)
                 {
@@ -375,7 +374,7 @@ public class ShowLibrary : SafeList<ShowConfiguration>
 
     internal void AddAlias(ShowConfiguration sc, string hint)
     {
-        if (Contains(sc))
+        if (this.Shows.Contains(sc))
         {
             sc.CheckHintExists(hint);
             return;
@@ -401,5 +400,10 @@ public class ShowLibrary : SafeList<ShowConfiguration>
     internal List<ProcessedEpisode>? GetRandomSeasonEpisodes()
     {
         return GetSortedShows().SelectMany(si => si.GetSortedSeasons()).FirstOrDefault();
+    }
+
+    internal void Remove(ShowConfiguration si)
+    {
+        this.TryRemove(si, out _);
     }
 }

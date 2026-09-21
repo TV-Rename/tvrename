@@ -210,7 +210,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     
     private Episode? FindEpisodeById(int id)
     {
-        lock (SERIES_LOCK)
         {
             return Series
                 .Values
@@ -278,11 +277,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     }
     public async Task ForgetEverythingAsync()
     {
-        lock (MOVIE_LOCK)
         {
             Movies.Clear();
         }
-        lock (SERIES_LOCK)
         {
             Series.Clear();
         }
@@ -590,7 +587,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     /// <exception cref="SourceConsistencyException">Episode's Series Id is not found.</exception>
     public void AddOrUpdateEpisode(Episode e)
     {
-        lock (SERIES_LOCK)
         {
             if (!Series.TryGetValue(e.SeriesId, out CachedSeriesInfo? ser))
             {
@@ -635,7 +631,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             CachedSeriesInfo? si = await API.DownloadSeriesInfoAsync(code, locale);
             this.AddSeriesToCache(si);
-            lock (SERIES_LOCK)
             {
                 si = GetSeries(code.TvdbId);
             }
@@ -730,7 +725,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id, bool showErrorMsgBox)
     {
-        lock (MOVIE_LOCK)
         {
             if (Movies.TryGetValue(id.TvdbId, out CachedMovieInfo? movie) && !movie.Dirty)
             {
@@ -756,7 +750,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             if (downloadedSi.TvdbCode != id.TvdbId && id.TvdbId == -1)
             {
-                lock (MOVIE_LOCK)
                 {
                     Movies.TryRemove(-1, out _);
                 }
@@ -913,12 +906,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     public void SaveCache()
     {
-        lock (MOVIE_LOCK)
         {
-            lock (SERIES_LOCK)
             {
                 CachePersistor.SaveCache(Series, Movies, CacheFile!,
-                    LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
+                LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
             }
         }
     }
@@ -965,7 +956,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             HandleConnectionIssue(showErrroMsgBox, e);
         }
 
-        lock (MOVIE_LOCK)
         {
             Movies.TryGetValue(tvdbId.TvdbId, out CachedMovieInfo? returnValue);
             SayNothing();

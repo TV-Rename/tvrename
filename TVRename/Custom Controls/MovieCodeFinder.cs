@@ -38,7 +38,6 @@ public class MovieCodeFinder : CodeFinder
     protected override int FindMedia(MediaCache cache, bool numeric, int matchnum, string what)
     {
         List<KeyValuePair<int, CachedMovieInfo>> lvis;
-        lock (cache.MOVIE_LOCK)
         {
             lvis = [.. cache.CachedMovieData
                 .Where(kvp => Matches(kvp.Key, kvp.Value, numeric, what, matchnum))

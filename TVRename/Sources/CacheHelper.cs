@@ -12,7 +12,6 @@ public static class CacheHelper
         // remove any shows from cache that aren't in My Shows
         List<ShowConfiguration> showConfigurations = [.. libraryValues];
 
-        lock (cache.SERIES_LOCK)
         {
             List<int> removeList = [.. cache.CachedShowData.Keys.Where(id => showConfigurations.All(si => cache.PrimaryKey(si) != id))];
 
@@ -28,7 +27,6 @@ public static class CacheHelper
         // remove any shows from cache that aren't in My Movies
         List<MediaConfiguration> movieConfigurations = [.. libraryValues];
 
-        lock (cache.MOVIE_LOCK)
         {
             List<int> removeList = [.. cache.CachedMovieData.Keys.Where(id => movieConfigurations.All(si => cache.PrimaryKey(si) != id))];
 
@@ -46,7 +44,6 @@ public static class CacheHelper
         {
             return;
         }
-        lock (cache.SERIES_LOCK)
         {
             cache.AddPlaceholderSeries(ss);
 
@@ -56,7 +53,6 @@ public static class CacheHelper
 
     public static void ForgetShow<T>(this T cache, int id) where T : MediaCache, iTVSource
     {
-        lock (cache.SERIES_LOCK)
         {
             if (cache.CachedShowData.ContainsKey(id))
             {
@@ -67,7 +63,6 @@ public static class CacheHelper
 
     public static void AddPlaceholderSeries<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache, iTVSource
     {
-        lock (cache.SERIES_LOCK)
         {
             cache.CachedShowData[cache.PrimaryKey(ss)] =
                 new CachedSeriesInfo(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale, cache.SourceProvider())
@@ -77,7 +72,6 @@ public static class CacheHelper
 
     public static void AddPlaceholderMovie<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache, iMovieSource
     {
-        lock (cache.MOVIE_LOCK)
         {
             cache.CachedMovieData[cache.PrimaryKey(ss)] =
                 new CachedMovieInfo(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale, cache.SourceProvider())
@@ -88,7 +82,6 @@ public static class CacheHelper
     public static void AddMovieToCache<T>(this T cache, CachedMovieInfo si) where T : MediaCache, iMovieSource
     {
         int id = cache.PrimaryKey(si);
-        lock (cache.MOVIE_LOCK)
         {
             if (cache.CachedMovieData.TryGetValue(id, out CachedMovieInfo? oldMovieInfo))
             {
@@ -104,7 +97,6 @@ public static class CacheHelper
     public static void AddSeriesToCache<T>(this T cache, CachedSeriesInfo si) where T : MediaCache, iTVSource
     {
         int id = cache.PrimaryKey(si);
-        lock (cache.SERIES_LOCK)
         {
             if (cache.CachedShowData.TryGetValue(id, out CachedSeriesInfo? oldSeriesInfo))
             {
@@ -119,7 +111,6 @@ public static class CacheHelper
 
     public static void ForgetMovie<T>(this T cache, int id) where T : MediaCache, iMovieSource
     {
-        lock (cache.MOVIE_LOCK)
         {
             if (cache.CachedMovieData.ContainsKey(id))
             {
@@ -131,7 +122,6 @@ public static class CacheHelper
     public static void ForgetMovie<T>(this T cache, ISeriesSpecifier si) where T : MediaCache, iMovieSource
     {
         cache.ForgetMovie(cache.PrimaryKey(si));
-        lock (cache.MOVIE_LOCK)
         {
             if (cache.PrimaryKey(si) > 0)
             {
@@ -173,14 +163,12 @@ public static class CacheHelper
 
     public static void MarkAllDirty(this MediaCache cache)
     {
-        lock (cache.MOVIE_LOCK)
         {
             foreach (CachedMovieInfo m in cache.CachedMovieData.Values)
             {
                 m.Dirty = true;
             }
         }
-        lock (cache.SERIES_LOCK)
         {
             foreach (CachedSeriesInfo m in cache.CachedShowData.Values)
             {
@@ -191,7 +179,6 @@ public static class CacheHelper
 
     public static void MarkPlaceholdersDirty(this MediaCache cache)
     {
-        lock (cache.MOVIE_LOCK)
         {
             // anything with a srv_lastupdated of 0 should be marked as dirty
             // typically, this'll be placeholder cachedSeries
@@ -200,7 +187,6 @@ public static class CacheHelper
                 ser.Dirty = true;
             }
         }
-        lock (cache.SERIES_LOCK)
         {
             // anything with a srv_lastupdated of 0 should be marked as dirty
             // typically, this'll be placeholder cachedSeries
@@ -252,7 +238,6 @@ public static class CacheHelper
             return matchingSeries;
         }
 
-        lock (cache.MOVIE_LOCK)
         {
             foreach (KeyValuePair<int, CachedMovieInfo> kvp in cache.CachedMovieData)
             {
