@@ -42,13 +42,15 @@ internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity
 
         var options = new ParallelOptions
         {
-            MaxDegreeOfParallelism = 4 // Only 4 tasks will run concurrently at any given time
+            MaxDegreeOfParallelism = 4, // Only 4 tasks will run concurrently at any given time
+            CancellationToken = Settings.Token
         };
 
         ThreadSafeCounter c = new();
 
         UpdateStatus(0, Settings.Shows.Count, "Checking shows");
         IEnumerable<(ShowConfiguration si, DirFilesCache dfc, ThreadSafeCounter c)> shows = Settings.Shows.OrderBy(item => item.ShowName).Select(si => (si, dfc, c));
+
         await Parallel.ForEachAsync(shows, options, async (show, cancellationToken) =>
         {
             await DoCheckForShowAsync(show.dfc, show.c, show.si, Settings.Token);
@@ -57,6 +59,7 @@ internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity
         c.Reset();
         UpdateStatus(0, Settings.Movies.Count, "Checking movies");
         IEnumerable<(MovieConfiguration si, DirFilesCache dfc, ThreadSafeCounter c)> movies = Settings.Movies.OrderBy(item => item.ShowName).Select(si => (si, dfc, c));
+
         await Parallel.ForEachAsync(movies, options, async (movie, cancellationToken) =>
         {
             await DoCheckMovieAsync(movie.dfc, movie.c, movie.si, Settings.Token);

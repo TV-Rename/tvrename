@@ -146,10 +146,8 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
         mDownloaderThread = null;
     }
 
-    private async Task GetThreadAsync(ISeriesSpecifier series, SemaphoreSlim semaphore, IProgress<DownloadProgressReport>? p, CancellationToken cts)
+    private async Task GetThreadAsync(ISeriesSpecifier series, IProgress<DownloadProgressReport>? p, CancellationToken cts)
     {
-        await semaphore.WaitAsync(cts).ConfigureAwait(false); // blocks until there is an available slot
-
         try
         {
             if (cts.IsCancellationRequested) return;
@@ -191,11 +189,6 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
         catch (Exception e)
         {
             Logger.Fatal(e, $"Unhandled Exception in GetThread for {series}");
-        }
-        finally
-        {
-            Threadslogger.Trace("  Finished " + series);
-            semaphore.Release();
         }
 
         //If we get to here the download failed
@@ -242,21 +235,17 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
             Logger.Info($"Identified that {CountDirtyIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv)} TVDB, {CountDirtyIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv)} TMDB and {CountDirtyIdsFrom(TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv)} TV Maze shows need to be updated");
             Logger.Info($"Identified that {CountDirtyIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie)} TVDB and {CountDirtyIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie)} TMDB movies need to be updated");
 
-            /*
             await Parallel.ForEachAsync(
                 downloadIds,
-                new ParallelOptions { MaxDegreeOfParallelism = numWorkers },
-                async (series,token) =>
+                new ParallelOptions
                 {
-                    await GetThreadAsync(series, new SemaphoreSlim(numWorkers, numWorkers), p, cts);
+                    MaxDegreeOfParallelism = numWorkers,
+                    CancellationToken = cts
+                },
+                async (series, token) =>
+                {
+                    await GetThreadAsync(series, p, cts);
                 }).ConfigureAwait(false);
-            */
-
-            using (var semaphore = new SemaphoreSlim(numWorkers, numWorkers))
-            {
-                var tasks = downloadIds.Select(code => GetThreadAsync(code, semaphore, p, cts)).ToArray();
-                await Task.WhenAll(tasks).ConfigureAwait(false);
-            }
 
             if (!cts.IsCancellationRequested)
             {

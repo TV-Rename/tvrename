@@ -3267,7 +3267,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        await mDoc.UpdateShowImagesScanAsync(sis, null, new CancellationTokenSource());
+        await mDoc.UpdateShowImagesScanAsync(sis);
 
         tabControl1.SelectTab(tbAllInOne);
         FillActionList();
@@ -3280,7 +3280,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        await mDoc.UpdateMovieImagesScanAsync(sis, null, new CancellationTokenSource());
+        await mDoc.UpdateMovieImagesScanAsync(sis);
 
         tabControl1.SelectTab(tbAllInOne);
         FillActionList();
@@ -4734,7 +4734,7 @@ public partial class UI : Form, IDialogParent
 
         var options = new ParallelOptions
         {
-            MaxDegreeOfParallelism = 8 // Only 4 tasks will run concurrently at any given time
+            MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads
         };
 
         ThreadSafeCounter c = new();

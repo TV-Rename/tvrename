@@ -44,8 +44,6 @@ public partial class TaskNotifier : Form
     {
         Text = $"{name} Progress";
     }
-
-    
 }
 
 public class TaskProgress

@@ -2330,35 +2330,48 @@ public class TVDoc : IDisposable, IAsyncDisposable
         TheActionList.Remove(selectedActions);
     }
 
-    public async Task UpdateShowImagesScanAsync(IReadOnlyCollection<ShowConfiguration> sis, TaskCompletionProgress? progress, CancellationTokenSource cts)
-        => await UpdateImagesScanAsync(sis,[], progress, cts);
-    public async Task UpdateMovieImagesScanAsync(IReadOnlyCollection<MovieConfiguration> sis, TaskCompletionProgress? progress, CancellationTokenSource cts)
-        => await UpdateImagesScanAsync([], sis,progress,cts);
+    public async Task UpdateShowImagesScanAsync(IReadOnlyCollection<ShowConfiguration> sis)
+        => await UpdateImagesScanAsync(sis,[], null, new CancellationTokenSource());
+    public async Task UpdateMovieImagesScanAsync(IReadOnlyCollection<MovieConfiguration> sis)
+        => await UpdateImagesScanAsync([], sis,null, new CancellationTokenSource());
 
     public async Task UpdateImagesScanAsync(IReadOnlyCollection<ShowConfiguration> sis,IReadOnlyCollection<MovieConfiguration> mis, TaskCompletionProgress? progress, CancellationTokenSource cancellationToken)
     {
-        //TODO - so much - do in parallel, hook up Up UI, Cancellation token etc
-
         TheActionList.Clear();
         progress?.SetMaxProgress(sis.Count + mis.Count);
         ThreadSafeCounter c= new();
-        //update images for the showitem
 
-        await Parallel.ForEachAsync(sis,
-            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
-            async (si, token) =>
-            {
-                await ForceUpdateImagesAsync(si, progress,c, cancellationToken.Token);
-            });
+        try
+        {
+            //update images for the showitem
+            await Parallel.ForEachAsync(sis,
+                new ParallelOptions {
+                    MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads,
+                    CancellationToken = cancellationToken.Token
+                },
+                async (si, token) =>
+                {
+                    await ForceUpdateImagesAsync(si, progress, c, cancellationToken.Token);
+                });
 
-        await Parallel.ForEachAsync(mis,
-            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
-            async (si, token) =>
-            {
-                await ForceUpdateImagesAsync(si, progress,c, cancellationToken.Token);
-            });
+            await Parallel.ForEachAsync(mis,
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads,
+                    CancellationToken = cancellationToken.Token
+                },
+                async (si, token) =>
+                {
+                    await ForceUpdateImagesAsync(si, progress, c, cancellationToken.Token);
+                });
 
-        RemoveIgnored();
+            RemoveIgnored();
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.Warn($"Update Images Scan Cancelled");
+            TheActionList.Clear();
+        }
     }
 
     internal void AddAlias(MediaConfiguration configuration, string hint)

@@ -22,11 +22,8 @@ namespace TVRename;
 /// -or-
 /// There was some other error. The HResult property may provide more information.</exception>
 /// <exception cref="DirectoryNotFoundException">Windows only: <paramref name="name" /> specified an unknown namespace. See Object Names for more information.</exception>
-/// <exception cref="UnauthorizedAccessException">The named semaphore exists and has access control security, and the user does not have <see cref="System.Security.AccessControl.SemaphoreRights.FullControl" />.</exception>
-/// <exception cref="WaitHandleCannotBeOpenedException">A synchronization object with the provided <paramref name="name" /> cannot be created. A synchronization object of a different type might have the same name.</exception>
 public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> actions, TVRenameStats mStats, CancellationTokenSource cts)
 {
-    //SemaphoreSlim semaphore = new(parallelLimit, parallelLimit);
     public override string ToString() => $"'{name}' worker, with {parallelLimit} threads.";
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private static readonly NLog.Logger ThreadsLogger = NLog.LogManager.GetLogger("threads");
@@ -88,21 +85,9 @@ public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> act
             //OK
         }
     }
-    /*
-    public async Task WaitForCompletionAsync()
-    {
-        if (currentTasks is not null)
-        {
-            await Task.WhenAll(currentTasks).ConfigureAwait(false);
-        }
-        //semaphore.Dispose();
-    }
-    */
+
     private async Task ProcessSingleActionAsync(Action action, CancellationTokenSource cts)
     {
-        // don't start until we're allowed to
-        //await semaphore.WaitAsync(cts.Token).ConfigureAwait(false); // blocks until there is an available slot
-
         // Pause the thread until _pauseEvent is signaled, or throw if cancelled
         _pauseEvent.Wait(cts.Token);
 
@@ -137,11 +122,6 @@ public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> act
         {
             Logger.Fatal(e, "Unhandled Exception in Process Single Action");
             action.Outcome = new ActionOutcome(e);
-        }
-        finally
-        {
-            //int nfr = semaphore.Release(); // release our hold on the semaphore, so that worker can grab it
-            //ThreadsLogger.Trace("ActionProcessor[" + name + "] pool has " + nfr + " free");
         }
     }
 }

@@ -12,7 +12,7 @@ public abstract partial class Notifier : Form
         InitializeComponent();
     }
 
-    protected void Start()
+    protected async void Start()
     {
         bwDo.RunWorkerAsync();
     }
