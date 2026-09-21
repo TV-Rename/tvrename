@@ -15,7 +15,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using TMDbLib.Client;
@@ -66,13 +65,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     }
     public async Task ForgetEverythingAsync()
     {
-        {
-            Movies.Clear();
-        }
-        {
-            Series.Clear();
-        }
-
+        Movies.Clear();
+        Series.Clear();
         SaveCache();
         //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
         latestUpdateTime.Reset();
@@ -100,8 +94,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             return;
         }
 
-        var movieLoadTask =  CachePersistor.LoadMovieCache(loadFrom, this);
-        var tvLoadTask =  CachePersistor.LoadTvCache(loadFrom, this);
+        var movieLoadTask = CachePersistor.LoadMovieCache(loadFrom, this);
+        var tvLoadTask = CachePersistor.LoadTvCache(loadFrom, this);
 
         LoadOk = movieLoadTask && tvLoadTask;
     }
@@ -110,11 +104,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     public void SaveCache()
     {
-        {
-            {
-                CachePersistor.SaveCache(Series, Movies, CacheFile!, latestUpdateTime.LastSuccessfulServerUpdateTimecode());
-            }
-        }
+        CachePersistor.SaveCache(Series, Movies, CacheFile!, latestUpdateTime.LastSuccessfulServerUpdateTimecode());
     }
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
@@ -137,11 +127,9 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     private async Task<bool> EnsureSeriesUpdatedAsync(ISeriesSpecifier s)
     {
+        if (Series.TryGetValue(s.TmdbId, out CachedSeriesInfo? si) && !si.Dirty)
         {
-            if (Series.TryGetValue(s.TmdbId,out CachedSeriesInfo? si) && !si.Dirty)
-            {
-                return true;
-            }
+            return true;
         }
 
         Say($"Series {s.Name} from TMDB");
@@ -151,16 +139,12 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
             if (downloadedSi.TmdbCode != s.TmdbId && s.TmdbId == -1)
             {
-                {
-                    Series.TryRemove(-1, out _);
-                }
+                Series.TryRemove(-1, out _);
             }
 
             if (downloadedSi.TmdbCode != s.TmdbId && s.TmdbId == 0)
             {
-                {
-                    Series.TryRemove(0, out _);
-                }
+                Series.TryRemove(0, out _);
             }
 
             this.AddSeriesToCache(downloadedSi);
@@ -193,11 +177,9 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id)
     {
+        if (Movies.TryGetValue(id.TmdbId, out CachedMovieInfo? movie) && !movie.Dirty)
         {
-            if (Movies.TryGetValue(id.TmdbId, out CachedMovieInfo? movie) && !movie.Dirty)
-            {
-                return true;
-            }
+            return true;
         }
 
         Say($"Movie: {id.Name} from TMDB");
@@ -286,7 +268,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             }
 
             IEnumerable<TMDbLib.Objects.Changes.ChangesListItem> taskShows = await Client.GetChangesShowsAsync(latestUpdateTime, cts);
-            List<int> showUpdates = [.. taskShows.Select(item => item.Id).Distinct()];  
+            List<int> showUpdates = [.. taskShows.Select(item => item.Id).Distinct()];
 
             Say(
                 $"Processing {showUpdates.Count} show updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
@@ -439,7 +421,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             Name = downloadedMovie.Title ?? string.Empty,
             Runtime = downloadedMovie.Runtime?.ToString(),
             FirstAired = downloadedMovieReleaseDate,
-            Genres = downloadedMovie.Genres?.Select(genre => genre.Name ?? string.Empty).ToSafeList()??[],
+            Genres = downloadedMovie.Genres?.Select(genre => genre.Name ?? string.Empty).ToSafeList() ?? [],
             Overview = downloadedMovie.Overview,
             Network = downloadedMovie.ProductionCompanies?.Select(y => y.Name ?? string.Empty).ToPsv(),
             Status = downloadedMovie.Status,
@@ -466,7 +448,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             Country = downloadedMovie.ProductionCountries?.FirstOrDefault()?.Name,
         };
 
-        if (downloadedMovie.AlternativeTitles?.Titles !=null)
+        if (downloadedMovie.AlternativeTitles?.Titles != null)
         {
             foreach (string? s in downloadedMovie.AlternativeTitles.Titles
                          .Where(t => t.Iso_3166_1 == id.RegionToUse().Abbreviation).Select(title => title.Title))
@@ -559,7 +541,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     private static DateTime? GetReleaseDateDetail(Movie downloadedMovie, string? country)
     {
         return downloadedMovie.ReleaseDates?.Results?
-            .Where(rel => rel.Iso_3166_1?.Equals(country, StringComparison.OrdinalIgnoreCase)??false)
+            .Where(rel => rel.Iso_3166_1?.Equals(country, StringComparison.OrdinalIgnoreCase) ?? false)
             .SelectMany(rel => rel.ReleaseDates ?? [])
             .MinOrNull(d => d.ReleaseDate);
     }
@@ -583,9 +565,9 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
         try
         {
-            return await webCall.WithRetry(3,10.Seconds(),ex=>ex is RequestLimitExceededException ,errorMessage);
+            return await webCall.WithRetry(3, 10.Seconds(), ex => ex is RequestLimitExceededException, errorMessage);
         }
-        
+
         catch (JsonReaderException ioex)
         {
             LOGGER.Error($"Error {errorMessage}:", ioex);
@@ -713,7 +695,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             FirstAired = downloadedSeries.FirstAirDate,
             Genres = downloadedSeries.Genres?.Select(genre => genre.Name ?? string.Empty).ToSafeList() ?? [],
             Overview = downloadedSeries.Overview,
-            Network = downloadedSeries.Networks?.Select(n => n.Name??string.Empty)?.ToPsv() ?? string.Empty,
+            Network = downloadedSeries.Networks?.Select(n => n.Name ?? string.Empty)?.ToPsv() ?? string.Empty,
             Status = MapStatus(downloadedSeries.Status),
             ShowLanguage = downloadedSeries.OriginalLanguage,
             SiteRating = (float)downloadedSeries.VoteAverage,
@@ -746,7 +728,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         foreach (TMDbLib.Objects.TvShows.Cast? s in downloadedSeries.Credits?.Cast ?? [])
         {
-            m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name??"No Name", s.Character, s.Order));
+            m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name ?? "No Name", s.Character, s.Order));
         }
 
         foreach (TMDbLib.Objects.General.Crew? s in downloadedSeries.Credits?.Crew ?? [])
@@ -795,7 +777,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
             m.AddSeason(newSeason);
 
-            foreach (TvSeasonEpisode? downloadedEpisode in downloadedSeason.Episodes??[])
+            foreach (TvSeasonEpisode? downloadedEpisode in downloadedSeason.Episodes ?? [])
             {
                 if (downloadedEpisode is null)
                 {
@@ -805,10 +787,10 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
                 Episode newEpisode = new(downloadedSeries.Id, m)
                 {
-                    Name = downloadedEpisode.Name??"No Episode Name Provided",
+                    Name = downloadedEpisode.Name ?? "No Episode Name Provided",
                     Overview = downloadedEpisode.Overview,
                     FirstAired = downloadedEpisode.AirDate,
-                    AiredEpNum = (int) downloadedEpisode.EpisodeNumber,
+                    AiredEpNum = (int)downloadedEpisode.EpisodeNumber,
                     AiredSeasonNumber = downloadedEpisode.SeasonNumber,
                     ProductionCode = downloadedEpisode.ProductionCode,
                     EpisodeId = downloadedEpisode.Id,
@@ -880,7 +862,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             }
         }
 
-        if ((downloadedSeries.Images?.Posters?.Count??0) != 0)
+        if ((downloadedSeries.Images?.Posters?.Count ?? 0) != 0)
         {
             foreach (ImageData? image in downloadedSeries.Images!.Posters!)
             {
@@ -1034,7 +1016,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             SearchContainer<SearchMovie>? results = await Client
                 .SearchMovieAsync(s, locale1.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation);
 
-            if (results ==null || results?.Results == null)
+            if (results == null || results?.Results == null)
             {
                 LOGGER.Warn($"TMDB returned no results for movie {s}");
                 return false;
@@ -1077,7 +1059,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         CachedSeriesInfo m = new(new Locale(), TVDoc.ProviderType.TMDB)
         {
             TmdbCode = result.Id,
-            Name = result.Name??"No Name Provided",
+            Name = result.Name ?? "No Name Provided",
             FirstAired = result.FirstAirDate,
             Overview = result.Overview,
             ShowLanguage = result.OriginalLanguage,
@@ -1265,7 +1247,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             await Parallel.ForEachAsync(
                 FullShows(),
                 new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
-                async (si,token) =>
+                async (si, token) =>
             {
                 Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
                 await check.ServerAccuracyCheckAsync(si);
@@ -1374,7 +1356,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         Task<SearchContainer<SearchTv>?> topRated = Client.GetTvShowTopRatedAsync(language: languageCode);
         Task<SearchContainer<SearchTv>?> trending = Client.GetTrendingTvAsync(TimeWindow.Week);
         Recomendations returnValue = new();
-        
+
         await topRated.ConfigureAwait(false);
         foreach (SearchTv? top in (await topRated)?.Results ?? [])
         {
@@ -1449,7 +1431,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         await topRated.ConfigureAwait(false);
         await trending.ConfigureAwait(false);
 
-        if (topRated.Result?.Results is not null) { 
+        if (topRated.Result?.Results is not null)
+        {
             foreach (SearchMovie? top in topRated.Result.Results)
             {
                 File(top);

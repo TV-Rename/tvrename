@@ -40,10 +40,8 @@ public class TvCodeFinder : CodeFinder
 
     protected override int FindMedia(MediaCache cache, bool numeric, int matchnum, string what)
     {
-        List<KeyValuePair<int, CachedSeriesInfo>> lvis;
-        {
-            lvis = [.. cache.CachedShowData.Where(kvp => Matches(kvp.Key, kvp.Value, numeric, what, matchnum))];
-        }
+        List<KeyValuePair<int, CachedSeriesInfo>> lvis = [.. cache.CachedShowData.Where(kvp => Matches(kvp.Key, kvp.Value, numeric, what, matchnum))];
+
         foreach (ListViewItem lvi in lvis.Select(kvp => NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum)))
         {
             lvMatches.Items.Add(lvi);

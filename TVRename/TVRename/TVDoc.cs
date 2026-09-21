@@ -242,12 +242,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
     // ReSharper disable once InconsistentNaming
     private void CheckForUsefulTVIds(MediaCache cache, ProviderType provider)
     {
-        List<CachedSeriesInfo> x;
-        {
-            x = [.. cache.CachedShowData.Values.Where(show => show.IdCode(provider) > 0)];
-        }
-
-        foreach (CachedSeriesInfo cachedData in x)
+        foreach (CachedSeriesInfo cachedData in cache.CachedShowData.Values.Where(show => show.IdCode(provider) > 0))
         {
             ShowConfiguration? showConfiguration = TvLibrary.GetShowItem(cachedData.IdCode(provider), provider);
             if (showConfiguration is null)
@@ -264,12 +259,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     private void CheckForUsefulMovieIds(MediaCache cache, ProviderType provider)
     {
-        IEnumerable<CachedMovieInfo> x;
-        {
-            x = [.. cache.CachedMovieData.Values.Where(show => show.IdCode(provider) > 0)];
-        }
-
-        foreach (CachedMovieInfo cachedData in x)
+        foreach (CachedMovieInfo cachedData in cache.CachedMovieData.Values.Where(show => show.IdCode(provider) > 0))
         {
             MovieConfiguration? showConfiguration = FilmLibrary.GetMovie(cachedData.IdCode(provider), provider);
             if (showConfiguration is null)

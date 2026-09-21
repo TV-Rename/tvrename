@@ -37,12 +37,10 @@ public class MovieCodeFinder : CodeFinder
 
     protected override int FindMedia(MediaCache cache, bool numeric, int matchnum, string what)
     {
-        List<KeyValuePair<int, CachedMovieInfo>> lvis;
-        {
-            lvis = [.. cache.CachedMovieData
+        List<KeyValuePair<int, CachedMovieInfo>> lvis = [.. cache.CachedMovieData
                 .Where(kvp => Matches(kvp.Key, kvp.Value, numeric, what, matchnum))
                 .OrderByDescending(m => m.Value.Popularity)];
-        }
+
         foreach (ListViewItem lvi in lvis.Select(kvp => NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum)))
         {
             lvMatches.Items.Add(lvi);
