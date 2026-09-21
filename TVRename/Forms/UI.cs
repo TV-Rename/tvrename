@@ -64,22 +64,20 @@ public partial class UI : Form, IDialogParent
 
     #endregion Delegates
 
-    private int busyDoingDownload = 0;
     private readonly TVDoc mDoc;
-    private bool actionsListBeingUpdated = false;
-    private bool calendarBeingUpdated = false;
     private Point mLastNonMaximizedLocation;
     private Size mLastNonMaximizedSize;
     private readonly AutoFolderMonitor? mAutoFolderMonitor;
     private bool treeExpandCollapseToggle = true;
-
     private ProcessedEpisode? switchToWhenOpenMyShows;
     private MovieConfiguration? switchToWhenOpenMyMovies;
-
-    private readonly ListViewColumnSorter lvwScheduleColumnSorter;
-
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-    private bool IsBusyDongBackgroundDownload => busyDoingDownload != 0;
+    
+    private int busyDoingDownload = 0;
+    private bool IsBusyDoingBackgroundDownload => busyDoingDownload != 0;
+    private bool actionsListBeingUpdated = false;
+    private bool calendarBeingUpdated = false;
+    
 
     private ScanProgress? scanProgDlg;
 
@@ -119,14 +117,6 @@ public partial class UI : Form, IDialogParent
             Logger.Info(e, "Error loading layout XML");
         }
 
-        //TODO fix this, it doesn't work with the new object list view
-        lvwScheduleColumnSorter = new ListViewColumnSorter(new DateSorterWtw(3));
-        //lvWhenToWatch.ListViewItemSorter = lvwScheduleColumnSorter;
-
-        //lvWhenToWatch.
-
-        //lvwActionColumnSorter = new ListViewActionItemSorter();
-
         if (mDoc.Args.Hide || !showUi)
         {
             WaitForCefInitialised();
@@ -140,19 +130,14 @@ public partial class UI : Form, IDialogParent
         UpdateSplashStatus(splash, "Filling Shows", 55);
         mDoc.TvLibrary.UpdateEpisodeCaches();
         FillMyShows(true);
-        UpdateSplashStatus(splash, "Filling Movies", 65);
+        UpdateSplashStatus(splash, "Filling Movies", 70);
         FillMyMovies();
         UpdateSearchButtons();
         SetScan(TVSettings.Instance.UIScanType);
         ClearInfoWindows();
-        UpdateSplashStatus(splash, "Updating WTW", 75);
+        UpdateSplashStatus(splash, "Updating WTW", 85);
         mDoc.UpdateDenormalisations();
-        UpdateSplashStatus(splash, "Updating WTW", 80);
-        // TODO SortSchedule(3);
-        UpdateSplashStatus(splash, "Write Upcoming", 85);
-        //mDoc.WriteUpcoming();
-        UpdateSplashStatus(splash, "Write Recent", 88);
-        //mDoc.WriteRecent();
+
         UpdateSplashStatus(splash, "Setting Notifications", 90);
         ShowHideNotificationIcon();
 
@@ -818,7 +803,7 @@ public partial class UI : Form, IDialogParent
     {
         Interlocked.Decrement(ref busyDoingDownload);
 
-        if (!IsBusyDongBackgroundDownload)
+        if (!IsBusyDoingBackgroundDownload)
         {
             btnScan.Enabled = true;
             tbQuickScan.Enabled = true;
@@ -952,35 +937,9 @@ public partial class UI : Form, IDialogParent
 
     private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
 
-    private static bool UseCustom(ListView view)
-    {
-        foreach (ListViewItem lvi in view.SelectedItems)
-        {
-            if (lvi.Tag is not ProcessedEpisode pe)
-            {
-                continue;
-            }
-
-            if (!pe.Show.UseCustomSearchUrl)
-            {
-                continue;
-            }
-
-            if (string.IsNullOrWhiteSpace(pe.Show.CustomSearchUrl))
-            {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
     private async void UI_LoadAsync(object sender, EventArgs e)
     {
-        await FillWhenToWatchListAsync();
-        //SortSchedule(3);
+        var x = FillWhenToWatchListAsync();
         mDoc.WriteUpcoming();
         mDoc.WriteRecent();
 
@@ -1011,6 +970,7 @@ public partial class UI : Form, IDialogParent
 
         quickTimer.Start();
 
+        await x;
         if (TVSettings.Instance.RunOnStartUp())
         {
             await RunAutoScanAsync("Startup Scan");
@@ -1102,7 +1062,7 @@ public partial class UI : Form, IDialogParent
 
     private async void flushImageCacheToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (IsBusyDongBackgroundDownload)
+        if (IsBusyDoingBackgroundDownload)
         {
             MessageBox.Show("Can't refresh until background download is complete");
             return;
@@ -1129,7 +1089,7 @@ public partial class UI : Form, IDialogParent
 
     private async void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (IsBusyDongBackgroundDownload)
+        if (IsBusyDoingBackgroundDownload)
         {
             MessageBox.Show("Can't refresh until background download is complete");
             return;
@@ -1959,7 +1919,7 @@ public partial class UI : Form, IDialogParent
 
     private async void refreshWTWTimer_Tick(object sender, EventArgs e)
     {
-        if (IsBusyDongBackgroundDownload)
+        if (IsBusyDoingBackgroundDownload)
         {
             return;
         }
@@ -2586,7 +2546,7 @@ public partial class UI : Form, IDialogParent
 
     private async void BGDownloadTimer_Tick(object sender, EventArgs e)
     {
-        if (IsBusyDongBackgroundDownload)
+        if (IsBusyDoingBackgroundDownload)
         {
             BGDownloadTimer.Interval = 60000; // come back in 60 seconds
             BGDownloadTimer.Start();
