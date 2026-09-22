@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -16,7 +17,7 @@ internal abstract class UpcomingExporter(TVDoc doc) : Exporter
 {
     private readonly TVDoc doc = doc;
 
-    private string Produce()
+    private async Task<string> ProduceAsync()
     {
         try
         {
@@ -29,7 +30,7 @@ internal abstract class UpcomingExporter(TVDoc doc) : Exporter
                 TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
 
             using System.IO.MemoryStream ms = new();
-            if (Generate(ms, lpe))
+            if (await GenerateAsync(ms, lpe))
             {
                 return Encoding.ASCII.GetString(ms.ToArray());
             }
@@ -49,9 +50,9 @@ internal abstract class UpcomingExporter(TVDoc doc) : Exporter
     /// <exception cref="System.Security.SecurityException">The caller does not have the required permission.</exception>
     /// <exception cref="System.IO.IOException"></exception>
     /// <exception cref="System.IO.PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length.</exception>
-    protected override void Do()
+    protected async override Task DoAsync()
     {
-        string contents = Produce();
+        string contents = await ProduceAsync();
 
         //Write Contents to file
         using System.IO.StreamWriter file = new(Location());
@@ -60,5 +61,5 @@ internal abstract class UpcomingExporter(TVDoc doc) : Exporter
         LOGGER.Trace($"Contents of File are: {contents}");
     }
 
-    protected abstract bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode> elist);
+    protected abstract Task<bool> GenerateAsync(System.IO.Stream str, IEnumerable<ProcessedEpisode> elist);
 }

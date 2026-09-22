@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -16,7 +17,7 @@ internal class MissingMovieCsv(ItemList theActionList) : MissingActionListExport
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="System.IO.IOException"></exception>
     /// <exception cref="System.IO.PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length.</exception>
-    protected override void Do()
+    protected override async Task DoAsync()
     {
         using System.IO.StreamWriter file = new(Location());
         file.WriteLine("Movie Name,Year,Folder,Nice Name");

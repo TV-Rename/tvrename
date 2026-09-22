@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -11,7 +12,7 @@ internal class UpcomingTXT(TVDoc i) : UpcomingExporter(i)
     protected override string Location() => TVSettings.Instance.ExportWTWTXTTo;
     protected override string Name() => "Upcoming TXT Exporter";
 
-    protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode> elist)
+    protected override async Task<bool> GenerateAsync(System.IO.Stream str, IEnumerable<ProcessedEpisode> elist)
     {
         try
         {

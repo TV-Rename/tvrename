@@ -92,7 +92,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private void ReviewDirInDownloadDirectory(string subDirPath)
+    private async Task ReviewDirInDownloadDirectory(string subDirPath)
     {
         //we are not checking for any file updates, so can return
         if (!TVSettings.Instance.RemoveDownloadDirectoriesFiles && !TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies)
@@ -123,7 +123,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
             return; // Some sort of random file - ignore
         }
 
-        List<ShowConfiguration> neededMatchingShows = [.. matchingShows.Where(si => FinderHelper.FileNeeded(di, si, dfc))];
+        List<ShowConfiguration> neededMatchingShows = [.. await matchingShows.WhereAsync(si => FinderHelper.FileNeededAsync(di, si, dfc))];
         if (neededMatchingShows.Any())
         {
             LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededMatchingShows.Select(x => x.ShowName).ToCsv()}");
@@ -209,7 +209,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, IDialogParent owner)
+    private async Task  ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, IDialogParent owner)
     {
         List<ShowConfiguration> matchingShowsAll = [.. showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<ShowConfiguration> matchingShows = FinderHelper.RemoveShortShows(matchingShowsAll);
@@ -234,7 +234,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
 
         foreach (ShowConfiguration si in matchingShows)
         {
-            (bool? x, ProcessedEpisode? matchingEpisode) = CanFileBeDeletedForShow(unattended, fi, owner, si, matchingShows);
+            (bool? x, ProcessedEpisode? matchingEpisode) = await CanFileBeDeletedForShowAsync(unattended, fi, owner, si, matchingShows);
             if (x is false)
             {
                 fileCanBeDeleted = false;
@@ -281,7 +281,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private (bool?, ProcessedEpisode?) CanFileBeDeletedForShow(bool unattended, FileInfo fi, IDialogParent owner, ShowConfiguration si,
+    private async Task<(bool?, ProcessedEpisode?)> CanFileBeDeletedForShowAsync(bool unattended, FileInfo fi, IDialogParent owner, ShowConfiguration si,
         List<ShowConfiguration> matchingShows)
     {
         FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE? re);
@@ -302,7 +302,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
             return (false, null);
         }
 
-        List<FileInfo> encumbants = dfc.FindEpOnDisk(firstMatchingEpisode, false);
+        List<FileInfo> encumbants = await dfc.FindEpOnDiskAsync(firstMatchingEpisode, false);
 
         if (encumbants.Count == 0)
         {

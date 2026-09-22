@@ -751,8 +751,7 @@ public class ShowConfiguration : MediaConfiguration
         return fld;
     }
 
-
-    protected async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)
+    protected override async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)
     {
         Dictionary<int, SafeList<string>> fld = [];
 

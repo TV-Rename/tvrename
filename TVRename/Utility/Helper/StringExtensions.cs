@@ -351,6 +351,7 @@ public static class StringExtensions
 
     public static string ToPsv(this IEnumerable<string?>? values) => values is null ? string.Empty : string.Join("|", values);
 
+    public static IEnumerable<string> FromScsv(this string? aggregate) => aggregate.FromSepValues(';');
     public static IEnumerable<string> FromPsv(this string? aggregate) => aggregate.FromSepValues('|');
     public static IEnumerable<string> FromCsv(this string? aggregate) => aggregate.FromSepValues(',');
     private static IEnumerable<string> FromSepValues(this string? aggregate, char delimiter)

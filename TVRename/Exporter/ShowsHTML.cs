@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -25,7 +26,7 @@ internal class ShowsHtml(List<ShowConfiguration> shows) : ShowsExporter(shows)
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="System.IO.IOException"></exception>
     /// <exception cref="System.IO.PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length.</exception>
-    protected override void Do()
+    protected override async Task DoAsync()
     {
         using System.IO.StreamWriter file = new(Location());
         file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));

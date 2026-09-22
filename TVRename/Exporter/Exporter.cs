@@ -9,6 +9,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using TVRename.Utility.Helper;
 
 namespace TVRename;
@@ -17,7 +18,7 @@ internal abstract class Exporter
 {
     protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
-    private void Run()
+    private async Task RunAsync()
     {
         if (!Active())
         {
@@ -47,7 +48,7 @@ internal abstract class Exporter
 
             //Create the directory if needed
             Directory.CreateDirectory(dir);
-            Do();
+            await DoAsync();
             LOGGER.Info($"Output File to: {Location()}");
         }
         catch (NotSupportedException e)
@@ -83,15 +84,15 @@ internal abstract class Exporter
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="System.IO.IOException"></exception>
     /// <exception cref="System.IO.PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length.</exception>
-    protected abstract void Do();
+    protected abstract Task DoAsync();
 
-    public void RunAsThread()
+    public async Task RunAsThread()
     {
         if (Active())
         {
             try
             {
-                TaskHelper.Run(Run, $"{Name()} Thread");
+                await RunAsync();
             }
             catch (ThreadStateException ex)
             {

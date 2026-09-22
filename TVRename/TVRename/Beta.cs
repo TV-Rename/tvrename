@@ -10,6 +10,7 @@ using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -17,7 +18,7 @@ internal static class Beta
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-    internal static void LogShowEpisodeSizes(TVDoc doc)
+    internal static async Task LogShowEpisodeSizesAsync(TVDoc doc)
     {
         doc.PreventAutoScan("Show File Sizes");
         StringBuilder output = new();
@@ -37,7 +38,7 @@ internal static class Beta
             {
                 foreach (ProcessedEpisode pep in episodes)
                 {
-                    List<FileInfo> files = dfc.FindEpOnDisk(pep);
+                    List<FileInfo> files = await dfc.FindEpOnDiskAsync(pep);
                     foreach (FileInfo file in files)
                     {
                         int width = file.GetFrameWidth();

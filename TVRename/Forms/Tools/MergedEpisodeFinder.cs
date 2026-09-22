@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TVRename.Forms;
@@ -124,7 +125,7 @@ public partial class MergedEpisodeFinder : Form
 
         rightClickMenu.Items.Clear();
 
-        rightClickMenu.Add("Episode Guide", (_, _) => GotoEpGuide(si, mlastSelected));
+        rightClickMenu.Add("Episode Guide", async (_, _) => await GotoEpGuideAsync(si, mlastSelected));
         rightClickMenu.Add("Force Refresh", async (_, _) => await mainUi.ForceRefreshAsync(si, false));
         rightClickMenu.Add("Edit TV Show", async (_, _) => await mainUi.EditShowAsync(si));
 
@@ -147,17 +148,17 @@ public partial class MergedEpisodeFinder : Form
         dupEps.Remove(selected);
     }
 
-    private void GotoEpGuide(ShowConfiguration? si, PossibleMergedEpisode? mLastSelected)
+    private async Task GotoEpGuideAsync(ShowConfiguration? si, PossibleMergedEpisode? mLastSelected)
     {
         if (mLastSelected != null)
         {
-            mainUi.GotoEpguideFor(mLastSelected.Episode, true);
+            await mainUi.GotoEpguideForAsync(mLastSelected.Episode, true);
         }
         else
         {
             if (si != null)
             {
-                mainUi.GotoEpguideFor(si, true);
+                await mainUi.GotoEpguideForAsync(si, true);
             }
         }
 

@@ -8,6 +8,7 @@
 
 using System;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace TVRename;
@@ -20,7 +21,7 @@ internal class MissingXML(ItemList theActionList) : MissingActionListExporter(th
 
     protected override string Location() => TVSettings.Instance.ExportMissingXMLTo;
 
-    protected override void Do()
+    protected override async Task DoAsync()
     {
         XmlWriterSettings settings = new()
         {

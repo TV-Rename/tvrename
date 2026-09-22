@@ -59,7 +59,7 @@ public partial class OrphanFiles : Form
 
         rightClickMenu.Add("View on Source Provider...", (_, _) => TvSourceFor(iss.Show));
         rightClickMenu.Add("Open Folder", (_, _) => iss.File.FullName.OpenFolderSelectFile());
-        rightClickMenu.Add("Episode Guide", (_, _) => MainWindow.GotoEpguideFor(iss.Show, true));
+        rightClickMenu.Add("Episode Guide", async (_, _) => await MainWindow.GotoEpguideForAsync(iss.Show, true));
 
         Point pt = ((ListView)sender).PointToScreen(new Point(e.X, e.Y));
         rightClickMenu.Show(pt);

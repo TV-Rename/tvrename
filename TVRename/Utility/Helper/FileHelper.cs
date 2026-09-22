@@ -246,7 +246,7 @@ public static class FileHelper
     public static bool IsImageFile(this FileInfo file) => file.IsFileOfType(".jpg;.jpeg;.gif;.tbn");
     private static bool IsFileOfType(this FileInfo file, string extensions)
     {
-        return extensions.Split(';')
+        return extensions.FromScsv()
             .Where(s => !string.IsNullOrWhiteSpace(s))
             .Any(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase));
     }

@@ -1,10 +1,11 @@
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace TVRename;
 
 internal abstract class ActionListXml(ItemList theActionList) : ActionListExporter(theActionList)
 {
-    protected override void Do()
+    protected override async Task DoAsync()
     {
         XmlWriterSettings settings = new()
         {

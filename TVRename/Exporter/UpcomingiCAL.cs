@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -23,7 +24,7 @@ internal class UpcomingiCAL(TVDoc i) : UpcomingExporter(i)
 
     protected override string Location() => TVSettings.Instance.ExportWTWICALTo;
     protected override string Name() => "Upcoming iCal Exporter";
-    protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? episodes)
+    protected override async Task<bool> GenerateAsync(System.IO.Stream str, IEnumerable<ProcessedEpisode>? episodes)
     {
         if (episodes is null)
         {

@@ -186,11 +186,11 @@ internal static class FinderHelper
         return FindSeasEp(theFile, out seasF, out epF, out maxEp, sI, out TVSettings.FilenameProcessorRE? _);
     }
 
-    public static bool FileNeeded(FileInfo fi, ShowConfiguration si, DirFilesCache dfc)
+    public async static Task<bool> FileNeededAsync(FileInfo fi, ShowConfiguration si, DirFilesCache dfc)
     {
         if (FindSeasEp(fi, out int seasF, out int epF, out _, si, out _))
         {
-            return EpisodeNeeded(si, dfc, seasF, epF, fi);
+            return await EpisodeNeededAsync(si, dfc, seasF, epF, fi);
         }
 
         //We may need the file
@@ -222,7 +222,7 @@ internal static class FinderHelper
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="di"/> is <see langword="null"/></exception>
-    public static bool FileNeeded(DirectoryInfo? di, ShowConfiguration? si, DirFilesCache dfc)
+    public async static Task<bool> FileNeededAsync(DirectoryInfo? di, ShowConfiguration? si, DirFilesCache dfc)
     {
         ArgumentNullException.ThrowIfNull(di);
 
@@ -230,7 +230,7 @@ internal static class FinderHelper
 
         if (FindSeasEp(di, out int seasF, out int epF, si, out _))
         {
-            return EpisodeNeeded(si, dfc, seasF, epF, di);
+            return await EpisodeNeededAsync(si, dfc, seasF, epF, di);
         }
 
         //We may need the file
@@ -266,16 +266,10 @@ internal static class FinderHelper
             .Where(fiTemp => si.NameMatch(fiTemp, false));
     }
 
-    public static List<FileInfo> FindEpOnDisk(this DirFilesCache? dfc, ProcessedEpisode pe,
+    public async static Task<List<FileInfo>> FindEpOnDiskAsync(this DirFilesCache? dfc, ProcessedEpisode pe,
         bool checkDirectoryExist = true)
     {
-        return FindEpOnDisk(dfc, pe.Show, pe, checkDirectoryExist);
-    }
-
-    public static async Task<List<FileInfo>> FindEpOnDiskAsync(this DirFilesCache? dfc, ProcessedEpisode pe,
-        bool checkDirectoryExist = true)
-    {
-        return await FindEpOnDiskAsync(dfc, pe.Show, pe, true);
+        return await FindEpOnDiskAsync(dfc, pe.Show, pe, checkDirectoryExist);
     }
 
     private static async Task<List<FileInfo>> FindEpOnDiskAsync(DirFilesCache? dfc, ShowConfiguration si, ProcessedEpisode epi,
@@ -320,7 +314,7 @@ internal static class FinderHelper
         return ret;
     }
 
-    private static List<FileInfo> FindEpOnDisk(DirFilesCache? dfc, ShowConfiguration si, ProcessedEpisode epi,
+    private async static Task<List<FileInfo>> FindEpOnDisk(DirFilesCache? dfc, ShowConfiguration si, ProcessedEpisode epi,
         bool checkDirectoryExist = true)
     {
         DirFilesCache cache = dfc ?? new DirFilesCache();
@@ -332,7 +326,7 @@ internal static class FinderHelper
 
         int snum = seasWanted;
 
-        Dictionary<int, SafeList<string>> dirs = si.AllFolderLocationsEpCheck(checkDirectoryExist);
+        Dictionary<int, SafeList<string>> dirs = await si.AllFolderLocationsEpCheckAsync(checkDirectoryExist);
 
         if (!dirs.TryGetValue(snum, out SafeList<string>? folders))
         {
@@ -364,7 +358,7 @@ internal static class FinderHelper
 
     private static bool IsMovieFile(FileInfo f) => f.IsMovieFile();
 
-    private static bool EpisodeNeeded(ShowConfiguration si, DirFilesCache dfc, int seasF, int epF,
+    private async static Task<bool> EpisodeNeededAsync(ShowConfiguration si, DirFilesCache dfc, int seasF, int epF,
         FileSystemInfo fi)
     {
         ArgumentNullException.ThrowIfNull(si);
@@ -382,7 +376,7 @@ internal static class FinderHelper
 
             ProcessedEpisode pep = si.GetEpisode(seasF, epF);
 
-            foreach (FileInfo testFileInfo in FindEpOnDisk(dfc, si, pep))
+            foreach (FileInfo testFileInfo in await FindEpOnDiskAsync(dfc, si, pep))
             {
                 //We will check that the file that is found is not the one we are testing
                 if (fi.FullName == testFileInfo.FullName)

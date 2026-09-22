@@ -31,7 +31,7 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
 
             foreach (IGrouping<string, TorrentEntry> torrentKey in keys)
             {
-                if (torrentKey.All(entry => CanRemove(entry, dfc)))
+                if (await torrentKey.AllAsync(entry => CanRemoveAsync(entry, dfc)))
                 {
                     if (lastFoundEntry != null && lastFoundEpisode != null)
                     {
@@ -50,7 +50,7 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
         }
     }
 
-    private bool CanRemove(TorrentEntry download, DirFilesCache dfc)
+    private async Task<bool> CanRemoveAsync(TorrentEntry download, DirFilesCache dfc)
     {
         if (download.PercentDone < 100)
         {
@@ -85,7 +85,7 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
             return false;
         }
 
-        if (matchesSomeShows && !pes!.All(episode => IsFound(dfc, episode)))
+        if (matchesSomeShows && (pes is not null) && !(await pes.AllAsync(episode => IsFoundAsync(dfc, episode))))
         {
             //Some Episodes have not been copied yet - wait until they have
             return false;
@@ -117,9 +117,9 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
         return [bestShow];
     }
 
-    private static bool IsFound(DirFilesCache dfc, ProcessedEpisode episode)
+    private static async Task<bool> IsFoundAsync(DirFilesCache dfc, ProcessedEpisode episode)
     {
-        List<FileInfo> fl = dfc.FindEpOnDisk(episode);
+        List<FileInfo> fl = await dfc.FindEpOnDiskAsync(episode);
         return fl.Any();
     }
 

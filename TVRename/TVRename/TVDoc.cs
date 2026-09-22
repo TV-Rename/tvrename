@@ -1310,16 +1310,16 @@ public class TVDoc : IDisposable, IAsyncDisposable
     {
         int dd = TVSettings.Instance.WTWRecentDays;
         DirFilesCache dfc = new();
-        return GetMissingEps(dfc, await TvLibrary.GetRecentAndFutureEpsAsync(dd));
+        return await GetMissingEpsAsync(dfc, await TvLibrary.GetRecentAndFutureEpsAsync(dd));
     }
 
-    private static List<ProcessedEpisode> GetMissingEps(DirFilesCache dfc, List<ProcessedEpisode> lpe)
+    private async static Task<List<ProcessedEpisode>> GetMissingEpsAsync(DirFilesCache dfc, List<ProcessedEpisode> lpe)
     {
         List<ProcessedEpisode> missing = [];
 
         foreach (ProcessedEpisode pe in lpe)
         {
-            List<FileInfo> fl = dfc.FindEpOnDisk(pe);
+            List<FileInfo> fl = await dfc.FindEpOnDiskAsync(pe);
             bool foundOnDisk = fl.Any(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase));
 
             if (!foundOnDisk && pe.HasAired() && pe.Show.DoMissingCheck)

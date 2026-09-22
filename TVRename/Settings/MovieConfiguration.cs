@@ -2,6 +2,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -328,5 +329,35 @@ public class MovieConfiguration : MediaConfiguration
             .SelectMany(dir => dir.GetFiles())
             .Where(f => f.IsMovieFile())
             .Distinct()];
+    }
+
+    protected async override Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)
+    {
+        Dictionary<int, SafeList<string>> fld = new()
+        {
+            [0] = []
+        };
+
+        if (manualToo && UseManualLocations)
+        {
+            foreach (string kvp in ManualLocations.ToList())
+            {
+                fld[0].Add(kvp.TrimSlash());
+            }
+        }
+
+        if (UseAutomaticFolders && !string.IsNullOrEmpty(AutomaticFolderRoot))
+        {
+            string newName = AutoFolderNameForMovie();
+
+            if (!checkExist || await FileHelper.DirectoryExistsAsync(newName))
+            {
+                if (!fld[0].Contains(newName))
+                {
+                    fld[0].Add(newName.TrimSlash());
+                }
+            }
+        }
+        return fld;
     }
 }

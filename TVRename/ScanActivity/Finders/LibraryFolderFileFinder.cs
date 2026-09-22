@@ -39,7 +39,7 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
                     LOGGER.Info($"Not looking for {me.Filename} in the library as the show/episode is null");
                     continue;
                 }
-                FindEpisode(sim, dfc, newList, toRemove);
+                await FindEpisodeAsync(sim, dfc, newList, toRemove);
             }
             else if (me is MovieItemMissing mim)
             {
@@ -99,7 +99,7 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
         newList.Add(new ActionMoveRenameDirectory(sourceFolder, targetFolder, mim.MovieConfig));
     }
 
-    private void FindEpisode(ShowItemMissing me, DirFilesCache dfc, ItemList newList, ItemList toRemove)
+    private async Task FindEpisodeAsync(ShowItemMissing me, DirFilesCache dfc, ItemList newList, ItemList toRemove)
     {
         Dictionary<FileInfo, ItemList> thisRound = [];
         if (me.Episode == null)
@@ -112,7 +112,8 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
 
         List<FileInfo> matchedFiles = GetMatchingFilesFromFolder(baseFolder, dfc, me, thisRound);
 
-        foreach (string folderName in me.Episode.Show.AllFolderLocationsEpCheck(false)
+        var folders = await me.Episode.Show.AllFolderLocationsEpCheck(false);
+        foreach (string folderName in folders
                      .Where(folders => folders.Key == me.Episode.AppropriateProcessedSeason.SeasonNumber)
                      .SelectMany(seriesFolders => seriesFolders.Value
                          .Where(f => !string.IsNullOrWhiteSpace(f)) //No point looking here

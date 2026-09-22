@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -58,7 +59,7 @@ internal static class MergedEpisodeFinderController
         return returnValue;
     }
 
-    private static void SearchForDuplicates(ProcessedEpisode pep, StringBuilder output, ShowConfiguration si, int seasonId, IEnumerable<ProcessedEpisode> seasonEpisodes, DirFilesCache dfc, List<PossibleMergedEpisode> returnValue)
+    private static async Task SearchForDuplicates(ProcessedEpisode pep, StringBuilder output, ShowConfiguration si, int seasonId, IEnumerable<ProcessedEpisode> seasonEpisodes, DirFilesCache dfc, List<PossibleMergedEpisode> returnValue)
     {
         if (pep.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
         {
@@ -86,7 +87,7 @@ internal static class MergedEpisodeFinderController
             bool largerFileSize = false;
             if (sameName)
             {
-                oneFound = IsOneFound(output, dfc, pep, comparePep, ref largerFileSize);
+                (oneFound,largerFileSize) = await IsOneFoundAsync(output, dfc, pep, comparePep);
             }
 
             returnValue.Add(new PossibleMergedEpisode(pep, comparePep, seasonId, true, sameName, oneFound, largerFileSize));
@@ -99,13 +100,14 @@ internal static class MergedEpisodeFinderController
                pep.FirstAired == comparePep.FirstAired && pep.EpisodeId < comparePep.EpisodeId;
     }
 
-    private static bool IsOneFound(StringBuilder output, DirFilesCache dfc, ProcessedEpisode pep, ProcessedEpisode comparePep, ref bool largerFileSize)
+    private async static Task<(bool,bool)> IsOneFoundAsync(StringBuilder output, DirFilesCache dfc, ProcessedEpisode pep, ProcessedEpisode comparePep)
     {
+        bool largerFileSize = false;
         output.AppendLine("####### POSSIBLE MERGED FILE DUE TO NAME##########");
 
         //Do the missing Test (ie is one missing and not the other)
-        bool pepFound = dfc.FindEpOnDisk(pep).Any();
-        bool comparePepFound = dfc.FindEpOnDisk(comparePep).Any();
+        bool pepFound = (await dfc.FindEpOnDiskAsync(pep)).Any();
+        bool comparePepFound = (await dfc.FindEpOnDiskAsync(comparePep)).Any();
         bool oneFound = pepFound ^ comparePepFound;
         if (oneFound)
         {
@@ -115,7 +117,7 @@ internal static class MergedEpisodeFinderController
             ProcessedEpisode possibleDupEpisode = pepFound ? pep : comparePep;
             //Test the file sizes in the season
             //More than 40% longer
-            FileInfo possibleDupFile = dfc.FindEpOnDisk(possibleDupEpisode)[0];
+            FileInfo possibleDupFile = (await dfc.FindEpOnDiskAsync(possibleDupEpisode))[0];
             int dupMovieLength = possibleDupFile.GetFilmLength();
             List<int> otherMovieLengths = [];
             foreach (FileInfo file in possibleDupFile.Directory.EnumerateFiles())
@@ -149,6 +151,6 @@ internal static class MergedEpisodeFinderController
             }
         }
 
-        return oneFound;
+        return (oneFound,largerFileSize);
     }
 }

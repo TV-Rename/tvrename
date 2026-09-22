@@ -57,16 +57,19 @@ public partial class ShowSummary : Form, IDialogParent
         }
     }
 
-    private void GenerateData(BackgroundWorker bw)
+    private async Task GenerateData(BackgroundWorker bw)
     {
         int total = mDoc.TvLibrary.Shows.Count();
         ThreadSafeCounter currentRecord = new();
         showList.Clear();
 
-        Parallel.ForEach(mDoc.TvLibrary.GetSortedShows(), new ParallelOptions { MaxDegreeOfParallelism = 12 }, si =>
+        await Parallel.ForEachAsync(
+            mDoc.TvLibrary.GetSortedShows(),
+            new ParallelOptions { MaxDegreeOfParallelism = 12 },
+            async (si,token) =>
         {
             bw.ReportProgress(100 * currentRecord.Increment() / total, si.ShowName);
-            showList.Add(AddShowDetails(si));
+            showList.Add(await AddShowDetailsAsync(si));
         }
         );
 
@@ -234,7 +237,7 @@ public partial class ShowSummary : Form, IDialogParent
         return shows.Select(x => x.MaxSeason).DefaultIfEmpty(0).Max();
     }
 
-    private static ShowSummaryData AddShowDetails(ShowConfiguration si)
+    private async static Task<ShowSummaryData> AddShowDetailsAsync(ShowConfiguration si)
     {
         ShowSummaryData showSummary = new(showName: si.ShowName, showConfiguration: si);
 
@@ -242,7 +245,7 @@ public partial class ShowSummary : Form, IDialogParent
         {
             foreach (int snum in si.AppropriateSeasons().Keys)
             {
-                ShowSummaryData.ShowSummarySeasonData? seasonData = GetSeasonDetails(si, snum);
+                ShowSummaryData.ShowSummarySeasonData? seasonData = await GetSeasonDetailsAsync(si, snum);
                 if (seasonData != null)
                 {
                     showSummary.AddSeason(seasonData);
@@ -252,7 +255,7 @@ public partial class ShowSummary : Form, IDialogParent
         return showSummary;
     }
 
-    private static ShowSummaryData.ShowSummarySeasonData? GetSeasonDetails(ShowConfiguration si, int snum)
+    private async static Task<ShowSummaryData.ShowSummarySeasonData?> GetSeasonDetailsAsync(ShowConfiguration si, int snum)
     {
         int epCount = 0;
         int epGotCount = 0;
@@ -271,7 +274,7 @@ public partial class ShowSummary : Form, IDialogParent
                     epAiredCount++;
                 }
 
-                List<FileInfo> fl = dfc.FindEpOnDisk(ei, false);
+                List<FileInfo> fl = await dfc.FindEpOnDiskAsync(ei, false);
                 if (fl.Count != 0)
                 {
                     epGotCount++;
@@ -330,7 +333,7 @@ public partial class ShowSummary : Form, IDialogParent
             mDoc = doc;
         }
 
-        public override void OnMouseDown(CellContext sender, MouseEventArgs e)
+        public async override void OnMouseDown(CellContext sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Right)
             {
@@ -348,7 +351,7 @@ public partial class ShowSummary : Form, IDialogParent
                         processedSeason.Show.IgnoreSeasons.Remove(processedSeason.SeasonNumber);
                         await mDoc.TvAddedOrEditedAsync(false, false, false, null, processedSeason.Show);
                         gridSummary.PopulateGrid();
-                        gridSummary.MainWindow.FillMyShows();
+                        await gridSummary.MainWindow.FillMyShowsAsync();
                     });
                 }
                 else
@@ -358,7 +361,7 @@ public partial class ShowSummary : Form, IDialogParent
                         processedSeason.Show.IgnoreSeasons.Add(processedSeason.SeasonNumber);
                         await mDoc.TvAddedOrEditedAsync(false, false, false, null, processedSeason.Show);
                         gridSummary.PopulateGrid();
-                        gridSummary.MainWindow.FillMyShows();
+                        await gridSummary.MainWindow.FillMyShowsAsync();
                     });
                 }
             }
@@ -370,7 +373,7 @@ public partial class ShowSummary : Form, IDialogParent
                     show.DoMissingCheck = false;
                     await mDoc.TvAddedOrEditedAsync(false, false, false, null, show);
                     gridSummary.PopulateGrid();
-                    gridSummary.MainWindow.FillMyShows();
+                    await gridSummary.MainWindow.FillMyShowsAsync();
                 });
             }
             else
@@ -380,7 +383,7 @@ public partial class ShowSummary : Form, IDialogParent
                     show.DoMissingCheck = true;
                     await mDoc.TvAddedOrEditedAsync(false, false, false, null, show);
                     gridSummary.PopulateGrid();
-                    gridSummary.MainWindow.FillMyShows();
+                    await gridSummary.MainWindow.FillMyShowsAsync();
                 });
             }
 
@@ -421,7 +424,7 @@ public partial class ShowSummary : Form, IDialogParent
 
             if (processedSeason != null)
             {
-                GenerateRightClickWatchMenu(processedSeason);
+                await GenerateRightClickWatchMenuAsync(processedSeason);
             }
 
             Point pt = new(e.X, e.Y);
@@ -483,14 +486,14 @@ public partial class ShowSummary : Form, IDialogParent
             }
         }
 
-        private void GenerateRightClickWatchMenu(ProcessedSeason seas)
+        private async Task GenerateRightClickWatchMenuAsync(ProcessedSeason seas)
         {
             // for each episode in season, find it on disk
             bool first = true;
             DirFilesCache dfc = new();
             foreach (ProcessedEpisode epds in show.EpisodesForSeason(seas.SeasonNumber))
             {
-                List<FileInfo> fl = dfc.FindEpOnDisk(epds, false);
+                List<FileInfo> fl = await dfc.FindEpOnDiskAsync(epds, false);
                 if (fl.Count != 0)
                 {
                     if (first)

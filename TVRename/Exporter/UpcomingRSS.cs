@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace TVRename;
@@ -20,7 +21,7 @@ internal class UpcomingRSS(TVDoc i) : UpcomingExporter(i)
     protected override string Location() => TVSettings.Instance.ExportWTWRSSTo;
     protected override string Name() => "Upcoming RSS Exporter";
 
-    protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? elist)
+    protected override async Task<bool> GenerateAsync(System.IO.Stream str, IEnumerable<ProcessedEpisode>? elist)
     {
         if (elist is null)
         {

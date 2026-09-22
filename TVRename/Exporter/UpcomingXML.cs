@@ -10,6 +10,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace TVRename;
@@ -21,7 +22,7 @@ internal class UpcomingXML(TVDoc i) : UpcomingExporter(i)
     protected override string Name() => "Upcoming XML Exporter";
     protected override string Location() => TVSettings.Instance.ExportWTWXMLTo;
 
-    protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode> elist)
+    protected override async Task<bool> GenerateAsync(System.IO.Stream str, IEnumerable<ProcessedEpisode> elist)
     {
         DirFilesCache dfc = new();
         XmlWriterSettings settings = new()
@@ -50,7 +51,7 @@ internal class UpcomingXML(TVDoc i) : UpcomingExporter(i)
             writer.WriteStartElement("available");
             if (ei.HasAired())
             {
-                List<FileInfo> fl = dfc.FindEpOnDisk(ei);
+                List<FileInfo> fl = await dfc.FindEpOnDiskAsync(ei);
                 if (fl.Count != 0)
                 {
                     writer.WriteValue("true");
