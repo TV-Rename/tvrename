@@ -3982,6 +3982,7 @@ public partial class UI : Form, IDialogParent
         showRightClickMenu.Add("Remove Selected", (_, _) => ActionDeleteSelected());
 
         MenuFolders(lvr, si, episode?.AppropriateProcessedSeason, episode);
+        //******* Make Async
 
         showRightClickMenu.Show(pt);
     }
