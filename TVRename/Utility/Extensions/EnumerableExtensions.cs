@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -24,6 +23,19 @@ public static class EnumerableExtensions
         {
             yield return (T)item;
         }
+    }
+
+    public static bool IsAny<T>(this IEnumerable<T> source)
+    {
+        if (source is null)
+        {
+            return false;
+        }
+        if (source is List<T> list)
+        {
+            return list.Count > 0;
+        }
+        return source.Any();
     }
 
     public static void AddNullableRange<T>(this List<T> source, IEnumerable<T>? items)
@@ -67,25 +79,25 @@ public static class EnumerableExtensions
     public static int MaxOrDefault<T>(this IEnumerable<T> enumeration, Func<T, int> selector, int defaultValue)
     {
         IEnumerable<T> enumerable = [.. enumeration];
-        return enumerable.Any() ? enumerable.Max(selector) : defaultValue;
+        return enumerable.IsAny() ? enumerable.Max(selector) : defaultValue;
     }
 
     public static int MinOrDefault<T>(this IEnumerable<T> enumeration, Func<T, int> selector, int defaultValue)
     {
         IEnumerable<T> enumerable = [.. enumeration];
-        return enumerable.Any() ? enumerable.Min(selector) : defaultValue;
+        return enumerable.IsAny() ? enumerable.Min(selector) : defaultValue;
     }
 
     public static TProp? MinOrNull<TItem, TProp>(this IEnumerable<TItem> @this, Func<TItem, TProp> selector) where TProp : struct
     {
         IEnumerable<TItem> list = [.. @this];
 
-        return list.Any() ? list.Min(selector) : null;
+        return list.IsAny() ? list.Min(selector) : null;
     }
     public static TProp? MaxOrNull<TItem, TProp>(this IEnumerable<TItem> @this, Func<TItem, TProp> selector) where TProp : struct
     {
         IEnumerable<TItem> list = [.. @this];
-        return list.Any() ? list.Max(selector) : null;
+        return list.IsAny() ? list.Max(selector) : null;
     }
 
     //
@@ -124,47 +136,5 @@ public static class EnumerableExtensions
             return [];
         }
         return source.SelectMany(selector);
-    }
-}
-
-public static class LinqAsyncExtensions
-{
-    public static async Task<IEnumerable<TResult>> SelectAsync<TSource,TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult>> mapper)
-    {
-        // 1. Project items into tasks pairing the item with its async boolean outcome
-        var evaluationTasks = source.Select(async item => mapper(item));
-
-        // 2. Await all conditions to resolve concurrently
-        var evaluations = await Task.WhenAll(evaluationTasks);
-
-        // 3. Perform a standard synchronous LINQ filter on the results
-        return evaluations.Select(x => x.Result).ToList();
-    }
-
-    public static async Task<IEnumerable<TSource>> WhereAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> filter)
-    {
-        // 1. Project items into tasks pairing the item with its async boolean outcome
-        var evaluationTasks = source.Select(item => new {
-            Item = item,
-            FilterTask = filter(item) });
-
-        // 2. Await all conditions to resolve concurrently
-        var evaluations = await Task.WhenAll(evaluationTasks.Select(p=>p.FilterTask));
-
-        // 3. Perform a standard synchronous LINQ filter on the results
-        return evaluationTasks.Where(x=>x.FilterTask.Result).Select(x => x.Item);
-    }
-
-
-    public static async Task<bool> AllAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> filter)
-    {
-        // 1. Project items into tasks pairing the item with its async boolean outcome
-        IEnumerable<Task<bool>> evaluationTasks = source.Select(item => filter(item));
-
-        // 2. Await all conditions to resolve concurrently
-        bool[] evaluations = await Task.WhenAll(evaluationTasks);
-
-        // 3. Perform a standard synchronous LINQ filter on the results
-        return evaluations.All(x=>x);
     }
 }

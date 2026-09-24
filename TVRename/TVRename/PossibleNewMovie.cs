@@ -254,7 +254,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
             try
             {
                 IEnumerable<FileInfo> files = [.. Directory.EnumerateFiles(fileName)];
-                if (files.Any())
+                if (files.IsAny())
                 {
                     foreach (string x in files.Select(info => FindShowCode(info, simpleIdCode, uniqueIdCode)).ValidStrings())
                     {

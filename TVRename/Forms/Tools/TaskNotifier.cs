@@ -8,7 +8,7 @@ namespace TVRename.Forms.Tools;
 
 public partial class TaskNotifier : Form
 {
-    private Task? task;
+    protected Task? task;
     private readonly string name;
     private readonly CancellationTokenSource cancellationToken;
 

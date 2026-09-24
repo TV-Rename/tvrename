@@ -330,7 +330,7 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
                                         || !Show.DoRename
                                         || fl.All(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(this)), StringComparison.OrdinalIgnoreCase));
 
-        if (fl.Any() && appropriateFileNameFound)
+        if (fl.IsAny() && appropriateFileNameFound)
         {
             _airedStatus = ProcessedEpisode.FoundStatus.OnDisk;
             NotifyPropertyChanged("ImageTypeName");

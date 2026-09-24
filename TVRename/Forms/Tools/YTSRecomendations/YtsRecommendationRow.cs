@@ -24,6 +24,7 @@ public class YtsRecommendationRow
     public string YtsUrl => result.YtsUrl;
     public string Runtime => result.Runtime;
     public IEnumerable<string> Genres => result.Genres;
+    public string GenresString => Genres.ToCsv();
     public string Language => Movie?.CachedMovie?.ShowLanguage ?? result.Language;
     public int NumberRelated => relatedMovies.Count;
     public string Related => relatedMovies.Select(m => m.Item2.Name).ToCsv();

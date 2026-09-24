@@ -31,14 +31,14 @@ public class MovieFilter
         ShowNetwork.HasValue() ||
         ShowRating.HasValue() ||
         ShowYear.HasValue() ||
-        Genres.Any();
+        Genres.IsAny();
 
     public bool Filter(MovieConfiguration show)
     {
         bool IsNetworkOk(MovieConfiguration showItem)
         {
             List<string>? seriesInfoNetwork = showItem.CachedMovie?.Networks.ToList();
-            if (seriesInfoNetwork is null || !seriesInfoNetwork.Any())
+            if (seriesInfoNetwork is null || !seriesInfoNetwork.IsAny())
             {
                 return IncludeBlankFields;
             }

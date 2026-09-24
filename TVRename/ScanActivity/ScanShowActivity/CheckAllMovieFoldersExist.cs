@@ -25,33 +25,33 @@ internal class CheckAllMovieFoldersExist(TVDoc doc) : ScanMovieActivity(doc)
             }
         }
 
-        List<string> folders = [.. movie.Locations];
+        List<string> folders = [.. await movie.LocationsAsync()];
 
         List<string> ignoredLocations = [];
 
         foreach (string folderExists in folders)
         {
-            CreateFolder(movie, ignoredLocations, folderExists, settings.Owner);
+            await CreateFolderAsync(movie, ignoredLocations, folderExists, settings.Owner);
             if (movie.Format == MovieConfiguration.MovieFolderFormat.dvd)
             {
-                CreateFolder(movie, ignoredLocations, folderExists, "AUDIO_TS", settings.Owner);
-                CreateFolder(movie, ignoredLocations, folderExists, "VIDEO_TS", settings.Owner);
+                await CreateFolderAsync(movie, ignoredLocations, folderExists, "AUDIO_TS", settings.Owner);
+                await CreateFolderAsync(movie, ignoredLocations, folderExists, "VIDEO_TS", settings.Owner);
             }
             if (movie.Format == MovieConfiguration.MovieFolderFormat.bluray)
             {
-                CreateFolder(movie, ignoredLocations, folderExists, "BDMV", settings.Owner);
-                CreateFolder(movie, ignoredLocations, folderExists, "CERTIFICATE", settings.Owner);
+                await CreateFolderAsync(movie, ignoredLocations, folderExists, "BDMV", settings.Owner);
+                await CreateFolderAsync(movie, ignoredLocations, folderExists, "CERTIFICATE", settings.Owner);
             }
         } // for each folder
     }
 
-    private void CreateFolder(MovieConfiguration si, ICollection<string> ignoredLocations,
+    private async Task CreateFolderAsync(MovieConfiguration si, ICollection<string> ignoredLocations,
         string proposedFolderName, string subFolder, IDialogParent owner)
     {
-        CreateFolder(si, ignoredLocations, Path.Combine(proposedFolderName, subFolder), owner);
+        await CreateFolderAsync(si, ignoredLocations, Path.Combine(proposedFolderName, subFolder), owner);
     }
 
-    private void CreateFolder(MovieConfiguration si, ICollection<string> ignoredLocations, string proposedFolderName, IDialogParent owner)
+    private async Task CreateFolderAsync(MovieConfiguration si, ICollection<string> ignoredLocations, string proposedFolderName, IDialogParent owner)
     {
         string folder = proposedFolderName;
         DirectoryInfo? di = null;
@@ -136,7 +136,7 @@ internal class CheckAllMovieFoldersExist(TVDoc doc) : ScanMovieActivity(doc)
                     break;
 
                 case FaResult.kfaIgnoreAlways:
-                    if (si.AutomaticLocations().Contains(folder))
+                    if ((await si.AutomaticLocationsAsync()).Contains(folder))
                     {
                         si.UseAutomaticFolders = false;
                     }

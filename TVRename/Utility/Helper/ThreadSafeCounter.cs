@@ -14,23 +14,18 @@ using System.Threading;
 
 namespace TVRename;
 
-public class ThreadSafeCounter
+/// <summary>
+/// Initializes a new instance of the counter with a specific starting value.
+/// </summary>
+public class ThreadSafeCounter(int initialValue)
 {
     // High-performance atomic operations require a primitive field
-    private int _value;
+    private int _value = initialValue;
 
     /// <summary>
     /// Initializes a new instance of the counter starting at 0.
     /// </summary>
     public ThreadSafeCounter() : this(0) { }
-
-    /// <summary>
-    /// Initializes a new instance of the counter with a specific starting value.
-    /// </summary>
-    public ThreadSafeCounter(int initialValue)
-    {
-        _value = initialValue;
-    }
 
     /// <summary>
     /// Gets the current value safely.

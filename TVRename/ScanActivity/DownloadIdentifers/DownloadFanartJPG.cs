@@ -1,5 +1,6 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -12,7 +13,7 @@ internal class DownloadFanartJpg : DownloadIdentifier
 
     public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
-    public override ItemList? ProcessShow(ShowConfiguration si, bool forceRefresh)
+    public override async Task<ItemList?> ProcessShowAsync(ShowConfiguration si, bool forceRefresh)
     {
         //We only want to do something if the fanart option is enabled. If the KODI option is enabled then let it do the work.
         if (TVSettings.Instance.FanArtJpg && !TVSettings.Instance.KODIImages)
@@ -34,16 +35,16 @@ internal class DownloadFanartJpg : DownloadIdentifier
             }
             return theActionList;
         }
-        return base.ProcessShow(si, forceRefresh);
+        return await base.ProcessShowAsync(si, forceRefresh);
     }
 
-    public override ItemList? ProcessMovie(MovieConfiguration si, FileInfo filo, bool forceRefresh)
+    public override async Task<ItemList?> ProcessMovieAsync(MovieConfiguration si, FileInfo filo, bool forceRefresh)
     {
         //We only want to do something if the fanart option is enabled.
         if (TVSettings.Instance.FanArtJpg)
         {
             ItemList theActionList = [];
-            foreach (string location in si.Locations)
+            foreach (string location in await si.LocationsAsync())
             {
                 FileInfo fi = FileHelper.FileInFolder(location, DEFAULT_FILE_NAME);
 
@@ -64,7 +65,7 @@ internal class DownloadFanartJpg : DownloadIdentifier
             return theActionList;
         }
 
-        return base.ProcessMovie(si, filo, forceRefresh);
+        return await base.ProcessMovieAsync(si, filo, forceRefresh);
     }
 
     public sealed override void Reset()

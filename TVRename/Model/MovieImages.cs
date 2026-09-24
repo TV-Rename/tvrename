@@ -6,7 +6,7 @@ public class MovieImages : SafeList<MovieImage>
 {
     public void MergeImages(MovieImages images)
     {
-        if (!this.Any())
+        if (!this.IsAny())
         {
             Clear();
             AddRange(images);

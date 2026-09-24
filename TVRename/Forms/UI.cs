@@ -51,8 +51,8 @@ namespace TVRename.Forms;
 // ReSharper disable once InconsistentNaming
 public partial class UI : Form, IDialogParent
 {
-    public const string EXPLORE_PROXY = "https://www.tvrename.com/EXPLOREPROXY";
-    public const string WATCH_PROXY = "https://www.tvrename.com/WATCHPROXY";
+    public const string EXPLORE_PROXY = "http://www.tvrename.com/EXPLOREPROXY";
+    public const string WATCH_PROXY = "http://www.tvrename.com/WATCHPROXY";
 
     #region Delegates
 
@@ -72,12 +72,11 @@ public partial class UI : Form, IDialogParent
     private ProcessedEpisode? switchToWhenOpenMyShows;
     private MovieConfiguration? switchToWhenOpenMyMovies;
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-    
+
     private int busyDoingDownload = 0;
     private bool IsBusyDoingBackgroundDownload => busyDoingDownload != 0;
     private bool actionsListBeingUpdated = false;
     private bool calendarBeingUpdated = false;
-    
 
     private ScanProgress? scanProgDlg;
 
@@ -399,7 +398,7 @@ public partial class UI : Form, IDialogParent
         olvAction.EndUpdate();
     }
 
-    private void OlvAction_Dropped(object sender, OlvDropEventArgs e)
+    private async void OlvAction_Dropped(object sender, OlvDropEventArgs e)
     {
         // Get a list of filenames being dragged
 
@@ -418,7 +417,7 @@ public partial class UI : Form, IDialogParent
         }
 
         // Only want the first file if multiple files were dragged across.
-        ManuallyAddFileForItem(mi, files[0]);
+        await ManuallyAddFileForItemAsync(mi, files[0]);
     }
 
     private void OlvAction_CanDrop(object sender, OlvDropEventArgs e)
@@ -534,7 +533,7 @@ public partial class UI : Form, IDialogParent
         ProcessedEpisode ep = (ProcessedEpisode)rowObject;
         if (ep.SeriesName != null)
         {
-            return $"{PostpendTheIfNeeded(ep.SeriesName).ToUiVersion()} - Season {ep.AppropriateSeasonNumber}" ;
+            return $"{PostpendTheIfNeeded(ep.SeriesName).ToUiVersion()} - Season {ep.AppropriateSeasonNumber}";
         }
 
         return string.Empty;
@@ -825,7 +824,7 @@ public partial class UI : Form, IDialogParent
 
         if (a.QuickUpdate)
         {
-            await UiDownloadAsync(true, UNATTENDED);
+            await UiDownloadAsync(true, UNATTENDED, new CancellationTokenSource());
         }
 
         if (a.ForceUpdate)
@@ -836,7 +835,7 @@ public partial class UI : Form, IDialogParent
 
         if (a.ForceRefresh)
         {
-            await ForceRefreshAsync(mDoc.TvLibrary.GetSortedShows(), UNATTENDED);
+            await ForceRefreshAsync(mDoc.TvLibrary.GetSortedShows(), UNATTENDED, new CancellationTokenSource());
             await ForceMovieRefreshAsync(mDoc.FilmLibrary.Movies, UNATTENDED);
         }
 
@@ -868,7 +867,7 @@ public partial class UI : Form, IDialogParent
 
         if (a.Export)
         {
-            mDoc.RunExporters();
+            await mDoc.RunExportersAsync();
         }
 
         if (a.Quit)
@@ -884,8 +883,9 @@ public partial class UI : Form, IDialogParent
         TaskHelper.Run(
             async () =>
             {
+                CancellationTokenSource cts = new();
                 var progress = new DownloadProgressStatus(pbProgressBarx, txtDLStatusLabel);
-                await mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this, progress);
+                await mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this, progress, cts);
             }, "TVDB Accuracy Check"
         );
         LessBusy();
@@ -895,7 +895,7 @@ public partial class UI : Form, IDialogParent
     {
         Searchers searchers = GetUsedSearchers();
         string name = searchers.CurrentSearch.Name;
-        bool enabled = name.HasValue() && searchers.Any();
+        bool enabled = name.HasValue() && searchers.IsAny();
 
         btnScheduleBTSearch.Enabled = enabled;
         btnScheduleBTSearch.Text = lvWhenToWatch.Selected().Any(pe => !string.IsNullOrWhiteSpace(pe.Show.CustomSearchUrl)) ? "Search" : name;
@@ -915,7 +915,7 @@ public partial class UI : Form, IDialogParent
 
     private static MediaConfiguration.MediaType GetSelectedObjectType(ObjectListViewFlickerFree<Item> list)
     {
-        IList listSelectedObjects = list.Selected();
+        List<Item> listSelectedObjects = list.Selected();
         if (listSelectedObjects.Count == listSelectedObjects.OfType<MovieItemMissing>().Count())
         {
             return MediaConfiguration.MediaType.movie;
@@ -943,8 +943,8 @@ public partial class UI : Form, IDialogParent
         UpdateSearchButtons();
 
 
-        mDoc.WriteUpcoming();
-        mDoc.WriteRecent();
+        await mDoc.WriteUpcomingAsync();
+        await mDoc.WriteRecentAsync();
 
         foreach (TabPage tp in tabControl1.TabPages) // grr! why does it go white?
         {
@@ -973,7 +973,7 @@ public partial class UI : Form, IDialogParent
 
         quickTimer.Start();
 
-        await Task.WhenAll(x,y);
+        await Task.WhenAll(x, y);
 
         if (TVSettings.Instance.RunOnStartUp())
         {
@@ -1521,7 +1521,7 @@ public partial class UI : Form, IDialogParent
     internal static string GenerateShowUiName(MovieConfiguration show) => PostpendTheIfNeeded(show.ShowName);
     internal static string GenerateShowUiName(ShowConfiguration show) => PostpendTheIfNeeded(show.ShowName);
 
-    public static string QuickStartGuide() => "https://www.tvrename.com/manual/quickstart/";
+    public static string QuickStartGuide() => "http://www.tvrename.com/manual/quickstart/";
 
     private void ShowQuickStartGuide()
     {
@@ -1557,7 +1557,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void FillMovieGuideHtml()
+    private async Task FillMovieGuideHtmlAsync()
     {
         if (movieTree.Nodes.Count == 0)
         {
@@ -1566,7 +1566,7 @@ public partial class UI : Form, IDialogParent
         else
         {
             TreeNode? n = movieTree.SelectedNode;
-            FillMovieGuideHtml(TreeNodeToMovieItem(n));
+            await FillMovieGuideHtml(TreeNodeToMovieItem(n));
         }
     }
 
@@ -1685,7 +1685,7 @@ public partial class UI : Form, IDialogParent
         {
             // no epnum specified, just show an overview
             chrImages.SetHtmlBody(si.GetShowImagesOverview());
-            chrInformation.SetHtmlBody(si.GetShowHtmlOverview(false));
+            chrInformation.SetHtmlBody(await si.GetShowHtmlOverviewAsync(false));
             chrSummary.SetHtmlBody(await si.GetShowSummaryHtmlOverviewAsync(false));
             chrTvTrailer.UpdateTvTrailer(si);
 
@@ -1794,7 +1794,7 @@ public partial class UI : Form, IDialogParent
     {
         UpdateSearchButtons();
 
-        if (! lvWhenToWatch.AnySelected())
+        if (!lvWhenToWatch.AnySelected())
         {
             txtWhenToWatchSynopsis.Text = string.Empty;
             switchToWhenOpenMyShows = null;
@@ -1834,7 +1834,7 @@ public partial class UI : Form, IDialogParent
 
     private async void lvWhenToWatch_DoubleClick(object sender, EventArgs e)
     {
-        if (! lvWhenToWatch.AnySelected())
+        if (!lvWhenToWatch.AnySelected())
         {
             return;
         }
@@ -1883,7 +1883,7 @@ public partial class UI : Form, IDialogParent
 
         lvWhenToWatch.DeselectAll();
 
-        foreach(ProcessedEpisode ei in lvWhenToWatch.Objects)
+        foreach (ProcessedEpisode ei in lvWhenToWatch.Objects)
         {
             DateTime? dt2 = ei?.GetAirDateDt();
             if (dt2 != null)
@@ -1908,7 +1908,8 @@ public partial class UI : Form, IDialogParent
     // ReSharper disable once InconsistentNaming
     private async Task RefreshWTWAsync(bool doDownloads, bool unattended)
     {
-        await UiDownloadAsync(doDownloads, unattended);
+        CancellationTokenSource cts = new();
+        await UiDownloadAsync(doDownloads, unattended, cts);
 
         await FillMyShowsAsync(true);
         FillMyMovies();
@@ -1916,9 +1917,9 @@ public partial class UI : Form, IDialogParent
         await FillWhenToWatchListAsync();
     }
 
-    private async Task UiDownloadAsync(bool doDownloads, bool unattended)
+    private async Task UiDownloadAsync(bool doDownloads, bool unattended, CancellationTokenSource cts)
     {
-        await mDoc.UpdateMediaAsync(doDownloads, unattended, WindowState == FormWindowState.Minimized, this);
+        await mDoc.UpdateMediaAsync(doDownloads, unattended, WindowState == FormWindowState.Minimized, this, cts);
     }
 
     private async void refreshWTWTimer_Tick(object sender, EventArgs e)
@@ -1938,7 +1939,7 @@ public partial class UI : Form, IDialogParent
         List<ProcessedEpisode> next1 = mDoc.TvLibrary.NextNShows(1, 0, 36500);
 
         tsNextShowTxt.Text = "Next airing: ";
-        if (next1.Any())
+        if (next1.IsAny())
         {
             ProcessedEpisode ei = next1.First();
             tsNextShowTxt.Text += $"{CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(1))}, {ei.HowLong()} ({ei.DayOfWeek()}, {ei.TimeOfDay()})".ToUiVersion();
@@ -2049,7 +2050,7 @@ public partial class UI : Form, IDialogParent
         {
             return;
         }
-        
+
         ProcessedEpisode? ep = eps.Count == 1 ? eps[0] : null;
 
         List<ShowConfiguration> sis = [.. eps.Select(e => e.Show)];
@@ -2091,21 +2092,21 @@ public partial class UI : Form, IDialogParent
         tabControl1.SelectTab(tbAllInOne);
     }
 
-    private void MenuFolders(ItemList? lvr, ShowConfiguration? si, ProcessedSeason? seas, ProcessedEpisode? ep)
+    private async Task MenuFoldersAsync(ItemList? lvr, ShowConfiguration? si, ProcessedSeason? seas, ProcessedEpisode? ep)
     {
         List<string> added = [];
 
         if (ep != null)
         {
-            Dictionary<int, SafeList<string>> afl = ep.Show.AllExistngFolderLocations();
+            Dictionary<int, SafeList<string>> afl = await ep.Show.AllExistngFolderLocationsAsync();
             if (afl.TryGetValue(ep.AppropriateSeasonNumber, out SafeList<string>? folder))
             {
                 AddFolders(folder, added);
             }
         }
-        else if (seas != null)
+        else if (seas != null && si is not null)
         {
-            Dictionary<int, SafeList<string>>? folders = si?.AllExistngFolderLocations();
+            Dictionary<int, SafeList<string>>? folders = await si.AllExistngFolderLocationsAsync();
 
             if (folders?.TryGetValue(seas.SeasonNumber, out SafeList<string>? folder) is true)
             {
@@ -2119,7 +2120,7 @@ public partial class UI : Form, IDialogParent
             {
                 AddFolders([si.AutoAddFolderBase], added);
             }
-            AddFoldersSubMenu([.. si.AllExistngFolderLocations().Values.SelectMany(l => l)], added);
+            AddFoldersSubMenu([.. (await si.AllExistngFolderLocationsAsync()).Values.SelectMany(l => l)], added);
         }
 
         if (lvr is null || lvr.Count > 1)
@@ -2169,7 +2170,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void RightClickOnMyMovies(MovieConfiguration si, Point pt)
+    private async Task RightClickOnMyMoviesAsync(MovieConfiguration si, Point pt)
     {
         showRightClickMenu.Items.Clear();
 
@@ -2179,17 +2180,17 @@ public partial class UI : Form, IDialogParent
         showRightClickMenu.AddSeparator();
 
         showRightClickMenu.Add("Edit Movie", async (_, _) => await EditMovieAsync(si));
-        showRightClickMenu.Add("Delete Movie", (_, _) => DeleteMovie(si));
+        showRightClickMenu.Add("Delete Movie", async (_, _) => await DeleteMovieAsync(si));
 
         showRightClickMenu.AddSeparator();
 
         showRightClickMenu.Add($"Scan {si.ShowName.InDoubleQuotes()}", async (_, _) => await RightMenuMovieScanAsync(si, TVSettings.ScanType.SingleShow));
         showRightClickMenu.Add($"Quick Scan {si.ShowName.InDoubleQuotes()}", async (_, _) => await RightMenuMovieScanAsync(si, TVSettings.ScanType.FastSingleShow));
 
-        if (si.Locations.Any())
+        if ((await si.LocationsAsync()).IsAny())
         {
             List<string> added = [];
-            AddFolders(si.Locations, added);
+            AddFolders(await si.LocationsAsync(), added);
         }
 
         showRightClickMenu.Show(pt);
@@ -2207,9 +2208,9 @@ public partial class UI : Form, IDialogParent
 
         ShowConfiguration? si = sil.Count >= 1 ? sil[0] : null;
 
-        if (sil.Any())
+        if (sil.IsAny())
         {
-            showRightClickMenu.Add("Force Refresh", async (_, _) => await ForceRefreshAsync(sil, false));
+            showRightClickMenu.Add("Force Refresh", async (_, _) => await ForceRefreshAsync(sil, false, new CancellationTokenSource()));
             showRightClickMenu.Add("Update Images", async (_, _) => await UpdateImagesAsync(sil));
             showRightClickMenu.AddSeparator();
 
@@ -2249,7 +2250,7 @@ public partial class UI : Form, IDialogParent
                 await AddSeasonEpisodesMenuAsync(seas, si);
             }
 
-            MenuFolders(null, sil[0], seas, ep);
+            await MenuFoldersAsync(null, sil[0], seas, ep);
         }
 
         if (ep != null)
@@ -2264,7 +2265,7 @@ public partial class UI : Form, IDialogParent
     private async Task AddEpisodesMenuAsync(ProcessedEpisode ep)
     {
         List<FileInfo> fl = await FinderHelper.FindEpOnDiskAsync(null, ep);
-        if (fl.Any())
+        if (fl.IsAny())
         {
             showRightClickMenu.AddSeparator();
 
@@ -2322,7 +2323,7 @@ public partial class UI : Form, IDialogParent
         await ShowAddedOrEditedAsync(false, false, si, true);
     }
 
-    private void BrowseForMissingItem(ItemMissing? mi)
+    private async Task BrowseForMissingItemAysnc(ItemMissing? mi)
     {
         if (mi is null)
         {
@@ -2337,13 +2338,13 @@ public partial class UI : Form, IDialogParent
 
         if (UiHelpers.ShowDialogAndOk(openFile, this))
         {
-            ManuallyAddFileForItem(mi, openFile.FileName);
+            await ManuallyAddFileForItemAsync(mi, openFile.FileName);
         }
     }
 
-    private void ManuallyAddFileForItem(ItemMissing mi, string fileName)
+    private async Task ManuallyAddFileForItemAsync(ItemMissing mi, string fileName)
     {
-        mDoc.UpdateMissingAction(mi, fileName);
+        await mDoc.UpdateMissingActionAsync(mi, fileName);
         FillActionList();
     }
 
@@ -2409,7 +2410,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        if (! lvWhenToWatch.AnySelected())
+        if (!lvWhenToWatch.AnySelected())
         {
             return;
         }
@@ -2890,7 +2891,7 @@ public partial class UI : Form, IDialogParent
         DialogResult dr = aem.ShowDialog(this);
         if (dr == DialogResult.OK)
         {
-            mDoc.Add(mov.AsList(), false);
+            await mDoc.AddAsync(mov.AsList(), false);
             FillMyMovies(mov);
 
             await mDoc.MoviesAddedOrEditedAsync(true, false, WindowState == FormWindowState.Minimized, this, mov);
@@ -2919,7 +2920,7 @@ public partial class UI : Form, IDialogParent
         DialogResult dr = aes.ShowDialog(this);
         if (dr == DialogResult.OK)
         {
-            mDoc.Add(si.AsList(), false);
+            await mDoc.AddAsync(si.AsList(), false);
 
             await ShowAddedOrEditedAsync(false, false, si, false);
             await SelectShowAsync(si);
@@ -3030,7 +3031,7 @@ public partial class UI : Form, IDialogParent
                     .Where(t => t.show.NameMatch(t.filename))
                     .Select(t => (t.show, t.filename))];
 
-            if (showsthatmatchanyfiles.Any())
+            if (showsthatmatchanyfiles.IsAny())
             {
                 string otherFilesDetails = showsthatmatchanyfiles.Select(m => $"{m.Item1.ShowName}:[{m.Item2}]").ToCsv();
 
@@ -3053,7 +3054,7 @@ public partial class UI : Form, IDialogParent
                 .Where(t => t.show.NameMatch(t.filename))
                 .Select(t => (t.show, t.filename))];
 
-            if (moviesthatmatchanyfiles.Any())
+            if (moviesthatmatchanyfiles.IsAny())
             {
                 string otherFilesDetails = moviesthatmatchanyfiles.Select(m => $"{m.Item1.ShowName}:[{m.Item2}]").ToCsv();
                 DialogResult res2 = MessageBox.Show(
@@ -3091,7 +3092,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void DeleteMovie(MovieConfiguration si)
+    private async Task DeleteMovieAsync(MovieConfiguration si)
     {
         DialogResult res = MessageBox.Show(
             $"Remove movie {si.ShowName.InDoubleQuotes()}.  Are you sure?", "Confirmation", MessageBoxButtons.YesNo,
@@ -3104,7 +3105,7 @@ public partial class UI : Form, IDialogParent
 
         if (TVSettings.Instance.DeleteMovieFromDisk && si.Format != MovieConfiguration.MovieFolderFormat.multiPerDirectory)
         {
-            foreach (string directory in si.Locations)
+            foreach (string directory in (await si.LocationsAsync()))
             {
                 RemoveFromDisk(directory, si);
             }
@@ -3112,7 +3113,7 @@ public partial class UI : Form, IDialogParent
 
         Logger.Info($"User asked to remove {si.ShowName} - removing now");
         mDoc.FilmLibrary.Remove(si);
-        mDoc.RunExporters();
+        await mDoc.RunExportersAsync();
         mDoc.SaveSettingsIfNeeded();
 
         FillMyMovies();
@@ -3204,15 +3205,15 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    internal async Task ForceRefreshAsync(IEnumerable<ShowConfiguration>? sis, bool unattended)
+    internal async Task ForceRefreshAsync(IEnumerable<ShowConfiguration>? sis, bool unattended, CancellationTokenSource cts)
     {
-        await mDoc.ForceRefreshShowsAsync(sis, unattended, WindowState == FormWindowState.Minimized, this);
+        await mDoc.ForceRefreshShowsAsync(sis, unattended, WindowState == FormWindowState.Minimized, this, cts);
         await FillMyShowsAsync(true);
         await FillEpGuideHtmlAsync();
         await RefreshWTWAsync(false, unattended);
     }
 
-    private async Task ForceRefreshAndRescanShowsAsync(IEnumerable<Item>? sis, bool unattended)
+    private async Task ForceRefreshAndRescanShowsAsync(IEnumerable<Item>? sis, bool unattended, CancellationTokenSource cts)
     {
         if (sis is null)
         {
@@ -3223,16 +3224,17 @@ public partial class UI : Form, IDialogParent
         List<ShowConfiguration> shows = [.. enumerable.Select(x => x.Series).OfType<ShowConfiguration>()];
         List<MovieConfiguration> movies = [.. enumerable.Select(x => x.Movie).OfType<MovieConfiguration>()];
 
-        await mDoc.ForceRefreshBeforeRescanAsync(shows, movies, unattended, WindowState == FormWindowState.Minimized, this);
+        await mDoc.ForceRefreshBeforeRescanAsync(shows, movies, unattended, WindowState == FormWindowState.Minimized, this, cts);
         await UiScanAsync(shows, movies, unattended, TVSettings.ScanType.Incremental, MediaConfiguration.MediaType.both);
     }
 
     internal async Task ForceMovieRefreshAsync(IEnumerable<MovieConfiguration>? sis, bool unattended)
     {
+        CancellationTokenSource cts = new();
         IEnumerable<MovieConfiguration>? movieConfigurations = sis?.ToList();
-        await mDoc.ForceRefreshMoviesAsync(movieConfigurations, unattended, WindowState == FormWindowState.Minimized, this);
+        await mDoc.ForceRefreshMoviesAsync(movieConfigurations, unattended, WindowState == FormWindowState.Minimized, this, cts);
         FillMyMovies(movieConfigurations?.FirstOrDefault());
-        FillMovieGuideHtml();
+        await FillMovieGuideHtmlAsync();
         await RefreshWTWAsync(false, unattended);
     }
 
@@ -3286,9 +3288,9 @@ public partial class UI : Form, IDialogParent
         UpdateMyShowsButtonStatus();
     }
 
-    private void MyMoviesTree_AfterSelect(object sender, TreeViewEventArgs e)
+    private async void MyMoviesTree_AfterSelect(object sender, TreeViewEventArgs e)
     {
-        FillMovieGuideHtml(TreeNodeToMovieItem(e.Node));
+        await FillMovieGuideHtml(TreeNodeToMovieItem(e.Node));
         UpdateMyMoviesButtonStatus();
     }
 
@@ -3300,7 +3302,7 @@ public partial class UI : Form, IDialogParent
         tsbMyMoviesContextMenu.Enabled = movieSelected;
     }
 
-    private void FillMovieGuideHtml(MovieConfiguration? si)
+    private async Task FillMovieGuideHtml(MovieConfiguration? si)
     {
         if (tabControl1.SelectedTab != tbMyMovies)
         {
@@ -3328,7 +3330,7 @@ public partial class UI : Form, IDialogParent
         }
 
         chrMovieImages.SetHtmlBody(si.GetMovieImagesOverview());
-        chrMovieInformation.SetHtmlBody(si.GetMovieHtmlOverview(false));
+        chrMovieInformation.SetHtmlBody(await si.GetMovieHtmlOverviewAsync(false));
 
         if (si.CachedMovie?.TrailerUrl?.HasValue() ?? false)
         {
@@ -3343,7 +3345,7 @@ public partial class UI : Form, IDialogParent
         ResetRunBackGroundWorker(bwMovieHTMLGenerator, si);
     }
 
-    private void MyMoviesTree_MouseClick(object sender, MouseEventArgs e)
+    private async void MyMoviesTree_MouseClick(object sender, MouseEventArgs e)
     {
         if (e.Button != MouseButtons.Right)
         {
@@ -3363,7 +3365,7 @@ public partial class UI : Form, IDialogParent
         MovieConfiguration? si = TreeNodeToMovieItem(n);
         if (si != null)
         {
-            RightClickOnMyMovies(si, pt);
+            await RightClickOnMyMoviesAsync(si, pt);
         }
     }
 
@@ -3495,7 +3497,7 @@ public partial class UI : Form, IDialogParent
         ShowConfiguration? currentShow = TreeNodeToShowItem(MyShowTree.SelectedNode);
         string theFolder = await GetFolderForShowAsync(currentShow);
 
-        if (string.IsNullOrWhiteSpace(theFolder) && TVSettings.Instance.DownloadFolders.Any())
+        if (string.IsNullOrWhiteSpace(theFolder) && TVSettings.Instance.DownloadFolders.IsAny())
         {
             theFolder = TVSettings.Instance.DownloadFolders.First();
         }
@@ -3624,7 +3626,7 @@ public partial class UI : Form, IDialogParent
         SetupScanUi(hidden, scanCancellation);
 
         UiHelpers.SetProgressStateNormal(Handle);
-        Task scan = mDoc.ScanAsync(scanSettings, scanProgDlg);
+        Task scan = mDoc.ScanAsync(scanSettings, scanProgDlg, scanCancellation);
 
         scanProgDlg?.Show(this);
         scanProgDlg?.Left = this.Left + 100;
@@ -3685,7 +3687,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        if (mDoc.ShowProblems.Any())
+        if (mDoc.ShowProblems.IsAny())
         {
             string message = mDoc.ShowProblems.Count() > 1
                 ? $"Shows with Id {mDoc.ShowProblems.Select(exception => exception.Media.ToString()).ToCsv()} are not found on TVDB, TMDB and TVMaze. Please update them"
@@ -3717,7 +3719,7 @@ public partial class UI : Form, IDialogParent
             }
         }
 
-        if (mDoc.MovieProblems.Any())
+        if (mDoc.MovieProblems.IsAny())
         {
             string message = mDoc.MovieProblems.Count() > 1
                 ? $"Movies with Id {string.Join(",", mDoc.MovieProblems.Select(exception => exception.Media.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
@@ -3859,7 +3861,7 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    private void lvAction_MouseClick(object sender, MouseEventArgs e)
+    private async void lvAction_MouseClick(object sender, MouseEventArgs e)
     {
         Point pt = ((ListView)sender).PointToScreen(new Point(e.X, e.Y));
 
@@ -3867,9 +3869,9 @@ public partial class UI : Form, IDialogParent
         {
             return;
         }
-        GenerateActionshowRightClickMenu(pt);
+        await GenerateActionshowRightClickMenuAsync(pt);
     }
-    private void GenerateActionshowRightClickMenu(Point pt)
+    private async Task GenerateActionshowRightClickMenuAsync(Point pt)
     {
         ItemList lvr = GetSelectedItems();
         Item? action = olvAction.FocusedObject as Item;
@@ -3907,11 +3909,11 @@ public partial class UI : Form, IDialogParent
         }
 
         // Action related items
-        if (lvr.Actions.Any()) // not just missing selected
+        if (lvr.Actions.IsAny()) // not just missing selected
         {
             showRightClickMenu.Add("Action Selected", async (_, _) => await ActionActionAsync(false, false, false));
         }
-        if (lvr.CopyMove.Any() || lvr.DownloadTorrents.Any() || lvr.Downloading.Any())
+        if (lvr.CopyMove.IsAny() || lvr.DownloadTorrents.IsAny() || lvr.Downloading.IsAny())
         {
             showRightClickMenu.AddSeparator();
             showRightClickMenu.Add("Revert to Missing", async (_, _) => await RevertAsync());
@@ -3928,7 +3930,7 @@ public partial class UI : Form, IDialogParent
         {
             if (lvr.Count == 1) // only one selected
             {
-                showRightClickMenu.Add("Browse For...", (_, _) => BrowseForMissingItem((ItemMissing)lvr.First()));
+                showRightClickMenu.Add("Browse For...", async (_, _) => await BrowseForMissingItemAysnc((ItemMissing)lvr.First()));
             }
             if (episode != null)
             {
@@ -3956,13 +3958,12 @@ public partial class UI : Form, IDialogParent
 
         if (episode != null || lvr.MissingSeasons.HasAny())
         {
-            showRightClickMenu.Add("Ignore Entire Season", (_, _) => IgnoreSelectedSeasons(lvr));
-            showRightClickMenu.Add("Force Refresh and Rescan Show", async (_, _) => await ForceRefreshAndRescanShowsAsync(lvr, false));
+            showRightClickMenu.Add("Ignore Entire Season", async (_, _) => await IgnoreSelectedSeasons(lvr));
+            showRightClickMenu.Add("Force Refresh and Rescan Show", async (_, _) => await ForceRefreshAndRescanShowsAsync(lvr, false, new CancellationTokenSource()));
         }
         showRightClickMenu.Add("Remove Selected", (_, _) => ActionDeleteSelected());
 
-        MenuFolders(lvr, si, episode?.AppropriateProcessedSeason, episode);
-        //******* Make Async
+        await MenuFoldersAsync(lvr, si, episode?.AppropriateProcessedSeason, episode);
 
         showRightClickMenu.Show(pt);
     }
@@ -3982,7 +3983,7 @@ public partial class UI : Form, IDialogParent
 
         if (TVSettings.Instance.SearchJackett || TVSettings.Instance.SearchJackettButton)
         {
-            if (TVDoc.GetSearchers().Any())
+            if (TVDoc.GetSearchers().IsAny())
             {
                 tsi.DropDownItems.Add(new ToolStripSeparator());
             }
@@ -4004,7 +4005,7 @@ public partial class UI : Form, IDialogParent
 
         if (TVSettings.Instance.SearchJackett || TVSettings.Instance.SearchJackettButton)
         {
-            if (TVDoc.GetMovieSearchers().Any())
+            if (TVDoc.GetMovieSearchers().IsAny())
             {
                 tsi.DropDownItems.Add(new ToolStripSeparator());
             }
@@ -4028,7 +4029,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        bool anyMissing = lvr.Missing.Any();
+        bool anyMissing = lvr.Missing.IsAny();
         btnActionBTSearch.Enabled = anyMissing;
         tbActionJackettSearch.Enabled = anyMissing;
 
@@ -4040,7 +4041,7 @@ public partial class UI : Form, IDialogParent
         ItemList toRemove = GetSelectedItems();
         mDoc.TheActionList.Remove(toRemove);
 
-        
+
         actionsListBeingUpdated = true;
         olvAction.RemoveObjects(toRemove.ToList());
         actionsListBeingUpdated = false;
@@ -4089,7 +4090,7 @@ public partial class UI : Form, IDialogParent
     {
         IEnumerable<Item> enumerable = [.. chk];
         IEnumerable<Item> btn = all as Item[] ?? [.. all];
-        if (!enumerable.Any())
+        if (!enumerable.IsAny())
         {
             box.CheckState = CheckState.Unchecked;
         }
@@ -4100,7 +4101,7 @@ public partial class UI : Form, IDialogParent
                 : CheckState.Indeterminate;
         }
 
-        box.Enabled = btn.Any();
+        box.Enabled = btn.IsAny();
     }
 
     private void bnActionOptions_Click(object sender, EventArgs e) => DoPrefs(true);
@@ -4178,10 +4179,13 @@ public partial class UI : Form, IDialogParent
         ie.ShowDialog(this);
     }
 
-    private void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        ShowSummary f = new(mDoc, this);
+        CancellationTokenSource cts = new();
+        ShowSummary f = new(mDoc, this, cts);
+        Task x = f.StartScanAsync();
         f.Show(this);
+        await x;
     }
 
     private void lvAction_ItemChecked(object sender, ItemCheckedEventArgs e) => UpdateActionCheckboxes();
@@ -4286,10 +4290,13 @@ public partial class UI : Form, IDialogParent
         await updateMarkup;
     }
 
-    private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MergedEpisodeFinder form = new(mDoc, this);
+        var x = form.StartScanAsync();
+
         form.ShowDialog(this);
+        await x;
     }
 
     private async void btnUpdateAvailable_Click(object sender, EventArgs e)
@@ -4354,12 +4361,13 @@ public partial class UI : Form, IDialogParent
 
         private static List<string> GetTimezone(string timezone, Dictionary<string, List<string>> snet)
         {
-            if (!snet.ContainsKey(timezone))
+            if (!snet.TryGetValue(timezone, out List<string>? value))
             {
-                snet.Add(timezone, []);
+                value = [];
+                snet.Add(timezone, value);
             }
 
-            return snet[timezone];
+            return value;
         }
 
         private Dictionary<string, List<string>> GetNetwork(string network)
@@ -4391,9 +4399,9 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void exportToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        mDoc.RunExporters();
+        await mDoc.RunExportersAsync();
     }
 
     private void logToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4620,7 +4628,7 @@ public partial class UI : Form, IDialogParent
         {
             if (s is not null)
             {
-                html = si is null? string.Empty : (await si.GetSeasonHtmlOverviewAsync(s, true)) ?? string.Empty;
+                html = si is null ? string.Empty : (await si.GetSeasonHtmlOverviewAsync(s, true)) ?? string.Empty;
             }
         }
         catch (Exception exception)
@@ -4656,20 +4664,26 @@ public partial class UI : Form, IDialogParent
         };
     }
 
-    private void BwShowHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
+    private async void BwShowHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
     {
         Thread.CurrentThread.Name ??= "Show HTML Creation Thread"; // Can only set it once
         ShowConfiguration? si = e.Argument as ShowConfiguration;
 
         string html = string.Empty;
-        try
+
+        if (si != null)
         {
-            html = si?.GetShowHtmlOverview(true) ?? string.Empty;
+            try
+            {
+                html = (await si.GetShowHtmlOverviewAsync(true)) ?? string.Empty;
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
+            }
+
         }
-        catch (Exception exception)
-        {
-            Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
-        }
+
         e.Result = new HtmlUpdateSettings(si, html, chrInformation);
     }
 
@@ -4735,12 +4749,18 @@ public partial class UI : Form, IDialogParent
         {
             rowsToUpdate = lvWhenToWatch.AllObjects();
         }));
-
-        await Parallel.ForEachAsync(
-            rowsToUpdate,
-            options,
-            async (episode, token) => await UpdateIconAsync(episode, dfc)
-        );
+        try
+        {
+            await Parallel.ForEachAsync(
+                rowsToUpdate,
+                options,
+                async (episode, token) => await UpdateIconAsync(episode, dfc)
+            );
+        }
+        catch (OperationCanceledException)
+        {
+            //OK
+        }
     }
 
     private static async Task UpdateIconAsync(ProcessedEpisode episode, DirFilesCache dfc)
@@ -4870,20 +4890,22 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void TsbScanContextMenu_Click(object sender, EventArgs e)
+    private async void TsbScanContextMenu_Click(object sender, EventArgs e)
     {
         ToolStripButton button = (ToolStripButton)sender;
         Point? pt = button.Owner?.PointToScreen(button.Bounds.Location);
 
         if (pt is null) return;
 
-        GenerateActionshowRightClickMenu(pt.Value);
+        await GenerateActionshowRightClickMenuAsync(pt.Value);
     }
 
-    private void ToolStripMenuItem1_Click(object sender, EventArgs e)
+    private async void ToolStripMenuItem1_Click(object sender, EventArgs e)
     {
         OrphanFiles ui = new(mDoc, this);
+        Task x = ui.StartScanAsync();
         ui.Show(this);
+        await x;
     }
 
     private void tbJackettSearch_Click(object sender, EventArgs e)
@@ -4946,7 +4968,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private void btnMovieDelete_Click(object sender, EventArgs e)
+    private async void btnMovieDelete_Click(object sender, EventArgs e)
     {
         TreeNode? n = movieTree.SelectedNode;
         MovieConfiguration? si = TreeNodeToMovieItem(n);
@@ -4955,22 +4977,27 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        DeleteMovie(si);
+        await DeleteMovieAsync(si);
     }
 
-    private void bwMovieHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
+    private async void bwMovieHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
     {
         MovieConfiguration? si = e.Argument as MovieConfiguration;
         Thread.CurrentThread.Name ??= $"Movie '{si?.Name}' HTML Creation Thread"; // Can only set it once
 
         string html = string.Empty;
-        try
+
+        if (si is not null)
         {
-            html = si?.GetMovieHtmlOverview(true) ?? string.Empty;
-        }
-        catch (Exception exception)
-        {
-            Logger.Error(exception, $"Error Occurred Creating Movie Summary for {si?.ShowName}");
+            try
+
+            {
+                html = (await si.GetMovieHtmlOverviewAsync(true)) ?? string.Empty;
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, $"Error Occurred Creating Movie Summary for {si?.ShowName}");
+            }
         }
         e.Result = new HtmlUpdateSettings(si, html, chrMovieInformation);
     }
@@ -5021,8 +5048,9 @@ public partial class UI : Form, IDialogParent
         TaskHelper.Run(
             async () =>
             {
+                CancellationTokenSource cts = new();
                 var progress = new DownloadProgressStatus(pbProgressBarx, txtDLStatusLabel);
-                await mDoc.TMDBServerAccuracyCheckAsync(unattended, WindowState == FormWindowState.Minimized, this, progress);
+                await mDoc.TMDBServerAccuracyCheckAsync(unattended, WindowState == FormWindowState.Minimized, this, progress, cts);
             },
             "TMDB Accuracy Check"
         );
@@ -5030,7 +5058,7 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    private void tsbMyMoviesContextMenu_Click(object sender, EventArgs e)
+    private async void tsbMyMoviesContextMenu_Click(object sender, EventArgs e)
     {
         ToolStripButton button = (ToolStripButton)sender;
         Point? pt = button.Owner?.PointToScreen(button.Bounds.Location);
@@ -5045,7 +5073,7 @@ public partial class UI : Form, IDialogParent
         MovieConfiguration? si = TreeNodeToMovieItem(n);
         if (si != null && pt != null)
         {
-            RightClickOnMyMovies(si, pt.Value);
+            await RightClickOnMyMoviesAsync(si, pt.Value);
         }
     }
 
@@ -5091,6 +5119,8 @@ public partial class UI : Form, IDialogParent
         mDoc.PreventAutoScan("Recommendations Open");
         RecommendationView form = new(mDoc, this, MediaConfiguration.MediaType.tv);
         form.ShowDialog(this);
+
+
         mDoc.AllowAutoScan();
         LessBusy();
         await FillMyShowsAsync(true);
@@ -5107,25 +5137,30 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    private void movieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void movieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
         mDoc.PreventAutoScan("Recommendations Open");
         RecommendationView form = new(mDoc, this, MediaConfiguration.MediaType.movie);
         form.ShowDialog(this);
+
+
         FillMyMovies();
         mDoc.AllowAutoScan();
         LessBusy();
+        FillMyMovies();
     }
 
     internal async Task ForceRefreshAsync(ShowConfiguration show, bool unattended)
     {
-        await ForceRefreshAsync([show], unattended);
+        var cts = new CancellationTokenSource();
+        await ForceRefreshAsync([show], unattended, cts);
     }
 
     private async Task ForceRefreshAsync(bool unattended)
     {
-        await ForceRefreshAsync((List<ShowConfiguration>?)null, unattended);
+        var cts = new CancellationTokenSource();
+        await ForceRefreshAsync((List<ShowConfiguration>?)null, unattended, cts);
     }
 
     private void settingsCheckToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5135,7 +5170,6 @@ public partial class UI : Form, IDialogParent
 
         SettingsReview form = new(mDoc, this);
         form.ShowDialog(this);
-
         mDoc.AllowAutoScan();
         LessBusy();
     }
@@ -5225,19 +5259,21 @@ public partial class UI : Form, IDialogParent
         tabControl1.SelectTab(tbAllInOne);
     }
 
-    private void cleanLibraryFoldersToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void cleanLibraryFoldersToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        PartialScan(new CleanUpEmptyLibraryFolders(mDoc));
+        await PartialScanAsync(new CleanUpEmptyLibraryFolders(mDoc));
     }
 
-    private void forceRefreshKodiTVShowNFOFIlesToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void forceRefreshKodiTVShowNFOFIlesToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        PartialScan(new ForceRefreshDownloadIdentifier(new DownloadKodiMetaData(), mDoc, "Refresh all tvshow.nfo"));
+        await PartialScanAsync(new ForceRefreshDownloadIdentifier(new DownloadKodiMetaData(), mDoc, "Refresh all tvshow.nfo"));
     }
-    private void PartialScan(PostScanActivity activity)
+    private async Task PartialScanAsync(PostScanActivity activity)
     {
+        CancellationTokenSource cts = new();
         mDoc.TheActionList.Clear();
-        DoScanPartNotifier f = new(activity);
+        DoScanPartNotifier f = new(activity, cts);
+
         f.ShowDialog();
         FillActionList();
         FocusOnScanResults();
@@ -5277,7 +5313,7 @@ public partial class UI : Form, IDialogParent
     }
 
     private void requestANewFeatureToolStripMenuItem_Click(object sender, EventArgs e)
-        => "https://tvrename.featureupvote.com/".OpenUrlInBrowser();
+        => "https://github.com/TV-Rename/tvrename/issues/new/choose".OpenUrlInBrowser();
 
     private async void yTSMoviePreviewToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -5285,6 +5321,7 @@ public partial class UI : Form, IDialogParent
         mDoc.PreventAutoScan("YTS Preview Open");
         YtsViewerView form = new(mDoc, this);
         form.ShowDialog(this);
+
         mDoc.AllowAutoScan();
         LessBusy();
         await FillMyShowsAsync(true);
@@ -5297,6 +5334,7 @@ public partial class UI : Form, IDialogParent
         mDoc.PreventAutoScan("YTS Recommendations Open");
         YtsRecommendationView form = new(mDoc, this, "1080p");
         form.ShowDialog(this);
+
         mDoc.AllowAutoScan();
         LessBusy();
         await FillMyShowsAsync(true);
@@ -5337,14 +5375,14 @@ public partial class UI : Form, IDialogParent
     {
         this.UpdateColorControls(fore, back, highlight);
     }
-    private void removeShowsWithNoFoldersToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void removeShowsWithNoFoldersToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        PartialScan(new RemoveShowsWithNoFolders(mDoc));
+        await PartialScanAsync(new RemoveShowsWithNoFolders(mDoc));
     }
 
-    private void exportFilteredToolStripMenuItem_Click(Object sender, EventArgs e)
+    private async void exportFilteredToolStripMenuItem_Click(Object sender, EventArgs e)
     {
-        mDoc.RunExporters(TVSettings.Instance.Filter, TVSettings.Instance.MovieFilter);
+        await mDoc.RunExportersAsync(TVSettings.Instance.Filter, TVSettings.Instance.MovieFilter);
     }
 
     private void txtDLStatusLabel_Click(object sender, EventArgs e)
@@ -5451,7 +5489,7 @@ public class DownloadProgressStatus : Progress<DownloadProgressReport>
     readonly ProgressBar bar;
     readonly Label label;
 
-    internal DownloadProgressStatus(ProgressBar bar,    Label label)
+    internal DownloadProgressStatus(ProgressBar bar, Label label)
     {
         this.bar = bar;
         this.label = label;
@@ -5479,7 +5517,7 @@ public class DownloadProgressStatus : Progress<DownloadProgressReport>
         {
             bar.Maximum = status.Values.Sum(a => a.total);
         }
-    } 
+    }
     protected override void OnReport(DownloadProgressReport update)
     {
         if (update.UpdateType == DownloadProgressReport.Type.ProviderUpdates)
@@ -5495,7 +5533,7 @@ public class DownloadProgressStatus : Progress<DownloadProgressReport>
             status[update.Provider] = (status[update.Provider].done + 1, status[update.Provider].total);
             Update($"Downloading: {update.Message}", status.Values.Sum(a => a.done));
         }
-        
+
         base.OnReport(update);
     }
 
@@ -5520,9 +5558,9 @@ public class DownloadProgressStatus : Progress<DownloadProgressReport>
         {
             label.Invoke(new MethodInvoker(delegate
             {
-            label.Text = message.ToUiVersion();
-            label.Visible = true;
-            label.Enabled = true;
+                label.Text = message.ToUiVersion();
+                label.Visible = true;
+                label.Enabled = true;
             }));
         }
         else

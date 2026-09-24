@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TVRename.Forms;
@@ -15,14 +16,61 @@ public partial class DuplicateMovieFinder : Form
     private readonly TVDoc mDoc;
     private readonly UI mainUi;
 
+    private Task? scan;
+
     public DuplicateMovieFinder(TVDoc doc, UI main)
     {
         InitializeComponent();
         dupMovies = [];
         mDoc = doc;
         mainUi = main;
-        Scan();
+        StartScan();
     }
+
+    private void StartScan()
+    {
+        var progressHandler = new Progress<ProgressReport>(scanReport =>
+        {
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(scanReport.ProgressPercentage);
+            lblStatus.Text = scanReport.UpdateText.ToUiVersion();
+        });
+
+        scan = Scan(progressHandler);
+    }
+
+    private async Task Scan(IProgress<ProgressReport> reporter)
+    {
+        btnRefresh.Visible = false;
+        pbProgress.Visible = true;
+        lblStatus.Visible = true;
+
+        int total = mDoc.FilmLibrary.Movies.Count();
+        ThreadSafeCounter currentRecord = new();
+
+        dupMovies.Clear();
+
+        foreach (MovieConfiguration? movie in mDoc.FilmLibrary.Movies)
+        {
+            await ProcessMovieAsync(movie);
+
+            reporter.Report(new ProgressReport(){
+                ProgressPercentage =  100 * currentRecord.Increment() / total,
+                UpdateText = movie.ShowName
+            });
+        }
+
+        btnRefresh.Visible = true;
+        pbProgress.Visible = false;
+        lblStatus.Visible = false;
+        if (olvDuplicates.IsDisposed)
+        {
+            return;
+        }
+
+        UpdateUI();
+    }
+
 
     // ReSharper disable once InconsistentNaming
     private void UpdateUI()
@@ -35,25 +83,9 @@ public partial class DuplicateMovieFinder : Form
         rightClickMenu.Close();
     }
 
-    private void BwScan_DoWork(object sender, DoWorkEventArgs e)
+    private async Task ProcessMovieAsync(MovieConfiguration movie)
     {
-        Thread.CurrentThread.Name ??= "DuplicateMovie Scan Thread"; // Can only set it once
-        BackgroundWorker bw = (BackgroundWorker)sender;
-        int total = mDoc.FilmLibrary.Movies.Count();
-        ThreadSafeCounter currentRecord = new();
-
-        dupMovies.Clear();
-        foreach (MovieConfiguration? movie in mDoc.FilmLibrary.Movies)
-        {
-            ProcessMovie(movie);
-
-            bw.ReportProgress(100 * currentRecord.Increment() / total, movie.ShowName);
-        }
-    }
-
-    private void ProcessMovie(MovieConfiguration movie)
-    {
-        List<FileInfo> files = [.. movie.MovieFiles().Where(fiTemp => movie.NameMatch(fiTemp, false))];
+        List<FileInfo> files = [.. (await movie.MovieFilesAsync()).Where(fiTemp => movie.NameMatch(fiTemp, false))];
 
         if (files.Count > 1)
         {
@@ -70,39 +102,12 @@ public partial class DuplicateMovieFinder : Form
         }
     }
 
-    private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
-    {
-        pbProgress.SetProgress(e.ProgressPercentage);
-        lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
-    }
-
-    private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        btnRefresh.Visible = true;
-        pbProgress.Visible = false;
-        lblStatus.Visible = false;
-        if (olvDuplicates.IsDisposed)
-        {
-            return;
-        }
-
-        UpdateUI();
-    }
-
     private void BtnRefresh_Click_1(object sender, EventArgs e)
     {
-        Scan();
+       
     }
 
-    private void Scan()
-    {
-        btnRefresh.Visible = false;
-        pbProgress.Visible = true;
-        lblStatus.Visible = true;
-        bwScan.RunWorkerAsync();
-    }
-
-    private void olvDuplicates_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+    private async void olvDuplicates_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
     {
         if (e.Model is null)
         {
@@ -117,39 +122,39 @@ public partial class DuplicateMovieFinder : Form
         rightClickMenu.Add("Force Refresh", async (_, _) =>
         {
             await mainUi.ForceMovieRefreshAsync([si], false);
-            Update(mlastSelected);
+            await UpdateAsync(mlastSelected);
         });
-        rightClickMenu.Add("Update", (_, _) =>
+        rightClickMenu.Add("Update", async (_, _) =>
         {
-            Update(mlastSelected);
+            await UpdateAsync(mlastSelected);
         });
         rightClickMenu.Add("Edit Movie", async (_, _) =>
         {
             await mainUi.EditMovieAsync(si);
-            Update(mlastSelected);
+            await UpdateAsync(mlastSelected);
         });
-        rightClickMenu.Add("Choose Best", (_, _) => MergeItems(mlastSelected, mainUi));
+        rightClickMenu.Add("Choose Best", async (_, _) => await MergeItemsAsync(mlastSelected, mainUi));
 
         rightClickMenu.AddSeparator();
 
         foreach (FileInfo? f in mlastSelected.Files)
         {
-            rightClickMenu.Add("Visit " + f.FullName, (_, _) =>
+            rightClickMenu.Add("Visit " + f.FullName, async (_, _) =>
             {
                 f.FullName.OpenFolderSelectFile();
-                Update(mlastSelected);
+                await UpdateAsync(mlastSelected);
             });
         }
     }
 
-    private void Update(DuplicateMovie duplicate)
+    private async Task UpdateAsync(DuplicateMovie duplicate)
     {
         dupMovies.Remove(duplicate);
-        ProcessMovie(duplicate.Movie);
+        await ProcessMovieAsync(duplicate.Movie);
         UpdateUI();
     }
 
-    private void MergeItems(DuplicateMovie mlastSelected, UI ui)
+    private async Task MergeItemsAsync(DuplicateMovie mlastSelected, UI ui)
     {
         foreach (FileInfo file1 in mlastSelected.Files)
         {
@@ -161,7 +166,7 @@ public partial class DuplicateMovieFinder : Form
                 }
             }
         }
-        Update(mlastSelected);
+        await UpdateAsync(mlastSelected);
     }
 
     private static void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, FileInfo file2, UI ui)

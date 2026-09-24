@@ -1,6 +1,9 @@
+using Alphaleonis.Win32.Filesystem;
+using System;
 using System.Linq;
 using System.Threading;
-using Alphaleonis.Win32.Filesystem;
+using System.Threading.Tasks;
+using TVRename.Forms.Tools;
 
 namespace TVRename;
 
@@ -13,7 +16,7 @@ internal class ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc d
 
     protected override bool Active() => true;
 
-    protected override void DoCheck(PostScanProgressDelegate progress, CancellationToken token)
+    protected override async Task DoCheckAsync(CancellationToken token)
     {
         int totalRecords = MDoc.TvLibrary.Count + MDoc.FilmLibrary.Count;
         ThreadSafeCounter currentRecord = new();
@@ -24,14 +27,14 @@ internal class ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc d
                 return;
             }
 
-            if (!si.AutoAddFolderBase.HasValue() || !si.AllExistngFolderLocations().Any())
+            if (!si.AutoAddFolderBase.HasValue() || !(await si.AllExistngFolderLocationsAsync()).IsAny())
             {
                 continue;
             }
 
-            MDoc.TheActionList.AddNullableRange(cx.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadMetaData, si));
+            MDoc.TheActionList.AddNullableRange(await cx.ForceUpdateShowAsync(DownloadIdentifier.DownloadType.downloadMetaData, si));
 
-            progress(currentRecord.Increment(), totalRecords,"Updating TV Shows" ,si.Name ?? string.Empty);
+            UpdateStatus( currentRecord.Increment(), totalRecords,"Updating TV Shows" ,si.Name ?? string.Empty);
         }
 
         foreach (MovieConfiguration si in MDoc.FilmLibrary.GetSortedMovies())
@@ -41,16 +44,16 @@ internal class ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc d
                 return;
             }
 
-            if (!si.AllExistngFolderLocations().Any())
+            if (!(await si.AllExistngFolderLocationsAsync()).IsAny())
             {
                 continue;
             }
-            foreach (FileInfo file in si.MovieFiles())
+            foreach (FileInfo file in (await si.MovieFilesAsync()))
             {
-                MDoc.TheActionList.AddNullableRange(cx.ForceUpdateMovie(DownloadIdentifier.DownloadType.downloadMetaData, si,file));
+                MDoc.TheActionList.AddNullableRange(await cx.ForceUpdateMovieAsync(DownloadIdentifier.DownloadType.downloadMetaData, si,file));
             }
 
-            progress(currentRecord.Increment(), totalRecords, "Updating Movies",si.Name ?? string.Empty);
+            UpdateStatus(currentRecord.Increment(), totalRecords, "Updating Movies",si.Name ?? string.Empty);
         }
     }
 }

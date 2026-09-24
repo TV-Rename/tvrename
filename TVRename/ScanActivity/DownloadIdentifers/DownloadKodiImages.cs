@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -31,7 +32,7 @@ internal class DownloadKodiImages : DownloadIdentifier
         base.NotifyComplete(file);
     }
 
-    public override ItemList? ProcessMovie(MovieConfiguration movie, FileInfo file, bool forceRefresh)
+    public override async Task<ItemList?> ProcessMovieAsync(MovieConfiguration movie, FileInfo file, bool forceRefresh)
     {
         //If we have KODI New style images being downloaded then we want to check that 3 files exist
         //for the cachedSeries:
@@ -98,10 +99,10 @@ internal class DownloadKodiImages : DownloadIdentifier
             return theActionList;
         }
 
-        return base.ProcessMovie(movie, file, forceRefresh);
+        return await base.ProcessMovieAsync(movie, file, forceRefresh);
     }
 
-    public override ItemList? ProcessShow(ShowConfiguration si, bool forceRefresh)
+    public override async Task<ItemList?> ProcessShowAsync(ShowConfiguration si, bool forceRefresh)
     {
         //If we have KODI New style images being downloaded then we want to check that 3 files exist
         //for the cachedSeries:
@@ -114,7 +115,7 @@ internal class DownloadKodiImages : DownloadIdentifier
         {
             ItemList theActionList = [];
             // base folder:
-            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && si.AllFolderLocations(false).Any())
+            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (await si.AllFolderLocationsAsync(false)).IsAny())
             {
                 FileInfo posterJpg = FileHelper.FileInFolder(si.AutoAddFolderBase, "poster.jpg");
                 FileInfo bannerJpg = FileHelper.FileInFolder(si.AutoAddFolderBase, "banner.jpg");
@@ -152,7 +153,7 @@ internal class DownloadKodiImages : DownloadIdentifier
             }
             return theActionList;
         }
-        return base.ProcessShow(si, forceRefresh);
+        return await base.ProcessShowAsync(si, forceRefresh);
     }
 
     public override ItemList? ProcessSeason(ShowConfiguration si, string folder, int snum, bool forceRefresh)

@@ -48,8 +48,8 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
 
             filesThatMayBeNeeded = [];
 
-            ReviewFilesInDownloadDirectory(dirPath, Settings.Owner);
-            ReviewDirsInDownloadDirectory(dirPath);
+            await ReviewFilesInDownloadDirectoryAsync(dirPath, Settings.Owner);
+            await ReviewDirsInDownloadDirectoryAsync(dirPath);
         }
 
         ItemList removeActions = [];
@@ -63,7 +63,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         MDoc.TheActionList.Replace(removeActions, returnActions);
     }
 
-    private void ReviewDirsInDownloadDirectory(string dirPath)
+    private async Task ReviewDirsInDownloadDirectoryAsync(string dirPath)
     {
         try
         {
@@ -75,7 +75,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
                     return;
                 }
 
-                ReviewDirInDownloadDirectory(subDirPath);
+                await ReviewDirInDownloadDirectoryAsync(subDirPath);
             }
         }
         catch (UnauthorizedAccessException ex)
@@ -92,7 +92,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private async Task ReviewDirInDownloadDirectory(string subDirPath)
+    private async Task ReviewDirInDownloadDirectoryAsync(string subDirPath)
     {
         //we are not checking for any file updates, so can return
         if (!TVSettings.Instance.RemoveDownloadDirectoriesFiles && !TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies)
@@ -118,30 +118,30 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
 
         List<ShowConfiguration> matchingShows = [.. showList.Where(si => si.NameMatch(di, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
 
-        if (!matchingShows.Any() && !matchingMovies.Any())
+        if (!matchingShows.IsAny() && !matchingMovies.IsAny())
         {
             return; // Some sort of random file - ignore
         }
 
         List<ShowConfiguration> neededMatchingShows = [.. await matchingShows.WhereAsync(si => FinderHelper.FileNeededAsync(di, si, dfc))];
-        if (neededMatchingShows.Any())
+        if (neededMatchingShows.IsAny())
         {
             LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededMatchingShows.Select(x => x.ShowName).ToCsv()}");
             return;
         }
 
-        List<MovieConfiguration> neededMatchingMovie = [.. matchingMovies.Where(si => FinderHelper.FileNeeded(di, si, dfc))];
-        if (neededMatchingMovie.Any())
+        List<MovieConfiguration> neededMatchingMovie = [.. await matchingMovies.WhereAsync(si => FinderHelper.FileNeededAsync(di, si, dfc))];
+        if (neededMatchingMovie.IsAny())
         {
             LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededMatchingMovie.Select(x => x.ShowName).ToCsv()}");
             return;
         }
 
-        if (matchingShows.Any() && TVSettings.Instance.RemoveDownloadDirectoriesFiles)
+        if (matchingShows.IsAny() && TVSettings.Instance.RemoveDownloadDirectoriesFiles)
         {
             returnActions.Add(SetupDirectoryRemoval(di, matchingShows));
         }
-        if (matchingMovies.Any() && TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies)
+        if (matchingMovies.IsAny() && TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies)
         {
             returnActions.Add(SetupDirectoryRemoval(di, matchingMovies));
         }
@@ -174,7 +174,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         return new ActionDeleteDirectory(di, si, TVSettings.Instance.Tidyup);
     }
 
-    private void ReviewFilesInDownloadDirectory(string dirPath, IDialogParent owner)
+    private async Task ReviewFilesInDownloadDirectoryAsync(string dirPath, IDialogParent owner)
     {
         try
         {
@@ -192,7 +192,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
                     continue;
                 }
 
-                ReviewFileInDownloadDirectory(Settings.Unattended, fi, owner);
+                await ReviewFileInDownloadDirectoryAsync(Settings.Unattended, fi, owner);
             }
         }
         catch (UnauthorizedAccessException ex)
@@ -209,7 +209,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private async Task  ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, IDialogParent owner)
+    private async Task  ReviewFileInDownloadDirectoryAsync(bool unattended, FileInfo fi, IDialogParent owner)
     {
         List<ShowConfiguration> matchingShowsAll = [.. showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<ShowConfiguration> matchingShows = FinderHelper.RemoveShortShows(matchingShowsAll);
@@ -220,14 +220,14 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
             FinderHelper.RemoveShortMedia(matchingMovies, matchingShows);
         //List<ShowConfiguration> matchingShowsNoMovies = FinderHelper.RemoveShortMedia(matchingShows, matchingMovies);
 
-        if (!matchingMovies.Any() && !matchingShows.Any())
+        if (!matchingMovies.IsAny() && !matchingShows.IsAny())
         {
             // Some sort of random file - ignore
             return;
         }
 
-        bool showCheck = TVSettings.Instance.RemoveDownloadDirectoriesFiles && matchingShows.Any();
-        bool movieCheck = TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies && matchingMovies.Any();
+        bool showCheck = TVSettings.Instance.RemoveDownloadDirectoriesFiles && matchingShows.IsAny();
+        bool movieCheck = TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies && matchingMovies.IsAny();
         bool fileCanBeDeleted = showCheck || movieCheck;
 
         ProcessedEpisode? firstMatchingPep = null;
@@ -245,8 +245,8 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
             }
         }
 
-        List<MovieConfiguration> neededMatchingMovie = [.. matchingMovies.Where(si => FinderHelper.FileNeeded(fi, si, dfc))];
-        if (neededMatchingMovie.Any())
+        List<MovieConfiguration> neededMatchingMovie = [.. await matchingMovies.WhereAsync(si => FinderHelper.FileNeededAsync(fi, si, dfc))];
+        if (neededMatchingMovie.IsAny())
         {
             LOGGER.Info($"Not removing {fi.FullName} as it may be needed for {neededMatchingMovie.Select(x => x.ShowName).ToCsv()}");
 
@@ -254,7 +254,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
         else
         {
-            if (TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck && matchingMovies.Any() && matchingMovies.Max(c => c.ShowName.Length) <= TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength)
+            if (TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck && matchingMovies.IsAny() && matchingMovies.Max(c => c.ShowName.Length) <= TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength)
             {
                 LOGGER.Info($"Not removing {fi.FullName} as it may be needed for {matchingMovies.Select(x => x.ShowName).ToCsv()} and they are all too short");
 
@@ -263,7 +263,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
 
             if (TVSettings.Instance.ReplaceMoviesWithBetterQuality)
             {
-                bool? x = ReviewFileAgainstExistingMovies(unattended, fi, owner, matchingMoviesNoShows);
+                bool? x = await ReviewFileAgainstExistingMoviesAsync(unattended, fi, owner, matchingMoviesNoShows);
                 if (x is false)
                 {
                     fileCanBeDeleted = false;
@@ -288,7 +288,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
 
         var seasonEpisodes = si.EpisodesForSeason(seasF);
 
-        if (!seasonEpisodes.Any())
+        if (!seasonEpisodes.IsAny())
         {
             LogError(fi, seasF, epF, re, si, "season");
             return (false, null);
@@ -307,7 +307,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         if (encumbants.Count == 0)
         {
             //File is needed as there are no files for that cachedSeries/episode
-            CopyFutureDatedFile(fi, firstMatchingEpisode, MDoc);
+            await CopyFutureDatedFileAsync(fi, firstMatchingEpisode, MDoc);
             return (false, firstMatchingEpisode);
         }
         else
@@ -332,13 +332,13 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private bool? ReviewFileAgainstExistingMovies(bool unattended, FileInfo fi, IDialogParent owner, List<MovieConfiguration> matchingMovies)
+    private async Task<bool?> ReviewFileAgainstExistingMoviesAsync(bool unattended, FileInfo fi, IDialogParent owner, List<MovieConfiguration> matchingMovies)
     {
         bool? fileCanBeDeleted = null;
 
         foreach (MovieConfiguration testMovie in matchingMovies)
         {
-            List<FileInfo> encumbants = [.. dfc.FindMovieOnDisk(testMovie)];
+            List<FileInfo> encumbants = [.. await dfc.FindMovieOnDiskAsync(testMovie)];
 
             foreach (FileInfo existingFile in encumbants)
             {
@@ -363,7 +363,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
     private void RemoveFileAndReport(FileInfo fi, List<MovieConfiguration> matchingMovies, List<ShowConfiguration> matchingShows,
         ProcessedEpisode? firstMatchingPep)
     {
-        if (matchingMovies.Any())
+        if (matchingMovies.IsAny())
         {
             LOGGER.Info(
                 $"Removing {fi.FullName} as it matches {matchingMovies.Select(s => s.ShowName).ToCsv()} and no files are needed for those movies");
@@ -371,12 +371,12 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
             returnActions.Add(new ActionDeleteFile(fi, matchingMovies.LongestShowName(), TVSettings.Instance.Tidyup));
         }
 
-        if (matchingShows.Any())
+        if (matchingShows.IsAny())
         {
             LOGGER.Info(
                 $"Removing {fi.FullName} as it matches {matchingShows.Select(s => s.ShowName).ToCsv()} and no episodes are needed");
 
-            if (!matchingMovies.Any())
+            if (!matchingMovies.IsAny())
             {
                 returnActions.Add(new ActionDeleteFile(fi, firstMatchingPep, TVSettings.Instance.Tidyup));
             }
@@ -548,7 +548,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         };
     }
 
-    private void CopyFutureDatedFile(FileInfo fi, ProcessedEpisode pep, TVDoc d)
+    private async Task CopyFutureDatedFileAsync(FileInfo fi, ProcessedEpisode pep, TVDoc d)
     {
         ShowConfiguration si = pep.Show;
         int seasF = pep.AppropriateSeasonNumber;
@@ -566,7 +566,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
             return;
         }
 
-        Dictionary<int, SafeList<string>> foldersLocations = si.AllProposedFolderLocations();
+        Dictionary<int, SafeList<string>> foldersLocations = await si.AllProposedFolderLocationsAsync();
         if (!foldersLocations.TryGetValue(seasF, out SafeList<string>? folders))
         {
             LOGGER.Info(

@@ -9,6 +9,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -21,7 +22,7 @@ internal sealed class IncorrectFileDates : DownloadIdentifier
 
     public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
-    public override ItemList? ProcessShow(ShowConfiguration si, bool forceRefresh)
+    public override async Task<ItemList?> ProcessShowAsync(ShowConfiguration si, bool forceRefresh)
     {
         DateTime? updateTime = si.LastAiredDate;
         if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue)
@@ -43,12 +44,12 @@ internal sealed class IncorrectFileDates : DownloadIdentifier
     }
 
     /// <exception cref="System.IO.DirectoryNotFoundException">Condition.</exception>
-    public override ItemList? ProcessMovie(MovieConfiguration movie, FileInfo file, bool forceRefresh)
+    public override async Task<ItemList?> ProcessMovieAsync(MovieConfiguration movie, FileInfo file, bool forceRefresh)
     {
         DateTime? updateTime = movie.CachedMovie?.FirstAired;
         if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue)
         {
-            return base.ProcessMovie(movie, file, forceRefresh);
+            return await base.ProcessMovieAsync(movie, file, forceRefresh);
         }
 
         DateTime newUpdateTime = FileHelper.GetMinWindowsTime(updateTime.Value);

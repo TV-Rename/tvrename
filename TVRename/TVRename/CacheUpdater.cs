@@ -54,7 +54,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
         }
     }
 
-    public async Task<bool> DoDownloadsFgAsync(bool showProgress, bool showMsgBox, ICollection<ISeriesSpecifier> shows, UI owner)
+    public async Task<bool> DoDownloadsFgAsync(bool showProgress, bool showMsgBox, ICollection<ISeriesSpecifier> shows, UI owner, CancellationTokenSource cts)
     {
         if (TVSettings.Instance.OfflineMode)
         {
@@ -64,7 +64,6 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
 
         Logger.Info("Doing downloads in the foreground...");
 
-        CancellationTokenSource cts = new();
         StartBackgroundDownloadAsync(true, shows, showMsgBox, null, cts.Token); //todo hook up progress dialog
 
         if (DownloadIsHappening() && showProgress) // downloading still going on, so time to show the dialog if we're not in /hide mode

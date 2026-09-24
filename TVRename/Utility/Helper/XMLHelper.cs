@@ -166,7 +166,7 @@ public static class XmlHelper
 
     public static XElement GetOrCreateElement(this XElement root, string elementName)
     {
-        if (root.Elements(elementName).Any())
+        if (root.Elements(elementName).IsAny())
         {
             return root.Elements(elementName).First();
         }
@@ -266,7 +266,7 @@ public static class XmlHelper
                 Logger.Error($"Could not update element {elementName} in {e}");
             }
         }
-        else if (!e.Elements(elementName).Any())
+        else if (!e.Elements(elementName).IsAny())
         {
             e.Add(new XElement(elementName, value));
         }
@@ -349,7 +349,7 @@ public static class XmlHelper
 
     public static bool? ExtractBool(this XElement xmlSettings, string elementName)
     {
-        if (xmlSettings.Descendants(elementName).Any())
+        if (xmlSettings.Descendants(elementName).IsAny())
         {
             return XmlConvert.ToBoolean((string)xmlSettings.Descendants(elementName).First());
         }
@@ -364,7 +364,7 @@ public static class XmlHelper
 
     public static bool ExtractBool(this XElement xmlSettings, string elementName, bool defaultValue)
     {
-        if (xmlSettings.Descendants(elementName).Any())
+        if (xmlSettings.Descendants(elementName).IsAny())
         {
             return XmlConvert.ToBoolean((string)xmlSettings.Descendants(elementName).First());
         }
@@ -381,7 +381,7 @@ public static class XmlHelper
 
     public static DateTime? ExtractDateTime(this XElement xmlSettings, string elementName)
     {
-        if (xmlSettings.Descendants(elementName).Any())
+        if (xmlSettings.Descendants(elementName).IsAny())
         {
             string textVersion = (string)xmlSettings.Descendants(elementName).First();
             if (string.IsNullOrWhiteSpace(textVersion))
@@ -408,7 +408,7 @@ public static class XmlHelper
 
     public static string? ExtractStringOrNull(this XElement xmlSettings, string elementName)
     {
-        if (xmlSettings.Descendants(elementName).Any())
+        if (xmlSettings.Descendants(elementName).IsAny())
         {
             return (string)xmlSettings.Descendants(elementName).First();
         }
@@ -418,7 +418,7 @@ public static class XmlHelper
 
     public static string ExtractString(this XElement xmlSettings, string elementName, string defaultValue)
     {
-        if (xmlSettings.Descendants(elementName).Any())
+        if (xmlSettings.Descendants(elementName).IsAny())
         {
             return (string)xmlSettings.Descendants(elementName).First();
         }
@@ -430,7 +430,7 @@ public static class XmlHelper
     {
         IEnumerable<XElement> xElements = [.. xmlSettings.Descendants(elementName)];
 
-        if (xElements.Any() && !string.IsNullOrWhiteSpace((string)xElements.First()))
+        if (xElements.IsAny() && !string.IsNullOrWhiteSpace((string)xElements.First()))
         {
             try
             {

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading.Tasks;
 using Alphaleonis.Win32.Filesystem;
 using WinCopies.Util;
 
@@ -38,7 +39,7 @@ internal sealed class MediaMetaData : DownloadIdentifier
         return returnActions;
     }
 
-    public override ItemList? ProcessMovie(MovieConfiguration movie, FileInfo file, bool forceRefresh)
+    public override async Task<ItemList?> ProcessMovieAsync(MovieConfiguration movie, FileInfo file, bool forceRefresh)
     {
         CachedMovieInfo? data = movie.CachedMovie;
 

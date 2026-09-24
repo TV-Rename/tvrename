@@ -304,10 +304,10 @@ public class ShowConfiguration : MediaConfiguration
     private void UpgradeFromOldSeasonFormat(XElement xmlSettings)
     {
         //These variables have been discontinued (JULY 2018).  If we have any then we should migrate to the new values
-        bool upgradeFromOldAutoAddFunction = xmlSettings.Descendants("AutoAddNewSeasons").Any()
-                                             || xmlSettings.Descendants("FolderPerSeason").Any()
-                                             || xmlSettings.Descendants("SeasonFolderName").Any()
-                                             || xmlSettings.Descendants("PadSeasonToTwoDigits").Any();
+        bool upgradeFromOldAutoAddFunction = xmlSettings.Descendants("AutoAddNewSeasons").IsAny()
+                                             || xmlSettings.Descendants("FolderPerSeason").IsAny()
+                                             || xmlSettings.Descendants("SeasonFolderName").IsAny()
+                                             || xmlSettings.Descendants("PadSeasonToTwoDigits").IsAny();
         bool tempAutoAddNewSeasons = xmlSettings.ExtractBool("AutoAddNewSeasons", true);
         bool tempAutoAddFolderPerSeason = xmlSettings.ExtractBool("FolderPerSeason", true);
         string tempAutoAddSeasonFolderName = xmlSettings.ExtractString("SeasonFolderName");
@@ -662,7 +662,7 @@ public class ShowConfiguration : MediaConfiguration
 
         foreach (KeyValuePair<int, List<ShowRule>> kvp in SeasonRules)
         {
-            if (kvp.Value.Any())
+            if (kvp.Value.IsAny())
             {
                 writer.WriteStartElement("Rules");
                 writer.WriteAttributeToXml("SeasonNumber", kvp.Key);
@@ -677,7 +677,7 @@ public class ShowConfiguration : MediaConfiguration
         }
         foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations)
         {
-            if (kvp.Value.Any())
+            if (kvp.Value.IsAny())
             {
                 writer.WriteStartElement("SeasonFolders");
 
@@ -694,61 +694,6 @@ public class ShowConfiguration : MediaConfiguration
             }
         }
         writer.WriteEndElement(); // ShowItem
-    }
-
-    protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
-    {
-        Dictionary<int, SafeList<string>> fld = [];
-
-        if (manualToo)
-        {
-            foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations.ToList())
-            {
-                if (!fld.ContainsKey(kvp.Key))
-                {
-                    fld[kvp.Key] = [];
-                }
-
-                foreach (string s in kvp.Value)
-                {
-                    fld[kvp.Key].Add(s.TrimSlash());
-                }
-            }
-        }
-
-        if (AutoAddNewSeasons() && !string.IsNullOrEmpty(AutoAddFolderBase))
-        {
-            foreach (int i in ActiveSeasons.Keys())
-            {
-                if (ManualFoldersReplaceAutomatic && fld.ContainsKey(i))
-                {
-                    continue;
-                }
-
-                string newName = AutoFolderNameForSeason(i);
-                if (string.IsNullOrEmpty(newName))
-                {
-                    continue;
-                }
-
-                if (checkExist && !Directory.Exists(newName)) //todo - make async
-                {
-                    continue;
-                }
-
-                //Now we can add the automated one
-                if (!fld.ContainsKey(i))
-                {
-                    fld[i] = [];
-                }
-
-                if (!fld[i].Contains(newName))
-                {
-                    fld[i].Add(newName.TrimSlash());
-                }
-            }
-        }
-        return fld;
     }
 
     protected override async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)
@@ -1375,7 +1320,7 @@ public class ShowConfiguration : MediaConfiguration
         }
     }
 
-    internal List<ProcessedEpisode> EpisodesForSeason(int snum) => EpisodeCaches.SeasonEpisodes[snum];
+    internal List<ProcessedEpisode> EpisodesForSeason(int snum) => EpisodeCaches.SeasonEpisodes[snum]; //TODO - check issue that c
 
     internal int EpisodeCount() => EpisodeCaches.SeasonEpisodes.Values.Sum(episodes => episodes.Count);
 

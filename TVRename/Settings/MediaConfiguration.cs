@@ -78,21 +78,17 @@ public abstract class MediaConfiguration : ISeriesSpecifier
 
     protected abstract MediaType GetMediaType();
 
-    protected abstract Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist);
-
     protected abstract Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist);
 
     public override string ToString() => $"{GetMediaType()}: ({ConfigurationProvider.PrettyPrint()}) TVDB:{TvdbCode} TMDB:{TmdbCode} TVMaze:{TVmazeCode} ({CustomShowName},{CustomLanguageCode},{CustomRegionCode}) [{LastName}]";
 
-    public Dictionary<int, SafeList<string>> AllExistngFolderLocations() => AllFolderLocations(true, true);
-
     public async Task<Dictionary<int, SafeList<string>>> AllExistngFolderLocationsAsync () => await AllFolderLocationsAsync(true, true);
 
-    public Dictionary<int, SafeList<string>> AllProposedFolderLocations() => AllFolderLocations(true, false);
+    public async Task<Dictionary<int, SafeList<string>>> AllProposedFolderLocationsAsync() => await AllFolderLocationsAsync(true, false);
 
     public async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsEpCheck(bool checkExist) => await AllFolderLocationsAsync(true, checkExist);
 
-    public Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo) => AllFolderLocations(manualToo, true);
+    public async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo) => await AllFolderLocationsAsync(manualToo, true);
 
     public enum MediaType
     {

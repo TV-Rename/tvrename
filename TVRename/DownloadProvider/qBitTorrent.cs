@@ -121,7 +121,7 @@ public class qBitTorrent : IDownloadProvider
             torrentDetailsString = await HttpHelper.ObtainAsync(url);
             JArray torrentDetails = JArray.Parse(torrentDetailsString);
 
-            if (!torrentDetails.Children().Any())
+            if (!torrentDetails.Children().IsAny())
             {
                 string proposedFilename = TVSettings.Instance.FilenameFriendly(savePath + torrentName) +
                                           TVSettings.Instance.VideoExtensionsArray[0];

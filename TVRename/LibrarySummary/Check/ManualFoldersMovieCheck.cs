@@ -43,7 +43,7 @@ internal class ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : Cu
                         return;
                     }
 
-                    if (!source.EnumerateFiles().Any() && !source.EnumerateDirectories().Any())
+                    if (!source.EnumerateFiles().IsAny() && !source.EnumerateDirectories().IsAny())
                     {
                         //directory has nothing in it
                         FileHelper.RemoveDirectory(source,null);

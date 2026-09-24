@@ -9,6 +9,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -47,7 +48,7 @@ internal class DownloadIdentifiersController
         }
     }
 
-    public ItemList ProcessMovie(MovieConfiguration? si, FileInfo filo)
+    public async Task<ItemList> ProcessMovieAsync(MovieConfiguration? si, FileInfo filo)
     {
         if (si is null)
         {
@@ -58,12 +59,12 @@ internal class DownloadIdentifiersController
 
         foreach (DownloadIdentifier di in identifiers)
         {
-            theActionList.Add(di.ProcessMovie(si, filo));
+            theActionList.Add(await di.ProcessMovieAsync(si, filo));
         }
         return theActionList;
     }
 
-    public ItemList ProcessShow(ShowConfiguration? si)
+    public async Task<ItemList> ProcessShowAsync(ShowConfiguration? si)
     {
         ItemList theActionList = [];
         if (si is null)
@@ -73,7 +74,7 @@ internal class DownloadIdentifiersController
 
         foreach (DownloadIdentifier di in identifiers)
         {
-            theActionList.Add(di.ProcessShow(si));
+            theActionList.Add(await di.ProcessShowAsync(si));
         }
         return theActionList;
     }
@@ -116,7 +117,7 @@ internal class DownloadIdentifiersController
         }
     }
 
-    public ItemList ForceUpdateMovie(DownloadIdentifier.DownloadType dt, MovieConfiguration? si, FileInfo filo)
+    public async Task<ItemList> ForceUpdateMovieAsync(DownloadIdentifier.DownloadType dt, MovieConfiguration? si, FileInfo filo)
     {
         ItemList theActionList = [];
         if (si is null)
@@ -126,12 +127,12 @@ internal class DownloadIdentifiersController
 
         foreach (DownloadIdentifier di in identifiers.Where(di => dt == di.GetDownloadType()))
         {
-            theActionList.Add(di.ProcessMovie(si, filo, true));
+            theActionList.Add(await di.ProcessMovieAsync(si, filo, true));
         }
         return theActionList;
     }
 
-    public ItemList ForceUpdateShow(DownloadIdentifier.DownloadType dt, ShowConfiguration? si)
+    public async Task<ItemList> ForceUpdateShowAsync(DownloadIdentifier.DownloadType dt, ShowConfiguration? si)
     {
         ItemList theActionList = [];
         if (si is null)
@@ -141,7 +142,7 @@ internal class DownloadIdentifiersController
 
         foreach (DownloadIdentifier di in identifiers.Where(di => dt == di.GetDownloadType()))
         {
-            theActionList.Add(di.ProcessShow(si, true));
+            theActionList.Add(await di.ProcessShowAsync(si, true));
         }
         return theActionList;
     }

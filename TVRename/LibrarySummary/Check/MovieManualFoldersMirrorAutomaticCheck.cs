@@ -28,7 +28,7 @@ internal class MovieManualFoldersMirrorAutomaticCheck(MovieConfiguration movie, 
 
         Movie.ManualLocations.RemoveNullableRange(matchingLocations);
 
-        if (!Movie.ManualLocations.Any())
+        if (!Movie.ManualLocations.IsAny())
         {
             Movie.UseManualLocations = false;
         }

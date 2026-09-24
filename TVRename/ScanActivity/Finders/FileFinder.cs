@@ -10,6 +10,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -90,7 +91,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
         return false;
     }
 
-    protected bool ReviewFile(MovieItemMissing me, ItemList addTo, FileInfo dce, bool preventMove, bool doExtraFiles, bool useFullPath)
+    protected async Task<bool> ReviewFileAsync(MovieItemMissing me, ItemList addTo, FileInfo dce, bool preventMove, bool doExtraFiles, bool useFullPath)
     {
         if (Settings.Token.IsCancellationRequested)
         {
@@ -142,7 +143,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
                 DownloadIdentifiersController di = new();
 
                 // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-                addTo.Add(di.ProcessMovie(me.MovieConfig, fi));
+                addTo.Add(await di.ProcessMovieAsync(me.MovieConfig, fi));
             }
 
             return true;

@@ -81,7 +81,7 @@ public class CommandLineArgs(IReadOnlyCollection<string> args)
         output.AppendLine("/ignoremissing will Ignore missing folders.");
         output.AppendLine("/norenamecheck requests an existing TV Rename session to scan without renaming.");
         output.AppendLine("");
-        output.AppendLine("Further information is available at https://www.tvrename.com/manual/cmd-line/");
+        output.AppendLine("Further information is available at http://www.tvrename.com/manual/cmd-line/");
 
         return output.ToString();
     }

@@ -1236,7 +1236,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return null;
     }
 
-    internal async Task<IEnumerable<CachedSeriesInfo>> ServerTvAccuracyCheckAsync()
+    internal async Task<IEnumerable<CachedSeriesInfo>> ServerTvAccuracyCheckAsync(CancellationToken token)
     {
         TmdbAccuracyCheck check = new(this);
 
@@ -1246,9 +1246,13 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         {
             await Parallel.ForEachAsync(
                 FullShows(),
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads , CancellationToken = token},
                 async (si, token) =>
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
                 Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
                 await check.ServerAccuracyCheckAsync(si);
             });
@@ -1270,7 +1274,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         SayNothing();
         return check.ShowsToUpdate;
     }
-    internal async Task<IEnumerable<CachedMovieInfo>> ServerMovieAccuracyCheckAsync()
+    internal async Task<IEnumerable<CachedMovieInfo>> ServerMovieAccuracyCheckAsync(CancellationToken token)
     {
         TmdbAccuracyCheck check = new(this);
 
@@ -1281,10 +1285,14 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             //todo set parallel cancellation source
             await Parallel.ForEachAsync(
                 FullMovies(),
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads, CancellationToken= token },
                 async (si, token) =>
                 {
                     Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
                     await check.ServerAccuracyCheckAsync(si);
                 });
         }
@@ -1308,7 +1316,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     /// <exception cref="SourceConnectivityException">Condition.</exception>
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    public async Task<Recomendations> GetTVRecommendationsAsync(BackgroundWorker sender, List<ShowConfiguration> shows, string languageCode)
+    public async Task<Recomendations> GetTVRecommendationsAsync(IProgress<ProgressReport> sender, List<ShowConfiguration> shows, string languageCode)
     {
         int total = shows.Count;
         ThreadSafeCounter current = new();
@@ -1323,12 +1331,18 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         await Parallel.ForEachAsync(shows, options, async (arg, cancellationToken) =>
         {
+            //TODO Check Cancellation Token
+
             string errorMessage = $"Error obtaining TMDB Recommendations for {arg.Name}:";
             try
             {
                 await AddRecommendationsFromASync(arg, returnValue, languageCode);
 
-                sender.ReportProgress(100 * current.Increment() / total, arg.CachedShow?.Name);
+                sender.Report(new ProgressReport()
+                {
+                    ProgressPercentage = 100 * current.Increment() / total,
+                    UpdateText = arg.CachedShow?.Name ?? string.Empty
+                });
             }
             catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
             {
@@ -1420,7 +1434,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     /// <exception cref="SourceConnectivityException">Condition.</exception>
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    public async Task<Recomendations> GetMovieRecommendationsAsync(BackgroundWorker sender, List<MovieConfiguration> movies, string languageCode)
+    public async Task<Recomendations> GetMovieRecommendationsAsync(IProgress<ProgressReport> sender, List<MovieConfiguration> movies, string languageCode)
     {
         int total = movies.Count;
         ThreadSafeCounter current = new();
@@ -1464,7 +1478,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             {
                 await HandleWebErrorsForAsync(async () => await GetMovieRecommendationsAsync(languageCode, movie, returnValue), errorMessage);
 
-                sender.ReportProgress(100 * current.Increment() / total, movie.CachedMovie?.Name);
+                sender.Report(new ProgressReport()
+                {
+                    ProgressPercentage = 100 * current.Increment() / total,
+                    UpdateText = movie.CachedMovie?.Name ?? string.Empty
+                });
             }
             catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
             {

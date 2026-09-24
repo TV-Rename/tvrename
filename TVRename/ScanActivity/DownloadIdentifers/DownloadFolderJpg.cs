@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;
@@ -13,7 +14,7 @@ internal class DownloadFolderJpg : DownloadIdentifier
 
     public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
-    public override ItemList ProcessMovie(MovieConfiguration mc, FileInfo file, bool forceRefresh)
+    public override async Task<ItemList?> ProcessMovieAsync(MovieConfiguration mc, FileInfo file, bool forceRefresh)
     {
         if (!TVSettings.Instance.FolderJpg)
         {
@@ -59,7 +60,7 @@ internal class DownloadFolderJpg : DownloadIdentifier
         }
     }
 
-    public override ItemList ProcessShow(ShowConfiguration si, bool forceRefresh)
+    public override async Task<ItemList?> ProcessShowAsync(ShowConfiguration si, bool forceRefresh)
     {
         ItemList theActionList = [];
 

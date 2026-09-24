@@ -10,6 +10,7 @@ using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -18,7 +19,7 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
     protected override string ActivityName() => "Created Merge Rules for episodes in the library";
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
-    protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+    protected override async Task CheckAsync(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
         if (settings.Token.IsCancellationRequested)
         {
@@ -30,7 +31,7 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
             return;
         }
 
-        Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
+        Dictionary<int, SafeList<string>> allFolders = await si.AllExistngFolderLocationsAsync();
 
         if (allFolders.Count == 0) // no folders defined for this show
         {
@@ -139,7 +140,7 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
             LOGGER.Info($"Added new rule automatically for {sr}");
         }
 
-        if (rulesToAdd.Any())
+        if (rulesToAdd.IsAny())
         {
             //Regenerate the episodes with the new rule added
             si.UpdateEpisodeCaches();

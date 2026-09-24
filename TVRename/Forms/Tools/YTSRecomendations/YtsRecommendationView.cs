@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
@@ -18,6 +19,8 @@ public partial class YtsRecommendationView : Form
     private readonly List<MovieConfiguration> addedMovies;
     private readonly string quality;
     private DateTime scanStartTime;
+    private Task? scanTask;
+
 
     public YtsRecommendationView(TVDoc doc, UI main, string defaultQuality)
     {
@@ -28,11 +31,16 @@ public partial class YtsRecommendationView : Form
         mDoc = doc;
         mainUi = main;
         quality = defaultQuality;
+        chrRecommendationPreview.RequestHandler = new BrowserRequestHandler();
 
         olvRating.GroupKeyGetter = rowObject => (int)Math.Floor(((YtsRecommendationRow)rowObject).StarScore);
         olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
 
-        Scan();
+        StartScan();
+    }
+    void StartScan()
+    {
+        scanTask = ScanAsync();
     }
 
     // ReSharper disable once InconsistentNaming
@@ -109,7 +117,7 @@ public partial class YtsRecommendationView : Form
             found.UseAutomaticFolders = true;
         }
 
-        mDoc.Add(found.AsList(), true);
+        await mDoc.AddAsync(found.AsList(), true);
         addedMovies.Add(found);
         addedMovie.SetShow(found);
     }
@@ -119,49 +127,7 @@ public partial class YtsRecommendationView : Form
         rightClickMenu.Close();
     }
 
-    private async void BwScan_DoWorkAsync(object sender, DoWorkEventArgs e)
-    {
-        System.Threading.Thread.CurrentThread.Name ??= "Recommendations Scan Thread"; // Can only set it once
-
-        RecommendationMovieStructure source = new();
-        ThreadSafeCounter page = new();
-
-        List<MovieConfiguration> inputMovies = [.. mDoc.FilmLibrary.Movies.Where(m => m.ImdbCode != null && !m.ImdbCode.IsNullOrWhitespace())];
-        scanStartTime = TimeHelpers.LocalNow();
-
-        try
-        {
-            foreach (MovieConfiguration existingMovie in inputMovies)
-            {
-                API.YtsMovie? ytsMovie = await API.GetMovieByImdbAsync(existingMovie.ImdbCode);
-                if (ytsMovie is null || ytsMovie.Id==0)
-                {
-                    continue;
-                }
-
-                IEnumerable<API.YtsMovie>? relatedMovies = await API.GetRelatedMoviesAsync(ytsMovie.Id);
-                if (relatedMovies is null)
-                {
-                    continue;
-                }
-
-                //File these away
-                foreach (API.YtsMovie relatedMovie in relatedMovies)
-                {
-                    source.Add(relatedMovie,existingMovie, ytsMovie);
-                }
-
-                ((BackgroundWorker)sender).ReportProgress(100 * page.Increment() / inputMovies.Count,existingMovie.Name);
-            }
-
-            recs = source.AsRecommendationRows(mDoc);
-        }
-        catch (Exception ex)
-        {
-            Logger.Fatal(ex, "UNHANDLED error obtinaing recommendations from YTS");
-        }
-    }
-
+    
     private class RecommendationMovieStructure : Dictionary<int, Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>>
     {
         internal void Add(API.YtsMovie relatedMovie, MovieConfiguration existingMovie, API.YtsMovie ytsMovie)
@@ -182,15 +148,64 @@ public partial class YtsRecommendationView : Form
         }
     }
 
-    private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+    private async void BtnRefresh_Click_1(object sender, EventArgs e)
     {
-        pbProgress.SetProgress(e.ProgressPercentage);
-        DateTime completionDateTime = scanStartTime.Add((TimeHelpers.LocalNow() - scanStartTime) / (pbProgress.Value+1) * 100) ;
-        lblStatus.Text = $"ETC={completionDateTime} {e.UserState?.ToString()?.ToUiVersion()}";
+        StartScan();
     }
 
-    private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    public async Task ScanAsync()
     {
+        var progressHandler = new Progress<ProgressReport>(scanReport =>
+        {
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(scanReport.ProgressPercentage);
+
+            DateTime completionDateTime = scanStartTime.Add((TimeHelpers.LocalNow() - scanStartTime) / (pbProgress.Value + 1) * 100);
+            lblStatus.Text = $"ETC={completionDateTime} {scanReport.UpdateText.ToUiVersion()}";
+        });
+
+        btnRefresh.Visible = false;
+        pbProgress.Visible = true;
+        lblStatus.Visible = true;
+
+        RecommendationMovieStructure source = new();
+        ThreadSafeCounter page = new();
+
+        List<MovieConfiguration> inputMovies = [.. mDoc.FilmLibrary.Movies.Where(m => m.ImdbCode != null && !m.ImdbCode.IsNullOrWhitespace())];
+        scanStartTime = TimeHelpers.LocalNow();
+
+        try
+        {
+            CancellationTokenSource cts = new();
+
+            await Parallel.ForEachAsync(
+                inputMovies,
+                new ParallelOptions {
+                    MaxDegreeOfParallelism = 2* TVSettings.Instance.ParallelDownloads,
+                    CancellationToken = cts.Token },
+                async (existingMovie, token) =>
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+                    ((IProgress<ProgressReport>)progressHandler).Report(new ProgressReport()
+                    {
+                        ProgressPercentage = 100 * page.Increment() / inputMovies.Count,
+                        UpdateText = existingMovie.Name ?? string.Empty
+                    });
+
+                    await ScanMovie(source, existingMovie);
+                });
+
+
+            recs = source.AsRecommendationRows(mDoc);
+        }
+        catch (Exception ex)
+        {
+            Logger.Fatal(ex, "UNHANDLED error obtinaing recommendations from YTS");
+        }
+
         btnRefresh.Visible = true;
         pbProgress.Visible = false;
         lblStatus.Visible = false;
@@ -202,17 +217,27 @@ public partial class YtsRecommendationView : Form
         PopulateGrid();
     }
 
-    private void BtnRefresh_Click_1(object sender, EventArgs e)
+    private static async Task<bool> ScanMovie(RecommendationMovieStructure source, MovieConfiguration existingMovie)
     {
-        Scan();
-    }
+        API.YtsMovie? ytsMovie = await API.GetMovieByImdbAsync(existingMovie.ImdbCode);
+        if (ytsMovie is null || ytsMovie.Id == 0)
+        {
+            return false;
+        }
 
-    private void Scan()
-    {
-        btnRefresh.Visible = false;
-        pbProgress.Visible = true;
-        lblStatus.Visible = true;
-        bwScan.RunWorkerAsync();
+        IEnumerable<API.YtsMovie>? relatedMovies = await API.GetRelatedMoviesAsync(ytsMovie.Id);
+        if (relatedMovies is null)
+        {
+            return false;
+        }
+
+        //File these away
+        foreach (API.YtsMovie relatedMovie in relatedMovies)
+        {
+            source.Add(relatedMovie, existingMovie, ytsMovie);
+        }
+
+        return true;
     }
 
     private void lvRecommendations_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
@@ -244,12 +269,12 @@ public partial class YtsRecommendationView : Form
         url?.OpenUrlInBrowser();
     }
 
-    private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+    private async void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
     {
         if (e.Item is BrightIdeasSoftware.OLVListItem { RowObject: YtsRecommendationRow rr })
         {
             chrRecommendationPreview.SetHtmlBody(rr.Movie != null
-                    ? rr.Movie.GetMovieHtmlOverview(false)
+                    ? await rr.Movie.GetMovieHtmlOverviewAsync(false)
                     : rr.YtsMovie.GetMovieHtmlOverview());
         }
     }

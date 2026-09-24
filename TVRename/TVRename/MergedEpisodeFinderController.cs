@@ -12,7 +12,7 @@ internal static class MergedEpisodeFinderController
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-    internal static List<PossibleMergedEpisode> FindDoubleEps(TVDoc doc, BackgroundWorker worker)
+    internal static async Task<List<PossibleMergedEpisode>> FindDoubleEpsAsync(TVDoc doc, IProgress<ProgressReport> reporter)
     {
         int total = doc.TvLibrary.Shows.Count();
         int current = 0;
@@ -29,8 +29,12 @@ internal static class MergedEpisodeFinderController
         DirFilesCache dfc = new();
         foreach (ShowConfiguration si in doc.TvLibrary.GetSortedShows())
         {
-            worker.ReportProgress(100 * current++ / total, si.ShowName);
-
+            reporter.Report(new ProgressReport()
+            {
+                ProgressPercentage = 100 * current++ / total,
+                UpdateText = si.ShowName
+            });
+            
             foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.ActiveSeasons)
             {
                 //Ignore seasons that all aired on same date
@@ -45,7 +49,7 @@ internal static class MergedEpisodeFinderController
                 //Search through each pair of episodes for the same season
                 foreach (ProcessedEpisode pep in kvp.Value)
                 {
-                    SearchForDuplicates(pep, output, si, kvp.Key, kvp.Value, dfc, returnValue);
+                    await SearchForDuplicatesAsync(pep, output, si, kvp.Key, kvp.Value, dfc, returnValue);
                 }
             }
         }
@@ -59,7 +63,7 @@ internal static class MergedEpisodeFinderController
         return returnValue;
     }
 
-    private static async Task SearchForDuplicates(ProcessedEpisode pep, StringBuilder output, ShowConfiguration si, int seasonId, IEnumerable<ProcessedEpisode> seasonEpisodes, DirFilesCache dfc, List<PossibleMergedEpisode> returnValue)
+    private static async Task SearchForDuplicatesAsync(ProcessedEpisode pep, StringBuilder output, ShowConfiguration si, int seasonId, IEnumerable<ProcessedEpisode> seasonEpisodes, DirFilesCache dfc, List<PossibleMergedEpisode> returnValue)
     {
         if (pep.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
         {
@@ -106,8 +110,8 @@ internal static class MergedEpisodeFinderController
         output.AppendLine("####### POSSIBLE MERGED FILE DUE TO NAME##########");
 
         //Do the missing Test (ie is one missing and not the other)
-        bool pepFound = (await dfc.FindEpOnDiskAsync(pep)).Any();
-        bool comparePepFound = (await dfc.FindEpOnDiskAsync(comparePep)).Any();
+        bool pepFound = (await dfc.FindEpOnDiskAsync(pep)).IsAny();
+        bool comparePepFound = (await dfc.FindEpOnDiskAsync(comparePep)).IsAny();
         bool oneFound = pepFound ^ comparePepFound;
         if (oneFound)
         {

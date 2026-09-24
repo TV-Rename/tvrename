@@ -1,23 +1,24 @@
+using System;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename.Forms.Tools;
 
-public class DoScanPartNotifier : Notifier
+public class DoScanPartNotifier : TaskNotifier
 {
     private readonly PostScanActivity activity;
 
-    public DoScanPartNotifier(PostScanActivity activity)
+    public DoScanPartNotifier(PostScanActivity activity, CancellationTokenSource cancellationToken) :base (activity.ActivityName(), cancellationToken)
     {
         this.activity = activity;
-        Start();
     }
 
-    protected override void Do(BackgroundWorker backgroundWorker, CancellationTokenSource source)
+    protected async Task DoAsync(IProgress<TaskProgress> sender, CancellationTokenSource source)
     {
-        activity.Check((percent, message, lastUpdate) => ReportProgress(source, percent, message, lastUpdate), source.Token);
-    }
+        await activity.CheckAsync(sender, source.Token);
 
-    protected override string ActionName() => activity.ActivityName();
+        Close();
+    }
 }
 

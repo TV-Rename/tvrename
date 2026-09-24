@@ -97,7 +97,7 @@ public class BulkAddSeriesManager(TVDoc doc)
             try
             {
                 IEnumerable<FileInfo> files = ai.FindFiles(fileName);
-                if (files.Any())
+                if (files.IsAny())
                 {
                     foreach (int x in files.Select(FindTvdbShowCode).Where(x => x != -1))
                     {
@@ -272,7 +272,7 @@ public class BulkAddSeriesManager(TVDoc doc)
             string theFolder = di2.FullName.ToLower();
             foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShows())
             {
-                if (RejectFolderIfIncludedInShow(fullLogging, si, theFolder))
+                if (await RejectFolderIfIncludedInShowAsync(fullLogging, si, theFolder))
                 {
                     return (true, null);
                 }
@@ -321,7 +321,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         }
     }
 
-    private static bool RejectFolderIfIncludedInShow(bool fullLogging, ShowConfiguration si, string theFolder)
+    private static async Task<bool> RejectFolderIfIncludedInShowAsync(bool fullLogging, ShowConfiguration si, string theFolder)
     {
         if (si.AutoAddNewSeasons() && !string.IsNullOrEmpty(si.AutoAddFolderBase) &&
             theFolder.IsSubfolderOf(si.AutoAddFolderBase))
@@ -337,7 +337,7 @@ public class BulkAddSeriesManager(TVDoc doc)
 
         if (si.UsesManualFolders())
         {
-            Dictionary<int, SafeList<string>> afl = si.AllExistngFolderLocations();
+            Dictionary<int, SafeList<string>> afl = await si.AllExistngFolderLocationsAsync();
             foreach (KeyValuePair<int, SafeList<string>> kvp in afl)
             {
                 foreach (string folder in kvp.Value)
@@ -365,7 +365,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
     }
 
-    private async Task CheckFolderForShowsAsync(IProgress<BulkAddMovie.ScanProgressReport>? handler, DirectoryInfo di, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
+    private async Task CheckFolderForShowsAsync(IProgress<ScanProgressReport>? handler, DirectoryInfo di, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
         if (!di.Exists)
         {
@@ -406,7 +406,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         int total = subDirs.Count();
         foreach (DirectoryInfo di2 in subDirs)
         {
-            handler?.Report(new BulkAddMovie.ScanProgressReport
+            handler?.Report(new ScanProgressReport
             {
                 ProgressPercentage = (int) ((100 * c.Increment()) / total),
                 UpdateText = di2.Name
@@ -418,13 +418,13 @@ public class BulkAddSeriesManager(TVDoc doc)
 
     public async Task AddAllToMyShowsAsync(UI ui)
     {
-        List<ShowConfiguration> shows = AddToLibrary(AddItems.Where(ai => ai.CodeKnown));
+        List<ShowConfiguration> shows = await AddToLibraryAsync(AddItems.Where(ai => ai.CodeKnown));
 
         await mDoc.TvAddedOrEditedAsync(true, false, false, ui, shows);
         AddItems.Clear();
     }
 
-    private List<ShowConfiguration> AddToLibrary(IEnumerable<PossibleNewTvShow> ais)
+    private async Task<List<ShowConfiguration>> AddToLibraryAsync(IEnumerable<PossibleNewTvShow> ais)
     {
         List<ShowConfiguration> touchedShows = [];
         foreach (PossibleNewTvShow ai in ais)
@@ -435,7 +435,7 @@ public class BulkAddSeriesManager(TVDoc doc)
             {
                 // need to add a new showitem
                 found = new ShowConfiguration(ai.ProviderCode, ai.Provider);
-                mDoc.Add(found.AsList(), true);
+                await mDoc.AddAsync(found.AsList(), true);
             }
 
             found.AutoAddFolderBase = ai.FolderName;
@@ -460,7 +460,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         return touchedShows;
     }
 
-    public async Task CheckFoldersAsync(IProgress<BulkAddMovie.ScanProgressReport>? handler, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
+    public async Task CheckFoldersAsync(IProgress<ScanProgressReport>? handler, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
     {
         // Check the  folder list, and build up a new "AddItems" list.
         // guessing what the shows actually are isn't done here.  That is done by
@@ -475,7 +475,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         int c2 = 0;
         foreach (string folder in TVSettings.Instance.LibraryFolders)
         {
-            handler?.Report(new BulkAddMovie.ScanProgressReport
+            handler?.Report(new ScanProgressReport
                 {
                     ProgressPercentage = (int)((100 * c2++) / c),
                     UpdateText = folder
@@ -495,7 +495,7 @@ public class BulkAddSeriesManager(TVDoc doc)
                 break;
             }
         }
-        handler?.Report(new BulkAddMovie.ScanProgressReport
+        handler?.Report(new ScanProgressReport
             {
                 ProgressPercentage = 100,
                 UpdateText = "Complete"

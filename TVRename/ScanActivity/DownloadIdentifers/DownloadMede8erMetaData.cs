@@ -1,5 +1,6 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -12,7 +13,7 @@ internal class DownloadMede8erMetaData : DownloadIdentifier
 
     public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
-    public override ItemList? ProcessShow(ShowConfiguration si, bool forceRefresh)
+    public override async Task<ItemList?> ProcessShowAsync(ShowConfiguration si, bool forceRefresh)
     {
         if (TVSettings.Instance.Mede8erXML)
         {
@@ -42,7 +43,7 @@ internal class DownloadMede8erMetaData : DownloadIdentifier
             return theActionList;
         }
 
-        return base.ProcessShow(si, forceRefresh);
+        return await base.ProcessShowAsync(si, forceRefresh);
     }
 
     public override ItemList? ProcessSeason(ShowConfiguration si, string folder, int snum, bool forceRefresh)

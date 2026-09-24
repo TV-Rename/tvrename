@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
 using TVRename.Forms.Tools;
@@ -24,8 +25,11 @@ public partial class RecommendationView : Form
     private int relatedWeight = 100;
     private int similarWeight = 100;
 
+    private Task? scanTask;
+
     private RecommendationView(TVDoc doc, UI main)
     {
+        //TODO Setup Cancellation token
         InitializeComponent();
         recs = new Recomendations();
         tvShows = [];
@@ -33,6 +37,7 @@ public partial class RecommendationView : Form
         addedShows = [];
         addedMovies = [];
 
+        chrRecommendationPreview.RequestHandler = new BrowserRequestHandler();
         mDoc = doc;
         mainUi = main;
 
@@ -59,7 +64,8 @@ public partial class RecommendationView : Form
             default:
                 throw new ArgumentOutOfRangeException(nameof(type), type, null);
         }
-        Scan();
+
+        StartScanAsync();
     }
 
     // ReSharper disable once UnusedMember.Global
@@ -67,7 +73,8 @@ public partial class RecommendationView : Form
     {
         media = MediaConfiguration.MediaType.movie;
         movies = m;
-        Scan();
+
+        StartScanAsync();
     }
 
     // ReSharper disable once UnusedMember.Global
@@ -75,7 +82,8 @@ public partial class RecommendationView : Form
     {
         media = MediaConfiguration.MediaType.tv;
         tvShows = s;
-        Scan();
+
+        StartScanAsync();
     }
 
     // ReSharper disable once InconsistentNaming
@@ -111,7 +119,7 @@ public partial class RecommendationView : Form
         UpdateUI();
     }
 
-    private void AddTvToLibrary(int id, CachedSeriesInfo cache)
+    private async Task AddTvToLibraryAsync(int id, CachedSeriesInfo cache)
     {
         string name = TVSettings.Instance.DefaultTVShowFolder(cache);
 
@@ -138,11 +146,11 @@ public partial class RecommendationView : Form
 
         newShow.AutoAddFolderBase = f.DirectoryFullPath;
         //TOD need to mark dirty?? newShow.CachedData.
-        mDoc.Add(newShow.AsList(), true);
+        await mDoc.AddAsync(newShow.AsList(), true);
         addedShows.Add(newShow);
     }
 
-    private void AddMovieToLibrary(int id, string? name)
+    private async Task AddMovieToLibraryAsync(int id, string? name)
     {
         // need to add a new showitem
         MovieConfiguration found = new(id, TVDoc.ProviderType.TMDB);
@@ -178,7 +186,7 @@ public partial class RecommendationView : Form
             found.UseAutomaticFolders = true;
         }
 
-        mDoc.Add(found.AsList(), true);
+        await mDoc.AddAsync(found.AsList(), true);
         addedMovies.Add(found);
     }
 
@@ -187,22 +195,41 @@ public partial class RecommendationView : Form
         rightClickMenu.Close();
     }
 
-    private void BwScan_DoWork(object sender, DoWorkEventArgs e)
+    private async void BtnRefresh_Click_1(object sender, EventArgs e)
     {
-        System.Threading.Thread.CurrentThread.Name ??= "Recommendations Scan Thread"; // Can only set it once
+        StartScanAsync();
+    }
+
+    private void StartScanAsync()
+    {
+        scanTask = ScanAsync();
+    }
+
+    private async Task ScanAsync()
+    {
+
+        var progressHandler = new Progress<ProgressReport>(scanReport =>
+        {
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(scanReport.ProgressPercentage);
+            lblStatus.Text = scanReport.UpdateText.ToUiVersion();
+        });
+
+        btnRefresh.Visible = false;
+        pbProgress.Visible = true;
+        lblStatus.Visible = true;
+
         try
         {
             string languageCode = TVSettings.Instance.TMDBLanguage.Abbreviation;
             recs = media switch
             {
-                MediaConfiguration.MediaType.tv => TMDB.LocalCache.Instance
-                    .GetTVRecommendationsAsync((BackgroundWorker)sender, tvShows.ToList(), languageCode)
-                    .GetAwaiter()
-                    .GetResult(),
-                MediaConfiguration.MediaType.movie => TMDB.LocalCache.Instance
-                    .GetMovieRecommendationsAsync((BackgroundWorker)sender, movies.ToList(), languageCode)
-                    .GetAwaiter()
-                    .GetResult(),
+                MediaConfiguration.MediaType.tv => await TMDB.LocalCache.Instance
+                    .GetTVRecommendationsAsync(progressHandler, tvShows.ToList(), languageCode)
+                    ,
+                MediaConfiguration.MediaType.movie => await TMDB.LocalCache.Instance
+                    .GetMovieRecommendationsAsync(progressHandler, movies.ToList(), languageCode)
+                    ,
                 _ => throw new NotSupportedException($"media = {media} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}")
             };
         }
@@ -210,16 +237,7 @@ public partial class RecommendationView : Form
         {
             Logger.Fatal(ex, "UNHANDLED error obtinaing recommendations");
         }
-    }
 
-    private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
-    {
-        pbProgress.SetProgress(e.ProgressPercentage);
-        lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
-    }
-
-    private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
         btnRefresh.Visible = true;
         pbProgress.Visible = false;
         lblStatus.Visible = false;
@@ -229,22 +247,9 @@ public partial class RecommendationView : Form
         }
         ClearGrid();
         PopulateGrid();
-    }
+    }   
 
-    private void BtnRefresh_Click_1(object sender, EventArgs e)
-    {
-        Scan();
-    }
-
-    private void Scan()
-    {
-        btnRefresh.Visible = false;
-        pbProgress.Visible = true;
-        lblStatus.Visible = true;
-        bwScan.RunWorkerAsync();
-    }
-
-    private void lvRecommendations_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+    private async void lvRecommendations_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
     {
         if (e.Model is null)
         {
@@ -258,19 +263,19 @@ public partial class RecommendationView : Form
         switch (media)
         {
             case MediaConfiguration.MediaType.movie:
-                rightClickMenu.Add("Add Movie to Library", (_, _) => AddMovieToLibrary(lastSelected.Key, lastSelected.Name));
+                rightClickMenu.Add("Add Movie to Library",async(_, _) => await AddMovieToLibraryAsync(lastSelected.Key, lastSelected.Name));
                 break;
             case MediaConfiguration.MediaType.tv:
                 if (lastSelected.Series != null)
                 {
                     rightClickMenu.Add("Add TV show to Library",
-                        (_, _) => AddTvToLibrary(lastSelected.Key, lastSelected.Series));
+                        async (_, _) => await AddTvToLibraryAsync(lastSelected.Key, lastSelected.Series));
                 }
                 break;
         }
     }
 
-    private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+    private async void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
     {
         if ((e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject is not RecommendationRow rr)
         {
@@ -278,15 +283,17 @@ public partial class RecommendationView : Form
         }
         if (rr.Movie != null)
         {
-            chrRecommendationPreview.SetHtmlBody(rr.Movie.GetMovieHtmlOverview(rr));
+            chrRecommendationPreview.SetHtmlBody(await rr.Movie.GetMovieHtmlOverviewAsync(rr));
         }
         else if (rr.Series != null)
         {
-            chrRecommendationPreview.SetHtmlBody(rr.Series.GetShowHtmlOverview(rr));
+            chrRecommendationPreview.SetHtmlBody(await rr.Series.GetShowHtmlOverviewAsync(rr));
         }
     }
     private async void this_FormClosing(object sender, FormClosingEventArgs e)
     {
+        //TODO close off any scans
+
         await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, addedMovies);
         await mDoc.TvAddedOrEditedAsync(true, false, false, mainUi, addedShows);
     }
@@ -305,5 +312,10 @@ public partial class RecommendationView : Form
         similarWeight = prefs.SimilarWeight;
 
         PopulateGrid();
+    }
+
+    internal async Task StartScan()
+    {
+        await ScanAsync();
     }
 }

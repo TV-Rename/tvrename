@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms;
@@ -29,19 +30,19 @@ public partial class ShowSummary : Form, IDialogParent
 {
     private UI MainWindow { get; }
     private readonly TVDoc mDoc;
+    private readonly CancellationTokenSource ct;
 
     private readonly SafeList<ShowSummaryData> showList;
 
-    public ShowSummary(TVDoc doc, UI parent)
+    public ShowSummary(TVDoc doc, UI parent, CancellationTokenSource token)
     {
         MainWindow = parent;
         mDoc = doc;
         showList = [];
+        ct = token;
 
         InitializeComponent();
         InitializeCmbShowStatus();
-
-        Scan();
     }
 
     private void InitializeCmbShowStatus()
@@ -57,7 +58,7 @@ public partial class ShowSummary : Form, IDialogParent
         }
     }
 
-    private async Task GenerateData(BackgroundWorker bw)
+    private async Task GenerateData(IProgress<ProgressReport> handler, CancellationToken token)
     {
         int total = mDoc.TvLibrary.Shows.Count();
         ThreadSafeCounter currentRecord = new();
@@ -65,10 +66,21 @@ public partial class ShowSummary : Form, IDialogParent
 
         await Parallel.ForEachAsync(
             mDoc.TvLibrary.GetSortedShows(),
-            new ParallelOptions { MaxDegreeOfParallelism = 12 },
+            new ParallelOptions {
+                MaxDegreeOfParallelism = 12,
+                CancellationToken = token
+            },
             async (si,token) =>
         {
-            bw.ReportProgress(100 * currentRecord.Increment() / total, si.ShowName);
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+            handler.Report(new ProgressReport() {
+                ProgressPercentage = (int) 100 * currentRecord.Increment() / total,
+                UpdateText = si.ShowName
+            });
+            
             showList.Add(await AddShowDetailsAsync(si));
         }
         );
@@ -417,10 +429,10 @@ public partial class ShowSummary : Form, IDialogParent
 
             if (processedSeason != null)
             {
-                GenerateOpenMenu(processedSeason, added);
+                await GenerateOpenMenuAsync(processedSeason, added);
             }
 
-            GenerateRightClickOpenMenu(added);
+            await GenerateRightClickOpenMenuAsync(added);
 
             if (processedSeason != null)
             {
@@ -431,9 +443,9 @@ public partial class ShowSummary : Form, IDialogParent
             gridSummary.rightClickMenu.Show(sender.Grid.PointToScreen(pt));
         }
 
-        private void GenerateOpenMenu(ProcessedSeason seas, List<string> added)
+        private async Task GenerateOpenMenuAsync(ProcessedSeason seas, List<string> added)
         {
-            Dictionary<int, SafeList<string>> afl = show.AllExistngFolderLocations();
+            Dictionary<int, SafeList<string>> afl = await show.AllExistngFolderLocationsAsync();
 
             if (!afl.TryGetValue(seas.SeasonNumber, out SafeList<string>?  seasonData))
             {
@@ -460,11 +472,11 @@ public partial class ShowSummary : Form, IDialogParent
             }
         }
 
-        private void GenerateRightClickOpenMenu(List<string> added)
+        private async Task GenerateRightClickOpenMenuAsync(List<string> added)
         {
             bool first = true;
 
-            foreach (KeyValuePair<int, SafeList<string>> kvp in show.AllExistngFolderLocations().OrderBy(pair => pair.Key))
+            foreach (KeyValuePair<int, SafeList<string>> kvp in (await show.AllExistngFolderLocationsAsync()).OrderBy(pair => pair.Key))
             {
                 foreach (string folder in kvp.Value)
                 {
@@ -515,7 +527,7 @@ public partial class ShowSummary : Form, IDialogParent
 
     #region Nested type: ShowSummaryData
 
-    public class ShowSummaryData(string showName, ShowConfiguration showConfiguration)
+    public class ShowSummaryData(string showName, ShowConfiguration showConfiguration) :IComparable
     {
         public int MaxSeason;
         public readonly List<ShowSummarySeasonData> SeasonDataList = [];
@@ -667,6 +679,12 @@ public partial class ShowSummary : Form, IDialogParent
         {
             return SeasonDataList.Any(ssn => ssn.HasEpisodesOnDisk());
         }
+
+        public int CompareTo(object? obj)
+        {
+            if (obj is null) {return 0; }
+            return ShowName.CompareTo(((ShowSummaryData)obj).ShowName);
+        }
     }
 
     #endregion Nested type: ShowSummaryData
@@ -686,14 +704,29 @@ public partial class ShowSummary : Form, IDialogParent
         PopulateGrid();
     }
 
-    private void Scan()
+    private async Task ScanAsync(CancellationToken token)
     {
         btnRefresh.Visible = false;
         EnableCheckboxes(false);
 
         pbProgress.Visible = true;
         lblStatus.Visible = true;
-        bwRescan.RunWorkerAsync();
+
+        var progressHandler = new Progress<ProgressReport>(scanReport =>
+        {
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(scanReport.ProgressPercentage);
+            lblStatus.Text = scanReport.UpdateText.ToUiVersion();
+        });
+
+        await GenerateData(progressHandler, token);
+
+        btnRefresh.Visible = true;
+        EnableCheckboxes(true);
+
+        pbProgress.Visible = false;
+        lblStatus.Visible = false;
+        PopulateGrid();
     }
 
     private void EnableCheckboxes(bool enabled)
@@ -709,43 +742,25 @@ public partial class ShowSummary : Form, IDialogParent
         btnClear.Enabled = enabled;
     }
 
-    private void BwRescan_DoWork(object sender, DoWorkEventArgs e)
-    {
-        System.Threading.Thread.CurrentThread.Name ??= "ShowSummary Scan Thread"; // Can only set it once
-        GenerateData((BackgroundWorker)sender);
-    }
 
-    private void BwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+    private async void btnRefresh_Click(object sender, EventArgs e)
     {
-        pbProgress.SetProgress(e.ProgressPercentage);
-        if (e.UserState is not null)
-        {
-            lblStatus.Text = e.UserState.ToString()?.ToUiVersion();
-        }
-    }
-
-    private void BwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        btnRefresh.Visible = true;
-        EnableCheckboxes(true);
-
-        pbProgress.Visible = false;
-        lblStatus.Visible = false;
-        PopulateGrid();
-    }
-
-    private void btnRefresh_Click(object sender, EventArgs e)
-    {
-        Scan();
+        await ScanAsync(ct.Token);
     }
 
     private void button1_Click(object sender, EventArgs e)
     {
+        //TODO Cancel runnign tasks
         Close();
     }
 
     private void cmbShowStatus_SelectedIndexChanged(object sender, EventArgs e)
     {
         PopulateGrid();
+    }
+
+    internal async Task StartScanAsync()
+    {
+        await ScanAsync(ct.Token);
     }
 }

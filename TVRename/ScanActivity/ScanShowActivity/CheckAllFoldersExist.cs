@@ -2,6 +2,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -9,14 +10,14 @@ internal class CheckAllFoldersExist(TVDoc doc) : ScanShowActivity(doc)
 {
     protected override string ActivityName() => "Checked All Folders Exist";
 
-    protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+    protected override async Task CheckAsync(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
         if (!si.DoMissingCheck && !si.DoRename)
         {
             return; // skip
         }
 
-        Dictionary<int, SafeList<string>> flocs = si.AllProposedFolderLocations();
+        Dictionary<int, SafeList<string>> flocs = await si.AllProposedFolderLocationsAsync();
 
         List<string> ignoredLocations = [];
 

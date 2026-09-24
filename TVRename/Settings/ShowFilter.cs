@@ -28,7 +28,7 @@ public class ShowFilter
         ShowStatus.HasValue() ||
         ShowNetwork.HasValue() ||
         ShowRating.HasValue() ||
-        Genres.Any();
+        Genres.IsAny();
 
     public bool Filter(ShowConfiguration show)
     {

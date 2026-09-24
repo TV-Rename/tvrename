@@ -49,16 +49,15 @@ public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> act
 
     public List<Task>? currentTasks; //Task that relates to all the actions in this queue, so that we can wait for it to finish if we need to
 
-    internal async Task StartAsync()
+    internal async Task StartAsync(CancellationToken ct)
     {
-        cts = new();
         var currentActions = actions.OrderBy(a => a.Order).ToList();
         currentTasks = [];
 
         var options = new ParallelOptions
         {
             MaxDegreeOfParallelism = parallelLimit, // Limit concurrent tasks
-            CancellationToken = cts.Token // Pass token to the loop mechanism
+            CancellationToken = ct // Pass token to the loop mechanism
         };
 
 
@@ -69,7 +68,7 @@ public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> act
                 options,
                 async (action, token) =>
                 {
-                    if (cts.IsCancellationRequested)
+                    if (token.IsCancellationRequested)
                     {
                         return;
                     }

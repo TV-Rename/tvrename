@@ -99,7 +99,7 @@ internal class ActionNfoEpisode : ActionNfo
         if (!string.IsNullOrEmpty(epDirector))
         {
             IEnumerable<string> dirs = [.. epDirector.FromPsv()];
-            if (dirs.Any())
+            if (dirs.IsAny())
             {
                 root.ReplaceElements("director", dirs);
             }
@@ -110,7 +110,7 @@ internal class ActionNfoEpisode : ActionNfo
         if (!string.IsNullOrEmpty(epWriter))
         {
             string[] writers = [.. epWriter.FromPsv()];
-            if (writers.Any())
+            if (writers.IsAny())
             {
                 root.ReplaceElements("credits", writers);
             }

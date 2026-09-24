@@ -7,7 +7,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
+using TMDbLib.Objects.Authentication;
 
 namespace TVRename.YTS;
 
@@ -16,7 +18,7 @@ public static class API
 {
     // ReSharper disable once ConvertToConstant.Local
     // ReSharper disable once InconsistentNaming
-    private static readonly string APIRoot = "https://yts.mx/api/v2/";
+    private static readonly string APIRoot = "https://yts.gg/api/v2/";
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -111,43 +113,74 @@ public static class API
         public string Size => result.GetMandatoryString("size");
     }
 
-    private static async Task<IEnumerable<YtsMovie>> GetMoviesInternalAsync(BackgroundWorker sender, string resolution, int minRating)
+    private static async Task<IEnumerable<YtsMovie>> GetMoviesInternalAsync(IProgress<ProgressReport> sender, string resolution, int minRating, CancellationToken ct)
     {
         List<YtsMovie> downloadedMovies = [];
-        bool morePages = true;
-        int page = 1;
 
-        while (morePages)
-        {
-            JObject updatesJson = await HttpHelper.HttpGetRequestWithRetryAsync(
-                APIRoot +
-                $"list_movies.json?quality={resolution}&limit=50&page={page}&minimum_rating={minRating}&with_rt_ratings=true",
-                3, 2);
+        int totalPages = (int) Math.Ceiling( await GetTotalMovies(resolution,minRating) / 50D);
+        ThreadSafeCounter c = new();
 
-            if (updatesJson["status"]?.ToString() is "ok" && updatesJson["data"]?["movies"] is not null)
+        await Parallel.ForEachAsync(
+            Enumerable.Range(1, totalPages),
+            new ParallelOptions
             {
-                JEnumerable<JObject>? x = updatesJson["data"]?["movies"]?.Children<JObject>();
-                if (x != null)
+                MaxDegreeOfParallelism = 12,
+                CancellationToken = ct
+            },
+            async (si, token) =>
+            {
+                sender.Report(new ProgressReport()
                 {
-                    foreach (YtsMovie movie in x.Cast<JObject>()
-                                 .Select(newMovie => new YtsMovie(newMovie))
-                                 .Where(movie => downloadedMovies.All(m => m.Id != movie.Id)))
-                    {
-                        downloadedMovies.Add(movie);
-                    }
+                    ProgressPercentage = 100 * c.Increment() / totalPages,
+                    UpdateText = $"Page {c.Value}"
+                });
+
+                if (ct.IsCancellationRequested)
+                {
+                    return;
                 }
 
-                page++;
-                int totalEntries = updatesJson["data"]?["movie_count"]?.ToObject<int>() ?? throw new Exception();
-                sender.ReportProgress(100 * page / (totalEntries / 50),$"Page {page}");
+                await ObtainAndProcessPage(downloadedMovies, resolution, minRating, c.Value);
             }
-            else
-            {
-                morePages = false;
-            }
-        }
+            );
 
         return downloadedMovies;
+    }
+
+    private static async Task ObtainAndProcessPage(List<YtsMovie> downloadedMovies, string resolution, int minRating, int page)
+    {
+        JObject updatesJson = await HttpHelper.HttpGetRequestWithRetryAsync(
+                        APIRoot +
+                        $"list_movies.json?quality={resolution}&limit=50&page={page}&minimum_rating={minRating}&with_rt_ratings=true",
+                        3, 2);
+
+        if (updatesJson["status"]?.ToString() is "ok" && updatesJson["data"]?["movies"] is not null)
+        {
+            JEnumerable<JObject>? x = updatesJson["data"]?["movies"]?.Children<JObject>();
+            if (x != null)
+            {
+                foreach (YtsMovie movie in x.Cast<JObject>()
+                             .Select(newMovie => new YtsMovie(newMovie))
+                             .Where(movie => downloadedMovies.All(m => m.Id != movie.Id)))
+                {
+                    downloadedMovies.Add(movie);
+                }
+            }
+        }
+    }
+
+    private static async Task<int> GetTotalMovies(string resolution, int minRating)
+    {
+        JObject updatesJson = await HttpHelper.HttpGetRequestWithRetryAsync(
+                APIRoot +
+                $"list_movies.json?quality={resolution}&limit=50&page=1&minimum_rating={minRating}&with_rt_ratings=true",
+                3, 2);
+
+        if (updatesJson["status"]?.ToString() is "ok" && updatesJson["data"]?["movies"] is not null)
+        {
+            return updatesJson["data"]?["movie_count"]?.ToObject<int>()   ?? throw new Exception();
+        }
+        throw new Exception("Could not parse json from YTS");
     }
 
     private static async Task<YtsMovie?> GetMovieByImdbInternalAsync(string? imdbCode)
@@ -184,8 +217,8 @@ public static class API
     {
         return await HandleErrorsFrom($"get movies related to id {id}", async () => await GetRelatedMoviesInternalAsync(id));
     }
-    internal static async Task<IEnumerable<YtsMovie>> GetMoviesAsync(BackgroundWorker sender, string resolution, int minRating)
+    internal static async Task<IEnumerable<YtsMovie>> GetMoviesAsync(IProgress<ProgressReport> report, string resolution, int minRating, CancellationToken ct)
     {
-        return await HandleErrorsFrom("get movies", async () => await GetMoviesInternalAsync(sender, resolution, minRating));
+        return await HandleErrorsFrom("get movies", async () => await GetMoviesInternalAsync(report, resolution, minRating, ct));
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
@@ -10,7 +11,7 @@ internal class RemoveShowsWithNoFolders(TVDoc doc) : PostScanActivity(doc)
     public override string ActivityName() => "Clean up shows with no folders that exist";
 
     protected override bool Active() => true;
-    protected override void DoCheck(PostScanProgressDelegate progress, CancellationToken token)
+    protected override async Task DoCheckAsync(CancellationToken token)
     {
         List<ShowConfiguration> libraryShows = MDoc.TvLibrary.GetSortedShows();
         List<MovieConfiguration> movieConfigurations = MDoc.FilmLibrary.GetSortedMovies();
@@ -21,15 +22,17 @@ internal class RemoveShowsWithNoFolders(TVDoc doc) : PostScanActivity(doc)
 
         foreach (ShowConfiguration si in libraryShows.Where(HasAiredEpisode))
         {
-            progress(n.Increment(), totalRecords, si.ShowName, lastUpdate);
+            UpdateStatus(n.Increment(), totalRecords, si.ShowName, lastUpdate);
 
             if (token.IsCancellationRequested)
             {
                 return;
             }
 
-            bool removeThisShow = si.AllProposedFolderLocations().Any()
-                                  && si.AllProposedFolderLocations()
+            var x = await si.AllProposedFolderLocationsAsync();
+
+            bool removeThisShow = x.IsAny()
+                                  && x
                                        .SelectMany(folderLocation => folderLocation.Value)
                                        .All(NotExist);
 
@@ -47,14 +50,14 @@ internal class RemoveShowsWithNoFolders(TVDoc doc) : PostScanActivity(doc)
     
         foreach (MovieConfiguration si in movieConfigurations.Where(IsReleased))
         {
-            progress(n.Increment(), totalRecords, si.ShowName, lastUpdate);
+            UpdateStatus(n.Increment(), totalRecords, si.ShowName, lastUpdate);
 
             if (token.IsCancellationRequested)
             {
                 return;
             }
 
-            bool removeThisShow = si.Locations.All(NotExist);
+            bool removeThisShow = (await si.LocationsAsync()).All(NotExist);
 
             if (removeThisShow)
             {

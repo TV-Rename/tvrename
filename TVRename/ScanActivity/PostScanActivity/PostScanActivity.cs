@@ -9,6 +9,7 @@
 using NLog;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using TVRename.Forms.Tools;
 
 namespace TVRename;
@@ -17,30 +18,28 @@ public abstract class PostScanActivity(TVDoc doc) : LongOperation
 {
     protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
     protected readonly TVDoc MDoc = doc;
-    private SetProgressDelegate? progressDelegate;
+    private IProgress<TaskProgress>? progressDelegate;
     private int startPosition = 0;
     private int endPosition = 100;
-
-    protected delegate void PostScanProgressDelegate(int percent, int total, string message, string lastUpdate);
 
     public abstract string ActivityName();
 
     protected abstract bool Active();
 
-    protected abstract void DoCheck(PostScanProgressDelegate progress, CancellationToken token);
+    protected abstract Task DoCheckAsync(CancellationToken token);
 
-    public override void Start(SetProgressDelegate? progress, CancellationToken sourceToken)
-        => Check(progress, sourceToken);
+    public override async Task StartAsync(IProgress<TaskProgress> progress, CancellationToken sourceToken)
+        => await CheckAsync(progress, sourceToken);
 
-    public void Check(SetProgressDelegate? progress, CancellationToken token)
-        => Check(progress, 0, 100, token);
+    public async Task CheckAsync(IProgress<TaskProgress> progress, CancellationToken token)
+        => await CheckAsync(progress, 0, 100, token);
 
-    private void Check(SetProgressDelegate? progress, int startpct, int totPct, CancellationToken token)
+    private async Task CheckAsync(IProgress<TaskProgress> progress, int startpct, int totPct, CancellationToken token)
     {
         startPosition = startpct;
         endPosition = totPct;
         progressDelegate = progress;
-        progressDelegate?.Invoke(startpct, string.Empty, string.Empty);
+        progressDelegate.Report(new TaskProgress(startpct, string.Empty, string.Empty));
         try
         {
             if (!Active())
@@ -48,7 +47,7 @@ public abstract class PostScanActivity(TVDoc doc) : LongOperation
                 return;
             }
 
-            DoCheck(UpdateStatus, token);
+            await DoCheckAsync(token);
             LogActionListSummary();
         }
         catch (TVRenameOperationInterruptedException)
@@ -65,14 +64,14 @@ public abstract class PostScanActivity(TVDoc doc) : LongOperation
         }
         finally
         {
-            progressDelegate?.Invoke(totPct, string.Empty, string.Empty);
+            progressDelegate.Report(new TaskProgress(totPct, string.Empty, string.Empty));
         }
     }
 
-    private void UpdateStatus(int recordNumber, int totalRecords, string message, string lastAction)
+    protected void UpdateStatus(int recordNumber, int totalRecords, string message, string lastAction)
     {
         int position = (endPosition - startPosition) * recordNumber / (totalRecords + 1);
-        progressDelegate?.Invoke(startPosition + position, message, lastAction);
+        progressDelegate?.Report(new TaskProgress(startPosition + position, message, lastAction));
     }
 
     private void LogActionListSummary()

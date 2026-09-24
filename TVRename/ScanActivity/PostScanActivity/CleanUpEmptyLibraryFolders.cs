@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -12,7 +13,7 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 
     protected override bool Active() => true;
 
-    protected override void DoCheck(PostScanProgressDelegate progress, CancellationToken token)
+    protected override async Task DoCheckAsync(CancellationToken token)
     {
         List<ShowConfiguration> libraryShows = MDoc.TvLibrary.GetSortedShows();
         List<MovieConfiguration> movieConfigurations = MDoc.FilmLibrary.GetSortedMovies();
@@ -24,9 +25,9 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 
         foreach (ShowConfiguration si in libraryShows)
         {
-            progress(n.Increment(), totalRecords, si.ShowName, lastUpdate);
+            UpdateStatus(n.Increment(),totalRecords, si.ShowName, lastUpdate);
 
-            foreach (string folderName in si.AllProposedFolderLocations().SelectMany(folderLocation => folderLocation.Value))
+            foreach (string folderName in (await si.AllProposedFolderLocationsAsync()).SelectMany(folderLocation => folderLocation.Value))
             {
                 string? action = RemoveIfEmpty(si, folderName);
                 if (action.HasValue())
@@ -43,9 +44,9 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 
         foreach (MovieConfiguration mi in movieConfigurations)
         {
-            progress(n.Increment(), totalRecords, mi.ShowName, lastUpdate);
+            UpdateStatus(n.Increment(), totalRecords, mi.ShowName, lastUpdate);
 
-            foreach (string folderName in mi.Locations)
+            foreach (string folderName in await mi.LocationsAsync())
             {
                 string? action = RemoveIfEmpty(mi, folderName);
                 if (action.HasValue())
@@ -62,7 +63,7 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 
         foreach (string folder in folders)
         {
-            progress(n.Increment(), totalRecords, folder, lastUpdate);
+            UpdateStatus(n.Increment(), totalRecords, folder, lastUpdate);
             DirectoryInfo directory = new(folder);
             foreach (DirectoryInfo testDirectory in directory.EnumerateDirectories(DirectoryEnumerationOptions.Recursive | DirectoryEnumerationOptions.ContinueOnException).ToList())
             {

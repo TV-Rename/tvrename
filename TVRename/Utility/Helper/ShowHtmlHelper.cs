@@ -33,12 +33,12 @@ internal static class ShowHtmlHelper
         return html;
     }
 
-    public static string GetShowHtmlOverview(this ShowConfiguration si, bool includeDirectoryLinks)
+    public static async Task<string> GetShowHtmlOverviewAsync(this ShowConfiguration si, bool includeDirectoryLinks)
     {
         Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
         sb.AppendLine(HTMLHeader(10, col));
-        sb.AppendShow(si, col, includeDirectoryLinks);
+        await sb.AppendShowAsync(si, col, includeDirectoryLinks);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
@@ -72,24 +72,24 @@ internal static class ShowHtmlHelper
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
-    public static string GetShowHtmlOverview(this CachedSeriesInfo series, RecommendationRow recommendation)
+    public static async Task<string> GetShowHtmlOverviewAsync(this CachedSeriesInfo series, RecommendationRow recommendation)
     {
         Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
         sb.AppendLine(HTMLHeader(10, col));
-        sb.AppendShow(null, series, col, false);
+        await sb.AppendShowAsync(null, series, col, false);
         sb.AppendRecommendation(recommendation, col);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
 
-    public static string GetMovieHtmlOverview(this MovieConfiguration si, bool includeDirectoryLinks)
+    public static async Task<string> GetMovieHtmlOverviewAsync(this MovieConfiguration si, bool includeDirectoryLinks)
     {
         Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
         DirFilesCache dfc = new();
         sb.AppendLine(HTMLHeader(10, col));
-        sb.AppendMovie(si, col, includeDirectoryLinks, dfc);
+        await sb.AppendMovieAsync(si, col, includeDirectoryLinks, dfc);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
@@ -148,17 +148,17 @@ internal static class ShowHtmlHelper
 
         sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                   <div class=""row trailer"">
-<iframe  height=""400"" src=""{si.TrailerUrl}"" />
+<iframe  height=""400"" src=""{si.TrailerUrl}"" referrerpolicy=""strict-origin-when-cross-origin"" />
                   </div>
                  </div>");
     }
-    public static string GetMovieHtmlOverview(this CachedMovieInfo movie, RecommendationRow? recommendation)
+    public static async Task<string> GetMovieHtmlOverviewAsync(this CachedMovieInfo movie, RecommendationRow? recommendation)
     {
         Color col = Color.FromName("ButtonFace");
         DirFilesCache dfc = new();
         StringBuilder sb = new();
         sb.AppendLine(HTMLHeader(10, col));
-        sb.AppendMovie(null, movie, col, false, dfc);
+        await sb.AppendMovieAsync(null, movie, col, false, dfc);
         if (recommendation != null)
         {
             sb.AppendRecommendation(recommendation, col);
@@ -224,7 +224,7 @@ internal static class ShowHtmlHelper
         foreach (ProcessedSeason season in si.AppropriateSeasons().OrderBy(pair => pair.Key).Select(pair => pair.Value))
         {
             List<ProcessedEpisode> seasonEpisodes = si.EpisodesForSeason(season.SeasonNumber);
-            if (seasonEpisodes.Any())
+            if (seasonEpisodes.IsAny())
             {
                 await tableRows.AppendSeasonShowSummaryAsync(dfc, si, season, includeDirectoryLinks, seasonEpisodes);
             }
@@ -238,7 +238,7 @@ internal static class ShowHtmlHelper
         string explorerButton = string.Empty;
         if (includeDirectoryLinks)
         {
-            string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
+            string urlFilename = Uri.EscapeDataString(await si.GetBestFolderLocationToOpenAsync(s));
             explorerButton = CreateExploreButton(urlFilename);
         }
 
@@ -286,7 +286,7 @@ internal static class ShowHtmlHelper
         return season.SeasonName is null || season.SeasonName.Trim().ToInt() != season.SeasonNumber;
     }
 
-    private static void AppendShow(this StringBuilder sb, ShowConfiguration si, Color backgroundColour,
+    private static async Task AppendShowAsync(this StringBuilder sb, ShowConfiguration si, Color backgroundColour,
         bool includeDirectoryLinks)
     {
         CachedSeriesInfo? ser = si.CachedShow;
@@ -295,7 +295,7 @@ internal static class ShowHtmlHelper
         {
             return;
         }
-        AppendShow(sb, si, ser, backgroundColour, includeDirectoryLinks);
+        await AppendShowAsync(sb, si, ser, backgroundColour, includeDirectoryLinks);
     }
 
     private static void AppendShowImages(this StringBuilder sb, ShowConfiguration? si, Color backgroundColour)
@@ -516,7 +516,7 @@ internal static class ShowHtmlHelper
         return sb.ToString();
     }
 
-    private static void AppendShow(this StringBuilder sb, ShowConfiguration? si, CachedSeriesInfo ser, Color backgroundColour, bool includeDirectoryLinks)
+    private static async Task AppendShowAsync(this StringBuilder sb, ShowConfiguration? si, CachedSeriesInfo ser, Color backgroundColour, bool includeDirectoryLinks)
     {
         string horizontalBanner = CreateHorizontalBannerHtml(si);
         string poster = CreatePosterHtml(ser);
@@ -535,8 +535,8 @@ internal static class ShowHtmlHelper
         string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteShowUrl(ser) : string.Empty;
         string tvdbLink = ser.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser) : string.Empty;
 
-        string urlFilename = includeDirectoryLinks
-            ? Uri.EscapeDataString(si?.GetBestFolderLocationToOpen() ?? string.Empty)
+        string urlFilename = includeDirectoryLinks && (si is not null)
+            ? Uri.EscapeDataString((await si.GetBestFolderLocationToOpenAsync()) ?? string.Empty)
             : string.Empty;
         string explorerButton = includeDirectoryLinks
             ? CreateExploreButton(urlFilename)
@@ -560,7 +560,7 @@ internal static class ShowHtmlHelper
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeText}{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>");
-        if (ser.GetCrew().Any() || ser.GetActors().Any())
+        if (ser.GetCrew().IsAny() || ser.GetActors().IsAny())
         {
             sb.AppendLine($@"<div class=""accordion accordion-flush"" id=""accordionCastCrew"">
   <div class=""accordion-item"" style=""background-color:#F0F0F0"">
@@ -640,7 +640,7 @@ internal static class ShowHtmlHelper
                  </div>");
     }
 
-    private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, Color backgroundColour,
+    private static async Task AppendMovieAsync(this StringBuilder sb, MovieConfiguration? si, Color backgroundColour,
         bool includeDirectoryLinks, DirFilesCache dfc)
     {
         CachedMovieInfo? ser = si?.CachedMovie;
@@ -649,11 +649,11 @@ internal static class ShowHtmlHelper
         {
             return;
         }
-        AppendMovie(sb, si, ser, backgroundColour, includeDirectoryLinks, dfc);
+        await AppendMovieAsync(sb, si, ser, backgroundColour, includeDirectoryLinks, dfc);
     }
 
     // ReSharper disable once FunctionComplexityOverflow
-    private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, CachedMovieInfo ser, Color backgroundColour, bool includeDirectoryLinks, DirFilesCache dfc)
+    private static async Task AppendMovieAsync(this StringBuilder sb, MovieConfiguration? si, CachedMovieInfo ser, Color backgroundColour, bool includeDirectoryLinks, DirFilesCache dfc)
     {
         string poster = CreatePosterHtml(ser);
         string yearRange = ser.Year?.ToString() ?? "";
@@ -667,7 +667,7 @@ internal static class ShowHtmlHelper
         string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(ser.TmdbCode) : string.Empty;
         string? mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
 
-        string urlFilename = includeDirectoryLinks && (si != null) ? Uri.EscapeDataString(dfc.FindMovieOnDisk(si).FirstOrDefault()?.FullName ?? string.Empty) : string.Empty;
+        string urlFilename = includeDirectoryLinks && (si != null) ? Uri.EscapeDataString((await dfc.FindMovieOnDiskAsync(si)).FirstOrDefault()?.FullName ?? string.Empty) : string.Empty;
         string explorerButton = includeDirectoryLinks ? CreateExploreButton(urlFilename) : string.Empty;
         string viewButton = includeDirectoryLinks ? CreateWatchButton(urlFilename) : string.Empty;
         string facebookButton = ser.FacebookId.HasValue() ? CreateButton($"https://facebook.com/{ser.FacebookId}", "<i class=\"fab fa-facebook\"></i>", "Facebook") : string.Empty;
@@ -688,7 +688,7 @@ internal static class ShowHtmlHelper
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>
 			        <div></div>");
-        if (ser.GetCrew().Any() || ser.GetActors().Any())
+        if (ser.GetCrew().IsAny() || ser.GetActors().IsAny())
         {
             sb.AppendLine($@"<div class=""accordion accordion-flush"" id=""accordionCastCrew"">
   <div class=""accordion-item"" style=""background-color:#F0F0F0"">
@@ -890,14 +890,14 @@ internal static class ShowHtmlHelper
         return ser.AirsTime?.ToString("h tt") ?? string.Empty;
     }
 
-    private static string GetBestFolderLocationToOpen(this ShowConfiguration si)
+    private static async Task<string> GetBestFolderLocationToOpenAsync(this ShowConfiguration si)
     {
         if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && Directory.Exists(si.AutoAddFolderBase))
         {
             return si.AutoAddFolderBase;
         }
 
-        return si.AllExistngFolderLocations()
+        return (await si.AllExistngFolderLocationsAsync())
             .Values
             .SelectMany(a => a)
             .Where(folder => folder.HasValue())
@@ -1030,7 +1030,7 @@ internal static class ShowHtmlHelper
         DirFilesCache dfc = new();
         Color col = Color.FromName("ButtonFace");
         sb.AppendLine(HTMLHeader(10, col));
-        sb.AppendSeason(s, si, col, includeDirectoryLinks);
+        await sb.AppendSeasonAsync(s, si, col, includeDirectoryLinks);
 
         List<ProcessedEpisode> seasonEpisodes = si.EpisodesForSeason(s.SeasonNumber);
         foreach (ProcessedEpisode ep in seasonEpisodes)
@@ -1128,7 +1128,7 @@ internal static class ShowHtmlHelper
             .SelectAsync(episode => SeasonSummaryTableRowAsync(episode, includeDirectoryLinks, dfc)))
             .Concat();
 
-        string seasonHeaderDiv = CreateSeasonHeaderDiv(si, s, includeDirectoryLinks);
+        string seasonHeaderDiv = await CreateSeasonHeaderDivAsync(si, s, includeDirectoryLinks);
         string table = CreateEpisodeTableHeader(tableRows);
 
         sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">{seasonHeaderDiv}
@@ -1156,12 +1156,12 @@ internal static class ShowHtmlHelper
 </div>";
     }
 
-    private static string CreateSeasonHeaderDiv(ShowConfiguration si, ProcessedSeason s, bool includeDirectoryLinks)
+    private static async Task<string> CreateSeasonHeaderDivAsync(ShowConfiguration si, ProcessedSeason s, bool includeDirectoryLinks)
     {
         string explorerButton = string.Empty;
         if (includeDirectoryLinks)
         {
-            string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
+            string urlFilename = Uri.EscapeDataString(await si.GetBestFolderLocationToOpenAsync(s));
             explorerButton = CreateExploreButton(urlFilename);
         }
 
@@ -1192,14 +1192,14 @@ internal static class ShowHtmlHelper
                 </div>";
     }
 
-    private static void AppendSeason(this StringBuilder sb, ProcessedSeason s, ShowConfiguration? si, Color backgroundColour, bool includeDirectoryLinks)
+    private static async Task AppendSeasonAsync(this StringBuilder sb, ProcessedSeason s, ShowConfiguration? si, Color backgroundColour, bool includeDirectoryLinks)
     {
         if (si is null)
         {
             return;
         }
 
-        string seasonHeaderDiv = CreateSeasonHeaderDiv(si, s, includeDirectoryLinks);
+        string seasonHeaderDiv = await CreateSeasonHeaderDivAsync(si, s, includeDirectoryLinks);
 
         sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
 				{s.CreateHorizontalBannerHtml()}
@@ -1208,9 +1208,9 @@ internal static class ShowHtmlHelper
 				</div>");
     }
 
-    private static string GetBestFolderLocationToOpen(this ShowConfiguration si, ProcessedSeason s)
+    private static async Task<string> GetBestFolderLocationToOpenAsync(this ShowConfiguration si, ProcessedSeason s)
     {
-        Dictionary<int, SafeList<string>> afl = si.AllExistngFolderLocations();
+        Dictionary<int, SafeList<string>> afl = await si.AllExistngFolderLocationsAsync();
 
         if (afl.TryGetValue(s.SeasonNumber, out SafeList<string>? folders))
         {
@@ -1357,7 +1357,7 @@ internal static class ShowHtmlHelper
             DateTime? dt = ei.GetAirDateDt();
             if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
             {
-                return $"<h6>{dt.Value.ToShortDateString()}</h6><small class=\"text-muted\">({ei.HowLong()})</small>";
+                return $"<h6>{dt.Value:d}</h6><small class=\"text-muted\">({ei.HowLong()})</small>";
             }
         }
         catch (Exception e)
@@ -1479,7 +1479,7 @@ internal static class ShowHtmlHelper
             "Talk Show", "Thriller", "Travel", "War", "Western"
         ];
 
-        const string ROOT = "https://www.tvrename.com/assets/images/GenreIcons/";
+        const string ROOT = "http://www.tvrename.com/assets/images/GenreIcons/";
 
         return availableIcons.Contains(genre)
             ? $@"<img width=""30"" height=""30"" src=""{ROOT}{genre}.svg"" alt=""{genre}"">"
@@ -1665,7 +1665,7 @@ internal static class ShowHtmlHelper
 
         string seasText = SeasonName(si, snum);
         string? seasonUrl = s.WebsiteUrl;
-        if (eis.Any() && eis[0].SeasonId > 0 && seasonUrl.HasValue())
+        if (eis.IsAny() && eis[0].SeasonId > 0 && seasonUrl.HasValue())
         {
             seasText = $" - <A HREF=\"{seasonUrl}\">{seasText}</a>";
         }
@@ -1693,7 +1693,7 @@ internal static class ShowHtmlHelper
             }
 
             List<FileInfo> fl = await dfc.FindEpOnDiskAsync(ei);
-            if (fl.Any())
+            if (fl.IsAny())
             {
                 foreach (FileInfo fi in fl)
                 {

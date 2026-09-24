@@ -45,7 +45,6 @@ namespace TVRename.Forms
             this.label1 = new System.Windows.Forms.Label();
             this.rightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.bwScan = new System.ComponentModel.BackgroundWorker();
             this.lblStatus = new System.Windows.Forms.Label();
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.btnRefresh = new System.Windows.Forms.Button();
@@ -191,13 +190,6 @@ namespace TVRename.Forms
             this.toolStripMenuItem1.Size = new System.Drawing.Size(155, 22);
             this.toolStripMenuItem1.Text = "toolStripMenuItem1";
             // 
-            // bwScan
-            // 
-            this.bwScan.WorkerReportsProgress = true;
-            this.bwScan.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwScan_DoWork);
-            this.bwScan.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BwScan_ProgressChanged);
-            this.bwScan.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BwScan_RunWorkerCompleted);
-            // 
             // lblStatus
             // 
             this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -274,7 +266,6 @@ namespace TVRename.Forms
         private System.Windows.Forms.ColumnHeader name;
         private System.Windows.Forms.ContextMenuStrip rightClickMenu;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.ComponentModel.BackgroundWorker bwScan;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.ProgressBar pbProgress;
         private System.Windows.Forms.Button btnRefresh;

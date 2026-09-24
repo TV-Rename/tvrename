@@ -43,7 +43,6 @@ namespace TVRename.Forms.Tools
             this.btnRefresh = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.rightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.bwRescan = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.olvFileIssues)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -183,13 +182,6 @@ namespace TVRename.Forms.Tools
             this.rightClickMenu.ShowImageMargin = false;
             this.rightClickMenu.Size = new System.Drawing.Size(36, 4);
             // 
-            // bwRescan
-            // 
-            this.bwRescan.WorkerReportsProgress = true;
-            this.bwRescan.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwRescan_DoWork);
-            this.bwRescan.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BwRescan_ProgressChanged);
-            this.bwRescan.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BwRescan_RunWorkerCompleted);
-            // 
             // OrphanFiles
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -223,7 +215,6 @@ namespace TVRename.Forms.Tools
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button button1;
-        private System.ComponentModel.BackgroundWorker bwRescan;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.ProgressBar pbProgress;
     }

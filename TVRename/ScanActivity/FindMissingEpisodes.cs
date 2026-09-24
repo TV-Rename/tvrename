@@ -35,7 +35,7 @@ internal abstract class FindMissingEpisodes(TVDoc doc, TVDoc.ScanSettings settin
                 return;
             }
 
-            if (!MDoc.TheActionList.Missing.Any())
+            if (!MDoc.TheActionList.Missing.IsAny())
             {
                 continue;
             }

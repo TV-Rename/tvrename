@@ -53,7 +53,7 @@ internal class SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : 
                 }
                 else if (action is MovieItemMissing movieMissingAction)
                 {
-                    List<FileInfo> matchedFiles = FindMatchedFiles(dirCache, movieMissingAction, thisRound);
+                    List<FileInfo> matchedFiles = await FindMatchedFilesAsync(dirCache, movieMissingAction, thisRound);
 
                     ProcessMissingItem(newList, toRemove, movieMissingAction, thisRound, matchedFiles,
                         TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
@@ -81,7 +81,7 @@ internal class SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : 
         ActionList.Replace(toRemove, newList);
     }
 
-    private List<FileInfo> FindMatchedFiles(DirCache dirCache, MovieItemMissing movieMissingAction, Dictionary<FileInfo, ItemList> thisRound)
+    private async Task<List<FileInfo>> FindMatchedFilesAsync(DirCache dirCache, MovieItemMissing movieMissingAction, Dictionary<FileInfo, ItemList> thisRound)
     {
         List<FileInfo> matchedFiles = [];
 
@@ -93,7 +93,7 @@ internal class SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : 
             {
                 continue;
             }
-            if (!ReviewFile(movieMissingAction, actionsForThisFile, dce.TheFile, TVSettings.Instance.PreventMove, true,
+            if (!await ReviewFileAsync(movieMissingAction, actionsForThisFile, dce.TheFile, TVSettings.Instance.PreventMove, true,
                     TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
             {
                 continue;

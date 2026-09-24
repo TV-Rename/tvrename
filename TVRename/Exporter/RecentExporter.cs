@@ -39,7 +39,7 @@ internal abstract class RecentExporter(TVDoc doc) : Exporter
             {
                 List<FileInfo> files = await dfc.FindEpOnDiskAsync(episode, false);
 
-                if (!files.Any())
+                if (!files.IsAny())
                 {
                     continue;
                 }

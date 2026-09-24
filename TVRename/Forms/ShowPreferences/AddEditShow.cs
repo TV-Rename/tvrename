@@ -427,7 +427,7 @@ public partial class AddEditShow : Form, ICodeWindow
 
     private static void OpenInfoWindow(string page)
     {
-        $"https://www.tvrename.com/manual/user{page}".OpenUrlInBrowser();
+        $"http://www.tvrename.com/manual/user{page}".OpenUrlInBrowser();
     }
 
     #endregion HelpWindows

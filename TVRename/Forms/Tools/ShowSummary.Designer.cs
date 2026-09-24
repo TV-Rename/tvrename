@@ -49,7 +49,6 @@ namespace TVRename
             this.panel2 = new System.Windows.Forms.Panel();
             this.chkHideDiskEps = new System.Windows.Forms.CheckBox();
             this.chkOnlyShow = new System.Windows.Forms.CheckBox();
-            this.bwRescan = new System.ComponentModel.BackgroundWorker();
             this.cmbShowStatus = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -268,13 +267,6 @@ namespace TVRename
             this.chkOnlyShow.UseVisualStyleBackColor = true;
             this.chkOnlyShow.CheckedChanged += new System.EventHandler(this.CheckedChanged);
             // 
-            // bwRescan
-            // 
-            this.bwRescan.WorkerReportsProgress = true;
-            this.bwRescan.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwRescan_DoWork);
-            this.bwRescan.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BwRescan_ProgressChanged);
-            this.bwRescan.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BwRescan_RunWorkerCompleted);
-            // 
             // cmbShowStatus
             // 
             this.cmbShowStatus.FormattingEnabled = true;
@@ -322,7 +314,6 @@ namespace TVRename
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Panel panel2;
-        private System.ComponentModel.BackgroundWorker bwRescan;
         private System.Windows.Forms.CheckBox chkHideDiskEps;
         private System.Windows.Forms.CheckBox chkOnlyShow;
         private System.Windows.Forms.ComboBox cmbShowStatus;

@@ -20,6 +20,8 @@ public class YtsViewerRow
     public string YtsUrl => result.YtsUrl;
     public string Runtime => result.Runtime;
     public IEnumerable<string> Genres => result.Genres;
+    public string GenresString => Genres.ToCsv();
+
     public string Language => Movie?.CachedMovie?.ShowLanguage ?? result.Language;
 
     //Star score is out of 5 stars, we produce a 'normlised' result by adding a top mark 10/10 and a bottom mark 1/10 and recalculating

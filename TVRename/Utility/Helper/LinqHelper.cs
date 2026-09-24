@@ -40,7 +40,7 @@ internal static class LinqHelper
     }
 
     public static bool HasAny<T>([NotNullWhen(true)] this IEnumerable<T>? source)
-        => source is not null && source.Any();
+        => source is not null && source.IsAny();
 
     public static IEnumerable<T> WithMax<T>(this IEnumerable<T>? source, Func<T, int> countFunction)
     {
@@ -54,7 +54,7 @@ internal static class LinqHelper
             return [];
         }
         IEnumerable<T> enumerable = source as T[] ?? [.. source];
-        if (!enumerable.Any())
+        if (!enumerable.IsAny())
         {
             return [];
         }

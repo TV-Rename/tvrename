@@ -43,9 +43,9 @@ internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings setti
         List<PossibleMedia> addedShowsUnique = RemoveExistingAndDups(addedShows);
 
         List<ShowConfiguration> addedTvShows = [.. addedShowsUnique.Select(x=>x.Configuration).OfType<ShowConfiguration>().Distinct()];
-        if (addedTvShows.Any())
+        if (addedTvShows.IsAny())
         {
-            MDoc.Add(addedTvShows, true);
+            await MDoc.AddAsync(addedTvShows, true);
             await MDoc.TvAddedOrEditedAsync(true, false, false, Settings.Owner, addedTvShows);
             //add each new show into the shows being scanned
             Settings.Shows.AddRange(addedTvShows);
@@ -53,9 +53,9 @@ internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings setti
         }
 
         List<MovieConfiguration> addedMovies = [.. addedShowsUnique.Select(x => x.Configuration).OfType<MovieConfiguration>().Distinct()];
-        if (addedMovies.Any())
+        if (addedMovies.IsAny())
         {
-            MDoc.Add(addedMovies, true);
+            await MDoc.AddAsync(addedMovies, true);
             await MDoc.MoviesAddedOrEditedAsync(true, false, false, Settings.Owner, addedMovies);
             Settings.Movies.AddRange(addedMovies);
             LOGGER.Info($"Added new movies called: {addedMovies.Select(s => s.ShowName).ToCsv()}");

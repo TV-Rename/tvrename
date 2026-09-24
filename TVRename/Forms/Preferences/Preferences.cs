@@ -2122,7 +2122,7 @@ public partial class Preferences : Form
     private void pbScanOptions_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-general-tab");
     private static void OpenInfoWindow(string page)
     {
-        $"https://www.tvrename.com/manual/options{page}".OpenUrlInBrowser();
+        $"http://www.tvrename.com/manual/options{page}".OpenUrlInBrowser();
     }
 
     #endregion HelpWindows

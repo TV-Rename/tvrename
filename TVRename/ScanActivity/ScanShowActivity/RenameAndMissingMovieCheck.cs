@@ -14,7 +14,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
 
     protected override async Task CheckAsync(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
-        List<string> allFolders = [.. si.Locations];
+        List<string> allFolders = [.. await si.LocationsAsync()];
         if (allFolders.Count == 0) // no folders defined for this show
         {
             LOGGER.Warn($"No Folders defined for {si.Name}, please review the configuration for that movie.");
@@ -52,14 +52,14 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
         switch (si.Format)
         {
             case MovieConfiguration.MovieFolderFormat.multiPerDirectory:
-                CheckMultiPartMovieFolder(si, settings, folder, dfc, renCheck, missCheck);
+                await CheckMultiPartMovieFolderAsync(si, settings, folder, dfc, renCheck, missCheck);
                 return;
             case MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile:
-                CheckSingleMovieFolder(si, settings, folder, dfc, renCheck);
+                await CheckSingleMovieFolderAsync(si, settings, folder, dfc, renCheck);
                 return;
             case MovieConfiguration.MovieFolderFormat.dvd:
             case MovieConfiguration.MovieFolderFormat.bluray:
-                CheckDvdBluRayMovieFolder(si, folder);
+                await CheckDvdBluRayMovieFolderAsync(si, folder);
                 return;
             default:
                 LOGGER.Error($"Unclear how to check {si.Name} with format {si.Format.PrettyPrint()}.");
@@ -67,7 +67,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
         }
     }
 
-    private void CheckSingleMovieFolder(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, DirFilesCache dfc, bool renCheck)
+    private async Task CheckSingleMovieFolderAsync(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, DirFilesCache dfc, bool renCheck)
     {
         FileInfo[] files = dfc.GetFiles(folder);
         FileInfo[] movieFiles = [.. files.Where(f => f.IsMovieFile()).Where(f => !f.IsSampleFile())];
@@ -90,14 +90,14 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
             if (renCheck && !baseString.Equals(newBase, StringComparison.OrdinalIgnoreCase))
             {
                 //Do a tweak to filename (case insensitive ones are dealt with below; this is for changes that are around punctuation
-                PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                await PlanToRenameFilesInFolderAsync(si, settings, folder, files, baseString, newBase);
                 string newName = baseString.HasValue() ? matchingMovieFile.Name.Replace(baseString, newBase) : newBase + matchingMovieFile.Extension;
                 newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
             }
 
             //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
             //it has all the required files for that show
-            Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, newFile));
+            Doc.TheActionList.Add(await downloadIdentifiers.ProcessMovieAsync(si, newFile));
             FileIsCorrect(si, movieFiles.First().FullName);
             return;
         }
@@ -109,10 +109,10 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
             {
                 foreach (string baseString in bases)
                 {
-                    PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                    await PlanToRenameFilesInFolderAsync(si, settings, folder, files, baseString, newBase);
                 }
             }
-            Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, movieFiles.FirstOrDefault(m => m.Name.StartsWith(newBase.RemoveBracketedYearFromEnd(), StringComparison.OrdinalIgnoreCase)) ?? movieFiles.First()));
+            Doc.TheActionList.Add(await downloadIdentifiers.ProcessMovieAsync(si, movieFiles.FirstOrDefault(m => m.Name.StartsWith(newBase.RemoveBracketedYearFromEnd(), StringComparison.OrdinalIgnoreCase)) ?? movieFiles.First()));
             return;
         }
 
@@ -122,7 +122,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
         {
             foreach (string baseString in bases)
             {
-                PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                await PlanToRenameFilesInFolderAsync(si, settings, folder, files, baseString, newBase);
             }
             return;
         }
@@ -135,7 +135,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
         {
             foreach (string baseString in bases)
             {
-                PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                await PlanToRenameFilesInFolderAsync(si, settings, folder, files, baseString, newBase);
             }
             return;
         }
@@ -147,7 +147,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
 
             if (matchingFile != null)
             {
-                Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, matchingFile));
+                Doc.TheActionList.Add(await downloadIdentifiers.ProcessMovieAsync(si, matchingFile));
                 FileIsCorrect(si, matchingFile.FullName);
                 LOGGER.Warn($"{matchingFile.Name} matches {newBase}, but other files [{movieFiles.Select(f => f.Name).ToCsv()}] are present; please review.");
                 return;
@@ -160,7 +160,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
         FileIsMissing(si, folder);
     }
 
-    private void CheckMultiPartMovieFolder(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, DirFilesCache dfc,
+    private async Task CheckMultiPartMovieFolderAsync(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, DirFilesCache dfc,
         bool renCheck, bool missCheck)
     {
         FileInfo[] files = dfc.GetFiles(folder);
@@ -177,7 +177,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
         //we have 3 options - matching file / close file that needs rename / else it's missing
         if (bases.Any(x => x.Equals(newBase)))
         {
-            Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si,
+            Doc.TheActionList.Add(await downloadIdentifiers.ProcessMovieAsync(si,
                 movieFiles.First(m => m.Name.StartsWith(newBase, StringComparison.Ordinal))));
 
             return;
@@ -187,24 +187,24 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
         {
             //This section deals with files that have had a 1 year rename
             List<string> matchingBases = [.. bases.Where(x => IsClose(x, si))];
-            if (matchingBases.Any())
+            if (matchingBases.IsAny())
             {
                 foreach (string baseString in matchingBases)
                 {
                     //rename all files with this base
-                    PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                    await PlanToRenameFilesInFolderAsync(si, settings, folder, files, baseString, newBase);
                 }
 
                 return;
             }
 
             List<string> matchingBases2 = [.. bases.Where(x => MatchesBase(x, newBase))];
-            if (matchingBases2.Any())
+            if (matchingBases2.IsAny())
             {
                 foreach (string baseString in matchingBases2)
                 {
                     //rename all files with this base
-                    PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                    await PlanToRenameFilesInFolderAsync(si, settings, folder, files, baseString, newBase);
                 }
 
                 return;
@@ -217,7 +217,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
         }
     }
 
-    private void CheckDvdBluRayMovieFolder(MovieConfiguration si, string folder)
+    private async Task CheckDvdBluRayMovieFolderAsync(MovieConfiguration si, string folder)
     {
         string targetFile = si.Format == MovieConfiguration.MovieFolderFormat.bluray
             ? Path.Combine(folder, "BDMV", "index.bdmv")
@@ -225,7 +225,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
 
         if (File.Exists(targetFile))
         {
-            Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, new FileInfo(targetFile)));
+            Doc.TheActionList.Add(await downloadIdentifiers.ProcessMovieAsync(si, new FileInfo(targetFile)));
             FileIsCorrect(si, targetFile);
         }
         else
@@ -244,7 +244,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
         return false;
     }
 
-    private void PlanToRenameFilesInFolder(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, FileInfo[] files,
+    private async Task PlanToRenameFilesInFolderAsync(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, FileInfo[] files,
         string baseString, string newBase)
     {
         foreach (FileInfo fi in files)
@@ -263,7 +263,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
                 {
                     //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
                     //it has all the required files for that show
-                    Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, newFile));
+                    Doc.TheActionList.Add(await downloadIdentifiers.ProcessMovieAsync(si, newFile));
                 }
 
                 if (newFile.FullName != fi.FullName)

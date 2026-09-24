@@ -57,13 +57,13 @@ public class ActionEngine(TVRenameStats stats)
         {
             //Do the main 4 queues
             actionWorkers = ActionProcessorMakeQueues(theList, token);
-            actionWorkerTasks = actionWorkers.Select(a => a.StartAsync()).ToList(); //todo add token
+            actionWorkerTasks = actionWorkers.Select(a => a.StartAsync(token.Token)).ToList();
             await Task.WhenAll(actionWorkerTasks);
 
             //Finish up wiht the later queue that needs to happen after the others
             var q = Action.QueueName.later;
             var laterQueue = new ActionQueue(GetName(q), GetParallelLimit(q), theList.GetActionsForQueue(q), mStats, token);
-            await laterQueue.StartAsync();
+            await laterQueue.StartAsync(token.Token);
 
             //Tidy Up
             theList.RemoveAll(x => x is Action { Outcome: { Done: true, Error: false } });

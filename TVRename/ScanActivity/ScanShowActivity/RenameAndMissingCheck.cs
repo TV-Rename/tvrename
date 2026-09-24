@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -14,9 +15,9 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
     protected override string ActivityName() => "Rename & Missing Check";
     protected override bool Active() => true;
 
-    protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+    protected async override Task CheckAsync(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
-        Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
+        Dictionary<int, SafeList<string>> allFolders = await si.AllExistngFolderLocationsAsync();
         if (allFolders.Count == 0) // no folders defined for this show
         {
             LOGGER.Warn($"No Folders defined for {si.Name}, please review the configuration for that TV Show. Either there are no scanned episodes or the configuation is not complete");
@@ -25,9 +26,9 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
 
         //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
         //it has all the required files for that show
-        if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && allFolders.Any())
+        if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && allFolders.IsAny())
         {
-            Doc.TheActionList.Add(downloadIdentifiers.ProcessShow(si));
+            Doc.TheActionList.Add(await downloadIdentifiers.ProcessShowAsync(si));
         }
 
         //TODO Put the banner refresh period into the settings file, we'll default to 3 months
@@ -37,8 +38,8 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
 
         if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
         {
-            Doc.TheActionList.Add(
-                downloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
+            Doc.TheActionList.Add(await 
+                downloadIdentifiers.ForceUpdateShowAsync(DownloadIdentifier.DownloadType.downloadImage, si));
 
             si.BannersLastUpdatedOnDisk = TimeHelpers.LocalNow();
             Doc.SetDirty();

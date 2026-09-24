@@ -1115,7 +1115,7 @@ public static class FileHelper
     {
         return path.HasValue()
                && Directory.Exists(path)
-               && Directory.EnumerateFileSystemEntries(path).Any();
+               && Directory.EnumerateFileSystemEntries(path).IsAny();
     }
 
     internal static bool FileExists(string destination)

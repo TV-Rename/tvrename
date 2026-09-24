@@ -515,7 +515,7 @@ public partial class BulkAddShow : Form
 
     private async void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
     {
-        if (engine.AddItems.Any())
+        if (engine.AddItems.IsAny())
         {
             DialogResult res = MessageBox.Show("Add identified shows to \"TV Shows\"?", "Bulk Add TV Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res != DialogResult.Yes)

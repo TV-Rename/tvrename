@@ -56,7 +56,7 @@ public class BulkAddMovieManager(TVDoc doc)
             string theFolder = di2.FullName.ToLower();
             foreach (MovieConfiguration? si in mDoc.FilmLibrary.Movies)
             {
-                if (RejectFolderIfIncludedInShow(fullLogging, si, theFolder))
+                if (await RejectFolderIfIncludedInShowAsync(fullLogging, si, theFolder))
                 {
                     return (true, null);
                 }
@@ -84,14 +84,14 @@ public class BulkAddMovieManager(TVDoc doc)
             }
 
             List<FileInfo> films = FilmFiles(di2);
-            if (TVSettings.Instance.BulkAddCompareNoVideoFolders && !films.Any())
+            if (TVSettings.Instance.BulkAddCompareNoVideoFolders && !films.IsAny())
             {
                 return (false, subDirectories);
             }
-            if (!films.Any())
+            if (!films.IsAny())
             {
                 Logger.Warn($"Checked {di2.FullName} and it had no movie files.");
-                if (!di2.GetFiles().Any() && !di2.GetDirectories().Any())
+                if (!di2.GetFiles().IsAny() && !di2.GetDirectories().IsAny())
                 {
                     di2.Delete(false); //TODO use FileHelper
                 }
@@ -118,9 +118,9 @@ public class BulkAddMovieManager(TVDoc doc)
         }
     }
 
-    private static bool RejectFolderIfIncludedInShow(bool fullLogging, MovieConfiguration si, string theFolder)
+    private static async Task<bool> RejectFolderIfIncludedInShowAsync(bool fullLogging, MovieConfiguration si, string theFolder)
     {
-        foreach (string dir in si.Locations)
+        foreach (string dir in (await si.LocationsAsync()))
         {
             if (!string.IsNullOrEmpty(dir) && theFolder.IsSubfolderOf(dir))
             {
@@ -142,7 +142,7 @@ public class BulkAddMovieManager(TVDoc doc)
         return [.. directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Where(file => file.IsMovieFile())];
     }
 
-    private async Task CheckFolderForShowsAsync(DirectoryInfo di, IProgress<BulkAddMovie.ScanProgressReport> handler, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
+    private async Task CheckFolderForShowsAsync(DirectoryInfo di, IProgress<ScanProgressReport> handler, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
         if (!di.Exists)
         {
@@ -156,7 +156,7 @@ public class BulkAddMovieManager(TVDoc doc)
 
         int percentComplete = (int)(100.0 / CurrentPhaseTotal.Value * (1.0 * CurrentPhase.Value + 1.0 * CurrentPhaseDirectory.Value / CurrentPhaseTotalDirectory.Value));
 
-        var x = new BulkAddMovie.ScanProgressReport
+        var x = new ScanProgressReport
         {
             ProgressPercentage = percentComplete,
             UpdateText = di.Name
@@ -197,13 +197,13 @@ public class BulkAddMovieManager(TVDoc doc)
 
     public async Task AddAllToMyMoviesAsync(UI ui)
     {
-        List<MovieConfiguration> movies = AddToLibrary(AddItems.Where(ai => ai.CodeKnown));
+        List<MovieConfiguration> movies = await AddToLibraryAsync(AddItems.Where(ai => ai.CodeKnown));
 
         await mDoc.MoviesAddedOrEditedAsync(true, false, false, ui, movies);
         AddItems.Clear();
     }
 
-    private List<MovieConfiguration> AddToLibrary(IEnumerable<PossibleNewMovie> ais)
+    private async Task<List<MovieConfiguration>> AddToLibraryAsync(IEnumerable<PossibleNewMovie> ais)
     {
         List<MovieConfiguration> movies = [];
         foreach (PossibleNewMovie ai in ais.Where(a=>a.CodeKnown))
@@ -213,7 +213,7 @@ public class BulkAddMovieManager(TVDoc doc)
             if (found is null)
             {
                 MovieConfiguration newMovie = GenerateConfiguration(ai);
-                mDoc.Add(newMovie.AsList(), true);
+                await mDoc.AddAsync(newMovie.AsList(), true);
                 mDoc.Stats().AutoAddedMovies++;
                 movies.Add(newMovie);
                 continue;
@@ -293,7 +293,7 @@ public class BulkAddMovieManager(TVDoc doc)
         return found;
     }
 
-    public async Task CheckFoldersAsync(ParallelOptions options, ThreadSafeCounter volatileCounter, IProgress<BulkAddMovie.ScanProgressReport> handler, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
+    public async Task CheckFoldersAsync(ParallelOptions options, ThreadSafeCounter volatileCounter, IProgress<ScanProgressReport> handler, bool detailedLogging, bool showErrorMsgBox, CancellationToken token)
     {
         // Check the  folder list, and build up a new "AddItems" list.
         // guessing what the shows actually are isn't done here.  That is done by
@@ -304,7 +304,7 @@ public class BulkAddMovieManager(TVDoc doc)
         AddItems = [];
 
         CurrentPhaseTotal.Reset(1);
-        if (TVSettings.Instance.MovieLibraryFolders.Any())
+        if (TVSettings.Instance.MovieLibraryFolders.IsAny())
         {
             CurrentPhaseTotal.Reset(TVSettings.Instance.MovieLibraryFolders.Count);
         }

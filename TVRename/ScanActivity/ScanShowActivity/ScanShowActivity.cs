@@ -6,17 +6,19 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System.Threading.Tasks;
+
 namespace TVRename;
 
 public abstract class ScanShowActivity(TVDoc doc) : ScanMediaActivity(doc)
 {
-    protected abstract void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings);
+    protected abstract Task CheckAsync(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings);
 
-    public void CheckIfActive(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+    public async Task CheckIfActiveAsync(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
         if (Active())
         {
-            Check(si, dfc, settings);
+            await CheckAsync(si, dfc, settings);
             LogActionListSummary();
         }
     }

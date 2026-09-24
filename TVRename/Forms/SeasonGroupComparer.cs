@@ -35,7 +35,7 @@ public class SeasonGroupComparer(SortOrder order) : IComparer<OLVGroup>
         // If we can compare the sort values, do that.
         // Otherwise do a case insensitive compare on the group header.
         int result;
-        if (x.Items.Any() && y.Items.Any())
+        if (x.Items.IsAny() && y.Items.IsAny())
         {
             result = CompareValue(x).CompareTo(CompareValue(y));
         }

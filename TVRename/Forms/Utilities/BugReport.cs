@@ -9,6 +9,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TVRename;
@@ -32,7 +33,7 @@ public partial class BugReport : Form
         InitializeComponent();
     }
 
-    private void bnCreate_Click(object sender, System.EventArgs e)
+    private async void bnCreate_Click(object sender, System.EventArgs e)
     {
         txtEmailText.Text = "Working... This may take a while.";
         txtEmailText.Update();
@@ -67,14 +68,14 @@ public partial class BugReport : Form
         if (cbFolderScan.Checked)
         {
             txt.AppendLine("==== Media Folders Directory Scan ====");
-            ExtractShowDetails(txt);
+            await ExtractShowDetailsAsync(txt);
             txt.AppendLine();
         }
 
         txtEmailText.Text = txt.ToString().ToUiVersion();
     }
 
-    private void ExtractShowDetails(StringBuilder txt)
+    private async Task ExtractShowDetailsAsync(StringBuilder txt)
     {
         foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShows())
         {
@@ -91,7 +92,7 @@ public partial class BugReport : Form
                     continue;
                 }
 
-                if (!si.AllExistngFolderLocations().TryGetValue(snum, out SafeList<string>? folders))
+                if (!(await si.AllExistngFolderLocationsAsync()).TryGetValue(snum, out SafeList<string>? folders))
                 {
                     continue; // skip non seen seasons
                 }

@@ -197,17 +197,17 @@ internal static class FinderHelper
         return true;
     }
 
-    public static bool FileNeeded(FileInfo fi, MovieConfiguration si, DirFilesCache dfc)
+    public static async Task<bool> FileNeededAsync(FileInfo fi, MovieConfiguration si, DirFilesCache dfc)
     {
-        return MovieNeeded(si, dfc, fi);
+        return await MovieNeededAsync(si, dfc, fi);
     }
 
-    private static bool MovieNeeded(MovieConfiguration si, DirFilesCache dfc, FileInfo fi)
+    private static async Task<bool> MovieNeededAsync(MovieConfiguration si, DirFilesCache dfc, FileInfo fi)
     {
         ArgumentNullException.ThrowIfNull(fi);
         ArgumentNullException.ThrowIfNull(si);
 
-        foreach (FileInfo testFileInfo in FindMovieOnDisk(dfc, si))
+        foreach (FileInfo testFileInfo in await FindMovieOnDiskAsync(dfc, si))
         {
             //We will check that the file that is found is not the one we are testing
             if (fi.FullName == testFileInfo.FullName)
@@ -238,13 +238,13 @@ internal static class FinderHelper
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="di"/> is <see langword="null"/></exception>
-    public static bool FileNeeded(DirectoryInfo? di, MovieConfiguration? si, DirFilesCache dfc)
+    public static async Task<bool> FileNeededAsync(DirectoryInfo? di, MovieConfiguration? si, DirFilesCache dfc)
     {
         ArgumentNullException.ThrowIfNull(di);
 
         ArgumentNullException.ThrowIfNull(si);
 
-        foreach (FileInfo testFileInfo in FindMovieOnDisk(dfc, si))
+        foreach (FileInfo testFileInfo in (await FindMovieOnDiskAsync(dfc, si)))
         {
             //We will check that the file that is found is not the one we are testing
             if (di.FullName == testFileInfo.FullName)
@@ -258,9 +258,9 @@ internal static class FinderHelper
         return true;
     }
 
-    public static IEnumerable<FileInfo> FindMovieOnDisk(this DirFilesCache cache, MovieConfiguration si)
+    public static async Task<IEnumerable<FileInfo>> FindMovieOnDiskAsync(this DirFilesCache cache, MovieConfiguration si)
     {
-        return si.Locations
+        return (await si.LocationsAsync())
             .SelectMany(cache.GetFiles)
             .Where(fiTemp => fiTemp.IsMovieFile())
             .Where(fiTemp => si.NameMatch(fiTemp, false));
@@ -647,13 +647,13 @@ internal static class FinderHelper
     }
 
     private static bool LookForSeries(string test, IEnumerable<MediaConfiguration> shows)
-        => GetMatchingSeries(test,shows).Any();
+        => GetMatchingSeries(test,shows).IsAny();
 
     private static IEnumerable<MediaConfiguration> GetMatchingSeries(string test, IEnumerable<MediaConfiguration> shows)
         => shows.Where(si => si.NameMatch(test));
 
     private static bool LookForMovies(string test, IEnumerable<MediaConfiguration> shows)
-        => GetMatchingMovies(test,shows).Any();
+        => GetMatchingMovies(test,shows).IsAny();
 
     private static IEnumerable<MediaConfiguration> GetMatchingMovies(string test, IEnumerable<MediaConfiguration> shows)
     {
@@ -973,7 +973,7 @@ internal static class FinderHelper
 
         IEnumerable<ShowConfiguration> matchAtStart = showsMatchAtStart as ShowConfiguration[] ?? [.. showsMatchAtStart];
 
-        if (matchAtStart.Any())
+        if (matchAtStart.IsAny())
         {
             return matchAtStart.MaxBy(s => s.ShowName.Length);
         }
@@ -991,7 +991,7 @@ internal static class FinderHelper
 
         IEnumerable<MovieConfiguration> matchAtStart = showsMatchAtStart as MovieConfiguration[] ?? [.. showsMatchAtStart];
 
-        if (matchAtStart.Any())
+        if (matchAtStart.IsAny())
         {
             return matchAtStart.MaxBy(s => s.ShowName.Length);
         }

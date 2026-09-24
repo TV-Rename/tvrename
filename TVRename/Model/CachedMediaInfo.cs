@@ -209,7 +209,7 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
         }
         if (this is CachedSeriesInfo si)
         {
-            if (!si.Seasons.Any())
+            if (!si.Seasons.IsAny())
             {
                 Dirty = true;
             }

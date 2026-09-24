@@ -206,7 +206,7 @@ internal class TvdbAccuracyCheck
                                       ?? throw new SourceConsistencyException("Could not get updates from TVDB", TVDoc.ProviderType.TheTVDB);
             JToken? jToken = currentDownload["data"];
 
-            if (jToken?.Children().Any() != true)
+            if (jToken?.Children().IsAny() != true)
             {
                 Logger.Info($" BETA Update Checker: FINISHED");
                 return;

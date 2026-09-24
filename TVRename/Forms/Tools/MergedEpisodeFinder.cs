@@ -19,7 +19,6 @@ public partial class MergedEpisodeFinder : Form
         dupEps = [];
         mDoc = doc;
         mainUi = main;
-        Scan();
     }
 
     // ReSharper disable once InconsistentNaming
@@ -170,23 +169,33 @@ public partial class MergedEpisodeFinder : Form
         rightClickMenu.Close();
     }
 
-    private void BwScan_DoWork(object sender, DoWorkEventArgs e)
+
+
+    private async void BtnRefresh_Click_1(object sender, EventArgs e)
     {
-        System.Threading.Thread.CurrentThread.Name ??= "MergedEpisode Scan Thread"; // Can only set it once
-        dupEps = MergedEpisodeFinderController.FindDoubleEps(mDoc, (BackgroundWorker)sender);
+        await ScanAsync();
     }
 
-    private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+    private async Task ScanAsync()
     {
-        pbProgress.SetProgress(e.ProgressPercentage);
-        lblStatus.Text = e.UserState?.ToString().ToUiVersion();
-    }
 
-    private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
+        var progressHandler = new Progress<ProgressReport>(scanReport =>
+        {
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(scanReport.ProgressPercentage);
+            lblStatus.Text = scanReport.UpdateText.ToUiVersion();
+        });
+
+        btnRefresh.Visible = false;
+        pbProgress.Visible = true;
+        lblStatus.Visible = true;
+
+        dupEps = await MergedEpisodeFinderController.FindDoubleEpsAsync(mDoc, progressHandler);
+
         btnRefresh.Visible = true;
         pbProgress.Visible = false;
         lblStatus.Visible = false;
+
         if (lvMergedEpisodes.IsDisposed)
         {
             return;
@@ -195,16 +204,8 @@ public partial class MergedEpisodeFinder : Form
         PopulateGrid();
     }
 
-    private void BtnRefresh_Click_1(object sender, EventArgs e)
+    internal async Task StartScanAsync()
     {
-        Scan();
-    }
-
-    private void Scan()
-    {
-        btnRefresh.Visible = false;
-        pbProgress.Visible = true;
-        lblStatus.Visible = true;
-        bwScan.RunWorkerAsync();
+        await ScanAsync();
     }
 }

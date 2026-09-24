@@ -131,7 +131,7 @@ public partial class QuickRename : Form, IDialogParent
 
                 if (bestShow != null && !mDoc.AlreadyContains(bestShow))
                 {
-                    mDoc.Add(bestShow.AsList(), true);
+                    await mDoc.AddAsync(bestShow.AsList(), true);
                     await mDoc.TvAddedOrEditedAsync(true, false, false, parent, bestShow);
 
                     Logger.Info($"Added new show called: {bestShow.ShowName}");

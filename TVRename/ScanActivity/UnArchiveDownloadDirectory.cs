@@ -25,11 +25,11 @@ internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings
                 continue;
             }
 
-            ReviewFilesInDownloadDirectory(dirPath);
+            await ReviewFilesInDownloadDirectoryAsync(dirPath);
         }
     }
 
-    private void ReviewFilesInDownloadDirectory(string dirPath)
+    private async Task ReviewFilesInDownloadDirectoryAsync(string dirPath)
     {
         try
         {
@@ -47,7 +47,7 @@ internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings
                     continue;
                 }
 
-                ReviewArchive(fi);
+                await ReviewArchiveAsync(fi);
             }
         }
         catch (UnauthorizedAccessException ex)
@@ -64,7 +64,7 @@ internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings
         }
     }
 
-    private void ReviewArchive(FileInfo fi)
+    private async Task ReviewArchiveAsync(FileInfo fi)
     {
         List<ShowConfiguration> matchingShowsAll = [.. MDoc.TvLibrary.GetSortedShows().Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<ShowConfiguration> matchingShows = FinderHelper.RemoveShortShows(matchingShowsAll);
@@ -76,17 +76,17 @@ internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings
         List<ShowConfiguration> matchingShowsNoMovies =
             FinderHelper.RemoveShortMedia(matchingShows, matchingMovies);
 
-        if (matchingShowsNoMovies.Any())
+        if (matchingShowsNoMovies.IsAny())
         {
             MDoc.TheActionList.Add(new ActionUnArchive(fi, matchingShowsNoMovies.First()));
             return;
         }
 
-        if (matchingMoviesNoShows.Any(x => HasMissing(x, fi)))
+        if (await matchingMoviesNoShows.AnyAsync(x => HasMissingAsync(x, fi)))
         {
-            MDoc.TheActionList.Add(new ActionUnArchive(fi, matchingMoviesNoShows.First(x => HasMissing(x, fi))));
+            MDoc.TheActionList.Add(new ActionUnArchive(fi, await matchingMoviesNoShows.FirstAsync(x => HasMissingAsync(x, fi))));
         }
     }
 
-    private static bool HasMissing(MovieConfiguration x, FileInfo fi) => FinderHelper.FileNeeded(fi, x, new DirFilesCache());
+    private static async Task<bool> HasMissingAsync(MovieConfiguration x, FileInfo fi) => await FinderHelper.FileNeededAsync(fi, x, new DirFilesCache());
 }

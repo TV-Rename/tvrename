@@ -273,7 +273,7 @@ public static class API
             List<(int? id, JToken jsonData)> neededEpisodes =
                 [.. availableEpisodes.Where(x => x.id.HasValue && si.Episodes.All(e => e.EpisodeId != x.id))];
 
-            if (!neededEpisodes.Any())
+            if (!neededEpisodes.IsAny())
             {
                 return;
             }
@@ -423,7 +423,7 @@ public static class API
                     result.AddRange(ProcessUpdate(o));
                 });
 
-        if (auditUpdates && updatesResponses.Any())
+        if (auditUpdates && updatesResponses.IsAny())
         {
             int n = 0;
             foreach (JObject response in updatesResponses)
@@ -1269,7 +1269,7 @@ public static class API
         }
 
         List<JToken> languageNodes = [.. aliasNode.Where(x => x["language"]?.ToString() == lang.TVDBCode())];
-        if (languageNodes.Any())
+        if (languageNodes.IsAny())
         {
             foreach (JToken? x in languageNodes)
             {
@@ -1279,7 +1279,7 @@ public static class API
         }
 
         languageNodes = [.. aliasNode.Where(x => x["language"]?.ToString() == TVSettings.Instance.PreferredTVDBLanguage.TVDBCode())];
-        if (languageNodes.Any())
+        if (languageNodes.IsAny())
         {
             foreach (JToken? x in languageNodes)
             {

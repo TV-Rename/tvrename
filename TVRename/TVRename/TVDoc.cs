@@ -380,20 +380,20 @@ public class TVDoc : IDisposable, IAsyncDisposable
         }
     }
 
-    private async Task<bool> DoDownloadsFgAsync(bool unattended, bool tvrMinimised, UI owner)
+    private async Task<bool> DoDownloadsFgAsync(bool unattended, bool tvrMinimised, UI owner, CancellationTokenSource cts)
     {
         List<ISeriesSpecifier> idsToDownload = [.. TvLibrary.Shows, .. FilmLibrary.Movies];
-        return await DoDownloadsFGNow(unattended, tvrMinimised, owner, idsToDownload);
+        return await DoDownloadsFGNow(unattended, tvrMinimised, owner, idsToDownload, cts);
     }
 
     // ReSharper disable once InconsistentNaming
-    private async Task<bool> DoDownloadsFGNow(bool unattended, bool tvrMinimised, UI owner, List<ISeriesSpecifier> passedShows)
+    private async Task<bool> DoDownloadsFGNow(bool unattended, bool tvrMinimised, UI owner, List<ISeriesSpecifier> passedShows, CancellationTokenSource cts)
     {
         bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
         bool showMsgBox = !unattended && Args is { Unattended: false, Hide: false } && Environment.UserInteractive;
 
         ForceRefreshIdentifiedMedia();
-        bool returnValue = await cacheManager.DoDownloadsFgAsync(showProgress, showMsgBox, passedShows, owner);
+        bool returnValue = await cacheManager.DoDownloadsFgAsync(showProgress, showMsgBox, passedShows, owner, cts);
         UpdateDenormalisations();
         return returnValue;
     }
@@ -674,7 +674,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
             //MonitorFolders are a little more complex as there is a parameter named the same which we need to ignore
             IEnumerable<XElement> mfs = x.Descendants("MonitorFolders");
-            foreach (XElement mf in mfs.Where(mf => mf.Descendants("Folder").Any()))
+            foreach (XElement mf in mfs.Where(mf => mf.Descendants("Folder").IsAny()))
             {
                 TVSettings.Instance.LibraryFolders = mf.ReadStringsFromXml("Folder").ToSafeList();
             }
@@ -692,7 +692,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         return true;
     }
 
-    private void OutputActionFiles()
+    private async Task OutputActionFilesAsync()
     {
         if (!LastScanComplete)
         {
@@ -710,59 +710,61 @@ public class TVDoc : IDisposable, IAsyncDisposable
             new RenamingXml(TheActionList)
         ];
 
-        ALExporters
+        await Task.WhenAll(ALExporters
             .Where(ue => ue.Active() && ue.ApplicableFor(lastScanType))
-            .ForEach(e=>e.RunAsThread());
+            .Select(e => e.RunAsync()));
     }
-    public void RunExporters()
+    public async Task RunExportersAsync()
     {
-        OutputActionFiles();
-        ExportShowInfo();
-        ExportMovieInfo();
-        WriteUpcoming();
-        WriteRecent();
+        await OutputActionFilesAsync();
+        await ExportShowInfoAsync();
+        await ExportMovieInfoAsync();
+        await WriteUpcomingAsync();
+        await WriteRecentAsync();
     }
 
-    public void RunExporters(ShowFilter tvFilter, MovieFilter movieFilter)
+    public async Task RunExportersAsync(ShowFilter tvFilter, MovieFilter movieFilter)
     {
-        ExportShowInfo(tvFilter);
-        ExportMovieInfo(movieFilter);
+        await ExportShowInfoAsync(tvFilter);
+        await ExportMovieInfoAsync(movieFilter);
     }
 
-    private void ExportMovieInfo(MovieFilter filter)
-        => ExportMovieInfo([.. FilmLibrary.GetSortedMovies().Where(filter.Filter)]);
-    private void ExportShowInfo(ShowFilter filter)
-        => ExportShowInfo([.. TvLibrary.GetSortedShows().Where(filter.Filter)]);
+    private async Task ExportMovieInfoAsync(MovieFilter filter)
+        => await ExportMovieInfoAsync([.. FilmLibrary.GetSortedMovies().Where(filter.Filter)]);
+    private async Task ExportShowInfoAsync(ShowFilter filter)
+        => await ExportShowInfoAsync([.. TvLibrary.GetSortedShows().Where(filter.Filter)]);
 
-    public void ExportMovieInfo() => ExportMovieInfo(FilmLibrary.GetSortedMovies());
+    public async Task ExportMovieInfoAsync() => await ExportMovieInfoAsync(FilmLibrary.GetSortedMovies());
 
-    public static void ExportMovieInfo(List<MovieConfiguration> movieConfigurations)
+    public static async Task ExportMovieInfoAsync(List<MovieConfiguration> movieConfigurations)
     {
-        new MoviesTxt(movieConfigurations).RunAsThread();
-        new MoviesHtml(movieConfigurations).RunAsThread();
+        await new MoviesTxt(movieConfigurations).RunAsync();
+        await new MoviesHtml(movieConfigurations).RunAsync();
     }
 
-    public void ExportShowInfo() => ExportShowInfo(TvLibrary.GetSortedShows());
+    public async Task ExportShowInfoAsync() => await ExportShowInfoAsync(TvLibrary.GetSortedShows());
 
-    public static void ExportShowInfo(List<ShowConfiguration> sortedShowItems)
+    public static async Task ExportShowInfoAsync(List<ShowConfiguration> sortedShowItems)
     {
-        new ShowsTXT(sortedShowItems).RunAsThread();
-        new ShowsHtml(sortedShowItems).RunAsThread();
+        await new ShowsTXT(sortedShowItems).RunAsync();
+        await new ShowsHtml(sortedShowItems).RunAsync();
     }
 
-    public void WriteUpcoming()
+    public async Task WriteUpcomingAsync()
     {
         List<UpcomingExporter> lup = [new UpcomingRSS(this), new UpcomingXML(this), new UpcomingiCAL(this), new UpcomingTXT(this)];
-        lup.ForEach(e=>e.RunAsThread());
+
+        await Task.WhenAll(lup.Select(e => e.RunAsync()));
     }
 
-    public void WriteRecent()
+    public async Task WriteRecentAsync()
     {
         List<RecentExporter> reps = [new RecentASXExporter(this), new RecentM3UExporter(this), new RecentWPLExporter(this), new RecentXSPFExporter(this)];
-        reps.ForEach(e=>e.RunAsThread());
+
+        await Task.WhenAll(reps.Select(e => e.RunAsync()));
     }
 
-    internal void Add(List<ShowConfiguration>? newShow, bool showErrors)
+    internal async Task AddAsync(List<ShowConfiguration>? newShow, bool showErrors)
     {
         if (newShow is null)
         {
@@ -780,24 +782,24 @@ public class TVDoc : IDisposable, IAsyncDisposable
             }
         }
         SetDirty();
-        ExportShowInfo();
+        await ExportShowInfoAsync();
     }
 
-    public void Add(List<MovieConfiguration>? newMovie, bool showErrors)
+    public async Task AddAsync(List<MovieConfiguration>? newMovie, bool showErrors)
     {
         forceMoviesRefresh.AddNullableRange(newMovie);
         forceMoviesScan.AddNullableRange(newMovie);
         FilmLibrary.AddMovies(newMovie, showErrors);
         SetDirty();
-        ExportMovieInfo();
+        await ExportMovieInfoAsync();
     }
 
-    internal async Task TvAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner,
-        ShowConfiguration show) =>
+    internal async Task TvAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, ShowConfiguration show) =>
         await TvAddedOrEditedAsync(download, unattended, hidden, owner, show.AsList());
 
     internal async Task TvAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, List<ShowConfiguration> shows)
     {
+        CancellationTokenSource cts = new();
         SetDirty();
 
         forceShowsRefresh.AddRange(shows);
@@ -805,7 +807,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
         if (download && owner != null)
         {
-            if (!await DoDownloadsFgAsync(unattended, hidden, owner, shows))
+            if (!await DoDownloadsFgAsync(unattended, hidden, owner, shows, cts))
             {
                 return;
             }
@@ -815,19 +817,19 @@ public class TVDoc : IDisposable, IAsyncDisposable
             UpdateDenormalisations();
         }
 
-        RunExporters();
+        await RunExportersAsync();
         SaveSettingsIfNeeded();
     }
 
-    internal async Task UpdateMediaAsync(bool download, bool unattended, bool hidden, UI owner)
+    internal async Task UpdateMediaAsync(bool download, bool unattended, bool hidden, UI owner, CancellationTokenSource cts)
     {
         if (download)
         {
-            if (!await DoDownloadsFgAsync(unattended, hidden, owner))
+            if (!await DoDownloadsFgAsync(unattended, hidden, owner, cts))
             {
                 return;
             }
-            RunExporters();
+            await RunExportersAsync();
         }
         else
         {
@@ -841,13 +843,14 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     internal async Task MoviesAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, List<MovieConfiguration> movies)
     {
+        CancellationTokenSource cts = new();
         SetDirty();
         forceMoviesRefresh.AddRange(movies);
         forceMoviesScan.AddRange(movies);
 
         if (download && owner != null)
         {
-            if (!await DoDownloadsFgAsync(unattended, hidden, owner, movies))
+            if (!await DoDownloadsFgAsync(unattended, hidden, owner, movies, cts ))
             {
                 return;
             }
@@ -856,7 +859,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         {
             UpdateDenormalisations();
         }
-        RunExporters();
+        await RunExportersAsync();
         SaveSettingsIfNeeded();
     }
 
@@ -869,7 +872,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     public bool HasActiveSearchFinders => searchFinders?.Active() ?? false;
 
-    public async Task ScanAsync(ScanSettings settings, ScanProgress? scanProgressDlg)
+    public async Task ScanAsync(ScanSettings settings, ScanProgress? scanProgressDlg, CancellationTokenSource cts       )
     {
         try
         {
@@ -886,7 +889,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
             if (settings.Type != TVSettings.ScanType.FastSingleShow && settings.AnyMediaToUpdate)
             {
-                if (!await DoDownloadsFgAsync(settings.Unattended, settings.Hidden, settings.Owner))
+                if (!await DoDownloadsFgAsync(settings.Unattended, settings.Hidden, settings.Owner, cts))
                 {
                     Logger.Warn("Scan stopped as updates failed");
                     return;
@@ -972,7 +975,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             lastScanType = settings.Type;
             LastScanComplete = true;
 
-            OutputActionFiles(); //Save missing shows to XML (and others)
+            await OutputActionFilesAsync(); //Save missing shows to XML (and others)
         }
         catch (TVRenameOperationInterruptedException)
         {
@@ -1035,7 +1038,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         public readonly UI Owner = owner;
         public readonly MediaConfiguration.MediaType Media = media;
 
-        public bool AnyMediaToUpdate => Shows.Any() || Movies.Any();
+        public bool AnyMediaToUpdate => Shows.IsAny() || Movies.IsAny();
 
         public void UpdateShowsAndMovies(List<ShowConfiguration> shows, List<MovieConfiguration> movies)
         {
@@ -1046,8 +1049,8 @@ public class TVDoc : IDisposable, IAsyncDisposable
         public string GenerateScanMessage()
         {
             string desc = Unattended ? "unattended " : string.Empty;
-            string shows = Shows.Any() ? Shows.Count.ToString() : "all";
-            string movies = Movies.Any() ? Movies.Count.ToString() : "all";
+            string shows = Shows.IsAny() ? Shows.Count.ToString() : "all";
+            string movies = Movies.IsAny() ? Movies.Count.ToString() : "all";
 
             return $"Starting {desc}{Type.PrettyPrint()} {Media.PrettyPrint()} Scan for {shows} shows and {movies} movies...";
         }
@@ -1169,10 +1172,10 @@ public class TVDoc : IDisposable, IAsyncDisposable
         progress?.Report(new TaskProgress(c.Increment(), "Force Update Movie Images: " + si.ShowName));
 
         // process each folder for each movie...
-        foreach (FileInfo? file in si.MovieFiles())
+        foreach (FileInfo? file in (await si.MovieFilesAsync()))
         {
-            TheActionList.Add(
-                downloadIdentifiers.ForceUpdateMovie(DownloadIdentifier.DownloadType.downloadImage, si, file));
+            TheActionList.Add(await 
+                downloadIdentifiers.ForceUpdateMovieAsync(DownloadIdentifier.DownloadType.downloadImage, si, file));
 
             SetDirty();
         }
@@ -1183,12 +1186,12 @@ public class TVDoc : IDisposable, IAsyncDisposable
         Logger.Info("Force Update Images: " + si.ShowName);
         progress?.Report(new TaskProgress(c.Increment() , "Force Update TV Images: " + si.ShowName));
 
-        Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
+        Dictionary<int, SafeList<string>> allFolders = await si.AllExistngFolderLocationsAsync();
 
-        if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && allFolders.Any())
+        if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && allFolders.IsAny())
         {
-            TheActionList.Add(
-                downloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
+            TheActionList.Add(await 
+                downloadIdentifiers.ForceUpdateShowAsync(DownloadIdentifier.DownloadType.downloadImage, si));
 
             si.BannersLastUpdatedOnDisk = TimeHelpers.LocalNow();
             SetDirty();
@@ -1545,10 +1548,10 @@ public class TVDoc : IDisposable, IAsyncDisposable
     }
 
     internal async Task ForceRefreshShowsAsync(IEnumerable<ShowConfiguration>? sis, bool unattended, bool tvrMinimised,
-        UI owner) =>
-        await ForceRefreshShowsAsync(sis, unattended, tvrMinimised, owner, true);
+        UI owner, CancellationTokenSource cts) =>
+        await ForceRefreshShowsAsync(sis, unattended, tvrMinimised, owner, true, cts);
 
-    private async Task ForceRefreshShowsAsync(IEnumerable<ShowConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner, bool doDownloads)
+    private async Task ForceRefreshShowsAsync(IEnumerable<ShowConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner, bool doDownloads, CancellationTokenSource cts)
     {
         if (sis == null)
         {
@@ -1561,7 +1564,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
         if (doDownloads)
         {
-            await DoDownloadsFgAsync(unattended, tvrMinimised, owner, showConfigurations);
+            await DoDownloadsFgAsync(unattended, tvrMinimised, owner, showConfigurations, cts);
         }
         AllowAutoScan();
     }
@@ -1600,10 +1603,10 @@ public class TVDoc : IDisposable, IAsyncDisposable
     }
 
     internal async Task ForceRefreshMoviesAsync(IEnumerable<MovieConfiguration>? sis, bool unattended, bool tvrMinimised,
-        UI owner) =>
-        await ForceRefreshMoviesAsync(sis, unattended, tvrMinimised, owner, true);
+        UI owner, CancellationTokenSource cts) =>
+        await ForceRefreshMoviesAsync(sis, unattended, tvrMinimised, owner, true,cts);
 
-    private async Task ForceRefreshMoviesAsync(IEnumerable<MovieConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner, bool doDownloads)
+    private async Task ForceRefreshMoviesAsync(IEnumerable<MovieConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner, bool doDownloads, CancellationTokenSource cts)
     {
         if (sis == null)
         {
@@ -1617,27 +1620,27 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
         if (doDownloads)
         {
-            await DoDownloadsFgAsync(unattended, tvrMinimised, owner, movieConfigurations);
+            await DoDownloadsFgAsync(unattended, tvrMinimised, owner, movieConfigurations, cts);
         }
         AllowAutoScan();
     }
 
-    private async Task<bool> DoDownloadsFgAsync(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MediaConfiguration> passedShows)
-        => await DoDownloadsFGNow(unattended, tvrMinimised, owner, [.. passedShows]);
+    private async Task<bool> DoDownloadsFgAsync(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MediaConfiguration> passedShows, CancellationTokenSource cts)
+        => await DoDownloadsFGNow(unattended, tvrMinimised, owner, [.. passedShows],cts);
 
     // ReSharper disable once InconsistentNaming
-    internal async Task TVDBServerAccuracyCheck(bool unattended, bool hidden, UI owner, DownloadProgressStatus? updateAction)
+    internal async Task TVDBServerAccuracyCheck(bool unattended, bool hidden, UI owner, DownloadProgressStatus? updateAction, CancellationTokenSource cts)
     {
         PreventAutoScan("TVDB Accuracy Check");
-        await DoDownloadsFgAsync(unattended, hidden, owner);
+        await DoDownloadsFgAsync(unattended, hidden, owner, cts);
 
         IEnumerable<CachedSeriesInfo> seriesToUpdate = await TheTVDB.LocalCache.Instance.ServerTvAccuracyCheckAsync(updateAction);
         IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode, ProviderType.TheTVDB)).OfType<ShowConfiguration>();
-        await ForceRefreshShowsAsync(showsToUpdate, unattended, hidden, owner);
+        await ForceRefreshShowsAsync(showsToUpdate, unattended, hidden, owner, cts);
 
         IEnumerable<CachedMovieInfo> moviesToUpdate = await TheTVDB.LocalCache.Instance.ServerMovieAccuracyCheckAsync(updateAction);
         IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TvdbCode, ProviderType.TheTVDB)).OfType<MovieConfiguration>();
-        await ForceRefreshMoviesAsync(filmsToUpdate, unattended, hidden, owner);
+        await ForceRefreshMoviesAsync(filmsToUpdate, unattended, hidden, owner, cts);
 
         await DoDownloadsBG(updateAction); 
         AllowAutoScan();
@@ -1672,18 +1675,18 @@ public class TVDoc : IDisposable, IAsyncDisposable
 #pragma warning restore IDE0051
 
     // ReSharper disable once InconsistentNaming
-    internal async Task TMDBServerAccuracyCheckAsync(bool unattended, bool hidden, UI owner, DownloadProgressStatus? updateAction)
+    internal async Task TMDBServerAccuracyCheckAsync(bool unattended, bool hidden, UI owner, DownloadProgressStatus? updateAction, CancellationTokenSource cts)
     {
         PreventAutoScan("TMDB Accuracy Check");
-        await DoDownloadsFgAsync(unattended, hidden, owner);
+        await DoDownloadsFgAsync(unattended, hidden, owner, cts);
 
-        IEnumerable<CachedMovieInfo> moviesToUpdate = await TMDB.LocalCache.Instance.ServerMovieAccuracyCheckAsync();
+        IEnumerable<CachedMovieInfo> moviesToUpdate = await TMDB.LocalCache.Instance.ServerMovieAccuracyCheckAsync(cts.Token);
         IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TmdbCode, ProviderType.TMDB)).OfType<MovieConfiguration>();
-        await ForceRefreshMoviesAsync(filmsToUpdate, unattended, hidden, owner);
+        await ForceRefreshMoviesAsync(filmsToUpdate, unattended, hidden, owner, cts);
 
-        IEnumerable<CachedSeriesInfo> seriesToUpdate = await TMDB.LocalCache.Instance.ServerTvAccuracyCheckAsync();
+        IEnumerable<CachedSeriesInfo> seriesToUpdate = await TMDB.LocalCache.Instance.ServerTvAccuracyCheckAsync(cts.Token);
         IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(mov => TvLibrary.GetShowItem(mov.TmdbCode, ProviderType.TMDB)).OfType<ShowConfiguration>();
-        await ForceRefreshShowsAsync(showsToUpdate, unattended, hidden, owner);
+        await ForceRefreshShowsAsync(showsToUpdate, unattended, hidden, owner, cts);
 
         await DoDownloadsBG(updateAction);
         AllowAutoScan();
@@ -1732,7 +1735,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     public void ClearCacheUpdateProblems() => cacheManager.ClearProblems();
 
-    public void UpdateMissingAction(ItemMissing mi, string fileName)
+    public async Task UpdateMissingActionAsync(ItemMissing mi, string fileName)
     {
         // make new Item for copying/moving to specified location
         FileInfo from = new(fileName);
@@ -1761,7 +1764,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
                             ? ActionCopyMoveRename.Op.copy
                             : ActionCopyMoveRename.Op.move, from, to
                         , mim.MovieConfig, true, mi, this));
-                TheActionList.Add(di.ProcessMovie(mim.MovieConfig, to));
+                TheActionList.Add(await di.ProcessMovieAsync(mim.MovieConfig, to));
 
                 break;
         }
@@ -1810,7 +1813,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             TheActionList.Remove(action);
         }
 
-        if (remove.Any())
+        if (remove.IsAny())
         {
             SetDirty();
         }
@@ -1918,9 +1921,9 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
                 List<MovieConfiguration> existingMatchingShows = GetMatchingMovies(fi);
 
-                if (!existingMatchingShows.Any())
+                if (!existingMatchingShows.IsAny())
                 {
-                    BonusAutoAdd(fi, ui);
+                    await BonusAutoAddAsync(fi, ui);
                 }
                 else
                 {
@@ -1937,12 +1940,12 @@ public class TVDoc : IDisposable, IAsyncDisposable
                     if (askUser.ChosenShow == null)
                     {
                         //if user selected a new show then
-                        BonusAutoAdd(fi, ui);
+                        await BonusAutoAddAsync(fi, ui);
                     }
                     else
                     {
                         //if user selected a show
-                        MergeMovieFileIntoMovieConfig(fi, askUser.ChosenShow, ui);
+                        await MergeMovieFileIntoMovieConfigAsync(fi, askUser.ChosenShow, ui);
                     }
                 }
             }
@@ -1982,15 +1985,15 @@ public class TVDoc : IDisposable, IAsyncDisposable
         return FinderHelper.RemoveShortShows(matchingMovies);
     }
 
-    private void MergeMovieFileIntoMovieConfig(FileInfo fi, MovieConfiguration chosenShow, IDialogParent owner)
+    private async Task MergeMovieFileIntoMovieConfigAsync(FileInfo fi, MovieConfiguration chosenShow, IDialogParent owner)
     {
         bool fileCanBeDeleted = true;
 
-        foreach (DirectoryInfo folder in chosenShow.Locations.Select(folderName => new DirectoryInfo(folderName)))
+        foreach (DirectoryInfo folder in (await chosenShow.LocationsAsync()).Select(folderName => new DirectoryInfo(folderName)))
         {
-            if (HasMissingFiles(chosenShow, folder))
+            if (await HasMissingFilesAync(chosenShow, folder))
             {
-                LinkFileToShow(fi, chosenShow, folder);
+                await LinkFileToShowAsync(fi, chosenShow, folder);
                 fileCanBeDeleted = false;
             }
             else
@@ -2032,7 +2035,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         return videoFiles.First();
     }
 
-    private void LinkFileToShow(FileInfo fi, MovieConfiguration chosenShow, DirectoryInfo folder)
+    private async Task LinkFileToShowAsync(FileInfo fi, MovieConfiguration chosenShow, DirectoryInfo folder)
     {
         string newBase = TVSettings.Instance.FilenameFriendly(chosenShow.ProposedFilename);
         string newName = fi.Name.Replace(fi.MovieFileNameBase(), newBase);
@@ -2041,7 +2044,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         TheActionList.Add(new ActionCopyMoveRename(fi, newFile, chosenShow, this));
 
         // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-        TheActionList.AddNullableRange(new DownloadIdentifiersController().ProcessMovie(chosenShow, fi));
+        TheActionList.AddNullableRange(await new DownloadIdentifiersController().ProcessMovieAsync(chosenShow, fi));
     }
 
     /// <summary>Asks user about whether to replace a file.</summary>
@@ -2071,7 +2074,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         }
     }
 
-    private bool HasMissingFiles(MovieConfiguration si, DirectoryInfo folder)
+    private async Task<bool> HasMissingFilesAync(MovieConfiguration si, DirectoryInfo folder)
     {
         if (!folder.Exists)
         {
@@ -2111,7 +2114,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
                     {
                         //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
                         //it has all the required files for that show
-                        TheActionList.Add(downloadIdentifiers.ProcessMovie(si, newFile));
+                        TheActionList.Add(await downloadIdentifiers.ProcessMovieAsync(si, newFile));
                         return false;
                     }
 
@@ -2154,7 +2157,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         }
     }
 
-    private void BonusAutoAdd(FileInfo fi, IDialogParent owner)
+    private async Task BonusAutoAddAsync(FileInfo fi, IDialogParent owner)
     {
         //do an auto add
         MovieConfiguration? selectedShow = AutoAddMovieFile(fi, owner);
@@ -2162,13 +2165,13 @@ public class TVDoc : IDisposable, IAsyncDisposable
         if (selectedShow != null && ContainsMedia(FilmLibrary.Movies, selectedShow))
         {
             //if user selects existing movie then do a compare for that new file for the show
-            MergeMovieFileIntoMovieConfig(fi, selectedShow, owner);
+            await MergeMovieFileIntoMovieConfigAsync(fi, selectedShow, owner);
         }
         //if new show then add and link file to it
-        else if (selectedShow != null && selectedShow.Locations.Any())
+        else if (selectedShow != null && (await selectedShow.LocationsAsync()).IsAny())
         {
-            LinkFileToShow(fi, selectedShow, new DirectoryInfo(selectedShow.Locations.First()));
-            Add(selectedShow.AsList(), true);
+            await LinkFileToShowAsync(fi, selectedShow, new DirectoryInfo((await selectedShow.LocationsAsync()).First()));
+            await AddAsync(selectedShow.AsList(), true);
         }
         else
         {
@@ -2297,13 +2300,13 @@ public class TVDoc : IDisposable, IAsyncDisposable
     }
 
 
-    public async Task ForceRefreshBeforeRescanAsync(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool tvrMinimised, UI owner)
+    public async Task ForceRefreshBeforeRescanAsync(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool tvrMinimised, UI owner, CancellationTokenSource cts)
     {
         RemoveActionsFromShows(shows);
         RemoveActionsFromMovies(movies);
 
-        var x = ForceRefreshShowsAsync(shows, unattended, tvrMinimised, owner, false);
-        var y = ForceRefreshMoviesAsync(movies, unattended, tvrMinimised, owner, false);
+        var x = ForceRefreshShowsAsync(shows, unattended, tvrMinimised, owner, false, cts);
+        var y = ForceRefreshMoviesAsync(movies, unattended, tvrMinimised, owner, false, cts);
 
         await Task.WhenAll(x, y);
     }

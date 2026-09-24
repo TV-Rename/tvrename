@@ -137,7 +137,7 @@ public class MovieConfiguration : MediaConfiguration
 
     protected override MediaType GetMediaType() => MediaType.movie;
 
-    protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
+    protected override async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)
     {
         Dictionary<int, SafeList<string>> fld = new()
         {
@@ -241,7 +241,7 @@ public class MovieConfiguration : MediaConfiguration
 
     public CachedMovieInfo? CachedMovie => CachedData as CachedMovieInfo;
 
-    public IEnumerable<string> Locations => AllFolderLocations(true, false).Values.SelectMany(x => x);
+    public async Task<IEnumerable<string>> LocationsAsync() => (await AllFolderLocationsAsync(true, false)).Values.SelectMany(x => x);
 
     public string ProposedFilename
     {//https://kodi.wiki/view/Naming_video_files/Movies
@@ -316,48 +316,18 @@ public class MovieConfiguration : MediaConfiguration
         writer.WriteEndElement(); // ShowItem
     }
 
-    public IEnumerable<string> AutomaticLocations() => AllFolderLocations(false, false).Values.SelectMany(x => x);
+    public async Task<IEnumerable<string>> AutomaticLocationsAsync() => (await AllFolderLocationsAsync(false, false)).Values.SelectMany(x => x);
 
     public bool IsDvdBluRay() => Format is MovieFolderFormat.bluray or MovieFolderFormat.dvd;
 
-    public List<FileInfo> MovieFiles()
+    public async Task<List<FileInfo>> MovieFilesAsync()
     {
-        return [.. Locations
+        return [.. (await LocationsAsync())
             .Where(location => location.HasValue())
             .Select(location => new DirectoryInfo(location))
             .Where(dir => dir.Exists)
             .SelectMany(dir => dir.GetFiles())
             .Where(f => f.IsMovieFile())
             .Distinct()];
-    }
-
-    protected async override Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)
-    {
-        Dictionary<int, SafeList<string>> fld = new()
-        {
-            [0] = []
-        };
-
-        if (manualToo && UseManualLocations)
-        {
-            foreach (string kvp in ManualLocations.ToList())
-            {
-                fld[0].Add(kvp.TrimSlash());
-            }
-        }
-
-        if (UseAutomaticFolders && !string.IsNullOrEmpty(AutomaticFolderRoot))
-        {
-            string newName = AutoFolderNameForMovie();
-
-            if (!checkExist || await FileHelper.DirectoryExistsAsync(newName))
-            {
-                if (!fld[0].Contains(newName))
-                {
-                    fld[0].Add(newName.TrimSlash());
-                }
-            }
-        }
-        return fld;
     }
 }

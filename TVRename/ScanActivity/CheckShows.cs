@@ -34,7 +34,7 @@ internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity
 
         DirFilesCache dfc = new();
 
-        if (Settings.Type == TVSettings.ScanType.Full && Settings.Shows.Any())
+        if (Settings.Type == TVSettings.ScanType.Full && Settings.Shows.IsAny())
         {
             // only do episode count if we're doing all shows and seasons
             MDoc.CurrentStats.NsNumberOfEpisodes = 0;
@@ -111,9 +111,9 @@ internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity
         LOGGER.Info("Rename and missing check: " + si.ShowName);
         try
         {
-            new CheckAllFoldersExist(MDoc).CheckIfActive(si, dfc, Settings);
-            new MergeLibraryEpisodes(MDoc).CheckIfActive(si, dfc, Settings);
-            new RenameAndMissingCheck(MDoc).CheckIfActive(si, dfc, Settings);
+            await new CheckAllFoldersExist(MDoc).CheckIfActiveAsync(si, dfc, Settings);
+            await new MergeLibraryEpisodes(MDoc).CheckIfActiveAsync(si, dfc, Settings);
+            await new RenameAndMissingCheck(MDoc).CheckIfActiveAsync(si, dfc, Settings);
         }
         catch (TVRenameOperationInterruptedException)
         {

@@ -1,22 +1,14 @@
-using System.ComponentModel;
+using System;
 using System.Threading;
 
 namespace TVRename.Forms.Tools;
 
-public class FixIssuesNotifier : Notifier
+public class FixIssuesNotifier : TaskNotifier
 {
-    private readonly LongOperation operation;
-
-    public FixIssuesNotifier(LongOperation operation)
+    public FixIssuesNotifier(LongOperation operation,CancellationTokenSource cts) : base("Fix Issues",cts)
     {
-        this.operation = operation;
-        Start();
-    }
+        var progressHandler = new Progress<TaskProgress>(UpdateProgress);
 
-    protected override void Do(BackgroundWorker backgroundWorker, CancellationTokenSource source)
-    {
-        operation.Start((percent, message, lastUpdate) => ReportProgress(source, percent, message, lastUpdate), source.Token);
+        task = operation.StartAsync(progressHandler, cts.Token);
     }
-
-    protected override string ActionName() => "Fix Issues";
 }

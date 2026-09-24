@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TVRename.Forms.Tools;
@@ -25,7 +26,6 @@ public partial class OrphanFiles : Form
         olvSeason.GroupKeyGetter = GroupSeasonKeyDelegate;
         olvFileDirectory.GroupKeyGetter = GroupFolderTitleDelegate;
         olvFileIssues.SetObjects(issues);
-        Scan();
     }
 
     private static object GroupFolderTitleDelegate(object rowObject)
@@ -71,23 +71,16 @@ public partial class OrphanFiles : Form
         {
             if (si.WebsiteUrl.HasValue())
             {
-                si.WebsiteUrl!.OpenUrlInBrowser();
+                si.WebsiteUrl.OpenUrlInBrowser();
             }
             else if (si.CachedShow?.WebUrl.HasValue() ?? false)
             {
-                si.CachedShow?.WebUrl!.OpenUrlInBrowser();
+                si.CachedShow?.WebUrl.OpenUrlInBrowser();
             }
         }
     }
 
-    private void BwRescan_DoWork(object sender, DoWorkEventArgs e)
-    {
-        System.Threading.Thread.CurrentThread.Name ??= "OrphanFiles Scan Thread"; // Can only set it once
-        issues.Clear();
-        UpdateIssues((BackgroundWorker)sender);
-    }
-
-    private void UpdateIssues(BackgroundWorker bw)
+    private async Task UpdateIssuesAsync(IProgress<ProgressReport> callback)
     {
         List<string> doneFolders = [];
         int total = mDoc.TvLibrary.Shows.Count();
@@ -96,9 +89,13 @@ public partial class OrphanFiles : Form
         foreach (ShowConfiguration show in mDoc.TvLibrary.Shows.OrderBy(item => item.ShowName))
         {
             Logger.Info($"Finding old eps for {show.ShowName}");
-            bw.ReportProgress(100 * currentRecord.Increment() / total, show.ShowName);
+            callback.Report(new ProgressReport()
+            {
+                ProgressPercentage = 100 * currentRecord.Increment() / total,
+                UpdateText = show.ShowName
+            });
 
-            Dictionary<int, SafeList<string>> folders = show.AllFolderLocations(true);
+            Dictionary<int, SafeList<string>> folders = await show.AllFolderLocationsAsync(true);
 
             foreach (string showFolder in folders
                          .SelectMany(x => x.Value)
@@ -152,25 +149,6 @@ public partial class OrphanFiles : Form
         return showSeasonEpisode.Any(episode => episodeNumber == episode.AppropriateEpNum);
     }
 
-    private void BwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
-    {
-        pbProgress.SetProgress(e.ProgressPercentage);
-        lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
-    }
-
-    private void BwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        btnRefresh.Visible = true;
-        pbProgress.Visible = false;
-        lblStatus.Visible = false;
-        if (olvFileIssues.IsDisposed)
-        {
-            return;
-        }
-        olvFileIssues.RebuildColumns();
-        AutosizeColumns(olvFileIssues);
-    }
-
     private static void AutosizeColumns(BrightIdeasSoftware.ObjectListView olv)
     {
         foreach (ColumnHeader col in olv.Columns)
@@ -205,21 +183,46 @@ public partial class OrphanFiles : Form
         }
     }
 
-    private void BtnRefresh_Click(object sender, EventArgs e)
+    private async void BtnRefresh_Click(object sender, EventArgs e)
     {
-        Scan();
+        await ScanAsync();
     }
 
-    private void Scan()
+    private async Task ScanAsync()
     {
+        var progressHandler = new Progress<ProgressReport>(scanReport =>
+        {
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(scanReport.ProgressPercentage);
+            lblStatus.Text = scanReport.UpdateText.ToUiVersion();
+        });
+
         btnRefresh.Visible = false;
         pbProgress.Visible = true;
         lblStatus.Visible = true;
-        bwRescan.RunWorkerAsync();
+
+        issues.Clear();
+        await UpdateIssuesAsync(progressHandler);
+
+        btnRefresh.Visible = true;
+        pbProgress.Visible = false;
+        lblStatus.Visible = false;
+        if (olvFileIssues.IsDisposed)
+        {
+            return;
+        }
+        olvFileIssues.RebuildColumns();
+        AutosizeColumns(olvFileIssues);
+
     }
 
     private void Button1_Click(object sender, EventArgs e)
     {
         Close();
+    }
+
+    internal async Task StartScanAsync()
+    {
+         await ScanAsync();
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
@@ -19,6 +20,9 @@ public partial class YtsViewerView : Form
     private readonly int minRating;
     private DateTime scanStartTime;
 
+    private CancellationTokenSource cts = new();
+    private Task? scanTask;
+
     public YtsViewerView(TVDoc doc, UI main)
     {
         InitializeComponent();
@@ -29,11 +33,12 @@ public partial class YtsViewerView : Form
         mainUi = main;
         quality = "1080p";
         minRating = 5;
+        chrRecommendationPreview.RequestHandler = new BrowserRequestHandler();
 
         olvRating.GroupKeyGetter = rowObject => (int)Math.Floor(((YtsViewerRow)rowObject).StarScore);
         olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
 
-        Scan();
+        StartScan();
     }
 
     // ReSharper disable once InconsistentNaming
@@ -110,7 +115,7 @@ public partial class YtsViewerView : Form
             found.UseAutomaticFolders = true;
         }
 
-        mDoc.Add(found.AsList(), true);
+        await mDoc.AddAsync(found.AsList(), true);
         addedMovies.Add(found);
         addedMovie.SetShow(found);
     }
@@ -120,33 +125,49 @@ public partial class YtsViewerView : Form
         rightClickMenu.Close();
     }
 
-    private void BwScan_DoWork(object sender, DoWorkEventArgs e)
+    private async void BtnRefresh_Click_1(object sender, EventArgs e)
     {
-        System.Threading.Thread.CurrentThread.Name ??= "Recommendations Scan Thread"; // Can only set it once
+        StartScan();
+    }
+
+    void StartScan()
+    {
+        cts = new();
+        scanTask = Scan();
+    }
+
+    private async Task Scan()
+    {
+
+        var progressHandler = new Progress<ProgressReport>(scanReport =>
+        {
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(scanReport.ProgressPercentage);
+
+            DateTime completionDateTime = scanStartTime.Add((TimeHelpers.LocalNow() - scanStartTime) / (pbProgress.Value + 1) * 100);
+            lblStatus.Text = $"ETC={completionDateTime} {scanReport.UpdateText.ToUiVersion()}";
+        });
+
+        btnRefresh.Visible = false;
+        pbProgress.Visible = true;
+        lblStatus.Visible = true;
+
         scanStartTime = TimeHelpers.LocalNow();
         try
         {
-            recs = [.. YTS.API
-                    .GetMoviesAsync((BackgroundWorker)sender, quality, minRating)
-                    .GetAwaiter()
-                    .GetResult()
-                    .Select(x => new YtsViewerRow(x, mDoc))];
+            recs = (await YTS.API.GetMoviesAsync(progressHandler, quality, minRating,cts.Token ))
+                    .Select(x => new YtsViewerRow(x, mDoc))
+                    .ToList();
+        }
+        catch (TaskCanceledException)
+        {
+            Logger.Warn("Error obtinaing recommendations from YTS - Task Cancelled");
         }
         catch (Exception ex)
         {
             Logger.Fatal(ex, "UNHANDLED error obtinaing recommendations from YTS");
         }
-    }
 
-    private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
-    {
-        pbProgress.SetProgress(e.ProgressPercentage);
-        DateTime completionDateTime = scanStartTime.Add((TimeHelpers.LocalNow() - scanStartTime) / (pbProgress.Value + 1) * 100);
-        lblStatus.Text = $"ETC={completionDateTime} {e.UserState?.ToString()?.ToUiVersion()}";
-    }
-
-    private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
         btnRefresh.Visible = true;
         pbProgress.Visible = false;
         lblStatus.Visible = false;
@@ -156,19 +177,6 @@ public partial class YtsViewerView : Form
         }
         ClearGrid();
         PopulateGrid();
-    }
-
-    private void BtnRefresh_Click_1(object sender, EventArgs e)
-    {
-        Scan();
-    }
-
-    private void Scan()
-    {
-        btnRefresh.Visible = false;
-        pbProgress.Visible = true;
-        lblStatus.Visible = true;
-        bwScan.RunWorkerAsync();
     }
 
     private void lvRecommendations_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
@@ -206,12 +214,14 @@ public partial class YtsViewerView : Form
         if (rowObject is YtsViewerRow rr)
         {
             chrRecommendationPreview.SetHtmlBody(rr.Movie != null
-                    ? rr.Movie.GetMovieHtmlOverview(false)
+                    ? await rr.Movie.GetMovieHtmlOverviewAsync(false)
                     : rr.YtsMovie.GetMovieHtmlOverview());
         }
     }
     private async void this_FormClosing(object sender, FormClosingEventArgs e)
     {
+        await cts.CancelAsync();
+        if (scanTask is not null) await scanTask;
         await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, addedMovies);
     }
 

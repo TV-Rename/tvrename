@@ -1,5 +1,6 @@
 using Alphaleonis.Win32.Filesystem;
 using NLog;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -14,9 +15,9 @@ internal abstract class DownloadIdentifier
 
     public abstract DownloadType GetDownloadType();
 
-    public ItemList? ProcessShow(ShowConfiguration si) => ProcessShow(si, false);
+    public async Task<ItemList?> ProcessShowAsync(ShowConfiguration si) => await ProcessShowAsync(si, false);
 
-    public virtual ItemList? ProcessShow(ShowConfiguration si, bool forceRefresh) => null;
+    public async virtual Task<ItemList?> ProcessShowAsync(ShowConfiguration si, bool forceRefresh) => null;
 
     public ItemList? ProcessSeason(ShowConfiguration si, string folder, int snum) => ProcessSeason(si, folder, snum, false);
 
@@ -26,9 +27,9 @@ internal abstract class DownloadIdentifier
 
     public virtual ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh) => null;
 
-    public ItemList? ProcessMovie(MovieConfiguration movie, FileInfo file) => ProcessMovie(movie, file, false);
+    public async Task<ItemList?> ProcessMovieAsync(MovieConfiguration movie, FileInfo file) => await ProcessMovieAsync(movie, file, false);
 
-    public virtual ItemList? ProcessMovie(MovieConfiguration movie, FileInfo file, bool forceRefresh) => null;
+    public virtual  async Task<ItemList?> ProcessMovieAsync(MovieConfiguration movie, FileInfo file, bool forceRefresh) => null;
 
     public virtual void NotifyComplete(FileInfo file)
     {

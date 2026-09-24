@@ -61,7 +61,7 @@ public partial class RecoverXml : Form
     private static void Setup(ListBox lb, string defaultValue, IReadOnlyCollection<FileInfo> files)
     {
         lb.Items.Add(defaultValue);
-        if (files.Any())
+        if (files.IsAny())
         {
             foreach (FileInfo fi in files)
             {

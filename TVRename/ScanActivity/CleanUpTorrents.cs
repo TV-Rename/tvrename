@@ -79,7 +79,7 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
             return false;
         }
 
-        if (matchesSomeMovies && !movies!.All(movie => IsFound(dfc, movie)))
+        if (matchesSomeMovies && !await movies!.AllAsync(movie => IsFoundAsync(dfc, movie)))
         {
             //Some Movies have not been copied yet - wait until they have
             return false;
@@ -120,10 +120,10 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
     private static async Task<bool> IsFoundAsync(DirFilesCache dfc, ProcessedEpisode episode)
     {
         List<FileInfo> fl = await dfc.FindEpOnDiskAsync(episode);
-        return fl.Any();
+        return fl.IsAny();
     }
 
-    private static bool IsFound(DirFilesCache dfc, MovieConfiguration movie) => dfc.FindMovieOnDisk(movie).Any();
+    private static async Task<bool> IsFoundAsync(DirFilesCache dfc, MovieConfiguration movie) => ( await dfc.FindMovieOnDiskAsync(movie)).IsAny();
 
     private List<ProcessedEpisode>? MatchEpisodes(FileInfo droppedFile)
     {

@@ -55,7 +55,7 @@ public class ShowImages : SafeList<ShowImage>
     private static ShowImage? BestFrom(IEnumerable<ShowImage> validImages)
     {
         List<ShowImage> showImages = [.. validImages];
-        if (!showImages.Any())
+        if (!showImages.IsAny())
         {
             return null;
         }
@@ -77,7 +77,7 @@ public class ShowImages : SafeList<ShowImage>
 
     internal void MergeImages(ShowImages images)
     {
-        if (!this.Any())
+        if (!this.IsAny())
         {
             Clear();
             AddRange(images);

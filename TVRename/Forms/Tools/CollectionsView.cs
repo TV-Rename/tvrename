@@ -16,6 +16,8 @@ public partial class CollectionsView : Form
     private readonly TVDoc mDoc;
     private readonly UI mainUi;
     private readonly List<MovieConfiguration> allAdded;
+    private Task? scanThread;
+    CancellationTokenSource cts = new();
 
     public CollectionsView(TVDoc doc, UI main)
     {
@@ -24,7 +26,13 @@ public partial class CollectionsView : Form
         allAdded = [];
         mDoc = doc;
         mainUi = main;
-        Scan();
+        StartScan(); // TODO CALL START SCAN
+    }
+
+    private void StartScan()
+    {
+        cts = new();
+        scanThread = Scan();
     }
 
     // ReSharper disable once InconsistentNaming
@@ -76,68 +84,75 @@ public partial class CollectionsView : Form
         rightClickMenu.Close();
     }
 
-    private void BwScan_DoWork(object sender, DoWorkEventArgs e)
+    private void BtnRefresh_Click_1(object sender, EventArgs e)
     {
-        Thread.CurrentThread.Name ??= "CollectionView Scan Thread"; // Can only set it once
-        BackgroundWorker bw = (BackgroundWorker)sender;
+        StartScan();
+    }
+
+    private async Task Scan()
+    {
+        var progressHandler = new Progress<ProgressReport>(scanReport =>
+        {
+            // This body executes safely on the main thread
+            pbProgress.SetProgress(scanReport.ProgressPercentage);
+            lblStatus.Text = scanReport.UpdateText.ToUiVersion();
+        });
+
+        btnRefresh.Visible = false;
+        pbProgress.Visible = true;
+        lblStatus.Visible = true;
 
         List<(int, string)> collectionIds = mDoc.FilmLibrary.Collections;
 
         int total = collectionIds.Count;
-        ThreadSafeCounter current =new();
+        ThreadSafeCounter current = new();
 
         collectionMovies.Clear();
 
         var options = new ParallelOptions
         {
             MaxDegreeOfParallelism = 8 // Limit to 8 concurrent downloads at a time
+            ,
+            CancellationToken = cts.Token
         };
 
-        Parallel.ForEach(collectionIds, options, (collection) =>
+        try
         {
-            Dictionary<int, CachedMovieInfo> shows =  TMDB.LocalCache.Instance.GetMovieIdsFromCollectionAsync(collection.Item1, TVSettings.Instance.TMDBLanguage.Abbreviation).GetAwaiter().GetResult();
-            foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
+            await Parallel.ForEachAsync(
+                collectionIds,
+                options,
+                async (collection, token) =>
             {
-                CollectionMember c = new(collection.Item2, neededShow.Value);
+                Dictionary<int, CachedMovieInfo> shows = await TMDB.LocalCache.Instance.GetMovieIdsFromCollectionAsync(collection.Item1, TVSettings.Instance.TMDBLanguage.Abbreviation);
+                foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
+                {
+                    CollectionMember c = new(collection.Item2, neededShow.Value);
 
-                c.IsInLibrary = mDoc.FilmLibrary.Movies.Any(configuration => configuration.TmdbCode == c.TmdbCode);
-                collectionMovies.Add(c);
-            }
+                    c.IsInLibrary = mDoc.FilmLibrary.Movies.Any(configuration => configuration.TmdbCode == c.TmdbCode);
+                    collectionMovies.Add(c);
+                }
+                ((IProgress<ProgressReport>)progressHandler).Report(new ProgressReport()
+                {
+                    ProgressPercentage = 100 * current.Increment(),
+                    UpdateText = collection.Item2
+                });
+            });
+        }
+        catch (OperationCanceledException)
+        {
+            //OK
+        }
 
-            bw.ReportProgress(100 * current.Increment() / total, collection.Item2);
-        });
-    }
-
-    private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
-    {
-        pbProgress.SetProgress(e.ProgressPercentage);
-        lblStatus.Text = e.UserState?.ToString()?.ToUiVersion();
-    }
-
-    private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
         btnRefresh.Visible = true;
         pbProgress.Visible = false;
         lblStatus.Visible = false;
+
         if (olvCollections.IsDisposed)
         {
             return;
         }
 
         UpdateUI();
-    }
-
-    private void BtnRefresh_Click_1(object sender, EventArgs e)
-    {
-        Scan();
-    }
-
-    private void Scan()
-    {
-        btnRefresh.Visible = false;
-        pbProgress.Visible = true;
-        lblStatus.Visible = true;
-        bwScan.RunWorkerAsync();
     }
 
     private void olvDuplicates_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
@@ -163,11 +178,11 @@ public partial class CollectionsView : Form
         }
         else
         {
-            rightClickMenu.Add("Add to Library...", (_, _) => AddToLibrary(mlastSelected.Movie));
+            rightClickMenu.Add("Add to Library...", async (_, _) => await AddToLibraryAsync(mlastSelected.Movie));
         }
     }
 
-    private void AddToLibrary(CachedMovieInfo si)
+    private async Task AddToLibraryAsync(CachedMovieInfo si)
     {
         // need to add a new showitem
         MovieConfiguration found = new(si.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -195,7 +210,7 @@ public partial class CollectionsView : Form
             found.UseAutomaticFolders = true;
         }
 
-        mDoc.Add(found.AsList(), true);
+        await mDoc.AddAsync(found.AsList(), true);
         allAdded.Add(found);
     }
 
@@ -212,5 +227,12 @@ public partial class CollectionsView : Form
     private async void CollectionsView_FormClosing(object sender, FormClosingEventArgs e)
     {
         await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, allAdded);
+    }
+
+    private async void btnClose_Click(object sender, EventArgs e)
+    {
+        cts.Cancel();
+
+        if (scanThread is not null)  await scanThread;
     }
 }
