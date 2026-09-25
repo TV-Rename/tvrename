@@ -56,6 +56,8 @@ jobs:
 
     env:
       Solution_Name: TVRename.sln
+      Wap_Project_Directory: MyWpfApp.Package # <--- Relative path to the WAP folder
+      Wap_Project_Path: MyWpfApp.Package\MyWpfApp.Package.wapproj 
 
     steps:
     - name: Checkout
