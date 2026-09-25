@@ -39,9 +39,9 @@ assembly_info:
 
 test: off
 
-
 before_build:
-- cmd: nuget restore -verbosity quiet -PackagesDirectory TVRename\packages
+  # Restore dependencies using the dotnet CLI (which supports .slnx files)
+  - dotnet restore TVRename.slnx
 
 build: 
   parallel: true                  # enable MSBuild parallel builds
