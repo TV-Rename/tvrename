@@ -11,5 +11,5 @@ before_build:
 - cmd: nuget restore -PackagesDirectory TVRename\packages
 
 build:
-  project: TVRename.sln
+  project: TVRename.slnx
 
