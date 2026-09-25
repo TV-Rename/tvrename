@@ -41,7 +41,10 @@ test: off
 
 before_build:
   # Restore dependencies using the dotnet CLI (which supports .slnx files)
+  - cmd: ls ../* -R
   - dotnet restore C:\projects\tvrename\TVRename.slnx
+  - nuget restore C:\projects\tvrename\TVRename.slnx
+  - nuget restore C:\projects\tvrename\TVRename\TVRename.csproj
 
 build: 
   parallel: true                  # enable MSBuild parallel builds
