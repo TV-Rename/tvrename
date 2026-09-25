@@ -47,7 +47,7 @@ public static class CustomTvShowName
             return r;
         }
 
-        bool needsSpacer = !extension.StartsWith(".", StringComparison.Ordinal);
+        bool needsSpacer = !extension.StartsWith('.');
 
         if (needsSpacer)
         {

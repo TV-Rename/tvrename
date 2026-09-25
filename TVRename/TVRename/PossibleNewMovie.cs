@@ -370,10 +370,10 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
         SourceProvider = source;
         ProviderCode = id;
 
-        NotifyPropertyChanged("Movie");
-        NotifyPropertyChanged("Year");
-        NotifyPropertyChanged("SourceCode");
-        NotifyPropertyChanged("ImageTypeName");
+        NotifyPropertyChanged(nameof(Movie));
+        NotifyPropertyChanged(nameof(Year));
+        NotifyPropertyChanged(nameof(SourceCode));
+        NotifyPropertyChanged(nameof(ImageTypeName));
     }
 
     public bool Matches(PossibleNewMovie ai) => movieStub.Equals(ai.movieStub, StringComparison.CurrentCultureIgnoreCase);

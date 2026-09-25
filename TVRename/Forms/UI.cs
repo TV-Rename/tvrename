@@ -322,7 +322,6 @@ public partial class UI : Form, IDialogParent
         olvAction.ShowSortIndicator();
     }
 
-
     private void SetupObjectListForWhenToWatch()
     {
         lvWhenToWatch.SetObjects(recentEps);
@@ -942,7 +941,6 @@ public partial class UI : Form, IDialogParent
         FillMyMovies();
         UpdateSearchButtons();
 
-
         await mDoc.WriteUpcomingAsync();
         await mDoc.WriteRecentAsync();
 
@@ -1078,7 +1076,6 @@ public partial class UI : Form, IDialogParent
 
         var task = mDoc.UpdateImagesScanAsync(mDoc.TvLibrary.GetSortedShows(), mDoc.FilmLibrary.GetSortedMovies(), progress, cts);
 
-
         progressUI.Start(task);
         await task;
 
@@ -1196,7 +1193,6 @@ public partial class UI : Form, IDialogParent
         {
             lvWhenToWatch.RestoreState(Convert.FromBase64String(wtwLayout));
         }
-
 
         foreach (XElement widthXmlElement in layoutNode.Descendants("ColumnWidths"))
         {
@@ -1317,7 +1313,6 @@ public partial class UI : Form, IDialogParent
         writer.WriteStartElement("WTWLayout");
         writer.WriteAttributeToXml("State", Convert.ToBase64String(lvWhenToWatch.SaveState()));
         writer.WriteEndElement(); // ActionLayout
-
 
         writer.WriteEndElement(); // Layout
         writer.WriteEndElement(); // tvrename
@@ -1899,9 +1894,7 @@ public partial class UI : Form, IDialogParent
                     }
                 }
             }
-
         }
-
         lvWhenToWatch.Focus();
     }
 
@@ -2496,16 +2489,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private async void statusTimer_Tick(object? sender, EventArgs? e)
-    {
-
-
-    }
-
-    private static void SaveCaches()
-    {
-        TVDoc.SaveCaches();
-    }
+    private static void SaveCaches() => TVDoc.SaveCaches();
 
     private void backgroundDownloadToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -3819,9 +3803,6 @@ public partial class UI : Form, IDialogParent
         FillActionList();
         await RefreshWTWAsync(false, unattended);
 
-
-
-
         ItemList GetSelectedItemsToScan(bool checkedNotSelected)
         {
             return checkedNotSelected ? GetCheckedItems() : GetSelectedItems();
@@ -4040,7 +4021,6 @@ public partial class UI : Form, IDialogParent
     {
         ItemList toRemove = GetSelectedItems();
         mDoc.TheActionList.Remove(toRemove);
-
 
         actionsListBeingUpdated = true;
         olvAction.RemoveObjects(toRemove.ToList());
@@ -4727,7 +4707,6 @@ public partial class UI : Form, IDialogParent
             await SelectShowAsync(currentShowConfiguration);
         }
 
-
         lvWhenToWatch.EndUpdate();
         calendarBeingUpdated = false;
 
@@ -4922,7 +4901,6 @@ public partial class UI : Form, IDialogParent
                 {
                     JackettFinder.SearchForSeason(ssm.Series, ssm.SeasonNumberAsInt.Value);
                 }
-
                 if (i.Movie != null)
                 {
                     JackettFinder.SearchForMovie(i.Movie);
@@ -4976,7 +4954,6 @@ public partial class UI : Form, IDialogParent
         {
             return;
         }
-
         await DeleteMovieAsync(si);
     }
 
@@ -5120,7 +5097,6 @@ public partial class UI : Form, IDialogParent
         RecommendationView form = new(mDoc, this, MediaConfiguration.MediaType.tv);
         form.ShowDialog(this);
 
-
         mDoc.AllowAutoScan();
         LessBusy();
         await FillMyShowsAsync(true);
@@ -5143,7 +5119,6 @@ public partial class UI : Form, IDialogParent
         mDoc.PreventAutoScan("Recommendations Open");
         RecommendationView form = new(mDoc, this, MediaConfiguration.MediaType.movie);
         form.ShowDialog(this);
-
 
         FillMyMovies();
         mDoc.AllowAutoScan();
@@ -5468,7 +5443,6 @@ public static class TvWebExtensions
     }
 }
 
-
 public struct DownloadProgressReport
 {
     public enum Type
@@ -5482,7 +5456,6 @@ public struct DownloadProgressReport
     public TVDoc.ProviderType Provider { get; set; }
     public string Message { get; set; }
 }
-
 
 public class DownloadProgressStatus : Progress<DownloadProgressReport>
 {

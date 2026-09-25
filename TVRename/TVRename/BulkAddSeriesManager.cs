@@ -403,7 +403,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         // recursively check a folder for new shows
 
         ThreadSafeCounter c = new();
-        int total = subDirs.Count();
+        int total = subDirs.Length;
         foreach (DirectoryInfo di2 in subDirs)
         {
             handler?.Report(new ScanProgressReport

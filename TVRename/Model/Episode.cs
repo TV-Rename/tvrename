@@ -268,10 +268,10 @@ public class Episode
     {
         return seasonOrderType switch
         {
-            ProcessedSeason.SeasonType.dvd => 0 == DvdSeasonNumber,
-            ProcessedSeason.SeasonType.aired => 0 == AiredSeasonNumber,
-            ProcessedSeason.SeasonType.absolute => 0 == AiredSeasonNumber,
-            ProcessedSeason.SeasonType.alternate => 0 == AiredSeasonNumber,
+            ProcessedSeason.SeasonType.dvd => DvdSeasonNumber == 0,
+            ProcessedSeason.SeasonType.aired => AiredSeasonNumber == 0,
+            ProcessedSeason.SeasonType.absolute => AiredSeasonNumber == 0,
+            ProcessedSeason.SeasonType.alternate => AiredSeasonNumber == 0,
             _ => throw new ArgumentOutOfRangeException(nameof(seasonOrderType), seasonOrderType, null)
         };
     }

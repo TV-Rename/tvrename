@@ -63,8 +63,8 @@ public static class XmlHelper
     /// <returns>A Task representing the asynchronous operation.</returns>
     public static async Task SaveXmlAsync(this XDocument doc, string filePath, CancellationToken cancellationToken = default)
     {
-        if (doc == null) throw new ArgumentNullException(nameof(doc));
-        if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("File path cannot be empty.", nameof(filePath));
+        ArgumentNullException.ThrowIfNull(doc);
+        ArgumentException.ThrowIfNullOrWhiteSpace("filePath")
 
         // Use FileOptions.Asynchronous to ensure true non-blocking OS I/O
         using (FileStream stream = new FileStream(

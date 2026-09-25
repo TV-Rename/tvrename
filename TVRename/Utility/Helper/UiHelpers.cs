@@ -126,10 +126,7 @@ public static class UiHelpers
         }
         else
         {
-            if (uiElement.IsDisposed)
-            {
-                throw new ObjectDisposedException("Control is already disposed.");
-            }
+            ObjectDisposedException.ThrowIf(uiElement.IsDisposed, uiElement);
 
             try
             {
