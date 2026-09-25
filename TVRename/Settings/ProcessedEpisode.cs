@@ -36,15 +36,15 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
     {
         get
         {
-            if (TVSettings.Instance.IgnorePreviouslySeen && PreviouslySeen && !(_airedStatus==FoundStatus.OnDisk))
+            if (TVSettings.Instance.IgnorePreviouslySeen && PreviouslySeen && !(_airedStatus == FoundStatus.OnDisk))
             {
                 _airedStatus = FoundStatus.PreviouslySeen;
-                NotifyPropertyChanged("ImageTypeName");
+                NotifyPropertyChanged(nameof(ImageTypeName));
             }
             if (!HasAired() && (_airedStatus == FoundStatus.Unknown || _airedStatus == FoundStatus.Missing))
             {
                 _airedStatus = FoundStatus.Future;
-                NotifyPropertyChanged("ImageTypeName");
+                NotifyPropertyChanged(nameof(ImageTypeName));
             }
 
             return Forms.UI.ChooseWtwIcon(_airedStatus);
@@ -278,7 +278,7 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
 
         DateTime now = TimeHelpers.LocalNow();
         DateTime limit = now.AddDays(-days);
-        
+
         return limit <= dt && dt <= now;
     }
 
@@ -333,14 +333,14 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
         if (fl.IsAny() && appropriateFileNameFound)
         {
             _airedStatus = ProcessedEpisode.FoundStatus.OnDisk;
-            NotifyPropertyChanged("ImageTypeName");
+            NotifyPropertyChanged(nameof(ImageTypeName));
             return;
         }
 
         if (TVSettings.Instance.IgnorePreviouslySeen && PreviouslySeen)
         {
             _airedStatus = ProcessedEpisode.FoundStatus.PreviouslySeen;
-            NotifyPropertyChanged("ImageTypeName");
+            NotifyPropertyChanged(nameof(ImageTypeName));
             return;
 
         }
@@ -350,14 +350,14 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
             if (Show.DoMissingCheck)
             {
                 _airedStatus = ProcessedEpisode.FoundStatus.Missing;
-                NotifyPropertyChanged("ImageTypeName");
+                NotifyPropertyChanged(nameof(ImageTypeName));
                 return;
 
             }
         }
 
         _airedStatus = ProcessedEpisode.FoundStatus.Future;
-        NotifyPropertyChanged("ImageTypeName");
+        NotifyPropertyChanged(nameof(ImageTypeName));
     }
 
     bool IEquatable<ProcessedEpisode>.Equals(ProcessedEpisode? other)

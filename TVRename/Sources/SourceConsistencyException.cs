@@ -13,7 +13,7 @@ public class SourceConsistencyException : Exception
     }
 
     public SourceConsistencyException(string message, TVDoc.ProviderType provider, Exception ex)
-        : base(provider.PrettyPrint() + ": " + message,ex)
+        : base(provider.PrettyPrint() + ": " + message, ex)
     {
     }
 }

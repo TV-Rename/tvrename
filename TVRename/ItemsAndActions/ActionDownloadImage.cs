@@ -152,7 +152,7 @@ public class ActionDownloadImage : ActionDownload
             {
                 if (im.Width > 232 || im.Height > 156)
                 {
-                    using Image newImage =  MaxSize(im, 232, 156);
+                    using Image newImage = MaxSize(im, 232, 156);
 
                     using System.IO.MemoryStream m = new();
                     newImage.Save(m, ImageFormat.Jpeg);

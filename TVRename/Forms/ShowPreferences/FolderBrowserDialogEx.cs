@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using JetBrains.Annotations;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -13,7 +14,6 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 // ReSharper disable ArrangeRedundantParentheses
 
 // ReSharper disable ConvertToConstant.Local

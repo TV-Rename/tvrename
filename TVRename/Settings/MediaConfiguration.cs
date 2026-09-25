@@ -82,7 +82,7 @@ public abstract class MediaConfiguration : ISeriesSpecifier
 
     public override string ToString() => $"{GetMediaType()}: ({ConfigurationProvider.PrettyPrint()}) TVDB:{TvdbCode} TMDB:{TmdbCode} TVMaze:{TVmazeCode} ({CustomShowName},{CustomLanguageCode},{CustomRegionCode}) [{LastName}]";
 
-    public async Task<Dictionary<int, SafeList<string>>> AllExistngFolderLocationsAsync () => await AllFolderLocationsAsync(true, true);
+    public async Task<Dictionary<int, SafeList<string>>> AllExistngFolderLocationsAsync() => await AllFolderLocationsAsync(true, true);
 
     public async Task<Dictionary<int, SafeList<string>>> AllProposedFolderLocationsAsync() => await AllFolderLocationsAsync(true, false);
 

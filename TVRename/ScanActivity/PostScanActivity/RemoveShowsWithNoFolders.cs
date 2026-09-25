@@ -1,8 +1,8 @@
+using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename;
 
@@ -44,10 +44,10 @@ internal class RemoveShowsWithNoFolders(TVDoc doc) : PostScanActivity(doc)
             if (removeThisShow)
             {
                 lastUpdate = $"{si.Name} has no folders that exist, removing";
-                MDoc.TheActionList.Add(new ActionChangeLibraryRemoveShow(si,MDoc));
+                MDoc.TheActionList.Add(new ActionChangeLibraryRemoveShow(si, MDoc));
             }
         }
-    
+
         foreach (MovieConfiguration si in movieConfigurations.Where(IsReleased))
         {
             UpdateStatus(n.Increment(), totalRecords, si.ShowName, lastUpdate);

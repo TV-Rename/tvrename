@@ -24,12 +24,12 @@ public abstract class ListSorter<T> : System.Collections.Generic.IComparer<T>
             return 1;
         }
 
-        return CompareItems(x,y);
+        return CompareItems(x, y);
     }
 
     protected abstract int CompareItems(T item, T item1);
 }
-public class DefaultActionItemSorter: ListSorter<Item>
+public class DefaultActionItemSorter : ListSorter<Item>
 {
     #region IComparer<Item> Members
 
@@ -61,7 +61,7 @@ public class DefaultActionItemSorter: ListSorter<Item>
             ActionDateTouchSeason => 17,
             ActionDateTouchMedia => 18,
             ActionDateTouchMovie => 19,
-            UpdateMediaFileTitle=>20,
+            UpdateMediaFileTitle => 20,
             UpdateMediaFileDescription => 21,
             UpdateMediaFileComment => 22,
             UpdateMediaFileSubtitle => 23,
@@ -69,8 +69,8 @@ public class DefaultActionItemSorter: ListSorter<Item>
             UpdateMediaFileGenres => 25,
             ActionTRemove => 30,
             ActionUnArchive => 31,
-            ActionChangeLibraryRemoveMovie =>32,
-            ActionChangeLibraryRemoveShow =>33,
+            ActionChangeLibraryRemoveMovie => 32,
+            ActionChangeLibraryRemoveShow => 33,
             _ => throw new NotSupportedException()
         };
     }
@@ -125,7 +125,7 @@ public class ActionItemSourceSorter : ActionItemStringSorter<Item>
 }
 public class ActionItemErrorsSorter : ActionItemStringSorter<Item>
 {
-    protected override string GetString(Item x) =>x.ErrorText ?? string.Empty;
+    protected override string GetString(Item x) => x.ErrorText ?? string.Empty;
 }
 public class ActionItemSeasonSorter : ListSorter<Item>
 {
@@ -163,7 +163,7 @@ public class DefaultProcessedEpisodeSorter : ListSorter<ProcessedEpisode>
             return DateTime.Compare(XairDate.Value, YairDate.Value);
         }
 
-        if(x.SeriesName != y.SeriesName)
+        if (x.SeriesName != y.SeriesName)
         {
             return x.SeriesName.CompareTo(y.SeriesName);
         }

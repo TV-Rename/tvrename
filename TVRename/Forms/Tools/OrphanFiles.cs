@@ -2,7 +2,6 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -223,6 +222,6 @@ public partial class OrphanFiles : Form
 
     internal async Task StartScanAsync()
     {
-         await ScanAsync();
+        await ScanAsync();
     }
 }

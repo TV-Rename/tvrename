@@ -2,7 +2,6 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -206,7 +205,7 @@ public class BulkAddMovieManager(TVDoc doc)
     private async Task<List<MovieConfiguration>> AddToLibraryAsync(IEnumerable<PossibleNewMovie> ais)
     {
         List<MovieConfiguration> movies = [];
-        foreach (PossibleNewMovie ai in ais.Where(a=>a.CodeKnown))
+        foreach (PossibleNewMovie ai in ais.Where(a => a.CodeKnown))
         {
             // see if there is a matching show item
             MovieConfiguration? found = mDoc.FilmLibrary.GetMovie(ai);

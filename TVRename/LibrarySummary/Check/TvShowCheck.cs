@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace TVRename;
 
 internal abstract class TvShowCheck(ShowConfiguration show, TVDoc doc) : SettingsCheck(doc)

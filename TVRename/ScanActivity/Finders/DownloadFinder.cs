@@ -17,7 +17,7 @@ public abstract class DownloadFinder(TVDoc doc, TVDoc.ScanSettings settings) : F
 
     protected static bool RssMatch(RSSItem rss, ProcessedEpisode pe)
     {
-        return rss.Season == pe.AppropriateSeasonNumber && rss.Episode == pe.AppropriateEpNum && RssNameMatch(rss,pe);
+        return rss.Season == pe.AppropriateSeasonNumber && rss.Episode == pe.AppropriateEpNum && RssNameMatch(rss, pe);
     }
 
     private static bool RssNameMatch(RSSItem rss, ProcessedEpisode pe)

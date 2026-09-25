@@ -7,10 +7,10 @@
 //
 
 using NLog;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using NodaTime;
 
 // This builds the filenames to rename to, for any given episode (or multi-episode episode)
 

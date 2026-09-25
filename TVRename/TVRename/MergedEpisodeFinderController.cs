@@ -1,7 +1,6 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +33,7 @@ internal static class MergedEpisodeFinderController
                 ProgressPercentage = 100 * current++ / total,
                 UpdateText = si.ShowName
             });
-            
+
             foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.ActiveSeasons)
             {
                 //Ignore seasons that all aired on same date
@@ -91,7 +90,7 @@ internal static class MergedEpisodeFinderController
             bool largerFileSize = false;
             if (sameName)
             {
-                (oneFound,largerFileSize) = await IsOneFoundAsync(output, dfc, pep, comparePep);
+                (oneFound, largerFileSize) = await IsOneFoundAsync(output, dfc, pep, comparePep);
             }
 
             returnValue.Add(new PossibleMergedEpisode(pep, comparePep, seasonId, true, sameName, oneFound, largerFileSize));
@@ -104,7 +103,7 @@ internal static class MergedEpisodeFinderController
                pep.FirstAired == comparePep.FirstAired && pep.EpisodeId < comparePep.EpisodeId;
     }
 
-    private async static Task<(bool,bool)> IsOneFoundAsync(StringBuilder output, DirFilesCache dfc, ProcessedEpisode pep, ProcessedEpisode comparePep)
+    private async static Task<(bool, bool)> IsOneFoundAsync(StringBuilder output, DirFilesCache dfc, ProcessedEpisode pep, ProcessedEpisode comparePep)
     {
         bool largerFileSize = false;
         output.AppendLine("####### POSSIBLE MERGED FILE DUE TO NAME##########");
@@ -155,6 +154,6 @@ internal static class MergedEpisodeFinderController
             }
         }
 
-        return (oneFound,largerFileSize);
+        return (oneFound, largerFileSize);
     }
 }

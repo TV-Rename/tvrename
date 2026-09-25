@@ -1,7 +1,7 @@
+using NLog;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NLog;
 using File = Alphaleonis.Win32.Filesystem.File;
 using Path = Alphaleonis.Win32.Filesystem.Path;
 

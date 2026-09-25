@@ -11,7 +11,6 @@ using Humanizer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -567,7 +566,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         {
             return await webCall.WithRetry(3, 10.Seconds(), ex => ex is RequestLimitExceededException, errorMessage);
         }
-
         catch (JsonReaderException ioex)
         {
             LOGGER.Error($"Error {errorMessage}:", ioex);
@@ -576,8 +574,6 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             LastErrorMessage = ioex.Message;
             throw new SourceConnectivityException(errorMessage, ioex);
         }
-
-
         catch (System.IO.IOException ioex)
         {
             LOGGER.LogIoException($"Error {errorMessage}:", ioex);
@@ -1246,7 +1242,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         {
             await Parallel.ForEachAsync(
                 FullShows(),
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads , CancellationToken = token},
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads, CancellationToken = token },
                 async (si, token) =>
             {
                 if (token.IsCancellationRequested)
@@ -1285,7 +1281,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             //todo set parallel cancellation source
             await Parallel.ForEachAsync(
                 FullMovies(),
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads, CancellationToken= token },
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads, CancellationToken = token },
                 async (si, token) =>
                 {
                     Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once

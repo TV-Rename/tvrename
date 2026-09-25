@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static TVRename.BulkAddMovie;
 
 namespace TVRename;
 
@@ -25,7 +24,7 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
 
         var progressHandler = new Progress<ScanProgressReport>(scanReport =>
         {
-            progress.Invoke(scanReport.ProgressPercentage,scanReport.UpdateText,scanReport.LatestAction);    
+            progress.Invoke(scanReport.ProgressPercentage, scanReport.UpdateText, scanReport.LatestAction);
         });
 
         await bam.CheckFoldersAsync(progressHandler, false, !Settings.Unattended, Settings.Token);

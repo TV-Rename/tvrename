@@ -19,7 +19,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
                                      TVSettings.Instance.ReplaceWithBetterQuality ||
                                      TVSettings.Instance.ReplaceMoviesWithBetterQuality ||
                                      TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders;
-    
+
     protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
     protected override async Task DoCheckAsync(SetProgressDelegate progress)
@@ -209,7 +209,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private async Task  ReviewFileInDownloadDirectoryAsync(bool unattended, FileInfo fi, IDialogParent owner)
+    private async Task ReviewFileInDownloadDirectoryAsync(bool unattended, FileInfo fi, IDialogParent owner)
     {
         List<ShowConfiguration> matchingShowsAll = [.. showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))];
         List<ShowConfiguration> matchingShows = FinderHelper.RemoveShortShows(matchingShowsAll);

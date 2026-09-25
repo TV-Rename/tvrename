@@ -42,7 +42,7 @@ internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings setti
         IEnumerable<PossibleMedia> addedShows = await FinderHelper.FindMediaAsync(possibleShowNames, MDoc, Settings.Owner);
         List<PossibleMedia> addedShowsUnique = RemoveExistingAndDups(addedShows);
 
-        List<ShowConfiguration> addedTvShows = [.. addedShowsUnique.Select(x=>x.Configuration).OfType<ShowConfiguration>().Distinct()];
+        List<ShowConfiguration> addedTvShows = [.. addedShowsUnique.Select(x => x.Configuration).OfType<ShowConfiguration>().Distinct()];
         if (addedTvShows.IsAny())
         {
             await MDoc.AddAsync(addedTvShows, true);
@@ -76,7 +76,7 @@ internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings setti
                 }
                 continue;
             }
-            if (TVDoc.ContainsMedia(returnList.Select(x=>x.Configuration), testMedia.Configuration))
+            if (TVDoc.ContainsMedia(returnList.Select(x => x.Configuration), testMedia.Configuration))
             {
                 continue;
             }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -247,7 +246,7 @@ public partial class RecommendationView : Form
         }
         ClearGrid();
         PopulateGrid();
-    }   
+    }
 
     private async void lvRecommendations_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
     {
@@ -263,7 +262,7 @@ public partial class RecommendationView : Form
         switch (media)
         {
             case MediaConfiguration.MediaType.movie:
-                rightClickMenu.Add("Add Movie to Library",async(_, _) => await AddMovieToLibraryAsync(lastSelected.Key, lastSelected.Name));
+                rightClickMenu.Add("Add Movie to Library", async (_, _) => await AddMovieToLibraryAsync(lastSelected.Key, lastSelected.Name));
                 break;
             case MediaConfiguration.MediaType.tv:
                 if (lastSelected.Series != null)

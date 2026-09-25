@@ -6,8 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using System;
 using NLog;
+using System;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -98,7 +98,7 @@ public static class PathManager
         Directory.CreateDirectory(path);
         return new FileInfo(System.IO.Path.Combine(path, file));
     }
-    
+
     private static string TvRenameFolder(string folderName)
     {
         string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", folderName);

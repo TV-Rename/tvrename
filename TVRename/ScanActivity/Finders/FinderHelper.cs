@@ -647,13 +647,13 @@ internal static class FinderHelper
     }
 
     private static bool LookForSeries(string test, IEnumerable<MediaConfiguration> shows)
-        => GetMatchingSeries(test,shows).IsAny();
+        => GetMatchingSeries(test, shows).IsAny();
 
     private static IEnumerable<MediaConfiguration> GetMatchingSeries(string test, IEnumerable<MediaConfiguration> shows)
         => shows.Where(si => si.NameMatch(test));
 
     private static bool LookForMovies(string test, IEnumerable<MediaConfiguration> shows)
-        => GetMatchingMovies(test,shows).IsAny();
+        => GetMatchingMovies(test, shows).IsAny();
 
     private static IEnumerable<MediaConfiguration> GetMatchingMovies(string test, IEnumerable<MediaConfiguration> shows)
     {
@@ -805,7 +805,7 @@ internal static class FinderHelper
         //if hint doesn't match existing added shows
         if (LookForSeries(refinedHint, doc.TvLibrary.Shows))
         {
-            Logger.Warn($"Ignoring {hint}({refinedHint}) as it matches shows ({GetMatchingSeries(refinedHint,doc.TvLibrary.Shows).Select(s=>s.Name).ToCsv()}) already in the library.");
+            Logger.Warn($"Ignoring {hint}({refinedHint}) as it matches shows ({GetMatchingSeries(refinedHint, doc.TvLibrary.Shows).Select(s => s.Name).ToCsv()}) already in the library.");
             return;
         }
 
@@ -859,7 +859,7 @@ internal static class FinderHelper
                     newMovie.AliasNames.Add(hint);
                 }
 
-                addedShows.Add(new PossibleMedia(newMovie,refinedHint));
+                addedShows.Add(new PossibleMedia(newMovie, refinedHint));
                 doc.Stats().AutoAddedMovies++;
                 return;
             }
@@ -873,7 +873,7 @@ internal static class FinderHelper
         {
             // no need to popup dialog
             Logger.Info($"Auto Adding New Show for '{refinedHint}' : {askForMatch.ShowConfiguration.CachedShow?.Name}");
-            addedShows.Add(new PossibleMedia(askForMatch.ShowConfiguration,refinedHint));
+            addedShows.Add(new PossibleMedia(askForMatch.ShowConfiguration, refinedHint));
             doc.Stats().AutoAddedShows++;
         }
         else if (askForMatch.SingleMovieFound && !askForMatch.SingleTvShowFound &&
@@ -895,12 +895,12 @@ internal static class FinderHelper
                 //If added add show to the collection
                 if (askForMatch.ShowConfiguration.Code > 0)
                 {
-                    addedShows.Add(new PossibleMedia(askForMatch.ShowConfiguration,refinedHint));
+                    addedShows.Add(new PossibleMedia(askForMatch.ShowConfiguration, refinedHint));
                     doc.Stats().AutoAddedShows++;
                 }
                 else if (askForMatch.MovieConfiguration.Code > 0)
                 {
-                    addedShows.Add(new PossibleMedia(askForMatch.MovieConfiguration,refinedHint));
+                    addedShows.Add(new PossibleMedia(askForMatch.MovieConfiguration, refinedHint));
                     doc.Stats().AutoAddedMovies++;
                 }
             }

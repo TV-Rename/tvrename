@@ -44,7 +44,7 @@ public class DirCache : List<DirCacheEntry>
             {
                 return n;
             }
-            
+
             dirs = di.GetDirectories()!;
         }
         catch (NotSupportedException)

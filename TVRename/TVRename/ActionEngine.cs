@@ -81,7 +81,7 @@ public class ActionEngine(TVRenameStats stats)
         Logger.Info("**************************");
 
     }
-   
+
     private List<ActionQueue> ActionProcessorMakeQueues(ItemList theList, CancellationTokenSource cts)
     {
         // Take a single list
@@ -95,7 +95,7 @@ public class ActionEngine(TVRenameStats stats)
         // We can discard any non-action items, as there is nothing to
         // /do for them
         return EnumerableExtensions.GetAllItems<Action.QueueName>()
-            .Where(q => !(q==Action.QueueName.later))
+            .Where(q => !(q == Action.QueueName.later))
             .Select(q => new ActionQueue(GetName(q), GetParallelLimit(q), theList.GetActionsForQueue(q), mStats, cts))
             .ToList();
     }

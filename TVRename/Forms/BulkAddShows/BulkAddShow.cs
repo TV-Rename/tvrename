@@ -14,7 +14,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms;
-using static TVRename.BulkAddMovie;
 
 namespace TVRename;
 
@@ -500,7 +499,7 @@ public partial class BulkAddShow : Form
 
     private bool NothingSelected()
     {
-        return ! olFMNewShows.AnySelected();
+        return !olFMNewShows.AnySelected();
     }
 
     private void UpdateListItem(PossibleNewTvShow ai, bool makevis)

@@ -9,6 +9,7 @@
 using System.Threading;
 
 namespace TVRename;
+
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ public class UpdateMediaFileTitle : UpdateMediaFileMetaData
 
         return compareTo != 0 ? compareTo : string.CompareOrdinal(Value, nfo.Value);
     }
-    public override bool SameAs(Item o) => CompareTo(o)==0;
+    public override bool SameAs(Item o) => CompareTo(o) == 0;
 
     public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {

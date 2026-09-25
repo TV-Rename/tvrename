@@ -67,16 +67,14 @@ public static class XmlHelper
         ArgumentException.ThrowIfNullOrWhiteSpace("filePath")
 
         // Use FileOptions.Asynchronous to ensure true non-blocking OS I/O
-        using (FileStream stream = new FileStream(
+        using FileStream stream = new FileStream(
             filePath,
             FileMode.Create,
             FileAccess.Write,
             FileShare.None,
             bufferSize: 4096,
-            options: FileOptions.Asynchronous))
-        {
-            await doc.SaveAsync(stream, SaveOptions.None, cancellationToken);
-        }
+            options: FileOptions.Asynchronous);
+        await doc.SaveAsync(stream, SaveOptions.None, cancellationToken);
     }
 
     public static void WriteElement(this XmlWriter writer, string elementName, string? value, bool ignoreIfBlank)

@@ -4,7 +4,6 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -51,7 +50,7 @@ public class qBitTorrent : IDownloadProvider
 
         try
         {
-            settingsString = await HttpHelper.ObtainAsync(GetApiUrl(qBitTorrentAPIPath.settings)) ;
+            settingsString = await HttpHelper.ObtainAsync(GetApiUrl(qBitTorrentAPIPath.settings));
             downloadsString = await HttpHelper.ObtainAsync(GetApiUrl(qBitTorrentAPIPath.torrents));
 
             JToken settings = JToken.Parse(settingsString);
@@ -294,7 +293,7 @@ public class qBitTorrent : IDownloadProvider
         }
         catch (DirectoryNotFoundException ex)
         {
-            Logger.Warn(ex, 
+            Logger.Warn(ex,
                 $"Could not connect to {url} to download {torrentName}, Could not find directory.");
         }
         catch (UnauthorizedAccessException ex)
@@ -362,7 +361,7 @@ public class qBitTorrent : IDownloadProvider
     /// <exception cref="WebException">Condition.</exception>
     /// <exception cref="HttpRequestException">Condition.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
-    public async Task  RemoveCompletedDownloadAsync(TorrentEntry name)
+    public async Task RemoveCompletedDownloadAsync(TorrentEntry name)
     {
         if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
         {

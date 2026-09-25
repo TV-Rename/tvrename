@@ -33,7 +33,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         extraEpisodes; // IDs of extra episodes to grab and merge in on next update
 
     private readonly UpdateTimeTracker LatestUpdateTime;
-    
+
     private bool showConnectionIssues;
 
     //We are using the singleton design pattern
@@ -120,10 +120,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         //todo set parallel cancellation source
         await Parallel.ForEachAsync(FullShows(),
             new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
-            async (si,token) =>
+            async (si, token) =>
             {
                 Thread.CurrentThread.Name ??= $"TVDB Consistency Check: {si.Name}"; // Can only set it once
-                await check.ServerAccuracyCheckAsync(si,p);
+                await check.ServerAccuracyCheckAsync(si, p);
             });
 
         foreach (string issue in check.Issues)
@@ -182,7 +182,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         Say($"{cachedSeriesInfo.Name} ({eptxt}) in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
         try
         {
-            await API.DownloadEpisodeNowAsync(cachedSeriesInfo, episodeId, locale,order);
+            await API.DownloadEpisodeNowAsync(cachedSeriesInfo, episodeId, locale, order);
         }
         catch (SourceConnectivityException e)
         {
@@ -207,7 +207,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         return true;
     }
-    
+
     private Episode? FindEpisodeById(int id)
     {
         {
@@ -246,7 +246,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
 
         CannotConnectForm form = new("Error while obtaining token from TVDB",
-            LastErrorMessage??e.Message, TVDoc.ProviderType.TheTVDB);
+            LastErrorMessage ?? e.Message, TVDoc.ProviderType.TheTVDB);
 
         DialogResult result = form.ShowDialog();
         if (result != DialogResult.Abort)
@@ -290,8 +290,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (SourceConnectivityException ex)
         {
-            HandleConnectionIssue(true,ex);
-        } 
+            HandleConnectionIssue(true, ex);
+        }
         SaveCache();
 
         //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
@@ -359,7 +359,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             //todo set parallel cancellation source
             await Parallel.ForEachAsync(updatesResponse.Updates,
                 new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
-                async (o,token) =>
+                async (o, token) =>
                 {
                     Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
                     ProcessUpdate(o);
@@ -419,73 +419,73 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         switch (updateRecord.Type)
         {
             case API.UpdateRecord.UpdateType.series:
-            {
-                CachedSeriesInfo? selectedCachedSeriesInfo = GetSeries(id);
-                if (selectedCachedSeriesInfo != null)
                 {
-                    MarkDirty(selectedCachedSeriesInfo, time,
-                        $"as it({id}-{entityType}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
-                        true);
-                }
+                    CachedSeriesInfo? selectedCachedSeriesInfo = GetSeries(id);
+                    if (selectedCachedSeriesInfo != null)
+                    {
+                        MarkDirty(selectedCachedSeriesInfo, time,
+                            $"as it({id}-{entityType}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
+                            true);
+                    }
 
-                return;
-            }
+                    return;
+                }
             case API.UpdateRecord.UpdateType.movie:
-            {
-                CachedMovieInfo? selectedMovieCachedData = GetMovie(id);
-                if (selectedMovieCachedData != null)
                 {
-                    MarkDirty(selectedMovieCachedData, time,
-                        $"as it({id}-{entityType}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
-                        true);
-                }
+                    CachedMovieInfo? selectedMovieCachedData = GetMovie(id);
+                    if (selectedMovieCachedData != null)
+                    {
+                        MarkDirty(selectedMovieCachedData, time,
+                            $"as it({id}-{entityType}) has been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
+                            true);
+                    }
 
-                return;
-            }
+                    return;
+                }
             case API.UpdateRecord.UpdateType.episode:
-            {
-                List<CachedSeriesInfo> matchingShows =
-                    [.. Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id))];
-
-                if (matchingShows.Count == 0)
                 {
+                    List<CachedSeriesInfo> matchingShows =
+                        [.. Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id))];
+
+                    if (matchingShows.Count == 0)
+                    {
+                        return;
+                    }
+
+                    foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
+                    {
+                        MarkDirty(selectedCachedSeriesInfo, time,
+                            $"({selectedCachedSeriesInfo.Id()}) as episodes({id}-{entityType}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
+                            false);
+                    }
+
+                    foreach (Episode updatedEpisode in Series.Values.SelectMany(s => s.Episodes)
+                                 .Where(e => e.EpisodeId == id))
+                    {
+                        updatedEpisode.Dirty = true;
+                    }
+
                     return;
                 }
-
-                foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
-                {
-                    MarkDirty(selectedCachedSeriesInfo, time,
-                        $"({selectedCachedSeriesInfo.Id()}) as episodes({id}-{entityType}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
-                        false);
-                }
-
-                foreach (Episode updatedEpisode in Series.Values.SelectMany(s => s.Episodes)
-                             .Where(e => e.EpisodeId == id))
-                {
-                    updatedEpisode.Dirty = true;
-                }
-
-                return;
-            }
             case API.UpdateRecord.UpdateType.season:
-            {
-                List<CachedSeriesInfo> matchingShows =
-                    [.. Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id))];
-
-                if (matchingShows.Count == 0)
                 {
+                    List<CachedSeriesInfo> matchingShows =
+                        [.. Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id))];
+
+                    if (matchingShows.Count == 0)
+                    {
+                        return;
+                    }
+
+                    foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
+                    {
+                        MarkDirty(selectedCachedSeriesInfo, time,
+                            $"({selectedCachedSeriesInfo.Id()}) as seasons({id}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
+                            false);
+                    }
+
                     return;
                 }
-
-                foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
-                {
-                    MarkDirty(selectedCachedSeriesInfo, time,
-                        $"({selectedCachedSeriesInfo.Id()}) as seasons({id}) have been updated at {time.FromUnixTime().ToLocalTime()} ({time})",
-                        false);
-                }
-
-                return;
-            }
             default:
                 LOGGER.Error($"Found update record for '{entityType}' = {id}");
                 return;
@@ -503,7 +503,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             this.ForgetShow(s);
             s.Dirty = true;
         }
-       
+
         IEnumerable<CachedMovieInfo> moviesToUpdate = await ServerMovieAccuracyCheckAsync(p);
         foreach (CachedMovieInfo s in moviesToUpdate)
         {
@@ -513,7 +513,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LatestUpdateTime.RegisterServerUpdate(time);
         return true;
     }
-    
+
     private void AddPlaceholders(IEnumerable<ISeriesSpecifier> ss)
     {
         IEnumerable<ISeriesSpecifier> seriesSpecifiers = [.. ss];
@@ -542,7 +542,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
             float percentDirty = totaleps > 0
                 ? (float)totaldirty * 100 / totaleps
-                : 100; 
+                : 100;
 
             if (totaleps > 0 && percentDirty >= TVSettings.Instance.PercentDirtyUpgrade()) // 10%
             {
@@ -572,7 +572,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 $"{selectedCachedSeriesInfo.Name} has a lastupdated of {selectedCachedSeriesInfo.SrvLastUpdated.FromUnixTime().ToLocalTime()} server says {time.FromUnixTime().ToLocalTime()} {message}");
         }
     }
-    
+
     private long GetUpdateTimeFromShows()
     {
         // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
@@ -667,7 +667,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             SayNothing();
             return null;
         }
-        
+
         Series.TryGetValue(code.TvdbId, out CachedSeriesInfo? returnValue);
         SayNothing();
         return returnValue;
@@ -891,7 +891,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         catch (SourceConnectivityException ex)
         {
-            LOGGER.Warn($"Searcing for {text} may be compromised as got an error from the API",ex);
+            LOGGER.Warn($"Searcing for {text} may be compromised as got an error from the API", ex);
             HandleConnectionIssue(showErrorMsgBox, ex);
         }
         catch (SourceConsistencyException ex)
@@ -925,7 +925,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     public async Task<CachedMovieInfo?> GetMovieAndDownloadAsync(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox) => HasMovie(id.TvdbId)
         ? CachedMovieData[id.TvdbId]
-        : await DownloadMovieNowAsync(id, locale,showErrorMsgBox);
+        : await DownloadMovieNowAsync(id, locale, showErrorMsgBox);
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
@@ -969,7 +969,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 public class TvdbSearchResult
 {
     public readonly List<CachedSeriesInfo> TvShows = [];
-    public readonly List<CachedMovieInfo> Movies=[];
+    public readonly List<CachedMovieInfo> Movies = [];
 }
 
 public class UpdateCancelledException : Exception

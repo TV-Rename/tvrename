@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace TVRename;
 
-public class MovieLibrary : ConcurrentDictionary<MovieConfiguration,int>
+public class MovieLibrary : ConcurrentDictionary<MovieConfiguration, int>
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -81,7 +81,7 @@ public class MovieLibrary : ConcurrentDictionary<MovieConfiguration,int>
             return;
         }
 
-        TryAdd(newShow,0);
+        TryAdd(newShow, 0);
     }
     public void AddMovies(List<MovieConfiguration>? newMovie, bool showErrors)
     {

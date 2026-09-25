@@ -8,7 +8,7 @@ internal class FixCheckException : Exception
     {
     }
 
-    public FixCheckException(string s, Exception e) : base(s,e)
+    public FixCheckException(string s, Exception e) : base(s, e)
     {
     }
 }

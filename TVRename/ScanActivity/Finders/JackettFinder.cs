@@ -132,13 +132,13 @@ internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadF
 
     private static async Task FindMissingSeasonAsync(ShowSeasonMissing action, ItemList toRemove, ItemList newItems)
     {
-        string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.Series , action.SeasonNumberAsInt) : NormalJackettUrl(action.Series, action.SeasonNumberAsInt);
+        string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.Series, action.SeasonNumberAsInt) : NormalJackettUrl(action.Series, action.SeasonNumberAsInt);
 
         RssItemList rssList = [];
         await rssList.DownloadRSSAsync(url, false, "Jackett");
         ItemList newItemsForThisMissingEpisode = [];
 
-        foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, action.Series, action.SeasonNumberAsInt??0 )))
+        foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, action.Series, action.SeasonNumberAsInt ?? 0)))
         {
             if (TVSettings.Instance.DetailedRSSJSONLogging)
             {
@@ -164,7 +164,7 @@ internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadF
     {
         string apikey = TVSettings.Instance.JackettAPIKey;
         const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
-        string text = WebUtility.UrlEncode(CustomSeasonName.NameFor(series,seasonNumberAsInt??0, FORMAT));
+        string text = WebUtility.UrlEncode(CustomSeasonName.NameFor(series, seasonNumberAsInt ?? 0, FORMAT));
         return $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
     }
 

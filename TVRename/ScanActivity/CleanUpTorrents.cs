@@ -123,7 +123,7 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
         return fl.IsAny();
     }
 
-    private static async Task<bool> IsFoundAsync(DirFilesCache dfc, MovieConfiguration movie) => ( await dfc.FindMovieOnDiskAsync(movie)).IsAny();
+    private static async Task<bool> IsFoundAsync(DirFilesCache dfc, MovieConfiguration movie) => (await dfc.FindMovieOnDiskAsync(movie)).IsAny();
 
     private List<ProcessedEpisode>? MatchEpisodes(FileInfo droppedFile)
     {

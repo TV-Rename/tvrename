@@ -12,7 +12,6 @@ using SourceGrid.Cells.Controllers;
 using SourceGrid.Cells.Views;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -66,21 +65,23 @@ public partial class ShowSummary : Form, IDialogParent
 
         await Parallel.ForEachAsync(
             mDoc.TvLibrary.GetSortedShows(),
-            new ParallelOptions {
+            new ParallelOptions
+            {
                 MaxDegreeOfParallelism = 12,
                 CancellationToken = token
             },
-            async (si,token) =>
+            async (si, token) =>
         {
             if (token.IsCancellationRequested)
             {
                 return;
             }
-            handler.Report(new ProgressReport() {
-                ProgressPercentage = (int) 100 * currentRecord.Increment() / total,
+            handler.Report(new ProgressReport()
+            {
+                ProgressPercentage = (int)100 * currentRecord.Increment() / total,
                 UpdateText = si.ShowName
             });
-            
+
             showList.Add(await AddShowDetailsAsync(si));
         }
         );
@@ -447,7 +448,7 @@ public partial class ShowSummary : Form, IDialogParent
         {
             Dictionary<int, SafeList<string>> afl = await show.AllExistngFolderLocationsAsync();
 
-            if (!afl.TryGetValue(seas.SeasonNumber, out SafeList<string>?  seasonData))
+            if (!afl.TryGetValue(seas.SeasonNumber, out SafeList<string>? seasonData))
             {
                 return;
             }
@@ -527,7 +528,7 @@ public partial class ShowSummary : Form, IDialogParent
 
     #region Nested type: ShowSummaryData
 
-    public class ShowSummaryData(string showName, ShowConfiguration showConfiguration) :IComparable
+    public class ShowSummaryData(string showName, ShowConfiguration showConfiguration) : IComparable
     {
         public int MaxSeason;
         public readonly List<ShowSummarySeasonData> SeasonDataList = [];
@@ -682,7 +683,7 @@ public partial class ShowSummary : Form, IDialogParent
 
         public int CompareTo(object? obj)
         {
-            if (obj is null) {return 0; }
+            if (obj is null) { return 0; }
             return ShowName.CompareTo(((ShowSummaryData)obj).ShowName);
         }
     }

@@ -37,7 +37,8 @@ internal class UpcomingiCAL(TVDoc i) : UpcomingExporter(i)
 
             foreach (CalendarEvent? ev in episodes.Select(CreateEvent).Where(ev => ev is not null))
             {
-                if (ev is not null) { 
+                if (ev is not null)
+                {
                     calendar.Events.Add(ev);
                 }
             }

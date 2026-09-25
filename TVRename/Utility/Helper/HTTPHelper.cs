@@ -1,5 +1,6 @@
 using CloudFlareUtilities;
 using Humanizer;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -8,9 +9,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -91,7 +91,7 @@ public static class HttpHelper
                 HttpClient cloudflareclient = new(httpMessageHandler);
 
                 // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
-                return cloudflareclient.GetByteArrayAsync(url); 
+                return cloudflareclient.GetByteArrayAsync(url);
             }
             catch (AggregateException ex) when (ex.InnerException is CloudFlareClearanceException)
             {
@@ -164,8 +164,8 @@ public static class HttpHelper
         //var y = await x();
         return await ObtainStringFromUrlFuncAsync(url, client)();
     }
-        
-    
+
+
     private static Func<Task<string>> ObtainStringFromUrlFuncAsync(string url, HttpClient client)
     {
         try
@@ -268,7 +268,7 @@ public static class HttpHelper
     public static async Task<byte[]> DownloadAsync(string url, CancellationToken token)
     {
         using HttpClient wc = new();
-        return await wc.GetByteArrayAsync(url,token);
+        return await wc.GetByteArrayAsync(url, token);
     }
 
     public static string LoggableDetails(this System.IO.IOException ex)
@@ -420,7 +420,7 @@ public static class HttpHelper
                 }
                 catch (Exception refreshException)
                 {
-                    Logger.Error(refreshException,$"Could not complete the update operation: {refreshException.ErrorText()}");
+                    Logger.Error(refreshException, $"Could not complete the update operation: {refreshException.ErrorText()}");
                 }
             }
         } while (true);
@@ -464,7 +464,7 @@ public static class HttpHelper
         JObject? response = null;
         await RetryOnExceptionAsync(times, secondsGap.Seconds(), fullUrl,
             RetryableWebException()
-            , async() => { response = await JsonHttpGetRequestAsync(fullUrl, null); }
+            , async () => { response = await JsonHttpGetRequestAsync(fullUrl, null); }
             , null);
 
         return response!;

@@ -29,7 +29,7 @@ public partial class CopyMoveProgress : Form
     private readonly System.Action mDoOnClose;
 
     public CopyMoveProgress(TVDoc engine, System.Action doOnClose) : this(engine, engine.TheActionList, doOnClose)
-    {}
+    { }
 
     public CopyMoveProgress(TVDoc engine, ItemList shows, System.Action doOnClose)
     {

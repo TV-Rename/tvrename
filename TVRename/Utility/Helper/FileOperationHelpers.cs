@@ -71,7 +71,7 @@ public static class FileOperationExtensions
         }
         catch (Exception e)
         {
-            Logger.Warn( $"Could not open URL: {url} - {e.ErrorText()}");
+            Logger.Warn($"Could not open URL: {url} - {e.ErrorText()}");
             return false;
         }
 

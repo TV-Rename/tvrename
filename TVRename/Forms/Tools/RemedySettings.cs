@@ -17,7 +17,7 @@ internal class RemedySettings(IEnumerable<SettingsCheck> selectedItems, Settings
         ThreadSafeCounter currentRecord = new();
         int totalRecords = selectedItems.Count();
         progress.Report(new TaskProgress(0, "Fixing Issues", string.Empty));
-        
+
         foreach (SettingsCheck selected in selectedItems)
         {
             if (sourceToken.IsCancellationRequested)
@@ -33,10 +33,10 @@ internal class RemedySettings(IEnumerable<SettingsCheck> selectedItems, Settings
                 }
             }
             int position = 100 * currentRecord.Increment() / (totalRecords + 1);
-            
+
             progress.Report(new TaskProgress(position, selected.CheckName, selected.MediaName));
         }
 
-        progress.Report(new TaskProgress(100, "Completed",string.Empty));
+        progress.Report(new TaskProgress(100, "Completed", string.Empty));
     }
 }

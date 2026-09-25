@@ -1839,7 +1839,7 @@ internal static class ShowHtmlHelper
         overviewString.Append(GetOverviewPart("Production Code", ei.ProductionCode));
         overviewString.Append(GetOverviewPart("Writer", ei.Writer));
 
-        if (overviewString.Length>0)
+        if (overviewString.Length > 0)
         {
             return ei.HiddenOverview() + "<table border=0>" + overviewString.ToString() + "</table>";
         }
@@ -1872,6 +1872,6 @@ internal static class ShowHtmlHelper
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
 
-        
+
     }
 }

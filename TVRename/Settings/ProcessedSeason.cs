@@ -171,7 +171,7 @@ public class ProcessedSeason(ShowConfiguration theShow, int number, int seasonId
         DateTime? returnValue = null;
         foreach (DateTime episodeAirDate in Episodes.Values.Select(a => a.FirstAired)
                      .Where(episodeAirDate => episodeAirDate.HasValue)
-                     .Select(epis=> epis!.Value)
+                     .Select(epis => epis!.Value)
                      .Where(episodeAirDate =>
                          DateTime.Compare(episodeAirDate.ToUniversalTime(), TimeHelpers.UtcNow()) <= 0))
         {

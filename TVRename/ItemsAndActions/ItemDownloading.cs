@@ -57,7 +57,7 @@ public class ItemDownloading : Item
     public ItemDownloading(IDownloadInformation dl, ShowConfiguration series, int? seasonNumberAsInt, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing me)
         : this(dl, desiredLocationNoExt, tApp, me)
     {
-        Episode=null;
+        Episode = null;
         Movie = null;
         internalShow = series;
         internalSeasonNumber = seasonNumberAsInt;

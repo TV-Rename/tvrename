@@ -47,7 +47,7 @@ internal static class API
         catch (JsonReaderException jre)
         {
             Logger.Error($"{errorMessage} due to {jre.ErrorText()}");
-            throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze,jre);
+            throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze, jre);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
@@ -82,17 +82,17 @@ internal static class API
         {
             if (ex.Is404() && await TvMazeIsUpAsync())
             {
-                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv,ex);
+                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv, ex);
             }
 
             Logger.LogWebException(errorMessage, ex);
-            throw new SourceConnectivityException(errorMessage,ex);
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (HttpRequestException wex)
         {
             if (wex.Is404() && await TvMazeIsUpAsync())
             {
-                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv,wex);
+                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv, wex);
             }
             Logger.LogHttpRequestException(errorMessage, wex);
             throw new SourceConnectivityException(errorMessage, wex);
@@ -105,24 +105,24 @@ internal static class API
         catch (JsonReaderException jre)
         {
             Logger.Error($"{errorMessage} due to {jre.ErrorText()}");
-            throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze,jre);
+            throw new SourceConsistencyException($"{errorMessage} due to {jre.Message}", TVDoc.ProviderType.TVmaze, jre);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             if (wex.Is404() && await TvMazeIsUpAsync())
             {
                 // ReSharper disable once ThrowFromCatchWithNoInnerException
-                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv,wex);
+                throw new MediaNotFoundException(tvMazeId, mediaNotFoundMessage, TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv, wex);
             }
 
             Logger.LogHttpRequestException(errorMessage, wex);
             // ReSharper disable once ThrowFromCatchWithNoInnerException
-            throw new SourceConnectivityException(errorMessage,wex);
+            throw new SourceConnectivityException(errorMessage, wex);
         }
         catch (System.Threading.Tasks.TaskCanceledException ex)
         {
             Logger.Warn($"{errorMessage} due to {ex.ErrorText()}");
-            throw new SourceConnectivityException(errorMessage,ex);
+            throw new SourceConnectivityException(errorMessage, ex);
         }
         catch (AggregateException aex) when (aex.InnerException is System.Threading.Tasks.TaskCanceledException ex)
         {
@@ -185,14 +185,14 @@ internal static class API
         }
         catch (System.IO.IOException wex)
         {
-            throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}",wex);
+            throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}", wex);
         }
         catch (AggregateException ex1) when (ex1.InnerException is HttpRequestException wex)
         {
             if (!wex.Is404())
             {
                 // ReSharper disable once ThrowFromCatchWithNoInnerException
-                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}",wex);
+                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}", wex);
             }
 
             await GetSeriesIdFromImdbCodeAsync(source, GuessImdbCode(source));
@@ -248,7 +248,7 @@ internal static class API
             await RaiseException(wex2, s);
         }
 
-        async Task   RaiseException(HttpRequestException wex2, string? imdbCode)
+        async Task RaiseException(HttpRequestException wex2, string? imdbCode)
         {
             if (wex2.Is404() && await TvMazeIsUpAsync())
             {
@@ -258,7 +258,7 @@ internal static class API
             }
 
             throw new SourceConnectivityException(
-                $"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={source.TvdbId} {wex2.Message}",wex2);
+                $"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={source.TvdbId} {wex2.Message}", wex2);
         }
     }
 
@@ -612,7 +612,7 @@ internal static class API
 
     private static string? GetUrl(JObject r, string typeKey)
     {
-        JToken x = r["image"]?? throw new SourceConsistencyException($"Could not get 'image' element from {r}", TVDoc.ProviderType.TVmaze);
+        JToken x = r["image"] ?? throw new SourceConsistencyException($"Could not get 'image' element from {r}", TVDoc.ProviderType.TVmaze);
 
         if (x.HasValues)
         {

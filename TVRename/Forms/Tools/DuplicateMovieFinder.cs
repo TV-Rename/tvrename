@@ -1,9 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -54,8 +52,9 @@ public partial class DuplicateMovieFinder : Form
         {
             await ProcessMovieAsync(movie);
 
-            reporter.Report(new ProgressReport(){
-                ProgressPercentage =  100 * currentRecord.Increment() / total,
+            reporter.Report(new ProgressReport()
+            {
+                ProgressPercentage = 100 * currentRecord.Increment() / total,
                 UpdateText = movie.ShowName
             });
         }
@@ -104,7 +103,7 @@ public partial class DuplicateMovieFinder : Form
 
     private void BtnRefresh_Click_1(object sender, EventArgs e)
     {
-       
+
     }
 
     private async void olvDuplicates_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)

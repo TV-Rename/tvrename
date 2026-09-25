@@ -9,6 +9,7 @@
 using System.Threading;
 
 namespace TVRename;
+
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ public class UpdateMediaFileDescription : UpdateMediaFileMetaData
         TagLib.File tfile = TagLib.File.Create(Where.FullName);
         string desc = tfile.Tag.Description;
 
-            if (desc != Value)
+        if (desc != Value)
         {
             tfile.Tag.Description = Value;
             tfile.Save();
@@ -49,11 +50,11 @@ public class UpdateMediaFileDescription : UpdateMediaFileMetaData
 
         return ActionOutcome.Success();
     }
-    public UpdateMediaFileDescription(FileInfo where, MovieConfiguration mc, string value) : base(where, mc,value)
+    public UpdateMediaFileDescription(FileInfo where, MovieConfiguration mc, string value) : base(where, mc, value)
     {
     }
 
-    public UpdateMediaFileDescription(FileInfo where, ProcessedEpisode episode, string value) : base(where, episode,  value)
+    public UpdateMediaFileDescription(FileInfo where, ProcessedEpisode episode, string value) : base(where, episode, value)
     {
     }
 }

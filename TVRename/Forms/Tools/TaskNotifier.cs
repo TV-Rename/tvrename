@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,7 +11,7 @@ public partial class TaskNotifier : Form
     private readonly string name;
     private readonly CancellationTokenSource cancellationToken;
 
-    public TaskNotifier( string name, CancellationTokenSource cancellationToken)
+    public TaskNotifier(string name, CancellationTokenSource cancellationToken)
     {
         this.name = name;
         this.cancellationToken = cancellationToken;
@@ -76,7 +75,7 @@ public class TaskCompletionProgress(Action<TaskProgress> handler) : Progress<Tas
     protected override void OnReport(TaskProgress progress)
     {
         int percent = (int)((double)progress.percent / maxProgress * 100);
-        base.OnReport(new TaskProgress (percent, progress.message, progress.lastUpdate));
+        base.OnReport(new TaskProgress(percent, progress.message, progress.lastUpdate));
     }
 
 }

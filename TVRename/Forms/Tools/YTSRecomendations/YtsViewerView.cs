@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -155,7 +154,7 @@ public partial class YtsViewerView : Form
         scanStartTime = TimeHelpers.LocalNow();
         try
         {
-            recs = (await YTS.API.GetMoviesAsync(progressHandler, quality, minRating,cts.Token ))
+            recs = (await YTS.API.GetMoviesAsync(progressHandler, quality, minRating, cts.Token))
                     .Select(x => new YtsViewerRow(x, mDoc))
                     .ToList();
         }

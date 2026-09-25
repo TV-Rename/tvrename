@@ -11,7 +11,7 @@ namespace TVRename;
 /// Handles a thread-safe implementation of the 'library' this will hold all the ShowItem configuration as well
 /// many methods that provide summaries of the data in the library
 /// </summary>
-public class ShowLibrary : ConcurrentDictionary<ShowConfiguration,int>
+public class ShowLibrary : ConcurrentDictionary<ShowConfiguration, int>
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -47,7 +47,7 @@ public class ShowLibrary : ConcurrentDictionary<ShowConfiguration,int>
         List<ShowConfiguration> matchingShows = [.. Shows.Where(configuration => configuration.AnyIdsMatch(newShow))];
         if (matchingShows.Count == 0)
         {
-            TryAdd(newShow,0);
+            TryAdd(newShow, 0);
         }
         else
         {
@@ -302,13 +302,13 @@ public class ShowLibrary : ConcurrentDictionary<ShowConfiguration,int>
                 bool nextToAirFound = false;
 
                 foreach (ProcessedEpisode ei in eis
-                             .Where(ei=>ei.HasAiredDate())
-                             .Where(ei=>ei.GetAirDateDt()>=limit)
-                             .OrderBy(ei=>ei.GetAirDateDt()))
+                             .Where(ei => ei.HasAiredDate())
+                             .Where(ei => ei.GetAirDateDt() >= limit)
+                             .OrderBy(ei => ei.GetAirDateDt()))
                 {
                     DateTime? dt = ei.GetAirDateDt();
-                    
-                    if (dt>now && !nextToAirFound)
+
+                    if (dt > now && !nextToAirFound)
                     {
                         nextToAirFound = true;
                         ei.NextToAir = true;

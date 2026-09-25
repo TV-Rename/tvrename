@@ -1,9 +1,9 @@
 using Alphaleonis.Win32.Filesystem;
-using System.Globalization;
-using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
-using TVRename.Forms;
+using System.Globalization;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using TVRename.Forms;
 
 namespace TVRename;
 
@@ -50,8 +50,8 @@ internal class ActionNfoShow : ActionNfo
             root.ReplaceElements("studio", cachedSeries.Networks);
             root.ReplaceElements("genre", SelectedShow.Genres);
 
-            UpdateId(root, "tvdb", SelectedShow.Provider == TVDoc.ProviderType.TheTVDB , SelectedShow.TvdbCode);
-            UpdateId(root, "tmdb", SelectedShow.Provider == TVDoc.ProviderType.TMDB , SelectedShow.TmdbCode);
+            UpdateId(root, "tvdb", SelectedShow.Provider == TVDoc.ProviderType.TheTVDB, SelectedShow.TvdbCode);
+            UpdateId(root, "tmdb", SelectedShow.Provider == TVDoc.ProviderType.TMDB, SelectedShow.TmdbCode);
             UpdateId(root, "tvmaze", SelectedShow.Provider == TVDoc.ProviderType.TVmaze, SelectedShow.TvMazeId);
             UpdateId(root, "imdb", false, SelectedShow.ImdbCode);
 
@@ -80,7 +80,7 @@ internal class ActionNfoShow : ActionNfo
         AddId(ids, "tvmaze", cachedSeries.TvMazeCode);
         AddId(ids, "tvrage", cachedSeries.TvRageCode);
         AddId(ids, "tvdb", cachedSeries.TvdbCode);
-        AddId(ids,"tmdb",cachedSeries.TmdbCode);
+        AddId(ids, "tmdb", cachedSeries.TmdbCode);
         AddId(ids, "imdb", cachedSeries.ImdbCode);
         return ids.ToString();
     }
@@ -91,7 +91,7 @@ internal class ActionNfoShow : ActionNfo
         {
             return;
         }
-        json.Add(key,id);
+        json.Add(key, id);
     }
 
     private static void AddId(JObject json, string key, int? id)
@@ -100,6 +100,6 @@ internal class ActionNfoShow : ActionNfo
         {
             return;
         }
-        AddId(json,key,id.ToString());
+        AddId(json, key, id.ToString());
     }
 }

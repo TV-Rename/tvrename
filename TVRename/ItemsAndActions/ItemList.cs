@@ -79,6 +79,6 @@ public sealed class ItemList : SafeList<Item>
 
     public IEnumerable<Action> GetActionsForQueue(Action.QueueName queueType)
     {
-        return Actions.Where(a=>a.Queue()==queueType);
+        return Actions.Where(a => a.Queue() == queueType);
     }
 }

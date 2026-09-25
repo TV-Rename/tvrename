@@ -70,19 +70,19 @@ internal class DownloadKodiMetaData : DownloadIdentifier
         try
         {
             FileInfo nfo = FileHelper.FileInFolder(file.Directory, file.RemoveExtension() + ".nfo");
-             if (nfo.Exists && System.Math.Abs(episode.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) < 1 && !forceRefresh)
-             {
-                 return null;
-             }
+            if (nfo.Exists && System.Math.Abs(episode.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) < 1 && !forceRefresh)
+            {
+                return null;
+            }
 
-             //If we do not already have plans to put the file into place
-             if (DoneNfo.Contains(nfo.FullName))
-             {
-                 return null;
-             }
+            //If we do not already have plans to put the file into place
+            if (DoneNfo.Contains(nfo.FullName))
+            {
+                return null;
+            }
 
-             DoneNfo.Add(nfo.FullName);
-             return [new ActionNfoEpisode(nfo, episode)];
+            DoneNfo.Add(nfo.FullName);
+            return [new ActionNfoEpisode(nfo, episode)];
         }
         catch (DirectoryNotFoundException ex)
         {

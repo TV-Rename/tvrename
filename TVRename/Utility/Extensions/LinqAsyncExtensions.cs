@@ -15,7 +15,7 @@ namespace TVRename;
 
 public static class LinqAsyncExtensions
 {
-    public static async Task<IEnumerable<TResult>> SelectAsync<TSource,TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult>> mapper)
+    public static async Task<IEnumerable<TResult>> SelectAsync<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult>> mapper)
     {
         // 1. Project items into tasks pairing the item with its async boolean outcome
         var evaluationTasks = source.Select(async item => mapper(item));
@@ -30,15 +30,17 @@ public static class LinqAsyncExtensions
     public static async Task<IEnumerable<TSource>> WhereAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> filter)
     {
         // 1. Project items into tasks pairing the item with its async boolean outcome
-        var evaluationTasks = source.Select(item => new {
+        var evaluationTasks = source.Select(item => new
+        {
             Item = item,
-            FilterTask = filter(item) });
+            FilterTask = filter(item)
+        });
 
         // 2. Await all conditions to resolve concurrently
-        var evaluations = await Task.WhenAll(evaluationTasks.Select(p=>p.FilterTask));
+        var evaluations = await Task.WhenAll(evaluationTasks.Select(p => p.FilterTask));
 
         // 3. Perform a standard synchronous LINQ filter on the results
-        return evaluationTasks.Where(x=>x.FilterTask.Result).Select(x => x.Item);
+        return evaluationTasks.Where(x => x.FilterTask.Result).Select(x => x.Item);
     }
 
 
@@ -51,7 +53,7 @@ public static class LinqAsyncExtensions
         bool[] evaluations = await Task.WhenAll(evaluationTasks);
 
         // 3. Perform a standard synchronous LINQ filter on the results
-        return evaluations.All(x=>x);
+        return evaluations.All(x => x);
     }
 
     public static async Task<bool> AnyAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> filter)
@@ -69,7 +71,8 @@ public static class LinqAsyncExtensions
     public static async Task<TSource> FirstAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> filter)
     {
         // 1. Project items into tasks pairing the item with its async boolean outcome
-        var evaluationTasks = source.Select(item => new {
+        var evaluationTasks = source.Select(item => new
+        {
             Item = item,
             FilterTask = filter(item)
         });

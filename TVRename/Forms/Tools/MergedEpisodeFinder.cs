@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -133,7 +132,7 @@ public partial class MergedEpisodeFinder : Form
 
         rightClickMenu.AddSeparator();
         rightClickMenu.Add("Add Rule", (_, _) => AddRule(mlastSelected, si, mLastClicked));
-        
+
         rightClickMenu.Show(pt);
     }
 

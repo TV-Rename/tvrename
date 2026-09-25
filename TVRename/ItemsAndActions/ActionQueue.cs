@@ -36,7 +36,7 @@ public class ActionQueue(string name, int parallelLimit, IEnumerable<Action> act
     {
         Logger.Info($"ActionQueue {name} requested to be paused");
         _pauseEvent.Reset(); // Wake up the thread
-    }   
+    }
 
     /// <summary>
     /// Asks for execution to resume

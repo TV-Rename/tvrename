@@ -20,7 +20,7 @@ public class PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, stri
     internal int ProviderCode = -1;
 
     public virtual string FolderName => directory.FullName;
-    public virtual string Show => (CodeKnown ? CachedSeries?.Name  : RefinedHint) ?? string.Empty;
+    public virtual string Show => (CodeKnown ? CachedSeries?.Name : RefinedHint) ?? string.Empty;
     public virtual string Type => HasSeasonFoldersGuess ? "Folder per season" : "Flat";
     public virtual string SourceCode => CodeKnown ? ProviderCode.ToString() : string.Empty;
     public virtual int ImageTypeName => CodeKnown && !string.IsNullOrWhiteSpace(FolderName) ? 1 : 0;
@@ -75,6 +75,6 @@ public class PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, stri
 
     internal IEnumerable<FileInfo> FindFiles(string fileName)
     {
-        return directory.EnumerateFiles(fileName) ;
+        return directory.EnumerateFiles(fileName);
     }
 }

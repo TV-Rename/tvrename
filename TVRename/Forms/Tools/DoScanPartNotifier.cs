@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,7 +8,7 @@ public class DoScanPartNotifier : TaskNotifier
 {
     private readonly PostScanActivity activity;
 
-    public DoScanPartNotifier(PostScanActivity activity, CancellationTokenSource cancellationToken) :base (activity.ActivityName(), cancellationToken)
+    public DoScanPartNotifier(PostScanActivity activity, CancellationTokenSource cancellationToken) : base(activity.ActivityName(), cancellationToken)
     {
         this.activity = activity;
     }

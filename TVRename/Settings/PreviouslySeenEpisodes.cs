@@ -37,7 +37,7 @@ public class PreviouslySeenEpisodes : List<int>
             }
             catch (OverflowException ex)
             {
-                Logger.Fatal($"Could not add episode Id {n.Value} to previouslyseenepisodes",ex);
+                Logger.Fatal($"Could not add episode Id {n.Value} to previouslyseenepisodes", ex);
             }
         }
     }

@@ -14,7 +14,7 @@ internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings
     protected override async Task DoCheckAsync(SetProgressDelegate progress)
     {
         int totalDownloadFolders = TVSettings.Instance.DownloadFolders.Count;
-        ThreadSafeCounter c = new(); 
+        ThreadSafeCounter c = new();
 
         foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToList())
         {

@@ -25,7 +25,7 @@ public class MediaNotFoundException : Exception
         SourceType = sourceType;
     }
 
-    public MediaNotFoundException(ISeriesSpecifier mc, string message, TVDoc.ProviderType showIdProvider, TVDoc.ProviderType errorProvider, MediaConfiguration.MediaType sourceType, Exception ex) :base (message,ex)
+    public MediaNotFoundException(ISeriesSpecifier mc, string message, TVDoc.ProviderType showIdProvider, TVDoc.ProviderType errorProvider, MediaConfiguration.MediaType sourceType, Exception ex) : base(message, ex)
     {
         Media = mc;
         ShowIdProvider = showIdProvider;

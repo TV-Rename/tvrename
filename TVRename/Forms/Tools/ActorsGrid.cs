@@ -14,8 +14,8 @@ using System.Windows.Forms;
 
 namespace TVRename;
 
-using SourceGrid.Cells;
 using Forms;
+using SourceGrid.Cells;
 
 /// <summary>
 /// Summary for ActorsGrid
@@ -326,7 +326,7 @@ public partial class ActorsGrid : Form
     private void bnSave_Click(object sender, EventArgs e)
     {
         saveFile.Filter = "PNG Files (*.png)|*.png|All Files (*.*)|*.*";
-        if (UiHelpers.ShowDialogAndOk(saveFile,this))
+        if (UiHelpers.ShowDialogAndOk(saveFile, this))
         {
             try
             {

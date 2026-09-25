@@ -1,7 +1,6 @@
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading.Tasks;
 using Alphaleonis.Win32.Filesystem;
+using System.Collections.Immutable;
+using System.Threading.Tasks;
 using WinCopies.Util;
 
 namespace TVRename;
@@ -18,7 +17,7 @@ internal sealed class MediaMetaData : DownloadIdentifier
 
         if (tfile.Tag.Title != file.Name)
         {
-            returnActions.Add(new UpdateMediaFileTitle(file,episode,file.Name));
+            returnActions.Add(new UpdateMediaFileTitle(file, episode, file.Name));
         }
 
         if (episode.Overview.HasValue() && tfile.Tag.Description != episode.Overview)
@@ -26,7 +25,7 @@ internal sealed class MediaMetaData : DownloadIdentifier
             returnActions.Add(new UpdateMediaFileDescription(file, episode, episode.Overview));
         }
 
-        if (episode.Overview.HasValue() &&  tfile.Tag.Comment != episode.Overview)
+        if (episode.Overview.HasValue() && tfile.Tag.Comment != episode.Overview)
         {
             returnActions.Add(new UpdateMediaFileComment(file, episode, episode.Overview));
         }
@@ -92,10 +91,10 @@ internal sealed class MediaMetaData : DownloadIdentifier
 
     private static bool NotEqual(string[] tagGenres, SafeList<string> dataGenres)
     {
-        if ( tagGenres.Length != dataGenres.Count)
+        if (tagGenres.Length != dataGenres.Count)
         {
             return true;
         }
-        return !string.Equals(tagGenres.ToImmutableSortedSet().ToCsv(),dataGenres.ToImmutableSortedSet().ToCsv());
+        return !string.Equals(tagGenres.ToImmutableSortedSet().ToCsv(), dataGenres.ToImmutableSortedSet().ToCsv());
     }
 }

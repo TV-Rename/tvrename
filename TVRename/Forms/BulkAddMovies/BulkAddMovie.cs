@@ -240,7 +240,7 @@ public partial class BulkAddMovie : Form
         {
             //OK
         }
-        
+
         olvFMNewShows.UpdateObjects(engine.AddItems);
         olvFMNewShows.Update();
 
@@ -387,7 +387,7 @@ public partial class BulkAddMovie : Form
         VolatileCounter.Reset();
 
         try
-        { 
+        {
             await Parallel.ForEachAsync(
                 engine.AddItems,
                 options,
@@ -414,7 +414,7 @@ public partial class BulkAddMovie : Form
                     ((IProgress<NewMovieProgressReport>)progressHandler).Report(report);
                 }
                 );
-            }
+        }
         catch (OperationCanceledException)
         {
             //OK

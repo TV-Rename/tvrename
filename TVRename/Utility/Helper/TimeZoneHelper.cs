@@ -29,7 +29,7 @@ public static class TimeZoneHelper
             return false;
         }
 
-        string[] streamers = { "Netflix","Apple TV+","Disney+","Amazon Prime Video","Paramount+", "Hulu", "Peacock", "Discovery+" };
+        string[] streamers = { "Netflix", "Apple TV+", "Disney+", "Amazon Prime Video", "Paramount+", "Hulu", "Peacock", "Discovery+" };
 
         return streamers.Contains(network);
     }

@@ -37,7 +37,7 @@ public partial class AddEditMovie : Form, ICodeWindow
         selectedShow = si;
         mDoc = doc;
         codeFinderForm =
-            new MovieCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider,this) { Dock = DockStyle.Fill };
+            new MovieCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider, this) { Dock = DockStyle.Fill };
 
         InitializeComponent();
         HasChanged = false;
@@ -571,7 +571,7 @@ public partial class AddEditMovie : Form, ICodeWindow
             folderBrowser.SelectedPath = cbDirectory.Text;
         }
 
-        if (UiHelpers.ShowDialogAndOk(folderBrowser,this))
+        if (UiHelpers.ShowDialogAndOk(folderBrowser, this))
         {
             txtFolder.Text = folderBrowser.SelectedPath;
         }

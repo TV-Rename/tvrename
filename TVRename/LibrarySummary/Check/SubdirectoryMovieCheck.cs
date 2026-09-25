@@ -37,7 +37,7 @@ internal class SubdirectoryMovieCheck(MovieConfiguration movie, TVDoc doc) : Mov
         }
         catch (UnauthorizedAccessException uae)
         {
-            throw new FixCheckException(message + ": " + uae.Message,uae);
+            throw new FixCheckException(message + ": " + uae.Message, uae);
         }
         catch (System.IO.DirectoryNotFoundException)
         {
@@ -45,7 +45,7 @@ internal class SubdirectoryMovieCheck(MovieConfiguration movie, TVDoc doc) : Mov
         }
         catch (System.IO.PathTooLongException ptle)
         {
-            throw new FixCheckException(message + ": " + ptle.Message,ptle);
+            throw new FixCheckException(message + ": " + ptle.Message, ptle);
         }
         catch (System.IO.IOException ex)
         {

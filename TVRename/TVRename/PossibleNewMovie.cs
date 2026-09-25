@@ -165,7 +165,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
         }
         catch (SourceConnectivityException ex)
         {
-            Logger.Warn( $"Could not match the possible movie (SourceConnectivityException: {ex.Message}): {this}");
+            Logger.Warn($"Could not match the possible movie (SourceConnectivityException: {ex.Message}): {this}");
         }
         catch (SourceConsistencyException ex)
         {
@@ -221,7 +221,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
         }
         catch (RegexMatchTimeoutException ex)
         {
-            Logger.Warn(ex,$"Could not parse hints for new movie");
+            Logger.Warn(ex, $"Could not parse hints for new movie");
         }
         return null;
     }

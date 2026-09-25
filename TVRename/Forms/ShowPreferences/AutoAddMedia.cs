@@ -24,14 +24,14 @@ public partial class AutoAddMedia : Form, ICodeWindow
 
         lblFileName.Text = "Filename: " + file.FullName;
 
-        tvCodeFinder = new TvCodeFinder("", TVDoc.ProviderType.libraryDefault,this) { Dock = DockStyle.Fill };
-        movieCodeFinder = new MovieCodeFinder("", TVDoc.ProviderType.libraryDefault,this) { Dock = DockStyle.Fill };
+        tvCodeFinder = new TvCodeFinder("", TVDoc.ProviderType.libraryDefault, this) { Dock = DockStyle.Fill };
+        movieCodeFinder = new MovieCodeFinder("", TVDoc.ProviderType.libraryDefault, this) { Dock = DockStyle.Fill };
 
         tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
         movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
 
         SingleTvShowFound = (tvCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultProvider).Result) && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
-        SingleMovieFound = ( movieCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultMovieProvider).Result) && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && assumeMovie;
+        SingleMovieFound = (movieCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultMovieProvider).Result) && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && assumeMovie;
 
         originalHint = hint;
 

@@ -1,12 +1,9 @@
 using BrightIdeasSoftware;
-using CefSharp.DevTools.BluetoothEmulation;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using TMDbLib.Objects.Movies;
 using TVRename.Forms.Tools;
 
 namespace TVRename.Forms;
@@ -83,7 +80,8 @@ public partial class SettingsReview : Form
             set.Add(new FolderBaseMovieCheck(movie, mDoc));
             set.Add(new MovieFolderTypeCheck(movie, mDoc));
 
-            ((IProgress<ProgressReport>)progressHandler).Report(new ProgressReport() {
+            ((IProgress<ProgressReport>)progressHandler).Report(new ProgressReport()
+            {
                 ProgressPercentage = 100 * currentRecord.Increment() / total,
                 UpdateText = movie.ShowName
             });

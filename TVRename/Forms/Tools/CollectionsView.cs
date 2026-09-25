@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -233,6 +231,6 @@ public partial class CollectionsView : Form
     {
         cts.Cancel();
 
-        if (scanThread is not null)  await scanThread;
+        if (scanThread is not null) await scanThread;
     }
 }

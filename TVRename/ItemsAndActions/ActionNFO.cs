@@ -118,7 +118,7 @@ public abstract class ActionNfo : ActionWriteMetadata
 
     protected static void UpdateRatings(XElement root, string rating, int votes)
     {
-        if (!rating.HasValue() ||  rating == "0" || votes == 0)
+        if (!rating.HasValue() || rating == "0" || votes == 0)
         {
             return;
         }

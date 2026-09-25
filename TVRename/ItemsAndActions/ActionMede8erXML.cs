@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -52,7 +51,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
             }
             else if (Movie != null)// show overview (Series.xml)
             {
-                WriteMovieXml(); 
+                WriteMovieXml();
             }
 
             return ActionOutcome.Success();
@@ -234,7 +233,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
     #endregion Action
 
     #region ComparisonStuff
-  
+
     public override bool SameAs(Item o)
     {
         return o is ActionMede8erXML xml && xml.Where == Where;
@@ -287,7 +286,7 @@ public class ActionMede8erXML : ActionWriteMetadata, IEquatable<ActionMede8erXML
         return Equals((ActionMede8erXML)obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(Where,Series);
+    public override int GetHashCode() => HashCode.Combine(Where, Series);
 
     #endregion
 }

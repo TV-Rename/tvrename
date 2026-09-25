@@ -65,7 +65,7 @@ internal class TvdbAccuracyCheck
             Issues.Add($"Failed to compare {si.Name} as it no longer exists on TVDB {si.TvdbId}.");
         }
     }
-    
+
     public async Task ServerAccuracyCheckAsync(CachedSeriesInfo si, IProgress<DownloadProgressReport>? p)
     {
         Logger.Info($"Checking Accuracy of {si.Name}({si.Id()}) on TVDB");
@@ -73,7 +73,7 @@ internal class TvdbAccuracyCheck
         p?.Report(new DownloadProgressReport
         {
             Provider = TVDoc.ProviderType.TheTVDB,
-            Message = $"{ si.Name }({ si.Id() })",
+            Message = $"{si.Name}({si.Id()})",
             UpdateType = DownloadProgressReport.Type.EpisodeDownload
         });
 
@@ -97,7 +97,7 @@ internal class TvdbAccuracyCheck
         }
         catch (SourceConsistencyException ex)
         {
-            Logger.Error($"Failed to compare {si.Name} as we could not download the cachedSeries details.",ex);
+            Logger.Error($"Failed to compare {si.Name} as we could not download the cachedSeries details.", ex);
         }
         catch (MediaNotFoundException)
         {

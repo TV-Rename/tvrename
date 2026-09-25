@@ -1,12 +1,12 @@
-using DaveChambers.FolderBrowserDialogEx;
 using BrightIdeasSoftware;
+using DaveChambers.FolderBrowserDialogEx;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using NLog;
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Microsoft.WindowsAPICodePack.Taskbar;
 
 namespace TVRename.Forms;
 
@@ -41,7 +41,7 @@ public static class UiHelpers
     {
         try
         {
-            if (d.SelectedPath.StartsWith(@"\",StringComparison.OrdinalIgnoreCase))
+            if (d.SelectedPath.StartsWith(@"\", StringComparison.OrdinalIgnoreCase))
             {
                 d.SelectedPath = d.SelectedPath.RemoveFirstCharacter();
             }
@@ -134,7 +134,7 @@ public static class UiHelpers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex,"Failed to Invoke");
+                Logger.Error(ex, "Failed to Invoke");
             }
         }
     }

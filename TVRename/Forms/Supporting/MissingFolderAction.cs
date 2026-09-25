@@ -67,7 +67,7 @@ public partial class MissingFolderAction : Form
     private void bnBrowse_Click(object sender, System.EventArgs e)
     {
         folderBrowser.SelectedPath = FolderName;
-        if (UiHelpers.ShowDialogAndOk(folderBrowser,this))
+        if (UiHelpers.ShowDialogAndOk(folderBrowser, this))
         {
             Outcome = FaResult.kfaDifferentFolder;
             FolderName = folderBrowser.SelectedPath;

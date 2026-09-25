@@ -56,7 +56,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
 
         Task.Run(async () => { doc = await LoadSettingsAsync(parameters); }).Wait();
 
-        
+
         if (TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs)
         {
             SetupLogging();

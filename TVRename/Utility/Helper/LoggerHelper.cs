@@ -1,7 +1,7 @@
 using NLog;
+using System;
 using System.Diagnostics;
 using System.Reflection;
-using System;
 using System.Text;
 using System.Text.RegularExpressions;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -10,7 +10,7 @@ namespace TVRename;
 
 public static class LoggerHelper
 {
-    public static ILogger AsILogger(this Logger baseLogger, string details,string source) => new NlogILogger(baseLogger,details,source);
+    public static ILogger AsILogger(this Logger baseLogger, string details, string source) => new NlogILogger(baseLogger, details, source);
 
     public static string ErrorText(this Exception e)
     {

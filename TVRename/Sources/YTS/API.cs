@@ -3,13 +3,11 @@ using Newtonsoft.Json.Linq;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using TMDbLib.Objects.Authentication;
 
 namespace TVRename.YTS;
 
@@ -47,13 +45,13 @@ public static class API
         catch (JsonReaderException jre)
         {
             Logger.Error($"{errorMessage} due to {jre.ErrorText()}");
-            throw new SourceConsistencyException(jre.Message,TVDoc.ProviderType.libraryDefault,jre);
+            throw new SourceConsistencyException(jre.Message, TVDoc.ProviderType.libraryDefault, jre);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
             Logger.LogHttpRequestException(errorMessage, wex);
             // ReSharper disable once ThrowFromCatchWithNoInnerException
-            throw new SourceConnectivityException(errorMessage,wex);
+            throw new SourceConnectivityException(errorMessage, wex);
         }
         catch (System.Threading.Tasks.TaskCanceledException ex)
         {
@@ -117,7 +115,7 @@ public static class API
     {
         List<YtsMovie> downloadedMovies = [];
 
-        int totalPages = (int) Math.Ceiling( await GetTotalMovies(resolution,minRating) / 50D);
+        int totalPages = (int)Math.Ceiling(await GetTotalMovies(resolution, minRating) / 50D);
         ThreadSafeCounter c = new();
 
         await Parallel.ForEachAsync(
@@ -178,7 +176,7 @@ public static class API
 
         if (updatesJson["status"]?.ToString() is "ok" && updatesJson["data"]?["movies"] is not null)
         {
-            return updatesJson["data"]?["movie_count"]?.ToObject<int>()   ?? throw new Exception();
+            return updatesJson["data"]?["movie_count"]?.ToObject<int>() ?? throw new Exception();
         }
         throw new Exception("Could not parse json from YTS");
     }

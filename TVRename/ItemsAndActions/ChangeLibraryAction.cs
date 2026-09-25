@@ -1,5 +1,5 @@
-using System.Threading;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TVRename;
@@ -52,7 +52,7 @@ internal class ActionChangeLibraryRemoveMovie : ActionChangeLibrary, IEquatable<
 
     public override bool SameAs(Item o) =>
         o is ActionChangeLibraryRemoveMovie cmr && Movie == cmr.Movie;
-   
+
     public override bool Equals(object? obj) => obj is ActionChangeLibraryRemoveMovie rs && Equals(rs);
     public bool Equals(ActionChangeLibraryRemoveMovie? other)
     {

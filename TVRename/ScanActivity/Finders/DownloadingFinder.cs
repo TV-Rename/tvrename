@@ -30,7 +30,7 @@ public abstract class DownloadingFinder(TVDoc doc, TVDoc.ScanSettings settings) 
         ItemList newList = [];
         ItemList toRemove = [];
         int c = ActionList.Missing.Count + 1;
-        ThreadSafeCounter n = new(); 
+        ThreadSafeCounter n = new();
         UpdateStatus(n.Increment(), c, "Searching torrent queue...");
         foreach (ItemMissing? action in ActionList.Missing.ToList())
         {

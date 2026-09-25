@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using Alphaleonis.Win32.Filesystem;
 using NodaTime;
 using System;
 using System.Collections.Concurrent;
@@ -47,7 +46,7 @@ public class ShowConfiguration : MediaConfiguration
     public string CustomNamingFormat;
     public bool ManualFoldersReplaceAutomatic;
 
-    private readonly EpisodeDenormalisations EpisodeCaches = new ();
+    private readonly EpisodeDenormalisations EpisodeCaches = new();
 
     public string ShowTimeZone { get; internal set; }
     private DateTimeZone? seriesTimeZone;
@@ -731,7 +730,8 @@ public class ShowConfiguration : MediaConfiguration
                     continue;
                 }
 
-                if (checkExist && !await FileHelper.DirectoryExistsAsync(newName)) { 
+                if (checkExist && !await FileHelper.DirectoryExistsAsync(newName))
+                {
                     continue;
                 }
 
@@ -802,7 +802,7 @@ public class ShowConfiguration : MediaConfiguration
             catch (OverflowException ex)
             {
                 LOGGER.Error(
-                    $"{Name} has a problem with series in {Order.PrettyPrint()} order - max={maxSeasonToUse}, keys = {EpisodeCaches.SeasonEpisodes.Keys.ToCsv()}, numberOfEps = OVERFLOW",ex);
+                    $"{Name} has a problem with series in {Order.PrettyPrint()} order - max={maxSeasonToUse}, keys = {EpisodeCaches.SeasonEpisodes.Keys.ToCsv()}, numberOfEps = OVERFLOW", ex);
             }
 
             return true;
@@ -859,7 +859,7 @@ public class ShowConfiguration : MediaConfiguration
     {
         SeasonRules[mSeasonNumber] = workingRuleSet;
     }
-    
+
     internal void UpdateEpisodeCaches()
     {
         {
@@ -876,7 +876,7 @@ public class ShowConfiguration : MediaConfiguration
                 return;
             }
 
-            EpisodeCaches.UpdateEpisodeDictionary(ser,this);
+            EpisodeCaches.UpdateEpisodeDictionary(ser, this);
 
             foreach (int snum in AppropriateSeasons().Keys.ToList())
             {
@@ -1024,7 +1024,7 @@ public class ShowConfiguration : MediaConfiguration
         }
     }
 
-    public  void ApplyRules(List<ProcessedEpisode> eis, IEnumerable<ShowRule> rules)
+    public void ApplyRules(List<ProcessedEpisode> eis, IEnumerable<ShowRule> rules)
     {
         foreach (ShowRule sr in rules)
         {
@@ -1062,7 +1062,7 @@ public class ShowConfiguration : MediaConfiguration
 
                 case RuleAction.kMerge:
                 case RuleAction.kCollapse:
-                    MergeEpisodes(episodes,  sr.DoWhatNow, n1, n2, sr.UserSuppliedText);
+                    MergeEpisodes(episodes, sr.DoWhatNow, n1, n2, sr.UserSuppliedText);
                     break;
 
                 case RuleAction.kSwap:
@@ -1070,7 +1070,7 @@ public class ShowConfiguration : MediaConfiguration
                     break;
 
                 case RuleAction.kInsert:
-                    InsertEpisode(episodes,  n1, sr.UserSuppliedText, sr);
+                    InsertEpisode(episodes, n1, sr.UserSuppliedText, sr);
                     break;
             }
 
@@ -1193,7 +1193,7 @@ public class ShowConfiguration : MediaConfiguration
         }
     }
 
-    private void MergeEpisodes(List<ProcessedEpisode> eis,  RuleAction action, int fromIndex, int toIndex, string? newName)
+    private void MergeEpisodes(List<ProcessedEpisode> eis, RuleAction action, int fromIndex, int toIndex, string? newName)
     {
         int ec = eis.Count;
         if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec) && fromIndex < toIndex)
@@ -1378,7 +1378,7 @@ public class ShowConfiguration : MediaConfiguration
                         airedSeasons.TryRemove(kvp.Key, out _);
                     }
                 }
-                
+
                 foreach (KeyValuePair<int, ProcessedSeason> kvp in NewDvdSeasons)
                 {
                     dvdSeasons[kvp.Key] = kvp.Value;
@@ -1392,7 +1392,7 @@ public class ShowConfiguration : MediaConfiguration
                 }
             }
         }
-        
+
         private static ProcessedSeason GetOrAddSeason(int num, int seasonId, ShowConfiguration showConfig, ConcurrentDictionary<int, ProcessedSeason> dict, ProcessedSeason.SeasonType type)
         {
             if (dict.TryGetValue(num, out ProcessedSeason? season))

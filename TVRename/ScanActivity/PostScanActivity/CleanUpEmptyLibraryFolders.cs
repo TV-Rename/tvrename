@@ -25,7 +25,7 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 
         foreach (ShowConfiguration si in libraryShows)
         {
-            UpdateStatus(n.Increment(),totalRecords, si.ShowName, lastUpdate);
+            UpdateStatus(n.Increment(), totalRecords, si.ShowName, lastUpdate);
 
             foreach (string folderName in (await si.AllProposedFolderLocationsAsync()).SelectMany(folderLocation => folderLocation.Value))
             {

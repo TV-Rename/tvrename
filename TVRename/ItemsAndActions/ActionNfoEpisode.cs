@@ -2,7 +2,6 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using TVRename.Forms;

@@ -241,7 +241,7 @@ public class BulkAddSeriesManager(TVDoc doc)
                         Logger.Error(e, $"Could not parse {regex} to tell whether {subDir.Name} is a subfolder - ignoring this regex.");
                         continue;
                     }
-                    return (true,subDirs,folderFormat);
+                    return (true, subDirs, folderFormat);
                 }
             }
 
@@ -261,7 +261,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         {
             Logger.Warn($"Could not access {di.FullName} (or a subdir), got an IO Exception");
         }
-        return (false,null,string.Empty);
+        return (false, null, string.Empty);
     }
 
     public async Task<(bool finished, DirectoryInfo[]? subDirs)> CheckFolderForShowsAsync(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
@@ -279,7 +279,7 @@ public class BulkAddSeriesManager(TVDoc doc)
             } // for each showitem
 
             //We don't have it already
-            (bool hasSeasonFolders, DirectoryInfo[]? subDirectories, string folderFormat)  = await HasSeasonFoldersAsync(di2);
+            (bool hasSeasonFolders, DirectoryInfo[]? subDirectories, string folderFormat) = await HasSeasonFoldersAsync(di2);
 
             //This is an indication that something is wrong
             if (subDirectories is null)
@@ -408,7 +408,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         {
             handler?.Report(new ScanProgressReport
             {
-                ProgressPercentage = (int) ((100 * c.Increment()) / total),
+                ProgressPercentage = (int)((100 * c.Increment()) / total),
                 UpdateText = di2.Name
             });
 
@@ -476,10 +476,10 @@ public class BulkAddSeriesManager(TVDoc doc)
         foreach (string folder in TVSettings.Instance.LibraryFolders)
         {
             handler?.Report(new ScanProgressReport
-                {
-                    ProgressPercentage = (int)((100 * c2++) / c),
-                    UpdateText = folder
-                });
+            {
+                ProgressPercentage = (int)((100 * c2++) / c),
+                UpdateText = folder
+            });
 
             DirectoryInfo di = new(folder);
             if (TVSettings.Instance.MovieLibraryFolders.Contains(folder))
@@ -496,9 +496,9 @@ public class BulkAddSeriesManager(TVDoc doc)
             }
         }
         handler?.Report(new ScanProgressReport
-            {
-                ProgressPercentage = 100,
-                UpdateText = "Complete"
-            });
+        {
+            ProgressPercentage = 100,
+            UpdateText = "Complete"
+        });
     }
 }

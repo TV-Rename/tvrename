@@ -1,6 +1,6 @@
+using NLog;
 using System;
 using System.IO;
-using NLog;
 
 namespace TVRename;
 
@@ -8,7 +8,7 @@ public static class BEncodeLoader
 {
     private static BTItem ReadString(this FileStream sr, long length)
     {
-        return new BTString(sr.ReadBytes(length) );
+        return new BTString(sr.ReadBytes(length));
     }
 
     private static byte[] ReadBytes(this FileStream sr, long length)
@@ -42,7 +42,7 @@ public static class BEncodeLoader
             }
         }
 
-        return new BTInteger( neg ?  -r : r);
+        return new BTInteger(neg ? -r : r);
     }
 
     private static int AsAsciiIntToInt(this int asciiInt) => asciiInt - '0';
@@ -59,7 +59,7 @@ public static class BEncodeLoader
 
             if (next.Type != BTChunk.kString)
             {
-                return new BTError( "Didn't get string as first of pair in dictionary" );
+                return new BTError("Didn't get string as first of pair in dictionary");
             }
 
             BTDictionaryItem di = new(((BTString)next).AsString(), ReadNext(sr));
@@ -118,7 +118,7 @@ public static class BEncodeLoader
         }
         catch (FormatException f)
         {
-            Logger.Error(f,$"Could not parse [{r}] in GetStringLength");
+            Logger.Error(f, $"Could not parse [{r}] in GetStringLength");
             throw;
         }
     }

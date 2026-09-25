@@ -48,7 +48,7 @@ internal class DownloadEpisodeJpg : DownloadIdentifier
         }
         catch (DirectoryNotFoundException ex)
         {
-            LOGGER.Warn(ex,"Failed to find directory to look for images for episode");
+            LOGGER.Warn(ex, "Failed to find directory to look for images for episode");
             return null;
         }
     }

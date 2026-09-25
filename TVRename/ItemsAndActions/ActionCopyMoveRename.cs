@@ -85,7 +85,7 @@ public class ActionCopyMoveRename : ActionFileOperation
 
         try
         {
-            await FileHelper.CopyMoveFileAsync(From, To, IsMoveRename(), new Progress<FileHelper.CopyMoveProgress>((info) => { PercentDone = info.Percentage; }),cancellationToken );
+            await FileHelper.CopyMoveFileAsync(From, To, IsMoveRename(), new Progress<FileHelper.CopyMoveProgress>((info) => { PercentDone = info.Percentage; }), cancellationToken);
 
             LOGGER.Info($"{Name} completed: {From.FullName} to {To.FullName} ");
 
@@ -154,7 +154,7 @@ public class ActionCopyMoveRename : ActionFileOperation
         return ActionOutcome.Success();
     }
 
-    
+
     private void UpdateStats(TVRenameStats stats)
     {
         switch (Operation)
@@ -272,7 +272,7 @@ public class ActionCopyMoveRename : ActionFileOperation
         => IsMoveRename(Operation);
 
     private static bool IsMoveRename(ActionCopyMoveRename.Op operation) // same thing to the OS
-        => operation == Op.move || operation  == Op.rename;
+        => operation == Op.move || operation == Op.rename;
 
 
     public bool SameSource(ActionCopyMoveRename o) => FileHelper.Same(From, o.From);

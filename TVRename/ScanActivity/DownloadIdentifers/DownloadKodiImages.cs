@@ -93,7 +93,7 @@ internal class DownloadKodiImages : DownloadIdentifier
             }
             catch (DirectoryNotFoundException ex)
             {
-                LOGGER.Warn(ex,"Failed to download images");
+                LOGGER.Warn(ex, "Failed to download images");
             }
 
             return theActionList;

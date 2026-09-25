@@ -11,7 +11,6 @@ using MediaInfo;
 using Microsoft.WindowsAPICodePack.COMNative.Shell.PropertySystem;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
-using Microsoft.WindowsAPICodePack.Win32Native.NamedPipe;
 using Microsoft.WindowsAPICodePack.Win32Native.Shell;
 using NLog;
 using System;
@@ -354,7 +353,7 @@ public static class FileHelper
                 $"Unable to use shell to access file as part of {operation} for {movieFile.FullName}. Platform is not supported: {pe.ErrorText()}");
         }
 
-        MediaInfoWrapper mw = new(movieFile.FullName, Logger.AsILogger(movieFile.FullName,"MediaInfo"));
+        MediaInfoWrapper mw = new(movieFile.FullName, Logger.AsILogger(movieFile.FullName, "MediaInfo"));
         int returnVal = meExtractMethod(mw);
 
         if (returnVal != 0)
@@ -564,7 +563,7 @@ public static class FileHelper
 
     public static FileInfo FileInFolder(string dir, string fn) => new(dir.EnsureEndsWithSeparator() + fn);
 
-    
+
     public static FileInfo FileInFolder(DirectoryInfo di, string fn) => FileInFolder(di.FullName, fn);
 
     // see if showname is somewhere in filename
@@ -840,7 +839,7 @@ public static class FileHelper
         //we use a temp name just in case we are interrupted or some other problem occurs
         string tempName = TempFor(To);
 
-        if (! await DirectoryExistsAsync(To.Directory.FullName))
+        if (!await DirectoryExistsAsync(To.Directory.FullName))
         {
             Directory.CreateDirectory(To.Directory.FullName);
         }

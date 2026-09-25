@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -127,7 +126,7 @@ public partial class YtsRecommendationView : Form
         rightClickMenu.Close();
     }
 
-    
+
     private class RecommendationMovieStructure : Dictionary<int, Tuple<API.YtsMovie, List<Tuple<API.YtsMovie, MovieConfiguration>>>>
     {
         internal void Add(API.YtsMovie relatedMovie, MovieConfiguration existingMovie, API.YtsMovie ytsMovie)
@@ -180,9 +179,11 @@ public partial class YtsRecommendationView : Form
 
             await Parallel.ForEachAsync(
                 inputMovies,
-                new ParallelOptions {
-                    MaxDegreeOfParallelism = 2* TVSettings.Instance.ParallelDownloads,
-                    CancellationToken = cts.Token },
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = 2 * TVSettings.Instance.ParallelDownloads,
+                    CancellationToken = cts.Token
+                },
                 async (existingMovie, token) =>
                 {
                     if (token.IsCancellationRequested)
@@ -257,7 +258,7 @@ public partial class YtsRecommendationView : Form
             Download(lastSelected, quality);
         });
 
-        rightClickMenu.Add("Add Movie to Library", async (_, _) =>  await AddMovieToLibraryAsync(lastSelected));
+        rightClickMenu.Add("Add Movie to Library", async (_, _) => await AddMovieToLibraryAsync(lastSelected));
         rightClickMenu.Add("Download Movie", (_, _) => Download(lastSelected, quality));
     }
 

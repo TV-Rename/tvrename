@@ -29,7 +29,7 @@ internal abstract class DownloadIdentifier
 
     public async Task<ItemList?> ProcessMovieAsync(MovieConfiguration movie, FileInfo file) => await ProcessMovieAsync(movie, file, false);
 
-    public virtual  async Task<ItemList?> ProcessMovieAsync(MovieConfiguration movie, FileInfo file, bool forceRefresh) => null;
+    public virtual async Task<ItemList?> ProcessMovieAsync(MovieConfiguration movie, FileInfo file, bool forceRefresh) => null;
 
     public virtual void NotifyComplete(FileInfo file)
     {

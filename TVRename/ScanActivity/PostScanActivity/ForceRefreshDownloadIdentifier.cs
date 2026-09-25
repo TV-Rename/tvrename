@@ -1,9 +1,6 @@
 using Alphaleonis.Win32.Filesystem;
-using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TVRename.Forms.Tools;
 
 namespace TVRename;
 
@@ -34,7 +31,7 @@ internal class ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc d
 
             MDoc.TheActionList.AddNullableRange(await cx.ForceUpdateShowAsync(DownloadIdentifier.DownloadType.downloadMetaData, si));
 
-            UpdateStatus( currentRecord.Increment(), totalRecords,"Updating TV Shows" ,si.Name ?? string.Empty);
+            UpdateStatus(currentRecord.Increment(), totalRecords, "Updating TV Shows", si.Name ?? string.Empty);
         }
 
         foreach (MovieConfiguration si in MDoc.FilmLibrary.GetSortedMovies())
@@ -50,10 +47,10 @@ internal class ForceRefreshDownloadIdentifier(DownloadIdentifier action, TVDoc d
             }
             foreach (FileInfo file in (await si.MovieFilesAsync()))
             {
-                MDoc.TheActionList.AddNullableRange(await cx.ForceUpdateMovieAsync(DownloadIdentifier.DownloadType.downloadMetaData, si,file));
+                MDoc.TheActionList.AddNullableRange(await cx.ForceUpdateMovieAsync(DownloadIdentifier.DownloadType.downloadMetaData, si, file));
             }
 
-            UpdateStatus(currentRecord.Increment(), totalRecords, "Updating Movies",si.Name ?? string.Empty);
+            UpdateStatus(currentRecord.Increment(), totalRecords, "Updating Movies", si.Name ?? string.Empty);
         }
     }
 }

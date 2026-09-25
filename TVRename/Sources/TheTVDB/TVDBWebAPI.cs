@@ -1,13 +1,13 @@
+using Humanizer;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Humanizer;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NLog;
 
 namespace TVRename.TheTVDB;
 
@@ -102,7 +102,8 @@ public static class TvdbWebApi
     private static async Task<JObject> GetUrlWithErrorHandlingAsync(ISeriesSpecifier? code, string uri, Language language)
     {
         return await HandleWebErrorsWithNotFoundForAsync(
-            async() => {
+            async () =>
+            {
                 Logger.Trace($"   Downloading {uri} in {language.EnglishName} ({language.TVDBCode()}");
                 string message = $"Error obtaining {uri} in {language.EnglishName} ({language.TVDBCode()})";
                 return await JsonHttpGetRequestAsync(uri, null, TokenProvider, language.TVDBCode(), true)
@@ -119,7 +120,8 @@ public static class TvdbWebApi
     private static async Task<JObject> GetUrlAsync(string uri, Language language)
     {
         return await HandleWebErrorsForAsync(
-            async () => {
+            async () =>
+            {
                 Logger.Trace($"   Downloading {uri} in {language.EnglishName} ({language.TVDBCode()}");
                 string message = $"Error obtaining {uri} in {language.EnglishName} ({language.TVDBCode()})";
 
@@ -150,7 +152,7 @@ public static class TvdbWebApi
 
         if (retry)
         {
-            await HttpHelper.RetryOnExceptionAsync(3, 2.Seconds(), fullUrl, _ => true, Operation, async () => {  authToken?.EnsureValidAsync(); }).ConfigureAwait(false);
+            await HttpHelper.RetryOnExceptionAsync(3, 2.Seconds(), fullUrl, _ => true, Operation, async () => { authToken?.EnsureValidAsync(); }).ConfigureAwait(false);
         }
         else
         {
@@ -249,7 +251,7 @@ public static class TvdbWebApi
         }
         catch (WebException ex)
         {
-            ProcessWebException(ex,errorMessage,code,notFoundMessage);
+            ProcessWebException(ex, errorMessage, code, notFoundMessage);
         }
         catch (AggregateException ex) when (ex.InnerException is WebException wex)
         {
@@ -356,7 +358,7 @@ public static class TvdbWebApi
         string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/translations/{language.TVDBCode()}";
         string errorMessage = $"obtaining translations for {code} in {language.EnglishName}";
 
-        return await HandleWebErrorsForAsync(async () => await GetUrlAsync( uri, language, errorMessage),errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
     }
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
@@ -387,7 +389,7 @@ public static class TvdbWebApi
     internal static async Task<JObject> ImageTypesAsync()
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/artwork/types";
-        return await GetUrlAsync( uri, Languages.Instance.FallbackLanguage);
+        return await GetUrlAsync(uri, Languages.Instance.FallbackLanguage);
     }
     // ReSharper disable once UnusedMember.Local
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
@@ -453,7 +455,7 @@ public static class TvdbWebApi
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task<JObject?>    GetUpdatesAsync(long updateFromEpochTime, int pageNumber)
+    internal static async Task<JObject?> GetUpdatesAsync(long updateFromEpochTime, int pageNumber)
     {
         string errorMessage = $"Error obtaining lastupdated query since (local) {updateFromEpochTime}:{pageNumber}";
         string url = $"{TokenProvider.TVDB_API_URL}/updates";

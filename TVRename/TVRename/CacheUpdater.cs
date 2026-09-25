@@ -155,7 +155,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
             {
                 Provider = series.Provider,
                 Message = series.Name ?? "Unknown Show",
-                UpdateType = DownloadProgressReport.Type.EpisodeDownload    
+                UpdateType = DownloadProgressReport.Type.EpisodeDownload
             });
 
 
@@ -298,7 +298,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
                     ((IProgress<DownloadProgressReport>)p).Report(x);
                 }
 
-                return await TVDoc.GetMediaCache(provider).GetUpdatesAsync(p,downloadIds.Where(specifier => specifier.Provider == provider).ToList().ConvertAll(s=>s), showErrorMsgBox, cts);
+                return await TVDoc.GetMediaCache(provider).GetUpdatesAsync(p, downloadIds.Where(specifier => specifier.Provider == provider).ToList().ConvertAll(s => s), showErrorMsgBox, cts);
             }
 
             return true;
@@ -317,7 +317,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
             : downloadIds.Count(s => s.Provider == provider && s.Media == type && (TVDoc.GetMediaCache(provider).GetMovie(s.IdFor(provider))?.Dirty ?? true));
     }
 
-    
+
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
         await DownloadThreadAsync();
