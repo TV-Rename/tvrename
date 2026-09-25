@@ -1,129 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>net10.0-windows7.0</TargetFramework>
-    <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
+    <!-- Configures it as a Windows Desktop executable application -->
     <OutputType>WinExe</OutputType>
-    <ApplicationIcon>App\app.ico</ApplicationIcon>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <LangVersion>Latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <WarningsAsErrors>Nullable</WarningsAsErrors>
-    <NullableContextOptions>enable</NullableContextOptions>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <UseWPF>False</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+
+    <!-- Assembly Metadata -->
+    <AssemblyName>TVRename</AssemblyName>
+    <RootNamespace>TVRename</RootNamespace>
+    <ApplicationIcon>App\app.ico</ApplicationIcon>
+
+    <!-- Compiler Settings -->
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+
+    <!-- Disable auto-generation of AssemblyInfo if you want to keep your Properties\AssemblyInfo.cs -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <WarningLevel>5</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>Latest</LangVersion>
-    <WarningsAsErrors>Nullable</WarningsAsErrors>
-    <NoWarn>CA1416</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <WarningLevel>1</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>Latest</LangVersion>
-    <WarningsAsErrors>Nullable</WarningsAsErrors>
-    <NoWarn>1701;1702;CA1416</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>TVRename.App.Program</StartupObject>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-  </PropertyGroup>
+
+  <!-- NuGet Package References -->
   <ItemGroup>
-    <Compile Update="Custom Controls\FastObjectListViewFlickerFree.cs" />
-    <Compile Update="Custom Controls\MovieCodeFinder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Custom Controls\ObjectListViewFlickerFree.cs" />
-    <Compile Update="Custom Controls\TvCodeFinder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Custom Controls\ListViewFlickerFree.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <None Include="Resources\blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b %281%29.jpg" />
-    <None Include="Resources\322497-48 %281%29.png" />
-    <None Include="Resources\4781834-128 %281%291.png" />
-    <None Include="Resources\226562-128 %281%291.png" />
-    <None Include="Resources\4781834-128 %281%29.png" />
-    <None Include="Resources\226562-128 %281%29.png" />
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Compile Update="Custom Controls\CodeFinder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Forms\Tools\TaskNotifier.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\Tools\YTSRecomendations\YtsRecommendationView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\Tools\YTSRecomendations\YtsViewerView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App\app.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Forms\Torrent\" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="NLog" Version="6.2.1" />
     <PackageReference Include="AlphaFS" Version="2.2.6" />
-    <PackageReference Include="CefSharp.Common.NETCore" Version="151.3.240" />
-    <PackageReference Include="CefSharp.WinForms.NETCore" Version="151.3.240" />
+    <PackageReference Include="CefSharp.Common.NETCore" Version="152.0.60" />
+    <PackageReference Include="CefSharp.WinForms.NETCore" Version="152.0.60" />
     <PackageReference Include="CloudFlareUtilities" Version="1.3.0" />
     <PackageReference Include="GuerrillaNtp" Version="3.1.0" />
     <PackageReference Include="Humanizer" Version="3.0.10" />
     <PackageReference Include="Ical.Net" Version="5.2.3" />
-    <PackageReference Include="IMDbApiLib" Version="2.0.2" />
+    <PackageReference Include="IMDbApiLib" Version="3.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
     <PackageReference Include="MediaInfo.Wrapper.Core" Version="26.1.0" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.12" />
     <PackageReference Include="MscVersion" Version="1.0.0.9" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
-    <PackageReference Include="NLog.OutputDebugString" Version="6.2.0" />
+    <PackageReference Include="NLog.OutputDebugString" Version="6.2.1" />
     <PackageReference Include="NLog.Targets.Syslog" Version="7.0.0" />
     <PackageReference Include="NLog.Windows.Forms" Version="6.1.4" />
-    <PackageReference Include="NodaTime" Version="3.3.3" />
+    <PackageReference Include="NodaTime" Version="3.3.4" />
     <PackageReference Include="ObjectListView.Repack.NET6Plus" Version="2.9.5" />
-    <PackageReference Include="Polly" Version="8.7.0" />
+    <PackageReference Include="Polly" Version="8.8.0" />
     <PackageReference Include="SharpCompress" Version="0.50.4" />
     <PackageReference Include="SourceGrid" Version="4.4.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
@@ -138,28 +57,13 @@
     <PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.12.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Utility\HashCacheItem.cs" />
-    <Compile Remove="Utility\SAB\NewDataSet.cs" />
-    <Compile Remove="Utility\SAB\Queue.cs" />
-    <Compile Remove="Utility\SAB\QueueCategories.cs" />
-    <Compile Remove="Utility\SAB\Result.cs" />
-    <Compile Remove="Utility\Sorters\DateSorterAction.cs" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="152.0.6" />
   </ItemGroup>
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="152.0.6" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Forms\Tools\YTSRecomendations\YtsRecommendationView.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="152.0.6" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="151.3.24" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="151.3.24" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="151.3.24" />
-  </ItemGroup>
+
 </Project>

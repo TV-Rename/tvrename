@@ -64,7 +64,7 @@ public static class XmlHelper
     public static async Task SaveXmlAsync(this XDocument doc, string filePath, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(doc);
-        ArgumentException.ThrowIfNullOrWhiteSpace("filePath")
+        ArgumentException.ThrowIfNullOrWhiteSpace("filePath");
 
         // Use FileOptions.Asynchronous to ensure true non-blocking OS I/O
         using FileStream stream = new FileStream(

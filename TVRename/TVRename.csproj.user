@@ -15,11 +15,23 @@
     </StartArguments>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Update="Custom Controls\CodeFinder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Custom Controls\FastObjectListViewFlickerFree.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="Custom Controls\ListViewFlickerFree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Custom Controls\MovieCodeFinder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Custom Controls\ObjectListViewFlickerFree.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Custom Controls\TvCodeFinder.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Forms\BulkAddMovies\BulkAddEditMovie.cs">
       <SubType>Form</SubType>
@@ -145,6 +157,15 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\Tools\ShowSummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\TaskNotifier.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\YTSRecomendations\YtsRecommendationView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Tools\YTSRecomendations\YtsViewerView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\UI.cs">

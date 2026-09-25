@@ -2295,7 +2295,6 @@ namespace TVRename.Forms
             // 
             statusTimer.Enabled = true;
             statusTimer.Interval = 250;
-            statusTimer.Tick += statusTimer_Tick;
             // 
             // BGDownloadTimer
             // 
