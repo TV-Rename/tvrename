@@ -69,7 +69,7 @@ namespace TVRename
             this.bnGoSearch.TabIndex = 2;
             this.bnGoSearch.Text = "&Search";
             this.bnGoSearch.UseVisualStyleBackColor = true;
-            this.bnGoSearch.Click += new System.EventHandler(this.bnGoSearch_Click);
+            this.bnGoSearch.Click += new System.EventHandler(this.BnGoSearch_Click);
             // 
             // txtFindThis
             // 
@@ -80,7 +80,7 @@ namespace TVRename
             this.txtFindThis.Size = new System.Drawing.Size(228, 20);
             this.txtFindThis.TabIndex = 1;
             this.txtFindThis.TextChanged += new System.EventHandler(this.TxtFindThis_TextChanged);
-            this.txtFindThis.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFindThis_KeyDown);
+            this.txtFindThis.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtFindThis_KeyDown);
             // 
             // lvMatches
             // 
@@ -104,8 +104,8 @@ namespace TVRename
             this.lvMatches.TabIndex = 3;
             this.lvMatches.UseCompatibleStateImageBehavior = false;
             this.lvMatches.View = System.Windows.Forms.View.Details;
-            this.lvMatches.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvMatches_ColumnClick);
-            this.lvMatches.SelectedIndexChanged += new System.EventHandler(this.lvMatches_SelectedIndexChanged);
+            this.lvMatches.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.LvMatches_ColumnClick);
+            this.lvMatches.SelectedIndexChanged += new System.EventHandler(this.LvMatches_SelectedIndexChanged);
             // 
             // columnHeader1
             // 

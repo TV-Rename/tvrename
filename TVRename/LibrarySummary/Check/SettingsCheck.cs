@@ -1,5 +1,6 @@
 using NLog;
 using System;
+using System.Threading.Tasks;
 
 namespace TVRename;
 
@@ -54,7 +55,7 @@ internal abstract class SettingsCheck(TVDoc doc)
     /// <exception cref="FixCheckException">Can't fix movie as multiple Movie Library Folders are specified</exception>
     protected abstract void FixInternal();
 
-    protected abstract void MarkMediaDirtyAsync();
+    protected abstract Task MarkMediaDirtyAsync();
 
     // ReSharper disable once UnusedMember.Global- Property is referred to by the ObjectListView
     public abstract MediaConfiguration.MediaType Type();

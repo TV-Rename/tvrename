@@ -1,10 +1,12 @@
+using System.Threading.Tasks;
+
 namespace TVRename;
 
 internal abstract class TvShowCheck(ShowConfiguration show, TVDoc doc) : SettingsCheck(doc)
 {
     public readonly ShowConfiguration Show = show;
 
-    protected override async void MarkMediaDirtyAsync()
+    protected override async Task MarkMediaDirtyAsync()
     {
         if (Show.CachedShow != null)
         {

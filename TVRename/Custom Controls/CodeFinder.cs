@@ -226,7 +226,7 @@ public abstract partial class CodeFinder : UserControl
         return numberMatch || textMatch || numberTextMatch;
     }
 
-    private async void bnGoSearch_Click(object sender, EventArgs e)
+    private async void BnGoSearch_Click(object sender, EventArgs e)
     {
         await SearchAsync(true);
     }
@@ -305,13 +305,13 @@ public abstract partial class CodeFinder : UserControl
             _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
         };
     }
-    private void lvMatches_SelectedIndexChanged(object sender, EventArgs e)
+    private void LvMatches_SelectedIndexChanged(object sender, EventArgs e)
     {
         hasChanged = true;
         SelectionChanged?.Invoke(sender, e);
     }
 
-    private async void txtFindThis_KeyDown(object sender, KeyEventArgs e)
+    private async void TxtFindThis_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.KeyCode is Keys.Enter or Keys.Return)
         {
@@ -321,7 +321,7 @@ public abstract partial class CodeFinder : UserControl
         }
     }
 
-    private void lvMatches_ColumnClick(object sender, ColumnClickEventArgs e)
+    private void LvMatches_ColumnClick(object sender, ColumnClickEventArgs e)
     {
         lvwCodeFinderColumnSorter.ClickedOn(e.Column);
         lvwCodeFinderColumnSorter.ListViewItemSorter = GetSorter(e.Column);

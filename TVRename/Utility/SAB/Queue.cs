@@ -15,11 +15,11 @@
 
 using System.Xml.Serialization;
 using System.IO;
-using System.Text;
+using TVRename.SAB;
 
 // ReSharper disable All
 
-namespace TVRename.SAB
+namespace TVRename.Utility.SAB
 {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
@@ -28,15 +28,13 @@ namespace TVRename.SAB
     [XmlRootAttribute(Namespace = "", IsNullable = false)]
     public class Queue : object, System.ComponentModel.INotifyPropertyChanged
     {
-        public static Queue Deserialize(byte[] data)
+        public static Queue? Deserialize(byte[] data)
         {
-            //MemoryStream ms = new MemoryStream(data);
-            MemoryStream ms = new MemoryStream(Encoding.ASCII.GetBytes("<?xml version=\"1.0\" encoding=\"UTF-8\" ?> <queue><noofslots_total>0</noofslots_total> <diskspace2_norm>2.2 T</diskspace2_norm> <paused>False</paused> <finish>0</finish> <speedlimit_abs></speedlimit_abs> <slots></slots> <speed>0  </speed> <size>0 B</size> <rating_enable>False</rating_enable> <eta>unknown</eta> <refresh_rate>1</refresh_rate> <start>0</start> <version>2.3.7</version> <diskspacetotal2>2794.39</diskspacetotal2> <limit>8888</limit> <diskspacetotal1>2794.39</diskspacetotal1> <status>Idle</status> <have_warnings>0</have_warnings> <cache_art>0</cache_art> <sizeleft>0 B</sizeleft> <finishaction>None</finishaction> <paused_all>False</paused_all> <quota>0 </quota> <have_quota>False</have_quota> <mbleft>0.00</mbleft> <diskspace2>2236.57</diskspace2> <diskspace1>2236.57</diskspace1> <scripts></scripts> <categories><category>*</category> </categories> <timeleft>0:00:00</timeleft> <pause_int>0</pause_int> <noofslots>0</noofslots> <mb>0.00</mb> <loadavg></loadavg> <cache_max>536870912</cache_max> <kbpersec>0.00</kbpersec> <speedlimit>100</speedlimit> <cache_size>0 B</cache_size> <left_quota>0 </left_quota> <diskspace1_norm>2.2 T</diskspace1_norm> <queue_details>0</queue_details> </queue>"));
+            MemoryStream ms = new MemoryStream(data);
             XmlSerializer serializer = new XmlSerializer(typeof(Queue));
             try
             {
-                Queue r = (Queue) serializer.Deserialize(ms);
-                return r;
+                return  (Queue?) serializer.Deserialize(ms);
             }
             catch
             {
@@ -44,62 +42,62 @@ namespace TVRename.SAB
             }
         }
 
-        private string uniconfigField;
-        private string cache_sizeField;
-        private string active_langField;
-        private string pausedField;
-        private string sessionField;
-        private string restart_reqField;
-        private string power_optionsField;
-        private string speedField;
-        private string helpuriField;
-        private string sizeField;
-        private string uptimeField;
-        private string refresh_rateField;
-        private string my_homeField;
-        private string limitField;
-        private string have_quotaField;
-        private string isverboseField;
-        private string startField;
-        private string finishField;
-        private string versionField;
-        private string new_rel_urlField;
-        private string my_lcldataField;
-        private string color_schemeField;
-        private string diskspacetotal1Field;
-        private string ntField;
-        private string statusField;
-        private string last_warningField;
-        private string have_warningsField;
-        private string cache_artField;
-        private string sizeleftField;
-        private string finishactionField;
-        private string paused_allField;
-        private string quotaField;
-        private string newzbin_urlField;
-        private string new_releaseField;
-        private string pause_intField;
-        private string mbleftField;
-        private string diskspace1Field;
-        private string scriptsField;
-        private string darwinField;
-        private string timeleftField;
-        private string mbField;
-        private string noofslotsField;
-        private string etaField;
-        private string diskspacetotal2Field;
-        private string nzb_quotaField;
-        private string loadavgField;
-        private string cache_maxField;
-        private string kbpersecField;
-        private string speedlimitField;
-        private string webdirField;
-        private string queue_detailsField;
-        private string left_quotaField;
-        private string diskspace2Field;
+        private string uniconfigField = string.Empty;
+        private string cache_sizeField = string.Empty;
+        private string active_langField = string.Empty;
+        private string pausedField = string.Empty;
+        private string sessionField = string.Empty;
+        private string restart_reqField = string.Empty;
+        private string power_optionsField = string.Empty;
+        private string speedField = string.Empty;
+        private string helpuriField = string.Empty;
+        private string sizeField = string.Empty;
+        private string uptimeField = string.Empty;
+        private string refresh_rateField = string.Empty;
+        private string my_homeField = string.Empty;
+        private string limitField = string.Empty;
+        private string have_quotaField = string.Empty;
+        private string isverboseField = string.Empty;
+        private string startField = string.Empty;
+        private string finishField = string.Empty;
+        private string versionField = string.Empty;
+        private string new_rel_urlField = string.Empty;
+        private string my_lcldataField = string.Empty;
+        private string color_schemeField = string.Empty;
+        private string diskspacetotal1Field = string.Empty;
+        private string ntField = string.Empty;
+        private string statusField = string.Empty;
+        private string last_warningField = string.Empty;
+        private string have_warningsField = string.Empty;
+        private string cache_artField = string.Empty;
+        private string sizeleftField = string.Empty;
+        private string finishactionField = string.Empty;
+        private string paused_allField = string.Empty;
+        private string quotaField = string.Empty;
+        private string newzbin_urlField = string.Empty;
+        private string new_releaseField = string.Empty;
+        private string pause_intField = string.Empty;
+        private string mbleftField = string.Empty;
+        private string diskspace1Field = string.Empty;
+        private string scriptsField = string.Empty;
+        private string darwinField = string.Empty;
+        private string timeleftField = string.Empty;
+        private string mbField = string.Empty;
+        private string noofslotsField = string.Empty;
+        private string etaField = string.Empty;
+        private string diskspacetotal2Field = string.Empty;
+        private string nzb_quotaField = string.Empty;
+        private string loadavgField = string.Empty;
+        private string cache_maxField = string.Empty;
+        private string kbpersecField = string.Empty;
+        private string speedlimitField = string.Empty;
+        private string webdirField = string.Empty;
+        private string queue_detailsField = string.Empty;
+        private string left_quotaField = string.Empty;
+        private string diskspace2Field = string.Empty;
 
-        private QueueSlotsSlot[] slotsField;
-        private QueueCategories[] categoriesField;
+        private QueueSlotsSlot[] slotsField = [];
+        private QueueCategories[] categoriesField = [];
 
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string uniconfig
@@ -708,11 +706,11 @@ namespace TVRename.SAB
             }
         }
 
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
+            System.ComponentModel.PropertyChangedEventHandler? propertyChanged = PropertyChanged;
             if ((propertyChanged != null))
             {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));

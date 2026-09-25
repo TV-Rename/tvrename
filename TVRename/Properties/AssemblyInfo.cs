@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TV Rename")]
 [assembly: AssemblyProduct("TV Rename")]
-[assembly: AssemblyCopyright("Copyright © 2007-2020")]
+[assembly: AssemblyCopyright("Copyright © 2007-2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
@@ -23,3 +23,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("3.0.0.0")]
 [assembly: AssemblyFileVersion("3.0.0")]
 [assembly: AssemblyInformationalVersion("3.0.0")] // Display version
+[assembly: System.Runtime.Versioning.SupportedOSPlatform("windows")]

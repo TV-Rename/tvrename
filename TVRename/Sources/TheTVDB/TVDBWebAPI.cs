@@ -251,44 +251,44 @@ public static class TvdbWebApi
         }
         catch (WebException ex)
         {
-            ProcessWebException(ex, errorMessage, code, notFoundMessage);
+            await ProcessWebException(ex, errorMessage, code, notFoundMessage);
         }
         catch (AggregateException ex) when (ex.InnerException is WebException wex)
         {
-            ProcessWebException(wex, errorMessage, code, notFoundMessage);
+            await ProcessWebException(wex, errorMessage, code, notFoundMessage);
         }
         catch (HttpRequestException ex)
         {
-            ProcessHttpRequestException(ex, errorMessage, code, notFoundMessage);
+            await ProcessHttpRequestException(ex, errorMessage, code, notFoundMessage);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
-            ProcessHttpRequestException(wex, errorMessage, code, notFoundMessage);
+            await ProcessHttpRequestException(wex, errorMessage, code, notFoundMessage);
         }
 
         throw new SourceConnectivityException("Failed to execute");//should never happen - just to appease compiler
 
-        static void ProcessWebException(WebException ex, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage)
+        static async Task ProcessWebException(WebException ex, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage)
         {
             if (ex.Is404() && code != null)
             {
-                RaiseNotFoundIfNeeded(notFoundMessage ?? errorMessage, code);
+                await RaiseNotFoundIfNeeded(notFoundMessage ?? errorMessage, code);
             }
             Logger.LogWebException($"Error {errorMessage}:", ex);
             throw new SourceConnectivityException(errorMessage + " - " + ex.LoggableDetails(), ex);
         }
-        static void ProcessHttpRequestException(HttpRequestException ex, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage)
+        static async Task ProcessHttpRequestException(HttpRequestException ex, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage)
         {
             if (ex.Is404() && code != null)
             {
-                RaiseNotFoundIfNeeded(notFoundMessage ?? errorMessage, code);
+                await RaiseNotFoundIfNeeded(notFoundMessage ?? errorMessage, code);
             }
             Logger.LogHttpRequestException($"Error {errorMessage}:", ex);
             throw new SourceConnectivityException(errorMessage + " - " + ex.LoggableDetails(), ex);
         }
-        static void RaiseNotFoundIfNeeded(string message, ISeriesSpecifier code)
+        static async Task RaiseNotFoundIfNeeded(string message, ISeriesSpecifier code)
         {
-            if (TvdbIsUp().Result)
+            if (await TvdbIsUp())
             {
                 Logger.Warn(message);
                 throw new MediaNotFoundException(code, message, TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TheTVDB, code.Media);

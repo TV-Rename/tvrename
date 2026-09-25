@@ -1438,21 +1438,21 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         Task<SearchContainer<SearchMovie>?> topRated = Client.GetMovieTopRatedListAsync(languageCode);
         Task<SearchContainer<SearchMovie>?> trending = Client.GetTrendingMoviesAsync(TimeWindow.Week);
-        await topRated.ConfigureAwait(false);
-        await trending.ConfigureAwait(false);
+        var topR = await topRated.ConfigureAwait(false);
+        var trend = await trending.ConfigureAwait(false);
 
-        if (topRated.Result?.Results is not null)
+        if (topR?.Results is not null)
         {
-            foreach (SearchMovie? top in topRated.Result.Results)
+            foreach (SearchMovie? top in topR.Results)
             {
                 File(top);
                 returnValue.AddTopRated(top.Id);
             }
         }
 
-        if (trending.Result?.Results is not null)
+        if (trend?.Results is not null)
         {
-            foreach (SearchMovie? top in trending.Result.Results)
+            foreach (SearchMovie? top in trend.Results)
             {
                 File(top);
                 returnValue.AddTrending(top.Id);

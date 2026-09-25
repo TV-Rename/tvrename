@@ -5,18 +5,22 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
 
     <!-- Assembly Metadata -->
     <AssemblyName>TVRename</AssemblyName>
     <RootNamespace>TVRename</RootNamespace>
     <ApplicationIcon>App\app.ico</ApplicationIcon>
 
+    <NoWarn>CA1416</NoWarn>
+    
     <!-- Compiler Settings -->
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
 
     <!-- Disable auto-generation of AssemblyInfo if you want to keep your Properties\AssemblyInfo.cs -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <StartupObject>TVRename.App.Program</StartupObject>
   </PropertyGroup>
 
   <!-- NuGet Package References -->
@@ -50,19 +54,9 @@
     <PackageReference Include="TagLibSharp" Version="2.3.0" />
     <PackageReference Include="TimeZoneConverter" Version="7.2.0" />
     <PackageReference Include="TMDbLib" Version="3.0.0" />
-    <PackageReference Include="System.ServiceModel.Federation" Version="10.0.652802" />
-    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.12.0.2" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="152.0.6" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="152.0.6" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="152.0.6" />
   </ItemGroup>
 

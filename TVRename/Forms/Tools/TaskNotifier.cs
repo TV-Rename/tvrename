@@ -33,7 +33,7 @@ public partial class TaskNotifier : Form
             lblLastUpdate.Text = progress.lastUpdate.ToUiVersion() ?? string.Empty;
     }
 
-    private void btnCancel_Click(object sender, EventArgs e)
+    private void BtnCancel_Click(object sender, EventArgs e)
     {
         cancellationToken.Cancel();
         Close();

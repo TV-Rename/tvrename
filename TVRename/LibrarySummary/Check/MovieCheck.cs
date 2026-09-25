@@ -1,10 +1,12 @@
+using System.Threading.Tasks;
+
 namespace TVRename;
 
 internal abstract class MovieCheck(MovieConfiguration movie, TVDoc doc) : SettingsCheck(doc)
 {
     public readonly MovieConfiguration Movie = movie;
 
-    protected override async void MarkMediaDirtyAsync()
+    protected override async Task MarkMediaDirtyAsync()
     {
         if (Movie.CachedMovie == null)
         {
