@@ -40,8 +40,12 @@ test: off
 before_build:
 - cmd: nuget restore -verbosity quiet -PackagesDirectory TVRename\packages
 
-build:
-  project: TVRename.slnx
+# Disable AppVeyor's automatic MSBuild discovery
+build: off
+
+# Build manually using the modern .NET CLI
+build_script:
+  - dotnet build TVRename.slnx --configuration Release
 
 after_build:
 #- cmd: ls ../* -R
