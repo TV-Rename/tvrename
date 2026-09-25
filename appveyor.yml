@@ -50,7 +50,6 @@ build:
   parallel: true                  # enable MSBuild parallel builds
   project: C:\projects\tvrename\TVRename.slnx          # path to Visual Studio solution or project
   verbosity: detailed             # MSBuild verbosity level
-  parallel: true
 
 test: off
 
