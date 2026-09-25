@@ -7,9 +7,5 @@ branches:
 before_build:
 - cmd: nuget restore -verbosity detailed -PackagesDirectory TVRename\packages
 
-before_build:
-- cmd: nuget restore -PackagesDirectory TVRename\packages
-
 build:
   project: TVRename.slnx
-
