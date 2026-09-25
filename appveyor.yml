@@ -9,9 +9,6 @@ branches:
   only:
   - master
 
-except:
-  - gh-pages
-    
 cache:
 - packages -> **\TVRename.csproj
 
