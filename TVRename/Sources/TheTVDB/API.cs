@@ -1,16 +1,8 @@
 using Humanizer;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NLog;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+
 
 namespace TVRename.TheTVDB;
 
@@ -109,7 +101,7 @@ public static class API
         try
         {
             //open file stream
-            using StreamWriter file = File.CreateText(auditLogFile);
+            using System.IO.StreamWriter file = File.CreateText(auditLogFile);
             JsonSerializer serializer = new();
             //serialize object directly into file stream
             serializer.Serialize(file, response);

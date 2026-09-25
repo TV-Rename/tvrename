@@ -9,15 +9,7 @@
 // All the processing and work should be done in here, nothing in UI.cs
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
-using Alphaleonis.Win32.Filesystem;
-using NLog;
 using Polly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using TVRename.Forms;

@@ -5,7 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using Alphaleonis.Win32.Filesystem;
+
 using NLog;
 using NodaTime;
 using System;

@@ -8,7 +8,7 @@
 
 namespace TVRename;
 
-using Alphaleonis.Win32.Filesystem;
+
 using System;
 
 public abstract class ItemMissing(string theFileNoExt, string filename, string folder) : Item

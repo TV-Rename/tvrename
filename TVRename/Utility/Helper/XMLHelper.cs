@@ -1,10 +1,4 @@
-using NLog;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -34,7 +28,7 @@ public static class XmlHelper
     public static async Task<XDocument> LoadXmlFromFileAsync(string filePath, CancellationToken cancellationToken = default)
     {
         // Open an async-compatible file stream
-        using FileStream stream = File.OpenRead(filePath);
+        using FileStream stream = System.IO.File.OpenRead(filePath);
         // Load the document asynchronously
         XDocument doc = await XDocument.LoadAsync(stream, LoadOptions.None, cancellationToken);
         return doc;
@@ -67,7 +61,7 @@ public static class XmlHelper
         ArgumentException.ThrowIfNullOrWhiteSpace("filePath");
 
         // Use FileOptions.Asynchronous to ensure true non-blocking OS I/O
-        using FileStream stream = new FileStream(
+        using FileStream stream = new (
             filePath,
             FileMode.Create,
             FileAccess.Write,

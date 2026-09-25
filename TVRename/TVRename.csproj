@@ -6,7 +6,7 @@
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
-
+    
     <!-- Assembly Metadata -->
     <AssemblyName>TVRename</AssemblyName>
     <RootNamespace>TVRename</RootNamespace>

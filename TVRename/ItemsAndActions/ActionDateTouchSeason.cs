@@ -1,6 +1,3 @@
-using Alphaleonis.Win32.Filesystem;
-using System;
-
 namespace TVRename;
 
 internal class ActionDateTouchSeason(DirectoryInfo dir, ProcessedSeason sn, DateTime date) : ActionDateTouchDirectory(dir, date)
