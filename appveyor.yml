@@ -40,6 +40,7 @@ before_build:
 - cmd: nuget restore -verbosity quiet -PackagesDirectory TVRename\packages
 
 build:
+  project: TVRename.sln
   verbosity: minimal
 
 after_build:
