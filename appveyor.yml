@@ -41,7 +41,6 @@ before_build:
 
 build:
   project: TVRename.sln
-  verbosity: minimal
 
 after_build:
 #- cmd: ls ../* -R
