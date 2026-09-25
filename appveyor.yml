@@ -41,7 +41,7 @@ test: off
 
 before_build:
   # Restore dependencies using the dotnet CLI (which supports .slnx files)
-  - dotnet restore TVRename.slnx
+  - dotnet restore C:\projects\tvrename\TVRename.slnx
 
 build: 
   parallel: true                  # enable MSBuild parallel builds
