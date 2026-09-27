@@ -65,7 +65,7 @@ Section "Install"
     File "TVRename\bin\Release\net10.0-windows\runtimes\win\lib\net10.0\*.dll"
     
     SetOutPath "$INSTDIR\runtimes\win-x64\lib\net10.0"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\lib\net10.0\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\lib\net6.0\*.dll"
     
     SetOutPath "$INSTDIR\runtimes\win-x64\native"
     File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\*.dll"
