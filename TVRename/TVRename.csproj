@@ -56,6 +56,9 @@
     <PackageReference Include="TimeZoneConverter" Version="7.2.0" />
     <PackageReference Include="TMDbLib" Version="3.0.0" />
     <PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.12.0.2" />
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="152.0.6" />
     <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="152.0.6" />
     <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="152.0.6" />
