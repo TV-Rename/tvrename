@@ -64,7 +64,7 @@ jobs:
       uses: repolevedavaj/install-nsis@v1.3.0
       with:
         # The version of NSIS to install
-        nsis-version: v3.12
+        nsis-version: 3.12
         
     # Compile the NSIS Installer using the 'makensis' CLI tool
     - name: Compile NSIS Script
