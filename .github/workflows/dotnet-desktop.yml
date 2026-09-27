@@ -39,9 +39,7 @@
 name: .NET Core Desktop
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
+  release:
     branches: [ "master" ]
 
 jobs:
@@ -65,6 +63,27 @@ jobs:
       with:
         fetch-depth: 0
 
+    init:
+    - ps: >-
+        $tag = $env:${{ github.ref_name }}.TrimStart("v")
+        $version = $tag -split '-'
+        $friendly = $version[0].TrimEnd(".0")
+        If ($version[1]) {
+          $end = (Get-Culture).TextInfo.ToTitleCase($version[1].Replace("rc", "RC"))
+          $friendly += " " + $end -replace "([a-z]+)(\d+)",'$1 $2'
+        }
+        env:
+          APPVEYOR_BUILD_VERSION_FRIENDLY: $friendly
+
+    - name: Patch AssemblyInfo
+      uses: secondbounce/assemblyinfo-update@v2
+      with:
+        # Pass your target version (e.g., from an environment variable or tag)
+        version: $friendly 
+        # Optional: Defaults to true. Recursively updates all matching files.
+        recursive: true 
+
+
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4
@@ -81,13 +100,6 @@ jobs:
       env:
         Configuration: ${{ matrix.configuration }}
 
-    # Decode the base 64 encoded pfx and save the Signing_Certificate
-    - name: Decode the pfx
-      run: |
-        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
-        $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
-        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
-
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
       run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
@@ -96,10 +108,25 @@ jobs:
         Appx_Bundle_Platforms: x86|x64
         Appx_Package_Build_Mode: StoreUpload
         Configuration: ${{ matrix.configuration }}
+    
+    - name: Install NSIS
+      uses: repolevedavaj/install-nsis@v1.3.0
+      with:
+        # The version of NSIS to install
+        nsis-version: v3.12
+        
+    # Compile the NSIS Installer using the 'makensis' CLI tool
+    - name: Compile NSIS Script
+      run: |
+        makensis /V3 /WX /DVERSION="%APPVEYOR_BUILD_VERSION_FRIENDLY%" /DTAG="%APPVEYOR_BUILD_VERSION%" Installer.nsi
 
-    # Remove the pfx
-    - name: Remove the pfx
-      run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
+    # 5. Upload the generated .exe installer as a downloadable workflow artifact
+    - name: Upload Installer Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Windows-Installer
+        path: path/to/your/generated_output_installer.exe        
+
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
