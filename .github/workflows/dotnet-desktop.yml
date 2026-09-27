@@ -53,7 +53,7 @@ jobs:
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
-      run: msbuild $src\tvrename\tvrename\TVRename.slnx -t:rebuild -verbosity:diag -property:Configuration=Release
+      run: msbuild $src\tvrename\TVRename.slnx -t:rebuild -verbosity:diag -property:Configuration=Release
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: x86|x64
