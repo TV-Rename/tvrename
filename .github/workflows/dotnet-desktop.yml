@@ -31,7 +31,7 @@ jobs:
       uses: secondbounce/assemblyinfo-update@v2
       with:
         # Pass your target version (e.g., from an environment variable or tag)
-        version: ${{ steps.get_version.outputs.version-without-v }}
+        version: ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }}
         # Optional: Defaults to true. Recursively updates all matching files.
         recursive: true 
 
