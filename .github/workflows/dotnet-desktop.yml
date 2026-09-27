@@ -40,7 +40,6 @@ name: .NET Core Desktop
 
 on:
   release:
-    branches: [ "master" ]
 
 jobs:
 
@@ -63,26 +62,17 @@ jobs:
       with:
         fetch-depth: 0
 
-    init:
-    - ps: >-
-        $tag = $env:${{ github.ref_name }}.TrimStart("v")
-        $version = $tag -split '-'
-        $friendly = $version[0].TrimEnd(".0")
-        If ($version[1]) {
-          $end = (Get-Culture).TextInfo.ToTitleCase($version[1].Replace("rc", "RC"))
-          $friendly += " " + $end -replace "([a-z]+)(\d+)",'$1 $2'
-        }
-        env:
-          APPVEYOR_BUILD_VERSION_FRIENDLY: $friendly
+    - name: Get Version
+      id: get_version
+      uses: battila7/get-version-action@v2.2.1
 
     - name: Patch AssemblyInfo
       uses: secondbounce/assemblyinfo-update@v2
       with:
         # Pass your target version (e.g., from an environment variable or tag)
-        version: $friendly 
+        version: ${{ steps.get_version.outputs.version-without-v }}
         # Optional: Defaults to true. Recursively updates all matching files.
         recursive: true 
-
 
     # Install the .NET Core workload
     - name: Install .NET Core
