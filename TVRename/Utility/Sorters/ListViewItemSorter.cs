@@ -5,10 +5,6 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using System;
-using System.Collections;
-using System.Windows.Forms;
-
 namespace TVRename;
 
 public abstract class ListViewItemSorter(int column) : IComparer

@@ -21,6 +21,7 @@
     <!-- Disable auto-generation of AssemblyInfo if you want to keep your Properties\AssemblyInfo.cs -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <StartupObject>TVRename.App.Program</StartupObject>
+    <SignAssembly>False</SignAssembly>
   </PropertyGroup>
 
   <!-- NuGet Package References -->

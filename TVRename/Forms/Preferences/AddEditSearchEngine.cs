@@ -8,7 +8,7 @@
 
 using SourceGrid;
 using SourceGrid.Cells.Views;
-using System;
+
 using System.Drawing;
 using System.Windows.Forms;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;

@@ -1,7 +1,7 @@
 
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
+
 using System.Xml.Linq;
 using TVRename.Forms;
 

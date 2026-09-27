@@ -6,14 +6,9 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using NLog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+
 using System.Xml;
 using System.Xml.Linq;
 
@@ -40,7 +35,7 @@ internal class RssItemList : List<RSSItem>
                 return false;
             }
 
-            using StringReader stringReader = new(response);
+            using System.IO.StringReader stringReader = new(response);
             XElement x = XElement.Load(stringReader);
 
             if (x.Name.LocalName != "rss")

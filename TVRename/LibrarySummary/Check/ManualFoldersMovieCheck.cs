@@ -1,8 +1,3 @@
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace TVRename;
 
 internal class ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : CustomMovieCheck(movie, doc)

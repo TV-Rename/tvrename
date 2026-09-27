@@ -5,14 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
-using System.Drawing;
-
 namespace TVRename;
-
-using System;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 public partial class BulkAddEditShow : Form, ICodeWindow
 {

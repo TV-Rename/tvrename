@@ -6,8 +6,8 @@ using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
-using System;
-using System.Threading.Tasks;
+
+
 using System.Windows.Forms;
 using TVRename.Forms;
 

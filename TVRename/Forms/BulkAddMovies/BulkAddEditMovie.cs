@@ -10,8 +10,8 @@ using System.Drawing;
 
 namespace TVRename;
 
-using System;
-using System.Threading.Tasks;
+
+
 using System.Windows.Forms;
 
 public partial class BulkAddEditMovie : Form, ICodeWindow

@@ -1,6 +1,3 @@
-using System;
-using System.Text;
-
 namespace TVRename;
 
 public class ServerRelease(string version, Release.VersionType type, string downloadUrl, string releaseNotesText,

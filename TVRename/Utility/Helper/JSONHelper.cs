@@ -8,7 +8,7 @@
 
 using Newtonsoft.Json.Linq;
 using NLog;
-using System;
+
 using System.Globalization;
 
 namespace TVRename;

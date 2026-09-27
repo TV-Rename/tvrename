@@ -1,6 +1,6 @@
 using CefSharp;
 using CefSharp.Handler;
-using System;
+
 using TVRename.Forms;
 
 namespace TVRename;

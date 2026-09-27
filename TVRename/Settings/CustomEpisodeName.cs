@@ -6,10 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using NLog;
 using NodaTime;
-using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 // This builds the filenames to rename to, for any given episode (or multi-episode episode)

@@ -14,9 +14,9 @@ using SharpCompress.Archives.SevenZip;
 using SharpCompress.Archives.Tar;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
-using System;
+
 using System.Threading;
-using System.Threading.Tasks;
+
 
 namespace TVRename;
 

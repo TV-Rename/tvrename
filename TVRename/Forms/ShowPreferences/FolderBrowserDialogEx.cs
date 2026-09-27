@@ -7,12 +7,12 @@
 //
 
 using JetBrains.Annotations;
-using System;
+
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
+
 using System.Windows.Forms;
 // ReSharper disable ArrangeRedundantParentheses
 

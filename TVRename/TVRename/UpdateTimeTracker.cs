@@ -1,5 +1,4 @@
 using Humanizer;
-using System;
 
 namespace TVRename;
 

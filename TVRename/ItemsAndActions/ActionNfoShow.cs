@@ -1,7 +1,7 @@
 
 using Newtonsoft.Json.Linq;
 using System.Globalization;
-using System.Threading.Tasks;
+
 using System.Xml.Linq;
 using TVRename.Forms;
 

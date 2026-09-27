@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+
 using System.IO;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 

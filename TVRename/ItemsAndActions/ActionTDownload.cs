@@ -10,8 +10,8 @@ using System.Threading;
 namespace TVRename;
 
 
-using System;
-using System.Threading.Tasks;
+
+
 
 // ReSharper disable once InconsistentNaming
 public class ActionTDownload : ActionDownload

@@ -1,12 +1,12 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
-using System;
-using System.Collections.Generic;
+
+
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
+
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;

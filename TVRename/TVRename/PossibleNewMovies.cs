@@ -1,6 +1,3 @@
-using System.Collections.Concurrent;
-using System.Linq;
-
 namespace TVRename;
 
 public class PossibleNewMovies : ConcurrentBag<PossibleNewMovie>

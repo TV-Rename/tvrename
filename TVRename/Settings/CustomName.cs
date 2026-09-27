@@ -1,5 +1,3 @@
-using System;
-
 namespace TVRename;
 
 public static class CustomName

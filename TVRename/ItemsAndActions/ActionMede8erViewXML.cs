@@ -11,8 +11,8 @@ using System.Threading;
 namespace TVRename;
 
 
-using System;
-using System.Threading.Tasks;
+
+
 using System.Xml;
 
 // ReSharper disable once InconsistentNaming

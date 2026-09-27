@@ -1,5 +1,5 @@
 using NLog;
-using System;
+
 using System.IO;
 
 namespace TVRename;

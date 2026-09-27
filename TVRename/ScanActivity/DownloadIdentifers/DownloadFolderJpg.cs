@@ -1,6 +1,6 @@
-using System.Collections.Generic;
+
 using System.IO;
-using System.Threading.Tasks;
+
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename;

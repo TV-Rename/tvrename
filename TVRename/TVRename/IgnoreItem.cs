@@ -8,7 +8,7 @@
 
 // An "IgnoreItem" represents a file/episode to never ask the user about again. (Right-click->Ignore Selected / Options->Ignore List)
 
-using System;
+
 
 namespace TVRename;
 

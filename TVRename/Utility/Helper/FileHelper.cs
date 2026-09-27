@@ -13,16 +13,16 @@ using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using Microsoft.WindowsAPICodePack.Win32Native.Shell;
 using NLog;
-using System;
-using System.Collections.Generic;
+
+
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security;
-using System.Text;
+
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
+
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;

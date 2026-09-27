@@ -7,12 +7,6 @@
 //
 
 
-using DaveChambers.FolderBrowserDialogEx;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using TVRename.Forms;
 
 namespace TVRename;

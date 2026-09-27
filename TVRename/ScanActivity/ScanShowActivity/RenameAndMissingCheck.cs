@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-
 namespace TVRename;
 
 internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
@@ -286,7 +279,7 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
                 }
             }
         }
-        catch (FileNotFoundException fnfe)
+        catch (System.IO.FileNotFoundException fnfe)
         {
             LOGGER.Warn($"Could not find file so aborting scan for it. Possibly it was removed half way through the scan - {fnfe.ErrorText()}");
         }

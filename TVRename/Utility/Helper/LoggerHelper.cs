@@ -1,8 +1,8 @@
 using NLog;
-using System;
+
 using System.Diagnostics;
 using System.Reflection;
-using System.Text;
+
 using System.Text.RegularExpressions;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 

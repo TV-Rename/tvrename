@@ -15,8 +15,8 @@ using System.Threading;
 namespace TVRename;
 
 
-using System;
-using System.Threading.Tasks;
+
+
 
 public class ActionDownloadImage : ActionDownload
 {

@@ -9,7 +9,7 @@
 namespace TVRename;
 
 
-using System;
+
 
 public abstract class ItemMissing(string theFileNoExt, string filename, string folder) : Item
 {
