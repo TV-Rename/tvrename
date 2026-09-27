@@ -4,7 +4,6 @@ SetCompressor /solid lzma
 
 !include "MUI.nsh"
 !include "FileFunc.nsh"
-!include "DotNetChecker.nsh" ; https://github.com/ReVolly/NsisDotNetChecker
 
 !define APPNAME "TV Rename"
 
@@ -51,55 +50,51 @@ Var STARTMENU_FOLDER
 Section "Install"
     SetOutPath "$INSTDIR"
 
-    !insertmacro CheckNetFramework 48
-
     Delete "$INSTDIR\Ionic.Utils.Zip.dll" ; Remove old dependency
 
-    File "TVRename\bin\Release\net6.0-windows\TVRename.exe"
-    File "TVRename\bin\Release\net6.0-windows\*.dll"
-    File "TVRename\bin\Release\net6.0-windows\*.json"
-    File "TVRename\bin\Release\net6.0-windows\TVRename.dll.config"
+    File "TVRename\bin\Release\net10.0-windows\TVRename.exe"
+    File "TVRename\bin\Release\net10.0-windows\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\*.json"
+    File "TVRename\bin\Release\net10.0-windows\TVRename.dll.config"
     
-    File "TVRename\bin\Release\net6.0-windows\NLog.config"
+    File "TVRename\bin\Release\net10.0-windows\NLog.config"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
-    SetOutPath "$INSTDIR\runtimes\win\lib\net6.0"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win\lib\net6.0\*.dll"
-    SetOutPath "$INSTDIR\runtimes\win\lib\netcoreapp2.1"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win\lib\netcoreapp2.1\*.dll"
+    SetOutPath "$INSTDIR\runtimes\win\lib\net10.0"
+    File "TVRename\bin\Release\net10.0-windows\runtimes\win\lib\net10.0\*.dll"
     
-    SetOutPath "$INSTDIR\runtimes\win-x64\lib\netcoreapp3.1"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\lib\netcoreapp3.1\*.dll"
+    SetOutPath "$INSTDIR\runtimes\win-x64\lib\net8.0"
+    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\lib\net8.0\*.dll"
     
     SetOutPath "$INSTDIR\runtimes\win-x64\native"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.dll"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.exe"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\*.json"
-    File /r TVRename\packages\cef.redist.x64\106.0.29\CEF\*.dll
-    File /r TVRename\packages\cef.redist.x64\106.0.29\CEF\*.pak
-    File /r TVRename\packages\cef.redist.x64\106.0.29\CEF\*.bin
-    File /r TVRename\packages\cef.redist.x64\106.0.29\CEF\*.dat
-    File /r TVRename\packages\cef.redist.x64\106.0.29\CEF\*.json
+    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\*.exe"
+    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\*.json"
+    File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\*.dll
+    File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\*.pak
+    File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\*.bin
+    File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\*.dat
+    File /r TVRename\packages\cef.redist.x64\102.0.10\CEF\*.json
 
     SetOutPath "$INSTDIR\runtimes\win-x64\native\locales"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x64\native\locales\*.pak"
+    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\locales\*.pak"
     
     SetOutPath "$INSTDIR\runtimes\win-x86\lib\netcoreapp3.1"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\lib\netcoreapp3.1\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\lib\netcoreapp3.1\*.dll"
 
     SetOutPath "$INSTDIR\runtimes\win-x86\native"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.dll"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.exe"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\*.json"
-    File /r TVRename\packages\cef.redist.x86\106.0.29\CEF\*.dll
-    File /r TVRename\packages\cef.redist.x86\106.0.29\CEF\*.pak
-    File /r TVRename\packages\cef.redist.x86\106.0.29\CEF\*.bin
-    File /r TVRename\packages\cef.redist.x86\106.0.29\CEF\*.dat
-    File /r TVRename\packages\cef.redist.x86\106.0.29\CEF\*.json
+    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\native\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\native\*.exe"
+    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\native\*.json"
+    File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.dll
+    File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.pak
+    File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.bin
+    File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.dat
+    File /r TVRename\packages\cef.redist.x86\102.0.10\CEF\*.json
     
     SetOutPath "$INSTDIR\runtimes\win-x86\native\locales"
-    File "TVRename\bin\Release\net6.0-windows\runtimes\win-x86\native\locales\*.pak"
+    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\native\locales\*.pak"
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
