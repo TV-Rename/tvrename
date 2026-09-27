@@ -16,8 +16,6 @@ jobs:
 
     env:
       Solution_Name: TVRename.slnx
-      Wap_Project_Directory: MyWpfApp.Package # <--- Relative path to the WAP folder
-      Wap_Project_Path: MyWpfApp.Package\MyWpfApp.Package.wapproj 
 
     steps:
     - name: Checkout
@@ -45,7 +43,7 @@ jobs:
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
@@ -55,7 +53,7 @@ jobs:
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
-      run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
+      run: msbuild $src\TVRename.slnx -t:rebuild -verbosity:diag -property:Configuration=Release
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: x86|x64
