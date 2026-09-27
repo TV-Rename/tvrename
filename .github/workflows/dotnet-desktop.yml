@@ -27,7 +27,7 @@ jobs:
 
     - name: Get Version
       id: get_version
-      uses: battila7/get-version-action@v2.2.1
+      uses: maltoze/get-version-action@v1.0.1
 
     - name: Patch AssemblyInfo
       uses: secondbounce/assemblyinfo-update@v2
