@@ -120,7 +120,7 @@ public partial class BulkAddMovie : Form
 
     private void bnAddMonFolder_Click(object sender, System.EventArgs e)
     {
-        FolderBrowserDialogEx searchFolderBrowser = new()
+        DaveChambers.FolderBrowserDialogEx.FolderBrowserDialogEx searchFolderBrowser = new()
         {
             SelectedPath = string.Empty,
             Title = "Add New Movie Base Folder...",
@@ -146,7 +146,7 @@ public partial class BulkAddMovie : Form
     }
     private void bnAddIgFolder_Click(object sender, System.EventArgs e)
     {
-        FolderBrowserDialogEx ignoreFolderBrowser = new()
+        DaveChambers.FolderBrowserDialogEx.FolderBrowserDialogEx ignoreFolderBrowser = new()
         {
             SelectedPath = string.Empty,
             Title = "Add New Ignore Folder...",
