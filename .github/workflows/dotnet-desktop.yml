@@ -65,6 +65,9 @@ jobs:
       with:
         # The version of NSIS to install
         nsis-version: 3.12
+
+    - name: List all files
+      run: Get-ChildItem -Path . -Recurse
         
     # Compile the NSIS Installer using the 'makensis' CLI tool
     - name: Compile NSIS Script
