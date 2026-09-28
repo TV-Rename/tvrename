@@ -67,7 +67,7 @@ jobs:
         nsis-version: 3.12
 
     - name: List all files
-      run: Get-ChildItem -Path . -Recurse
+      run: Get-ChildItem -Path D:\a\ -Recurse
         
     # Compile the NSIS Installer using the 'makensis' CLI tool
     - name: Compile NSIS Script
