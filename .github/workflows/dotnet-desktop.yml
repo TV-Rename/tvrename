@@ -18,14 +18,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Cache NuGet Packages
-      uses: actions/cache@v6
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.sln') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-
     - name: Get Version
       id: get_version
       uses: maltoze/get-version-action@v1.0.1
