@@ -46,15 +46,13 @@ public static class Helpers
     /// </value>
     public static string DisplayVersion =>
         InDebug()
-            ? Version + DebugText
+            ? "1.0.0" + DebugText
             : Version;
 
-    public static string Version =>
-     Assembly.GetExecutingAssembly()
-            .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false)
-            .OfType<AssemblyInformationalVersionAttribute>()
-            .First()
-            .InformationalVersion;
+    public static string Version => InDebug()
+        ? "1.0.0"
+        : Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
+
 
     private static string DebugText => " ** Debug Build **";
     #endregion
