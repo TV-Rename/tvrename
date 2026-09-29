@@ -31,7 +31,7 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
     {
         get
         {
-            if (TVSettings.Instance.IgnorePreviouslySeen && PreviouslySeen && !(_airedStatus == FoundStatus.OnDisk))
+            if (TVSettings.Instance.IgnorePreviouslySeen && PreviouslySeen && !(_airedStatus == FoundStatus.OnDisk) && !(_airedStatus == FoundStatus.PreviouslySeen))
             {
                 _airedStatus = FoundStatus.PreviouslySeen;
                 NotifyPropertyChanged(nameof(ImageTypeName));
@@ -320,6 +320,7 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
 
     internal async Task UpdateSeenStatusAsync(DirFilesCache dfc)
     {
+        var oldAiredStatus = _airedStatus;
         List<FileInfo> fl = await dfc.FindEpOnDiskAsync(this);
         bool appropriateFileNameFound = !TVSettings.Instance.RenameCheck
                                         || !Show.DoRename
@@ -327,15 +328,21 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
 
         if (fl.IsAny() && appropriateFileNameFound)
         {
-            _airedStatus = ProcessedEpisode.FoundStatus.OnDisk;
-            NotifyPropertyChanged(nameof(ImageTypeName));
+            if (oldAiredStatus!= FoundStatus.OnDisk)
+            {
+                _airedStatus = ProcessedEpisode.FoundStatus.OnDisk;
+                NotifyPropertyChanged(nameof(ImageTypeName));
+            }
             return;
         }
 
         if (TVSettings.Instance.IgnorePreviouslySeen && PreviouslySeen)
         {
-            _airedStatus = ProcessedEpisode.FoundStatus.PreviouslySeen;
-            NotifyPropertyChanged(nameof(ImageTypeName));
+            if (oldAiredStatus != FoundStatus.PreviouslySeen)
+            {
+                _airedStatus = ProcessedEpisode.FoundStatus.PreviouslySeen;
+                NotifyPropertyChanged(nameof(ImageTypeName));
+            }
             return;
 
         }
@@ -344,15 +351,21 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
         {
             if (Show.DoMissingCheck)
             {
-                _airedStatus = ProcessedEpisode.FoundStatus.Missing;
-                NotifyPropertyChanged(nameof(ImageTypeName));
+                if (oldAiredStatus != FoundStatus.Missing)
+                {
+                    _airedStatus = ProcessedEpisode.FoundStatus.Missing;
+                    NotifyPropertyChanged(nameof(ImageTypeName));
+                }
                 return;
 
             }
         }
 
-        _airedStatus = ProcessedEpisode.FoundStatus.Future;
-        NotifyPropertyChanged(nameof(ImageTypeName));
+        if (oldAiredStatus != FoundStatus.Future)
+        {
+            _airedStatus = ProcessedEpisode.FoundStatus.Future;
+            NotifyPropertyChanged(nameof(ImageTypeName));
+        }
     }
 
     bool IEquatable<ProcessedEpisode>.Equals(ProcessedEpisode? other)
