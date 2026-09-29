@@ -55,7 +55,7 @@ public static class Helpers
     {
         if (version is null) return "1.0.0";
 
-        return $"{version.Major}.{version.Minor}.{version.Revision}";
+        return $"{version.Major}.{version.Minor}.{version.Build}";
     }
 
     private static string DebugText => " ** Debug Build **";
