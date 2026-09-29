@@ -56,7 +56,7 @@ Section "Install"
     File "TVRename\bin\Release\net10.0-windows\publish\*.dll"
     File "TVRename\bin\Release\net10.0-windows\publish\*.json"
     File "TVRename\bin\Release\net10.0-windows\publish\TVRename.dll.config"
-    File "TVRename\bin\Release\net10.0-windows\publish\NLog.config"
+    File "TVRename\NLog.config"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
