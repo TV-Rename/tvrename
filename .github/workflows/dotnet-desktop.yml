@@ -34,7 +34,7 @@ jobs:
       uses: secondbounce/assemblyinfo-update@v2
       with:
         # Pass your target version (e.g., from an environment variable or tag)
-        version: 1.1.1
+        version: ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }}
         # Optional: Defaults to true. Recursively updates all matching files.
         recursive: true 
 
@@ -71,7 +71,7 @@ jobs:
     - name: Upload Installer Artifact
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: Windows-Installer
+        name: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe
         path: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe        
 
     - name: Release Asset
