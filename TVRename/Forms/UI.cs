@@ -169,7 +169,7 @@ public partial class UI : Form, IDialogParent
             numberOfWaits++;
             if (doLogging && WorthLogging(numberOfWaits))
             {
-                Logger.Error($"Waiting for {textMessage} {numberOfWaits}/{maxSeconds}");
+                Logger.Warn($"Waiting for {textMessage} {numberOfWaits}/{maxSeconds}");
             }
         }
     }
@@ -926,10 +926,9 @@ public partial class UI : Form, IDialogParent
         var y = FillMyShowsAsync(true);
 
         FillMyMovies();
-        UpdateSearchButtons();
 
-        await mDoc.WriteUpcomingAsync();
-        await mDoc.WriteRecentAsync();
+        var m = mDoc.WriteUpcomingAsync();
+        var n = mDoc.WriteRecentAsync();
 
         foreach (TabPage tp in tabControl1.TabPages) // grr! why does it go white?
         {
@@ -941,6 +940,9 @@ public partial class UI : Form, IDialogParent
 
         UpdateVisibilityFromSettings();
         EnableDisableAccessibilty();
+
+        await Task.WhenAll(x, y);
+        UpdateSearchButtons();
 
         Show();
         UI_LocationChanged(null, null);
@@ -956,9 +958,9 @@ public partial class UI : Form, IDialogParent
 
         TriggerAppUpdateCheck();
 
-        quickTimer.Start();
+        await Task.WhenAll(n, m);
 
-        await Task.WhenAll(x, y);
+        quickTimer.Start();
 
         if (TVSettings.Instance.RunOnStartUp())
         {
