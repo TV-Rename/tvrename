@@ -13,7 +13,7 @@ BrandingText " "
 
 InstallDir "$PROGRAMFILES\TVRename"
 
-OutFile "TVRename-${TAG}.exe"
+OutFile "TVRename-${TAG}-Installer.exe"
 
 !define MUI_ICON "TVRename\App\app.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\win-uninstall.ico"
