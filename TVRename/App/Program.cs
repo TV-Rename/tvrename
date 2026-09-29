@@ -95,7 +95,7 @@ public static class Program
                 // Already running
                 Logger.Warn("An instance is already running, exiting");
                 SingleInstanceService.SendArgumentsToExistingInstance();
-                return;
+                Environment.Exit(1);
             }
 
             Logger.Info("Starting new instance");
@@ -127,9 +127,8 @@ public static class Program
         finally
         {
             mutex?.Dispose();
+            Logger.Info("Application exiting");
         }
-
-        Logger.Info("Application exiting");
     }
 
     private static void OnArgumentsReceived(string[] args)

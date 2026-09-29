@@ -1,12 +1,8 @@
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-
-using System.Threading;
-
 
 namespace TVRename.App;
 
@@ -18,7 +14,7 @@ internal class SingleInstanceService(Action<string[]> onArgumentsReceived)
     private static readonly NLog.Logger Log = NLog.LogManager.GetCurrentClassLogger();
     // ReSharper disable once NotAccessedField.Local
     private Semaphore? semaphore;
-    private readonly string semaphoreName = $"Global\\{Environment.MachineName}-myAppName{Assembly.GetExecutingAssembly().GetName().Version}-sid{Process.GetCurrentProcess().SessionId}";
+    private readonly string semaphoreName = $"Global\\{Environment.MachineName}-TVRename-{Assembly.GetExecutingAssembly().GetName().Version}-sid{Process.GetCurrentProcess().SessionId}";
 
     internal bool IsFirstInstance()
     {
