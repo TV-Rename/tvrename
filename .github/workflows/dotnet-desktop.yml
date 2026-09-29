@@ -74,10 +74,10 @@ jobs:
         name: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe
         path: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe        
 
-    - name: Release Asset
-      uses: csexton/release-asset-action@v3
+    - name: Attach Files to Release
+    
+      uses: stacksjs/action-releaser@v1.2.6
       with:
-        # The file to upload
-        file: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe
-        # The GitHub token used to create an authenticated client
-        github-token: ${{github.token}}
+        files: |
+          **/TVRename-*-Installer.exe
+
