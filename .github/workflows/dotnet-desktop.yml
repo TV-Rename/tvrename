@@ -73,3 +73,11 @@ jobs:
       with:
         name: Windows-Installer
         path: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe        
+
+    - name: Release Asset
+      uses: csexton/release-asset-action@v3
+      with:
+        # The file to upload
+        file: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe
+        # The GitHub token used to create an authenticated client
+        github-token: fS4peelilh527mw4hpY9FP89YyqLHq1GFlD8+cwD4B02+1obWoEAQuxhN0cI75mT
