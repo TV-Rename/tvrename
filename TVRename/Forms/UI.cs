@@ -6,25 +6,13 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using Alphaleonis.Win32.Filesystem;
 using BrightIdeasSoftware;
+using CefSharp;
 using CefSharp.WinForms;
 using Humanizer;
-using NLog;
-
-
-
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-
-using System.Threading;
-
-using System.Windows.Forms;
 using System.Windows.Threading;
-using System.Xml;
-using System.Xml.Linq;
 using TVRename.Forms.Supporting;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
@@ -169,7 +157,7 @@ public partial class UI : Form, IDialogParent
 
     private static void WaitForCefInitialised()
     {
-        WaitFor(() => CefSharp.Cef.IsInitialized ?? false, 10, "browser to initialise", true);
+        WaitFor(() => Cef.IsInitialized ?? false, 10, "browser to initialise", true);
     }
 
     private static void WaitFor(Func<bool> func, int maxSeconds, string textMessage, bool doLogging)
@@ -4247,7 +4235,7 @@ public partial class UI : Form, IDialogParent
         }
 
         UpdateNotification unForm = new(update);
-        var updateMarkup = unForm.UpdateMarkup().ConfigureAwait(false);
+        var updateMarkup = unForm.UpdateMarkup();
 
         if (IsDisposed || !IsHandleCreated)
         {

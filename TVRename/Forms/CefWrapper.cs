@@ -1,15 +1,17 @@
+//
+// Main website for TVRename is http://tvrename.com
+//
+// Source code available at https://github.com/TV-Rename/tvrename
+//
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+//
+
 
 using CefSharp;
 using CefSharp.WinForms;
 using Microsoft.Win32;
 using MscVersion;
-using NLog;
-
-
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace TVRename;
 
