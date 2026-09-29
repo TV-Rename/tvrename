@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Release]
+        platform: [x64, x86]
 
     runs-on: windows-latest  
 
@@ -55,11 +56,11 @@ jobs:
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
-      run: msbuild D:\a\tvrename\tvrename\TVRename.slnx /t:Restore /p:Configuration=Release
+      run: msbuild D:\a\tvrename\tvrename\TVRename.slnx /t:Restore /p:Configuration=Release -p:Platform=${{ matrix.platform }}
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
-      run: msbuild D:\a\tvrename\tvrename\TVRename.slnx  -t:rebuild -verbosity:diag -property:Configuration=Release
+      run: msbuild D:\a\tvrename\tvrename\TVRename.slnx  -t:rebuild -verbosity:diag -property:Configuration=Release -p:Platform=${{ matrix.platform }}
     
     - name: Install NSIS
       uses: repolevedavaj/install-nsis@v1.3.0
