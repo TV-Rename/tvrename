@@ -6,14 +6,23 @@
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
-    
-    <!-- Assembly Metadata -->
+
+    <AssemblyVersion > 1.0.0.0 </AssemblyVersion>
+    <FileVersion > 1.0.0.0 </FileVersion>
+    <Version>1.0.0 - alpha </Version>
+    <Authors>TV Rename</Authors>
+    <Company>TV Rename</Company>
+    <Product>TV Rename</Product>
+    <Copyright>Copyright © $([System.DateTime]::Now.Year)</Copyright>
+
+      <!-- Assembly Metadata -->
     <AssemblyName>TVRename</AssemblyName>
     <RootNamespace>TVRename</RootNamespace>
     <ApplicationIcon>App\app.ico</ApplicationIcon>
 
     <NoWarn>CA1416</NoWarn>
     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
+    <PublishTrimmed>true</PublishTrimmed>
     
     <!-- Compiler Settings -->
     <LangVersion>latest</LangVersion>
