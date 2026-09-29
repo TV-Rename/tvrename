@@ -13,6 +13,7 @@
     <ApplicationIcon>App\app.ico</ApplicationIcon>
 
     <NoWarn>CA1416</NoWarn>
+    <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
     
     <!-- Compiler Settings -->
     <LangVersion>latest</LangVersion>
