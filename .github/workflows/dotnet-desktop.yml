@@ -7,12 +7,6 @@ on:
 jobs:
 
   build:
-
-    strategy:
-      matrix:
-        configuration: [Release]
-        platform: [x64, x86]
-
     runs-on: windows-latest  
 
     env:
@@ -40,44 +34,38 @@ jobs:
       uses: secondbounce/assemblyinfo-update@v2
       with:
         # Pass your target version (e.g., from an environment variable or tag)
-        version: ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }}
+        version: 1.1.1
         # Optional: Defaults to true. Recursively updates all matching files.
         recursive: true 
 
-    # Install the .NET Core workload
+    # Install the .NET Core
     - name: Install .NET Core
       uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.x
 
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v3
-
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore the application
-      run: msbuild D:\a\tvrename\tvrename\TVRename.slnx /t:Restore /p:Configuration=Release -p:Platform=${{ matrix.platform }}
-
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
-      run: msbuild D:\a\tvrename\tvrename\TVRename.slnx  -t:rebuild -verbosity:diag -property:Configuration=Release -p:Platform=${{ matrix.platform }}
+      run: dotnet publish D:\a\tvrename\tvrename\TVRename.slnx  -t:rebuild -verbosity:diag --configuration Release
     
+    - name: List all files
+      run: Get-ChildItem -Path D:\a\ -Recurse
+
+    - name: List all nuget files
+      run: Get-ChildItem -Path ~/.nuget/packages -Recurse    
     - name: Install NSIS
       uses: repolevedavaj/install-nsis@v1.3.0
       with:
         # The version of NSIS to install
         nsis-version: 3.12
-
-    - name: List all files
-      run: Get-ChildItem -Path D:\a\ -Recurse
-
-    - name: List all nuget files
-      run: Get-ChildItem -Path ~/.nuget/packages -Recurse
         
     # Compile the NSIS Installer using the 'makensis' CLI tool
     - name: Compile NSIS Script
       run: |
         makensis /V3 /WX /DVERSION=${{ steps.get_version.outputs.version-without-v }} /DTAG=${{ steps.get_version.outputs.version-without-v }} Installer.nsi
+
+    - name: List all files
+      run: Get-ChildItem -Path D:\a\ -Recurse
 
     # 5. Upload the generated .exe installer as a downloadable workflow artifact
     - name: Upload Installer Artifact
