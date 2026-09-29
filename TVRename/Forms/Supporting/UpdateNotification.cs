@@ -62,10 +62,37 @@ public partial class UpdateNotification : Form
 
             const string HTML_FOOTER = "</body></html>";
 
-            webReleaseNotes.DocumentText = HTML_HEAD + result + HTML_FOOTER;
 
-            webReleaseNotes.Visible = true;
-            tbReleaseNotes.Visible = false;
+            // Check if the current thread is different from the UI thread
+            if (webReleaseNotes.InvokeRequired)
+            {
+                // Marshal the execution back to the UI thread asynchronously
+                webReleaseNotes.BeginInvoke(new MethodInvoker(() =>
+                {
+                    webReleaseNotes.DocumentText = HTML_HEAD + result + HTML_FOOTER;
+                    webReleaseNotes.Visible = true;
+                }));
+            }
+            else
+            {
+                // Safe to update the UI directly
+                webReleaseNotes.DocumentText = HTML_HEAD + result + HTML_FOOTER;
+                webReleaseNotes.Visible = true;
+            }
+
+
+            // Check if the current thread is different from the UI thread
+            if (tbReleaseNotes.InvokeRequired)
+            {
+                // Marshal the execution back to the UI thread asynchronously
+                tbReleaseNotes.BeginInvoke(new MethodInvoker(() => { tbReleaseNotes.Visible = false; }));
+            }
+            else
+            {
+                // Safe to update the UI directly
+                tbReleaseNotes.Visible = false;
+            }
+            
         }
         catch (WebException wex)
         {
