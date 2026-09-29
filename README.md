@@ -32,5 +32,5 @@ and more!
 For more details visit https://www.tvrename.com...
 
 * to ask a question or get help visit the [forums](https://groups.google.com/forum/#!forum/tvrename)
-* to ask for a new feature visit the [list of potential features](https://tvrename.featureupvote.com/)
+* to ask for a new feature visit the [list of potential features](https://github.com/TV-Rename/tvrename/issues/new/choose)
 * or raise a bug [here](https://github.com/TV-Rename/tvrename/issues)
