@@ -2,7 +2,7 @@ name: Build & Deploy TV Rename
 
 on:
   release:
-  workflow_dispatch:
+    types: [published]
 
 jobs:
 
