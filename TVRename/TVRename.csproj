@@ -22,7 +22,6 @@
 
     <NoWarn>CA1416</NoWarn>
     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
-    <PublishTrimmed>true</PublishTrimmed>
     
     <!-- Compiler Settings -->
     <LangVersion>latest</LangVersion>
