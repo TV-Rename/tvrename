@@ -30,14 +30,6 @@ jobs:
       id: get_version
       uses: maltoze/get-version-action@v1.0.1
 
-    - name: Patch AssemblyInfo
-      uses: secondbounce/assemblyinfo-update@v2
-      with:
-        # Pass your target version (e.g., from an environment variable or tag)
-        version: ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }}
-        # Optional: Defaults to true. Recursively updates all matching files.
-        recursive: true 
-
     # Install the .NET Core
     - name: Install .NET Core
       uses: actions/setup-dotnet@v6
@@ -46,7 +38,10 @@ jobs:
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
-      run: dotnet publish D:\a\tvrename\tvrename\TVRename.slnx  -t:rebuild -verbosity:diag --configuration Release
+      run: dotnet publish D:\a\tvrename\tvrename\TVRename.slnx  -t:rebuild -verbosity:diag --configuration Release \
+        -p:Version="${{ steps.get_version.outputs.version-without-v }}" \
+        -p:AssemblyVersion="${{ steps.get_version.outputs.version-without-v }}" \
+        -p:FileVersion="${{ steps.get_version.outputs.version-without-v }}" 
     
     - name: List all files
       run: Get-ChildItem -Path D:\a\ -Recurse
