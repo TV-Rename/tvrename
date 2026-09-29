@@ -65,11 +65,12 @@ jobs:
       with:
         name: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe
         path: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe        
+        archive: false
+        overwrite: true
 
     - name: Attach Files to Release
-    
       uses: stacksjs/action-releaser@v1.2.11
       with:
         files: |
-          **/TVRename-*-Installer.exe
+          TVRename-*-Installer.exe
 
