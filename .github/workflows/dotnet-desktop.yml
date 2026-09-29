@@ -68,7 +68,7 @@ jobs:
 
     - name: Attach Files to Release
     
-      uses: stacksjs/action-releaser@v1.2.6
+      uses: stacksjs/action-releaser@v1.2.11
       with:
         files: |
           **/TVRename-*-Installer.exe
