@@ -13,7 +13,7 @@ BrandingText " "
 
 InstallDir "$PROGRAMFILES\TVRename"
 
-OutFile "TVRename-${TAG}.exe"
+OutFile "TVRename-${TAG}-Installer.exe"
 
 !define MUI_ICON "TVRename\App\app.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\win-uninstall.ico"
@@ -52,48 +52,47 @@ Section "Install"
 
     Delete "$INSTDIR\Ionic.Utils.Zip.dll" ; Remove old dependency
 
-    File "TVRename\bin\Release\net10.0-windows\TVRename.exe"
-    File "TVRename\bin\Release\net10.0-windows\*.dll"
-    File "TVRename\bin\Release\net10.0-windows\*.json"
-    File "TVRename\bin\Release\net10.0-windows\TVRename.dll.config"
-    
-    File "TVRename\bin\Release\net10.0-windows\NLog.config"
+    File "TVRename\bin\Release\net10.0-windows\publish\TVRename.exe"
+    File "TVRename\bin\Release\net10.0-windows\publish\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\publish\*.json"
+    File "TVRename\bin\Release\net10.0-windows\publish\TVRename.dll.config"
+    File "TVRename\NLog.config"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
     SetOutPath "$INSTDIR\runtimes\win\lib\net8.0"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win\lib\net8.0\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win\lib\net8.0\*.dll"
     
     SetOutPath "$INSTDIR\runtimes\win\lib\net10.0"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win\lib\net10.0\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win\lib\net10.0\*.dll"
     
     SetOutPath "$INSTDIR\runtimes\win-x64\lib\net6.0"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\lib\net6.0\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x64\lib\net6.0\*.dll"
     
     SetOutPath "$INSTDIR\runtimes\win-x64\native"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\*.dll"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\*.exe"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\*.json"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\*.pak"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\*.bin"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\*.dat"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x64\native\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x64\native\*.exe"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x64\native\*.json"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x64\native\*.pak"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x64\native\*.bin"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x64\native\*.dat"
 
     SetOutPath "$INSTDIR\runtimes\win-x64\native\locales"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x64\native\locales\*.pak"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x64\native\locales\*.pak"
     
     SetOutPath "$INSTDIR\runtimes\win-x86\lib\net6.0"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\lib\net6.0\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x86\lib\net6.0\*.dll"
 
     SetOutPath "$INSTDIR\runtimes\win-x86\native"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\native\*.dll"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\native\*.exe"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\native\*.json"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\native\*.pak"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\native\*.bin"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\native\*.dat"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x86\native\*.dll"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x86\native\*.exe"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x86\native\*.json"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x86\native\*.pak"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x86\native\*.bin"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x86\native\*.dat"
     
     SetOutPath "$INSTDIR\runtimes\win-x86\native\locales"
-    File "TVRename\bin\Release\net10.0-windows\runtimes\win-x86\native\locales\*.pak"
+    File "TVRename\bin\Release\net10.0-windows\publish\runtimes\win-x86\native\locales\*.pak"
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"

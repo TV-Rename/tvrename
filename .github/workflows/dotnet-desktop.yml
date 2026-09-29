@@ -2,7 +2,7 @@ name: Build & Deploy TV Rename
 
 on:
   release:
-  workflow_dispatch:
+    types: [published]
 
 jobs:
 
@@ -34,7 +34,7 @@ jobs:
       uses: secondbounce/assemblyinfo-update@v2
       with:
         # Pass your target version (e.g., from an environment variable or tag)
-        version: 1.1.1
+        version: ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }}
         # Optional: Defaults to true. Recursively updates all matching files.
         recursive: true 
 
@@ -62,7 +62,7 @@ jobs:
     # Compile the NSIS Installer using the 'makensis' CLI tool
     - name: Compile NSIS Script
       run: |
-        makensis /V3 /WX /DVERSION=${{ steps.get_version.outputs.version-without-v }} /DTAG=${{ steps.get_version.outputs.version-without-v }} Installer.nsi
+        makensis /V3 /WX /DVERSION=${{ steps.get_version.outputs.version-without-v }} /DTAG=${{ steps.get_version.outputs.version }} Installer.nsi
 
     - name: List all files
       run: Get-ChildItem -Path D:\a\ -Recurse
@@ -71,5 +71,13 @@ jobs:
     - name: Upload Installer Artifact
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: Windows-Installer
-        path: path/to/your/generated_output_installer.exe        
+        name: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe
+        path: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe        
+
+    - name: Attach Files to Release
+    
+      uses: stacksjs/action-releaser@v1.2.6
+      with:
+        files: |
+          **/TVRename-*-Installer.exe
+
