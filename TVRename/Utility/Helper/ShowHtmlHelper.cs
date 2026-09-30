@@ -8,16 +8,16 @@ namespace TVRename;
 
 internal static class ShowHtmlHelper
 {
+    static Color BackgroundColour = SystemColors.ButtonFace;
+    static Color ForegroundColour = SystemColors.ControlText;
+
     public static string CreateOldPage(string body)
     {
-        Color col = Color.FromName("ButtonFace");
-
         string css = "* { font-family: Tahoma, Arial; font-size 10pt; } " + "a:link { color: black } " +
                      "a:visited { color:black } " + "a:hover { color:#000080 } " + "a:active { color:black } " +
                      "a.search:link { color: #800000 } " + "a.search:visited { color:#800000 } " +
                      "a.search:hover { color:#000080 } " + "a.search:active { color:#800000 } " +
-                     "* {background-color: #" + col.R.ToString("X2") + col.G.ToString("X2") + col.B.ToString("X2") +
-                     "}" + "* { color: black }";
+                     "* {background-color: " + BackgroundColour.HexColour() + "}" + "* { color: black }";
 
         string html = "<html><head><meta charset=\"UTF-8\"><STYLE type=\"text/css\">" + css + "</style>";
 
@@ -29,70 +29,63 @@ internal static class ShowHtmlHelper
 
     public static async Task<string> GetShowHtmlOverviewAsync(this ShowConfiguration si, bool includeDirectoryLinks)
     {
-        Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col));
-        await sb.AppendShowAsync(si, col, includeDirectoryLinks);
+        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        await sb.AppendShowAsync(si, BackgroundColour, includeDirectoryLinks);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
 
     public static string GetSeasonImagesOverview(this ProcessedSeason season)
     {
-        Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col));
-        sb.AppendSeasonImages(col, season);
+        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        sb.AppendSeasonImages(BackgroundColour, season);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
 
     public static string GetShowImagesOverview(this ShowConfiguration si)
     {
-        Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col));
-        sb.AppendShowImages(si, col);
+        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        sb.AppendShowImages(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
 
     public static string GetMovieImagesOverview(this MovieConfiguration si)
     {
-        Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col));
-        sb.AppendMovieImages(si, col);
+        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        sb.AppendMovieImages(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
     public static async Task<string> GetShowHtmlOverviewAsync(this CachedSeriesInfo series, RecommendationRow recommendation)
     {
-        Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col));
-        await sb.AppendShowAsync(null, series, col, false);
-        sb.AppendRecommendation(recommendation, col);
+        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        await sb.AppendShowAsync(null, series, BackgroundColour, false);
+        sb.AppendRecommendation(recommendation, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
 
     public static async Task<string> GetMovieHtmlOverviewAsync(this MovieConfiguration si, bool includeDirectoryLinks)
     {
-        Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
         DirFilesCache dfc = new();
-        sb.AppendLine(HTMLHeader(10, col));
-        await sb.AppendMovieAsync(si, col, includeDirectoryLinks, dfc);
+        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        await sb.AppendMovieAsync(si, BackgroundColour, includeDirectoryLinks, dfc);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
     public static string GetMovieHtmlOverview(this API.YtsMovie si)
     {
-        Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col));
-        sb.AppendMovie(si, col);
+        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        sb.AppendMovie(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
@@ -557,9 +550,9 @@ internal static class ShowHtmlHelper
         if (ser.GetCrew().IsAny() || ser.GetActors().IsAny())
         {
             sb.AppendLine($@"<div class=""accordion accordion-flush"" id=""accordionCastCrew"">
-  <div class=""accordion-item"" style=""background-color:#F0F0F0"">
-    <h2 class=""accordion-header"" id=""flush-headingOne"" style=""background-color:#F0F0F0"">
-      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseOne"" aria-expanded=""false"" aria-controls=""flush-collapseOne"" style=""background-color:#F0F0F0"">
+  <div class=""accordion-item"" style=""background-color:{backgroundColour.HexColour()}"">
+    <h2 class=""accordion-header"" id=""flush-headingOne"" style=""background-color:{backgroundColour.HexColour()}"">
+      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseOne"" aria-expanded=""false"" aria-controls=""flush-collapseOne"" style=""background-color:{backgroundColour.HexColour()}"">
         Cast
       </button>
     </h2>
@@ -569,9 +562,9 @@ internal static class ShowHtmlHelper
 	  </div>
     </div>
   </div>
-  <div class=""accordion-item"" style=""background-color:#F0F0F0"">
-    <h2 class=""accordion-header"" id=""flush-headingTwo"" style=""background-color:#F0F0F0"">
-      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseTwo"" aria-expanded=""false"" aria-controls=""flush-collapseTwo"" style=""background-color:#F0F0F0"">
+  <div class=""accordion-item"" style=""background-color:{backgroundColour.HexColour()}"">
+    <h2 class=""accordion-header"" id=""flush-headingTwo"" style=""background-color:{backgroundColour.HexColour()}"">
+      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseTwo"" aria-expanded=""false"" aria-controls=""flush-collapseTwo"" style=""background-color:{backgroundColour.HexColour()}"">
         Crew
       </button>
     </h2>
@@ -685,9 +678,9 @@ internal static class ShowHtmlHelper
         if (ser.GetCrew().IsAny() || ser.GetActors().IsAny())
         {
             sb.AppendLine($@"<div class=""accordion accordion-flush"" id=""accordionCastCrew"">
-  <div class=""accordion-item"" style=""background-color:#F0F0F0"">
-    <h2 class=""accordion-header"" id=""flush-headingOne"" style=""background-color:#F0F0F0"">
-      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseOne"" aria-expanded=""false"" aria-controls=""flush-collapseOne"" style=""background-color:#F0F0F0"">
+  <div class=""accordion-item"" style=""background-color:{backgroundColour.HexColour()}"">
+    <h2 class=""accordion-header"" id=""flush-headingOne"" style=""background-color:{backgroundColour.HexColour()}"">
+      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseOne"" aria-expanded=""false"" aria-controls=""flush-collapseOne"" style=""background-color:{backgroundColour.HexColour()}"">
         Cast
       </button>
     </h2>
@@ -697,9 +690,9 @@ internal static class ShowHtmlHelper
 	  </div>
     </div>
   </div>
-  <div class=""accordion-item"" style=""background-color:#F0F0F0"">
-    <h2 class=""accordion-header"" id=""flush-headingTwo"" style=""background-color:#F0F0F0"">
-      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseTwo"" aria-expanded=""false"" aria-controls=""flush-collapseTwo"" style=""background-color:#F0F0F0"">
+  <div class=""accordion-item"" style=""background-color:{backgroundColour.HexColour()}"">
+    <h2 class=""accordion-header"" id=""flush-headingTwo"" style=""background-color:{backgroundColour.HexColour()}"">
+      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseTwo"" aria-expanded=""false"" aria-controls=""flush-collapseTwo"" style=""background-color:{backgroundColour.HexColour()}"">
         Crew
       </button>
     </h2>
@@ -1547,7 +1540,7 @@ internal static class ShowHtmlHelper
                  <link href=""https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"" rel=""stylesheet"" integrity=""sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"" crossorigin=""anonymous"">
                 <link rel=""stylesheet"" href=""https://pro.fontawesome.com/releases/v5.10.0/css/all.css"" integrity=""sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"" crossorigin=""anonymous""/>
                 </head>"
-               + $"<body style=\"background-color: {backgroundColour.HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
+               + $"<body style=\"background-color: {backgroundColour.HexColour()}; color: {ForegroundColour.HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
     }
 
     private static string HexColour(this Color c)

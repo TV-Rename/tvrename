@@ -17,7 +17,6 @@ using TVRename.Forms.Supporting;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Utility.Helper;
-using static TVRename.TVDoc;
 using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
@@ -74,6 +73,7 @@ public partial class UI : Form, IDialogParent
         mDoc = doc;
 
         InitializeComponent();
+        ApplyColorOverrides(this, TVSettings.Instance.ColorModeActual);
 
         ShowInTaskbar = TVSettings.Instance.ShowInTaskbar && !mDoc.Args.Hide;
 
@@ -152,6 +152,36 @@ public partial class UI : Form, IDialogParent
             }
             SetStartUpTab();
             UpdateSplashStatus(splash, "Opening...", 100);
+        }
+    }
+    private void ApplyColorOverrides(Control container, SystemColorMode colorMode)
+    {
+        foreach (Control c in container.Controls)
+        {
+            // 1. TabPages MUST have UseVisualStyleBackColor turned OFF to not be white
+            if (c is TabPage tabPage)
+            {
+                tabPage.UseVisualStyleBackColor = false;
+                if (colorMode == SystemColorMode.Dark)
+                {
+                    tabPage.BackColor = Color.FromArgb(32, 32, 32); // Custom dark gray
+                }
+            }
+            // 2. Buttons MUST have UseVisualStyleBackColor turned ON for Win11 Dark Theme
+            else if (c is Button button)
+            {
+                button.UseVisualStyleBackColor = true;
+            }
+            else if (c is TabControl tabcontrol)
+            {
+
+            }
+
+            // Recursively handle child controls (like panels or groupboxes)
+            if (c.HasChildren)
+            {
+                ApplyColorOverrides(c,colorMode);
+            }
         }
     }
 
@@ -5444,101 +5474,4 @@ public struct DownloadProgressReport
     public Type UpdateType { get; set; }
     public TVDoc.ProviderType Provider { get; set; }
     public string Message { get; set; }
-}
-
-public class DownloadProgressStatus : Progress<DownloadProgressReport>
-{
-    readonly ProgressBar bar;
-    readonly Label label;
-
-    internal DownloadProgressStatus(ProgressBar bar, Label label)
-    {
-        this.bar = bar;
-        this.label = label;
-        reset();
-    }
-
-    readonly ConcurrentDictionary<ProviderType, (int done, int total)> status = new();
-
-    void reset()
-    {
-        status.Clear();
-        status[ProviderType.TheTVDB] = (0, 1);
-        status[ProviderType.TMDB] = (0, 1);
-        status[ProviderType.TVmaze] = (0, 1);
-    }
-
-    public void UpdateFromSource(ProviderType provider, int total)
-    {
-        status[provider] = (0, total);
-        if (bar.InvokeRequired)
-        {
-            bar.Invoke(new MethodInvoker(delegate { bar.Maximum = status.Values.Sum(a => a.total); }));
-        }
-        else
-        {
-            bar.Maximum = status.Values.Sum(a => a.total);
-        }
-    }
-    protected override void OnReport(DownloadProgressReport update)
-    {
-        if (update.UpdateType == DownloadProgressReport.Type.ProviderUpdates)
-        {
-            Update($"Downloading: {update.Provider.PrettyPrint()} updates", 0);
-        }
-        else if (update.UpdateType == DownloadProgressReport.Type.Final)
-        {
-            Update($"Downloading: {update.Message}", 0);
-        }
-        else
-        {
-            status[update.Provider] = (status[update.Provider].done + 1, status[update.Provider].total);
-            Update($"Downloading: {update.Message}", status.Values.Sum(a => a.done));
-        }
-
-        base.OnReport(update);
-    }
-
-    private void Update(string message, int position)
-    {
-        if (bar.InvokeRequired)
-        {
-            bar.Invoke(new MethodInvoker(delegate
-            {
-                bar.SetProgress(position);
-                bar.Enabled = true;
-                bar.Visible = true;
-            }));
-        }
-        else
-        {
-            bar.SetProgress(position);
-            bar.Enabled = true;
-            bar.Visible = true;
-        }
-        if (label.InvokeRequired)
-        {
-            label.Invoke(new MethodInvoker(delegate
-            {
-                label.Text = message.ToUiVersion();
-                label.Visible = true;
-                label.Enabled = true;
-            }));
-        }
-        else
-        {
-            label.Text = message.ToUiVersion();
-            label.Visible = true;
-            label.Enabled = true;
-        }
-    }
-
-    internal void MarkFinished()
-    {
-        bar.Enabled = false;
-        bar.Visible = false;
-        label.Visible = false;
-        label.Enabled = false;
-        label.Text = string.Empty;
-    }
 }

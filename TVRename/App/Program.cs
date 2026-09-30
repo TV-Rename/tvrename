@@ -31,10 +31,10 @@ public static class Program
         Logger.Info($"Copyright (C) {TimeHelpers.LocalNow().Year} TV Rename");
         Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
 
-        Application.SetColorMode(SystemColorMode.System);
         Application.EnableVisualStyles();
         Application.SetHighDpiMode(HighDpiMode.SystemAware);
         Application.SetCompatibleTextRenderingDefault(false);
+        Application.SetColorMode(TVSettings.Instance.ColorModeActual);
 
         try
         {

@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using Microsoft.Win32;
 using Polly;
 using System.Reflection;
 
@@ -232,5 +233,29 @@ public static class Helpers
                 });
 
         return retryPolicy.Execute(operation);
+    }
+    
+    public static bool IsSystemDarkMode()
+    {
+        try
+        {
+            var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize");
+            if (registryKey != null)
+            {
+                var value = registryKey.GetValue("AppsUseLightTheme");
+                if (value is int intValue)
+                {
+                    // If AppsUseLightTheme is 0, it's Dark Mode. If 1, it's Light Mode.
+                    return intValue == 0;
+                }
+            }
+        }
+        catch
+        {
+            // Handle potential exceptions or missing keys gracefully
+        }
+
+        // Default fallback to light mode if unable to read
+        return false;
     }
 }
