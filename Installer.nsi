@@ -25,7 +25,6 @@ Var STARTMENU_FOLDER
 
 !define MUI_ABORTWARNING
 
-!define MUI_FINISHPAGE_RUN "$INSTDIR\TVRename.exe"
 !define MUI_FINISHPAGE_LINK "Visit the TV Rename site for the latest news and support"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://www.tvrename.com/"
 
