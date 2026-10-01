@@ -137,6 +137,7 @@ public partial class UI : Form, IDialogParent
 
         SetupObjectListForScanResults();
         SetupObjectListForWhenToWatch();
+        RevertWTWView();
 
         if (mDoc.Args.Hide || !showUi)
         {
@@ -180,7 +181,7 @@ public partial class UI : Form, IDialogParent
             // Recursively handle child controls (like panels or groupboxes)
             if (c.HasChildren)
             {
-                ApplyColorOverrides(c,colorMode);
+                ApplyColorOverrides(c, colorMode);
             }
         }
     }
@@ -5387,6 +5388,21 @@ public partial class UI : Form, IDialogParent
     private void lvWhenToWatch_BeforeCreatingGroups(object sender, CreateGroupsEventArgs e)
     {
         e.Parameters.ItemComparer = new OlvGroupComparer<ProcessedEpisode>(MapEpisodeColumnToSorter(e.Parameters.PrimarySort), e.Parameters.PrimarySortOrder);
+    }
+
+    private void toolStripButton1_Click_2(object sender, EventArgs e)
+    {
+        RevertWTWView();
+    }
+
+    private void RevertWTWView()
+    {
+        lvWhenToWatch.BeginUpdate();
+        lvWhenToWatch.AlwaysGroupByColumn = null;
+        lvWhenToWatch.Sort(olvWTWDate, SortOrder.Ascending);
+        lvWhenToWatch.ShowGroups = true;
+        lvWhenToWatch.ResetColumnFiltering();
+        lvWhenToWatch.EndUpdate();
     }
 }
 

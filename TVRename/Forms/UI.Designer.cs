@@ -289,6 +289,7 @@ namespace TVRename.Forms
             bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             tableLayoutPanel3 = new TableLayoutPanel();
             panel1 = new Panel();
+            toolStripButton1 = new ToolStripButton();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
             tbMyMovies.SuspendLayout();
@@ -340,7 +341,7 @@ namespace TVRename.Forms
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(7, 2, 0, 2);
-            menuStrip1.Size = new Size(1102, 24);
+            menuStrip1.Size = new Size(1555, 24);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -870,7 +871,7 @@ namespace TVRename.Forms
             tabControl1.Multiline = true;
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1102, 690);
+            tabControl1.Size = new Size(1555, 695);
             tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 0;
             tabControl1.DrawItem += TabControl1_DrawItem;
@@ -1432,7 +1433,7 @@ namespace TVRename.Forms
             tbAllInOne.Location = new Point(104, 4);
             tbAllInOne.Margin = new Padding(4, 3, 4, 3);
             tbAllInOne.Name = "tbAllInOne";
-            tbAllInOne.Size = new Size(994, 682);
+            tbAllInOne.Size = new Size(1447, 687);
             tbAllInOne.TabIndex = 11;
             tbAllInOne.Text = "Scan";
             tbAllInOne.UseVisualStyleBackColor = true;
@@ -1467,7 +1468,7 @@ namespace TVRename.Forms
             olvAction.ShowImagesOnSubItems = true;
             olvAction.ShowItemCountOnGroups = true;
             olvAction.ShowItemToolTips = true;
-            olvAction.Size = new Size(994, 637);
+            olvAction.Size = new Size(1447, 642);
             olvAction.SmallImageList = ilIcons;
             olvAction.TabIndex = 0;
             olvAction.UseCompatibleStateImageBehavior = false;
@@ -1602,7 +1603,7 @@ namespace TVRename.Forms
             tsScanResults.Location = new Point(0, 0);
             tsScanResults.Name = "tsScanResults";
             tsScanResults.Padding = new Padding(0, 0, 2, 0);
-            tsScanResults.Size = new Size(994, 45);
+            tsScanResults.Size = new Size(1447, 45);
             tsScanResults.TabIndex = 13;
             tsScanResults.Text = "toolStrip1";
             // 
@@ -1829,7 +1830,7 @@ namespace TVRename.Forms
             btnRevertView.Image = (Image)resources.GetObject("btnRevertView.Image");
             btnRevertView.ImageScaling = ToolStripItemImageScaling.None;
             btnRevertView.Name = "btnRevertView";
-            btnRevertView.Size = new Size(88, 20);
+            btnRevertView.Size = new Size(88, 42);
             btnRevertView.Text = "Revert View";
             btnRevertView.Click += BtnRevertView_Click;
             // 
@@ -1839,7 +1840,7 @@ namespace TVRename.Forms
             btnPreferences.Image = (Image)resources.GetObject("btnPreferences.Image");
             btnPreferences.ImageScaling = ToolStripItemImageScaling.None;
             btnPreferences.Name = "btnPreferences";
-            btnPreferences.Size = new Size(113, 36);
+            btnPreferences.Size = new Size(113, 42);
             btnPreferences.Text = "&Preferences...";
             btnPreferences.Click += bnActionOptions_Click;
             // 
@@ -1853,7 +1854,7 @@ namespace TVRename.Forms
             tsbScanContextMenu.Image = (Image)resources.GetObject("tsbScanContextMenu.Image");
             tsbScanContextMenu.ImageScaling = ToolStripItemImageScaling.None;
             tsbScanContextMenu.Name = "tsbScanContextMenu";
-            tsbScanContextMenu.Size = new Size(118, 36);
+            tsbScanContextMenu.Size = new Size(118, 42);
             tsbScanContextMenu.Text = "Context Menu";
             tsbScanContextMenu.Click += TsbScanContextMenu_Click;
             // 
@@ -1864,7 +1865,7 @@ namespace TVRename.Forms
             tbWTW.Location = new Point(104, 4);
             tbWTW.Margin = new Padding(4, 3, 4, 3);
             tbWTW.Name = "tbWTW";
-            tbWTW.Size = new Size(994, 682);
+            tbWTW.Size = new Size(1447, 687);
             tbWTW.TabIndex = 4;
             tbWTW.Text = "Schedule";
             tbWTW.UseVisualStyleBackColor = true;
@@ -1882,7 +1883,7 @@ namespace TVRename.Forms
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 162F));
-            tableLayoutPanel4.Size = new Size(994, 682);
+            tableLayoutPanel4.Size = new Size(1447, 687);
             tableLayoutPanel4.TabIndex = 13;
             // 
             // tableLayoutPanel1
@@ -1894,18 +1895,18 @@ namespace TVRename.Forms
             tableLayoutPanel1.Controls.Add(txtWhenToWatchSynopsis, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-            tableLayoutPanel1.Location = new Point(2, 522);
+            tableLayoutPanel1.Location = new Point(2, 527);
             tableLayoutPanel1.Margin = new Padding(2);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(990, 158);
+            tableLayoutPanel1.Size = new Size(1443, 158);
             tableLayoutPanel1.TabIndex = 4;
             // 
             // calCalendar
             // 
             calCalendar.Dock = DockStyle.Fill;
-            calCalendar.Location = new Point(763, 0);
+            calCalendar.Location = new Point(1216, 0);
             calCalendar.Margin = new Padding(0);
             calCalendar.MaxSelectionCount = 1;
             calCalendar.Name = "calCalendar";
@@ -1921,7 +1922,7 @@ namespace TVRename.Forms
             txtWhenToWatchSynopsis.Name = "txtWhenToWatchSynopsis";
             txtWhenToWatchSynopsis.ReadOnly = true;
             txtWhenToWatchSynopsis.ScrollBars = ScrollBars.Vertical;
-            txtWhenToWatchSynopsis.Size = new Size(763, 158);
+            txtWhenToWatchSynopsis.Size = new Size(1216, 158);
             txtWhenToWatchSynopsis.TabIndex = 4;
             // 
             // toolStripContainer3
@@ -1931,12 +1932,12 @@ namespace TVRename.Forms
             // 
             toolStripContainer3.ContentPanel.Controls.Add(lvWhenToWatch);
             toolStripContainer3.ContentPanel.Margin = new Padding(2);
-            toolStripContainer3.ContentPanel.Size = new Size(990, 477);
+            toolStripContainer3.ContentPanel.Size = new Size(1443, 482);
             toolStripContainer3.Dock = DockStyle.Fill;
             toolStripContainer3.Location = new Point(2, 2);
             toolStripContainer3.Margin = new Padding(2);
             toolStripContainer3.Name = "toolStripContainer3";
-            toolStripContainer3.Size = new Size(990, 516);
+            toolStripContainer3.Size = new Size(1443, 521);
             toolStripContainer3.TabIndex = 11;
             toolStripContainer3.Text = "toolStripContainer3";
             // 
@@ -1969,7 +1970,7 @@ namespace TVRename.Forms
             lvWhenToWatch.ShowImagesOnSubItems = true;
             lvWhenToWatch.ShowItemCountOnGroups = true;
             lvWhenToWatch.ShowItemToolTips = true;
-            lvWhenToWatch.Size = new Size(990, 477);
+            lvWhenToWatch.Size = new Size(1443, 482);
             lvWhenToWatch.SmallImageList = ilIcons;
             lvWhenToWatch.TabIndex = 3;
             lvWhenToWatch.UseCompatibleStateImageBehavior = false;
@@ -2079,11 +2080,11 @@ namespace TVRename.Forms
             tsWtW.Dock = DockStyle.None;
             tsWtW.GripStyle = ToolStripGripStyle.Hidden;
             tsWtW.ImageScalingSize = new Size(28, 28);
-            tsWtW.Items.AddRange(new ToolStripItem[] { btnWhenToWatchCheck, btnScheduleBTSearch, tsbScheduleJackettSearch, toolStripSeparator12, btnScheduleRightClick });
+            tsWtW.Items.AddRange(new ToolStripItem[] { btnWhenToWatchCheck, btnScheduleBTSearch, tsbScheduleJackettSearch, toolStripSeparator12, btnScheduleRightClick, toolStripButton1 });
             tsWtW.Location = new Point(0, 0);
             tsWtW.Name = "tsWtW";
             tsWtW.Padding = new Padding(0, 0, 4, 0);
-            tsWtW.Size = new Size(990, 39);
+            tsWtW.Size = new Size(1443, 39);
             tsWtW.Stretch = true;
             tsWtW.TabIndex = 6;
             tsWtW.Text = "toolStrip1";
@@ -2180,21 +2181,21 @@ namespace TVRename.Forms
             tableLayoutPanel2.Controls.Add(tsNextShowTxt, 0, 0);
             tableLayoutPanel2.Dock = DockStyle.Bottom;
             tableLayoutPanel2.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-            tableLayoutPanel2.Location = new Point(0, 714);
+            tableLayoutPanel2.Location = new Point(0, 719);
             tableLayoutPanel2.Margin = new Padding(4, 3, 4, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new Size(1102, 29);
+            tableLayoutPanel2.Size = new Size(1555, 29);
             tableLayoutPanel2.TabIndex = 9;
             // 
             // pbProgressBarx
             // 
             pbProgressBarx.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pbProgressBarx.Location = new Point(939, 12);
+            pbProgressBarx.Location = new Point(1325, 12);
             pbProgressBarx.Margin = new Padding(4, 3, 4, 3);
             pbProgressBarx.Name = "pbProgressBarx";
-            pbProgressBarx.Size = new Size(159, 14);
+            pbProgressBarx.Size = new Size(226, 14);
             pbProgressBarx.Step = 1;
             pbProgressBarx.Style = ProgressBarStyle.Continuous;
             pbProgressBarx.TabIndex = 0;
@@ -2202,10 +2203,10 @@ namespace TVRename.Forms
             // txtDLStatusLabel
             // 
             txtDLStatusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            txtDLStatusLabel.Location = new Point(499, 14);
+            txtDLStatusLabel.Location = new Point(703, 14);
             txtDLStatusLabel.Margin = new Padding(4, 0, 4, 0);
             txtDLStatusLabel.Name = "txtDLStatusLabel";
-            txtDLStatusLabel.Size = new Size(432, 15);
+            txtDLStatusLabel.Size = new Size(614, 15);
             txtDLStatusLabel.TabIndex = 1;
             txtDLStatusLabel.Text = "Background Download: ---";
             txtDLStatusLabel.Visible = false;
@@ -2217,7 +2218,7 @@ namespace TVRename.Forms
             tsNextShowTxt.Location = new Point(4, 14);
             tsNextShowTxt.Margin = new Padding(4, 0, 4, 0);
             tsNextShowTxt.Name = "tsNextShowTxt";
-            tsNextShowTxt.Size = new Size(487, 15);
+            tsNextShowTxt.Size = new Size(691, 15);
             tsNextShowTxt.TabIndex = 1;
             tsNextShowTxt.Text = "---";
             // 
@@ -2327,7 +2328,7 @@ namespace TVRename.Forms
             // 
             btnUpdateAvailable.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnUpdateAvailable.BackColor = SystemColors.ActiveCaption;
-            btnUpdateAvailable.Location = new Point(958, 0);
+            btnUpdateAvailable.Location = new Point(1411, 0);
             btnUpdateAvailable.Margin = new Padding(4, 3, 4, 3);
             btnUpdateAvailable.Name = "btnUpdateAvailable";
             btnUpdateAvailable.Size = new Size(135, 27);
@@ -2386,14 +2387,24 @@ namespace TVRename.Forms
             panel1.Location = new Point(0, 24);
             panel1.Margin = new Padding(4, 3, 4, 3);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1102, 690);
+            panel1.Size = new Size(1555, 695);
             panel1.TabIndex = 12;
+            // 
+            // toolStripButton1
+            // 
+            toolStripButton1.Alignment = ToolStripItemAlignment.Right;
+            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
+            toolStripButton1.ImageScaling = ToolStripItemImageScaling.None;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new Size(88, 36);
+            toolStripButton1.Text = "Revert View";
+            toolStripButton1.Click += toolStripButton1_Click_2;
             // 
             // UI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1102, 743);
+            ClientSize = new Size(1555, 748);
             Controls.Add(panel1);
             Controls.Add(tableLayoutPanel3);
             Controls.Add(btnUpdateAvailable);
@@ -2710,5 +2721,6 @@ namespace TVRename.Forms
         private ToolStripMenuItem exportFilteredToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator25;
         private ObjectListViewFlickerFree<ProcessedEpisode> lvWhenToWatch;
+        private ToolStripButton toolStripButton1;
     }
 }
