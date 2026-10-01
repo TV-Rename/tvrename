@@ -224,6 +224,16 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             {
                 this.MarkAllDirty();
                 latestUpdateTime.RegisterServerUpdate(TimeHelpers.UnixUtcNow());
+                Say($"Identified all TMDB Shows({Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) & Movies({Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) need updating");
+                return true;
+            }
+
+            if (updateFromEpochTime < DateTime.UtcNow.AddMonths(-2).ToUnixTime())
+            {
+                //it's been a long time since we last updated, so just mark everything dirty and get the latest data
+                this.MarkAllDirty();
+                latestUpdateTime.RegisterServerUpdate(TimeHelpers.UnixUtcNow());
+                Say($"Identified all TMDB Shows({Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) & Movies({Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) need updating");
                 return true;
             }
 
