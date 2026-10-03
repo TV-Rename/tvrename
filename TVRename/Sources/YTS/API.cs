@@ -181,7 +181,7 @@ public static class API
         throw new Exception("Could not parse json from YTS");
     }
 
-    private static async Task<YtsMovie?> GetMovieByImdbInternalAsync(string? imdbCode)
+    private static async Task<YtsMovie?> GetMovieByImdbInternalAsync(string? imdbCode, CancellationToken cancellationToken)
     {
         JObject updatesJson =
             await HttpHelper.HttpGetRequestWithRetryAsync(APIRoot + $"movie_details.json?imdb_id={imdbCode}", 3, 2);
@@ -194,7 +194,7 @@ public static class API
         return null;
     }
 
-    private static async Task<IEnumerable<YtsMovie>?> GetRelatedMoviesInternalAsync(int ytsMovieId)
+    private static async Task<IEnumerable<YtsMovie>?> GetRelatedMoviesInternalAsync(int ytsMovieId, CancellationToken cancellationToken)
     {
         JObject updatesJson =
             await HttpHelper.HttpGetRequestWithRetryAsync(APIRoot + $"movie_suggestions.json?movie_id={ytsMovieId}", 3, 2);
@@ -207,13 +207,13 @@ public static class API
         return null;
     }
 
-    internal static async Task<YtsMovie?> GetMovieByImdbAsync(string? imdbCode)
+    internal static async Task<YtsMovie?> GetMovieByImdbAsync(string? imdbCode, CancellationToken cancellationToken)
     {
-        return await HandleErrorsFrom($"get IMDB {imdbCode} movie", async () => await GetMovieByImdbInternalAsync(imdbCode));
+        return await HandleErrorsFrom($"get IMDB {imdbCode} movie", async () => await GetMovieByImdbInternalAsync(imdbCode, cancellationToken));
     }
-    internal static async Task<IEnumerable<YtsMovie>?> GetRelatedMoviesAsync(int id)
+    internal static async Task<IEnumerable<YtsMovie>?> GetRelatedMoviesAsync(int id, CancellationToken cancellationToken)
     {
-        return await HandleErrorsFrom($"get movies related to id {id}", async () => await GetRelatedMoviesInternalAsync(id));
+        return await HandleErrorsFrom($"get movies related to id {id}", async () => await GetRelatedMoviesInternalAsync(id, cancellationToken));
     }
     internal static async Task<IEnumerable<YtsMovie>> GetMoviesAsync(IProgress<ProgressReport> report, string resolution, int minRating, CancellationToken ct)
     {

@@ -33,6 +33,8 @@ public partial class BulkAddShow : Form
     private readonly UI mainUi;
     CancellationTokenSource cts = new();
 
+    Task? scanTask;
+
     //Thread safe counters to work out the progress
     //For auto id
     private static readonly ThreadSafeCounter VolatileCounter = new();
@@ -57,7 +59,7 @@ public partial class BulkAddShow : Form
         ShowHideUpdateControls(false);
     }
 
-    private void bnClose_Click(object sender, System.EventArgs e)
+    private async void bnClose_Click(object sender, System.EventArgs e)
     {
         cts.Cancel();
 
@@ -67,6 +69,10 @@ public partial class BulkAddShow : Form
             {
                 return;
             }
+        }
+        if (scanTask is not null)
+        {
+            await scanTask;
         }
 
         Close();
@@ -231,7 +237,9 @@ public partial class BulkAddShow : Form
 
         try
         {
-            await engine.CheckFoldersAsync(progressHandler, true, true, cts.Token);
+            scanTask = engine.CheckFoldersAsync(progressHandler, true, true, cts.Token);
+
+            await scanTask;
         }
         catch (OperationCanceledException)
         {
@@ -628,5 +636,10 @@ public partial class BulkAddShow : Form
     private void btnStopScan_Click(object sender, EventArgs e)
     {
         cts.Cancel();
+
+        if (scanTask is not null)
+        {
+            scanTask.Wait();
+        }
     }
 }

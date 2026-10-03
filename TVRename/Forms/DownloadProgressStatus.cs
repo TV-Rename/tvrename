@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System.ComponentModel;
 using static TVRename.TVDoc;
 
 namespace TVRename.Forms;
@@ -35,13 +36,20 @@ public class DownloadProgressStatus : Progress<DownloadProgressReport>
     public void UpdateFromSource(ProviderType provider, int total)
     {
         status[provider] = (0, total);
-        if (bar.InvokeRequired)
+        try
         {
-            bar.Invoke(new MethodInvoker(delegate { bar.Maximum = status.Values.Sum(a => a.total); }));
+            if (bar.InvokeRequired)
+            {
+                bar.Invoke(new MethodInvoker(delegate { bar.Maximum = status.Values.Sum(a => a.total); }));
+            }
+            else
+            {
+                bar.Maximum = status.Values.Sum(a => a.total);
+            }
         }
-        else
+        catch (InvalidAsynchronousStateException)
         {
-            bar.Maximum = status.Values.Sum(a => a.total);
+            // The control's thread no longer exists (form was closed)
         }
     }
     protected override void OnReport(DownloadProgressReport update)
@@ -65,35 +73,53 @@ public class DownloadProgressStatus : Progress<DownloadProgressReport>
 
     private void Update(string message, int position)
     {
-        if (bar.InvokeRequired)
+        try
         {
-            bar.Invoke(new MethodInvoker(delegate
+            if (bar.InvokeRequired)
+            {
+                bar.Invoke(new MethodInvoker(delegate
+                {
+                    bar.SetProgress(position);
+                    bar.Enabled = true;
+                    bar.Visible = true;
+                }));
+            }
+            else
             {
                 bar.SetProgress(position);
                 bar.Enabled = true;
                 bar.Visible = true;
-            }));
+            }
         }
-        else
+        catch (InvalidAsynchronousStateException)
         {
-            bar.SetProgress(position);
-            bar.Enabled = true;
-            bar.Visible = true;
+            // The control's thread no longer exists (form was closed)
+            // Silently ignore as the operation is being cancelled anyway
+            return;
         }
-        if (label.InvokeRequired)
+
+        try
         {
-            label.Invoke(new MethodInvoker(delegate
+            if (label.InvokeRequired)
+            {
+                label.Invoke(new MethodInvoker(delegate
+                {
+                    label.Text = message.ToUiVersion();
+                    label.Visible = true;
+                    label.Enabled = true;
+                }));
+            }
+            else
             {
                 label.Text = message.ToUiVersion();
                 label.Visible = true;
                 label.Enabled = true;
-            }));
+            }
         }
-        else
+        catch (InvalidAsynchronousStateException)
         {
-            label.Text = message.ToUiVersion();
-            label.Visible = true;
-            label.Enabled = true;
+            // The control's thread no longer exists (form was closed)
+            // Silently ignore as the operation is being cancelled anyway
         }
     }
 

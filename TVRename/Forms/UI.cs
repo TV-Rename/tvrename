@@ -58,13 +58,12 @@ public partial class UI : Form, IDialogParent
     private ProcessedEpisode? switchToWhenOpenMyShows;
     private MovieConfiguration? switchToWhenOpenMyMovies;
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
     private int busyDoingDownload = 0;
     private bool IsBusyDoingBackgroundDownload => busyDoingDownload != 0;
     private bool actionsListBeingUpdated = false;
     private bool calendarBeingUpdated = false;
-
     private ScanProgress? scanProgDlg;
+    private readonly AsyncShutdownManager _shutdownManager = new();
 
     public UI(TVDoc doc, TVRenameSplash splash, bool showUi)
     {
@@ -841,18 +840,22 @@ public partial class UI : Form, IDialogParent
 
         if (a.QuickUpdate)
         {
-            await UiDownloadAsync(true, UNATTENDED, new CancellationTokenSource());
+            var downloadCancellationToken = new CancellationTokenSource();
+            _shutdownManager.TrackCancellationToken(downloadCancellationToken);
+            await UiDownloadAsync(true, UNATTENDED, downloadCancellationToken);
         }
 
         if (a.ForceUpdate)
         {
-            UITVDBAccuracyCheck(UNATTENDED);
-            UITMDBAccuracyCheck(UNATTENDED);
+            await UITVDBAccuracyCheck(UNATTENDED);
+            await UITMDBAccuracyCheck(UNATTENDED);
         }
 
         if (a.ForceRefresh)
         {
-            await ForceRefreshAsync(mDoc.TvLibrary.GetSortedShows(), UNATTENDED, new CancellationTokenSource());
+            var forceRefreshCancellationToken = new CancellationTokenSource();
+            _shutdownManager.TrackCancellationToken(forceRefreshCancellationToken);
+            await ForceRefreshAsync(mDoc.TvLibrary.GetSortedShows(), UNATTENDED, forceRefreshCancellationToken);
             await ForceMovieRefreshAsync(mDoc.FilmLibrary.Movies, UNATTENDED);
         }
 
@@ -879,7 +882,7 @@ public partial class UI : Form, IDialogParent
         if (a.Save)
         {
             mDoc.WriteXMLSettings();
-            SaveCaches();
+            await SaveCaches();
         }
 
         if (a.Export)
@@ -894,17 +897,29 @@ public partial class UI : Form, IDialogParent
     }
 
     // ReSharper disable once InconsistentNaming
-    private void UITVDBAccuracyCheck(bool unattended)
+    private async Task UITVDBAccuracyCheck(bool unattended)
     {
         MoreBusy();
-        TaskHelper.Run(
-            async () =>
-            {
-                CancellationTokenSource cts = new();
-                var progress = new DownloadProgressStatus(pbProgressBarx, txtDLStatusLabel);
-                await mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this, progress, cts);
-            }, "TVDB Accuracy Check"
-        );
+        CancellationTokenSource cts = new();
+        _shutdownManager.TrackCancellationToken(cts);
+        var progress = new DownloadProgressStatus(pbProgressBarx, txtDLStatusLabel);
+        try
+        {
+            await mDoc.TVDBServerAccuracyCheck(
+                unattended,
+                WindowState == FormWindowState.Minimized,
+                this,
+                progress,
+                cts);
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.Info("TVDB accuracy check was cancelled");
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Error in TVDB accuracy check");
+        }
         LessBusy();
     }
 
@@ -949,7 +964,41 @@ public partial class UI : Form, IDialogParent
     private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) =>
         "http://tvrename.com".OpenUrlInBrowser();
 
-    private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
+    private async void exitToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            await SafeClose();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Error during application close");
+        }
+    }
+
+    private async Task CancellAllTasksAsync()
+    {
+        if (_shutdownManager != null)
+        {
+            await _shutdownManager.CancelAllAndWaitAsync(TimeSpan.FromSeconds(15));
+        }
+    }
+
+    private async Task SafeClose()
+    {
+        try
+        {
+            await CancellAllTasksAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Error during task cancellation on close");
+        }
+        finally
+        {
+            Close();
+        }
+    }
 
     private async void UI_LoadAsync(object sender, EventArgs e)
     {
@@ -1090,11 +1139,12 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        var cts = new CancellationTokenSource();
-        var progressUI = new TaskNotifier("Refresh all images", cts);
+        var scanCancellationToken = new CancellationTokenSource();
+        _shutdownManager.TrackCancellationToken(scanCancellationToken);
+        var progressUI = new TaskNotifier("Refresh all images", scanCancellationToken);
         TaskCompletionProgress progress = new(progressUI.UpdateProgress);
 
-        var task = mDoc.UpdateImagesScanAsync(mDoc.TvLibrary.GetSortedShows(), mDoc.FilmLibrary.GetSortedMovies(), progress, cts);
+        var task = mDoc.UpdateImagesScanAsync(mDoc.TvLibrary.GetSortedShows(), mDoc.FilmLibrary.GetSortedMovies(), progress, scanCancellationToken);
 
         progressUI.Start(task);
         await task;
@@ -1360,6 +1410,9 @@ public partial class UI : Form, IDialogParent
 
     private async void UI_FormClosing(object sender, FormClosingEventArgs e)
     {
+        // Cancel the close event immediately to keep the form open
+        e.Cancel = true;
+        bool keepOpenAftTasks = false;
         try
         {
             if (mDoc.Dirty() && !mDoc.Args.Unattended && !mDoc.Args.Hide && !TVSettings.Instance.AutoSaveOnExit)
@@ -1375,25 +1428,10 @@ public partial class UI : Form, IDialogParent
                         break;
 
                     case DialogResult.Cancel:
-                        e.Cancel = true;
+                        keepOpenAftTasks = true;
                         break;
 
                     case DialogResult.No:
-                        break;
-
-                    case DialogResult.None:
-                        break;
-
-                    case DialogResult.OK:
-                        break;
-
-                    case DialogResult.Abort:
-                        break;
-
-                    case DialogResult.Retry:
-                        break;
-
-                    case DialogResult.Ignore:
                         break;
 
                     default:
@@ -1407,26 +1445,39 @@ public partial class UI : Form, IDialogParent
                 mDoc.WriteXMLSettings();
             }
 
-            if (!e.Cancel)
+            if (keepOpenAftTasks) return;
+
+            this.Cursor = Cursors.WaitCursor;
+            
+            await CancellAllTasksAsync();
+
+            SaveLayoutXml();
+            mDoc.TidyCaches();
+            await SaveCaches();
+            await mDoc.ClosingAsync();
+
+            mAutoFolderMonitor?.Dispose();
+            BGDownloadTimer.Dispose();
+            UpdateTimer.Dispose();
+            quickTimer.Dispose();
+            refreshWTWTimer.Dispose();
+            statusTimer.Dispose();
+
+            // Dispose shutdown manager
+            if (_shutdownManager != null)
             {
-                SaveLayoutXml();
-                mDoc.TidyCaches();
-                SaveCaches();
-                await mDoc.ClosingAsync();
-                mAutoFolderMonitor?.Dispose();
-                BGDownloadTimer.Dispose();
-                UpdateTimer.Dispose();
-                quickTimer.Dispose();
-                refreshWTWTimer.Dispose();
-                statusTimer.Dispose();
-                CefWrapper.Shutdown();
+                await _shutdownManager.DisposeAsync();
             }
+
+            CefWrapper.Shutdown();
         }
         catch (Exception ex)
         {
             MessageBox.Show(this, ex.Message + "\r\n\r\n" + ex.StackTrace, "Form Closing Error",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+        e.Cancel = keepOpenAftTasks;
+        Cursor = Cursors.Default;
     }
 
     private void ChooseSiteMenu(ToolStripSplitButton btn)
@@ -1921,8 +1972,9 @@ public partial class UI : Form, IDialogParent
     // ReSharper disable once InconsistentNaming
     private async Task RefreshWTWAsync(bool doDownloads, bool unattended)
     {
-        CancellationTokenSource cts = new();
-        await UiDownloadAsync(doDownloads, unattended, cts);
+        var downloadCancellationToken = new CancellationTokenSource();
+        _shutdownManager.TrackCancellationToken(downloadCancellationToken);
+        await UiDownloadAsync(doDownloads, unattended, downloadCancellationToken);
 
         await FillMyShowsAsync(true);
         FillMyMovies();
@@ -2223,7 +2275,12 @@ public partial class UI : Form, IDialogParent
 
         if (sil.IsAny())
         {
-            showRightClickMenu.Add("Force Refresh", async (_, _) => await ForceRefreshAsync(sil, false, new CancellationTokenSource()));
+            showRightClickMenu.Add("Force Refresh", async (_, _) =>
+            {
+                var cts = new CancellationTokenSource();
+                _shutdownManager.TrackCancellationToken(cts);
+                await ForceRefreshAsync(sil, false, cts);
+            });
             showRightClickMenu.Add("Update Images", async (_, _) => await UpdateImagesAsync(sil));
             showRightClickMenu.AddSeparator();
 
@@ -2432,9 +2489,9 @@ public partial class UI : Form, IDialogParent
         await WtwRightClickOnShowAsync(pt);
     }
 
-    private void preferencesToolStripMenuItem_Click(object sender, EventArgs e) => DoPrefs(false);
+    private async void preferencesToolStripMenuItem_Click(object sender, EventArgs e) => await DoPrefs(false);
 
-    private async void DoPrefs(bool scanOptions)
+    private async Task DoPrefs(bool scanOptions)
     {
         MoreBusy(); // no background download while preferences are open!
         mDoc.PreventAutoScan("Preferences are open");
@@ -2458,12 +2515,12 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void saveToolStripMenuItem_ClickAsync(object sender, EventArgs e)
     {
         try
         {
             mDoc.WriteXMLSettings();
-            SaveCaches();
+            await SaveCaches();
             if (!SaveLayoutXml())
             {
                 Logger.Error("Failed to Save Layout Configuration Files");
@@ -2509,7 +2566,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private static void SaveCaches() => TVDoc.SaveCaches();
+    private async Task SaveCaches() => await mDoc.StartSavingCachesAsync();
 
     private void backgroundDownloadToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -2535,8 +2592,7 @@ public partial class UI : Form, IDialogParent
 
         Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
 
-        Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
-        ServerRelease? result = await tuv.ConfigureAwait(false);
+        ServerRelease? result = await VersionUpdater.CheckForUpdatesAsync().ConfigureAwait(false);
 
         mDoc.CurrentAppState.UpdateCheck.LastUpdateCheckUtc = TimeHelpers.UtcNow();
         try
@@ -2607,15 +2663,35 @@ public partial class UI : Form, IDialogParent
 
         var progress = new DownloadProgressStatus(pbProgressBarx, txtDLStatusLabel);
 
-        await mDoc.DoDownloadsBG(progress);
+        try
+        {
+            var cts = new CancellationTokenSource();
+            _shutdownManager.TrackCancellationToken(cts);
 
-        // we've just finished a bunch of background downloads
-        SaveCaches();
-        mDoc.SaveSettingsIfNeeded();
-        await RefreshWTWAsync(false, true);
+            var dl = mDoc.DoDownloadsBG(progress,cts);
+            _shutdownManager.TrackTask(dl);
+            await dl;
 
-        backgroundDownloadNowToolStripMenuItem.Enabled = true;
-        progress.MarkFinished();
+            if (!cts.IsCancellationRequested)
+            {
+                // we've just finished a bunch of background downloads
+                await SaveCaches();
+                mDoc.SaveSettingsIfNeeded();
+                await RefreshWTWAsync(false, true);
+            }
+            backgroundDownloadNowToolStripMenuItem.Enabled = true;
+            progress.MarkFinished();
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.Info("Background download was cancelled");
+            backgroundDownloadNowToolStripMenuItem.Enabled = true;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Error in background download");
+            backgroundDownloadNowToolStripMenuItem.Enabled = true;
+        }
     }
 
     private void offlineOperationToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3234,9 +3310,10 @@ public partial class UI : Form, IDialogParent
 
     internal async Task ForceMovieRefreshAsync(IEnumerable<MovieConfiguration>? sis, bool unattended)
     {
-        CancellationTokenSource cts = new();
+        var downloadCancellationToken = new CancellationTokenSource();
+        _shutdownManager.TrackCancellationToken(downloadCancellationToken);
         IEnumerable<MovieConfiguration>? movieConfigurations = sis?.ToList();
-        await mDoc.ForceRefreshMoviesAsync(movieConfigurations, unattended, WindowState == FormWindowState.Minimized, this, cts);
+        await mDoc.ForceRefreshMoviesAsync(movieConfigurations, unattended, WindowState == FormWindowState.Minimized, this, downloadCancellationToken);
         FillMyMovies(movieConfigurations?.FirstOrDefault());
         await FillMovieGuideHtmlAsync();
         await RefreshWTWAsync(false, unattended);
@@ -3248,8 +3325,9 @@ public partial class UI : Form, IDialogParent
         {
             return;
         }
-
-        await mDoc.UpdateShowImagesScanAsync(sis);
+        var scanCancellationToken = new CancellationTokenSource();
+        _shutdownManager.TrackCancellationToken(scanCancellationToken);
+        await mDoc.UpdateShowImagesScanAsync(sis, scanCancellationToken);
 
         tabControl1.SelectTab(tbAllInOne);
         FillActionList();
@@ -3261,8 +3339,10 @@ public partial class UI : Form, IDialogParent
         {
             return;
         }
-
-        await mDoc.UpdateMovieImagesScanAsync(sis);
+        
+        var cts = new CancellationTokenSource();
+        _shutdownManager.TrackCancellationToken(cts);
+        await mDoc.UpdateMovieImagesScanAsync(sis, cts);
 
         tabControl1.SelectTab(tbAllInOne);
         FillActionList();
@@ -3622,15 +3702,18 @@ public partial class UI : Form, IDialogParent
         MoreBusy();
 
         bool hidden = WindowState == FormWindowState.Minimized;
-        CancellationTokenSource scanCancellation = new();
 
-        TVDoc.ScanSettings scanSettings = new(shows ?? [], movies ?? [], unattended, hidden, st, media, this, scanCancellation.Token);
+        CancellationTokenSource scanCancellationToken = new();
+        _shutdownManager.TrackCancellationToken(scanCancellationToken);
+
+        TVDoc.ScanSettings scanSettings = new(shows ?? [], movies ?? [], unattended, hidden, st, media, this, scanCancellationToken.Token);
         mDoc.SetScanSettings(scanSettings);
 
-        SetupScanUi(hidden, scanCancellation);
+        SetupScanUi(hidden, scanCancellationToken);
 
         UiHelpers.SetProgressStateNormal(Handle);
-        Task scan = mDoc.ScanAsync(scanSettings, scanProgDlg, scanCancellation);
+        Task scan = mDoc.ScanAsync(scanSettings, scanProgDlg, scanCancellationToken);
+        _shutdownManager.TrackTask(scan);
 
         scanProgDlg?.Show(this);
         scanProgDlg?.Left = this.Left + 100;
@@ -3797,7 +3880,8 @@ public partial class UI : Form, IDialogParent
 
     private async Task ActionActionAsync(bool checkedNotSelected, bool unattended, bool doAll)
     {
-        CancellationTokenSource actionCancellationToken = new();
+        var actionCancellationToken = new CancellationTokenSource();
+        _shutdownManager.TrackCancellationToken(actionCancellationToken);
         if (ActionTask != null && !ActionTask.IsCompleted)
         {
             Logger.Warn("Can't do actions as they are already processing");
@@ -3818,6 +3902,7 @@ public partial class UI : Form, IDialogParent
             ? mDoc.DoAllActionsAsync(actionCancellationToken)
             : mDoc.DoSelectedActionsAsync(GetSelectedItemsToScan(checkedNotSelected), actionCancellationToken);
 
+        _shutdownManager.TrackTask(ActionTask);
         await ActionTask;
 
         FillActionList();
@@ -3960,7 +4045,11 @@ public partial class UI : Form, IDialogParent
         if (episode != null || lvr.MissingSeasons.HasAny())
         {
             showRightClickMenu.Add("Ignore Entire Season", async (_, _) => await IgnoreSelectedSeasons(lvr));
-            showRightClickMenu.Add("Force Refresh and Rescan Show", async (_, _) => await ForceRefreshAndRescanShowsAsync(lvr, false, new CancellationTokenSource()));
+            showRightClickMenu.Add("Force Refresh and Rescan Show", async (_, _) => {
+                var x = new CancellationTokenSource();
+                _shutdownManager.TrackCancellationToken(x);
+                await ForceRefreshAndRescanShowsAsync(lvr, false, x);
+                });
         }
         showRightClickMenu.Add("Remove Selected", (_, _) => ActionDeleteSelected());
 
@@ -4104,7 +4193,7 @@ public partial class UI : Form, IDialogParent
         box.Enabled = btn.IsAny();
     }
 
-    private void bnActionOptions_Click(object sender, EventArgs e) => DoPrefs(true);
+    private async void bnActionOptions_Click(object sender, EventArgs e) => await DoPrefs(true);
 
     private void lvAction_MouseDoubleClick(object sender, MouseEventArgs e)
     {
@@ -4181,8 +4270,7 @@ public partial class UI : Form, IDialogParent
 
     private async void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        CancellationTokenSource cts = new();
-        ShowSummary f = new(mDoc, this, cts);
+        ShowSummary f = new(mDoc, this);
         Task x = f.StartScanAsync();
         f.Show(this);
         await x;
@@ -4750,11 +4838,13 @@ public partial class UI : Form, IDialogParent
         }));
         try
         {
-            await Parallel.ForEachAsync(
+            Task x = Parallel.ForEachAsync(
                 rowsToUpdate,
                 options,
                 async (episode, token) => await UpdateIconAsync(episode, dfc)
             );
+            _shutdownManager.TrackTask(x);
+            await x;
         }
         catch (OperationCanceledException)
         {
@@ -5026,32 +5116,26 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    private void tMDBAccuracyCheckLogToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void tMDBAccuracyCheckLogToolStripMenuItem_Click(object sender, EventArgs e)
     {
         //Show Log Pane
         logToolStripMenuItem_Click(sender, e);
 
         Cursor.Current = Cursors.WaitCursor;
 
-        UITMDBAccuracyCheck(false);
+        await UITMDBAccuracyCheck(false);
 
         Cursor.Current = Cursors.Default;
     }
 
     // ReSharper disable once InconsistentNaming
-    private void UITMDBAccuracyCheck(bool unattended)
+    private async Task UITMDBAccuracyCheck(bool unattended)
     {
         MoreBusy();
-        TaskHelper.Run(
-            async () =>
-            {
-                CancellationTokenSource cts = new();
-                var progress = new DownloadProgressStatus(pbProgressBarx, txtDLStatusLabel);
-                await mDoc.TMDBServerAccuracyCheckAsync(unattended, WindowState == FormWindowState.Minimized, this, progress, cts);
-            },
-            "TMDB Accuracy Check"
-        );
-
+        CancellationTokenSource cts = new();
+        _shutdownManager.TrackCancellationToken(cts);
+        var progress = new DownloadProgressStatus(pbProgressBarx, txtDLStatusLabel);
+        await mDoc.TMDBServerAccuracyCheckAsync(unattended, WindowState == FormWindowState.Minimized, this, progress, cts);
         LessBusy();
     }
 
@@ -5148,14 +5232,16 @@ public partial class UI : Form, IDialogParent
 
     internal async Task ForceRefreshAsync(ShowConfiguration show, bool unattended)
     {
-        var cts = new CancellationTokenSource();
-        await ForceRefreshAsync([show], unattended, cts);
+        var downloadCancellationToken = new CancellationTokenSource();
+        _shutdownManager.TrackCancellationToken(downloadCancellationToken);
+        await ForceRefreshAsync([show], unattended, downloadCancellationToken);
     }
 
     private async Task ForceRefreshAsync(bool unattended)
     {
-        var cts = new CancellationTokenSource();
-        await ForceRefreshAsync((List<ShowConfiguration>?)null, unattended, cts);
+        var downloadCancellationToken = new CancellationTokenSource();
+        _shutdownManager.TrackCancellationToken(downloadCancellationToken);
+        await ForceRefreshAsync((List<ShowConfiguration>?)null, unattended, downloadCancellationToken);
     }
 
     private void settingsCheckToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5265,9 +5351,10 @@ public partial class UI : Form, IDialogParent
     }
     private async Task PartialScanAsync(PostScanActivity activity)
     {
-        CancellationTokenSource cts = new();
         mDoc.TheActionList.Clear();
-        DoScanPartNotifier f = new(activity, cts);
+        var scanCancellationToken = new CancellationTokenSource();
+        _shutdownManager.TrackCancellationToken(scanCancellationToken);
+        DoScanPartNotifier f = new(activity, scanCancellationToken);
 
         f.ShowDialog();
         FillActionList();

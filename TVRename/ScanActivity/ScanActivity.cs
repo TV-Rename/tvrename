@@ -24,8 +24,7 @@ public abstract class ScanActivity(TVDoc doc, TVDoc.ScanSettings settings)
     protected abstract Task DoCheckAsync(SetProgressDelegate progress);
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
-    public async Task CheckAsync(SetProgressDelegate prog) =>
-        await CheckAsync(prog, 0, 100);
+    public async Task CheckAsync(SetProgressDelegate prog) =>  await CheckAsync(prog, 0, 100);
 
     /// <exception cref="TVRenameOperationInterruptedException">Condition.</exception>
     public async Task CheckAsync(SetProgressDelegate prog, int startpct, int totPct)

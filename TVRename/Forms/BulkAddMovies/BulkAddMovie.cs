@@ -26,6 +26,7 @@ public partial class BulkAddMovie : Form
     private readonly BulkAddMovieManager engine;
     private readonly UI mainUi;
     CancellationTokenSource cts = new();
+    private Task? scanTask;
 
 
     //Thread safe counters to work out the progress
@@ -50,7 +51,7 @@ public partial class BulkAddMovie : Form
         ShowHideUpdateControls(false);
     }
 
-    private void bnClose_Click(object sender, System.EventArgs e)
+    private async void bnClose_Click(object sender, System.EventArgs e)
     {
         cts.Cancel();
 
@@ -62,6 +63,8 @@ public partial class BulkAddMovie : Form
             }
         }
 
+        if (scanTask is not null)
+            await scanTask;
         Close();
     }
 
@@ -194,7 +197,7 @@ public partial class BulkAddMovie : Form
 
     private async void bnCheck_Click(object sender, System.EventArgs e)
     {
-        await DoCheckAsync();
+        await Scan();
     }
 
     private async Task DoCheckAsync()
@@ -374,7 +377,7 @@ public partial class BulkAddMovie : Form
 
         var options = new ParallelOptions
         {
-            MaxDegreeOfParallelism = 4, // Limit concurrent tasks
+            MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads, // Limit concurrent tasks
             CancellationToken = cts.Token // Pass token to the loop mechanism
         };
 
@@ -554,7 +557,13 @@ public partial class BulkAddMovie : Form
 
     private async void bnCheck2_Click(object sender, System.EventArgs e)
     {
-        await DoCheckAsync();
+        await Scan();
+    }
+
+    private async Task Scan()
+    {
+        this.scanTask = DoCheckAsync();
+        await this.scanTask;
     }
 
     private async void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -616,8 +625,11 @@ public partial class BulkAddMovie : Form
         bnNewFolderOpen.Enabled = somethingSelected;
     }
 
-    private void btnStopScan_Click(object sender, EventArgs e)
+    private async void btnStopScan_Click(object sender, EventArgs e)
     {
         cts.Cancel();
+
+        if (scanTask is not null)
+            await scanTask;
     }
 }

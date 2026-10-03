@@ -10,13 +10,7 @@
 using SourceGrid;
 using SourceGrid.Cells.Controllers;
 using SourceGrid.Cells.Views;
-using System;
 
-using System.Drawing;
-using System.Linq;
-using System.Threading;
-
-using System.Windows.Forms;
 using TVRename.Forms;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using ContentAlignment = DevAge.Drawing.ContentAlignment;
@@ -30,15 +24,16 @@ public partial class ShowSummary : Form, IDialogParent
     private UI MainWindow { get; }
     private readonly TVDoc mDoc;
     private readonly CancellationTokenSource ct;
+    private Task? scanTask;
 
     private readonly SafeList<ShowSummaryData> showList;
 
-    public ShowSummary(TVDoc doc, UI parent, CancellationTokenSource token)
+    public ShowSummary(TVDoc doc, UI parent)
     {
         MainWindow = parent;
         mDoc = doc;
         showList = [];
-        ct = token;
+        ct = new CancellationTokenSource();
 
         InitializeComponent();
         InitializeCmbShowStatus();
@@ -720,7 +715,9 @@ public partial class ShowSummary : Form, IDialogParent
             lblStatus.Text = scanReport.UpdateText.ToUiVersion();
         });
 
-        await GenerateData(progressHandler, token);
+        scanTask = GenerateData(progressHandler, token);
+
+        await scanTask;
 
         btnRefresh.Visible = true;
         EnableCheckboxes(true);
@@ -749,9 +746,13 @@ public partial class ShowSummary : Form, IDialogParent
         await ScanAsync(ct.Token);
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    private async void button1_Click(object sender, EventArgs e)
     {
-        //TODO Cancel runnign tasks
+        ct.Cancel();
+        if (scanTask != null)
+        {
+            await scanTask;
+        }
         Close();
     }
 

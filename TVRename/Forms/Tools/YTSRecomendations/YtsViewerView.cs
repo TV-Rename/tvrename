@@ -1,9 +1,3 @@
-using System;
-
-using System.Linq;
-using System.Threading;
-
-using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
 
 namespace TVRename.Forms;

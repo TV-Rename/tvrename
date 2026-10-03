@@ -380,7 +380,7 @@ namespace TVRename.Forms
             saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
             saveToolStripMenuItem.Size = new Size(149, 22);
             saveToolStripMenuItem.Text = "&Save";
-            saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
+            saveToolStripMenuItem.Click += saveToolStripMenuItem_ClickAsync;
             // 
             // toolStripSeparator1
             // 
