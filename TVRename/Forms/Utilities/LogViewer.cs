@@ -28,7 +28,7 @@ public partial class LogViewer : Form
         RichTextBoxTarget target = new()
         {
             Name = "UI Target",
-            Layout = "${date:format=HH\\:MM\\:ss} ${level:uppercase=true} ${message}",
+            Layout = "${date:format=HH\\:mm\\:ss} ${level:uppercase=true} ${message}",
             ControlName = "logData",
             FormName = "LogViewer",
             AutoScroll = true,
