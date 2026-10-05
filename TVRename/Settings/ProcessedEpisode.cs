@@ -370,11 +370,32 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
 
     bool IEquatable<ProcessedEpisode>.Equals(ProcessedEpisode? other)
     {
-        throw new NotImplementedException();
+        return base.Equals(other) && EpNum2.Equals(other.EpNum2); 
     }
 
     int IComparable<ProcessedEpisode>.CompareTo(ProcessedEpisode? other)
     {
-        throw new NotImplementedException();
+        if (other is not ProcessedEpisode pe)
+        {
+            return -1;
+        }
+        if (pe.Show.Name != Show.Name)
+        {
+            return string.Compare(Show.Name, pe.Show.Name, StringComparison.OrdinalIgnoreCase);
+        }
+        if(pe.AppropriateSeasonNumber != AppropriateSeasonNumber)
+        {
+            return AppropriateSeasonNumber - pe.AppropriateSeasonNumber;
+        }
+        if (pe.AppropriateEpNum != AppropriateEpNum)
+        {
+            return AppropriateEpNum - pe.AppropriateEpNum;
+        }
+        if(pe.EpNum2 != EpNum2)
+        {
+            return EpNum2 - pe.EpNum2;
+        }
+        return 0;
+
     }
 }
