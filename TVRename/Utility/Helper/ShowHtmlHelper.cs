@@ -210,7 +210,7 @@ internal static class ShowHtmlHelper
 
         foreach (ProcessedSeason season in si.AppropriateSeasons().OrderBy(pair => pair.Key).Select(pair => pair.Value))
         {
-            List<ProcessedEpisode> seasonEpisodes = si.EpisodesForSeason(season.SeasonNumber);
+            List<ProcessedEpisode> seasonEpisodes = si.AllEpisodesForSeason(season.SeasonNumber);
             if (seasonEpisodes.IsAny())
             {
                 await tableRows.AppendSeasonShowSummaryAsync(dfc, si, season, includeDirectoryLinks, seasonEpisodes);
@@ -1019,7 +1019,7 @@ internal static class ShowHtmlHelper
         sb.AppendLine(HTMLHeader(10, col));
         await sb.AppendSeasonAsync(s, si, col, includeDirectoryLinks);
 
-        List<ProcessedEpisode> seasonEpisodes = si.EpisodesForSeason(s.SeasonNumber);
+        List<ProcessedEpisode> seasonEpisodes = si.AllEpisodesForSeason(s.SeasonNumber);
         foreach (ProcessedEpisode ep in seasonEpisodes)
         {
             List<FileInfo>? fl = includeDirectoryLinks ? await dfc.FindEpOnDiskAsync(ep) : null;
@@ -1110,7 +1110,7 @@ internal static class ShowHtmlHelper
         }
 
         string tableRows = (await si
-            .EpisodesForSeason(s.SeasonNumber)
+            .AllEpisodesForSeason(s.SeasonNumber)
             .ToList()
             .SelectAsync(episode => SeasonSummaryTableRowAsync(episode, includeDirectoryLinks, dfc)))
             .Concat();
@@ -1648,7 +1648,7 @@ internal static class ShowHtmlHelper
             body += $"<img width=758 height=140 src=\"{widePosterUrl}\"><br/>";
         }
 
-        List<ProcessedEpisode> eis = si.EpisodesForSeason(snum);
+        List<ProcessedEpisode> eis = si.AllEpisodesForSeason(snum);
 
         string seasText = SeasonName(si, snum);
         string? seasonUrl = s.WebsiteUrl;

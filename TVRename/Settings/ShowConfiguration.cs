@@ -594,15 +594,8 @@ public class ShowConfiguration : MediaConfiguration
 
     public int MaxSeason()
     {
-        int max = 0;
-        foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in EpisodeCaches.SeasonEpisodes)
-        {
-            if (kvp.Key > max)
-            {
-                max = kvp.Key;
-            }
-        }
-        return max;
+        var keys = EpisodeCaches.SeasonEpisodes.Keys;
+        return keys.Count > 0 ? keys.Max() : 0;
     }
 
     public void WriteXmlSettings(XmlWriter writer)
@@ -862,50 +855,52 @@ public class ShowConfiguration : MediaConfiguration
 
     internal void UpdateEpisodeCaches()
     {
+        CachedSeriesInfo? ser = TVDoc.GetMediaCache(Provider).GetSeries(Code);
+
+        if (ser is null)
         {
-            CachedSeriesInfo? ser = TVDoc.GetMediaCache(Provider).GetSeries(Code);
-
-            if (ser is null)
-            {
-                Logger.Warn($"Asked to generate episodes for {ShowName}, but this has not yet been downloaded from {Provider.PrettyPrint()}");
-                return;
-            }
-            if (ser != CachedShow)
-            {
-                Logger.Warn($"Asked to generate episodes for {ShowName}, but current prvider {Provider.PrettyPrint()} has returned different data {ser.Id()} vs {CachedShow?.Id()}");
-                return;
-            }
-
-            EpisodeCaches.UpdateEpisodeDictionary(ser, this);
-
-            foreach (int snum in AppropriateSeasons().Keys.ToList())
-            {
-                List<ProcessedEpisode>? pel = GenerateEpisodes(snum, true);
-                EpisodeCaches.SeasonEpisodes[snum] = pel ?? [];
-            }
-
-            {
-                // now, go through and number them all sequentially
-                List<int> theKeys = [.. AppropriateSeasons().Keys];
-                theKeys.Sort();
-
-                int overallCount = 1;
-                foreach (int snum in theKeys)
-                {
-                    if (snum == 0)
-                    {
-                        continue;
-                    }
-
-                    foreach (ProcessedEpisode pe in EpisodeCaches.SeasonEpisodes[snum])
-                    {
-                        pe.OverallNumber = overallCount;
-                        overallCount += 1 + pe.EpNum2 - pe.AppropriateEpNum;
-                    }
-                }
-            }
+            Logger.Warn($"Asked to generate episodes for {ShowName}, but this has not yet been downloaded from {Provider.PrettyPrint()}");
+            return;
+        }
+        if (ser != CachedShow)
+        {
+            Logger.Warn($"Asked to generate episodes for {ShowName}, but current prvider {Provider.PrettyPrint()} has returned different data {ser.Id()} vs {CachedShow?.Id()}");
+            return;
         }
 
+        EpisodeCaches.UpdateEpisodeDictionary(ser, this);
+
+        ConcurrentDictionary<int, List<ProcessedEpisode>> NewSeasonEpisodes = new();
+        foreach (int snum in AppropriateSeasons().Keys.ToList())
+        {
+            List<ProcessedEpisode>? pel = GenerateEpisodes(snum, true);
+            NewSeasonEpisodes.TryAdd(snum, pel ?? []);
+        }
+        EpisodeCaches.SeasonEpisodes = NewSeasonEpisodes;
+
+        RenumberEpisodesSequentually();
+    }
+
+    private void RenumberEpisodesSequentually()
+    {
+        // now, go through and number them all sequentially
+        List<int> theKeys = [.. AppropriateSeasons().Keys];
+        theKeys.Sort();
+
+        int overallCount = 1;
+        foreach (int snum in theKeys)
+        {
+            if (snum == 0)
+            {
+                continue;
+            }
+
+            foreach (ProcessedEpisode pe in EpisodeCaches.SeasonEpisodes[snum])
+            {
+                pe.OverallNumber = overallCount;
+                overallCount += 1 + pe.EpNum2 - pe.AppropriateEpNum;
+            }
+        }
     }
 
     public List<ProcessedEpisode>? GetRawEpisodes(int snum) => GenerateEpisodes(snum, false);
@@ -1320,8 +1315,13 @@ public class ShowConfiguration : MediaConfiguration
         }
     }
 
-    internal List<ProcessedEpisode> EpisodesForSeason(int snum) => EpisodeCaches.SeasonEpisodes[snum]; //TODO - check issue that c
-
+    internal List<ProcessedEpisode>? EpisodesForSeason(int snum)
+    {
+        EpisodeCaches.SeasonEpisodes.TryGetValue(snum, out List<ProcessedEpisode>? episodes);
+        return episodes;
+    }
+    internal List<ProcessedEpisode> AllEpisodesForSeason(int snum) => EpisodesForSeason(snum) ?? [];
+    
     internal int EpisodeCount() => EpisodeCaches.SeasonEpisodes.Values.Sum(episodes => episodes.Count);
 
     internal int SeasonCount() => EpisodeCaches.SeasonEpisodes.Count;
@@ -1341,16 +1341,14 @@ public class ShowConfiguration : MediaConfiguration
 
     internal class EpisodeDenormalisations
     {
-        internal readonly ConcurrentDictionary<int, List<ProcessedEpisode>> SeasonEpisodes = new(); // built up by applying rules.
+        internal ConcurrentDictionary<int, List<ProcessedEpisode>> SeasonEpisodes = new(); // built up by applying rules in UpdateEpisodeCaches.
         internal readonly ConcurrentDictionary<int, ProcessedSeason> airedSeasons = new();
         internal readonly ConcurrentDictionary<int, ProcessedSeason> dvdSeasons = new();
 
 
         internal void UpdateEpisodeDictionary(CachedSeriesInfo ser, ShowConfiguration showConfig)
         {
-            { //TODO Do we need to reload SeasonEpisodes too?
-
-
+            {
                 // Regenerate the seasons and episodes from the downloaded episodes info,
                 // applying any rules as necessary.This will populate the SeasonEpisodes, airedSeasons, and dvdSeasons dictionaries with the appropriate data.
                 ConcurrentDictionary<int, ProcessedSeason> NewAiredSeasons = new();

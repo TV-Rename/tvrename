@@ -272,7 +272,7 @@ public partial class ShowSummary : Form, IDialogParent
 
         if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? processedSeason))
         {
-            foreach (ProcessedEpisode ei in si.EpisodesForSeason(snum))
+            foreach (ProcessedEpisode ei in si.AllEpisodesForSeason(snum))
             {
                 epCount++;
 
@@ -499,7 +499,7 @@ public partial class ShowSummary : Form, IDialogParent
             // for each episode in season, find it on disk
             bool first = true;
             DirFilesCache dfc = new();
-            foreach (ProcessedEpisode epds in show.EpisodesForSeason(seas.SeasonNumber))
+            foreach (ProcessedEpisode epds in show.AllEpisodesForSeason(seas.SeasonNumber))
             {
                 List<FileInfo> fl = await dfc.FindEpOnDiskAsync(epds, false);
                 if (fl.Count != 0)

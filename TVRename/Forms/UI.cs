@@ -2400,7 +2400,7 @@ public partial class UI : Form, IDialogParent
         ToolStripMenuItem tsis = new("Watch Episodes");
 
         // for each episode in season, find it on disk
-        foreach (ProcessedEpisode epds in si.EpisodesForSeason(seas.SeasonNumber))
+        foreach (ProcessedEpisode epds in si.AllEpisodesForSeason(seas.SeasonNumber))
         {
             List<FileInfo> fl = await FinderHelper.FindEpOnDiskAsync(null, epds);
             if (fl.Count <= 0)

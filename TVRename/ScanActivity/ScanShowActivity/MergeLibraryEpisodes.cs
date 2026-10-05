@@ -68,7 +68,7 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
             return;
         }
 
-        List<ProcessedEpisode> eps = si.EpisodesForSeason(snum);
+        List<ProcessedEpisode> eps = si.AllEpisodesForSeason(snum);
 
         List<ShowRule> rulesToAdd = [];
 
