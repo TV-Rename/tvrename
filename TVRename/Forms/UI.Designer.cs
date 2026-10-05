@@ -282,11 +282,6 @@ namespace TVRename.Forms
             tmrPeriodicScan = new Timer(components);
             toolTip1 = new ToolTip(components);
             btnUpdateAvailable = new Button();
-            bwSeasonHTMLGenerator = new System.ComponentModel.BackgroundWorker();
-            bwShowHTMLGenerator = new System.ComponentModel.BackgroundWorker();
-            bwShowSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
-            bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
-            bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             tableLayoutPanel3 = new TableLayoutPanel();
             panel1 = new Panel();
             toolStripButton1 = new ToolStripButton();
@@ -2338,36 +2333,6 @@ namespace TVRename.Forms
             btnUpdateAvailable.Visible = false;
             btnUpdateAvailable.Click += btnUpdateAvailable_Click;
             // 
-            // bwSeasonHTMLGenerator
-            // 
-            bwSeasonHTMLGenerator.WorkerSupportsCancellation = true;
-            bwSeasonHTMLGenerator.DoWork += BwSeasonHTMLGenerator_DoWork;
-            bwSeasonHTMLGenerator.RunWorkerCompleted += UpdateWeb;
-            // 
-            // bwShowHTMLGenerator
-            // 
-            bwShowHTMLGenerator.WorkerSupportsCancellation = true;
-            bwShowHTMLGenerator.DoWork += BwShowHTMLGenerator_DoWork;
-            bwShowHTMLGenerator.RunWorkerCompleted += UpdateWeb;
-            // 
-            // bwShowSummaryHTMLGenerator
-            // 
-            bwShowSummaryHTMLGenerator.WorkerSupportsCancellation = true;
-            bwShowSummaryHTMLGenerator.DoWork += BwShowSummaryHTMLGenerator_DoWork;
-            bwShowSummaryHTMLGenerator.RunWorkerCompleted += UpdateWeb;
-            // 
-            // bwSeasonSummaryHTMLGenerator
-            // 
-            bwSeasonSummaryHTMLGenerator.WorkerSupportsCancellation = true;
-            bwSeasonSummaryHTMLGenerator.DoWork += BwSeasonSummaryHTMLGenerator_DoWork;
-            bwSeasonSummaryHTMLGenerator.RunWorkerCompleted += UpdateWeb;
-            // 
-            // bwMovieHTMLGenerator
-            // 
-            bwMovieHTMLGenerator.WorkerSupportsCancellation = true;
-            bwMovieHTMLGenerator.DoWork += bwMovieHTMLGenerator_DoWork;
-            bwMovieHTMLGenerator.RunWorkerCompleted += UpdateWeb;
-            // 
             // tableLayoutPanel3
             // 
             tableLayoutPanel3.ColumnCount = 1;
@@ -2618,8 +2583,6 @@ namespace TVRename.Forms
         private ToolStripMenuItem mcbModifyMetadata;
         private ToolStripMenuItem thanksToolStripMenuItem;
         private ImageList ilNewIcons;
-        private System.ComponentModel.BackgroundWorker bwSeasonHTMLGenerator;
-        private System.ComponentModel.BackgroundWorker bwShowHTMLGenerator;
         private ToolStripButton tbFullScan;
         private ToolStripButton tpRecentScan;
         private ToolStripButton tbQuickScan;
@@ -2643,8 +2606,6 @@ namespace TVRename.Forms
         private OLVColumn olvWTWName;
         private ToolStripButton btnRevertView;
         private TabPage tpSummary;
-        private System.ComponentModel.BackgroundWorker bwShowSummaryHTMLGenerator;
-        private System.ComponentModel.BackgroundWorker bwSeasonSummaryHTMLGenerator;
         private ToolStripButton btnScheduleRightClick;
         private ToolStripSeparator toolStripSeparator12;
         private ToolStripSeparator toolStripSeparator13;
@@ -2671,7 +2632,6 @@ namespace TVRename.Forms
         private TabControl tabControl3;
         private TabPage tabPage1;
         private TabPage tabPage2;
-        private System.ComponentModel.BackgroundWorker bwMovieHTMLGenerator;
         private ToolStripSeparator toolStripSeparator17;
         private ToolStripMenuItem bulkAddMoviesToolStripMenuItem;
         private ToolStripMenuItem tMDBAccuracyCheckLogToolStripMenuItem;

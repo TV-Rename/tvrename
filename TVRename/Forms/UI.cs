@@ -1744,8 +1744,7 @@ public partial class UI : Form, IDialogParent
             chrSummary.SetHtmlBody(await si.GetSeasonSummaryHtmlOverviewAsync(se, false));
             chrTvTrailer.UpdateTvTrailer(si);
 
-            ResetRunBackGroundWorker(bwSeasonHTMLGenerator, se);
-            ResetRunBackGroundWorker(bwSeasonSummaryHTMLGenerator, se);
+            await UpdateSeasonHTML(se);
         }
         else
         {
@@ -1755,22 +1754,70 @@ public partial class UI : Form, IDialogParent
             chrSummary.SetHtmlBody(await si.GetShowSummaryHtmlOverviewAsync(false));
             chrTvTrailer.UpdateTvTrailer(si);
 
-            ResetRunBackGroundWorker(bwShowHTMLGenerator, si);
-            ResetRunBackGroundWorker(bwShowSummaryHTMLGenerator, si);
+            await UpdateShowHTML(si);
         }
     }
 
-    private static void ResetRunBackGroundWorker(BackgroundWorker worker, object s)
+    private async Task UpdateShowHTML(ShowConfiguration si)
     {
-        if (worker.WorkerSupportsCancellation)
+        try
         {
-            // Cancel the asynchronous operation.
-            worker.CancelAsync();
+            string html = await si.GetShowSummaryHtmlOverviewAsync(true);
+
+            if (UiHasContextFor(si))
+            {
+                chrSummary.SetHtmlBody(html);
+            }
+        }
+        catch (Exception exception)
+        {
+            Logger.Error(exception, $"Error Occurred Creating Show Summary for {si.ShowName} with order {si.Order}");
         }
 
-        if (!worker.IsBusy)
+        try
         {
-            worker.RunWorkerAsync(s);
+            string html = await si.GetShowHtmlOverviewAsync(true);
+            if (UiHasContextFor(si))
+            {
+                chrInformation.SetHtmlBody(html);
+            }
+        }
+        catch (Exception exception)
+        {
+            Logger.Error(exception, $"Error Occurred Creating Show Summary for {si.ShowName} with order {si.Order}");
+        }
+    }
+
+    private async Task UpdateSeasonHTML(ProcessedSeason s)
+    {
+        ShowConfiguration si = s.Show;
+
+        try
+        {
+            string html = await si.GetSeasonHtmlOverviewAsync(s, true);
+            if (UiHasContextFor(s))
+            {
+                chrInformation.SetHtmlBody(html);
+            }
+
+        }
+        catch (Exception exception)
+        {
+            Logger.Error(exception, $"Error Occurred Creating Show Summary for {si.ShowName} with order {si.Order}");
+        }
+
+        try
+        {
+            string html = await si.GetSeasonSummaryHtmlOverviewAsync(s, true);
+            if (UiHasContextFor(s))
+            {
+                chrSummary.SetHtmlBody(html);
+            }
+
+        }
+        catch (Exception exception)
+        {
+            Logger.Error(exception, $"Error Occurred Creating Show Summary for {si.ShowName} with order {si.Order}");
         }
     }
 
@@ -3426,7 +3473,24 @@ public partial class UI : Form, IDialogParent
             chrMovieTrailer.SetSimpleHtmlBody("Not available for this Movie");
         }
 
-        ResetRunBackGroundWorker(bwMovieHTMLGenerator, si);
+        await UpdateMovieHTML(si);
+    }
+
+    private async Task UpdateMovieHTML(MovieConfiguration si)
+    {
+        try
+        {
+            string html = await si.GetMovieHtmlOverviewAsync(true);
+
+            if (UiHasContextFor(si))
+            {
+                chrMovieInformation.SetHtmlBody(html);
+            }
+        }
+        catch (Exception exception)
+        {
+            Logger.Error(exception, $"Error Occurred Creating Movie Summary for {si?.ShowName}");
+        }
     }
 
     private async void MyMoviesTree_MouseClick(object sender, MouseEventArgs e)
@@ -4705,39 +4769,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private async void BwSeasonHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
-    {
-        Thread.CurrentThread.Name ??= "Season HTML Creation Thread"; // Can only set it once
-        ProcessedSeason? s = e.Argument as ProcessedSeason;
-        ShowConfiguration? si = s?.Show;
-
-        string html = string.Empty;
-        try
-        {
-            if (s is not null)
-            {
-                html = si is null ? string.Empty : (await si.GetSeasonHtmlOverviewAsync(s, true)) ?? string.Empty;
-            }
-        }
-        catch (Exception exception)
-        {
-            Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
-        }
-        e.Result = new HtmlUpdateSettings(s, html, chrInformation);
-    }
-
-    private void UpdateWeb(object sender, RunWorkerCompletedEventArgs e)
-    {
-        if (e.Result is HtmlUpdateSettings result)
-        {
-            if (UiHasContextFor(result.Argument))
-            {
-                result.Web.SetHtmlBody(result.Html);
-            }
-        }
-    }
-
-    private bool UiHasContextFor(object? context)
+    private bool UiHasContextFor(object context)
     {
         return context switch
         {
@@ -4750,36 +4782,6 @@ public partial class UI : Form, IDialogParent
             ProcessedSeason season => TreeNodeToSeason(MyShowTree.SelectedNode) == season,
             _ => false
         };
-    }
-
-    private async void BwShowHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
-    {
-        Thread.CurrentThread.Name ??= "Show HTML Creation Thread"; // Can only set it once
-        ShowConfiguration? si = e.Argument as ShowConfiguration;
-
-        string html = string.Empty;
-
-        if (si != null)
-        {
-            try
-            {
-                html = (await si.GetShowHtmlOverviewAsync(true)) ?? string.Empty;
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
-            }
-
-        }
-
-        e.Result = new HtmlUpdateSettings(si, html, chrInformation);
-    }
-
-    public class HtmlUpdateSettings(object? argument, string html, ChromiumWebBrowser web)
-    {
-        public readonly object? Argument = argument;
-        public readonly string Html = html;
-        public readonly ChromiumWebBrowser Web = web;
     }
 
     private async Task UpdateScheduleAsync()
@@ -4897,45 +4899,6 @@ public partial class UI : Form, IDialogParent
     private void BtnRevertView_Click(object sender, EventArgs e)
     {
         DefaultOlvActionView();
-    }
-
-    private async void BwShowSummaryHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
-    {
-        Thread.CurrentThread.Name ??= "Show Summary HTML Creation Thread"; // Can only set it once
-        ShowConfiguration? si = e.Argument as ShowConfiguration;
-        string html = string.Empty;
-        try
-        {
-            if (si != null)
-            {
-                html = await si.GetShowSummaryHtmlOverviewAsync(true) ?? string.Empty;
-            }
-        }
-        catch (Exception exception)
-        {
-            Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
-        }
-        e.Result = new HtmlUpdateSettings(si, html, chrSummary);
-    }
-
-    private async void BwSeasonSummaryHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
-    {
-        Thread.CurrentThread.Name ??= "Season Summary Creation Thread"; // Can only set it once
-        ProcessedSeason? s = e.Argument as ProcessedSeason;
-        ShowConfiguration? si = s?.Show;
-        string html = string.Empty;
-        try
-        {
-            if (si is not null && s is not null)
-            {
-                html = await si.GetSeasonSummaryHtmlOverviewAsync(s, true) ?? string.Empty;
-            }
-        }
-        catch (Exception exception)
-        {
-            Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
-        }
-        e.Result = new HtmlUpdateSettings(s, html, chrSummary);
     }
 
     private async void ToolStripButton1_Click(object sender, EventArgs e)
@@ -5066,29 +5029,6 @@ public partial class UI : Form, IDialogParent
         }
         await DeleteMovieAsync(si);
     }
-
-    private async void bwMovieHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
-    {
-        MovieConfiguration? si = e.Argument as MovieConfiguration;
-        Thread.CurrentThread.Name ??= $"Movie '{si?.Name}' HTML Creation Thread"; // Can only set it once
-
-        string html = string.Empty;
-
-        if (si is not null)
-        {
-            try
-
-            {
-                html = (await si.GetMovieHtmlOverviewAsync(true)) ?? string.Empty;
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception, $"Error Occurred Creating Movie Summary for {si?.ShowName}");
-            }
-        }
-        e.Result = new HtmlUpdateSettings(si, html, chrMovieInformation);
-    }
-
     private void movieCollectionSummaryLogToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();

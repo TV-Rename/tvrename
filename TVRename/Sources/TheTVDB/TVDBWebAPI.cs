@@ -174,7 +174,14 @@ public static class TvdbWebApi
         }
     }
     private static async Task<string> HttpRequestAsync(string method, string url, string contentType, TokenProvider? authToken, string lang)
-        => await HttpHelper.HttpRequestAsync(method, url, null, contentType, authToken?.GetTokenAsync()?.Result, lang);
+        => await HttpHelper.HttpRequestAsync(method, url, null, contentType, await AuthToken(authToken), lang);
+
+    private static async Task<string?> AuthToken(TokenProvider? authToken)
+    {
+        if (authToken is null) return string.Empty;
+
+        return await authToken.GetTokenAsync();
+    }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
