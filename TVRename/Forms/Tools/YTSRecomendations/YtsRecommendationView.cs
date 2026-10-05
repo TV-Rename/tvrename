@@ -195,6 +195,10 @@ public partial class YtsRecommendationView : Form
 
             recs = source.AsRecommendationRows(mDoc);
         }
+        catch (TaskCanceledException)
+        {
+            Logger.Info("YTS Recommendations Cancelled");
+        }
         catch (Exception ex)
         {
             Logger.Fatal(ex, "UNHANDLED error obtinaing recommendations from YTS");

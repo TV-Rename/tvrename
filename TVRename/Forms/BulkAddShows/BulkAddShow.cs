@@ -61,8 +61,6 @@ public partial class BulkAddShow : Form
 
     private async void bnClose_Click(object sender, System.EventArgs e)
     {
-        cts.Cancel();
-
         if (!CanClose())
         {
             if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"TV Shows\"?", "Bulk Add TV Shows", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
@@ -70,12 +68,20 @@ public partial class BulkAddShow : Form
                 return;
             }
         }
+
+        cts.Cancel();
+
+        await CancelCleanUp();
+
+        Close();
+    }
+
+    private async Task CancelCleanUp()
+    {
         if (scanTask is not null)
         {
             await scanTask;
         }
-
-        Close();
     }
 
     private bool CanClose()
@@ -633,13 +639,8 @@ public partial class BulkAddShow : Form
         bnNewFolderOpen.Enabled = somethingSelected;
     }
 
-    private void btnStopScan_Click(object sender, EventArgs e)
+    private async void btnStopScan_Click(object sender, EventArgs e)
     {
-        cts.Cancel();
-
-        if (scanTask is not null)
-        {
-            scanTask.Wait();
-        }
+        await CancelCleanUp();
     }
 }
