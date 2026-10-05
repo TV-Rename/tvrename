@@ -1030,6 +1030,8 @@ public partial class UI : Form, IDialogParent
 
         backgroundDownloadToolStripMenuItem.Checked = TVSettings.Instance.BGDownload;
         offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
+        InformUserOffline();
+
         BGDownloadTimer.Interval = 10000; // first time
         if (TVSettings.Instance.BGDownload)
         {
@@ -2620,6 +2622,7 @@ public partial class UI : Form, IDialogParent
         TVSettings.Instance.BGDownload = !TVSettings.Instance.BGDownload;
         backgroundDownloadToolStripMenuItem.Checked = TVSettings.Instance.BGDownload;
         offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
+        InformUserOffline();
 
         mDoc.SetDirty();
 
@@ -2654,6 +2657,17 @@ public partial class UI : Form, IDialogParent
         await uiDisp.InvokeAsync(() => UpdateScheduleAsync());
 
         await uiDisp.Invoke(() => NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
+
+        InformUserOffline();
+    }
+
+    private void InformUserOffline()
+    {
+        txtDLStatusLabel.Text = (TVSettings.Instance.OfflineMode)
+            ? "OFFLINE"
+            : string.Empty;
+        txtDLStatusLabel.Visible = true;
+        txtDLStatusLabel.Enabled = true;
     }
 
     private async void BGDownloadTimer_Tick(object sender, EventArgs e)
@@ -2699,6 +2713,7 @@ public partial class UI : Form, IDialogParent
         }
 
         await BackgroundDownloadNowAsync();
+        InformUserOffline();
     }
 
     private async Task BackgroundDownloadNowAsync()
@@ -2755,6 +2770,7 @@ public partial class UI : Form, IDialogParent
         TVSettings.Instance.OfflineMode = !TVSettings.Instance.OfflineMode;
         offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
         mDoc.SetDirty();
+        InformUserOffline();
     }
 
     private async void tabControl1_SelectedIndexChanged(object? sender, EventArgs? e)
@@ -3803,6 +3819,7 @@ public partial class UI : Form, IDialogParent
             UiHelpers.SetProgressStateNone(Handle);
         }
         offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
+        InformUserOffline();
     }
 
     private ScanProgress? SetupScanUi(bool hidden, CancellationTokenSource cancellationTokenSource)

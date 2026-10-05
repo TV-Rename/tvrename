@@ -127,8 +127,6 @@ public class DownloadProgressStatus : Progress<DownloadProgressReport>
     {
         bar.Enabled = false;
         bar.Visible = false;
-        label.Visible = false;
-        label.Enabled = false;
         label.Text = string.Empty;
     }
 }
