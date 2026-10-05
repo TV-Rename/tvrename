@@ -2658,7 +2658,7 @@ public partial class UI : Form, IDialogParent
 
         await uiDisp.Invoke(() => NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
 
-        InformUserOffline();
+        uiDisp.Invoke(() => InformUserOffline());
     }
 
     private void InformUserOffline()
