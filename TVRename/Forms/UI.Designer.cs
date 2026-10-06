@@ -45,6 +45,10 @@ namespace TVRename.Forms
             {
                 Logger.Warn(ex);
             }
+            catch (ObjectDisposedException ex)
+            {
+                Logger.Warn(ex);
+            }
         }
 
         #region Windows Form Designer generated code
