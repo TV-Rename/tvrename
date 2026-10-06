@@ -906,12 +906,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     public void SaveCache()
     {
-        {
-            {
-                CachePersistor.SaveCache(Series, Movies, CacheFile!,
-                LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
-            }
-        }
+        CachePersistor.SaveCache(Series, Movies, CacheFile!,
+        LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
     }
 
     public void LatestUpdateTimeIs(string time)

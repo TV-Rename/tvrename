@@ -2271,11 +2271,16 @@ public class TVDoc : IDisposable, IAsyncDisposable
         {
             saveCachesTask = SaveCachesAsync();
         }
+        else
+        {
+            Logger.Info("Caches already being saved, skipping for now...");
+        }
         await saveCachesTask;
     }
 
     private static async Task SaveCachesAsync()
     {
+        Logger.Info("Attempting to save caches");
         try
         {
             await Task.Run(() =>

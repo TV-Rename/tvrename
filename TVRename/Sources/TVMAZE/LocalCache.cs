@@ -61,9 +61,7 @@ public class LocalCache : MediaCache, iTVSource
 
     public void SaveCache()
     {
-        {
-            CachePersistor.SaveCache(Series, Movies, CacheFile!, 0);
-        }
+        CachePersistor.SaveCache(Series, Movies, CacheFile!, 0);
     }
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
