@@ -1,9 +1,3 @@
-
-
-
-using System.Linq;
-
-
 namespace TVRename;
 
 internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)

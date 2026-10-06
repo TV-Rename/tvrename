@@ -1,8 +1,3 @@
-
-
-using System.Linq;
-
-
 namespace TVRename;
 
 internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)

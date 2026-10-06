@@ -1,9 +1,3 @@
-
-
-
-using System.Linq;
-
-
 namespace TVRename;
 
 internal class CheckAllFoldersExist(TVDoc doc) : ScanShowActivity(doc)

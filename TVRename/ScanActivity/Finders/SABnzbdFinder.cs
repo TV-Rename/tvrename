@@ -7,7 +7,6 @@
 //
 
 using System.Net.Http;
-using System.Xml.Linq;
 using TVRename.SAB;
 
 namespace TVRename;

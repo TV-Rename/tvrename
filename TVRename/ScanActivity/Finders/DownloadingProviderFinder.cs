@@ -1,6 +1,3 @@
-
-
-
 namespace TVRename;
 
 internal abstract class DownloadingProviderFinder(TVDoc doc, IDownloadProvider source, TVDoc.ScanSettings settings) : DownloadingFinder(doc, settings)
