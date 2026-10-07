@@ -65,8 +65,8 @@ public class CommandLineArgs(IReadOnlyCollection<string> args)
         output.AppendLine("/forceupdate will verify TVDB & TMDB information is up to date");
         output.AppendLine("/quickupdate will do a quick update from TVDB, TMDB and TV Maze");
         output.AppendLine("/scan will Tell TV Rename to run a full scan");
-        output.AppendLine("/quickscan will scan shows most likely to need an update: http://www.tvrename.com/userguide#scan");
-        output.AppendLine("/recentscan will scan recent shows: http://www.tvrename.com/userguide#scan");
+        output.AppendLine("/quickscan will scan shows most likely to need an update: https://www.tvrename.com/main/scan");
+        output.AppendLine("/recentscan will scan recent shows: https://www.tvrename.com/main/scan");
         output.AppendLine("/doall Tell TV Rename execute all the actions it can.");
         output.AppendLine("/export Tell TV Rename do any configured exports.");
         output.AppendLine("/quit Tell a running TV Rename session to exit.");
@@ -81,7 +81,7 @@ public class CommandLineArgs(IReadOnlyCollection<string> args)
         output.AppendLine("/ignoremissing will Ignore missing folders.");
         output.AppendLine("/norenamecheck requests an existing TV Rename session to scan without renaming.");
         output.AppendLine("");
-        output.AppendLine("Further information is available at http://www.tvrename.com/manual/cmd-line/");
+        output.AppendLine("Further information is available at https://www.tvrename.com/technical/command-line");
 
         return output.ToString();
     }

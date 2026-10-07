@@ -9,12 +9,6 @@ using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
-using NodaTime;
-using System;
-
-using System.Linq;
-
-
 
 namespace TVRename;
 
@@ -34,7 +28,7 @@ internal class UpcomingiCAL(TVDoc i) : UpcomingExporter(i)
 
         try
         {
-            Calendar calendar = new() { ProductId = "Upcoming Shows Exported by TV Rename http://www.tvrename.com" };
+            Calendar calendar = new() { ProductId = "Upcoming Shows Exported by TV Rename https://www.tvrename.com" };
 
             foreach (CalendarEvent? ev in episodes.Select(CreateEvent).Where(ev => ev is not null))
             {

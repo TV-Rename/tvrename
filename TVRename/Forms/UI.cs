@@ -1589,7 +1589,7 @@ public partial class UI : Form, IDialogParent
     internal static string GenerateShowUiName(MovieConfiguration show) => PostpendTheIfNeeded(show.ShowName);
     internal static string GenerateShowUiName(ShowConfiguration show) => PostpendTheIfNeeded(show.ShowName);
 
-    public static string QuickStartGuide() => "http://www.tvrename.com/manual/quickstart/";
+    public static string QuickStartGuide() => "https://www.tvrename.com/guides/quick-start-guide";
 
     private void ShowQuickStartGuide()
     {

@@ -108,6 +108,7 @@ public class Languages : SafeList<Language>
         Add(new Language(999, "af", "afr", "Afrikaans", "Afrikaans", "af-ZA", true));
         Add(new Language(998, "xh", "xho", "Xhosa", "Xhosa", "xh-ZA", true));
         Add(new Language(997, "hr", "hrv", "Croatian", "Hrvatska", "hr-HR", true));
+        Add(new Language(996, "cy", "cym", "Welsh", "Cymraeg", "cy-GB", true));
     }
 
     public Language? GetLanguageFromCode(string? languageAbbreviation)

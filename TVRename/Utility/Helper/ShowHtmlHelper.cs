@@ -1459,18 +1459,61 @@ internal static class ShowHtmlHelper
 
     internal static string GenreIconHtml(string genre)
     {
-        string[] availableIcons =
-        [
-            "Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama", "Family",
-            "Fantasy", "Food", "Horror", "Mini-Series", "Mystery", "Reality", "Romance", "Science-Fiction", "Soap",
-            "Talk Show", "Thriller", "Travel", "War", "Western"
-        ];
+        string iconTag = GetIconTag(genre);
 
-        const string ROOT = "http://www.tvrename.com/assets/images/GenreIcons/";
+        if (iconTag.IsNullOrWhitespace())
+        {
+            return string.Empty;
+        }
+        return $"<i class=\"fa-2xl {iconTag}\"></i>";
+    }
 
-        return availableIcons.Contains(genre)
-            ? $@"<img width=""30"" height=""30"" src=""{ROOT}{genre}.svg"" alt=""{genre}"">"
-            : "";
+    private static string GetIconTag(string genre)
+    {
+        return genre switch
+        {
+            "War" => "fal fa-fighter-jet",
+            "War & Politics" => "fal fa-fighter-jet",
+            "Drama" => "fa-solid fa-masks-theater",
+            "Western" => "fa-solid fa-hat-cowboy",
+            "Action" => "fa-solid fa-gun",
+            "Action & Adventure" => "fa-solid fa-gun",
+            "Adventure" => "fa-regular fa-map",
+            "Animation" => "fa-solid fa-film",
+            "Anime"=>"",
+            "Children" => "fa-solid fa-baby",
+            "Kids" => "fa-solid fa-baby",
+            "Comedy" => "fa-regular fa-face-grin-tears",
+            "Crime" => "fa-solid fa-handcuffs",
+            "Documentary" => "fa-solid fa-video",
+            "Family" => "fa-solid fa-children",
+            "Fantasy" => "fa-solid fa-hat-wizard",
+            "Food" => "fa-solid fa-utensils",
+            "Horror" => "fa-solid fa-ghost",
+            "Mini-Series" => "fa-solid fa-gift",
+            "Mystery" => "fa-solid fa-magnifying-glass",
+            "Romance" => "fa-regular fa-heart",
+            "Science Fiction" => "fa-brands fa-reddit-alien",
+            "Science-Fiction" => "fa-brands fa-reddit-alien",
+            "Soap" => "fa-solid fa-soap",
+            "Talk Show"=> "fa-regular fa-comments",
+            "Thriller" => "fa-solid fa-droplet",
+            "Travel" => "fa-solid fa-earth-americas",
+            "History"=> "fa-solid fa-building-columns",
+            "Music" => "fa-brands fa-itunes-note",
+            "TV Movie" => "fa-solid fa-tv",
+            "Game Show" => "fa-solid fa-dice",
+            "Legal" => "fa-solid fa-scale-balanced",
+            "Martial Arts" => "fa-solid fa-hand-fist",
+            "Musical" => "fa-brands fa-itunes-note",
+            "News" => "fa-regular fa-newspaper",
+            "Reality" => "fa-solid fa-eye",
+            "Sci-Fi & Fantasy" => "fa-brands fa-reddit-alien",
+            "Sport" => "fa-regular fa-futbol",
+            "Sports" => "fa-regular fa-futbol",
+            "Suspense" => "fa-solid fa-droplet",
+            _ => string.Empty
+        };
     }
 
     private static string ActorLinkHtml(this Actor actor)
@@ -1539,6 +1582,7 @@ internal static class ShowHtmlHelper
                 <title> TV Rename - Show Summary</title>
                  <link href=""https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"" rel=""stylesheet"" integrity=""sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"" crossorigin=""anonymous"">
                 <link rel=""stylesheet"" href=""https://pro.fontawesome.com/releases/v5.10.0/css/all.css"" integrity=""sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"" crossorigin=""anonymous""/>
+                <link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"">
                 </head>"
                + $"<body style=\"background-color: {backgroundColour.HexColour()}; color: {ForegroundColour.HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
     }
