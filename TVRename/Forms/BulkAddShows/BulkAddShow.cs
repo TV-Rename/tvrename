@@ -33,6 +33,8 @@ public partial class BulkAddShow : Form
     private readonly UI mainUi;
     CancellationTokenSource cts = new();
 
+    Task? scanTask;
+
     //Thread safe counters to work out the progress
     //For auto id
     private static readonly ThreadSafeCounter VolatileCounter = new();
@@ -57,10 +59,8 @@ public partial class BulkAddShow : Form
         ShowHideUpdateControls(false);
     }
 
-    private void bnClose_Click(object sender, System.EventArgs e)
+    private async void bnClose_Click(object sender, System.EventArgs e)
     {
-        cts.Cancel();
-
         if (!CanClose())
         {
             if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"TV Shows\"?", "Bulk Add TV Shows", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
@@ -69,7 +69,19 @@ public partial class BulkAddShow : Form
             }
         }
 
+        cts.Cancel();
+
+        await CancelCleanUp();
+
         Close();
+    }
+
+    private async Task CancelCleanUp()
+    {
+        if (scanTask is not null)
+        {
+            await scanTask;
+        }
     }
 
     private bool CanClose()
@@ -231,7 +243,9 @@ public partial class BulkAddShow : Form
 
         try
         {
-            await engine.CheckFoldersAsync(progressHandler, true, true, cts.Token);
+            scanTask = engine.CheckFoldersAsync(progressHandler, true, true, cts.Token);
+
+            await scanTask;
         }
         catch (OperationCanceledException)
         {
@@ -625,8 +639,8 @@ public partial class BulkAddShow : Form
         bnNewFolderOpen.Enabled = somethingSelected;
     }
 
-    private void btnStopScan_Click(object sender, EventArgs e)
+    private async void btnStopScan_Click(object sender, EventArgs e)
     {
-        cts.Cancel();
+        await CancelCleanUp();
     }
 }

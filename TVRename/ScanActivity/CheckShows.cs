@@ -6,13 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-
-
-using System.IO;
-using System.Linq;
-using System.Threading;
-
-
 namespace TVRename;
 
 internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
@@ -86,7 +79,7 @@ internal class CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity
         {
             throw;
         }
-        catch (FileNotFoundException e)
+        catch (System.IO.FileNotFoundException e)
         {
             LOGGER.Warn(e, $"Failed to scan {si.ShowName}. Please double check settings for this movie: {si.Code}: {si}");
         }

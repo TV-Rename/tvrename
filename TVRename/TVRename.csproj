@@ -6,10 +6,7 @@
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
-
-    <AssemblyVersion > 1.0.0.0 </AssemblyVersion>
-    <FileVersion > 1.0.0.0 </FileVersion>
-    <Version>1.0.0 - alpha </Version>
+    <Version>2.0.0</Version>
     <Authors>TV Rename</Authors>
     <Company>TV Rename</Company>
     <Product>TV Rename</Product>
@@ -22,18 +19,23 @@
 
     <NoWarn>CA1416</NoWarn>
     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
-    <PublishTrimmed>true</PublishTrimmed>
     
     <!-- Compiler Settings -->
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
 
-    <!-- Disable auto-generation of AssemblyInfo if you want to keep your Properties\AssemblyInfo.cs -->
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <StartupObject>TVRename.App.Program</StartupObject>
     <SignAssembly>False</SignAssembly>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <!-- NuGet Package References -->
   <ItemGroup>
@@ -67,9 +69,14 @@
     <PackageReference Include="TimeZoneConverter" Version="7.2.0" />
     <PackageReference Include="TMDbLib" Version="3.0.0" />
     <PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.12.0.2" />
-    <PackageReference Include="chromiumembeddedframework.runtime.win-arm64" Version="152.0.6" />
-    <PackageReference Include="chromiumembeddedframework.runtime.win-x64" Version="152.0.6" />
-    <PackageReference Include="chromiumembeddedframework.runtime.win-x86" Version="152.0.6" />
+    <PackageReference Include="chromiumembeddedframework.runtime.win-arm64" Version="152.0.10" />
+    <PackageReference Include="chromiumembeddedframework.runtime.win-x64" Version="152.0.10" />
+    <PackageReference Include="chromiumembeddedframework.runtime.win-x86" Version="152.0.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -158,7 +158,6 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
                 UpdateType = DownloadProgressReport.Type.EpisodeDownload
             });
 
-
             bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
             Threadslogger.Trace("  Downloading " + series.Name);

@@ -1,14 +1,10 @@
-using Alphaleonis.Win32.Filesystem;
 using Microsoft.VisualBasic.ApplicationServices;
 using Microsoft.Win32;
-using NLog;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
-
-
-using System.Windows.Forms;
+using System.Collections.ObjectModel;
 using TVRename.Forms;
 
 namespace TVRename.App;
@@ -22,6 +18,13 @@ internal class ApplicationBase : WindowsFormsApplicationBase
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private TVDoc? doc;
     private UI? ui;
+
+    protected override bool OnInitialize(ReadOnlyCollection<string> commandLineArgs)
+    {
+        ColorMode = TVSettings.Instance.ColorModeActual;
+        return base.OnInitialize(commandLineArgs);
+    }
+
 
     /// <summary>
     /// Initializes the splash screen.

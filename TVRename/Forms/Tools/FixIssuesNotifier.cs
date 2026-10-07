@@ -1,6 +1,3 @@
-
-using System.Threading;
-
 namespace TVRename.Forms.Tools;
 
 public class FixIssuesNotifier : TaskNotifier

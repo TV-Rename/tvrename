@@ -1,9 +1,4 @@
 
-
-using System.Linq;
-using System.Threading;
-
-using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
 
 namespace TVRename.Forms;
@@ -24,7 +19,7 @@ public partial class CollectionsView : Form
         allAdded = [];
         mDoc = doc;
         mainUi = main;
-        StartScan(); // TODO CALL START SCAN
+        StartScan();
     }
 
     private void StartScan()
@@ -109,8 +104,7 @@ public partial class CollectionsView : Form
 
         var options = new ParallelOptions
         {
-            MaxDegreeOfParallelism = 8 // Limit to 8 concurrent downloads at a time
-            ,
+            MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads, 
             CancellationToken = cts.Token
         };
 

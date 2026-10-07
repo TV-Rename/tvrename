@@ -6,15 +6,9 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using NLog;
 using NodaTime;
-
-
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
-
-using System.Windows.Forms;
 using Path = System.IO.Path;
 
 namespace TVRename;

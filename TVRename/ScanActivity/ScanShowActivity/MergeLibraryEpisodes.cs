@@ -5,12 +5,6 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
-
-
-using System.Threading;
-
-
 namespace TVRename;
 
 internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
@@ -68,7 +62,7 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
             return;
         }
 
-        List<ProcessedEpisode> eps = si.EpisodesForSeason(snum);
+        List<ProcessedEpisode> eps = si.AllEpisodesForSeason(snum);
 
         List<ShowRule> rulesToAdd = [];
 

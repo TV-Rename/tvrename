@@ -1,7 +1,8 @@
 # TV & Movie Rename
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/ad1fea1cdca5468fb3d6c237db26eb23)](https://www.codacy.com/gh/TV-Rename/tvrename/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=TV-Rename/tvrename&amp;utm_campaign=Badge_Grade)
-[![CodeFactor](https://www.codefactor.io/repository/github/tv-rename/tvrename/badge)](https://www.codefactor.io/repository/github/tv-rename/tvrename)  [![AppveyorBuild](https://ci.appveyor.com/api/projects/status/github/TV-Rename/tvrename?svg=true)](https://ci.appveyor.com/project/MarkSummerville/tvrename)
-[![CodeQL](https://github.com/TV-Rename/tvrename/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/TV-Rename/tvrename/actions/workflows/codeql.yml)
+[![CodeFactor](https://www.codefactor.io/repository/github/tv-rename/tvrename/badge)](https://www.codefactor.io/repository/github/tv-rename/tvrename) [![CodeQL](https://github.com/TV-Rename/tvrename/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/TV-Rename/tvrename/actions/workflows/codeql.yml) 
+[![Build & Deploy TV Rename](https://github.com/TV-Rename/tvrename/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/TV-Rename/tvrename/actions/workflows/dotnet-desktop.yml)
+
 
 ### Organise your TV and movie files with ease
 
@@ -31,5 +32,5 @@ and more!
 For more details visit https://www.tvrename.com...
 
 * to ask a question or get help visit the [forums](https://groups.google.com/forum/#!forum/tvrename)
-* to ask for a new feature visit the [list of potential features](https://tvrename.featureupvote.com/)
+* to ask for a new feature visit the [list of potential features](https://github.com/TV-Rename/tvrename/issues/new/choose)
 * or raise a bug [here](https://github.com/TV-Rename/tvrename/issues)

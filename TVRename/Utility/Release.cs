@@ -36,10 +36,10 @@ public class Release
         }
 
         string matchString = type == VersionType.semantic
-            ? @"^v?(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?([ \-](?<pre>[0-9A-Za-z\- \.]+|[*]))?(\+(?<build>[0-9A-Za-z\-\.]+|[*]))?$"
-            : @"^v?(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?([ \-](?<pre>[0-9A-Za-z\- \.]+))?$";
+            ? @"^[vV]?(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?([ \-](?<pre>[0-9A-Za-z\- \.]+|[*]))?(\+(?<build>[0-9A-Za-z\-\.]+|[*]))?$"
+            : @"^[vV]?(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?([ \-](?<pre>[0-9A-Za-z\- \.]+))?$";
 
-        Regex regex = new(matchString, RegexOptions.ExplicitCapture);
+        Regex regex = new(matchString, RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
         Match match = regex.Match(version);
 
         if (!match.Success || !match.Groups["major"].Success || !match.Groups["minor"].Success)

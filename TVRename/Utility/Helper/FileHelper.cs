@@ -806,6 +806,14 @@ public static class FileHelper
                                         IProgress<CopyMoveProgress> progress,
                                         CancellationToken cancellationToken = default)
     {
+        await CopyFileWithProgressAsync(From, To, progress, cancellationToken);
+
+        // Complete the "move" by deleting the source file after a successful copy
+        From.Delete(); //todo use soemthing safer!
+    }
+
+    private static async Task CopyFileWithProgressAsync(FileInfo From, string To, IProgress<CopyMoveProgress> progress, CancellationToken cancellationToken)
+    {
         long totalBytes = From.Length;
         long bytesTransferred = 0;
         int bufferSize = 81920; // 80 KB large buffer
@@ -828,9 +836,6 @@ public static class FileHelper
                 });
             }
         }
-
-        // Complete the "move" by deleting the source file after a successful copy
-        From.Delete(); //todo use soemthing safer!
     }
 
     private static string TempFor(Alphaleonis.Win32.Filesystem.FileSystemInfo f) => f.FullName + ".tvrenametemp";
@@ -859,17 +864,21 @@ public static class FileHelper
                 //CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.WriteThrough | MoveOptions.ReplaceExisting, callback, null);
                 await FileHelper.MoveFileWithProgressAsync(From, tempName, progress, cancellationToken);
             }
+
+            // Copying the temp file into the correct name is very quick, so no progress reporting
+            File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
+            return;
         }
         else
         {
             //we are copying
 
             // This step could be slow, so report progress
-            await FileHelper.MoveFileWithProgressAsync(From, tempName, progress, cancellationToken);
-        }
+            await FileHelper.CopyFileWithProgressAsync(From, tempName, progress, cancellationToken);
 
-        // Copying the temp file into the correct name is very quick, so no progress reporting
-        File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
+            // Copying the temp file into the correct name is very quick, so no progress reporting
+            File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
+        }
     }
 
     private static bool SameFolder(FileInfo from, FileInfo to)

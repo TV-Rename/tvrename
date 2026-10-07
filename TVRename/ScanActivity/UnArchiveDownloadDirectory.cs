@@ -1,9 +1,3 @@
-
-using System;
-
-using System.Linq;
-
-
 namespace TVRename;
 
 internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)

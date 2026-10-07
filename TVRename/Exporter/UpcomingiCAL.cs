@@ -9,6 +9,7 @@ using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using NodaTime;
 using System;
 
 using System.Linq;
@@ -73,8 +74,8 @@ internal class UpcomingiCAL(TVDoc i) : UpcomingExporter(i)
 
             return new CalendarEvent
             {
-                Start = new CalDateTime(startTime),
-                End = new CalDateTime(endTime),
+                Start = new CalDateTime(DateTime.SpecifyKind(startTime, DateTimeKind.Unspecified)),
+                End = new CalDateTime(DateTime.SpecifyKind(endTime, DateTimeKind.Unspecified)),
                 Description = ei.Overview,
                 Comments = [ei.Overview ?? string.Empty],
                 Summary = niceName,

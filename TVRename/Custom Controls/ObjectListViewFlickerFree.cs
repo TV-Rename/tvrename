@@ -7,13 +7,8 @@
 //
 
 using BrightIdeasSoftware;
-using System.Drawing;
 
 namespace TVRename;
-
-
-using System.Linq;
-using System.Windows.Forms;
 
 // Thanks to http://stackoverflow.com/questions/442817/c-flickering-listview-on-update
 public class ObjectListViewFlickerFree<T> : ObjectListView
@@ -46,12 +41,12 @@ public class ObjectListViewFlickerFree<T> : ObjectListView
 
     public List<T> Selected()
     {
-        return this.SelectedObjects.OfType<T>().ToList();
+        return SelectedObjects.OfType<T>().ToList();
     }
 
     public T? FirstSelected()
     {
-        return this.Selected().FirstOrDefault();
+        return Selected().FirstOrDefault();
     }
 
     public bool AnySelected() => SelectedObjects.Count != 0;

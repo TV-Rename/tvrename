@@ -1,8 +1,3 @@
-
-
-using System.Linq;
-using System.Windows.Forms;
-
 namespace TVRename;
 
 public partial class AutoAddMedia : Form, ICodeWindow

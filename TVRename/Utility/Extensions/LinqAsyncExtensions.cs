@@ -5,12 +5,6 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
-
-
-using System.Linq;
-
-
 namespace TVRename;
 
 public static class LinqAsyncExtensions
@@ -18,13 +12,13 @@ public static class LinqAsyncExtensions
     public static async Task<IEnumerable<TResult>> SelectAsync<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult>> mapper)
     {
         // 1. Project items into tasks pairing the item with its async boolean outcome
-        var evaluationTasks = source.Select(async item => mapper(item));
+        var evaluationTasks = source.Select(item => mapper(item));
 
         // 2. Await all conditions to resolve concurrently
         var evaluations = await Task.WhenAll(evaluationTasks);
 
-        // 3. Perform a standard synchronous LINQ filter on the results
-        return evaluations.Select(x => x.Result).ToList();
+        // 3. Return the results from completed tasks
+        return evaluations.ToList();
     }
 
     public static async Task<IEnumerable<TSource>> WhereAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> filter)

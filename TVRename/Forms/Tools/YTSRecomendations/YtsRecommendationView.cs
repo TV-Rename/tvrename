@@ -1,9 +1,3 @@
-using System;
-
-using System.Linq;
-using System.Threading;
-
-using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
 using TVRename.YTS;
 
@@ -19,7 +13,7 @@ public partial class YtsRecommendationView : Form
     private readonly string quality;
     private DateTime scanStartTime;
     private Task? scanTask;
-
+    private CancellationTokenSource scanCancellationTokenSource = new();
 
     public YtsRecommendationView(TVDoc doc, UI main, string defaultQuality)
     {
@@ -175,14 +169,13 @@ public partial class YtsRecommendationView : Form
 
         try
         {
-            CancellationTokenSource cts = new();
 
             await Parallel.ForEachAsync(
                 inputMovies,
                 new ParallelOptions
                 {
                     MaxDegreeOfParallelism = 2 * TVSettings.Instance.ParallelDownloads,
-                    CancellationToken = cts.Token
+                    CancellationToken = scanCancellationTokenSource.Token
                 },
                 async (existingMovie, token) =>
                 {
@@ -196,11 +189,15 @@ public partial class YtsRecommendationView : Form
                         UpdateText = existingMovie.Name ?? string.Empty
                     });
 
-                    await ScanMovie(source, existingMovie);
+                    await ScanMovieAsync(source, existingMovie, scanCancellationTokenSource.Token);
                 });
 
 
             recs = source.AsRecommendationRows(mDoc);
+        }
+        catch (TaskCanceledException)
+        {
+            Logger.Info("YTS Recommendations Cancelled");
         }
         catch (Exception ex)
         {
@@ -218,15 +215,15 @@ public partial class YtsRecommendationView : Form
         PopulateGrid();
     }
 
-    private static async Task<bool> ScanMovie(RecommendationMovieStructure source, MovieConfiguration existingMovie)
+    private static async Task<bool> ScanMovieAsync(RecommendationMovieStructure source, MovieConfiguration existingMovie, CancellationToken cancellationToken)
     {
-        API.YtsMovie? ytsMovie = await API.GetMovieByImdbAsync(existingMovie.ImdbCode);
+        API.YtsMovie? ytsMovie = await API.GetMovieByImdbAsync(existingMovie.ImdbCode, cancellationToken);
         if (ytsMovie is null || ytsMovie.Id == 0)
         {
             return false;
         }
 
-        IEnumerable<API.YtsMovie>? relatedMovies = await API.GetRelatedMoviesAsync(ytsMovie.Id);
+        IEnumerable<API.YtsMovie>? relatedMovies = await API.GetRelatedMoviesAsync(ytsMovie.Id, cancellationToken);
         if (relatedMovies is null)
         {
             return false;
@@ -281,6 +278,8 @@ public partial class YtsRecommendationView : Form
     }
     private async void this_FormClosing(object sender, FormClosingEventArgs e)
     {
+        await scanCancellationTokenSource.CancelAsync();
+        if (scanTask is not null) await scanTask;
         await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, addedMovies);
     }
 

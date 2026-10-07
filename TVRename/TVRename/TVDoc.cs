@@ -391,11 +391,11 @@ public class TVDoc : IDisposable, IAsyncDisposable
     }
 
     // ReSharper disable once InconsistentNaming
-    public async Task DoDownloadsBG(DownloadProgressStatus? p)
+    public async Task DoDownloadsBG(DownloadProgressStatus? p, CancellationTokenSource cts)
     {
         ForceRefreshIdentifiedMedia();
         List<ISeriesSpecifier> idsToDownload = [.. TvLibrary.Shows, .. FilmLibrary.Movies];
-        cacheManager.StartBackgroundDownloadAsync(false, idsToDownload, false, p, CancellationToken.None);
+        cacheManager.StartBackgroundDownloadAsync(false, idsToDownload, false, p, cts.Token);
         await cacheManager.DownloadThreadAsync();
     }
 
@@ -975,6 +975,13 @@ public class TVDoc : IDisposable, IAsyncDisposable
             TheActionList.Clear();
             LastScanComplete = false;
         }
+        catch (OperationCanceledException ex)
+        {
+            Logger.Info(ex, "Scan was cancelled by user");
+            TheActionList.Clear();
+            LastScanComplete = false;
+            throw;  // Re-throw so UI knows it was cancelled
+        }
         catch (Exception e)
         {
             Logger.Fatal(e, "Unhandled Exception in ScanWorker");
@@ -998,7 +1005,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
             if (configuration != null && seasonNum != null)
             {
-                if (configuration.EpisodesForSeason(seasonNum.Value).Count == season.Count() && season.Count() > 1)
+                if (configuration.AllEpisodesForSeason(seasonNum.Value).Count == season.Count() && season.Count() > 1)
                 {
                     TheActionList.Replace(season, new ShowSeasonMissing(configuration, seasonNum.Value, season.First().TargetFolder, [.. season]));
                 }
@@ -1634,7 +1641,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TvdbCode, ProviderType.TheTVDB)).OfType<MovieConfiguration>();
         await ForceRefreshMoviesAsync(filmsToUpdate, unattended, hidden, owner, cts);
 
-        await DoDownloadsBG(updateAction);
+        await DoDownloadsBG(updateAction, cts);
         AllowAutoScan();
     }
 
@@ -1680,7 +1687,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(mov => TvLibrary.GetShowItem(mov.TmdbCode, ProviderType.TMDB)).OfType<ShowConfiguration>();
         await ForceRefreshShowsAsync(showsToUpdate, unattended, hidden, owner, cts);
 
-        await DoDownloadsBG(updateAction);
+        await DoDownloadsBG(updateAction, cts);
         AllowAutoScan();
     }
 
@@ -2256,16 +2263,32 @@ public class TVDoc : IDisposable, IAsyncDisposable
         searchFinders = new FindMissingEpisodesSearch(this, settings);
     }
 
-    public static void SaveCaches()
+
+    private Task saveCachesTask;
+    public async Task StartSavingCachesAsync()
     {
+        if (saveCachesTask is null || !(saveCachesTask.IsCompleted))
+        {
+            saveCachesTask = SaveCachesAsync();
+        }
+        else
+        {
+            Logger.Info("Caches already being saved, skipping for now...");
+        }
+        await saveCachesTask;
+    }
+
+    private static async Task SaveCachesAsync()
+    {
+        Logger.Info("Attempting to save caches");
         try
         {
-            Utility.Helper.TaskHelper.Run(() =>
+            await Task.Run(() =>
             {
                 TheTVDB.LocalCache.Instance.SaveCache();
                 TVmaze.LocalCache.Instance.SaveCache();
                 TMDB.LocalCache.Instance.SaveCache();
-            }, "Save Cache Files", false);
+            });
         }
         catch (ThreadStateException ex)
         {
@@ -2315,10 +2338,10 @@ public class TVDoc : IDisposable, IAsyncDisposable
         TheActionList.Remove(selectedActions);
     }
 
-    public async Task UpdateShowImagesScanAsync(IReadOnlyCollection<ShowConfiguration> sis)
-        => await UpdateImagesScanAsync(sis, [], null, new CancellationTokenSource());
-    public async Task UpdateMovieImagesScanAsync(IReadOnlyCollection<MovieConfiguration> sis)
-        => await UpdateImagesScanAsync([], sis, null, new CancellationTokenSource());
+    public async Task UpdateShowImagesScanAsync(IReadOnlyCollection<ShowConfiguration> sis, CancellationTokenSource cts)
+        => await UpdateImagesScanAsync(sis, [], null, cts);
+    public async Task UpdateMovieImagesScanAsync(IReadOnlyCollection<MovieConfiguration> sis, CancellationTokenSource cts)
+        => await UpdateImagesScanAsync([], sis, null,cts);
 
     public async Task UpdateImagesScanAsync(IReadOnlyCollection<ShowConfiguration> sis, IReadOnlyCollection<MovieConfiguration> mis, TaskCompletionProgress? progress, CancellationTokenSource cancellationToken)
     {

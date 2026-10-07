@@ -1,8 +1,3 @@
-
-
-using System.Linq;
-
-
 namespace TVRename;
 
 internal class SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : FileFinder(doc, settings)

@@ -1,9 +1,3 @@
-
-
-
-using System.Linq;
-
-
 namespace TVRename;
 
 internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
@@ -286,7 +280,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
     {
         FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE? re);
 
-        var seasonEpisodes = si.EpisodesForSeason(seasF);
+        var seasonEpisodes = si.AllEpisodesForSeason(seasF);
 
         if (!seasonEpisodes.IsAny())
         {
