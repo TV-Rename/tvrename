@@ -2100,21 +2100,23 @@ public partial class Preferences : Form
 
     private void pbGeneral_Click(object sender, EventArgs e) => OpenInfoWindow("#the-general-tab");
     private void pbDisplay_Click(object sender, EventArgs e) => OpenInfoWindow("#the-display-tab");
-    private void pbSearchFolders_Click(object sender, EventArgs e) => OpenInfoWindow("#the-search-folders-tab");
-    private void pbRSSJSONSearch_Click(object sender, EventArgs e) => OpenInfoWindow("#the-rss--json-search-tab");
-    private void pbFilesAndFolders_Click(object sender, EventArgs e) => OpenInfoWindow("#the-files-and-folders-tab");
-    private void pbFolderDeleting_Click(object sender, EventArgs e) => OpenInfoWindow("#the-folder-deleting-tab");
-    private void pbLibraryFolders_Click(object sender, EventArgs e) => OpenInfoWindow("#the-library-folders-tab");
-    private void pictureBox1_Click(object sender, EventArgs e) => OpenInfoWindow("#the-torrents--nzb-tab");
-    private void PictureBox1_Click_1(object sender, EventArgs e) => OpenInfoWindow("#the-folder-defaults-tab");
-    private void pictureBox7_Click(object sender, EventArgs e) => OpenInfoWindow("#the-media-center-tab");
-    private void pbuUpdates_Click(object sender, EventArgs e) => OpenInfoWindow("#the-updates-tab");
-    private void pbuExportEpisodes_Click(object sender, EventArgs e) => OpenInfoWindow("#the-episode-exporters-tab");
-    private void pbuJackett_Click(object sender, EventArgs e) => OpenInfoWindow("#the-jackett-tab");
-    private void pbuShowExport_Click(object sender, EventArgs e) => OpenInfoWindow("#the-show-exporters-tab");
-    private void pbMovieDefaults_Click(object sender, EventArgs e) => OpenInfoWindow("#movies-defaults");
     private void pbSources_Click(object sender, EventArgs e) => OpenInfoWindow("#data-sources");
+    private void pbLibraryFolders_Click(object sender, EventArgs e) => OpenInfoWindow("#the-library-folders-tab");
+    private void pbMovieDefaults_Click(object sender, EventArgs e) => OpenInfoWindow("#movies-defaults");
+    private void tv_show_Defaults_Click(object sender, EventArgs e) => OpenInfoWindow("tv-show-defaults");
     private void pbScanOptions_Click(object sender, EventArgs e) => OpenInfoWindow("#scan-settings");
+    private void pbFilesAndFolders_Click(object sender, EventArgs e) => OpenInfoWindow("#the-files-and-folders-tab");
+    private void subtitles_Click(object sender, EventArgs e) => OpenInfoWindow("subtitles");
+    private void pbSearchFolders_Click(object sender, EventArgs e) => OpenInfoWindow("#the-search-folders-tab");
+    private void pbFolderDeleting_Click(object sender, EventArgs e) => OpenInfoWindow("#the-folder-deleting-tab");
+    private void pictureBox7_Click(object sender, EventArgs e) => OpenInfoWindow("#the-media-centers-tab");
+    private void torrents_nzb_Click(object sender, EventArgs e) => OpenInfoWindow("#torrents-nzb");
+    private void pbRSSJSONSearch_Click(object sender, EventArgs e) => OpenInfoWindow("#rss-json-search");
+    private void pbuJackett_Click(object sender, EventArgs e) => OpenInfoWindow("#jackett-search");
+    private void pbuExportEpisodes_Click(object sender, EventArgs e) => OpenInfoWindow("#episode-export");
+    private void pbuShowExport_Click(object sender, EventArgs e) => OpenInfoWindow("#library-export");
+    private void pbuUpdates_Click(object sender, EventArgs e) => OpenInfoWindow("#app-updates");
+
     private static void OpenInfoWindow(string page)
     {
         $"https://www.tvrename.com/menu/preferences{page}".OpenUrlInBrowser();

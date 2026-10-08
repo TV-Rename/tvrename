@@ -71,7 +71,7 @@ public class BrowserResourceRequestHandler : ResourceRequestHandler
 {
     protected override CefReturnValue OnBeforeResourceLoad(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
     {
-        request.SetReferrer("http://tvreanme.com", ReferrerPolicy.NeverClearReferrer);
+        request.SetReferrer("http://tvrename.com", ReferrerPolicy.NeverClearReferrer);
         return CefReturnValue.Continue; // Let the request continue normally
     }
 }
