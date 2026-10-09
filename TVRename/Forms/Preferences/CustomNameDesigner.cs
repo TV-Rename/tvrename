@@ -7,8 +7,6 @@
 //
 
 
-using System.Drawing;
-using System.Windows.Forms;
 using TVRename.Forms;
 
 namespace TVRename;

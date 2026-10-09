@@ -10,7 +10,6 @@ using BrightIdeasSoftware;
 using CefSharp;
 using CefSharp.WinForms;
 using Humanizer;
-using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using TVRename.Forms.Supporting;
@@ -4604,16 +4603,12 @@ public partial class UI : Form, IDialogParent
         tabControl1.SelectedTab = tbAllInOne;
     }
 
-    private void AccuracyCheckLogToolStripMenuItem_Click(object sender, EventArgs e)
+    private async void AccuracyCheckLogToolStripMenuItem_Click(object sender, EventArgs e)
     {
         //Show Log Pane
         logToolStripMenuItem_Click(sender, e);
 
-        Cursor.Current = Cursors.WaitCursor;
-
-        UITVDBAccuracyCheck(false);
-
-        Cursor.Current = Cursors.Default;
+        await UITVDBAccuracyCheck(false);
     }
 
     private void ToolStripButton5_Click(object sender, EventArgs e)

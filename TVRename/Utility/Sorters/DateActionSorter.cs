@@ -8,8 +8,6 @@
 
 using BrightIdeasSoftware;
 
-using System.Windows.Forms;
-
 namespace TVRename;
 
 public class DateActionSorter(int column) : ListViewItemDateSorter(column)

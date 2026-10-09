@@ -7,10 +7,8 @@
 //
 
 using NodaTime;
-using System;
 
 using System.Diagnostics;
-using System.Linq;
 
 namespace TVRename;
 

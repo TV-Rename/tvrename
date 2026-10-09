@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Windows.Forms;
-
 // <summary>
 // This class is an implementation of the 'IComparer' interface.
 // </summary>

@@ -8,10 +8,6 @@
 // For more information see http://thetvdb.com/wiki/index.php/API:banners.xml
 //
 
-
-using System.Xml;
-using System.Xml.Linq;
-
 namespace TVRename;
 
 public class MediaImage

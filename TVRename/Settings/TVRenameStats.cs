@@ -7,8 +7,6 @@
 //
 
 
-using System;
-using System.Xml;
 using System.Xml.Serialization;
 
 // ReSharper disable RedundantDefaultMemberInitializer

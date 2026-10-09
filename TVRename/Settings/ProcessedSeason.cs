@@ -8,10 +8,6 @@
 
 using NodaTime;
 
-
-
-using System.Linq;
-
 namespace TVRename;
 
 public class ProcessedSeason(ShowConfiguration theShow, int number, int seasonId, ProcessedSeason.SeasonType t)

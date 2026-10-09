@@ -7,13 +7,6 @@
 //
 
 using NodaTime;
-
-
-
-using System.Linq;
-
-using System.Xml;
-using System.Xml.Linq;
 using TimeZoneConverter;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.

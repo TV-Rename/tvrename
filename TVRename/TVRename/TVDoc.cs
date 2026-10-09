@@ -10,8 +10,6 @@
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
 using Polly;
-using System.Xml;
-using System.Xml.Linq;
 using TVRename.Forms;
 using TVRename.Forms.Tools;
 using TVRename.Settings.AppState;
@@ -2264,7 +2262,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
     }
 
 
-    private Task saveCachesTask;
+    private Task? saveCachesTask;
     public async Task StartSavingCachesAsync()
     {
         if (saveCachesTask is null || !(saveCachesTask.IsCompleted))

@@ -1,9 +1,12 @@
-using BrightIdeasSoftware;
-using System;
+//
+// Main website for TVRename is http://tvrename.com
+//
+// Source code available at https://github.com/TV-Rename/tvrename
+//
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+//
 
-using System.Linq;
-using System.Threading;
-using System.Windows.Forms;
+using BrightIdeasSoftware;
 using TVRename.Forms.Tools;
 
 namespace TVRename.Forms;

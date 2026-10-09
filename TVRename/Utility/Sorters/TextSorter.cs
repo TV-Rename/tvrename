@@ -6,9 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using System;
-using System.Windows.Forms;
-
 // Sorting IComparer classes used by the ListViews in UI.cs
 
 namespace TVRename;

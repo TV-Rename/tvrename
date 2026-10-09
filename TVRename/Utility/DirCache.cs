@@ -9,8 +9,6 @@
 
 
 
-using System.Linq;
-
 // Recursively reads and caches files and folders, and info about them, as this is way faster
 // than repeatedly hitting the filesystem.
 

@@ -8,9 +8,6 @@
 
 using SourceGrid;
 using SourceGrid.Cells.Views;
-
-using System.Drawing;
-using System.Windows.Forms;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using ContentAlignment = DevAge.Drawing.ContentAlignment;
 

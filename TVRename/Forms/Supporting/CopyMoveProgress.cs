@@ -7,7 +7,6 @@
 //
 
 
-using System.Windows.Forms;
 using TVRename.Forms;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 

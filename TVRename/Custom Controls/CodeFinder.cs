@@ -8,8 +8,6 @@
 
 
 
-using System.Windows.Forms;
-
 // Control for searching for a source provider code, checking against local cache and
 // searching on various providers
 

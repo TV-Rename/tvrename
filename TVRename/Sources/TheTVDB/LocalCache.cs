@@ -7,14 +7,7 @@
 //
 
 using Humanizer;
-
-
-
-using System.Linq;
 using System.Net.Http;
-using System.Threading;
-
-using System.Windows.Forms;
 using TVRename.Forms;
 using TVRename.Forms.Utilities;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;

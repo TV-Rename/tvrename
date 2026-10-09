@@ -9,9 +9,6 @@
 using System.Net;
 using System.Text.RegularExpressions;
 
-using System.Xml;
-using System.Xml.Linq;
-
 namespace TVRename;
 
 internal class RssItemList : List<RSSItem>

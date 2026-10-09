@@ -6,12 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-
-
-
-using System.Linq;
-
-
 namespace TVRename;
 
 internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings settings) : ScanActivity(doc, settings)
