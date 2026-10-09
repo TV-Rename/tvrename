@@ -39,1440 +39,1406 @@ namespace TVRename
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddEditShow));
-            this.txtCustomShowName = new System.Windows.Forms.TextBox();
-            this.cbTimeZone = new System.Windows.Forms.ComboBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.bnCancel = new System.Windows.Forms.Button();
-            this.buttonOK = new System.Windows.Forms.Button();
-            this.chkSpecialsCount = new System.Windows.Forms.CheckBox();
-            this.chkShowNextAirdate = new System.Windows.Forms.CheckBox();
-            this.pnlCF = new System.Windows.Forms.Panel();
-            this.cbDoRenaming = new System.Windows.Forms.CheckBox();
-            this.cbDoMissingCheck = new System.Windows.Forms.CheckBox();
-            this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
-            this.label5 = new System.Windows.Forms.Label();
-            this.txtIgnoreSeasons = new System.Windows.Forms.TextBox();
-            this.chkDVDOrder = new System.Windows.Forms.CheckBox();
-            this.cbSequentialMatching = new System.Windows.Forms.CheckBox();
-            this.chkCustomShowName = new System.Windows.Forms.CheckBox();
-            this.Folders = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.chkCustomRegion = new System.Windows.Forms.CheckBox();
-            this.cbRegion = new System.Windows.Forms.ComboBox();
-            this.rdoTMDB = new System.Windows.Forms.RadioButton();
-            this.label13 = new System.Windows.Forms.Label();
-            this.rdoTVMaze = new System.Windows.Forms.RadioButton();
-            this.rdoTVDB = new System.Windows.Forms.RadioButton();
-            this.rdoDefault = new System.Windows.Forms.RadioButton();
-            this.label60 = new System.Windows.Forms.Label();
-            this.pbBasics = new System.Windows.Forms.PictureBox();
-            this.cbLanguage = new System.Windows.Forms.ComboBox();
-            this.chkCustomLanguage = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.txtIgnoreList = new System.Windows.Forms.Label();
-            this.btnIgnoreList = new System.Windows.Forms.Button();
-            this.label12 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.chkReplaceAutoFolders = new System.Windows.Forms.CheckBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.bnRemove = new System.Windows.Forms.Button();
-            this.bnAdd = new System.Windows.Forms.Button();
-            this.bnBrowseFolder = new System.Windows.Forms.Button();
-            this.txtFolder = new System.Windows.Forms.TextBox();
-            this.txtSeasonNumber = new System.Windows.Forms.TextBox();
-            this.lvSeasonFolders = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-            this.chkAutoFolders = new System.Windows.Forms.CheckBox();
-            this.gbAutoFolders = new System.Windows.Forms.GroupBox();
-            this.bnQuickLocate = new System.Windows.Forms.Button();
-            this.txtSeasonFormat = new System.Windows.Forms.TextBox();
-            this.bnTags = new System.Windows.Forms.Button();
-            this.lblSeasonWordPreview = new System.Windows.Forms.Label();
-            this.rdoFolderBaseOnly = new System.Windows.Forms.RadioButton();
-            this.rdoFolderCustom = new System.Windows.Forms.RadioButton();
-            this.rdoFolderLibraryDefault = new System.Windows.Forms.RadioButton();
-            this.txtBaseFolder = new System.Windows.Forms.TextBox();
-            this.bnBrowse = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.pbFolders = new System.Windows.Forms.PictureBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.label14 = new System.Windows.Forms.Label();
-            this.lbSourceAliases = new System.Windows.Forms.ListBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.bnRemoveAlias = new System.Windows.Forms.Button();
-            this.bnAddAlias = new System.Windows.Forms.Button();
-            this.tbShowAlias = new System.Windows.Forms.TextBox();
-            this.pbAliases = new System.Windows.Forms.PictureBox();
-            this.lbShowAlias = new System.Windows.Forms.ListBox();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.label11 = new System.Windows.Forms.Label();
-            this.llCustomSearchPreview = new System.Windows.Forms.LinkLabel();
-            this.lbSearchExample = new System.Windows.Forms.Label();
-            this.txtSearchURL = new System.Windows.Forms.TextBox();
-            this.txtTagList = new System.Windows.Forms.Label();
-            this.lbTags = new System.Windows.Forms.Label();
-            this.lbSearchURL = new System.Windows.Forms.Label();
-            this.cbUseCustomSearch = new System.Windows.Forms.CheckBox();
-            this.pbCustomSearch = new System.Windows.Forms.PictureBox();
-            this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.llLibraryDefaultFormat = new System.Windows.Forms.LinkLabel();
-            this.llCustomName = new System.Windows.Forms.LinkLabel();
-            this.lbLibraryDefaultNaming = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.lbNamingExample = new System.Windows.Forms.Label();
-            this.txtCustomEpisodeNamingFormat = new System.Windows.Forms.TextBox();
-            this.txtTagList2 = new System.Windows.Forms.Label();
-            this.lbAvailableTags = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.cbUseCustomNamingFormat = new System.Windows.Forms.CheckBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.chkAlternateOrder = new System.Windows.Forms.CheckBox();
-            this.cbEpNameMatching = new System.Windows.Forms.CheckBox();
-            this.label68 = new System.Windows.Forms.Label();
-            this.cbAirdateMatching = new System.Windows.Forms.CheckBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
-            this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
-            this.pbAdvanced = new System.Windows.Forms.PictureBox();
-            this.Folders.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).BeginInit();
-            this.tabPage5.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.gbAutoFolders.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbFolders)).BeginInit();
-            this.tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbAliases)).BeginInit();
-            this.tabPage4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbCustomSearch)).BeginInit();
-            this.tabPage6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbAdvanced)).BeginInit();
-            this.SuspendLayout();
+            txtCustomShowName = new TextBox();
+            cbTimeZone = new ComboBox();
+            label6 = new Label();
+            bnCancel = new Button();
+            buttonOK = new Button();
+            chkSpecialsCount = new CheckBox();
+            chkShowNextAirdate = new CheckBox();
+            pnlCF = new Panel();
+            cbDoRenaming = new CheckBox();
+            cbDoMissingCheck = new CheckBox();
+            folderBrowser = new FolderBrowserDialog();
+            label5 = new Label();
+            txtIgnoreSeasons = new TextBox();
+            chkDVDOrder = new CheckBox();
+            cbSequentialMatching = new CheckBox();
+            chkCustomShowName = new CheckBox();
+            Folders = new TabControl();
+            tabPage1 = new TabPage();
+            chkCustomRegion = new CheckBox();
+            cbRegion = new ComboBox();
+            rdoTMDB = new RadioButton();
+            label13 = new Label();
+            rdoTVMaze = new RadioButton();
+            rdoTVDB = new RadioButton();
+            rdoDefault = new RadioButton();
+            label60 = new Label();
+            pbBasics = new PictureBox();
+            cbLanguage = new ComboBox();
+            chkCustomLanguage = new CheckBox();
+            label2 = new Label();
+            tabPage5 = new TabPage();
+            txtIgnoreList = new Label();
+            btnIgnoreList = new Button();
+            label12 = new Label();
+            groupBox1 = new GroupBox();
+            chkReplaceAutoFolders = new CheckBox();
+            label7 = new Label();
+            label1 = new Label();
+            bnRemove = new Button();
+            bnAdd = new Button();
+            bnBrowseFolder = new Button();
+            txtFolder = new TextBox();
+            txtSeasonNumber = new TextBox();
+            lvSeasonFolders = new ListView();
+            columnHeader1 = new ColumnHeader();
+            columnHeader2 = new ColumnHeader();
+            chkAutoFolders = new CheckBox();
+            gbAutoFolders = new GroupBox();
+            bnQuickLocate = new Button();
+            txtSeasonFormat = new TextBox();
+            bnTags = new Button();
+            lblSeasonWordPreview = new Label();
+            rdoFolderBaseOnly = new RadioButton();
+            rdoFolderCustom = new RadioButton();
+            rdoFolderLibraryDefault = new RadioButton();
+            txtBaseFolder = new TextBox();
+            bnBrowse = new Button();
+            label3 = new Label();
+            pbFolders = new PictureBox();
+            tabPage3 = new TabPage();
+            label14 = new Label();
+            lbSourceAliases = new ListBox();
+            label10 = new Label();
+            label8 = new Label();
+            label4 = new Label();
+            bnRemoveAlias = new Button();
+            bnAddAlias = new Button();
+            tbShowAlias = new TextBox();
+            pbAliases = new PictureBox();
+            lbShowAlias = new ListBox();
+            tabPage4 = new TabPage();
+            label11 = new Label();
+            llCustomSearchPreview = new LinkLabel();
+            lbSearchExample = new Label();
+            txtSearchURL = new TextBox();
+            txtTagList = new Label();
+            lbTags = new Label();
+            lbSearchURL = new Label();
+            cbUseCustomSearch = new CheckBox();
+            pbCustomSearch = new PictureBox();
+            tabPage6 = new TabPage();
+            llLibraryDefaultFormat = new LinkLabel();
+            llCustomName = new LinkLabel();
+            lbLibraryDefaultNaming = new Label();
+            label15 = new Label();
+            lbNamingExample = new Label();
+            txtCustomEpisodeNamingFormat = new TextBox();
+            txtTagList2 = new Label();
+            lbAvailableTags = new Label();
+            label19 = new Label();
+            cbUseCustomNamingFormat = new CheckBox();
+            pictureBox1 = new PictureBox();
+            tabPage2 = new TabPage();
+            chkAlternateOrder = new CheckBox();
+            cbEpNameMatching = new CheckBox();
+            label68 = new Label();
+            cbAirdateMatching = new CheckBox();
+            label9 = new Label();
+            cbIncludeNoAirdate = new CheckBox();
+            cbIncludeFuture = new CheckBox();
+            pbAdvanced = new PictureBox();
+            Folders.SuspendLayout();
+            tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbBasics).BeginInit();
+            tabPage5.SuspendLayout();
+            groupBox1.SuspendLayout();
+            gbAutoFolders.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbFolders).BeginInit();
+            tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbAliases).BeginInit();
+            tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbCustomSearch).BeginInit();
+            tabPage6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbAdvanced).BeginInit();
+            SuspendLayout();
             // 
             // txtCustomShowName
             // 
-            this.txtCustomShowName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtCustomShowName.Location = new System.Drawing.Point(156, 384);
-            this.txtCustomShowName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtCustomShowName.Name = "txtCustomShowName";
-            this.txtCustomShowName.Size = new System.Drawing.Size(353, 23);
-            this.txtCustomShowName.TabIndex = 2;
+            txtCustomShowName.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            txtCustomShowName.Location = new Point(156, 384);
+            txtCustomShowName.Margin = new Padding(4, 3, 4, 3);
+            txtCustomShowName.Name = "txtCustomShowName";
+            txtCustomShowName.Size = new Size(353, 23);
+            txtCustomShowName.TabIndex = 2;
             // 
             // cbTimeZone
             // 
-            this.cbTimeZone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbTimeZone.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbTimeZone.FormattingEnabled = true;
-            this.cbTimeZone.Location = new System.Drawing.Point(119, 417);
-            this.cbTimeZone.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbTimeZone.Name = "cbTimeZone";
-            this.cbTimeZone.Size = new System.Drawing.Size(233, 23);
-            this.cbTimeZone.TabIndex = 4;
+            cbTimeZone.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            cbTimeZone.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbTimeZone.FormattingEnabled = true;
+            cbTimeZone.Location = new Point(119, 417);
+            cbTimeZone.Margin = new Padding(4, 3, 4, 3);
+            cbTimeZone.Name = "cbTimeZone";
+            cbTimeZone.Size = new Size(233, 23);
+            cbTimeZone.TabIndex = 4;
             // 
             // label6
             // 
-            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 420);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(97, 15);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Airs in &Timezone:";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            label6.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            label6.AutoSize = true;
+            label6.Location = new Point(8, 420);
+            label6.Margin = new Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new Size(98, 15);
+            label6.TabIndex = 3;
+            label6.Text = "Airs in &Timezone:";
+            label6.TextAlign = ContentAlignment.TopRight;
             // 
             // bnCancel
             // 
-            this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(428, 579);
-            this.bnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.bnCancel.Name = "bnCancel";
-            this.bnCancel.Size = new System.Drawing.Size(88, 27);
-            this.bnCancel.TabIndex = 2;
-            this.bnCancel.Text = "Cancel";
-            this.bnCancel.UseVisualStyleBackColor = true;
-            this.bnCancel.Click += new System.EventHandler(this.bnCancel_Click);
+            bnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            bnCancel.DialogResult = DialogResult.Cancel;
+            bnCancel.Location = new Point(428, 579);
+            bnCancel.Margin = new Padding(4, 3, 4, 3);
+            bnCancel.Name = "bnCancel";
+            bnCancel.Size = new Size(88, 27);
+            bnCancel.TabIndex = 2;
+            bnCancel.Text = "Cancel";
+            bnCancel.UseVisualStyleBackColor = true;
+            bnCancel.Click += bnCancel_Click;
             // 
             // buttonOK
             // 
-            this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(334, 579);
-            this.buttonOK.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(88, 27);
-            this.buttonOK.TabIndex = 1;
-            this.buttonOK.Text = "OK";
-            this.buttonOK.UseVisualStyleBackColor = true;
-            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
+            buttonOK.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            buttonOK.DialogResult = DialogResult.OK;
+            buttonOK.Location = new Point(334, 579);
+            buttonOK.Margin = new Padding(4, 3, 4, 3);
+            buttonOK.Name = "buttonOK";
+            buttonOK.Size = new Size(88, 27);
+            buttonOK.TabIndex = 1;
+            buttonOK.Text = "OK";
+            buttonOK.UseVisualStyleBackColor = true;
+            buttonOK.Click += buttonOK_Click;
             // 
             // chkSpecialsCount
             // 
-            this.chkSpecialsCount.AutoSize = true;
-            this.chkSpecialsCount.Location = new System.Drawing.Point(9, 117);
-            this.chkSpecialsCount.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkSpecialsCount.Name = "chkSpecialsCount";
-            this.chkSpecialsCount.Size = new System.Drawing.Size(165, 19);
-            this.chkSpecialsCount.TabIndex = 2;
-            this.chkSpecialsCount.Text = "S&pecials count as episodes";
-            this.chkSpecialsCount.UseVisualStyleBackColor = true;
+            chkSpecialsCount.AutoSize = true;
+            chkSpecialsCount.Location = new Point(9, 117);
+            chkSpecialsCount.Margin = new Padding(4, 3, 4, 3);
+            chkSpecialsCount.Name = "chkSpecialsCount";
+            chkSpecialsCount.Size = new Size(165, 19);
+            chkSpecialsCount.TabIndex = 2;
+            chkSpecialsCount.Text = "S&pecials count as episodes";
+            chkSpecialsCount.UseVisualStyleBackColor = true;
             // 
             // chkShowNextAirdate
             // 
-            this.chkShowNextAirdate.AutoSize = true;
-            this.chkShowNextAirdate.Location = new System.Drawing.Point(9, 90);
-            this.chkShowNextAirdate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkShowNextAirdate.Name = "chkShowNextAirdate";
-            this.chkShowNextAirdate.Size = new System.Drawing.Size(190, 19);
-            this.chkShowNextAirdate.TabIndex = 1;
-            this.chkShowNextAirdate.Text = "Show &next airdate in \'Schedule\'";
-            this.chkShowNextAirdate.UseVisualStyleBackColor = true;
+            chkShowNextAirdate.AutoSize = true;
+            chkShowNextAirdate.Location = new Point(9, 90);
+            chkShowNextAirdate.Margin = new Padding(4, 3, 4, 3);
+            chkShowNextAirdate.Name = "chkShowNextAirdate";
+            chkShowNextAirdate.Size = new Size(189, 19);
+            chkShowNextAirdate.TabIndex = 1;
+            chkShowNextAirdate.Text = "Show &next airdate in 'Schedule'";
+            chkShowNextAirdate.UseVisualStyleBackColor = true;
             // 
             // pnlCF
             // 
-            this.pnlCF.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlCF.Location = new System.Drawing.Point(4, 60);
-            this.pnlCF.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pnlCF.Name = "pnlCF";
-            this.pnlCF.Size = new System.Drawing.Size(518, 282);
-            this.pnlCF.TabIndex = 0;
+            pnlCF.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlCF.Location = new Point(4, 60);
+            pnlCF.Margin = new Padding(4, 3, 4, 3);
+            pnlCF.Name = "pnlCF";
+            pnlCF.Size = new Size(518, 282);
+            pnlCF.TabIndex = 0;
             // 
             // cbDoRenaming
             // 
-            this.cbDoRenaming.AutoSize = true;
-            this.cbDoRenaming.Location = new System.Drawing.Point(9, 143);
-            this.cbDoRenaming.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbDoRenaming.Name = "cbDoRenaming";
-            this.cbDoRenaming.Size = new System.Drawing.Size(95, 19);
-            this.cbDoRenaming.TabIndex = 3;
-            this.cbDoRenaming.Text = "Do &renaming";
-            this.cbDoRenaming.UseVisualStyleBackColor = true;
+            cbDoRenaming.AutoSize = true;
+            cbDoRenaming.Location = new Point(9, 143);
+            cbDoRenaming.Margin = new Padding(4, 3, 4, 3);
+            cbDoRenaming.Name = "cbDoRenaming";
+            cbDoRenaming.Size = new Size(95, 19);
+            cbDoRenaming.TabIndex = 3;
+            cbDoRenaming.Text = "Do &renaming";
+            cbDoRenaming.UseVisualStyleBackColor = true;
             // 
             // cbDoMissingCheck
             // 
-            this.cbDoMissingCheck.AutoSize = true;
-            this.cbDoMissingCheck.Location = new System.Drawing.Point(9, 170);
-            this.cbDoMissingCheck.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbDoMissingCheck.Name = "cbDoMissingCheck";
-            this.cbDoMissingCheck.Size = new System.Drawing.Size(119, 19);
-            this.cbDoMissingCheck.TabIndex = 4;
-            this.cbDoMissingCheck.Text = "Do &missing check";
-            this.cbDoMissingCheck.UseVisualStyleBackColor = true;
-            this.cbDoMissingCheck.CheckedChanged += new System.EventHandler(this.cbDoMissingCheck_CheckedChanged);
+            cbDoMissingCheck.AutoSize = true;
+            cbDoMissingCheck.Location = new Point(9, 170);
+            cbDoMissingCheck.Margin = new Padding(4, 3, 4, 3);
+            cbDoMissingCheck.Name = "cbDoMissingCheck";
+            cbDoMissingCheck.Size = new Size(119, 19);
+            cbDoMissingCheck.TabIndex = 4;
+            cbDoMissingCheck.Text = "Do &missing check";
+            cbDoMissingCheck.UseVisualStyleBackColor = true;
+            cbDoMissingCheck.CheckedChanged += cbDoMissingCheck_CheckedChanged;
             // 
             // label5
             // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 451);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(89, 15);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Ign&ore Seasons:";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            label5.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            label5.AutoSize = true;
+            label5.Location = new Point(8, 451);
+            label5.Margin = new Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(89, 15);
+            label5.TabIndex = 5;
+            label5.Text = "Ign&ore Seasons:";
+            label5.TextAlign = ContentAlignment.TopRight;
             // 
             // txtIgnoreSeasons
             // 
-            this.txtIgnoreSeasons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtIgnoreSeasons.Location = new System.Drawing.Point(119, 448);
-            this.txtIgnoreSeasons.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtIgnoreSeasons.Name = "txtIgnoreSeasons";
-            this.txtIgnoreSeasons.Size = new System.Drawing.Size(181, 23);
-            this.txtIgnoreSeasons.TabIndex = 6;
+            txtIgnoreSeasons.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            txtIgnoreSeasons.Location = new Point(119, 448);
+            txtIgnoreSeasons.Margin = new Padding(4, 3, 4, 3);
+            txtIgnoreSeasons.Name = "txtIgnoreSeasons";
+            txtIgnoreSeasons.Size = new Size(181, 23);
+            txtIgnoreSeasons.TabIndex = 6;
             // 
             // chkDVDOrder
             // 
-            this.chkDVDOrder.AutoSize = true;
-            this.chkDVDOrder.Location = new System.Drawing.Point(9, 63);
-            this.chkDVDOrder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkDVDOrder.Name = "chkDVDOrder";
-            this.chkDVDOrder.Size = new System.Drawing.Size(104, 19);
-            this.chkDVDOrder.TabIndex = 0;
-            this.chkDVDOrder.Text = "&Use DVD Order";
-            this.chkDVDOrder.UseVisualStyleBackColor = true;
-            this.chkDVDOrder.CheckedChanged += new System.EventHandler(this.chkDVDOrder_CheckedChanged);
+            chkDVDOrder.AutoSize = true;
+            chkDVDOrder.Location = new Point(9, 63);
+            chkDVDOrder.Margin = new Padding(4, 3, 4, 3);
+            chkDVDOrder.Name = "chkDVDOrder";
+            chkDVDOrder.Size = new Size(104, 19);
+            chkDVDOrder.TabIndex = 0;
+            chkDVDOrder.Text = "&Use DVD Order";
+            chkDVDOrder.UseVisualStyleBackColor = true;
+            chkDVDOrder.CheckedChanged += chkDVDOrder_CheckedChanged;
             // 
             // cbSequentialMatching
             // 
-            this.cbSequentialMatching.AutoSize = true;
-            this.cbSequentialMatching.Location = new System.Drawing.Point(30, 269);
-            this.cbSequentialMatching.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbSequentialMatching.Name = "cbSequentialMatching";
-            this.cbSequentialMatching.Size = new System.Drawing.Size(201, 19);
-            this.cbSequentialMatching.TabIndex = 6;
-            this.cbSequentialMatching.Text = "Use sequential number matching";
-            this.cbSequentialMatching.UseVisualStyleBackColor = true;
+            cbSequentialMatching.AutoSize = true;
+            cbSequentialMatching.Location = new Point(30, 269);
+            cbSequentialMatching.Margin = new Padding(4, 3, 4, 3);
+            cbSequentialMatching.Name = "cbSequentialMatching";
+            cbSequentialMatching.Size = new Size(201, 19);
+            cbSequentialMatching.TabIndex = 6;
+            cbSequentialMatching.Text = "Use sequential number matching";
+            cbSequentialMatching.UseVisualStyleBackColor = true;
             // 
             // chkCustomShowName
             // 
-            this.chkCustomShowName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkCustomShowName.AutoSize = true;
-            this.chkCustomShowName.Location = new System.Drawing.Point(12, 387);
-            this.chkCustomShowName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkCustomShowName.Name = "chkCustomShowName";
-            this.chkCustomShowName.Size = new System.Drawing.Size(135, 19);
-            this.chkCustomShowName.TabIndex = 1;
-            this.chkCustomShowName.Text = "Custom s&how name:";
-            this.chkCustomShowName.UseVisualStyleBackColor = true;
-            this.chkCustomShowName.CheckedChanged += new System.EventHandler(this.chkCustomShowName_CheckedChanged);
+            chkCustomShowName.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            chkCustomShowName.AutoSize = true;
+            chkCustomShowName.Location = new Point(12, 387);
+            chkCustomShowName.Margin = new Padding(4, 3, 4, 3);
+            chkCustomShowName.Name = "chkCustomShowName";
+            chkCustomShowName.Size = new Size(135, 19);
+            chkCustomShowName.TabIndex = 1;
+            chkCustomShowName.Text = "Custom s&how name:";
+            chkCustomShowName.UseVisualStyleBackColor = true;
+            chkCustomShowName.CheckedChanged += chkCustomShowName_CheckedChanged;
             // 
             // Folders
             // 
-            this.Folders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Folders.Controls.Add(this.tabPage1);
-            this.Folders.Controls.Add(this.tabPage5);
-            this.Folders.Controls.Add(this.tabPage3);
-            this.Folders.Controls.Add(this.tabPage4);
-            this.Folders.Controls.Add(this.tabPage6);
-            this.Folders.Controls.Add(this.tabPage2);
-            this.Folders.Location = new System.Drawing.Point(-5, 2);
-            this.Folders.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Folders.Name = "Folders";
-            this.Folders.SelectedIndex = 0;
-            this.Folders.Size = new System.Drawing.Size(541, 570);
-            this.Folders.TabIndex = 0;
+            Folders.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            Folders.Controls.Add(tabPage1);
+            Folders.Controls.Add(tabPage5);
+            Folders.Controls.Add(tabPage3);
+            Folders.Controls.Add(tabPage4);
+            Folders.Controls.Add(tabPage6);
+            Folders.Controls.Add(tabPage2);
+            Folders.Location = new Point(-5, 2);
+            Folders.Margin = new Padding(4, 3, 4, 3);
+            Folders.Name = "Folders";
+            Folders.SelectedIndex = 0;
+            Folders.Size = new Size(541, 570);
+            Folders.TabIndex = 0;
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.chkCustomRegion);
-            this.tabPage1.Controls.Add(this.cbRegion);
-            this.tabPage1.Controls.Add(this.rdoTMDB);
-            this.tabPage1.Controls.Add(this.label13);
-            this.tabPage1.Controls.Add(this.rdoTVMaze);
-            this.tabPage1.Controls.Add(this.rdoTVDB);
-            this.tabPage1.Controls.Add(this.rdoDefault);
-            this.tabPage1.Controls.Add(this.label60);
-            this.tabPage1.Controls.Add(this.pbBasics);
-            this.tabPage1.Controls.Add(this.cbLanguage);
-            this.tabPage1.Controls.Add(this.chkCustomLanguage);
-            this.tabPage1.Controls.Add(this.pnlCF);
-            this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Controls.Add(this.label5);
-            this.tabPage1.Controls.Add(this.chkCustomShowName);
-            this.tabPage1.Controls.Add(this.txtCustomShowName);
-            this.tabPage1.Controls.Add(this.label6);
-            this.tabPage1.Controls.Add(this.cbTimeZone);
-            this.tabPage1.Controls.Add(this.txtIgnoreSeasons);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage1.Size = new System.Drawing.Size(533, 542);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Basics";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            tabPage1.Controls.Add(chkCustomRegion);
+            tabPage1.Controls.Add(cbRegion);
+            tabPage1.Controls.Add(rdoTMDB);
+            tabPage1.Controls.Add(label13);
+            tabPage1.Controls.Add(rdoTVMaze);
+            tabPage1.Controls.Add(rdoTVDB);
+            tabPage1.Controls.Add(rdoDefault);
+            tabPage1.Controls.Add(label60);
+            tabPage1.Controls.Add(pbBasics);
+            tabPage1.Controls.Add(cbLanguage);
+            tabPage1.Controls.Add(chkCustomLanguage);
+            tabPage1.Controls.Add(pnlCF);
+            tabPage1.Controls.Add(label2);
+            tabPage1.Controls.Add(label5);
+            tabPage1.Controls.Add(chkCustomShowName);
+            tabPage1.Controls.Add(txtCustomShowName);
+            tabPage1.Controls.Add(label6);
+            tabPage1.Controls.Add(cbTimeZone);
+            tabPage1.Controls.Add(txtIgnoreSeasons);
+            tabPage1.Location = new Point(4, 24);
+            tabPage1.Margin = new Padding(4, 3, 4, 3);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(4, 3, 4, 3);
+            tabPage1.Size = new Size(533, 542);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Basics";
+            tabPage1.UseVisualStyleBackColor = true;
             // 
             // chkCustomRegion
             // 
-            this.chkCustomRegion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkCustomRegion.AutoSize = true;
-            this.chkCustomRegion.Location = new System.Drawing.Point(10, 507);
-            this.chkCustomRegion.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkCustomRegion.Name = "chkCustomRegion";
-            this.chkCustomRegion.Size = new System.Drawing.Size(111, 19);
-            this.chkCustomRegion.TabIndex = 48;
-            this.chkCustomRegion.Text = "Custom Region:";
-            this.chkCustomRegion.UseVisualStyleBackColor = true;
-            this.chkCustomRegion.CheckedChanged += new System.EventHandler(this.chkCustomRegion_CheckedChanged);
+            chkCustomRegion.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            chkCustomRegion.AutoSize = true;
+            chkCustomRegion.Location = new Point(10, 507);
+            chkCustomRegion.Margin = new Padding(4, 3, 4, 3);
+            chkCustomRegion.Name = "chkCustomRegion";
+            chkCustomRegion.Size = new Size(111, 19);
+            chkCustomRegion.TabIndex = 48;
+            chkCustomRegion.Text = "Custom Region:";
+            chkCustomRegion.UseVisualStyleBackColor = true;
+            chkCustomRegion.CheckedChanged += chkCustomRegion_CheckedChanged;
             // 
             // cbRegion
             // 
-            this.cbRegion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbRegion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbRegion.FormattingEnabled = true;
-            this.cbRegion.Location = new System.Drawing.Point(156, 507);
-            this.cbRegion.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbRegion.Name = "cbRegion";
-            this.cbRegion.Size = new System.Drawing.Size(170, 23);
-            this.cbRegion.Sorted = true;
-            this.cbRegion.TabIndex = 47;
-            this.cbRegion.SelectedIndexChanged += new System.EventHandler(this.cbRegion_SelectedIndexChanged);
+            cbRegion.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            cbRegion.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbRegion.FormattingEnabled = true;
+            cbRegion.Location = new Point(156, 507);
+            cbRegion.Margin = new Padding(4, 3, 4, 3);
+            cbRegion.Name = "cbRegion";
+            cbRegion.Size = new Size(170, 23);
+            cbRegion.Sorted = true;
+            cbRegion.TabIndex = 47;
+            cbRegion.SelectedIndexChanged += cbRegion_SelectedIndexChanged;
             // 
             // rdoTMDB
             // 
-            this.rdoTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.rdoTMDB.AutoSize = true;
-            this.rdoTMDB.Location = new System.Drawing.Point(328, 351);
-            this.rdoTMDB.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.rdoTMDB.Name = "rdoTMDB";
-            this.rdoTMDB.Size = new System.Drawing.Size(57, 19);
-            this.rdoTMDB.TabIndex = 45;
-            this.rdoTMDB.TabStop = true;
-            this.rdoTMDB.Text = "TMDB";
-            this.rdoTMDB.UseVisualStyleBackColor = true;
-            this.rdoTMDB.CheckedChanged += new System.EventHandler(this.rdoProvider_CheckedChanged);
+            rdoTMDB.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            rdoTMDB.AutoSize = true;
+            rdoTMDB.Location = new Point(328, 351);
+            rdoTMDB.Margin = new Padding(4, 3, 4, 3);
+            rdoTMDB.Name = "rdoTMDB";
+            rdoTMDB.Size = new Size(58, 19);
+            rdoTMDB.TabIndex = 45;
+            rdoTMDB.TabStop = true;
+            rdoTMDB.Text = "TMDB";
+            rdoTMDB.UseVisualStyleBackColor = true;
+            rdoTMDB.CheckedChanged += rdoProvider_CheckedChanged;
             // 
             // label13
             // 
-            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(8, 353);
-            this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(46, 15);
-            this.label13.TabIndex = 44;
-            this.label13.Text = "Source:";
-            this.label13.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            label13.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            label13.AutoSize = true;
+            label13.Location = new Point(8, 353);
+            label13.Margin = new Padding(4, 0, 4, 0);
+            label13.Name = "label13";
+            label13.Size = new Size(46, 15);
+            label13.TabIndex = 44;
+            label13.Text = "Source:";
+            label13.TextAlign = ContentAlignment.TopRight;
             // 
             // rdoTVMaze
             // 
-            this.rdoTVMaze.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.rdoTVMaze.AutoSize = true;
-            this.rdoTVMaze.Location = new System.Drawing.Point(254, 351);
-            this.rdoTVMaze.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.rdoTVMaze.Name = "rdoTVMaze";
-            this.rdoTVMaze.Size = new System.Drawing.Size(66, 19);
-            this.rdoTVMaze.TabIndex = 43;
-            this.rdoTVMaze.TabStop = true;
-            this.rdoTVMaze.Text = "TVmaze";
-            this.rdoTVMaze.UseVisualStyleBackColor = true;
-            this.rdoTVMaze.CheckedChanged += new System.EventHandler(this.rdoProvider_CheckedChanged);
+            rdoTVMaze.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            rdoTVMaze.AutoSize = true;
+            rdoTVMaze.Location = new Point(254, 351);
+            rdoTVMaze.Margin = new Padding(4, 3, 4, 3);
+            rdoTVMaze.Name = "rdoTVMaze";
+            rdoTVMaze.Size = new Size(67, 19);
+            rdoTVMaze.TabIndex = 43;
+            rdoTVMaze.TabStop = true;
+            rdoTVMaze.Text = "TVmaze";
+            rdoTVMaze.UseVisualStyleBackColor = true;
+            rdoTVMaze.CheckedChanged += rdoProvider_CheckedChanged;
             // 
             // rdoTVDB
             // 
-            this.rdoTVDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.rdoTVDB.AutoSize = true;
-            this.rdoTVDB.Location = new System.Drawing.Point(171, 351);
-            this.rdoTVDB.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.rdoTVDB.Name = "rdoTVDB";
-            this.rdoTVDB.Size = new System.Drawing.Size(75, 19);
-            this.rdoTVDB.TabIndex = 42;
-            this.rdoTVDB.TabStop = true;
-            this.rdoTVDB.Text = "The TVDB";
-            this.rdoTVDB.UseVisualStyleBackColor = true;
-            this.rdoTVDB.CheckedChanged += new System.EventHandler(this.rdoProvider_CheckedChanged);
+            rdoTVDB.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            rdoTVDB.AutoSize = true;
+            rdoTVDB.Location = new Point(171, 351);
+            rdoTVDB.Margin = new Padding(4, 3, 4, 3);
+            rdoTVDB.Name = "rdoTVDB";
+            rdoTVDB.Size = new Size(77, 19);
+            rdoTVDB.TabIndex = 42;
+            rdoTVDB.TabStop = true;
+            rdoTVDB.Text = "The TVDB";
+            rdoTVDB.UseVisualStyleBackColor = true;
+            rdoTVDB.CheckedChanged += rdoProvider_CheckedChanged;
             // 
             // rdoDefault
             // 
-            this.rdoDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.rdoDefault.AutoSize = true;
-            this.rdoDefault.Location = new System.Drawing.Point(61, 351);
-            this.rdoDefault.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.rdoDefault.Name = "rdoDefault";
-            this.rdoDefault.Size = new System.Drawing.Size(102, 19);
-            this.rdoDefault.TabIndex = 41;
-            this.rdoDefault.TabStop = true;
-            this.rdoDefault.Text = "Library Default";
-            this.rdoDefault.UseVisualStyleBackColor = true;
-            this.rdoDefault.CheckedChanged += new System.EventHandler(this.rdoProvider_CheckedChanged);
+            rdoDefault.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            rdoDefault.AutoSize = true;
+            rdoDefault.Location = new Point(61, 351);
+            rdoDefault.Margin = new Padding(4, 3, 4, 3);
+            rdoDefault.Name = "rdoDefault";
+            rdoDefault.Size = new Size(102, 19);
+            rdoDefault.TabIndex = 41;
+            rdoDefault.TabStop = true;
+            rdoDefault.Text = "Library Default";
+            rdoDefault.UseVisualStyleBackColor = true;
+            rdoDefault.CheckedChanged += rdoProvider_CheckedChanged;
             // 
             // label60
             // 
-            this.label60.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label60.AutoSize = true;
-            this.label60.Location = new System.Drawing.Point(7, 7);
-            this.label60.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label60.Name = "label60";
-            this.label60.Size = new System.Drawing.Size(411, 15);
-            this.label60.TabIndex = 40;
-            this.label60.Text = "Use these settings to control the link to the show and what the show is called";
+            label60.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label60.AutoSize = true;
+            label60.Location = new Point(7, 7);
+            label60.Margin = new Padding(4, 0, 4, 0);
+            label60.Name = "label60";
+            label60.Size = new Size(411, 15);
+            label60.TabIndex = 40;
+            label60.Text = "Use these settings to control the link to the show and what the show is called";
             // 
             // pbBasics
             // 
-            this.pbBasics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbBasics.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbBasics.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbBasics.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbBasics.Location = new System.Drawing.Point(468, 7);
-            this.pbBasics.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pbBasics.Name = "pbBasics";
-            this.pbBasics.Size = new System.Drawing.Size(50, 46);
-            this.pbBasics.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbBasics.TabIndex = 39;
-            this.pbBasics.TabStop = false;
-            this.pbBasics.Click += new System.EventHandler(this.pbBasics_Click);
+            pbBasics.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pbBasics.Cursor = Cursors.Hand;
+            pbBasics.Image = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pbBasics.InitialImage = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pbBasics.Location = new Point(468, 7);
+            pbBasics.Margin = new Padding(4, 3, 4, 3);
+            pbBasics.Name = "pbBasics";
+            pbBasics.Size = new Size(50, 46);
+            pbBasics.SizeMode = PictureBoxSizeMode.CenterImage;
+            pbBasics.TabIndex = 39;
+            pbBasics.TabStop = false;
+            pbBasics.Click += pbBasics_Click;
             // 
             // cbLanguage
             // 
-            this.cbLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbLanguage.FormattingEnabled = true;
-            this.cbLanguage.Location = new System.Drawing.Point(156, 475);
-            this.cbLanguage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbLanguage.Name = "cbLanguage";
-            this.cbLanguage.Size = new System.Drawing.Size(233, 23);
-            this.cbLanguage.TabIndex = 9;
-            this.cbLanguage.SelectedIndexChanged += new System.EventHandler(this.cbLanguage_SelectedIndexChanged);
+            cbLanguage.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            cbLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbLanguage.FormattingEnabled = true;
+            cbLanguage.Location = new Point(156, 475);
+            cbLanguage.Margin = new Padding(4, 3, 4, 3);
+            cbLanguage.Name = "cbLanguage";
+            cbLanguage.Size = new Size(233, 23);
+            cbLanguage.TabIndex = 9;
+            cbLanguage.SelectedIndexChanged += cbLanguage_SelectedIndexChanged;
             // 
             // chkCustomLanguage
             // 
-            this.chkCustomLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkCustomLanguage.AutoSize = true;
-            this.chkCustomLanguage.Location = new System.Drawing.Point(12, 481);
-            this.chkCustomLanguage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkCustomLanguage.Name = "chkCustomLanguage";
-            this.chkCustomLanguage.Size = new System.Drawing.Size(126, 19);
-            this.chkCustomLanguage.TabIndex = 8;
-            this.chkCustomLanguage.Text = "Custom Language:";
-            this.chkCustomLanguage.UseVisualStyleBackColor = true;
-            this.chkCustomLanguage.CheckedChanged += new System.EventHandler(this.chkCustomLanguage_CheckedChanged);
+            chkCustomLanguage.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            chkCustomLanguage.AutoSize = true;
+            chkCustomLanguage.Location = new Point(12, 481);
+            chkCustomLanguage.Margin = new Padding(4, 3, 4, 3);
+            chkCustomLanguage.Name = "chkCustomLanguage";
+            chkCustomLanguage.Size = new Size(126, 19);
+            chkCustomLanguage.TabIndex = 8;
+            chkCustomLanguage.Text = "Custom Language:";
+            chkCustomLanguage.UseVisualStyleBackColor = true;
+            chkCustomLanguage.CheckedChanged += chkCustomLanguage_CheckedChanged;
             // 
             // label2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(304, 451);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(173, 15);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "e.g. \"1 2 4\". 0 to ignore specials.";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            label2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            label2.AutoSize = true;
+            label2.Location = new Point(304, 451);
+            label2.Margin = new Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(173, 15);
+            label2.TabIndex = 7;
+            label2.Text = "e.g. \"1 2 4\". 0 to ignore specials.";
+            label2.TextAlign = ContentAlignment.TopRight;
             // 
             // tabPage5
             // 
-            this.tabPage5.Controls.Add(this.txtIgnoreList);
-            this.tabPage5.Controls.Add(this.btnIgnoreList);
-            this.tabPage5.Controls.Add(this.label12);
-            this.tabPage5.Controls.Add(this.groupBox1);
-            this.tabPage5.Controls.Add(this.chkAutoFolders);
-            this.tabPage5.Controls.Add(this.gbAutoFolders);
-            this.tabPage5.Controls.Add(this.pbFolders);
-            this.tabPage5.Location = new System.Drawing.Point(4, 24);
-            this.tabPage5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage5.Size = new System.Drawing.Size(533, 542);
-            this.tabPage5.TabIndex = 4;
-            this.tabPage5.Text = "Folders";
-            this.tabPage5.UseVisualStyleBackColor = true;
+            tabPage5.Controls.Add(txtIgnoreList);
+            tabPage5.Controls.Add(btnIgnoreList);
+            tabPage5.Controls.Add(label12);
+            tabPage5.Controls.Add(groupBox1);
+            tabPage5.Controls.Add(chkAutoFolders);
+            tabPage5.Controls.Add(gbAutoFolders);
+            tabPage5.Controls.Add(pbFolders);
+            tabPage5.Location = new Point(4, 24);
+            tabPage5.Margin = new Padding(4, 3, 4, 3);
+            tabPage5.Name = "tabPage5";
+            tabPage5.Padding = new Padding(4, 3, 4, 3);
+            tabPage5.Size = new Size(533, 542);
+            tabPage5.TabIndex = 4;
+            tabPage5.Text = "Folders";
+            tabPage5.UseVisualStyleBackColor = true;
             // 
             // txtIgnoreList
             // 
-            this.txtIgnoreList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtIgnoreList.AutoSize = true;
-            this.txtIgnoreList.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.txtIgnoreList.Location = new System.Drawing.Point(13, 516);
-            this.txtIgnoreList.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.txtIgnoreList.Name = "txtIgnoreList";
-            this.txtIgnoreList.Size = new System.Drawing.Size(259, 13);
-            this.txtIgnoreList.TabIndex = 50;
-            this.txtIgnoreList.Text = "Note: Some files in these folders are ignored";
-            this.txtIgnoreList.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            txtIgnoreList.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            txtIgnoreList.AutoSize = true;
+            txtIgnoreList.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
+            txtIgnoreList.Location = new Point(13, 516);
+            txtIgnoreList.Margin = new Padding(4, 0, 4, 0);
+            txtIgnoreList.Name = "txtIgnoreList";
+            txtIgnoreList.Size = new Size(259, 13);
+            txtIgnoreList.TabIndex = 50;
+            txtIgnoreList.Text = "Note: Some files in these folders are ignored";
+            txtIgnoreList.TextAlign = ContentAlignment.TopRight;
             // 
             // btnIgnoreList
             // 
-            this.btnIgnoreList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnIgnoreList.BackColor = System.Drawing.Color.Transparent;
-            this.btnIgnoreList.Location = new System.Drawing.Point(334, 510);
-            this.btnIgnoreList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btnIgnoreList.Name = "btnIgnoreList";
-            this.btnIgnoreList.Size = new System.Drawing.Size(178, 27);
-            this.btnIgnoreList.TabIndex = 49;
-            this.btnIgnoreList.Text = "See Ignore List";
-            this.btnIgnoreList.UseVisualStyleBackColor = false;
-            this.btnIgnoreList.Click += new System.EventHandler(this.BtnIgnoreList_Click);
+            btnIgnoreList.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnIgnoreList.BackColor = Color.Transparent;
+            btnIgnoreList.Location = new Point(334, 510);
+            btnIgnoreList.Margin = new Padding(4, 3, 4, 3);
+            btnIgnoreList.Name = "btnIgnoreList";
+            btnIgnoreList.Size = new Size(178, 27);
+            btnIgnoreList.TabIndex = 49;
+            btnIgnoreList.Text = "See Ignore List";
+            btnIgnoreList.UseVisualStyleBackColor = false;
+            btnIgnoreList.Click += BtnIgnoreList_Click;
             // 
             // label12
             // 
-            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(7, 6);
-            this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(404, 30);
-            this.label12.TabIndex = 48;
-            this.label12.Text = "Setup which folders the episodes for this cachedSeries should be stored in.  \r\nYo" +
-    "u can choose automatic season folders or maintain full manual control.";
+            label12.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label12.AutoSize = true;
+            label12.Location = new Point(7, 6);
+            label12.Margin = new Padding(4, 0, 4, 0);
+            label12.Name = "label12";
+            label12.Size = new Size(404, 30);
+            label12.TabIndex = 48;
+            label12.Text = "Setup which folders the episodes for this cachedSeries should be stored in.  \r\nYou can choose automatic season folders or maintain full manual control.";
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.chkReplaceAutoFolders);
-            this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.bnRemove);
-            this.groupBox1.Controls.Add(this.bnAdd);
-            this.groupBox1.Controls.Add(this.bnBrowseFolder);
-            this.groupBox1.Controls.Add(this.txtFolder);
-            this.groupBox1.Controls.Add(this.txtSeasonNumber);
-            this.groupBox1.Controls.Add(this.lvSeasonFolders);
-            this.groupBox1.Location = new System.Drawing.Point(4, 218);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Size = new System.Drawing.Size(510, 292);
-            this.groupBox1.TabIndex = 12;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Manual/Additional Folders";
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox1.Controls.Add(chkReplaceAutoFolders);
+            groupBox1.Controls.Add(label7);
+            groupBox1.Controls.Add(label1);
+            groupBox1.Controls.Add(bnRemove);
+            groupBox1.Controls.Add(bnAdd);
+            groupBox1.Controls.Add(bnBrowseFolder);
+            groupBox1.Controls.Add(txtFolder);
+            groupBox1.Controls.Add(txtSeasonNumber);
+            groupBox1.Controls.Add(lvSeasonFolders);
+            groupBox1.Location = new Point(4, 218);
+            groupBox1.Margin = new Padding(4, 3, 4, 3);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new Padding(4, 3, 4, 3);
+            groupBox1.Size = new Size(510, 292);
+            groupBox1.TabIndex = 12;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Manual/Additional Folders";
             // 
             // chkReplaceAutoFolders
             // 
-            this.chkReplaceAutoFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkReplaceAutoFolders.AutoSize = true;
-            this.chkReplaceAutoFolders.Location = new System.Drawing.Point(293, 21);
-            this.chkReplaceAutoFolders.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkReplaceAutoFolders.Name = "chkReplaceAutoFolders";
-            this.chkReplaceAutoFolders.Size = new System.Drawing.Size(207, 19);
-            this.chkReplaceAutoFolders.TabIndex = 11;
-            this.chkReplaceAutoFolders.Text = "Replace Automatic Season Folders";
-            this.chkReplaceAutoFolders.UseVisualStyleBackColor = true;
+            chkReplaceAutoFolders.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            chkReplaceAutoFolders.AutoSize = true;
+            chkReplaceAutoFolders.Location = new Point(293, 21);
+            chkReplaceAutoFolders.Margin = new Padding(4, 3, 4, 3);
+            chkReplaceAutoFolders.Name = "chkReplaceAutoFolders";
+            chkReplaceAutoFolders.Size = new Size(207, 19);
+            chkReplaceAutoFolders.TabIndex = 11;
+            chkReplaceAutoFolders.Text = "Replace Automatic Season Folders";
+            chkReplaceAutoFolders.UseVisualStyleBackColor = true;
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(10, 61);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(43, 15);
-            this.label7.TabIndex = 2;
-            this.label7.Text = "Folder:";
+            label7.AutoSize = true;
+            label7.Location = new Point(10, 61);
+            label7.Margin = new Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(43, 15);
+            label7.TabIndex = 2;
+            label7.Text = "Folder:";
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 25);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(47, 15);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Season:";
+            label1.AutoSize = true;
+            label1.Location = new Point(10, 25);
+            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(47, 15);
+            label1.TabIndex = 0;
+            label1.Text = "Season:";
             // 
             // bnRemove
             // 
-            this.bnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnRemove.Location = new System.Drawing.Point(413, 252);
-            this.bnRemove.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.bnRemove.Name = "bnRemove";
-            this.bnRemove.Size = new System.Drawing.Size(88, 27);
-            this.bnRemove.TabIndex = 7;
-            this.bnRemove.Text = "Remo&ve";
-            this.bnRemove.UseVisualStyleBackColor = true;
-            this.bnRemove.Click += new System.EventHandler(this.bnRemove_Click);
+            bnRemove.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            bnRemove.Location = new Point(413, 252);
+            bnRemove.Margin = new Padding(4, 3, 4, 3);
+            bnRemove.Name = "bnRemove";
+            bnRemove.Size = new Size(88, 27);
+            bnRemove.TabIndex = 7;
+            bnRemove.Text = "Remo&ve";
+            bnRemove.UseVisualStyleBackColor = true;
+            bnRemove.Click += bnRemove_Click;
             // 
             // bnAdd
             // 
-            this.bnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnAdd.Location = new System.Drawing.Point(413, 55);
-            this.bnAdd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.bnAdd.Name = "bnAdd";
-            this.bnAdd.Size = new System.Drawing.Size(88, 27);
-            this.bnAdd.TabIndex = 5;
-            this.bnAdd.Text = "&Add";
-            this.bnAdd.UseVisualStyleBackColor = true;
-            this.bnAdd.Click += new System.EventHandler(this.bnAdd_Click);
+            bnAdd.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            bnAdd.Location = new Point(413, 55);
+            bnAdd.Margin = new Padding(4, 3, 4, 3);
+            bnAdd.Name = "bnAdd";
+            bnAdd.Size = new Size(88, 27);
+            bnAdd.TabIndex = 5;
+            bnAdd.Text = "&Add";
+            bnAdd.UseVisualStyleBackColor = true;
+            bnAdd.Click += bnAdd_Click;
             // 
             // bnBrowseFolder
             // 
-            this.bnBrowseFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseFolder.Location = new System.Drawing.Point(318, 55);
-            this.bnBrowseFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.bnBrowseFolder.Name = "bnBrowseFolder";
-            this.bnBrowseFolder.Size = new System.Drawing.Size(88, 27);
-            this.bnBrowseFolder.TabIndex = 4;
-            this.bnBrowseFolder.Text = "B&rowse...";
-            this.bnBrowseFolder.UseVisualStyleBackColor = true;
-            this.bnBrowseFolder.Click += new System.EventHandler(this.bnBrowseFolder_Click);
+            bnBrowseFolder.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            bnBrowseFolder.Location = new Point(318, 55);
+            bnBrowseFolder.Margin = new Padding(4, 3, 4, 3);
+            bnBrowseFolder.Name = "bnBrowseFolder";
+            bnBrowseFolder.Size = new Size(88, 27);
+            bnBrowseFolder.TabIndex = 4;
+            bnBrowseFolder.Text = "B&rowse...";
+            bnBrowseFolder.UseVisualStyleBackColor = true;
+            bnBrowseFolder.Click += bnBrowseFolder_Click;
             // 
             // txtFolder
             // 
-            this.txtFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFolder.Location = new System.Drawing.Point(71, 58);
-            this.txtFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtFolder.Name = "txtFolder";
-            this.txtFolder.Size = new System.Drawing.Size(240, 23);
-            this.txtFolder.TabIndex = 3;
-            this.txtFolder.TextChanged += new System.EventHandler(this.txtFolder_TextChanged);
+            txtFolder.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtFolder.Location = new Point(71, 58);
+            txtFolder.Margin = new Padding(4, 3, 4, 3);
+            txtFolder.Name = "txtFolder";
+            txtFolder.Size = new Size(240, 23);
+            txtFolder.TabIndex = 3;
+            txtFolder.TextChanged += txtFolder_TextChanged;
             // 
             // txtSeasonNumber
             // 
-            this.txtSeasonNumber.Location = new System.Drawing.Point(71, 22);
-            this.txtSeasonNumber.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtSeasonNumber.Name = "txtSeasonNumber";
-            this.txtSeasonNumber.Size = new System.Drawing.Size(60, 23);
-            this.txtSeasonNumber.TabIndex = 1;
-            this.txtSeasonNumber.TextChanged += new System.EventHandler(this.txtSeasonNumber_TextChanged);
+            txtSeasonNumber.Location = new Point(71, 22);
+            txtSeasonNumber.Margin = new Padding(4, 3, 4, 3);
+            txtSeasonNumber.Name = "txtSeasonNumber";
+            txtSeasonNumber.Size = new Size(60, 23);
+            txtSeasonNumber.TabIndex = 1;
+            txtSeasonNumber.TextChanged += txtSeasonNumber_TextChanged;
             // 
             // lvSeasonFolders
             // 
-            this.lvSeasonFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvSeasonFolders.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
-            this.lvSeasonFolders.FullRowSelect = true;
-            this.lvSeasonFolders.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lvSeasonFolders.Location = new System.Drawing.Point(13, 89);
-            this.lvSeasonFolders.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.lvSeasonFolders.Name = "lvSeasonFolders";
-            this.lvSeasonFolders.Size = new System.Drawing.Size(392, 189);
-            this.lvSeasonFolders.TabIndex = 6;
-            this.lvSeasonFolders.UseCompatibleStateImageBehavior = false;
-            this.lvSeasonFolders.View = System.Windows.Forms.View.Details;
-            this.lvSeasonFolders.SelectedIndexChanged += new System.EventHandler(this.lvSeasonFolders_SelectedIndexChanged);
+            lvSeasonFolders.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lvSeasonFolders.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
+            lvSeasonFolders.FullRowSelect = true;
+            lvSeasonFolders.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            lvSeasonFolders.Location = new Point(13, 89);
+            lvSeasonFolders.Margin = new Padding(4, 3, 4, 3);
+            lvSeasonFolders.Name = "lvSeasonFolders";
+            lvSeasonFolders.Size = new Size(392, 189);
+            lvSeasonFolders.TabIndex = 6;
+            lvSeasonFolders.UseCompatibleStateImageBehavior = false;
+            lvSeasonFolders.View = View.Details;
+            lvSeasonFolders.SelectedIndexChanged += lvSeasonFolders_SelectedIndexChanged;
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "Season";
-            this.columnHeader1.Width = 52;
+            columnHeader1.Text = "Season";
+            columnHeader1.Width = 52;
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "Folder";
-            this.columnHeader2.Width = 250;
+            columnHeader2.Text = "Folder";
+            columnHeader2.Width = 250;
             // 
             // chkAutoFolders
             // 
-            this.chkAutoFolders.AutoSize = true;
-            this.chkAutoFolders.Checked = true;
-            this.chkAutoFolders.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutoFolders.Location = new System.Drawing.Point(16, 58);
-            this.chkAutoFolders.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkAutoFolders.Name = "chkAutoFolders";
-            this.chkAutoFolders.Size = new System.Drawing.Size(163, 19);
-            this.chkAutoFolders.TabIndex = 10;
-            this.chkAutoFolders.Text = "&Automatic Season Folders";
-            this.chkAutoFolders.UseVisualStyleBackColor = true;
-            this.chkAutoFolders.CheckedChanged += new System.EventHandler(this.chkAutoFolders_CheckedChanged);
+            chkAutoFolders.AutoSize = true;
+            chkAutoFolders.Checked = true;
+            chkAutoFolders.CheckState = CheckState.Checked;
+            chkAutoFolders.Location = new Point(16, 58);
+            chkAutoFolders.Margin = new Padding(4, 3, 4, 3);
+            chkAutoFolders.Name = "chkAutoFolders";
+            chkAutoFolders.Size = new Size(163, 19);
+            chkAutoFolders.TabIndex = 10;
+            chkAutoFolders.Text = "&Automatic Season Folders";
+            chkAutoFolders.UseVisualStyleBackColor = true;
+            chkAutoFolders.CheckedChanged += chkAutoFolders_CheckedChanged;
             // 
             // gbAutoFolders
             // 
-            this.gbAutoFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbAutoFolders.Controls.Add(this.bnQuickLocate);
-            this.gbAutoFolders.Controls.Add(this.txtSeasonFormat);
-            this.gbAutoFolders.Controls.Add(this.bnTags);
-            this.gbAutoFolders.Controls.Add(this.lblSeasonWordPreview);
-            this.gbAutoFolders.Controls.Add(this.rdoFolderBaseOnly);
-            this.gbAutoFolders.Controls.Add(this.rdoFolderCustom);
-            this.gbAutoFolders.Controls.Add(this.rdoFolderLibraryDefault);
-            this.gbAutoFolders.Controls.Add(this.txtBaseFolder);
-            this.gbAutoFolders.Controls.Add(this.bnBrowse);
-            this.gbAutoFolders.Controls.Add(this.label3);
-            this.gbAutoFolders.Location = new System.Drawing.Point(4, 57);
-            this.gbAutoFolders.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.gbAutoFolders.Name = "gbAutoFolders";
-            this.gbAutoFolders.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.gbAutoFolders.Size = new System.Drawing.Size(510, 155);
-            this.gbAutoFolders.TabIndex = 11;
-            this.gbAutoFolders.TabStop = false;
+            gbAutoFolders.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            gbAutoFolders.Controls.Add(bnQuickLocate);
+            gbAutoFolders.Controls.Add(txtSeasonFormat);
+            gbAutoFolders.Controls.Add(bnTags);
+            gbAutoFolders.Controls.Add(lblSeasonWordPreview);
+            gbAutoFolders.Controls.Add(rdoFolderBaseOnly);
+            gbAutoFolders.Controls.Add(rdoFolderCustom);
+            gbAutoFolders.Controls.Add(rdoFolderLibraryDefault);
+            gbAutoFolders.Controls.Add(txtBaseFolder);
+            gbAutoFolders.Controls.Add(bnBrowse);
+            gbAutoFolders.Controls.Add(label3);
+            gbAutoFolders.Location = new Point(4, 57);
+            gbAutoFolders.Margin = new Padding(4, 3, 4, 3);
+            gbAutoFolders.Name = "gbAutoFolders";
+            gbAutoFolders.Padding = new Padding(4, 3, 4, 3);
+            gbAutoFolders.Size = new Size(510, 155);
+            gbAutoFolders.TabIndex = 11;
+            gbAutoFolders.TabStop = false;
             // 
             // bnQuickLocate
             // 
-            this.bnQuickLocate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnQuickLocate.Location = new System.Drawing.Point(413, 55);
-            this.bnQuickLocate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.bnQuickLocate.Name = "bnQuickLocate";
-            this.bnQuickLocate.Size = new System.Drawing.Size(88, 27);
-            this.bnQuickLocate.TabIndex = 29;
-            this.bnQuickLocate.Text = "&Create...";
-            this.bnQuickLocate.UseVisualStyleBackColor = true;
-            this.bnQuickLocate.Click += new System.EventHandler(this.bnQuickLocate_Click);
+            bnQuickLocate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            bnQuickLocate.Location = new Point(413, 55);
+            bnQuickLocate.Margin = new Padding(4, 3, 4, 3);
+            bnQuickLocate.Name = "bnQuickLocate";
+            bnQuickLocate.Size = new Size(88, 27);
+            bnQuickLocate.TabIndex = 29;
+            bnQuickLocate.Text = "&Create...";
+            bnQuickLocate.UseVisualStyleBackColor = true;
+            bnQuickLocate.Click += bnQuickLocate_Click;
             // 
             // txtSeasonFormat
             // 
-            this.txtSeasonFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSeasonFormat.Location = new System.Drawing.Point(172, 108);
-            this.txtSeasonFormat.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtSeasonFormat.Name = "txtSeasonFormat";
-            this.txtSeasonFormat.Size = new System.Drawing.Size(234, 23);
-            this.txtSeasonFormat.TabIndex = 28;
-            this.txtSeasonFormat.TextChanged += new System.EventHandler(this.txtSeasonFormat_TextChanged);
+            txtSeasonFormat.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtSeasonFormat.Location = new Point(172, 108);
+            txtSeasonFormat.Margin = new Padding(4, 3, 4, 3);
+            txtSeasonFormat.Name = "txtSeasonFormat";
+            txtSeasonFormat.Size = new Size(234, 23);
+            txtSeasonFormat.TabIndex = 28;
+            txtSeasonFormat.TextChanged += txtSeasonFormat_TextChanged;
             // 
             // bnTags
             // 
-            this.bnTags.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnTags.Location = new System.Drawing.Point(413, 108);
-            this.bnTags.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.bnTags.Name = "bnTags";
-            this.bnTags.Size = new System.Drawing.Size(88, 27);
-            this.bnTags.TabIndex = 27;
-            this.bnTags.Text = "Tags...";
-            this.bnTags.UseVisualStyleBackColor = true;
-            this.bnTags.Click += new System.EventHandler(this.bnTags_Click);
+            bnTags.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            bnTags.Location = new Point(413, 108);
+            bnTags.Margin = new Padding(4, 3, 4, 3);
+            bnTags.Name = "bnTags";
+            bnTags.Size = new Size(88, 27);
+            bnTags.TabIndex = 27;
+            bnTags.Text = "Tags...";
+            bnTags.UseVisualStyleBackColor = true;
+            bnTags.Click += bnTags_Click;
             // 
             // lblSeasonWordPreview
             // 
-            this.lblSeasonWordPreview.AutoSize = true;
-            this.lblSeasonWordPreview.Enabled = false;
-            this.lblSeasonWordPreview.Location = new System.Drawing.Point(170, 91);
-            this.lblSeasonWordPreview.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblSeasonWordPreview.Name = "lblSeasonWordPreview";
-            this.lblSeasonWordPreview.Size = new System.Drawing.Size(44, 15);
-            this.lblSeasonWordPreview.TabIndex = 11;
-            this.lblSeasonWordPreview.Text = "label10";
+            lblSeasonWordPreview.AutoSize = true;
+            lblSeasonWordPreview.Enabled = false;
+            lblSeasonWordPreview.Location = new Point(170, 91);
+            lblSeasonWordPreview.Margin = new Padding(4, 0, 4, 0);
+            lblSeasonWordPreview.Name = "lblSeasonWordPreview";
+            lblSeasonWordPreview.Size = new Size(44, 15);
+            lblSeasonWordPreview.TabIndex = 11;
+            lblSeasonWordPreview.Text = "label10";
             // 
             // rdoFolderBaseOnly
             // 
-            this.rdoFolderBaseOnly.AutoSize = true;
-            this.rdoFolderBaseOnly.Location = new System.Drawing.Point(13, 68);
-            this.rdoFolderBaseOnly.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.rdoFolderBaseOnly.Name = "rdoFolderBaseOnly";
-            this.rdoFolderBaseOnly.Size = new System.Drawing.Size(187, 19);
-            this.rdoFolderBaseOnly.TabIndex = 9;
-            this.rdoFolderBaseOnly.TabStop = true;
-            this.rdoFolderBaseOnly.Text = "Store all seasons in Base Folder";
-            this.rdoFolderBaseOnly.UseVisualStyleBackColor = true;
+            rdoFolderBaseOnly.AutoSize = true;
+            rdoFolderBaseOnly.Location = new Point(13, 68);
+            rdoFolderBaseOnly.Margin = new Padding(4, 3, 4, 3);
+            rdoFolderBaseOnly.Name = "rdoFolderBaseOnly";
+            rdoFolderBaseOnly.Size = new Size(187, 19);
+            rdoFolderBaseOnly.TabIndex = 9;
+            rdoFolderBaseOnly.TabStop = true;
+            rdoFolderBaseOnly.Text = "Store all seasons in Base Folder";
+            rdoFolderBaseOnly.UseVisualStyleBackColor = true;
             // 
             // rdoFolderCustom
             // 
-            this.rdoFolderCustom.AutoSize = true;
-            this.rdoFolderCustom.Location = new System.Drawing.Point(13, 111);
-            this.rdoFolderCustom.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.rdoFolderCustom.Name = "rdoFolderCustom";
-            this.rdoFolderCustom.Size = new System.Drawing.Size(145, 19);
-            this.rdoFolderCustom.TabIndex = 7;
-            this.rdoFolderCustom.TabStop = true;
-            this.rdoFolderCustom.Text = "Custom Subdirectories";
-            this.rdoFolderCustom.UseVisualStyleBackColor = true;
+            rdoFolderCustom.AutoSize = true;
+            rdoFolderCustom.Location = new Point(13, 111);
+            rdoFolderCustom.Margin = new Padding(4, 3, 4, 3);
+            rdoFolderCustom.Name = "rdoFolderCustom";
+            rdoFolderCustom.Size = new Size(145, 19);
+            rdoFolderCustom.TabIndex = 7;
+            rdoFolderCustom.TabStop = true;
+            rdoFolderCustom.Text = "Custom Subdirectories";
+            rdoFolderCustom.UseVisualStyleBackColor = true;
             // 
             // rdoFolderLibraryDefault
             // 
-            this.rdoFolderLibraryDefault.AutoSize = true;
-            this.rdoFolderLibraryDefault.Location = new System.Drawing.Point(13, 90);
-            this.rdoFolderLibraryDefault.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.rdoFolderLibraryDefault.Name = "rdoFolderLibraryDefault";
-            this.rdoFolderLibraryDefault.Size = new System.Drawing.Size(148, 19);
-            this.rdoFolderLibraryDefault.TabIndex = 6;
-            this.rdoFolderLibraryDefault.TabStop = true;
-            this.rdoFolderLibraryDefault.Text = "Subdirectories (default)";
-            this.rdoFolderLibraryDefault.UseVisualStyleBackColor = true;
+            rdoFolderLibraryDefault.AutoSize = true;
+            rdoFolderLibraryDefault.Location = new Point(13, 90);
+            rdoFolderLibraryDefault.Margin = new Padding(4, 3, 4, 3);
+            rdoFolderLibraryDefault.Name = "rdoFolderLibraryDefault";
+            rdoFolderLibraryDefault.Size = new Size(148, 19);
+            rdoFolderLibraryDefault.TabIndex = 6;
+            rdoFolderLibraryDefault.TabStop = true;
+            rdoFolderLibraryDefault.Text = "Subdirectories (default)";
+            rdoFolderLibraryDefault.UseVisualStyleBackColor = true;
             // 
             // txtBaseFolder
             // 
-            this.txtBaseFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtBaseFolder.Location = new System.Drawing.Point(92, 36);
-            this.txtBaseFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtBaseFolder.Name = "txtBaseFolder";
-            this.txtBaseFolder.Size = new System.Drawing.Size(313, 23);
-            this.txtBaseFolder.TabIndex = 1;
-            this.txtBaseFolder.TextChanged += new System.EventHandler(this.TxtBaseFolder_TextChanged);
+            txtBaseFolder.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtBaseFolder.Location = new Point(92, 36);
+            txtBaseFolder.Margin = new Padding(4, 3, 4, 3);
+            txtBaseFolder.Name = "txtBaseFolder";
+            txtBaseFolder.Size = new Size(313, 23);
+            txtBaseFolder.TabIndex = 1;
+            txtBaseFolder.TextChanged += TxtBaseFolder_TextChanged;
             // 
             // bnBrowse
             // 
-            this.bnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowse.Location = new System.Drawing.Point(413, 22);
-            this.bnBrowse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.bnBrowse.Name = "bnBrowse";
-            this.bnBrowse.Size = new System.Drawing.Size(88, 27);
-            this.bnBrowse.TabIndex = 2;
-            this.bnBrowse.Text = "&Browse...";
-            this.bnBrowse.UseVisualStyleBackColor = true;
-            this.bnBrowse.Click += new System.EventHandler(this.bnBrowse_Click);
+            bnBrowse.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            bnBrowse.Location = new Point(413, 22);
+            bnBrowse.Margin = new Padding(4, 3, 4, 3);
+            bnBrowse.Name = "bnBrowse";
+            bnBrowse.Size = new Size(88, 27);
+            bnBrowse.TabIndex = 2;
+            bnBrowse.Text = "&Browse...";
+            bnBrowse.UseVisualStyleBackColor = true;
+            bnBrowse.Click += bnBrowse_Click;
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 39);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 15);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Base &Folder";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            label3.AutoSize = true;
+            label3.Location = new Point(12, 39);
+            label3.Margin = new Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(67, 15);
+            label3.TabIndex = 0;
+            label3.Text = "Base &Folder";
+            label3.TextAlign = ContentAlignment.TopRight;
             // 
             // pbFolders
             // 
-            this.pbFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbFolders.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFolders.Location = new System.Drawing.Point(463, 7);
-            this.pbFolders.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pbFolders.Name = "pbFolders";
-            this.pbFolders.Size = new System.Drawing.Size(50, 46);
-            this.pbFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbFolders.TabIndex = 47;
-            this.pbFolders.TabStop = false;
-            this.pbFolders.Click += new System.EventHandler(this.pbFolders_Click);
+            pbFolders.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pbFolders.Cursor = Cursors.Hand;
+            pbFolders.Image = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pbFolders.InitialImage = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pbFolders.Location = new Point(463, 7);
+            pbFolders.Margin = new Padding(4, 3, 4, 3);
+            pbFolders.Name = "pbFolders";
+            pbFolders.Size = new Size(50, 46);
+            pbFolders.SizeMode = PictureBoxSizeMode.CenterImage;
+            pbFolders.TabIndex = 47;
+            pbFolders.TabStop = false;
+            pbFolders.Click += pbFolders_Click;
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.label14);
-            this.tabPage3.Controls.Add(this.lbSourceAliases);
-            this.tabPage3.Controls.Add(this.label10);
-            this.tabPage3.Controls.Add(this.label8);
-            this.tabPage3.Controls.Add(this.label4);
-            this.tabPage3.Controls.Add(this.bnRemoveAlias);
-            this.tabPage3.Controls.Add(this.bnAddAlias);
-            this.tabPage3.Controls.Add(this.tbShowAlias);
-            this.tabPage3.Controls.Add(this.pbAliases);
-            this.tabPage3.Controls.Add(this.lbShowAlias);
-            this.tabPage3.Location = new System.Drawing.Point(4, 24);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage3.Size = new System.Drawing.Size(533, 542);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Show Aliases";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            tabPage3.Controls.Add(label14);
+            tabPage3.Controls.Add(lbSourceAliases);
+            tabPage3.Controls.Add(label10);
+            tabPage3.Controls.Add(label8);
+            tabPage3.Controls.Add(label4);
+            tabPage3.Controls.Add(bnRemoveAlias);
+            tabPage3.Controls.Add(bnAddAlias);
+            tabPage3.Controls.Add(tbShowAlias);
+            tabPage3.Controls.Add(pbAliases);
+            tabPage3.Controls.Add(lbShowAlias);
+            tabPage3.Location = new Point(4, 24);
+            tabPage3.Margin = new Padding(4, 3, 4, 3);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(4, 3, 4, 3);
+            tabPage3.Size = new Size(533, 542);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "Show Aliases";
+            tabPage3.UseVisualStyleBackColor = true;
             // 
             // label14
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(7, 54);
-            this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(82, 15);
-            this.label14.TabIndex = 46;
-            this.label14.Text = "Source Aliases";
-            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            label14.AutoSize = true;
+            label14.Location = new Point(7, 54);
+            label14.Margin = new Padding(4, 0, 4, 0);
+            label14.Name = "label14";
+            label14.Size = new Size(82, 15);
+            label14.TabIndex = 46;
+            label14.Text = "Source Aliases";
+            label14.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // lbSourceAliases
             // 
-            this.lbSourceAliases.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbSourceAliases.FormattingEnabled = true;
-            this.lbSourceAliases.ItemHeight = 15;
-            this.lbSourceAliases.Location = new System.Drawing.Point(4, 73);
-            this.lbSourceAliases.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.lbSourceAliases.Name = "lbSourceAliases";
-            this.lbSourceAliases.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbSourceAliases.Size = new System.Drawing.Size(511, 94);
-            this.lbSourceAliases.TabIndex = 45;
+            lbSourceAliases.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lbSourceAliases.FormattingEnabled = true;
+            lbSourceAliases.Location = new Point(4, 73);
+            lbSourceAliases.Margin = new Padding(4, 3, 4, 3);
+            lbSourceAliases.Name = "lbSourceAliases";
+            lbSourceAliases.SelectionMode = SelectionMode.MultiExtended;
+            lbSourceAliases.Size = new Size(511, 94);
+            lbSourceAliases.TabIndex = 45;
             // 
             // label10
             // 
-            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(7, 6);
-            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(420, 45);
-            this.label10.TabIndex = 44;
-            this.label10.Text = "Setup other names that this show is sometimes known as or referred to. \r\nUse this" +
-    " if the files of the show use an abbreviated name and not the full show \r\nname.";
+            label10.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label10.AutoSize = true;
+            label10.Location = new Point(7, 6);
+            label10.Margin = new Padding(4, 0, 4, 0);
+            label10.Name = "label10";
+            label10.Size = new Size(420, 45);
+            label10.TabIndex = 44;
+            label10.Text = "Setup other names that this show is sometimes known as or referred to. \r\nUse this if the files of the show use an abbreviated name and not the full show \r\nname.";
             // 
             // label8
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(7, 222);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(88, 15);
-            this.label8.TabIndex = 9;
-            this.label8.Text = "Custom Aliases";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            label8.AutoSize = true;
+            label8.Location = new Point(7, 222);
+            label8.Margin = new Padding(4, 0, 4, 0);
+            label8.Name = "label8";
+            label8.Size = new Size(88, 15);
+            label8.TabIndex = 9;
+            label8.Text = "Custom Aliases";
+            label8.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(7, 193);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(59, 15);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Alias Text:";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            label4.AutoSize = true;
+            label4.Location = new Point(7, 193);
+            label4.Margin = new Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new Size(59, 15);
+            label4.TabIndex = 8;
+            label4.Text = "Alias Text:";
+            label4.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // bnRemoveAlias
             // 
-            this.bnRemoveAlias.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnRemoveAlias.Enabled = false;
-            this.bnRemoveAlias.Location = new System.Drawing.Point(419, 507);
-            this.bnRemoveAlias.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.bnRemoveAlias.Name = "bnRemoveAlias";
-            this.bnRemoveAlias.Size = new System.Drawing.Size(97, 27);
-            this.bnRemoveAlias.TabIndex = 3;
-            this.bnRemoveAlias.Text = "&Remove Alias";
-            this.bnRemoveAlias.UseVisualStyleBackColor = true;
-            this.bnRemoveAlias.Click += new System.EventHandler(this.bnRemoveAlias_Click);
+            bnRemoveAlias.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            bnRemoveAlias.Enabled = false;
+            bnRemoveAlias.Location = new Point(419, 507);
+            bnRemoveAlias.Margin = new Padding(4, 3, 4, 3);
+            bnRemoveAlias.Name = "bnRemoveAlias";
+            bnRemoveAlias.Size = new Size(97, 27);
+            bnRemoveAlias.TabIndex = 3;
+            bnRemoveAlias.Text = "&Remove Alias";
+            bnRemoveAlias.UseVisualStyleBackColor = true;
+            bnRemoveAlias.Click += bnRemoveAlias_Click;
             // 
             // bnAddAlias
             // 
-            this.bnAddAlias.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnAddAlias.Enabled = false;
-            this.bnAddAlias.Location = new System.Drawing.Point(419, 187);
-            this.bnAddAlias.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.bnAddAlias.Name = "bnAddAlias";
-            this.bnAddAlias.Size = new System.Drawing.Size(97, 27);
-            this.bnAddAlias.TabIndex = 2;
-            this.bnAddAlias.Text = "&Add Alias";
-            this.bnAddAlias.UseVisualStyleBackColor = true;
-            this.bnAddAlias.Click += new System.EventHandler(this.bnAddAlias_Click);
+            bnAddAlias.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            bnAddAlias.Enabled = false;
+            bnAddAlias.Location = new Point(419, 187);
+            bnAddAlias.Margin = new Padding(4, 3, 4, 3);
+            bnAddAlias.Name = "bnAddAlias";
+            bnAddAlias.Size = new Size(97, 27);
+            bnAddAlias.TabIndex = 2;
+            bnAddAlias.Text = "&Add Alias";
+            bnAddAlias.UseVisualStyleBackColor = true;
+            bnAddAlias.Click += bnAddAlias_Click;
             // 
             // tbShowAlias
             // 
-            this.tbShowAlias.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbShowAlias.Location = new System.Drawing.Point(79, 189);
-            this.tbShowAlias.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tbShowAlias.Name = "tbShowAlias";
-            this.tbShowAlias.Size = new System.Drawing.Size(332, 23);
-            this.tbShowAlias.TabIndex = 1;
-            this.tbShowAlias.TextChanged += new System.EventHandler(this.tbShowAlias_TextChanged);
-            this.tbShowAlias.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbShowAlias_KeyDown);
+            tbShowAlias.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tbShowAlias.Location = new Point(79, 189);
+            tbShowAlias.Margin = new Padding(4, 3, 4, 3);
+            tbShowAlias.Name = "tbShowAlias";
+            tbShowAlias.Size = new Size(332, 23);
+            tbShowAlias.TabIndex = 1;
+            tbShowAlias.TextChanged += tbShowAlias_TextChanged;
+            tbShowAlias.KeyDown += tbShowAlias_KeyDown;
             // 
             // pbAliases
             // 
-            this.pbAliases.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbAliases.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbAliases.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbAliases.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbAliases.Location = new System.Drawing.Point(456, 7);
-            this.pbAliases.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pbAliases.Name = "pbAliases";
-            this.pbAliases.Size = new System.Drawing.Size(50, 46);
-            this.pbAliases.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbAliases.TabIndex = 43;
-            this.pbAliases.TabStop = false;
-            this.pbAliases.Click += new System.EventHandler(this.pbAliases_Click);
+            pbAliases.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pbAliases.Cursor = Cursors.Hand;
+            pbAliases.Image = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pbAliases.InitialImage = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pbAliases.Location = new Point(456, 7);
+            pbAliases.Margin = new Padding(4, 3, 4, 3);
+            pbAliases.Name = "pbAliases";
+            pbAliases.Size = new Size(50, 46);
+            pbAliases.SizeMode = PictureBoxSizeMode.CenterImage;
+            pbAliases.TabIndex = 43;
+            pbAliases.TabStop = false;
+            pbAliases.Click += pbAliases_Click;
             // 
             // lbShowAlias
             // 
-            this.lbShowAlias.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbShowAlias.FormattingEnabled = true;
-            this.lbShowAlias.ItemHeight = 15;
-            this.lbShowAlias.Location = new System.Drawing.Point(4, 240);
-            this.lbShowAlias.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.lbShowAlias.Name = "lbShowAlias";
-            this.lbShowAlias.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbShowAlias.Size = new System.Drawing.Size(511, 259);
-            this.lbShowAlias.TabIndex = 0;
-            this.lbShowAlias.SelectedIndexChanged += new System.EventHandler(this.lbShowAlias_SelectedIndexChanged);
+            lbShowAlias.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lbShowAlias.FormattingEnabled = true;
+            lbShowAlias.Location = new Point(4, 240);
+            lbShowAlias.Margin = new Padding(4, 3, 4, 3);
+            lbShowAlias.Name = "lbShowAlias";
+            lbShowAlias.SelectionMode = SelectionMode.MultiExtended;
+            lbShowAlias.Size = new Size(511, 259);
+            lbShowAlias.TabIndex = 0;
+            lbShowAlias.SelectedIndexChanged += lbShowAlias_SelectedIndexChanged;
             // 
             // tabPage4
             // 
-            this.tabPage4.Controls.Add(this.label11);
-            this.tabPage4.Controls.Add(this.llCustomSearchPreview);
-            this.tabPage4.Controls.Add(this.lbSearchExample);
-            this.tabPage4.Controls.Add(this.txtSearchURL);
-            this.tabPage4.Controls.Add(this.txtTagList);
-            this.tabPage4.Controls.Add(this.lbTags);
-            this.tabPage4.Controls.Add(this.lbSearchURL);
-            this.tabPage4.Controls.Add(this.cbUseCustomSearch);
-            this.tabPage4.Controls.Add(this.pbCustomSearch);
-            this.tabPage4.Location = new System.Drawing.Point(4, 24);
-            this.tabPage4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage4.Size = new System.Drawing.Size(533, 542);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Custom Search";
-            this.tabPage4.UseVisualStyleBackColor = true;
+            tabPage4.Controls.Add(label11);
+            tabPage4.Controls.Add(llCustomSearchPreview);
+            tabPage4.Controls.Add(lbSearchExample);
+            tabPage4.Controls.Add(txtSearchURL);
+            tabPage4.Controls.Add(txtTagList);
+            tabPage4.Controls.Add(lbTags);
+            tabPage4.Controls.Add(lbSearchURL);
+            tabPage4.Controls.Add(cbUseCustomSearch);
+            tabPage4.Controls.Add(pbCustomSearch);
+            tabPage4.Location = new Point(4, 24);
+            tabPage4.Margin = new Padding(4, 3, 4, 3);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Padding = new Padding(4, 3, 4, 3);
+            tabPage4.Size = new Size(533, 542);
+            tabPage4.TabIndex = 3;
+            tabPage4.Text = "Custom Search";
+            tabPage4.UseVisualStyleBackColor = true;
             // 
             // label11
             // 
-            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(7, 6);
-            this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(218, 15);
-            this.label11.TabIndex = 46;
-            this.label11.Text = "Setup a search engine just for this show.";
+            label11.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label11.AutoSize = true;
+            label11.Location = new Point(7, 6);
+            label11.Margin = new Padding(4, 0, 4, 0);
+            label11.Name = "label11";
+            label11.Size = new Size(218, 15);
+            label11.TabIndex = 46;
+            label11.Text = "Setup a search engine just for this show.";
             // 
             // llCustomSearchPreview
             // 
-            this.llCustomSearchPreview.AutoSize = true;
-            this.llCustomSearchPreview.Location = new System.Drawing.Point(97, 111);
-            this.llCustomSearchPreview.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.llCustomSearchPreview.Name = "llCustomSearchPreview";
-            this.llCustomSearchPreview.Size = new System.Drawing.Size(0, 15);
-            this.llCustomSearchPreview.TabIndex = 4;
-            this.llCustomSearchPreview.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llCustomSearchPreview_LinkClicked);
+            llCustomSearchPreview.AutoSize = true;
+            llCustomSearchPreview.Location = new Point(97, 111);
+            llCustomSearchPreview.Margin = new Padding(4, 0, 4, 0);
+            llCustomSearchPreview.Name = "llCustomSearchPreview";
+            llCustomSearchPreview.Size = new Size(0, 15);
+            llCustomSearchPreview.TabIndex = 4;
+            llCustomSearchPreview.LinkClicked += llCustomSearchPreview_LinkClicked;
             // 
             // lbSearchExample
             // 
-            this.lbSearchExample.AutoSize = true;
-            this.lbSearchExample.Location = new System.Drawing.Point(31, 111);
-            this.lbSearchExample.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lbSearchExample.Name = "lbSearchExample";
-            this.lbSearchExample.Size = new System.Drawing.Size(55, 15);
-            this.lbSearchExample.TabIndex = 3;
-            this.lbSearchExample.Text = "Example:";
+            lbSearchExample.AutoSize = true;
+            lbSearchExample.Location = new Point(31, 111);
+            lbSearchExample.Margin = new Padding(4, 0, 4, 0);
+            lbSearchExample.Name = "lbSearchExample";
+            lbSearchExample.Size = new Size(54, 15);
+            lbSearchExample.TabIndex = 3;
+            lbSearchExample.Text = "Example:";
             // 
             // txtSearchURL
             // 
-            this.txtSearchURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSearchURL.Location = new System.Drawing.Point(93, 77);
-            this.txtSearchURL.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtSearchURL.Name = "txtSearchURL";
-            this.txtSearchURL.Size = new System.Drawing.Size(412, 23);
-            this.txtSearchURL.TabIndex = 2;
-            this.txtSearchURL.TextChanged += new System.EventHandler(this.txtSearchURL_TextChanged);
+            txtSearchURL.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtSearchURL.Location = new Point(93, 77);
+            txtSearchURL.Margin = new Padding(4, 3, 4, 3);
+            txtSearchURL.Name = "txtSearchURL";
+            txtSearchURL.Size = new Size(412, 23);
+            txtSearchURL.TabIndex = 2;
+            txtSearchURL.TextChanged += txtSearchURL_TextChanged;
             // 
             // txtTagList
             // 
-            this.txtTagList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTagList.Location = new System.Drawing.Point(52, 166);
-            this.txtTagList.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.txtTagList.Name = "txtTagList";
-            this.txtTagList.Size = new System.Drawing.Size(424, 323);
-            this.txtTagList.TabIndex = 1;
-            this.txtTagList.Text = "<tags>";
+            txtTagList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtTagList.Location = new Point(52, 166);
+            txtTagList.Margin = new Padding(4, 0, 4, 0);
+            txtTagList.Name = "txtTagList";
+            txtTagList.Size = new Size(424, 323);
+            txtTagList.TabIndex = 1;
+            txtTagList.Text = "<tags>";
             // 
             // lbTags
             // 
-            this.lbTags.AutoSize = true;
-            this.lbTags.Location = new System.Drawing.Point(31, 142);
-            this.lbTags.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lbTags.Name = "lbTags";
-            this.lbTags.Size = new System.Drawing.Size(84, 15);
-            this.lbTags.TabIndex = 1;
-            this.lbTags.Tag = "";
-            this.lbTags.Text = "Available Tags:";
+            lbTags.AutoSize = true;
+            lbTags.Location = new Point(31, 142);
+            lbTags.Margin = new Padding(4, 0, 4, 0);
+            lbTags.Name = "lbTags";
+            lbTags.Size = new Size(85, 15);
+            lbTags.TabIndex = 1;
+            lbTags.Tag = "";
+            lbTags.Text = "Available Tags:";
             // 
             // lbSearchURL
             // 
-            this.lbSearchURL.AutoSize = true;
-            this.lbSearchURL.Location = new System.Drawing.Point(31, 81);
-            this.lbSearchURL.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lbSearchURL.Name = "lbSearchURL";
-            this.lbSearchURL.Size = new System.Drawing.Size(31, 15);
-            this.lbSearchURL.TabIndex = 1;
-            this.lbSearchURL.Text = "URL:";
+            lbSearchURL.AutoSize = true;
+            lbSearchURL.Location = new Point(31, 81);
+            lbSearchURL.Margin = new Padding(4, 0, 4, 0);
+            lbSearchURL.Name = "lbSearchURL";
+            lbSearchURL.Size = new Size(31, 15);
+            lbSearchURL.TabIndex = 1;
+            lbSearchURL.Text = "URL:";
             // 
             // cbUseCustomSearch
             // 
-            this.cbUseCustomSearch.AutoSize = true;
-            this.cbUseCustomSearch.Location = new System.Drawing.Point(9, 50);
-            this.cbUseCustomSearch.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbUseCustomSearch.Name = "cbUseCustomSearch";
-            this.cbUseCustomSearch.Size = new System.Drawing.Size(128, 19);
-            this.cbUseCustomSearch.TabIndex = 0;
-            this.cbUseCustomSearch.Text = "&Use Custom Search";
-            this.cbUseCustomSearch.UseVisualStyleBackColor = true;
-            this.cbUseCustomSearch.CheckedChanged += new System.EventHandler(this.cbUseCustomSearch_CheckedChanged);
+            cbUseCustomSearch.AutoSize = true;
+            cbUseCustomSearch.Location = new Point(9, 50);
+            cbUseCustomSearch.Margin = new Padding(4, 3, 4, 3);
+            cbUseCustomSearch.Name = "cbUseCustomSearch";
+            cbUseCustomSearch.Size = new Size(128, 19);
+            cbUseCustomSearch.TabIndex = 0;
+            cbUseCustomSearch.Text = "&Use Custom Search";
+            cbUseCustomSearch.UseVisualStyleBackColor = true;
+            cbUseCustomSearch.CheckedChanged += cbUseCustomSearch_CheckedChanged;
             // 
             // pbCustomSearch
             // 
-            this.pbCustomSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbCustomSearch.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbCustomSearch.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbCustomSearch.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbCustomSearch.Location = new System.Drawing.Point(456, 7);
-            this.pbCustomSearch.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pbCustomSearch.Name = "pbCustomSearch";
-            this.pbCustomSearch.Size = new System.Drawing.Size(50, 46);
-            this.pbCustomSearch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbCustomSearch.TabIndex = 45;
-            this.pbCustomSearch.TabStop = false;
-            this.pbCustomSearch.Click += new System.EventHandler(this.pbSearch_Click);
+            pbCustomSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pbCustomSearch.Cursor = Cursors.Hand;
+            pbCustomSearch.Image = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pbCustomSearch.InitialImage = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pbCustomSearch.Location = new Point(456, 7);
+            pbCustomSearch.Margin = new Padding(4, 3, 4, 3);
+            pbCustomSearch.Name = "pbCustomSearch";
+            pbCustomSearch.Size = new Size(50, 46);
+            pbCustomSearch.SizeMode = PictureBoxSizeMode.CenterImage;
+            pbCustomSearch.TabIndex = 45;
+            pbCustomSearch.TabStop = false;
+            pbCustomSearch.Click += pbSearch_Click;
             // 
             // tabPage6
             // 
-            this.tabPage6.Controls.Add(this.llLibraryDefaultFormat);
-            this.tabPage6.Controls.Add(this.llCustomName);
-            this.tabPage6.Controls.Add(this.lbLibraryDefaultNaming);
-            this.tabPage6.Controls.Add(this.label15);
-            this.tabPage6.Controls.Add(this.lbNamingExample);
-            this.tabPage6.Controls.Add(this.txtCustomEpisodeNamingFormat);
-            this.tabPage6.Controls.Add(this.txtTagList2);
-            this.tabPage6.Controls.Add(this.lbAvailableTags);
-            this.tabPage6.Controls.Add(this.label19);
-            this.tabPage6.Controls.Add(this.cbUseCustomNamingFormat);
-            this.tabPage6.Controls.Add(this.pictureBox1);
-            this.tabPage6.Location = new System.Drawing.Point(4, 24);
-            this.tabPage6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage6.Size = new System.Drawing.Size(533, 542);
-            this.tabPage6.TabIndex = 5;
-            this.tabPage6.Text = "Custom Episode Naming";
-            this.tabPage6.UseVisualStyleBackColor = true;
+            tabPage6.Controls.Add(llLibraryDefaultFormat);
+            tabPage6.Controls.Add(llCustomName);
+            tabPage6.Controls.Add(lbLibraryDefaultNaming);
+            tabPage6.Controls.Add(label15);
+            tabPage6.Controls.Add(lbNamingExample);
+            tabPage6.Controls.Add(txtCustomEpisodeNamingFormat);
+            tabPage6.Controls.Add(txtTagList2);
+            tabPage6.Controls.Add(lbAvailableTags);
+            tabPage6.Controls.Add(label19);
+            tabPage6.Controls.Add(cbUseCustomNamingFormat);
+            tabPage6.Controls.Add(pictureBox1);
+            tabPage6.Location = new Point(4, 24);
+            tabPage6.Margin = new Padding(4, 3, 4, 3);
+            tabPage6.Name = "tabPage6";
+            tabPage6.Padding = new Padding(4, 3, 4, 3);
+            tabPage6.Size = new Size(533, 542);
+            tabPage6.TabIndex = 5;
+            tabPage6.Text = "Custom Episode Naming";
+            tabPage6.UseVisualStyleBackColor = true;
             // 
             // llLibraryDefaultFormat
             // 
-            this.llLibraryDefaultFormat.AutoSize = true;
-            this.llLibraryDefaultFormat.Location = new System.Drawing.Point(121, 73);
-            this.llLibraryDefaultFormat.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.llLibraryDefaultFormat.Name = "llLibraryDefaultFormat";
-            this.llLibraryDefaultFormat.Size = new System.Drawing.Size(0, 15);
-            this.llLibraryDefaultFormat.TabIndex = 57;
+            llLibraryDefaultFormat.AutoSize = true;
+            llLibraryDefaultFormat.Location = new Point(121, 73);
+            llLibraryDefaultFormat.Margin = new Padding(4, 0, 4, 0);
+            llLibraryDefaultFormat.Name = "llLibraryDefaultFormat";
+            llLibraryDefaultFormat.Size = new Size(0, 15);
+            llLibraryDefaultFormat.TabIndex = 57;
             // 
             // llCustomName
             // 
-            this.llCustomName.AutoSize = true;
-            this.llCustomName.Location = new System.Drawing.Point(121, 134);
-            this.llCustomName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.llCustomName.Name = "llCustomName";
-            this.llCustomName.Size = new System.Drawing.Size(0, 15);
-            this.llCustomName.TabIndex = 56;
+            llCustomName.AutoSize = true;
+            llCustomName.Location = new Point(121, 134);
+            llCustomName.Margin = new Padding(4, 0, 4, 0);
+            llCustomName.Name = "llCustomName";
+            llCustomName.Size = new Size(0, 15);
+            llCustomName.TabIndex = 56;
             // 
             // lbLibraryDefaultNaming
             // 
-            this.lbLibraryDefaultNaming.AutoSize = true;
-            this.lbLibraryDefaultNaming.Location = new System.Drawing.Point(34, 73);
-            this.lbLibraryDefaultNaming.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lbLibraryDefaultNaming.Name = "lbLibraryDefaultNaming";
-            this.lbLibraryDefaultNaming.Size = new System.Drawing.Size(48, 15);
-            this.lbLibraryDefaultNaming.TabIndex = 55;
-            this.lbLibraryDefaultNaming.Text = "Default:";
+            lbLibraryDefaultNaming.AutoSize = true;
+            lbLibraryDefaultNaming.Location = new Point(34, 73);
+            lbLibraryDefaultNaming.Margin = new Padding(4, 0, 4, 0);
+            lbLibraryDefaultNaming.Name = "lbLibraryDefaultNaming";
+            lbLibraryDefaultNaming.Size = new Size(48, 15);
+            lbLibraryDefaultNaming.TabIndex = 55;
+            lbLibraryDefaultNaming.Text = "Default:";
             // 
             // label15
             // 
-            this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(9, 6);
-            this.label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(232, 15);
-            this.label15.TabIndex = 54;
-            this.label15.Text = "Setup an episode format just for this show.";
+            label15.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label15.AutoSize = true;
+            label15.Location = new Point(9, 6);
+            label15.Margin = new Padding(4, 0, 4, 0);
+            label15.Name = "label15";
+            label15.Size = new Size(232, 15);
+            label15.TabIndex = 54;
+            label15.Text = "Setup an episode format just for this show.";
             // 
             // lbNamingExample
             // 
-            this.lbNamingExample.AutoSize = true;
-            this.lbNamingExample.Location = new System.Drawing.Point(34, 134);
-            this.lbNamingExample.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lbNamingExample.Name = "lbNamingExample";
-            this.lbNamingExample.Size = new System.Drawing.Size(55, 15);
-            this.lbNamingExample.TabIndex = 52;
-            this.lbNamingExample.Text = "Example:";
+            lbNamingExample.AutoSize = true;
+            lbNamingExample.Location = new Point(34, 134);
+            lbNamingExample.Margin = new Padding(4, 0, 4, 0);
+            lbNamingExample.Name = "lbNamingExample";
+            lbNamingExample.Size = new Size(54, 15);
+            lbNamingExample.TabIndex = 52;
+            lbNamingExample.Text = "Example:";
             // 
             // txtCustomEpisodeNamingFormat
             // 
-            this.txtCustomEpisodeNamingFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCustomEpisodeNamingFormat.Location = new System.Drawing.Point(125, 100);
-            this.txtCustomEpisodeNamingFormat.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtCustomEpisodeNamingFormat.Name = "txtCustomEpisodeNamingFormat";
-            this.txtCustomEpisodeNamingFormat.Size = new System.Drawing.Size(383, 23);
-            this.txtCustomEpisodeNamingFormat.TabIndex = 51;
-            this.txtCustomEpisodeNamingFormat.TextChanged += new System.EventHandler(this.TxtCustomEpisodeNamingFormat_TextChanged);
+            txtCustomEpisodeNamingFormat.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtCustomEpisodeNamingFormat.Location = new Point(125, 100);
+            txtCustomEpisodeNamingFormat.Margin = new Padding(4, 3, 4, 3);
+            txtCustomEpisodeNamingFormat.Name = "txtCustomEpisodeNamingFormat";
+            txtCustomEpisodeNamingFormat.Size = new Size(383, 23);
+            txtCustomEpisodeNamingFormat.TabIndex = 51;
+            txtCustomEpisodeNamingFormat.TextChanged += TxtCustomEpisodeNamingFormat_TextChanged;
             // 
             // txtTagList2
             // 
-            this.txtTagList2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTagList2.Location = new System.Drawing.Point(57, 189);
-            this.txtTagList2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.txtTagList2.Name = "txtTagList2";
-            this.txtTagList2.Size = new System.Drawing.Size(421, 323);
-            this.txtTagList2.TabIndex = 48;
-            this.txtTagList2.Text = "<tags>";
+            txtTagList2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtTagList2.Location = new Point(57, 189);
+            txtTagList2.Margin = new Padding(4, 0, 4, 0);
+            txtTagList2.Name = "txtTagList2";
+            txtTagList2.Size = new Size(421, 323);
+            txtTagList2.TabIndex = 48;
+            txtTagList2.Text = "<tags>";
             // 
             // lbAvailableTags
             // 
-            this.lbAvailableTags.AutoSize = true;
-            this.lbAvailableTags.Location = new System.Drawing.Point(34, 165);
-            this.lbAvailableTags.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lbAvailableTags.Name = "lbAvailableTags";
-            this.lbAvailableTags.Size = new System.Drawing.Size(84, 15);
-            this.lbAvailableTags.TabIndex = 49;
-            this.lbAvailableTags.Tag = "";
-            this.lbAvailableTags.Text = "Available Tags:";
+            lbAvailableTags.AutoSize = true;
+            lbAvailableTags.Location = new Point(34, 165);
+            lbAvailableTags.Margin = new Padding(4, 0, 4, 0);
+            lbAvailableTags.Name = "lbAvailableTags";
+            lbAvailableTags.Size = new Size(85, 15);
+            lbAvailableTags.TabIndex = 49;
+            lbAvailableTags.Tag = "";
+            lbAvailableTags.Text = "Available Tags:";
             // 
             // label19
             // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(34, 104);
-            this.label19.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(93, 15);
-            this.label19.TabIndex = 50;
-            this.label19.Text = "Custom Format:";
+            label19.AutoSize = true;
+            label19.Location = new Point(34, 104);
+            label19.Margin = new Padding(4, 0, 4, 0);
+            label19.Name = "label19";
+            label19.Size = new Size(93, 15);
+            label19.TabIndex = 50;
+            label19.Text = "Custom Format:";
             // 
             // cbUseCustomNamingFormat
             // 
-            this.cbUseCustomNamingFormat.AutoSize = true;
-            this.cbUseCustomNamingFormat.Location = new System.Drawing.Point(12, 50);
-            this.cbUseCustomNamingFormat.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbUseCustomNamingFormat.Name = "cbUseCustomNamingFormat";
-            this.cbUseCustomNamingFormat.Size = new System.Drawing.Size(177, 19);
-            this.cbUseCustomNamingFormat.TabIndex = 47;
-            this.cbUseCustomNamingFormat.Text = "Use Custom Naming Format";
-            this.cbUseCustomNamingFormat.UseVisualStyleBackColor = true;
-            this.cbUseCustomNamingFormat.CheckedChanged += new System.EventHandler(this.CbUseCustomNamingFormat_CheckedChanged);
+            cbUseCustomNamingFormat.AutoSize = true;
+            cbUseCustomNamingFormat.Location = new Point(12, 50);
+            cbUseCustomNamingFormat.Margin = new Padding(4, 3, 4, 3);
+            cbUseCustomNamingFormat.Name = "cbUseCustomNamingFormat";
+            cbUseCustomNamingFormat.Size = new Size(177, 19);
+            cbUseCustomNamingFormat.TabIndex = 47;
+            cbUseCustomNamingFormat.Text = "Use Custom Naming Format";
+            cbUseCustomNamingFormat.UseVisualStyleBackColor = true;
+            cbUseCustomNamingFormat.CheckedChanged += CbUseCustomNamingFormat_CheckedChanged;
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox1.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox1.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox1.Location = new System.Drawing.Point(458, 7);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(50, 46);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 53;
-            this.pictureBox1.TabStop = false;
+            pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pictureBox1.Cursor = Cursors.Hand;
+            pictureBox1.Image = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pictureBox1.InitialImage = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pictureBox1.Location = new Point(458, 7);
+            pictureBox1.Margin = new Padding(4, 3, 4, 3);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(50, 46);
+            pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
+            pictureBox1.TabIndex = 53;
+            pictureBox1.TabStop = false;
+            pictureBox1.Click += pbCustomEpisode_Click;
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.chkAlternateOrder);
-            this.tabPage2.Controls.Add(this.cbEpNameMatching);
-            this.tabPage2.Controls.Add(this.label68);
-            this.tabPage2.Controls.Add(this.cbAirdateMatching);
-            this.tabPage2.Controls.Add(this.label9);
-            this.tabPage2.Controls.Add(this.cbIncludeNoAirdate);
-            this.tabPage2.Controls.Add(this.cbIncludeFuture);
-            this.tabPage2.Controls.Add(this.chkShowNextAirdate);
-            this.tabPage2.Controls.Add(this.chkDVDOrder);
-            this.tabPage2.Controls.Add(this.cbDoRenaming);
-            this.tabPage2.Controls.Add(this.cbDoMissingCheck);
-            this.tabPage2.Controls.Add(this.cbSequentialMatching);
-            this.tabPage2.Controls.Add(this.chkSpecialsCount);
-            this.tabPage2.Controls.Add(this.pbAdvanced);
-            this.tabPage2.Location = new System.Drawing.Point(4, 24);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage2.Size = new System.Drawing.Size(533, 542);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Advanced";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            tabPage2.Controls.Add(chkAlternateOrder);
+            tabPage2.Controls.Add(cbEpNameMatching);
+            tabPage2.Controls.Add(label68);
+            tabPage2.Controls.Add(cbAirdateMatching);
+            tabPage2.Controls.Add(label9);
+            tabPage2.Controls.Add(cbIncludeNoAirdate);
+            tabPage2.Controls.Add(cbIncludeFuture);
+            tabPage2.Controls.Add(chkShowNextAirdate);
+            tabPage2.Controls.Add(chkDVDOrder);
+            tabPage2.Controls.Add(cbDoRenaming);
+            tabPage2.Controls.Add(cbDoMissingCheck);
+            tabPage2.Controls.Add(cbSequentialMatching);
+            tabPage2.Controls.Add(chkSpecialsCount);
+            tabPage2.Controls.Add(pbAdvanced);
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Margin = new Padding(4, 3, 4, 3);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(4, 3, 4, 3);
+            tabPage2.Size = new Size(533, 542);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Advanced";
+            tabPage2.UseVisualStyleBackColor = true;
             // 
             // chkAlternateOrder
             // 
-            this.chkAlternateOrder.AutoSize = true;
-            this.chkAlternateOrder.Location = new System.Drawing.Point(133, 63);
-            this.chkAlternateOrder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkAlternateOrder.Name = "chkAlternateOrder";
-            this.chkAlternateOrder.Size = new System.Drawing.Size(129, 19);
-            this.chkAlternateOrder.TabIndex = 63;
-            this.chkAlternateOrder.Text = "Use Alternate Order";
-            this.chkAlternateOrder.UseVisualStyleBackColor = true;
-            this.chkAlternateOrder.CheckedChanged += new System.EventHandler(this.chkAlternateOrder_CheckedChanged);
+            chkAlternateOrder.AutoSize = true;
+            chkAlternateOrder.Location = new Point(133, 63);
+            chkAlternateOrder.Margin = new Padding(4, 3, 4, 3);
+            chkAlternateOrder.Name = "chkAlternateOrder";
+            chkAlternateOrder.Size = new Size(129, 19);
+            chkAlternateOrder.TabIndex = 63;
+            chkAlternateOrder.Text = "Use Alternate Order";
+            chkAlternateOrder.UseVisualStyleBackColor = true;
+            chkAlternateOrder.CheckedChanged += chkAlternateOrder_CheckedChanged;
             // 
             // cbEpNameMatching
             // 
-            this.cbEpNameMatching.AutoSize = true;
-            this.cbEpNameMatching.Location = new System.Drawing.Point(30, 322);
-            this.cbEpNameMatching.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbEpNameMatching.Name = "cbEpNameMatching";
-            this.cbEpNameMatching.Size = new System.Drawing.Size(204, 19);
-            this.cbEpNameMatching.TabIndex = 62;
-            this.cbEpNameMatching.Text = "Look for episode title in filenames";
-            this.cbEpNameMatching.UseVisualStyleBackColor = true;
+            cbEpNameMatching.AutoSize = true;
+            cbEpNameMatching.Location = new Point(30, 322);
+            cbEpNameMatching.Margin = new Padding(4, 3, 4, 3);
+            cbEpNameMatching.Name = "cbEpNameMatching";
+            cbEpNameMatching.Size = new Size(204, 19);
+            cbEpNameMatching.TabIndex = 62;
+            cbEpNameMatching.Text = "Look for episode title in filenames";
+            cbEpNameMatching.UseVisualStyleBackColor = true;
             // 
             // label68
             // 
-            this.label68.AutoSize = true;
-            this.label68.Location = new System.Drawing.Point(7, 246);
-            this.label68.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label68.Name = "label68";
-            this.label68.Size = new System.Drawing.Size(206, 15);
-            this.label68.TabIndex = 61;
-            this.label68.Text = "When finding missing episodes (only)";
+            label68.AutoSize = true;
+            label68.Location = new Point(7, 246);
+            label68.Margin = new Padding(4, 0, 4, 0);
+            label68.Name = "label68";
+            label68.Size = new Size(206, 15);
+            label68.TabIndex = 61;
+            label68.Text = "When finding missing episodes (only)";
             // 
             // cbAirdateMatching
             // 
-            this.cbAirdateMatching.AutoSize = true;
-            this.cbAirdateMatching.Location = new System.Drawing.Point(30, 295);
-            this.cbAirdateMatching.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbAirdateMatching.Name = "cbAirdateMatching";
-            this.cbAirdateMatching.Size = new System.Drawing.Size(176, 19);
-            this.cbAirdateMatching.TabIndex = 60;
-            this.cbAirdateMatching.Text = "&Look for airdate in filenames";
-            this.cbAirdateMatching.UseVisualStyleBackColor = true;
+            cbAirdateMatching.AutoSize = true;
+            cbAirdateMatching.Location = new Point(30, 295);
+            cbAirdateMatching.Margin = new Padding(4, 3, 4, 3);
+            cbAirdateMatching.Name = "cbAirdateMatching";
+            cbAirdateMatching.Size = new Size(176, 19);
+            cbAirdateMatching.TabIndex = 60;
+            cbAirdateMatching.Text = "&Look for airdate in filenames";
+            cbAirdateMatching.UseVisualStyleBackColor = true;
             // 
             // label9
             // 
-            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 7);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(426, 30);
-            this.label9.TabIndex = 42;
-            this.label9.Text = "Further details of how to setup the actions that TV Rename does for this specific" +
-    "\r\nshow.";
+            label9.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label9.AutoSize = true;
+            label9.Location = new Point(6, 7);
+            label9.Margin = new Padding(4, 0, 4, 0);
+            label9.Name = "label9";
+            label9.Size = new Size(427, 30);
+            label9.TabIndex = 42;
+            label9.Text = "Further details of how to setup the actions that TV Rename does for this specific\r\nshow.";
             // 
             // cbIncludeNoAirdate
             // 
-            this.cbIncludeNoAirdate.AutoSize = true;
-            this.cbIncludeNoAirdate.Location = new System.Drawing.Point(203, 196);
-            this.cbIncludeNoAirdate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbIncludeNoAirdate.Name = "cbIncludeNoAirdate";
-            this.cbIncludeNoAirdate.Size = new System.Drawing.Size(121, 19);
-            this.cbIncludeNoAirdate.TabIndex = 8;
-            this.cbIncludeNoAirdate.Text = "Include no airdate";
-            this.cbIncludeNoAirdate.UseVisualStyleBackColor = true;
+            cbIncludeNoAirdate.AutoSize = true;
+            cbIncludeNoAirdate.Location = new Point(203, 196);
+            cbIncludeNoAirdate.Margin = new Padding(4, 3, 4, 3);
+            cbIncludeNoAirdate.Name = "cbIncludeNoAirdate";
+            cbIncludeNoAirdate.Size = new Size(121, 19);
+            cbIncludeNoAirdate.TabIndex = 8;
+            cbIncludeNoAirdate.Text = "Include no airdate";
+            cbIncludeNoAirdate.UseVisualStyleBackColor = true;
             // 
             // cbIncludeFuture
             // 
-            this.cbIncludeFuture.AutoSize = true;
-            this.cbIncludeFuture.Location = new System.Drawing.Point(33, 196);
-            this.cbIncludeFuture.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbIncludeFuture.Name = "cbIncludeFuture";
-            this.cbIncludeFuture.Size = new System.Drawing.Size(149, 19);
-            this.cbIncludeFuture.TabIndex = 8;
-            this.cbIncludeFuture.Text = "Include future episodes";
-            this.cbIncludeFuture.UseVisualStyleBackColor = true;
+            cbIncludeFuture.AutoSize = true;
+            cbIncludeFuture.Location = new Point(33, 196);
+            cbIncludeFuture.Margin = new Padding(4, 3, 4, 3);
+            cbIncludeFuture.Name = "cbIncludeFuture";
+            cbIncludeFuture.Size = new Size(149, 19);
+            cbIncludeFuture.TabIndex = 8;
+            cbIncludeFuture.Text = "Include future episodes";
+            cbIncludeFuture.UseVisualStyleBackColor = true;
             // 
             // pbAdvanced
             // 
-            this.pbAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbAdvanced.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbAdvanced.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbAdvanced.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbAdvanced.Location = new System.Drawing.Point(456, 7);
-            this.pbAdvanced.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pbAdvanced.Name = "pbAdvanced";
-            this.pbAdvanced.Size = new System.Drawing.Size(50, 46);
-            this.pbAdvanced.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbAdvanced.TabIndex = 41;
-            this.pbAdvanced.TabStop = false;
-            this.pbAdvanced.Click += new System.EventHandler(this.pbAdvanced_Click);
+            pbAdvanced.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pbAdvanced.Cursor = Cursors.Hand;
+            pbAdvanced.Image = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pbAdvanced.InitialImage = Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            pbAdvanced.Location = new Point(456, 7);
+            pbAdvanced.Margin = new Padding(4, 3, 4, 3);
+            pbAdvanced.Name = "pbAdvanced";
+            pbAdvanced.Size = new Size(50, 46);
+            pbAdvanced.SizeMode = PictureBoxSizeMode.CenterImage;
+            pbAdvanced.TabIndex = 41;
+            pbAdvanced.TabStop = false;
+            pbAdvanced.Click += pbAdvanced_Click;
             // 
             // AddEditShow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(539, 620);
-            this.ControlBox = false;
-            this.Controls.Add(this.Folders);
-            this.Controls.Add(this.bnCancel);
-            this.Controls.Add(this.buttonOK);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(534, 505);
-            this.Name = "AddEditShow";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Add/Edit TV Show";
-            this.Folders.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).EndInit();
-            this.tabPage5.ResumeLayout(false);
-            this.tabPage5.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.gbAutoFolders.ResumeLayout(false);
-            this.gbAutoFolders.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbFolders)).EndInit();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbAliases)).EndInit();
-            this.tabPage4.ResumeLayout(false);
-            this.tabPage4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbCustomSearch)).EndInit();
-            this.tabPage6.ResumeLayout(false);
-            this.tabPage6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbAdvanced)).EndInit();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            CancelButton = bnCancel;
+            ClientSize = new Size(539, 620);
+            ControlBox = false;
+            Controls.Add(Folders);
+            Controls.Add(bnCancel);
+            Controls.Add(buttonOK);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            MinimumSize = new Size(534, 505);
+            Name = "AddEditShow";
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Add/Edit TV Show";
+            Folders.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pbBasics).EndInit();
+            tabPage5.ResumeLayout(false);
+            tabPage5.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            gbAutoFolders.ResumeLayout(false);
+            gbAutoFolders.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pbFolders).EndInit();
+            tabPage3.ResumeLayout(false);
+            tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pbAliases).EndInit();
+            tabPage4.ResumeLayout(false);
+            tabPage4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pbCustomSearch).EndInit();
+            tabPage6.ResumeLayout(false);
+            tabPage6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pbAdvanced).EndInit();
+            ResumeLayout(false);
 
         }
 
