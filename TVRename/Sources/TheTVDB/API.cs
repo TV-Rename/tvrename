@@ -628,7 +628,7 @@ public static class API
         }
         catch
         {
-            Logger.Error($"Failed to parse Epsiode update date {lastUpdateString}");
+            Logger.Error($"Failed to parse Episode update date {lastUpdateString}");
             return DEFLT;
         }
     }

@@ -1077,7 +1077,7 @@ namespace TVRename.Forms
             chkShowAccessibilityOptions.Name = "chkShowAccessibilityOptions";
             chkShowAccessibilityOptions.Size = new Size(165, 19);
             chkShowAccessibilityOptions.TabIndex = 45;
-            chkShowAccessibilityOptions.Text = "Show Accessibilty Options";
+            chkShowAccessibilityOptions.Text = "Show Accessibility Options";
             chkShowAccessibilityOptions.UseVisualStyleBackColor = true;
             // 
             // cbUseColoursOnWtw
@@ -1248,7 +1248,7 @@ namespace TVRename.Forms
             label61.Name = "label61";
             label61.Size = new Size(326, 45);
             label61.TabIndex = 40;
-            label61.Text = "Settings that contol the way that TV Rename looks. These do\r\nnot have any impact on the main scanning, just on the way \r\nthe interface looks.";
+            label61.Text = "Settings that control the way that TV Rename looks. These do\r\nnot have any impact on the main scanning, just on the way \r\nthe interface looks.";
             // 
             // cbLeadingZero
             // 
@@ -2850,7 +2850,7 @@ namespace TVRename.Forms
             cbSeriesJpg.Name = "cbSeriesJpg";
             cbSeriesJpg.Size = new Size(266, 19);
             cbSeriesJpg.TabIndex = 7;
-            cbSeriesJpg.Text = "&Create cachedSeries poster (cachedSeries.jpg)";
+            cbSeriesJpg.Text = "&Create series poster (Series.jpg)";
             cbSeriesJpg.UseVisualStyleBackColor = true;
             // 
             // cbShrinkLarge
@@ -2861,7 +2861,7 @@ namespace TVRename.Forms
             cbShrinkLarge.Name = "cbShrinkLarge";
             cbShrinkLarge.Size = new Size(363, 19);
             cbShrinkLarge.TabIndex = 9;
-            cbShrinkLarge.Text = "S&hrink large cachedSeries and episode images to 156 x 232 pixels";
+            cbShrinkLarge.Text = "S&hrink large series and episode images to 156 x 232 pixels";
             cbShrinkLarge.UseVisualStyleBackColor = true;
             // 
             // groupBox14
@@ -4513,7 +4513,7 @@ namespace TVRename.Forms
             label63.Name = "label63";
             label63.Size = new Size(396, 30);
             label63.TabIndex = 57;
-            label63.Text = "TV Rename downloads information from upstream sources to understand\r\nwhich shows have epiosdes";
+            label63.Text = "TV Rename downloads information from upstream sources to understand\r\nwhich shows have episodes";
             // 
             // label57
             // 

@@ -46,7 +46,7 @@ internal static class Beta
 
         output.Clear();
         output.AppendLine("##################################################");
-        output.AppendLine("File Quailty FINDER - End");
+        output.AppendLine("File Quality FINDER - End");
         output.AppendLine("##################################################");
 
         Logger.Info(output.ToString());

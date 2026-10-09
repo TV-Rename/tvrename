@@ -77,9 +77,9 @@ public class CefWrapper
             Logger.Warn("C++ Version (Git Library): " + VcRuntime.GetInstalled(_ => true).Select(VersionToString).ToCsv());
             Logger.Warn("If C++ 2019 is not installed visit: https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-160 and install the latest appropriate version");
 
-            MessageBox.Show("TV Rename needs Microsoft Visual C++ 2015-2019 Redistributable to be present. Downloading installer now.", "Missing Dependencies");
+            MessageBox.Show("TV Rename needs Microsoft Visual C++ v14 (2017-2026) Redistributable to be present. Downloading installer now.", "Missing Dependencies");
             string urlToDownload = Environment.Is64BitProcess ? "vc_redist.x64.exe" : "vc_redist.x86.exe";
-            $"https://aka.ms/vs/17/release/{urlToDownload}".OpenUrlInBrowser();
+            $"https://aka.ms/vc14/{urlToDownload}".OpenUrlInBrowser();
         }
         CheckForBrowserDependencies(false);
     }

@@ -544,7 +544,7 @@ namespace TVRename.Forms
             // 
             tsmiOrphanFiles.Name = "tsmiOrphanFiles";
             tsmiOrphanFiles.Size = new Size(274, 22);
-            tsmiOrphanFiles.Text = "Find Orphan Media Files....";
+            tsmiOrphanFiles.Text = "Find Orphan Media Files...";
             tsmiOrphanFiles.Click += ToolStripMenuItem1_Click;
             // 
             // duplicateFinderLOGToolStripMenuItem
@@ -615,7 +615,7 @@ namespace TVRename.Forms
             // 
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Name = "forceRefreshKodiTVShowNFOFIlesToolStripMenuItem";
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Size = new Size(274, 22);
-            forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Text = "Force Refresh Kodi TV Show NFO FIles";
+            forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Text = "Force Refresh Kodi TV Show NFO Files";
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Click += forceRefreshKodiTVShowNFOFIlesToolStripMenuItem_Click;
             // 
             // removeShowsWithNoFoldersToolStripMenuItem
@@ -1637,7 +1637,7 @@ namespace TVRename.Forms
             quickToolStripMenuItem.Name = "quickToolStripMenuItem";
             quickToolStripMenuItem.Size = new Size(110, 22);
             quickToolStripMenuItem.Text = "Quick";
-            quickToolStripMenuItem.ToolTipText = "Scan shows with missing recent aired episodes and and shows that match files in the search folders";
+            quickToolStripMenuItem.ToolTipText = "Scan shows with missing recent aired episodes and shows that match files in the search folders";
             quickToolStripMenuItem.Click += QuickToolStripMenuItem_Click;
             // 
             // tbFullScan
@@ -2071,7 +2071,7 @@ namespace TVRename.Forms
             olvWTWName.Groupable = false;
             olvWTWName.GroupWithItemCountFormat = "{0}";
             olvWTWName.GroupWithItemCountSingularFormat = "{0}";
-            olvWTWName.Text = "Epsiode Name";
+            olvWTWName.Text = "Episode Name";
             olvWTWName.Width = 420;
             // 
             // tsWtW

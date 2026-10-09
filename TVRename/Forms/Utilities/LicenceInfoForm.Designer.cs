@@ -121,7 +121,7 @@ namespace TVRename.Forms.Utilities
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(264, 13);
             this.label6.TabIndex = 8;
-            this.label6.Text = "papertrailapp.com to send annonymous crash statistics";
+            this.label6.Text = "papertrailapp.com to send anonymous crash statistics";
             // 
             // lblCopyright
             // 

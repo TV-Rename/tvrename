@@ -597,7 +597,7 @@ namespace TVRename
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(404, 30);
             this.label12.TabIndex = 48;
-            this.label12.Text = "Setup which folders the episodes for this cachedSeries should be stored in.  \r\nYo" +
+            this.label12.Text = "Setup which folders the episodes for this series should be stored in.  \r\nYo" +
     "u can choose automatic folders or maintain full manual control.";
             // 
             // chkAutoFolders

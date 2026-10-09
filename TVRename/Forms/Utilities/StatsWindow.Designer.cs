@@ -112,7 +112,7 @@ namespace TVRename
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(126, 13);
             this.label5.TabIndex = 0;
-            this.label5.Text = "Find and organises done:";
+            this.label5.Text = "Finds and organises done:";
             // 
             // label6
             // 
