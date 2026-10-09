@@ -265,7 +265,7 @@ public sealed class TVSettings
 
     public IEnumerable<string> SearchSeasonWordsArray => Convert(searchSeasonWordsString);
 
-    public string preferredRSSSearchTermsString = "720p;1080p";
+    public string preferredRSSSearchTermsString = "720p;1080p;2160p";
 
     public string unwantedRSSSearchTermsString = "hdcam;tscam;CAMRip;HDCAM;HDTS";
 
@@ -1535,7 +1535,7 @@ public sealed class TVSettings
         searchSeasonWordsString = xmlSettings.ExtractString("SearchSeasonNames", "Season;Series;Saison;Temporada;Seizoen");
         SubsFolderNamesString =
             xmlSettings.ExtractString("SubsFolderNamesString", "subs;subtitle;vobsubs;sub;vobsub;subtitle");
-        preferredRSSSearchTermsString = xmlSettings.ExtractString("PreferredRSSSearchTerms", "720p;1080p");
+        preferredRSSSearchTermsString = xmlSettings.ExtractString("PreferredRSSSearchTerms", "720p;1080p;2160p");
         unwantedRSSSearchTermsString = xmlSettings.ExtractString("UnwantedRSSSearchTerms", "hdcam;tscam;CAMRip;HDCAM;HDTS");
         keepTogetherMode = xmlSettings.ExtractEnum("KeepTogetherType", KeepTogetherModes.All);
         UIScanType = xmlSettings.ExtractEnum("UIScanType", ScanType.Full);
