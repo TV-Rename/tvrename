@@ -2103,10 +2103,10 @@ public partial class Preferences : Form
     private void pbSources_Click(object sender, EventArgs e) => OpenInfoWindow("#data-sources");
     private void pbLibraryFolders_Click(object sender, EventArgs e) => OpenInfoWindow("#the-library-folders-tab");
     private void pbMovieDefaults_Click(object sender, EventArgs e) => OpenInfoWindow("#movies-defaults");
-    private void tv_show_Defaults_Click(object sender, EventArgs e) => OpenInfoWindow("tv-show-defaults");
+    private void tv_show_Defaults_Click(object sender, EventArgs e) => OpenInfoWindow("#tv-show-defaults");
     private void pbScanOptions_Click(object sender, EventArgs e) => OpenInfoWindow("#scan-settings");
     private void pbFilesAndFolders_Click(object sender, EventArgs e) => OpenInfoWindow("#the-files-and-folders-tab");
-    private void subtitles_Click(object sender, EventArgs e) => OpenInfoWindow("subtitles");
+    private void subtitles_Click(object sender, EventArgs e) => OpenInfoWindow("#subtitles");
     private void pbSearchFolders_Click(object sender, EventArgs e) => OpenInfoWindow("#the-search-folders-tab");
     private void pbFolderDeleting_Click(object sender, EventArgs e) => OpenInfoWindow("#the-folder-deleting-tab");
     private void pictureBox7_Click(object sender, EventArgs e) => OpenInfoWindow("#the-media-centers-tab");
