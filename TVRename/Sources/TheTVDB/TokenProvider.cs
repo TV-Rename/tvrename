@@ -119,8 +119,7 @@ internal class TokenProvider
         }
         UpdateToken(newToken);
 
-        Logger.Info("Performed login at " + TimeHelpers.LocalNow());
-        Logger.Info("New Token " + lastKnownToken);
+        Logger.Info("Performed login at " + TimeHelpers.LocalNow() + ", and got a new Token");
     }
 
     private async Task RefreshTokenAsync()
@@ -137,7 +136,6 @@ internal class TokenProvider
         UpdateToken(newToken);
 
         Logger.Info("Refreshed token at " + TimeHelpers.LocalNow());
-        Logger.Info("New Token " + lastKnownToken);
     }
 
     private void UpdateToken(string token)
