@@ -85,7 +85,7 @@ public partial class QuickRename : Form, IDialogParent
             await ProcessUnknownAsync(subFile, this);
         }
 
-        foreach (DirectoryInfo subFile in droppedDir.GetDirectories())
+        foreach (DirectoryInfo subFile in await droppedDir.GetDirectoriesAsync())
         {
             await ProcessDirectoryAsync(subFile);
         }

@@ -12,7 +12,7 @@ public partial class TaskNotifier : Form
 {
     protected Task? task;
     private readonly string name;
-    private readonly CancellationTokenSource cancellationToken;
+    protected readonly CancellationTokenSource cancellationToken;
 
     public TaskNotifier(string name, CancellationTokenSource cancellationToken)
     {
@@ -44,7 +44,7 @@ public partial class TaskNotifier : Form
 
     private void DoScanPartNotifier_Shown(object sender, EventArgs e)
     {
-        Text = $"{name} Progress";
+        Text = $"{name} - Scan Progress";
     }
 }
 

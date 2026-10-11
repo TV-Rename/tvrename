@@ -5,7 +5,6 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
 namespace TVRename.Forms.Tools;
 
 public class DoScanPartNotifier : TaskNotifier
@@ -17,10 +16,13 @@ public class DoScanPartNotifier : TaskNotifier
         this.activity = activity;
     }
 
-    protected async Task DoAsync(IProgress<TaskProgress> sender, CancellationTokenSource source)
+    public async Task DoAsync()
     {
-        await activity.CheckAsync(sender, source.Token);
+        var progressHandler = new Progress<TaskProgress>(UpdateProgress);
 
+        task = activity.CheckAsync(progressHandler, cancellationToken.Token);
+        Start(task);
+        await task;
         Close();
     }
 }

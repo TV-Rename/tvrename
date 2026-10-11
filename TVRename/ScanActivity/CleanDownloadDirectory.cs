@@ -43,7 +43,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         {
             UpdateStatus(c.Increment(), totalDownloadFolders, dirPath);
 
-            if (!Directory.Exists(dirPath) || Settings.Token.IsCancellationRequested)
+            if (! await FileHelper.DirectoryExistsAsync(dirPath) || Settings.Token.IsCancellationRequested)
             {
                 continue;
             }
@@ -581,7 +581,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
 
         foreach (string folder in folders)
         {
-            if (!Directory.Exists(folder))
+            if (! await FileHelper.DirectoryExistsAsync(folder))
             {
                 if (TVSettings.Instance.AutoCreateFolders || MDoc.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.create)
                 {

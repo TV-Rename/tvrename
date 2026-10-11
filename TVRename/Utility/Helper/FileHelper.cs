@@ -14,7 +14,6 @@ using Microsoft.WindowsAPICodePack.Win32Native.Shell;
 
 
 using System.Globalization;
-using System.IO;
 using System.Security;
 
 using System.Text.RegularExpressions;
@@ -35,7 +34,26 @@ public static class FileHelper
 
     public static async Task<DirectoryInfo[]> GetDirectoriesAsync(this DirectoryInfo di)
     {
-        return await Task.Run(() => di.GetDirectories());
+        return await Task.Run(() =>
+        {
+            try
+            {
+                return di.GetDirectories();
+            }
+            catch (NotSupportedException)
+            {
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+            }
+            catch (System.IO.IOException)
+            {
+            }
+            return Array.Empty<DirectoryInfo>();
+        });
     }
 
     public static void DeleteOrRecycleFile(FileInfo? file, TVSettings.TidySettings? Tidyup)
@@ -814,8 +832,8 @@ public static class FileHelper
         long bytesTransferred = 0;
         int bufferSize = 81920; // 80 KB large buffer
 
-        using (var sourceStream = new FileStream(From.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, useAsync: true))
-        using (var destStream = new FileStream(To, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, useAsync: true))
+        using (var sourceStream = new System.IO.FileStream(From.FullName, System.IO.FileMode.Open, FileAccess.Read, System.IO.FileShare.Read, bufferSize, useAsync: true))
+        using (var destStream = new System.IO.FileStream(To, System.IO.FileMode.Create, FileAccess.Write, System.IO.FileShare.None, bufferSize, useAsync: true))
         {
             var buffer = new byte[bufferSize];
             int bytesRead;

@@ -30,7 +30,7 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 
             foreach (string folderName in (await si.AllProposedFolderLocationsAsync()).SelectMany(folderLocation => folderLocation.Value))
             {
-                string? action = RemoveIfEmpty(si, folderName);
+                string? action = await RemoveIfEmpty(si, folderName);
                 if (action.HasValue())
                 {
                     lastUpdate = action;
@@ -49,7 +49,7 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 
             foreach (string folderName in await mi.LocationsAsync())
             {
-                string? action = RemoveIfEmpty(mi, folderName);
+                string? action = await RemoveIfEmpty(mi, folderName);
                 if (action.HasValue())
                 {
                     lastUpdate = action;
@@ -68,7 +68,7 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
             DirectoryInfo directory = new(folder);
             foreach (DirectoryInfo testDirectory in directory.EnumerateDirectories(DirectoryEnumerationOptions.Recursive | DirectoryEnumerationOptions.ContinueOnException).ToList())
             {
-                string? action = RemoveIfEmpty(testDirectory.FullName);
+                string? action = await RemoveIfEmpty(testDirectory.FullName);
                 if (action.HasValue())
                 {
                     lastUpdate = action;
@@ -82,9 +82,9 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
         }
     }
 
-    private string? RemoveIfEmpty(string folderName)
+    private async Task<string?> RemoveIfEmpty(string folderName)
     {
-        if (CanRemove(folderName))
+        if (await CanRemoveAsync(folderName))
         {
             //FileHelper.RemoveDirectory(folderName);
             if (!AlreadyDeleted(MDoc.TheActionList, folderName))
@@ -102,9 +102,9 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
         return mDocTheActionList.OfType<ActionDeleteDirectory>().Any(deleteDirectory => deleteDirectory.IsFor(folderName));
     }
 
-    private string? RemoveIfEmpty(MovieConfiguration mi, string folderName)
+    private async Task<string?> RemoveIfEmpty(MovieConfiguration mi, string folderName)
     {
-        if (CanRemove(folderName))
+        if (await CanRemoveAsync(folderName))
         {
             //FileHelper.RemoveDirectory(folderName);
             MDoc.TheActionList.Add(new ActionDeleteDirectory(new DirectoryInfo(folderName), mi, TVSettings.Instance.Tidyup));
@@ -113,9 +113,9 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 
         return null;
     }
-    private string? RemoveIfEmpty(ShowConfiguration si, string folderName)
+    private async Task<string?> RemoveIfEmpty(ShowConfiguration si, string folderName)
     {
-        if (CanRemove(folderName))
+        if (await CanRemoveAsync(folderName))
         {
             //FileHelper.RemoveDirectory(folderName);
             MDoc.TheActionList.Add(new ActionDeleteDirectory(new DirectoryInfo(folderName), si, TVSettings.Instance.Tidyup));
@@ -124,9 +124,9 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 
         return null;
     }
-    private static bool CanRemove(string folderName)
+    private static async Task<bool> CanRemoveAsync(string folderName)
     {
-        if (!Directory.Exists(folderName))
+        if (!await FileHelper.DirectoryExistsAsync(folderName))
         {
             return false;
         }
@@ -139,7 +139,7 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
                 return false;
             }
             //nothing at all
-            bool noSubFolders = d.GetDirectories().Length == 0;
+            bool noSubFolders = (await d.GetDirectoriesAsync()).Length == 0;
             if (d.GetFiles().Length == 0 && noSubFolders)
             {
                 return true;

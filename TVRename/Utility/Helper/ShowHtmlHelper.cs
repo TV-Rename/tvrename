@@ -887,7 +887,7 @@ internal static class ShowHtmlHelper
 
     private static async Task<string> GetBestFolderLocationToOpenAsync(this ShowConfiguration si)
     {
-        if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && Directory.Exists(si.AutoAddFolderBase))
+        if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && await FileHelper.DirectoryExistsAsync(si.AutoAddFolderBase))
         {
             return si.AutoAddFolderBase;
         }

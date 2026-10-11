@@ -156,7 +156,7 @@ public class MovieConfiguration : MediaConfiguration
         {
             string newName = AutoFolderNameForMovie();
 
-            if (!checkExist || Directory.Exists(newName))
+            if (!checkExist || await FileHelper.DirectoryExistsAsync(newName))
             {
                 if (!fld[0].Contains(newName))
                 {

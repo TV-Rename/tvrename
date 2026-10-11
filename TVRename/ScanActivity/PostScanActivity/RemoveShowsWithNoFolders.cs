@@ -34,11 +34,11 @@ internal class RemoveShowsWithNoFolders(TVDoc doc) : PostScanActivity(doc)
             var x = await si.AllProposedFolderLocationsAsync();
 
             bool removeThisShow = x.IsAny()
-                                  && x
+                                  && await x
                                        .SelectMany(folderLocation => folderLocation.Value)
-                                       .All(NotExist);
+                                       .AllAsync(NotExistAsync);
 
-            if (removeThisShow && si.AutoAddFolderBase.HasValue() && Directory.Exists(si.AutoAddFolderBase))
+            if (removeThisShow && si.AutoAddFolderBase.HasValue() && await FileHelper.DirectoryExistsAsync(si.AutoAddFolderBase))
             {
                 removeThisShow = false;
             }
@@ -59,7 +59,7 @@ internal class RemoveShowsWithNoFolders(TVDoc doc) : PostScanActivity(doc)
                 return;
             }
 
-            bool removeThisShow = (await si.LocationsAsync()).All(NotExist);
+            bool removeThisShow = await (await si.LocationsAsync()).AllAsync(NotExistAsync);
 
             if (removeThisShow)
             {
@@ -73,5 +73,5 @@ internal class RemoveShowsWithNoFolders(TVDoc doc) : PostScanActivity(doc)
 
     private static bool HasAiredEpisode(ShowConfiguration sc) => sc.GetFirstAvailableEpisode()?.HasAired() ?? false;
 
-    private static bool NotExist(string folderName) => !Directory.Exists(folderName);
+    private static async Task<bool> NotExistAsync(string folderName) => ! await FileHelper.DirectoryExistsAsync(folderName);
 }

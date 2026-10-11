@@ -615,14 +615,14 @@ namespace TVRename.Forms
             // 
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Name = "forceRefreshKodiTVShowNFOFIlesToolStripMenuItem";
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Size = new Size(274, 22);
-            forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Text = "Force Refresh Kodi TV Show NFO Files";
+            forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Text = "Force Refresh Kodi NFO Files...";
             forceRefreshKodiTVShowNFOFIlesToolStripMenuItem.Click += forceRefreshKodiTVShowNFOFIlesToolStripMenuItem_Click;
             // 
             // removeShowsWithNoFoldersToolStripMenuItem
             // 
             removeShowsWithNoFoldersToolStripMenuItem.Name = "removeShowsWithNoFoldersToolStripMenuItem";
             removeShowsWithNoFoldersToolStripMenuItem.Size = new Size(274, 22);
-            removeShowsWithNoFoldersToolStripMenuItem.Text = "Remove Shows With No Folders...";
+            removeShowsWithNoFoldersToolStripMenuItem.Text = "Remove Media With No Folders...";
             removeShowsWithNoFoldersToolStripMenuItem.Click += removeShowsWithNoFoldersToolStripMenuItem_Click;
             // 
             // viewToolStripMenuItem

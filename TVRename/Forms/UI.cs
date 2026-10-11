@@ -5286,7 +5286,7 @@ public partial class UI : Form, IDialogParent
 
     private async void forceRefreshKodiTVShowNFOFIlesToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        await PartialScanAsync(new ForceRefreshDownloadIdentifier(new DownloadKodiMetaData(), mDoc, "Refresh all tvshow.nfo"));
+        await PartialScanAsync(new ForceRefreshDownloadIdentifier(new DownloadKodiMetaData(), mDoc, "Refresh all Kodi NFO files"));
     }
     private async Task PartialScanAsync(PostScanActivity activity)
     {
@@ -5294,8 +5294,7 @@ public partial class UI : Form, IDialogParent
         var scanCancellationToken = new CancellationTokenSource();
         _shutdownManager.TrackCancellationToken(scanCancellationToken);
         DoScanPartNotifier f = new(activity, scanCancellationToken);
-
-        f.ShowDialog();
+        await f.DoAsync();
         FillActionList();
         FocusOnScanResults();
     }
