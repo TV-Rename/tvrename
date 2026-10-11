@@ -10,7 +10,7 @@ namespace TVRename.Forms;
 
 public partial class DuplicateMovieFinder : Form
 {
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private readonly List<DuplicateMovie> dupMovies;
     private readonly TVDoc mDoc;
     private readonly UI mainUi;
@@ -85,9 +85,9 @@ public partial class DuplicateMovieFinder : Form
 
     private async Task ProcessMovieAsync(MovieConfiguration movie)
     {
-        List<FileInfo> files = [.. (await movie.MovieFilesAsync()).Where(fiTemp => movie.NameMatch(fiTemp, false))];
+        List<FileInfo> files = (await movie.MovieFilesAsync()).Where(fiTemp => movie.NameMatch(fiTemp, false)).ToList();
 
-        if (files.Count > 1)
+        if (files.Count() > 1)
         {
             DuplicateMovie duplicateMovie = new(movie, files);
             dupMovies.Add(duplicateMovie);
@@ -104,7 +104,8 @@ public partial class DuplicateMovieFinder : Form
 
     private void BtnRefresh_Click_1(object sender, EventArgs e)
     {
-
+        dupMovies.Clear();
+        StartScan();
     }
 
     private async void olvDuplicates_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)

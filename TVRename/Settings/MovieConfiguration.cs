@@ -308,14 +308,32 @@ public class MovieConfiguration : MediaConfiguration
 
     public bool IsDvdBluRay() => Format is MovieFolderFormat.bluray or MovieFolderFormat.dvd;
 
-    public async Task<List<FileInfo>> MovieFilesAsync()
+    public async Task<IEnumerable<FileInfo>> MovieFilesAsync()
     {
-        return [.. (await LocationsAsync())
+        IEnumerable<string> locations = await LocationsAsync();
+        IEnumerable<DirectoryInfo> selectedlocations = locations
             .Where(location => location.HasValue())
-            .Select(location => new DirectoryInfo(location))
-            .Where(dir => dir.Exists)
-            .SelectMany(dir => dir.GetFiles())
-            .Where(f => f.IsMovieFile())
-            .Distinct()];
+            .Select(location => new DirectoryInfo(location));
+
+        var x = new List<FileInfo>();
+
+        foreach (DirectoryInfo dir in selectedlocations)
+        {
+            if (! await FileHelper.DirectoryExistsAsync(dir))
+            {
+                continue;
+            }
+            try
+            {
+                var y = dir.GetFiles();
+                x.AddRange(y);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                LogManager.GetCurrentClassLogger().Warn(ex, $"MovieFilesAsync: UnauthorizedAccessException for {dir.FullName}");
+            }
+        }
+
+        return x.Where(f => f.IsMovieFile()).Distinct();
     }
 }
