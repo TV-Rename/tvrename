@@ -7,6 +7,7 @@
 //
 
 using NodaTime;
+using System.Globalization;
 
 namespace TVRename;
 
@@ -86,6 +87,48 @@ public class Episode
         AirStamp = o.AirStamp;
         AirTime = o.AirTime;
     }
+
+    public Episode(XElement r) 
+    {
+        // </Episode>
+        //  blah blah
+        //  <id>...</id>
+        // <Episode>
+        SeriesId = r.ExtractInt("seriesid", -1); // key to the cachedSeries
+        EpisodeId = r.ExtractInt("id", -1);
+        SeasonId = r.ExtractInt("airedSeasonID") ?? r.ExtractInt("seasonid", -1);
+        AiredEpNum = r.ExtractInt("airedEpisodeNumber") ?? r.ExtractInt("EpisodeNumber", -1);
+        DvdEpNum = ExtractAndParse(r, "dvdEpisodeNumber");
+        ReadAiredSeasonNum = ExtractAndParse(r, "SeasonNumber");
+        ReadDvdSeasonNum = ExtractAndParse(r, "dvdSeason");
+        SrvLastUpdated = r.ExtractLong("lastupdated", -1);
+        Overview = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("Overview")));
+        LinkUrl = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("LinkURL"));
+        Runtime = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("Runtime"));
+        EpisodeRating = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("Rating"));
+        EpisodeGuestStars = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("GuestStars"));
+        EpisodeDirector = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("EpisodeDirector"));
+        Writer = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("Writer"));
+        MName = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("EpisodeName")));
+
+        AirStamp = r.ExtractDateTime("AirStamp");
+        AirTime = JsonHelper.ParseAirTime(r.ExtractString("Airs_Time"));
+
+        DvdDiscId = r.ExtractString("DvdDiscId");
+        Filename = r.ExtractStringOrNull("Filename") ?? r.ExtractString("filename");
+        ShowUrl = r.ExtractStringOrNull("ShowUrl") ?? r.ExtractString("showUrl");
+        ImdbCode = r.ExtractStringOrNull("ImdbCode") ?? r.ExtractStringOrNull("IMDB_ID") ?? r.ExtractString("imdbId");
+        ProductionCode = r.ExtractStringOrNull("ProductionCode") ?? r.ExtractString("productionCode");
+
+        DvdChapter = r.ExtractInt("DvdChapter") ?? r.ExtractInt("dvdChapter");
+        AirsBeforeSeason = r.ExtractInt("AirsBeforeSeason") ?? r.ExtractInt("airsBeforeSeason") ?? r.ExtractInt("airsbefore_season");
+        AirsBeforeEpisode = r.ExtractInt("AirsBeforeEpisode") ?? r.ExtractInt("airsBeforeEpisode") ?? r.ExtractInt("airsbefore_episode");
+        AirsAfterSeason = r.ExtractInt("AirsAfterSeason");
+        SiteRatingCount = r.ExtractInt("SiteRatingCount") ?? r.ExtractInt("siteRatingCount");
+        AbsoluteNumber = r.ExtractInt("AbsoluteNumber");
+        FirstAired = JsonHelper.ParseFirstAired(r.ExtractString("FirstAired"));
+    }
+
 
     public LocalDateTime? LocalAirTime()
     {
@@ -271,5 +314,47 @@ public class Episode
             ProcessedSeason.SeasonType.alternate => AiredSeasonNumber == 0,
             _ => throw new ArgumentOutOfRangeException(nameof(seasonOrderType), seasonOrderType, null)
         };
+    }
+
+    internal XElement GenerateEpisodeXElement()
+    {
+        return new XElement("Episode",
+            new XElement("id", EpisodeId),
+            new XElement("seriesid", SeriesId),
+            new XElement("airedSeasonID", SeasonId),
+            new XElement("airedEpisodeNumber", AiredEpNum),
+            new XElement("SeasonNumber", AiredSeasonNumber),
+            XmlHelper.GenerateOptionalXElement("dvdEpisodeNumber", DvdEpNum),
+            XmlHelper.GenerateOptionalXElement("dvdSeason", DvdSeasonNumber),
+            new XElement("lastupdated", SrvLastUpdated),
+            XmlHelper.GenerateOptionalXElement("Overview", Overview?.Trim()),
+            new XElement("LinkURL", LinkUrl?.Trim()),
+            new XElement("Runtime", Runtime?.Trim()),
+            new XElement("Rating", EpisodeRating),
+            XmlHelper.GenerateOptionalXElement("GuestStars", EpisodeGuestStars),
+            XmlHelper.GenerateOptionalXElement("EpisodeDirector", EpisodeDirector),
+            XmlHelper.GenerateOptionalXElement("Writer", Writer),
+            new XElement("EpisodeName", MName),
+            XmlHelper.GenerateOptionalXElement("FirstAired", FirstAired?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
+            XmlHelper.GenerateOptionalXElement("AirTime", AirTime?.ToString("HH:mm")),
+            XmlHelper.GenerateOptionalXElement("AirStamp", AirStamp),
+            XmlHelper.GenerateOptionalXElement("DvdChapter", DvdChapter),
+            XmlHelper.GenerateOptionalXElement("DvdDiscId", DvdDiscId),
+            XmlHelper.GenerateOptionalXElement("AirsBeforeSeason", AirsBeforeSeason),
+            XmlHelper.GenerateOptionalXElement("AirsBeforeEpisode", AirsBeforeEpisode),
+            XmlHelper.GenerateOptionalXElement("AirsAfterSeason", AirsAfterSeason),
+            XmlHelper.GenerateOptionalXElement("SiteRatingCount", SiteRatingCount),
+            XmlHelper.GenerateOptionalXElement("AbsoluteNumber", AbsoluteNumber),
+            XmlHelper.GenerateOptionalXElement("ProductionCode", ProductionCode),
+            XmlHelper.GenerateOptionalXElement("ImdbCode", ImdbCode),
+            XmlHelper.GenerateOptionalXElement("ShowUrl", ShowUrl),
+            XmlHelper.GenerateOptionalXElement("Filename", Filename)
+        );
+    }
+
+    private static int ExtractAndParse(XElement r, string key)
+    {
+        string value = r.ExtractString(key);
+        return int.TryParse(value, out int intValue) ? intValue : -1;
     }
 }

@@ -880,7 +880,7 @@ public partial class UI : Form, IDialogParent
 
         if (a.Save)
         {
-            mDoc.WriteXMLSettings();
+            mDoc.WriteXMLSettingsAsync();
             await SaveCaches();
         }
 
@@ -1335,85 +1335,74 @@ public partial class UI : Form, IDialogParent
         Size = new Size(xsize, ysize);
     }
 
-    private bool SaveLayoutXml()
+    private async Task<bool> SaveLayoutXmlAsync()
     {
         if (mDoc.Args.Hide)
         {
             return true;
         }
 
-        XmlWriterSettings settings = new()
-        {
-            Indent = true,
-            NewLineOnAttributes = true
-        };
+        var layoutXML = GenerateLayoutXML();
 
-        using XmlWriter writer = XmlWriter.Create(PathManager.UILayoutFile.FullName, settings);
-        writer.WriteStartDocument();
-        writer.WriteStartElement("TVRename");
-        writer.WriteAttributeToXml("Version", "2.1");
-        writer.WriteStartElement("Layout");
-        writer.WriteStartElement("Window");
-
-        writer.WriteStartElement("Size");
-        writer.WriteAttributeToXml("Width", mLastNonMaximizedSize.Width);
-        writer.WriteAttributeToXml("Height", mLastNonMaximizedSize.Height);
-        writer.WriteEndElement(); // size
-
-        writer.WriteStartElement("Location");
-        writer.WriteAttributeToXml("X", mLastNonMaximizedLocation.X);
-        writer.WriteAttributeToXml("Y", mLastNonMaximizedLocation.Y);
-        writer.WriteEndElement(); // Location
-
-        writer.WriteElement("Maximized", WindowState == FormWindowState.Maximized);
-
-        writer.WriteEndElement(); // window
-
-        WriteColWidthsXml("WhenToWatch", writer);
-        WriteColWidthsXml("AllInOne", writer);
-
-        writer.WriteStartElement("Splitter");
-        writer.WriteAttributeToXml("Distance", splitContainer1.SplitterDistance);
-        writer.WriteAttributeToXml("HTMLCollapsed", splitContainer1.Panel2Collapsed);
-        writer.WriteEndElement(); // splitter
-
-        writer.WriteStartElement("ActionLayout");
-        writer.WriteAttributeToXml("State", Convert.ToBase64String(olvAction.SaveState()));
-        writer.WriteEndElement(); // ActionLayout
-
-        writer.WriteStartElement("WTWLayout");
-        writer.WriteAttributeToXml("State", Convert.ToBase64String(lvWhenToWatch.SaveState()));
-        writer.WriteEndElement(); // ActionLayout
-
-        writer.WriteEndElement(); // Layout
-        writer.WriteEndElement(); // tvrename
-        writer.WriteEndDocument();
-
+        await XmlHelper.SaveXmlFileAsync(layoutXML, PathManager.UILayoutFile.FullName);
         return true;
     }
 
-    private void WriteColWidthsXml(string thingName, XmlWriter writer)
+    private XDocument GenerateLayoutXML()
     {
-        ListView lv = ListViewByName(thingName);
+        return new XDocument(
+            new XDeclaration("1.0", "utf-8", "yes"), // XML Declaration
+            new XElement("TVRename",                     // Root Element
+                new XAttribute("Version", "2.1"),      // Attribute
+                new XElement("Layout",
+                    new XElement("Window",
+                        new XElement("Size",
+                            new XAttribute("Width", mLastNonMaximizedSize.Width),      // Attribute
+                            new XAttribute("Height", mLastNonMaximizedSize.Height)      // Attribute
+                            ),
+                        new XElement("Location",
+                            new XAttribute("X", mLastNonMaximizedLocation.X),
+                            new XAttribute("Y", mLastNonMaximizedLocation.Y)
+                            ),
+                        new XElement("Maximized", WindowState == FormWindowState.Maximized)
+                        ),
+                    ColWidthsXElement("WhenToWatch",lvWhenToWatch),
+                    ColWidthsXElement("AllInOne",olvAction),
+                    new XElement("Splitter",
+                        new XAttribute("Distance", splitContainer1.SplitterDistance),
+                        new XAttribute("HTMLCollapsed", splitContainer1.Panel2Collapsed)
+                        ),
+                    new XElement("ActionLayout",
+                        new XAttribute("State", Convert.ToBase64String(olvAction.SaveState())
+                        ),
+                    new XElement("WTWLayout",
+                        new XAttribute("State", Convert.ToBase64String(lvWhenToWatch.SaveState())))
+                    )
+                )
+            )
+        );
+    }
 
-        writer.WriteStartElement("ColumnWidths");
-        writer.WriteAttributeToXml("For", thingName);
+    private static XElement ColWidthsXElement(string thingName, ListView lv)
+    {
+        var returnElement = new XElement("ColumnWidths", new XAttribute("For", thingName));
         foreach (ColumnHeader lvc in lv.Columns)
         {
-            writer.WriteElement("Width", lvc.Width);
+            returnElement.Add(new XElement("Width", lvc.Width));
         }
 
-        // ReSharper disable once CommentTypo
-        writer.WriteEndElement(); // ColumnWidths
+        return returnElement;
     }
 
     #endregion
 
     private async void UI_FormClosing(object sender, FormClosingEventArgs e)
     {
-        // Cancel the close event immediately to keep the form open
-        e.Cancel = true;
-        bool keepOpenAftTasks = false;
+        e.Cancel = await CloseAndTidyUpAsync(e);
+    }
+
+    private async Task<bool> CloseAndTidyUpAsync(FormClosingEventArgs e)
+    {
         try
         {
             if (mDoc.Dirty() && !mDoc.Args.Unattended && !mDoc.Args.Hide && !TVSettings.Instance.AutoSaveOnExit)
@@ -1425,12 +1414,11 @@ public partial class UI : Form, IDialogParent
                 switch (res)
                 {
                     case DialogResult.Yes:
-                        mDoc.WriteXMLSettings();
+                        mDoc.WriteXMLSettingsAsync();
                         break;
 
                     case DialogResult.Cancel:
-                        keepOpenAftTasks = true;
-                        break;
+                        return true;
 
                     case DialogResult.No:
                         break;
@@ -1443,16 +1431,14 @@ public partial class UI : Form, IDialogParent
             if (mDoc.Dirty() && (mDoc.Args.Unattended || mDoc.Args.Hide || TVSettings.Instance.AutoSaveOnExit))
             {
                 //We have to assume that they wanted to save any settings
-                mDoc.WriteXMLSettings();
+                mDoc.WriteXMLSettingsAsync();
             }
 
-            if (keepOpenAftTasks) return;
-
             this.Cursor = Cursors.WaitCursor;
-            
+
             await CancellAllTasksAsync();
 
-            SaveLayoutXml();
+            await SaveLayoutXmlAsync();
             mDoc.TidyCaches();
             await SaveCaches();
             await mDoc.ClosingAsync();
@@ -1477,8 +1463,8 @@ public partial class UI : Form, IDialogParent
             MessageBox.Show(this, ex.Message + "\r\n\r\n" + ex.StackTrace, "Form Closing Error",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
-        e.Cancel = keepOpenAftTasks;
         Cursor = Cursors.Default;
+        return false;
     }
 
     private void ChooseSiteMenu(ToolStripSplitButton btn)
@@ -2567,9 +2553,9 @@ public partial class UI : Form, IDialogParent
     {
         try
         {
-            mDoc.WriteXMLSettings();
+            mDoc.WriteXMLSettingsAsync();
             await SaveCaches();
-            if (!SaveLayoutXml())
+            if (!await SaveLayoutXmlAsync())
             {
                 Logger.Error("Failed to Save Layout Configuration Files");
             }
@@ -2729,7 +2715,7 @@ public partial class UI : Form, IDialogParent
             var cts = new CancellationTokenSource();
             _shutdownManager.TrackCancellationToken(cts);
 
-            var dl = mDoc.DoDownloadsBG(progress,cts);
+            var dl = mDoc.DoDownloadsBG(progress, cts);
             _shutdownManager.TrackTask(dl);
             await dl;
 
@@ -2737,7 +2723,7 @@ public partial class UI : Form, IDialogParent
             {
                 // we've just finished a bunch of background downloads
                 await SaveCaches();
-                mDoc.SaveSettingsIfNeeded();
+                await mDoc.SaveSettingsIfNeededAsync();
                 await RefreshWTWAsync(false, true);
             }
             backgroundDownloadNowToolStripMenuItem.Enabled = true;
@@ -3256,7 +3242,7 @@ public partial class UI : Form, IDialogParent
         Logger.Info($"User asked to remove {si.ShowName} - removing now");
         mDoc.FilmLibrary.Remove(si);
         await mDoc.RunExportersAsync();
-        mDoc.SaveSettingsIfNeeded();
+        await mDoc.SaveSettingsIfNeededAsync();
 
         FillMyMovies();
     }
@@ -3401,7 +3387,7 @@ public partial class UI : Form, IDialogParent
         {
             return;
         }
-        
+
         var cts = new CancellationTokenSource();
         _shutdownManager.TrackCancellationToken(cts);
         await mDoc.UpdateMovieImagesScanAsync(sis, cts);
@@ -4125,11 +4111,12 @@ public partial class UI : Form, IDialogParent
         if (episode != null || lvr.MissingSeasons.HasAny())
         {
             showRightClickMenu.Add("Ignore Entire Season", async (_, _) => await IgnoreSelectedSeasons(lvr));
-            showRightClickMenu.Add("Force Refresh and Rescan Show", async (_, _) => {
+            showRightClickMenu.Add("Force Refresh and Rescan Show", async (_, _) =>
+            {
                 var x = new CancellationTokenSource();
                 _shutdownManager.TrackCancellationToken(x);
                 await ForceRefreshAndRescanShowsAsync(lvr, false, x);
-                });
+            });
         }
         showRightClickMenu.Add("Remove Selected", (_, _) => ActionDeleteSelected());
 

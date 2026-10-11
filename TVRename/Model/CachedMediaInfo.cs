@@ -8,7 +8,9 @@
 
 
 
+using SharpCompress.Writers;
 using System.Globalization;
+using WinCopies.Util;
 
 namespace TVRename;
 
@@ -290,71 +292,59 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
         }
     }
 
-    protected void WriteCommonFields(XmlWriter writer)
+    protected List<XElement> GenerateCommonXElements()
     {
-        writer.WriteElement("id", TvdbCode);
-        writer.WriteElement("mazeid", TvMazeCode);
-        writer.WriteElement("TMDBCode", TmdbCode);
-        writer.WriteElement("SeriesName", Name, true);
-        writer.WriteElement("lastupdated", SrvLastUpdated);
-        writer.WriteElement("LanguageId", ActualLocale?.PreferredLanguage?.TvdbId);
-        writer.WriteElement("RegionCode", ActualLocale?.PreferredRegion?.Abbreviation);
-        writer.WriteElement("TwitterId", TwitterId, true);
-        writer.WriteElement("InstagramId", InstagramId, true);
-        writer.WriteElement("FacebookId", FacebookId, true);
-        writer.WriteElement("TagLine", TagLine, true);
-        writer.WriteElement("Country", Country, true);
-        writer.WriteElement("posterURL", PosterUrl);
-        writer.WriteElement("FanartUrl", FanartUrl);
-        writer.WriteElement("banner", BannerString, true);
-        writer.WriteElement("TrailerUrl", TrailerUrl, true);
-        writer.WriteElement("WebURL", WebUrl, true);
-        writer.WriteElement("OfficialUrl", OfficialUrl, true);
-        writer.WriteElement("ShowLanguage", ShowLanguage);
-        writer.WriteElement("imdbId", Imdb, true);
-        writer.WriteElement("rageid", TvRageCode, true);
-        writer.WriteElement("network", Network, true);
-        writer.WriteElement("overview", Overview, true);
-        writer.WriteElement("rating", ContentRating);
-        writer.WriteElement("runtime", Runtime, true);
-        writer.WriteElement("seriesId", SeriesId, true);
-        writer.WriteElement("status", Status);
-        writer.WriteElement("siteRating", SiteRating, "0.##", CultureInfo.CreateSpecificCulture("en-US"));
-        writer.WriteElement("siteRatingCount", SiteRatingVotes);
-        writer.WriteElement("slug", Slug, true);
-        writer.WriteElement("Popularity", Popularity, "0.##", CultureInfo.CreateSpecificCulture("en-US"));
+        List<XElement> returnList = [
+            new XElement("id", TvdbCode),
+            new XElement("mazeid", TvMazeCode),
+            new XElement("TMDBCode", TmdbCode),
+            XmlHelper.GenerateOptionalXElement("SeriesName", Name),
+            new XElement("lastupdated", SrvLastUpdated),
+            XmlHelper.GenerateOptionalXElement("LanguageId", ActualLocale?.PreferredLanguage?.TvdbId),
+            new XElement("RegionCode", ActualLocale?.PreferredRegion?.Abbreviation),
+            XmlHelper.GenerateOptionalXElement("TwitterId", TwitterId),
+            XmlHelper.GenerateOptionalXElement("InstagramId", InstagramId),
+            XmlHelper.GenerateOptionalXElement("FacebookId", FacebookId),
+            XmlHelper.GenerateOptionalXElement("TagLine", TagLine),
+            XmlHelper.GenerateOptionalXElement("Country", Country),
+            new XElement("posterURL", PosterUrl),
+            new XElement("FanartUrl", FanartUrl),
+            XmlHelper.GenerateOptionalXElement("banner", BannerString),
+            XmlHelper.GenerateOptionalXElement("TrailerUrl", TrailerUrl),
+            XmlHelper.GenerateOptionalXElement("WebURL", WebUrl),
+            XmlHelper.GenerateOptionalXElement("OfficialUrl", OfficialUrl),
+            new XElement("ShowLanguage", ShowLanguage),
+            XmlHelper.GenerateOptionalXElement("imdbId", Imdb),
+            XmlHelper.GenerateOptionalXElement("rageid", TvRageCode.ToString()),
+            XmlHelper.GenerateOptionalXElement("network", Network),
+            XmlHelper.GenerateOptionalXElement("overview", Overview),
+            new XElement("rating", ContentRating),
+            XmlHelper.GenerateOptionalXElement("runtime", Runtime),
+            XmlHelper.GenerateOptionalXElement("seriesId", SeriesId),
+            new XElement("status", Status),
+            XmlHelper.GenerateDoubleXElement("siteRating", SiteRating, "0.##", CultureInfo.CreateSpecificCulture("en-US")),
+            new XElement("siteRatingCount", SiteRatingVotes),
+            XmlHelper.GenerateOptionalXElement("slug", Slug),
+            XmlHelper.GenerateDoubleXElement("Popularity", Popularity, "0.##", CultureInfo.CreateSpecificCulture("en-US"))
+            ];
 
         if (FirstAired != null && FirstAired > DateTime.Parse("1000-01-01"))
         {
-            writer.WriteElement("FirstAired", FirstAired.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+            returnList.Add(new XElement ("FirstAired", FirstAired.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)));
         }
 
-        writer.WriteStartElement("Actors");
-        foreach (Actor aa in GetActors())
-        {
-            aa.WriteXml(writer);
-        }
-        writer.WriteEndElement(); //Actors
-        writer.WriteStartElement("Crew");
-        foreach (Crew aa in Crew)
-        {
-            aa.WriteXml(writer);
-        }
-        writer.WriteEndElement(); //Crew
-        writer.WriteStartElement("Aliases");
-        foreach (string a in Aliases)
-        {
-            writer.WriteElement("Alias", a);
-        }
-        writer.WriteEndElement(); //Aliases
+        returnList.Add(GenerateActorsXElement());
+        returnList.Add(GenerateCrewXElement());
+        returnList.Add(GenerateAliasesXElement());
+        returnList.Add(GenerateGenresXElement());
 
-        writer.WriteStartElement("Genres");
-        foreach (string a in Genres)
-        {
-            writer.WriteElement("Genre", a);
-        }
-        writer.WriteEndElement(); //Genres
+        return returnList;
     }
+
+    private XElement GenerateActorsXElement() => XmlHelper.GenerateXmlElementsFromCollection("Actors", GetActors(), a => a.GenerateXElement());
+    private XElement GenerateCrewXElement() => XmlHelper.GenerateXmlElementsFromCollection("Crew", Crew, c => c.GenerateXElement());
+    private XElement GenerateAliasesXElement() => XmlHelper.GenerateStringsXMLElement(Aliases, "Aliases", "Alias");
+    private XElement GenerateGenresXElement() => XmlHelper.GenerateStringsXMLElement(Genres,"Genres", "Genre");
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     protected void LoadCommonXml(XElement seriesXml)

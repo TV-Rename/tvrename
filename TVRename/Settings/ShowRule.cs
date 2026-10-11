@@ -44,15 +44,15 @@ public class ShowRule
 
     public override string ToString() => $"ShowRule: {ActionInWords()} with parameters {First}, {Second} and usertext: {UserSuppliedText} ({RenumberAfter})";
 
-    public void WriteXml(XmlWriter writer)
+
+    internal XElement ToXElement()
     {
-        writer.WriteStartElement("Rule");
-        writer.WriteElement("DoWhatNow", (int)DoWhatNow);
-        writer.WriteElement("First", First);
-        writer.WriteElement("Second", Second);
-        writer.WriteElement("Text", UserSuppliedText);
-        writer.WriteElement("RenumberAfter", RenumberAfter);
-        writer.WriteEndElement(); // Rule
+        return new XElement("Rule",
+            new XElement("DoWhatNow", (int)DoWhatNow),
+            new XElement("First", First),
+            new XElement("Second", Second),
+            new XElement("Text", UserSuppliedText),
+            new XElement("RenumberAfter", RenumberAfter));
     }
 
     public string ActionInWords()

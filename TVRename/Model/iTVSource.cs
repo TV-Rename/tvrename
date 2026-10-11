@@ -14,7 +14,7 @@ namespace TVRename;
 // ReSharper disable once InconsistentNaming
 public interface iTVSource
 {
-    Task SetupAsync(FileInfo loadFrom, FileInfo cacheFile, bool showConnectionIssues);
+    Task SetupAsync(FileInfo loadFrom, FileInfo cacheFile, bool showConnectionIssues, CancellationToken token);
 
     Task<bool> ConnectAsync(bool showErrorMsgBox);
 

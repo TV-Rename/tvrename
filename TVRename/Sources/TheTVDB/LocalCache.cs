@@ -67,7 +67,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TheTVDB;
 
-    public async Task SetupAsync(FileInfo? loadFrom, FileInfo cache, bool showIssues)
+    public async Task SetupAsync(FileInfo? loadFrom, FileInfo cache, bool showIssues, CancellationToken token)
     {
         showConnectionIssues = showIssues;
 
@@ -80,8 +80,8 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return;
         }
 
-        bool mOk = CachePersistor.LoadMovieCache(loadFrom, this);
-        bool tvOk = CachePersistor.LoadTvCache(loadFrom, this);
+        bool mOk = await CachePersistor.LoadMovieCacheAsync(loadFrom, this, token);
+        bool tvOk = await CachePersistor.LoadTvCacheAsync(loadFrom, this, token);
         LoadOk = mOk && tvOk;
         LOGGER.Info($"Assumed we have updates until {LatestUpdateTime}");
     }

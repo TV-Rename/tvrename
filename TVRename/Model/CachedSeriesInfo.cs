@@ -313,38 +313,20 @@ public class CachedSeriesInfo : CachedMediaInfo
         }
     }
 
-    public void WriteXml(XmlWriter writer)
+    internal XElement GenerateXElement()
     {
-        writer.WriteStartElement("Series");
-        WriteCommonFields(writer);
+        return new XElement("Series",
+            GenerateCommonXElements(),
+            new XElement("airsDayOfWeek", AirsDay),
 
-        writer.WriteElement("airsDayOfWeek", AirsDay);
-        writer.WriteElement("Airs_Time", AirsTime?.ToString("HH:mm"), true);
-        writer.WriteElement("Type", SeriesType, true);
-        writer.WriteElement("SeasonOrderType", (int)SeasonOrderType);
-
-        writer.WriteStartElement("Seasons");
-        foreach (Season a in seasons)
-        {
-            a.WriteXml(writer);
-        }
-        writer.WriteEndElement(); //Seasons
-
-        writer.WriteStartElement("Episodes");
-        foreach (Episode e in Episodes)
-        {
-            writer.WriteEpisodeXml(e);
-        }
-        writer.WriteEndElement(); //Episodes
-
-        writer.WriteStartElement("Images");
-        foreach (ShowImage i in images)
-        {
-            i.WriteXml(writer);
-        }
-        writer.WriteEndElement(); //Images
-
-        writer.WriteEndElement(); // cachedSeries
+            XmlHelper.GenerateOptionalXElement("Airs_Time", AirsTime?.ToString("HH:mm")),
+            new XElement("Type", SeriesType),
+            new XElement("SeasonOrderType", (int)SeasonOrderType),
+            new XElement("Seasons", seasons.Select(s => s.GenerateXElement())),
+            new XElement("Episodes", Episodes.Select(e => e.GenerateEpisodeXElement())),
+            new XElement("Images", images.Select(i => i.GenerateXElement()))
+        );
+        throw new NotImplementedException();
     }
 
     public string? GetSeriesFanartPath() => FanartUrl.HasValue() ? FanartUrl : images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.background)?.ImageUrl;

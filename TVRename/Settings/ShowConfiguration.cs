@@ -591,94 +591,83 @@ public class ShowConfiguration : MediaConfiguration
         return keys.Count > 0 ? keys.Max() : 0;
     }
 
-    public void WriteXmlSettings(XmlWriter writer)
+    internal XElement GenerateXElement()
     {
-        writer.WriteStartElement("ShowItem");
+        return new XElement("ShowItem",
+            new XElement("UseCustomShowName", UseCustomShowName),
+            new XElement("CustomShowName", CustomShowName),
+            new XElement("UseCustomLanguage", UseCustomLanguage),
+            new XElement("CustomLanguageCode", CustomLanguageCode),
+            new XElement("UseCustomRegion", UseCustomRegion),
+            new XElement("CustomRegionCode", CustomRegionCode),
+            new XElement("ShowNextAirdate", ShowNextAirdate),
+            new XElement("TVDBID", TvdbCode),
+            new XElement("TVMAZEID", TVmazeCode),
+            new XElement("TMDBID", TmdbCode),
+            new XElement("LastName", LastName),
+            new XElement("ImdbCode", ImdbCode),
+            new XElement("FolderBase", AutoAddFolderBase),
+            new XElement("DoRename", DoRename),
+            new XElement("DoMissingCheck", DoMissingCheck),
+            new XElement("CountSpecials", CountSpecials),
+            new XElement("DVDOrder", DvdOrder),
+            new XElement("AlternateOrder", AlternateOrder),
+            new XElement("ForceCheckNoAirdate", ForceCheckNoAirdate),
+            new XElement("ForceCheckFuture", ForceCheckFuture),
+            new XElement("UseSequentialMatch", UseSequentialMatch),
+            new XElement("UseAirDateMatch", UseAirDateMatch),
+            new XElement("UseEpNameMatch", UseEpNameMatch),
+            new XElement("CustomFolderFormat", AutoAddCustomFolderFormat),
+            new XElement("AutoAddType", (int)AutoAddType),
+            new XElement("ConfigurationProvider", (int)ConfigurationProvider),
+            new XElement("BannersLastUpdatedOnDisk", BannersLastUpdatedOnDisk),
+            new XElement("TimeZone", ShowTimeZone),
+            new XElement("ManualFoldersReplaceAutomatic", ManualFoldersReplaceAutomatic),
+            new XElement("UseCustomSearchURL", UseCustomSearchUrl),
+            new XElement("CustomSearchURL", CustomSearchUrl),
+            new XElement("UseCustomNamingFormat", UseCustomNamingFormat),
+            new XElement("CustomNamingFormat", CustomNamingFormat),
+            XmlHelper.GenerateIntsXMLElement(IgnoreSeasons, "IgnoreSeasons", "Ignore"),
+            XmlHelper.GenerateStringsXMLElement(AliasNames, "AliasNames", "Alias"),
+            GenerateSeasonRulesXElement(),
+            GenerateSeasonFoldersXElement()
+        );
+    }
 
-        writer.WriteElement("UseCustomShowName", UseCustomShowName);
-        writer.WriteElement("CustomShowName", CustomShowName);
-        writer.WriteElement("UseCustomLanguage", UseCustomLanguage);
-        writer.WriteElement("CustomLanguageCode", CustomLanguageCode);
-        writer.WriteElement("UseCustomRegion", UseCustomRegion);
-        writer.WriteElement("CustomRegionCode", CustomRegionCode);
-        writer.WriteElement("ShowNextAirdate", ShowNextAirdate);
-        writer.WriteElement("TVDBID", TvdbCode);
-        writer.WriteElement("TVMAZEID", TVmazeCode);
-        writer.WriteElement("TMDBID", TmdbCode);
-        writer.WriteElement("LastName", LastName);
-        writer.WriteElement("ImdbCode", ImdbCode);
-        writer.WriteElement("FolderBase", AutoAddFolderBase);
-        writer.WriteElement("DoRename", DoRename);
-        writer.WriteElement("DoMissingCheck", DoMissingCheck);
-        writer.WriteElement("CountSpecials", CountSpecials);
-        writer.WriteElement("DVDOrder", DvdOrder);
-        writer.WriteElement("AlternateOrder", AlternateOrder);
-        writer.WriteElement("ForceCheckNoAirdate", ForceCheckNoAirdate);
-        writer.WriteElement("ForceCheckFuture", ForceCheckFuture);
-        writer.WriteElement("UseSequentialMatch", UseSequentialMatch);
-        writer.WriteElement("UseAirDateMatch", UseAirDateMatch);
-        writer.WriteElement("UseEpNameMatch", UseEpNameMatch);
-        writer.WriteElement("CustomFolderFormat", AutoAddCustomFolderFormat);
-        writer.WriteElement("AutoAddType", (int)AutoAddType);
-        writer.WriteElement("ConfigurationProvider", (int)ConfigurationProvider);
-        writer.WriteElement("BannersLastUpdatedOnDisk", BannersLastUpdatedOnDisk);
-        writer.WriteElement("TimeZone", ShowTimeZone);
-        writer.WriteElement("ManualFoldersReplaceAutomatic", ManualFoldersReplaceAutomatic);
 
-        writer.WriteStartElement("IgnoreSeasons");
-        foreach (int i in IgnoreSeasons)
-        {
-            writer.WriteElement("Ignore", i);
-        }
-        writer.WriteEndElement();
 
-        writer.WriteStartElement("AliasNames");
-        foreach (string str in AliasNames)
-        {
-            writer.WriteElement("Alias", str);
-        }
-        writer.WriteEndElement();
-
-        writer.WriteElement("UseCustomSearchURL", UseCustomSearchUrl);
-        writer.WriteElement("CustomSearchURL", CustomSearchUrl);
-
-        writer.WriteElement("UseCustomNamingFormat", UseCustomNamingFormat);
-        writer.WriteElement("CustomNamingFormat", CustomNamingFormat);
-
+    private List<XElement> GenerateSeasonRulesXElement()
+    {
+        List<XElement> seasonRules = [];
         foreach (KeyValuePair<int, List<ShowRule>> kvp in SeasonRules)
         {
             if (kvp.Value.IsAny())
             {
-                writer.WriteStartElement("Rules");
-                writer.WriteAttributeToXml("SeasonNumber", kvp.Key);
-
-                foreach (ShowRule r in kvp.Value)
-                {
-                    r.WriteXml(writer);
-                }
-
-                writer.WriteEndElement(); // Rules
+                seasonRules.Add(new XElement("Rules",
+                    new XAttribute("SeasonNumber", kvp.Key),
+                    kvp.Value.Select(r => r.ToXElement())
+                ));
             }
         }
+        return seasonRules;
+    }
+
+    private List<XElement> GenerateSeasonFoldersXElement()
+    {
+        List<XElement> seasonFolders = [];
+    
         foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations)
         {
+
             if (kvp.Value.IsAny())
             {
-                writer.WriteStartElement("SeasonFolders");
-
-                writer.WriteAttributeToXml("SeasonNumber", kvp.Key);
-
-                foreach (string s in kvp.Value)
-                {
-                    writer.WriteStartElement("Folder");
-                    writer.WriteAttributeToXml("Location", s);
-                    writer.WriteEndElement(); // Folder
-                }
-
-                writer.WriteEndElement(); // Rules
+                seasonFolders.Add(new XElement("SeasonFolders",
+                    new XAttribute("SeasonNumber", kvp.Key),
+                    kvp.Value.Select(s => new XElement("Folder", new XAttribute("Location", s)))
+                ));
             }
         }
-        writer.WriteEndElement(); // ShowItem
+        return seasonFolders;
     }
 
     protected override async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)

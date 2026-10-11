@@ -55,17 +55,20 @@ public class MediaImage
     {
     }
 
-    protected void WriteCoreXml(XmlWriter writer)
+    protected IEnumerable<XElement?> GenerateCoreXElements()
     {
-        writer.WriteElement("Id", Id);
-        writer.WriteElement("ImageUrl", ImageUrl, true);
-        writer.WriteElement("ImageStyle", (int)ImageStyle);
-        writer.WriteElement("Subject", (int)Subject);
-        writer.WriteElement("LanguageCode", LanguageCode, true);
-        writer.WriteElement("Resolution", Resolution, true);
-        writer.WriteElement("Rating", Rating);
-        writer.WriteElement("RatingCount", RatingCount);
-        writer.WriteElement("ThumbnailUrl", ThumbnailUrl, true);
+        return
+        [
+            new XElement("Id", Id),
+            new XElement("ImageUrl", ImageUrl),
+            new XElement("ImageStyle", (int)ImageStyle),
+            new XElement("Subject", (int)Subject),
+            XmlHelper.GenerateOptionalXElement("LanguageCode", LanguageCode),
+            XmlHelper.GenerateOptionalXElement("Resolution", Resolution),
+            new XElement("Rating", Rating),
+            new XElement("RatingCount", RatingCount),
+            XmlHelper.GenerateOptionalXElement("ThumbnailUrl", ThumbnailUrl)
+        ];
     }
 
     public override string ToString() => $"{ImageStyle} for {Subject} ({Id})";

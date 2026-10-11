@@ -49,17 +49,16 @@ public class Actor
         ActorName = name;
     }
 
-    public void WriteXml(XmlWriter writer)
+    internal XElement GenerateXElement()
     {
-        writer.WriteStartElement("Actor");
-        writer.WriteElement("Id", ActorId);
-        writer.WriteElement("Image", ActorImage, true);
-        writer.WriteElement("Name", ActorName, true);
-        writer.WriteElement("Role", ActorRole, true);
-        //writer.WriteElement("SeriesId", ActorSeriesId, true);
-        writer.WriteElement("SortOrder", ActorSortOrder);
-        writer.WriteEndElement();
+        return new XElement("Actor",
+            new XElement("Id", ActorId),
+            XmlHelper.GenerateOptionalXElement("Image", ActorImage),
+            XmlHelper.GenerateOptionalXElement("Name", ActorName),
+            XmlHelper.GenerateOptionalXElement("Role", ActorRole),
+            //new XElement("SeriesId", ActorSeriesId),
+            new XElement("SortOrder", ActorSortOrder)
+            );
     }
-
     public bool AsSelf() => ActorName == ActorRole;
 }

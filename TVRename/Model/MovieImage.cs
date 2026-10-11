@@ -25,11 +25,11 @@ public class MovieImage : MediaImage
         Subject = ImageSubject.movie;
     }
 
-    public void WriteXml(XmlWriter writer)
+    public XElement GenerateXElement()
     {
-        writer.WriteStartElement("MovieImage");
-        WriteCoreXml(writer);
-        writer.WriteElement("MovieId", MovieId);
-        writer.WriteEndElement(); //MovieImage
+        return new XElement("MovieImage",
+            GenerateCoreXElements(),
+            new XElement("MovieId", MovieId)
+        );
     }
 }

@@ -9,7 +9,10 @@
 // All the processing and work should be done in here, nothing in UI.cs
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
+using Microsoft.VisualBasic;
 using Polly;
+using SharpCompress.Writers;
+using System.Security.Policy;
 using TVRename.Forms;
 using TVRename.Forms.Tools;
 using TVRename.Settings.AppState;
@@ -342,11 +345,11 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     public bool Dirty() => mDirty;
 
-    public void SaveSettingsIfNeeded()
+    public async Task SaveSettingsIfNeededAsync()
     {
         if (Dirty() && TVSettings.Instance.AutoSaveOnExit)
         {
-            WriteXMLSettings();
+            await WriteXMLSettingsAsync();
         }
     }
 
@@ -533,7 +536,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
     }
 
     // ReSharper disable once InconsistentNaming
-    public void WriteXMLSettings()
+    public async Task WriteXMLSettingsAsync()
     {
         try
         {
@@ -546,7 +549,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
                             $"Retry {retryCount}/3 to save {PathManager.TVDocSettingsFile.FullName}.");
                     });
 
-            retryPolicy.Execute(WriteXmlSettingsInternal);
+            await retryPolicy.Execute(WriteXmlSettingsInternalAsync);
         }
         catch (Exception e)
         {
@@ -555,11 +558,11 @@ public class TVDoc : IDisposable, IAsyncDisposable
                 MessageBoxButtons.YesNo, MessageBoxIcon.Error);
             if (dr != DialogResult.No)
             {
-                WriteXMLSettings();
+                await WriteXMLSettingsAsync();
             }
         }
     }
-    private void WriteXmlSettingsInternal()
+    private async Task WriteXmlSettingsInternalAsync()
     {
         DirectoryInfo di = PathManager.TVDocSettingsFile.Directory;
         if (!di.Exists)
@@ -570,53 +573,38 @@ public class TVDoc : IDisposable, IAsyncDisposable
         FileHelper.Rotate(PathManager.TVDocSettingsFile.FullName);
         Logger.Info($"Saving Settings to {PathManager.TVDocSettingsFile.FullName}");
 
-        XmlWriterSettings settings = new()
-        {
-            Indent = true,
-            NewLineOnAttributes = true
-        };
+        var settingsXML = GenerateSettingsXML();
 
-        using (XmlWriter writer = XmlWriter.Create(PathManager.TVDocSettingsFile.FullName, settings))
-        {
-            writer.WriteStartDocument();
-            writer.WriteStartElement("TVRename");
-
-            writer.WriteAttributeToXml("Version", "2.1");
-
-            TVSettings.Instance.WriteXML(writer); // <Settings>
-
-            writer.WriteStartElement("MyShows");
-            foreach (ShowConfiguration si in TvLibrary.Shows)
-            {
-                si.WriteXmlSettings(writer);
-            }
-
-            writer.WriteEndElement(); // MyShows
-
-            writer.WriteStartElement("MyMovies");
-            foreach (MovieConfiguration? si in FilmLibrary.Movies)
-            {
-                si.WriteXmlSettings(writer);
-            }
-
-            writer.WriteEndElement(); // MyMovies
-
-            XmlHelper.WriteStringsToXml(TVSettings.Instance.LibraryFolders, writer, "MonitorFolders", "Folder");
-            XmlHelper.WriteStringsToXml(TVSettings.Instance.MovieLibraryFolders, writer, "MovieLibraryFolders", "Folder");
-            XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoreFolders, writer, "IgnoreFolders", "Folder");
-            XmlHelper.WriteStringsToXml(TVSettings.Instance.DownloadFolders, writer, "FinderSearchFolders", "Folder");
-            XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoredAutoAddHints.Distinct(), writer, "IgnoredAutoAddHints", "Hint");
-            writer.WriteStringsToXml(TVSettings.Instance.Ignore, "IgnoreItems", "Ignore");
-            writer.WriteStringsToXml(TVSettings.Instance.PreviouslySeenEpisodes, "PreviouslySeenEpisodes", "Episode");
-            writer.WriteStringsToXml(TVSettings.Instance.PreviouslySeenMovies, "PreviouslySeenMovies", "Movie");
-
-            writer.WriteEndElement(); // tvrename
-            writer.WriteEndDocument();
-        }
+        await XmlHelper.SaveXmlFileAsync(settingsXML, PathManager.TVDocSettingsFile.FullName);
 
         mDirty = false;
         Stats().Save();
     }
+
+    XDocument GenerateSettingsXML()
+    {
+        return new XDocument(
+           new XDeclaration("1.0", "utf-8", "yes"), // XML Declaration
+           new XElement("TVRename",                     // Root Element
+               new XAttribute("Version", "2.1"),      // Attribute
+               TVSettings.Instance.GenerateXElement(), // <Settings>
+                GenerateShowsXmlElement("MyShows"),
+                GenerateMoviesXmlElement("MyMovies"),
+                XmlHelper.GenerateStringsXMLElement(TVSettings.Instance.LibraryFolders, "MonitorFolders", "Folder"),
+                XmlHelper.GenerateStringsXMLElement(TVSettings.Instance.MovieLibraryFolders, "MovieLibraryFolders", "Folder"),
+                XmlHelper.GenerateStringsXMLElement(TVSettings.Instance.IgnoreFolders, "IgnoreFolders", "Folder"),
+                XmlHelper.GenerateStringsXMLElement(TVSettings.Instance.DownloadFolders, "FinderSearchFolders", "Folder"),
+                XmlHelper.GenerateStringsXMLElement(TVSettings.Instance.IgnoredAutoAddHints.Distinct(), "IgnoredAutoAddHints", "Hint"),
+                XmlHelper.GenerateStringsXMLElement(TVSettings.Instance.Ignore.Select(i => i.FileAndPath), "IgnoreItems", "Ignore"),
+                XmlHelper.GenerateIntsXMLElement(TVSettings.Instance.PreviouslySeenEpisodes, "PreviouslySeenEpisodes", "Episode"),
+                XmlHelper.GenerateIntsXMLElement(TVSettings.Instance.PreviouslySeenMovies, "PreviouslySeenMovies", "Movie")
+               )
+           );
+    }
+
+    private XElement GenerateShowsXmlElement(string elementName) => XmlHelper.GenerateXmlElementsFromCollection(elementName, TvLibrary.Shows, si => si.GenerateXElement());
+
+    private XElement GenerateMoviesXmlElement(string elementName) => XmlHelper.GenerateXmlElementsFromCollection(elementName, FilmLibrary.Movies, si => si.GenerateXElement());
 
     // ReSharper disable once InconsistentNaming
     private bool LoadXMLSettings(FileInfo? from)
@@ -808,7 +796,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         }
 
         await RunExportersAsync();
-        SaveSettingsIfNeeded();
+        await SaveSettingsIfNeededAsync();
     }
 
     internal async Task UpdateMediaAsync(bool download, bool unattended, bool hidden, UI owner, CancellationTokenSource cts)
@@ -850,7 +838,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             UpdateDenormalisations();
         }
         await RunExportersAsync();
-        SaveSettingsIfNeeded();
+        await SaveSettingsIfNeededAsync();
     }
 
     public IEnumerable<MediaNotFoundException> ShowProblems => cacheManager.Problems.Where(x => x.SourceType == MediaConfiguration.MediaType.tv);
@@ -2265,7 +2253,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
     private Task? saveCachesTask;
     public async Task StartSavingCachesAsync()
     {
-        if (saveCachesTask is null || !(saveCachesTask.IsCompleted))
+        if (saveCachesTask is null || saveCachesTask.IsCompleted)
         {
             saveCachesTask = SaveCachesAsync();
         }

@@ -87,19 +87,24 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         //Always get the final notification when the event thread is shutting down
         //so we can unregister.
 
-        SystemEvents.SessionEnded += OnSessionEnded;
+        SystemEvents.SessionEnded += OnSessionEndedAsync;
     }
 
     /*  Triggered when the user is actually logging off or shutting down the system
      */
-    private void OnSessionEnded(object sender, SessionEndedEventArgs e)
+    private async void OnSessionEndedAsync(object sender, SessionEndedEventArgs e)
     {
-        if (doc?.Dirty() ?? false)
+        if (doc is null)
         {
-            doc?.WriteXMLSettings();
+            return;
         }
 
-        doc?.ClosingAsync();
+        if (doc.Dirty())
+        {
+            await doc.WriteXMLSettingsAsync();
+        }
+
+        await doc.ClosingAsync();
     }
 
     private async Task<TVDoc> LoadSettingsAsync(CommandLineArgs commandLineArgs)
@@ -149,12 +154,12 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             // Try loading TheTVDB cache file
             bool showIssues = commandLineArgs is { Unattended: false, Hide: false };
             AlertUser("Loading TVDB Cache", 20);
-            await TheTVDB.LocalCache.Instance.SetupAsync(tvdbFile, PathManager.TVDBFile, showIssues);
+            await TheTVDB.LocalCache.Instance.SetupAsync(tvdbFile, PathManager.TVDBFile, showIssues, CancellationToken.None );
 
             AlertUser("Loading TVMaze Cache", 30);
-            await TVmaze.LocalCache.Instance.SetupAsync(tvMazeFile, PathManager.TVmazeFile, showIssues);
+            await TVmaze.LocalCache.Instance.SetupAsync(tvMazeFile, PathManager.TVmazeFile, showIssues, CancellationToken.None);
             AlertUser("Loading TMDB Cache", 40);
-            await TMDB.LocalCache.Instance.SetupAsync(tmdbFile, PathManager.TmdbFile, showIssues);
+            await TMDB.LocalCache.Instance.SetupAsync(tmdbFile, PathManager.TmdbFile, showIssues, CancellationToken.None);
 
             if (recover)
             {

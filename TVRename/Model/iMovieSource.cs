@@ -14,7 +14,7 @@ namespace TVRename;
 // ReSharper disable once InconsistentNaming
 public interface iMovieSource
 {
-    Task SetupAsync(FileInfo loadFrom, FileInfo cacheFile, bool showIssues);
+    Task SetupAsync(FileInfo loadFrom, FileInfo cacheFile, bool showIssues, CancellationToken token);
 
     Task<bool> ConnectAsync(bool showErrorMsgBox);
 

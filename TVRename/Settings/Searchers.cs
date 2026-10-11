@@ -91,19 +91,15 @@ public class Searchers : List<SearchEngine>
         CurrentSearch = s;
     }
 
-    public void WriteXml(XmlWriter writer, string startElementName)
+    internal XElement GenerateXElement(string startElementName)
     {
-        writer.WriteStartElement(startElementName);
-        writer.WriteElement("Current", CurrentSearch.Name);
-
-        foreach (SearchEngine e in this)
-        {
-            writer.WriteStartElement("Choice");
-            writer.WriteAttributeToXml("Name", e.Name);
-            writer.WriteAttributeToXml("URL2", e.Url);
-            writer.WriteEndElement();
-        }
-
-        writer.WriteEndElement(); // TheSearchers
+        return new XElement(startElementName,
+            new XElement("Current", CurrentSearch.Name),
+            from e in this
+            select new XElement("Choice",
+                new XAttribute("Name", e.Name),
+                new XAttribute("URL2", e.Url)
+            )
+        );
     }
 }

@@ -7,6 +7,7 @@
 //
 
 using Polly;
+using TVRename;
 
 namespace TVRename;
 
@@ -44,7 +45,7 @@ internal static class CachePersistor
 
         try
         {
-            retryPolicy.Execute(() => { SaveCacheInternal(series, movies, cacheFile, timestamp); });
+            retryPolicy.Execute(async () => { await SaveCacheInternalAsync(series, movies, cacheFile, timestamp); });
         }
         catch (Exception e)
         {
@@ -58,7 +59,7 @@ internal static class CachePersistor
             }
         }
     }
-    private static void SaveCacheInternal(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp)
+    private static async Task SaveCacheInternalAsync(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp)
     {
         DirectoryInfo di = cacheFile.Directory;
         if (!di.Exists)
@@ -85,7 +86,7 @@ internal static class CachePersistor
         }
         try
         {
-            SaveCacheFileInternal(series, movies, cacheFile, timestamp);
+            await SaveCacheFileInternalAsync(series, movies, cacheFile, timestamp);
         }
         catch (Exception e)
         {
@@ -94,54 +95,63 @@ internal static class CachePersistor
         }
     }
 
-    private static void SaveCacheFileInternal(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile,
+    private static async Task SaveCacheFileInternalAsync(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile,
         long timestamp)
     {
-        // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
-        // to make loading easy
-        XmlWriterSettings settings = new()
-        {
-            Indent = true,
-            NewLineOnAttributes = true
-        };
+        Logger.Info($"Saving Cache to {cacheFile.FullName}");
+        var cacheXml = GenerateCacheXML(series,movies,timestamp);
+        await XmlHelper.SaveXmlFileAsync(cacheXml, cacheFile.FullName);
+    }
 
-        using XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings);
-        writer.WriteStartDocument();
-        writer.WriteStartElement("Data");
-        writer.WriteAttributeToXml("time", timestamp);
+    private static XDocument GenerateCacheXML(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, long timestamp)
+    {
+        return new XDocument(
+           new XDeclaration("1.0", "utf-8", "yes"), // XML Declaration
+           new XElement("Data",                     // Root Element
+               new XAttribute("time", timestamp),      // Attribute
+               GenerateSeriesXElements(series), // <Series> elements
+               GenerateMovieXElements(movies)   // <Movie> elements
+                )
+           );
+    }
 
-        foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
-        {
-            if (kvp.Value.SrvLastUpdated != 0)
-            {
-                kvp.Value.WriteXml(writer);
-            }
-            else
-            {
-                Logger.Info(
-                    $"Cannot save TV {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it has not been updated at all.");
-            }
-        }
-
+    private static List<XElement> GenerateMovieXElements(ConcurrentDictionary<int, CachedMovieInfo> movies)
+    {
+        var elements = new List<XElement>();
         foreach (KeyValuePair<int, CachedMovieInfo> kvp in movies)
         {
             if (!kvp.Value.IsSearchResultOnly)
             {
-                kvp.Value.WriteXml(writer);
+                elements.Add(kvp.Value.GenerateXElement());
             }
             else
             {
                 Logger.Info(
-                    $"Cannot save Movie {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it is a search result that has not been used.");
+                    $"Cannot save Movie {kvp.Key} ({kvp.Value.Name}) to cache as it is a search result that has not been used.");
             }
         }
-
-        writer.WriteEndElement(); // data
-
-        writer.WriteEndDocument();
+        return elements;
     }
 
-    public static bool LoadTvCache<T>(FileInfo loadFrom, T cache) where T : MediaCache, iTVSource
+    private static List<XElement> GenerateSeriesXElements(ConcurrentDictionary<int, CachedSeriesInfo> series)
+    {
+        var elements = new List<XElement>();
+        foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
+        {
+            if (kvp.Value.SrvLastUpdated != 0)
+            {
+                elements.Add(kvp.Value.GenerateXElement());
+            }
+            else
+            {
+                Logger.Info(
+                    $"Cannot save TV {kvp.Key} ({kvp.Value.Name}) to cache as it has not been updated at all.");
+            }
+        }
+        return elements;
+    }
+
+    public static async Task<bool> LoadTvCacheAsync<T>(FileInfo loadFrom, T cache, CancellationToken token) where T : MediaCache, iTVSource
     {
         Logger.Info($"Loading Cache from: {loadFrom.FullName}");
         if (!loadFrom.Exists)
@@ -151,7 +161,9 @@ internal static class CachePersistor
 
         try
         {
-            XElement x = XElement.Load(loadFrom.FullName);
+            await using var stream = new System.IO.FileStream(loadFrom.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read, bufferSize: 4096, useAsync: true);
+
+            XElement x = await XElement.LoadAsync(stream, LoadOptions.None, token);
             bool r = ProcessSeriesXml(x, cache);
             if (r)
             {
@@ -168,7 +180,7 @@ internal static class CachePersistor
         }
     }
 
-    public static bool LoadMovieCache<T>(FileInfo loadFrom, T cache) where T : MediaCache, iMovieSource
+    public static async Task<bool> LoadMovieCacheAsync<T>(FileInfo loadFrom, T cache, CancellationToken token) where T : MediaCache, iMovieSource
     {
         Logger.Info($"Loading Cache from: {loadFrom.FullName}");
         if (!loadFrom.Exists)
@@ -178,7 +190,9 @@ internal static class CachePersistor
 
         try
         {
-            XElement x = XElement.Load(loadFrom.FullName);
+            await using var stream = new System.IO.FileStream(loadFrom.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read, bufferSize: 4096, useAsync: true);
+
+            XElement x = await XElement.LoadAsync(stream, LoadOptions.None, token);
             bool r = ProcessMovieXml(x, cache);
             if (r)
             {
@@ -280,7 +294,7 @@ internal static class CachePersistor
 
             foreach (XElement episodeXml in x.Descendants("Episode"))
             {
-                Episode e = episodeXml.CreateEpisode();
+                Episode e = new(episodeXml);
                 if (e.Ok())
                 {
                     cache.AddOrUpdateEpisode(e);

@@ -266,54 +266,42 @@ public class MovieConfiguration : MediaConfiguration
 
     public int? CollectionOrder;
 
-    public void WriteXmlSettings(XmlWriter writer)
+    internal XElement GenerateXElement()
     {
-        writer.WriteStartElement("MovieItem");
-
-        writer.WriteElement("UseManualLocations", UseManualLocations);
-
-        writer.WriteElement("useAutomaticFolders", UseAutomaticFolders);
-        writer.WriteElement("automaticFolderRoot", AutomaticFolderRoot);
-
-        writer.WriteElement("UseCustomFolderNameFormat", UseCustomFolderNameFormat);
-        writer.WriteElement("CustomFolderNameFormat", CustomFolderNameFormat);
-
-        writer.WriteElement("CustomNamingFormat", CustomNamingFormat);
-        writer.WriteElement("UseCustomNamingFormat", UseCustomNamingFormat);
-
-        writer.WriteElement("UseCustomShowName", UseCustomShowName);
-        writer.WriteElement("CustomShowName", CustomShowName);
-        writer.WriteElement("UseCustomLanguage", UseCustomLanguage);
-        writer.WriteElement("CustomLanguageCode", CustomLanguageCode);
-        writer.WriteElement("UseCustomRegion", UseCustomRegion);
-        writer.WriteElement("CustomRegionCode", CustomRegionCode);
-        writer.WriteElement("TVDBID", TvdbCode);
-        writer.WriteElement("TVMAZEID", TVmazeCode);
-        writer.WriteElement("TMDBID", TmdbCode);
-        writer.WriteElement("DoRename", DoRename);
-        writer.WriteElement("ImdbCode", ImdbCode);
-        writer.WriteElement("LastName", LastName);
-        writer.WriteElement("DoMissingCheck", DoMissingCheck);
-        writer.WriteElement("ConfigurationProvider", (int)ConfigurationProvider);
-        writer.WriteElement("Format", (int)Format);
-        writer.WriteElement("ForceCheckNoAirdate", ForceCheckNoAirdate);
-        writer.WriteElement("ForceCheckFuture", ForceCheckFuture);
-
-        writer.WriteStartElement("Locations");
-        foreach (string str in ManualLocations)
-        {
-            writer.WriteElement("Location", str);
-        }
-        writer.WriteEndElement();
-
-        writer.WriteStartElement("AliasNames");
-        foreach (string str in AliasNames)
-        {
-            writer.WriteElement("Alias", str);
-        }
-        writer.WriteEndElement();
-
-        writer.WriteEndElement(); // ShowItem
+        return new XElement("MovieItem",
+            new XElement("UseManualLocations", UseManualLocations),
+            new XElement("useAutomaticFolders", UseAutomaticFolders),
+            new XElement("automaticFolderRoot", AutomaticFolderRoot),
+            new XElement("UseCustomFolderNameFormat", UseCustomFolderNameFormat),
+            new XElement("CustomFolderNameFormat", CustomFolderNameFormat),
+            new XElement("CustomNamingFormat", CustomNamingFormat),
+            new XElement("UseCustomNamingFormat", UseCustomNamingFormat),
+            new XElement("UseCustomShowName", UseCustomShowName),
+            new XElement("CustomShowName", CustomShowName),
+            new XElement("UseCustomLanguage", UseCustomLanguage),
+            new XElement("CustomLanguageCode", CustomLanguageCode),
+            new XElement("UseCustomRegion", UseCustomRegion),
+            new XElement("CustomRegionCode", CustomRegionCode),
+            new XElement("TVDBID", TvdbCode),
+            new XElement("TVMAZEID", TVmazeCode),
+            new XElement("TMDBID", TmdbCode),
+            new XElement("DoRename", DoRename),
+            new XElement("ImdbCode", ImdbCode),
+            new XElement("LastName", LastName),
+            new XElement("DoMissingCheck", DoMissingCheck),
+            new XElement("ConfigurationProvider", (int)ConfigurationProvider),
+            new XElement("Format", (int)Format),
+            new XElement("ForceCheckNoAirdate", ForceCheckNoAirdate),
+            new XElement("ForceCheckFuture", ForceCheckFuture),
+            ManualLocations.Count != 0
+                ? new XElement("Locations",
+                    ManualLocations.Select(str => new XElement("Location", str)))
+                : null,
+            AliasNames.Count != 0
+                ? new XElement("AliasNames",
+                    AliasNames.Select(str => new XElement("Alias", str)))
+                : null
+        );
     }
 
     public async Task<IEnumerable<string>> AutomaticLocationsAsync() => (await AllFolderLocationsAsync(false, false)).Values.SelectMany(x => x);

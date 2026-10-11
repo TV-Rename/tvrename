@@ -72,7 +72,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     public override string CacheSourceName() => "TMDB";
 
-    public async Task SetupAsync(FileInfo? loadFrom, FileInfo cache, bool showIssues)
+    public async Task SetupAsync(FileInfo? loadFrom, FileInfo cache, bool showIssues, CancellationToken token)
     {
         System.Diagnostics.Debug.Assert(cache != null);
         CacheFile = cache;
@@ -89,8 +89,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             return;
         }
 
-        var movieLoadTask = CachePersistor.LoadMovieCache(loadFrom, this);
-        var tvLoadTask = CachePersistor.LoadTvCache(loadFrom, this);
+        var movieLoadTask = await CachePersistor.LoadMovieCacheAsync(loadFrom, this, token);
+        var tvLoadTask = await CachePersistor.LoadTvCacheAsync(loadFrom, this, token);
 
         LoadOk = movieLoadTask && tvLoadTask;
     }

@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using CefSharp.DevTools.CSS;
+using SharpCompress.Writers;
 using System.IO;
 
 namespace TVRename;
@@ -13,6 +15,24 @@ namespace TVRename;
 public static class XmlHelper
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+    public static async Task SaveXmlFileAsync(XDocument doc, string filePath, CancellationToken cancellationToken = default)
+    {
+        // 1. Configure the writer to support async behavior
+        XmlWriterSettings settings = new XmlWriterSettings
+        {
+            Async = true,
+            Indent = true, // Optional: formats the XML output
+            NewLineOnAttributes = true
+        };
+
+        // 2. Open the file stream and the writer asynchronously
+        await using FileStream stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true);
+        await using XmlWriter xmlWriter = XmlWriter.Create(stream, settings);
+
+        // 3. Save the document
+        await doc.SaveAsync(xmlWriter, cancellationToken).ConfigureAwait(false);
+    }
 
     public static void WriteStringsToXml(IEnumerable<string> strings, XmlWriter writer, string elementName, string stringName)
     {
@@ -47,7 +67,7 @@ public static class XmlHelper
         res = res.Trim();
         return res;
     }
-    public static string ValidXml(this string content) => new([.. content.Where(XmlConvert.IsXmlChar)]);
+    public static string ValidXml(this string? content) => string.IsNullOrEmpty(content) ? string.Empty : new([.. content.Where(XmlConvert.IsXmlChar)]);
 
     public static void WriteElement(this XmlWriter writer, string elementName, string? value)
     {
@@ -67,7 +87,7 @@ public static class XmlHelper
         ArgumentException.ThrowIfNullOrWhiteSpace("filePath");
 
         // Use FileOptions.Asynchronous to ensure true non-blocking OS I/O
-        using FileStream stream = new (
+        using FileStream stream = new(
             filePath,
             FileMode.Create,
             FileAccess.Write,
@@ -100,6 +120,22 @@ public static class XmlHelper
     public static void WriteElement(this XmlWriter writer, string elementName, double value)
     {
         WriteElement(writer, elementName, value, null, null);
+    }
+
+    public static XElement? GenerateDoubleXElement(string elementName, double? value, string? format, IFormatProvider? provider)
+    {
+        if (!value.HasValue)
+        {
+            return null;
+        }
+        if (format is null || provider is null)
+        {
+            return new XElement(elementName, value);
+        }
+        else
+        {
+            return new XElement(elementName, value?.ToString(format, provider));
+        }
     }
 
     public static void WriteElement(this XmlWriter writer, string elementName, double? value, string? format, IFormatProvider? provider)
@@ -160,6 +196,36 @@ public static class XmlHelper
         writer.WriteStartAttribute(attributeName);
         writer.WriteValue(value.ValidXml());
         writer.WriteEndAttribute();
+    }
+
+    public static XElement GenerateXmlElementsFromCollection<T>(string elementName, IEnumerable<T> collection, Func<T, XElement> elementGenerator)
+    {
+        XElement root = new(elementName);
+        foreach (T item in collection)
+        {
+            root.Add(elementGenerator(item));
+        }
+        return root;
+    }
+
+
+    public static XElement GenerateStringsXMLElement(IEnumerable<string> strings, string elementName, string stringName)
+    {
+        XElement root = new(elementName);
+        foreach (string s in strings)
+        {
+            root.Add(new XElement(stringName, s));
+        }
+        return root;
+    }
+    public static XElement GenerateIntsXMLElement(IEnumerable<int> strings, string elementName, string stringName)
+    {
+        XElement root = new(elementName);
+        foreach (int s in strings)
+        {
+            root.Add(new XElement(stringName, s));
+        }
+        return root;
     }
 
     public static XElement GetOrCreateElement(this XElement root, string elementName)
@@ -223,6 +289,7 @@ public static class XmlHelper
         writer.WriteValue(value);
         writer.WriteEndAttribute();
     }
+
 
     public static void WriteInfo(this XmlWriter writer, string elemName, string? attribute, string? attributeVal, string? value)
     {
@@ -320,29 +387,30 @@ public static class XmlHelper
         }
     }
 
-    public static void WriteInfo(this XmlWriter writer, string elemName, string? attribute, string? attributeVal)
+
+    internal static XElement? GenerateInfoXElement(string elemName, string? attribute, string? attributeVal)
     {
         if (string.IsNullOrEmpty(attributeVal))
         {
-            return;
+            return null;
         }
 
-        writer.WriteStartElement(elemName);
+        var element = new XElement(elemName);
         if (!string.IsNullOrEmpty(attribute))
         {
-            writer.WriteAttributeString(attribute, attributeVal);
+            element.Add(new XAttribute(attribute, attributeVal));
         }
-        writer.WriteEndElement();
+        return element;
     }
 
-    public static void WriteInfo(this XmlWriter writer, string elemName, string? attribute, bool attributeVal)
+    public static XElement? GenerateInfoXElement(string elemName, string? attribute, bool attributeVal)
     {
-        writer.WriteStartElement(elemName);
+        var element = new XElement(elemName);
         if (!string.IsNullOrEmpty(attribute))
         {
-            writer.WriteAttributeString(attribute, XmlConvert.ToString(attributeVal));
+            element.Add(new XAttribute(attribute, XmlConvert.ToString(attributeVal)));
         }
-        writer.WriteEndElement();
+        return element;
     }
 
     public static bool? ExtractBool(this XElement xmlSettings, string elementName)
@@ -509,39 +577,37 @@ public static class XmlHelper
         return [.. rootElement.Descendants(token).Select(n => new IgnoreItem(n.Value))];
     }
 
-    internal static void WriteStringsToXml(this XmlWriter writer, IEnumerable<IgnoreItem> ignores, string elementName, string stringName)
+    internal static XElement? GenerateOptionalXElement(string elementName, string? value) => GenerateXElement(elementName, value, true);
+
+    private static XElement? GenerateXElement(string elementName, string? value, bool ignoreIfBlank)
     {
-        writer.WriteStartElement(elementName);
-        foreach (IgnoreItem ss in ignores)
+        if (ignoreIfBlank && string.IsNullOrWhiteSpace(value))
         {
-            writer.WriteStartElement(stringName);
-            writer.WriteValue(ss.FileAndPath);
-            writer.WriteEndElement();
+            return null;
         }
-        writer.WriteEndElement();
+
+        return new XElement(elementName, value.ValidXml());
     }
 
-    internal static void WriteStringsToXml(this XmlWriter writer, PreviouslySeenEpisodes previouslySeenEpisodes, string elementName, string stringName)
+    internal static XElement? GenerateOptionalXElement(string elementName, int? value, bool ignoreZero = true)
     {
-        writer.WriteStartElement(elementName);
-        foreach (int ep in previouslySeenEpisodes)
+        if (value is null)
         {
-            writer.WriteStartElement(stringName);
-            writer.WriteValue(ep);
-            writer.WriteEndElement();
+            return null;
         }
-        writer.WriteEndElement();
+        if (ignoreZero && value <= 0)
+        {
+            return null;
+        }
+        return new XElement(elementName, value);
     }
 
-    internal static void WriteStringsToXml(this XmlWriter writer, PreviouslySeenMovies previouslySeenMovies, string elementName, string stringName)
+    internal static XElement? GenerateOptionalXElement(string elementName, DateTime? value)
     {
-        writer.WriteStartElement(elementName);
-        foreach (int ep in previouslySeenMovies)
+        if (value == null)
         {
-            writer.WriteStartElement(stringName);
-            writer.WriteValue(ep);
-            writer.WriteEndElement();
-        }
-        writer.WriteEndElement();
+            return null;
+        }  
+        return new XElement(elementName, value);
     }
 }

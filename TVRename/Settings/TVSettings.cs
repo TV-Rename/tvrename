@@ -8,6 +8,7 @@
 
 
 using Humanizer;
+using SharpCompress.Writers;
 using System.Text.RegularExpressions;
 using TVRename.Forms;
 
@@ -492,380 +493,349 @@ public sealed class TVSettings
 
         ResumeDatPath = f2.Exists ? f2.FullName : "";
     }
-
-    // ReSharper disable once FunctionComplexityOverflow
-    public void WriteXML(XmlWriter writer)
+    internal XElement GenerateXElement()
     {
-        writer.WriteStartElement("Settings");
-        writer.WriteElement("UseColoursOnWtw", UseColoursOnWtw);
-        writer.WriteElement("BGDownload", BGDownload);
-        writer.WriteElement("OfflineMode", OfflineMode);
-        writer.WriteElement("ShowBasicShowDetails", ShowBasicShowDetails);
-        writer.WriteElement("DetailedRSSJSONLogging", DetailedRSSJSONLogging);
-        writer.WriteElement("RSSUseCloudflare", RSSUseCloudflare);
-        writer.WriteElement("SearchJSONUseCloudflare", SearchJSONUseCloudflare);
-        writer.WriteElement("qBitTorrentDownloadFilesFirst", qBitTorrentDownloadFilesFirst);
-        writer.WriteElement("ReplaceWithBetterQuality", ReplaceWithBetterQuality);
-        writer.WriteElement("ReplaceMoviesWithBetterQuality", ReplaceMoviesWithBetterQuality);
-        writer.WriteElement("ForceSystemToDecideOnUpgradedFiles", ForceSystemToDecideOnUpgradedFiles);
-        writer.WriteElement("ExportWTWRSS", ExportWTWRSS);
-        writer.WriteElement("ExportWTWRSSTo", ExportWTWRSSTo);
-        writer.WriteElement("ExportWTWICAL", ExportWTWICAL);
-        writer.WriteElement("ExportWTWICALTo", ExportWTWICALTo);
-        writer.WriteElement("ExportWTWXML", ExportWTWXML);
-        writer.WriteElement("ExportWTWXMLTo", ExportWTWXMLTo);
-        writer.WriteElement("ExportWTWTXT", ExportWTWTXT);
-        writer.WriteElement("ExportWTWTXTTo", ExportWTWTXTTo);
-        writer.WriteElement("WTWRecentDays", WTWRecentDays);
-        writer.WriteElement("ExportMissingXML", ExportMissingXML);
-        writer.WriteElement("ExportMissingXMLTo", ExportMissingXMLTo);
-        writer.WriteElement("ExportMissingCSV", ExportMissingCSV);
-        writer.WriteElement("ExportMissingCSVTo", ExportMissingCSVTo);
-        writer.WriteElement("ExportRenamingXML", ExportRenamingXML);
-        writer.WriteElement("ExportRenamingXMLTo", ExportRenamingXMLTo);
-        writer.WriteElement("ExportRecentM3U", ExportRecentM3U);
-        writer.WriteElement("ExportRecentM3UTo", ExportRecentM3UTo);
-        writer.WriteElement("ExportRecentASX", ExportRecentASX);
-        writer.WriteElement("ExportRecentASXTo", ExportRecentASXTo);
-        writer.WriteElement("ExportRecentWPL", ExportRecentWPL);
-        writer.WriteElement("ExportRecentWPLTo", ExportRecentWPLTo);
-        writer.WriteElement("ExportRecentXSPF", ExportRecentXSPF);
-        writer.WriteElement("ExportRecentXSPFTo", ExportRecentXSPFTo);
-        writer.WriteElement("ExportShowsTXT", ExportShowsTXT);
-        writer.WriteElement("ExportShowsTXTTo", ExportShowsTXTTo);
-        writer.WriteElement("ExportShowsHTML", ExportShowsHTML);
-        writer.WriteElement("ExportShowsHTMLTo", ExportShowsHTMLTo);
-        writer.WriteElement("ExportFOXML", ExportFOXML);
-        writer.WriteElement("ExportFOXMLTo", ExportFOXMLTo);
-        writer.WriteElement("FolderMonitorDelaySeconds", FolderMonitorDelaySeconds);
+        return new XElement("Settings",
+        new XElement("ExportFOXML", ExportFOXML),
+        new XElement("ExportFOXMLTo", ExportFOXMLTo),
+        new XElement("FolderMonitorDelaySeconds", FolderMonitorDelaySeconds),
+        new XElement("NamingStyle", NamingStyle.StyleString),
+        new XElement("NotificationAreaIcon", NotificationAreaIcon),
+        new XElement("OtherExtensions", OtherExtensionsString),
+        new XElement("StartupTab2", TabNameForNumber(StartupTab)),
+        new XElement("SubtitleExtensions", subtitleExtensionsString),
+        new XElement("VideoExtensions", VideoExtensionsString),
+        new XElement("UseColoursOnWtw", UseColoursOnWtw),
+        new XElement("BGDownload", BGDownload),
+        new XElement("OfflineMode", OfflineMode),
+        new XElement("ShowBasicShowDetails", ShowBasicShowDetails),
+        new XElement("DetailedRSSJSONLogging", DetailedRSSJSONLogging),
+        new XElement("RSSUseCloudflare", RSSUseCloudflare),
+        new XElement("SearchJSONUseCloudflare", SearchJSONUseCloudflare),
+        new XElement("qBitTorrentDownloadFilesFirst", qBitTorrentDownloadFilesFirst),
+        new XElement("ReplaceWithBetterQuality", ReplaceWithBetterQuality),
+        new XElement("ReplaceMoviesWithBetterQuality", ReplaceMoviesWithBetterQuality),
+        new XElement("ForceSystemToDecideOnUpgradedFiles", ForceSystemToDecideOnUpgradedFiles),
+        new XElement("ExportWTWRSS", ExportWTWRSS),
+        new XElement("ExportWTWRSSTo", ExportWTWRSSTo),
+        new XElement("ExportWTWICAL", ExportWTWICAL),
+        new XElement("ExportWTWICALTo", ExportWTWICALTo),
+        new XElement("ExportWTWXML", ExportWTWXML),
+        new XElement("ExportWTWXMLTo", ExportWTWXMLTo),
+        new XElement("ExportWTWTXT", ExportWTWTXT),
+        new XElement("ExportWTWTXTTo", ExportWTWTXTTo),
+        new XElement("WTWRecentDays", WTWRecentDays),
+        new XElement("ExportMissingXML", ExportMissingXML),
+        new XElement("ExportMissingXMLTo", ExportMissingXMLTo),
+        new XElement("ExportMissingCSV", ExportMissingCSV),
+        new XElement("ExportMissingCSVTo", ExportMissingCSVTo),
+        new XElement("ExportRenamingXML", ExportRenamingXML),
+        new XElement("ExportRenamingXMLTo", ExportRenamingXMLTo),
+        new XElement("ExportRecentM3U", ExportRecentM3U),
+        new XElement("ExportRecentM3UTo", ExportRecentM3UTo),
+        new XElement("ExportRecentASX", ExportRecentASX),
+        new XElement("ExportRecentASXTo", ExportRecentASXTo),
+        new XElement("ExportRecentWPL", ExportRecentWPL),
+        new XElement("ExportRecentWPLTo", ExportRecentWPLTo),
+        new XElement("ExportRecentXSPF", ExportRecentXSPF),
+        new XElement("ExportRecentXSPFTo", ExportRecentXSPFTo),
+        new XElement("ExportShowsTXT", ExportShowsTXT),
+        new XElement("ExportShowsTXTTo", ExportShowsTXTTo),
+        new XElement("ExportShowsHTML", ExportShowsHTML),
+        new XElement("ExportShowsHTMLTo", ExportShowsHTMLTo),
+        new XElement("ExportMissingMoviesCSV", ExportMissingMoviesCSV),
+        new XElement("ExportMissingMoviesCSVTo", ExportMissingMoviesCSVTo),
+        new XElement("ExportMissingMoviesXML", ExportMissingMoviesXML),
+        new XElement("ExportMissingMoviesXMLTo", ExportMissingMoviesXMLTo),
+        new XElement("ExportMoviesTXT", ExportMoviesTXT),
+        new XElement("ExportMoviesTXTTo", ExportMoviesTXTTo),
+        new XElement("ExportMoviesHTML", ExportMoviesHTML),
+        new XElement("ExportMoviesHTMLTo", ExportMoviesHTMLTo),
+        new XElement("ExportRSSMaxDays", ExportRSSMaxDays),
+        new XElement("ExportRSSMaxShows", ExportRSSMaxShows),
+        new XElement("ExportRSSDaysPast", ExportRSSDaysPast),
+        new XElement("MinRSSSeeders", MinRSSSeeders),
+        new XElement("KeepTogether", KeepTogether),
+        new XElement("KeepTogetherType", (int)keepTogetherMode),
+        new XElement("UIScanType", (int)UIScanType),
+        new XElement("KeepTogetherExtensions", keepTogetherExtensionsString),
+        new XElement("LeadingZeroOnSeason", LeadingZeroOnSeason),
+        new XElement("ShowInTaskbar", ShowInTaskbar),
+        new XElement("ShowAccessibilityOptions", ShowAccessibilityOptions),
+        new XElement("IgnoreSamples", IgnoreSamples),
+        new XElement("ForceLowercaseFilenames", ForceLowercaseFilenames),
+        new XElement("RenameTxtToSub", RenameTxtToSub),
+        new XElement("ParallelDownloads", ParallelDownloads),
+        new XElement("AutoSelectShowInMyShows", AutoSelectShowInMyShows),
+        new XElement("AutoCreateFolders", AutoCreateFolders),
+        new XElement("ShowEpisodePictures", ShowEpisodePictures),
+        new XElement("HideWtWSpoilers", HideWtWSpoilers),
+        new XElement("HideMyShowsSpoilers", HideMyShowsSpoilers),
+        new XElement("SpecialsFolderName", SpecialsFolderName),
+        new XElement("SeasonFolderFormat", SeasonFolderFormat),
+        new XElement("DefaultTvShowFolderFormat", DefaultTvShowFolderFormat),
+        new XElement("MovieFolderFormat", MovieFolderFormat),
+        new XElement("MovieFilenameFormat", MovieFilenameFormat),
+        new XElement("uTorrentPath", uTorrentPath),
+        new XElement("ResumeDatPath", ResumeDatPath),
+        new XElement("SearchRSS", SearchRSS),
+        new XElement("SearchJSON", SearchJSON),
+        new XElement("SearchJSONManualScanOnly", SearchJSONManualScanOnly),
+        new XElement("SearchRSSManualScanOnly", SearchRSSManualScanOnly),
+        new XElement("EpImgs", EpThumbnails),
+        new XElement("NFOShows", NFOShows),
+        new XElement("NFOEpisodes", NFOEpisodes),
+        new XElement("NFOMovies", NFOMovies),
+        new XElement("KODIImages", KODIImages),
+        new XElement("pyTivoMeta", pyTivoMeta),
+        new XElement("pyTivoMetaSubFolder", pyTivoMetaSubFolder),
+        new XElement("wdLiveTvMeta", wdLiveTvMeta),
+        new XElement("FolderJpg", FolderJpg),
+        new XElement("FolderJpgIs", (int)FolderJpgIs),
+        new XElement("MonitoredFoldersScanType", (int)MonitoredFoldersScanType),
+        new XElement("DefaultProvider", (int)DefaultProvider),
+        new XElement("CheckuTorrent", CheckuTorrent),
+        new XElement("RestrictMissingExportsToFullScans", RestrictMissingExportsToFullScans),
+        new XElement("RemoveCompletedTorrents", RemoveCompletedTorrents),
+        new XElement("CheckqBitTorrent", CheckqBitTorrent),
+        new XElement("qBitTorrentHost", qBitTorrentHost),
+        new XElement("qBitTorrentPort", qBitTorrentPort),
+        new XElement("qBitTorrentUseHTTPS", qBitTorrentUseHTTPS),
+        new XElement("qBitTorrentAPIVersion", (int)qBitTorrentAPIVersion),
+        new XElement("RenameCheck", RenameCheck),
+        new XElement("PreventMove", PreventMove),
+        new XElement("MissingCheck", MissingCheck),
+        new XElement("MoveLibraryFiles", MoveLibraryFiles),
+        new XElement("AutoSearchForDownloadedFiles", AutoSearchForDownloadedFiles),
+        new XElement("UpdateFileDates", CorrectFileDates),
+        new XElement("SearchLocally", SearchLocally),
+        new XElement("IgnorePreviouslySeen", IgnorePreviouslySeen),
+        new XElement("IgnorePreviouslySeenMovies", IgnorePreviouslySeenMovies),
+        new XElement("LeaveOriginals", LeaveOriginals),
+        new XElement("RetainLanguageSpecificSubtitles", RetainLanguageSpecificSubtitles),
+        new XElement("ForceBulkAddToUseSettingsOnly", ForceBulkAddToUseSettingsOnly),
+        new XElement("AutoMergeEpisodes", AutoMergeDownloadEpisodes),
+        new XElement("AutoMergeLibraryEpisodes", AutoMergeLibraryEpisodes),
+        new XElement("MonitorFolders", MonitorFolders),
+        new XElement("StartupScan", runStartupCheck),
+        new XElement("PeriodicScan", runPeriodicCheck),
+        new XElement("PeriodicScanHours", periodCheckHours),
+        new XElement("PeriodicUpdateCacheHours", periodUpdateCacheHours),
+        new XElement("RemoveDownloadDirectoriesFiles", RemoveDownloadDirectoriesFiles),
+        new XElement("RemoveDownloadDirectoriesFilesMatchMovies", RemoveDownloadDirectoriesFilesMatchMovies),
+        new XElement("RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck", RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck),
+        new XElement("RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength", RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength),
+        new XElement("DoBulkAddInScan", DoBulkAddInScan),
+        new XElement("DeleteShowFromDisk", DeleteShowFromDisk),
+        new XElement("DeleteMovieFromDisk", DeleteMovieFromDisk),
+        new XElement("UseGlobalReleaseDate", UseGlobalReleaseDate),
+        new XElement("FileNameCaseSensitiveMatch", FileNameCaseSensitiveMatch),
+        new XElement("CopySubsFolders", CopySubsFolders),
+        new XElement("SABAPIKey", SABAPIKey),
+        new XElement("CheckSABnzbd", CheckSABnzbd),
+        new XElement("SABHostPort", SABHostPort),
+        new XElement("PreferredLanguage", PreferredTVDBLanguage.Abbreviation),
+        new XElement("WTWDoubleClick", (int)WTWDoubleClick),
+        new XElement("EpJPGs", EpJPGs),
+        new XElement("SeriesJpg", SeriesJpg),
+        new XElement("GroupMissingEpisodesIntoSeasons", GroupMissingEpisodesIntoSeasons),
+        new XElement("Mede8erXML", Mede8erXML),
+        new XElement("ShrinkLargeMede8erImages", ShrinkLargeMede8erImages),
+        new XElement("FanArtJpg", FanArtJpg),
+        new XElement("DeleteEmpty", Tidyup.DeleteEmpty),
+        new XElement("DeleteEmptyIsRecycle", Tidyup.DeleteEmptyIsRecycle),
+        new XElement("EmptyIgnoreWords", Tidyup.EmptyIgnoreWords),
+        new XElement("EmptyIgnoreWordList", Tidyup.EmptyIgnoreWordList),
+        new XElement("EmptyIgnoreExtensions", Tidyup.EmptyIgnoreExtensions),
+        new XElement("EmptyIgnoreExtensionList", Tidyup.EmptyIgnoreExtensionList),
+        new XElement("EmptyMaxSizeCheck", Tidyup.EmptyMaxSizeCheck),
+        new XElement("EmptyMaxSizeMB", Tidyup.EmptyMaxSizeMB),
+        new XElement("BetaMode", (int)mode),
+        new XElement("PercentDirtyUpgrade", upgradeDirtyPercent),
+        new XElement("PercentBetter", replaceMargin),
+        new XElement("BaseSeasonName", defaultSeasonWord),
+        new XElement("SearchSeasonNames", searchSeasonWordsString),
+        new XElement("PreferredRSSSearchTerms", preferredRSSSearchTermsString),
+        new XElement("UnwantedRSSSearchTerms", unwantedRSSSearchTermsString),
+        new XElement("BulkAddIgnoreRecycleBin", BulkAddIgnoreRecycleBin),
+        new XElement("BulkAddCompareNoVideoFolders", BulkAddCompareNoVideoFolders),
+        new XElement("AutoAddMovieTerms", AutoAddMovieTerms),
+        new XElement("AutoAddIgnoreSuffixes", AutoAddIgnoreSuffixes),
+        new XElement("SearchJSONURL", SearchJSONURL),
+        new XElement("SearchJSONRootNode", SearchJSONRootNode),
+        new XElement("SearchJSONFilenameToken", SearchJSONFilenameToken),
+        new XElement("SearchJSONURLToken", SearchJSONURLToken),
+        new XElement("SearchJSONFileSizeToken", SearchJSONFileSizeToken),
+        new XElement("SearchJSONSeedersToken", SearchJSONSeedersToken),
+        new XElement("PriorityReplaceTerms", PriorityReplaceTerms),
+        new XElement("CopyFutureDatedEpsFromSearchFolders", CopyFutureDatedEpsFromSearchFolders),
+        new XElement("ShareLogs", ShareLogs),
+        new XElement("PostpendThe", PostpendThe),
+        new XElement("IgnoreAllSpecials", IgnoreAllSpecials),
+        new XElement("UseFullPathNameToMatchLibraryFolders", UseFullPathNameToMatchLibraryFolders),
+        new XElement("UseFullPathNameToMatchSearchFolders", UseFullPathNameToMatchSearchFolders),
+        new XElement("AutoAddAsPartOfQuickRename", AutoAddAsPartOfQuickRename),
+        new XElement("AutomateAutoAddWhenOneShowFound", AutomateAutoAddWhenOneShowFound),
+        new XElement("AutomateAutoAddWhenOneMovieFound", AutomateAutoAddWhenOneMovieFound),
+        new XElement("SubsFolderNamesString", SubsFolderNamesString),
 
-        writer.WriteElement("ExportMoviesTXT", ExportMoviesTXT);
-        writer.WriteElement("ExportMoviesTXTTo", ExportMoviesTXTTo);
-        writer.WriteElement("ExportMoviesHTML", ExportMoviesHTML);
-        writer.WriteElement("ExportMoviesHTMLTo", ExportMoviesHTMLTo);
-        writer.WriteElement("ExportMissingMoviesXML", ExportMissingMoviesXML);
-        writer.WriteElement("ExportMissingMoviesXMLTo", ExportMissingMoviesXMLTo);
-        writer.WriteElement("ExportMissingMoviesCSV", ExportMissingMoviesCSV);
-        writer.WriteElement("ExportMissingMoviesCSVTo", ExportMissingMoviesCSVTo);
+        new XElement("ChooseWhenMultipleEpisodesMatch", ChooseWhenMultipleEpisodesMatch),
 
-        writer.WriteElement("StartupTab2", TabNameForNumber(StartupTab));
-        writer.WriteElement("NamingStyle", NamingStyle.StyleString);
-        writer.WriteElement("NotificationAreaIcon", NotificationAreaIcon);
-        writer.WriteElement("VideoExtensions", VideoExtensionsString);
-        writer.WriteElement("OtherExtensions", OtherExtensionsString);
-        writer.WriteElement("SubtitleExtensions", subtitleExtensionsString);
-        writer.WriteElement("ExportRSSMaxDays", ExportRSSMaxDays);
-        writer.WriteElement("ExportRSSMaxShows", ExportRSSMaxShows);
-        writer.WriteElement("ExportRSSDaysPast", ExportRSSDaysPast);
-        writer.WriteElement("MinRSSSeeders", MinRSSSeeders);
-        writer.WriteElement("KeepTogether", KeepTogether);
-        writer.WriteElement("KeepTogetherType", (int)keepTogetherMode);
-        writer.WriteElement("UIScanType", (int)UIScanType);
-        writer.WriteElement("KeepTogetherExtensions", keepTogetherExtensionsString);
-        writer.WriteElement("LeadingZeroOnSeason", LeadingZeroOnSeason);
-        writer.WriteElement("ShowInTaskbar", ShowInTaskbar);
-        writer.WriteElement("ShowAccessibilityOptions", ShowAccessibilityOptions);
-        writer.WriteElement("IgnoreSamples", IgnoreSamples);
-        writer.WriteElement("ForceLowercaseFilenames", ForceLowercaseFilenames);
-        writer.WriteElement("RenameTxtToSub", RenameTxtToSub);
-        writer.WriteElement("ParallelDownloads", ParallelDownloads);
-        writer.WriteElement("AutoSelectShowInMyShows", AutoSelectShowInMyShows);
-        writer.WriteElement("AutoCreateFolders", AutoCreateFolders);
-        writer.WriteElement("ShowEpisodePictures", ShowEpisodePictures);
-        writer.WriteElement("HideWtWSpoilers", HideWtWSpoilers);
-        writer.WriteElement("HideMyShowsSpoilers", HideMyShowsSpoilers);
-        writer.WriteElement("SpecialsFolderName", SpecialsFolderName);
-        writer.WriteElement("SeasonFolderFormat", SeasonFolderFormat);
-        writer.WriteElement("DefaultTvShowFolderFormat", DefaultTvShowFolderFormat);
-        writer.WriteElement("MovieFolderFormat", MovieFolderFormat);
-        writer.WriteElement("MovieFilenameFormat", MovieFilenameFormat);
-        writer.WriteElement("uTorrentPath", uTorrentPath);
-        writer.WriteElement("ResumeDatPath", ResumeDatPath);
-        writer.WriteElement("SearchRSS", SearchRSS);
-        writer.WriteElement("SearchJSON", SearchJSON);
-        writer.WriteElement("SearchJSONManualScanOnly", SearchJSONManualScanOnly);
-        writer.WriteElement("SearchRSSManualScanOnly", SearchRSSManualScanOnly);
-        writer.WriteElement("EpImgs", EpThumbnails);
-        writer.WriteElement("NFOShows", NFOShows);
-        writer.WriteElement("NFOEpisodes", NFOEpisodes);
-        writer.WriteElement("NFOMovies", NFOMovies);
-        writer.WriteElement("KODIImages", KODIImages);
-        writer.WriteElement("pyTivoMeta", pyTivoMeta);
-        writer.WriteElement("pyTivoMetaSubFolder", pyTivoMetaSubFolder);
-        writer.WriteElement("wdLiveTvMeta", wdLiveTvMeta);
-        writer.WriteElement("FolderJpg", FolderJpg);
-        writer.WriteElement("FolderJpgIs", (int)FolderJpgIs);
-        writer.WriteElement("MonitoredFoldersScanType", (int)MonitoredFoldersScanType);
-        writer.WriteElement("DefaultProvider", (int)DefaultProvider);
-        writer.WriteElement("CheckuTorrent", CheckuTorrent);
-        writer.WriteElement("RestrictMissingExportsToFullScans", RestrictMissingExportsToFullScans);
-        writer.WriteElement("RemoveCompletedTorrents", RemoveCompletedTorrents);
-        writer.WriteElement("CheckqBitTorrent", CheckqBitTorrent);
-        writer.WriteElement("qBitTorrentHost", qBitTorrentHost);
-        writer.WriteElement("qBitTorrentPort", qBitTorrentPort);
-        writer.WriteElement("qBitTorrentUseHTTPS", qBitTorrentUseHTTPS);
-        writer.WriteElement("qBitTorrentAPIVersion", (int)qBitTorrentAPIVersion);
-        writer.WriteElement("RenameCheck", RenameCheck);
-        writer.WriteElement("PreventMove", PreventMove);
-        writer.WriteElement("MissingCheck", MissingCheck);
-        writer.WriteElement("MoveLibraryFiles", MoveLibraryFiles);
-        writer.WriteElement("AutoSearchForDownloadedFiles", AutoSearchForDownloadedFiles);
-        writer.WriteElement("UpdateFileDates", CorrectFileDates);
-        writer.WriteElement("SearchLocally", SearchLocally);
-        writer.WriteElement("IgnorePreviouslySeen", IgnorePreviouslySeen);
-        writer.WriteElement("IgnorePreviouslySeenMovies", IgnorePreviouslySeenMovies);
-        writer.WriteElement("LeaveOriginals", LeaveOriginals);
-        writer.WriteElement("RetainLanguageSpecificSubtitles", RetainLanguageSpecificSubtitles);
-        writer.WriteElement("ForceBulkAddToUseSettingsOnly", ForceBulkAddToUseSettingsOnly);
-        writer.WriteElement("AutoMergeEpisodes", AutoMergeDownloadEpisodes);
-        writer.WriteElement("AutoMergeLibraryEpisodes", AutoMergeLibraryEpisodes);
-        writer.WriteElement("MonitorFolders", MonitorFolders);
-        writer.WriteElement("StartupScan", runStartupCheck);
-        writer.WriteElement("PeriodicScan", runPeriodicCheck);
-        writer.WriteElement("PeriodicScanHours", periodCheckHours);
-        writer.WriteElement("PeriodicUpdateCacheHours", periodUpdateCacheHours);
-        writer.WriteElement("RemoveDownloadDirectoriesFiles", RemoveDownloadDirectoriesFiles);
-        writer.WriteElement("RemoveDownloadDirectoriesFilesMatchMovies", RemoveDownloadDirectoriesFilesMatchMovies);
-        writer.WriteElement("RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck", RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck);
-        writer.WriteElement("RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength", RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength);
-        writer.WriteElement("DoBulkAddInScan", DoBulkAddInScan);
-        writer.WriteElement("DeleteShowFromDisk", DeleteShowFromDisk);
-        writer.WriteElement("DeleteMovieFromDisk", DeleteMovieFromDisk);
-        writer.WriteElement("UseGlobalReleaseDate", UseGlobalReleaseDate);
-        writer.WriteElement("FileNameCaseSensitiveMatch", FileNameCaseSensitiveMatch);
-        writer.WriteElement("CopySubsFolders", CopySubsFolders);
-        writer.WriteElement("SABAPIKey", SABAPIKey);
-        writer.WriteElement("CheckSABnzbd", CheckSABnzbd);
-        writer.WriteElement("SABHostPort", SABHostPort);
-        writer.WriteElement("PreferredLanguage", PreferredTVDBLanguage.Abbreviation);
-        writer.WriteElement("WTWDoubleClick", (int)WTWDoubleClick);
-        writer.WriteElement("EpJPGs", EpJPGs);
-        writer.WriteElement("SeriesJpg", SeriesJpg);
-        writer.WriteElement("GroupMissingEpisodesIntoSeasons", GroupMissingEpisodesIntoSeasons);
-        writer.WriteElement("Mede8erXML", Mede8erXML);
-        writer.WriteElement("ShrinkLargeMede8erImages", ShrinkLargeMede8erImages);
-        writer.WriteElement("FanArtJpg", FanArtJpg);
-        writer.WriteElement("DeleteEmpty", Tidyup.DeleteEmpty);
-        writer.WriteElement("DeleteEmptyIsRecycle", Tidyup.DeleteEmptyIsRecycle);
-        writer.WriteElement("EmptyIgnoreWords", Tidyup.EmptyIgnoreWords);
-        writer.WriteElement("EmptyIgnoreWordList", Tidyup.EmptyIgnoreWordList);
-        writer.WriteElement("EmptyIgnoreExtensions", Tidyup.EmptyIgnoreExtensions);
-        writer.WriteElement("EmptyIgnoreExtensionList", Tidyup.EmptyIgnoreExtensionList);
-        writer.WriteElement("EmptyMaxSizeCheck", Tidyup.EmptyMaxSizeCheck);
-        writer.WriteElement("EmptyMaxSizeMB", Tidyup.EmptyMaxSizeMB);
-        writer.WriteElement("BetaMode", (int)mode);
-        writer.WriteElement("PercentDirtyUpgrade", upgradeDirtyPercent);
-        writer.WriteElement("PercentBetter", replaceMargin);
-        writer.WriteElement("BaseSeasonName", defaultSeasonWord);
-        writer.WriteElement("SearchSeasonNames", searchSeasonWordsString);
-        writer.WriteElement("PreferredRSSSearchTerms", preferredRSSSearchTermsString);
-        writer.WriteElement("UnwantedRSSSearchTerms", unwantedRSSSearchTermsString);
-        writer.WriteElement("BulkAddIgnoreRecycleBin", BulkAddIgnoreRecycleBin);
-        writer.WriteElement("BulkAddCompareNoVideoFolders", BulkAddCompareNoVideoFolders);
-        writer.WriteElement("AutoAddMovieTerms", AutoAddMovieTerms);
-        writer.WriteElement("AutoAddIgnoreSuffixes", AutoAddIgnoreSuffixes);
-        writer.WriteElement("SearchJSONURL", SearchJSONURL);
-        writer.WriteElement("SearchJSONRootNode", SearchJSONRootNode);
-        writer.WriteElement("SearchJSONFilenameToken", SearchJSONFilenameToken);
-        writer.WriteElement("SearchJSONURLToken", SearchJSONURLToken);
-        writer.WriteElement("SearchJSONFileSizeToken", SearchJSONFileSizeToken);
-        writer.WriteElement("SearchJSONSeedersToken", SearchJSONSeedersToken);
-        writer.WriteElement("PriorityReplaceTerms", PriorityReplaceTerms);
-        writer.WriteElement("CopyFutureDatedEpsFromSearchFolders", CopyFutureDatedEpsFromSearchFolders);
-        writer.WriteElement("ShareLogs", ShareLogs);
-        writer.WriteElement("PostpendThe", PostpendThe);
-        writer.WriteElement("IgnoreAllSpecials", IgnoreAllSpecials);
-        writer.WriteElement("UseFullPathNameToMatchLibraryFolders", UseFullPathNameToMatchLibraryFolders);
-        writer.WriteElement("UseFullPathNameToMatchSearchFolders", UseFullPathNameToMatchSearchFolders);
-        writer.WriteElement("AutoAddAsPartOfQuickRename", AutoAddAsPartOfQuickRename);
-        writer.WriteElement("AutomateAutoAddWhenOneShowFound", AutomateAutoAddWhenOneShowFound);
-        writer.WriteElement("AutomateAutoAddWhenOneMovieFound", AutomateAutoAddWhenOneMovieFound);
-        writer.WriteElement("SubsFolderNamesString", SubsFolderNamesString);
+        new XElement("DefShowIncludeNoAirdate", DefShowIncludeNoAirdate),
+        new XElement("DefShowIncludeFuture", DefShowIncludeFuture),
+        new XElement("DefShowNextAirdate", DefShowNextAirdate),
+        new XElement("DefShowDVDOrder", DefShowDVDOrder),
+        new XElement("DefShowAlternateOrder", DefShowAlternateOrder),
+        new XElement("DefShowDoRenaming", DefShowDoRenaming),
+        new XElement("DefShowDoMissingCheck", DefShowDoMissingCheck),
+        new XElement("DefShowSequentialMatching", DefShowSequentialMatching),
+        new XElement("DefShowAirDateMatching", DefShowAirDateMatching),
+        new XElement("DefShowEpNameMatching", DefShowEpNameMatching),
+        new XElement("DefShowSpecialsCount", DefShowSpecialsCount),
+        new XElement("DefShowAutoFolders", DefShowAutoFolders),
+        new XElement("DefShowUseDefLocation", DefShowUseDefLocation),
+        new XElement("DefShowLocation", DefShowLocation),
+        new XElement("DefaultShowTimezoneName", DefaultShowTimezoneName),
+        new XElement("DefShowUseBase", DefShowUseBase),
+        new XElement("DefShowUseSubFolders", DefShowUseSubFolders),
+        new XElement("SampleFileMaxSizeMB", SampleFileMaxSizeMB),
 
-        writer.WriteElement("ChooseWhenMultipleEpisodesMatch", ChooseWhenMultipleEpisodesMatch);
+        new XElement("DefMovieDoRenaming", DefMovieDoRenaming),
+        new XElement("DefMovieDoMissingCheck", DefMovieDoMissingCheck),
+        new XElement("DefMovieUseutomaticFolders", DefMovieUseAutomaticFolders),
+        new XElement("DefMovieUseDefaultLocation", DefMovieUseDefaultLocation),
+        new XElement("DefMovieDefaultLocation", DefMovieDefaultLocation),
+        new XElement("DefaultMovieProvider", (int)DefaultMovieProvider),
+        new XElement("DefMovieCheckFutureDatedMovies", DefMovieCheckFutureDatedMovies),
+        new XElement("DefMovieCheckNoDatedMovies", DefMovieCheckNoDatedMovies),
 
-        writer.WriteElement("DefShowIncludeNoAirdate", DefShowIncludeNoAirdate);
-        writer.WriteElement("DefShowIncludeFuture", DefShowIncludeFuture);
-        writer.WriteElement("DefShowNextAirdate", DefShowNextAirdate);
-        writer.WriteElement("DefShowDVDOrder", DefShowDVDOrder);
-        writer.WriteElement("DefShowAlternateOrder", DefShowAlternateOrder);
-        writer.WriteElement("DefShowDoRenaming", DefShowDoRenaming);
-        writer.WriteElement("DefShowDoMissingCheck", DefShowDoMissingCheck);
-        writer.WriteElement("DefShowSequentialMatching", DefShowSequentialMatching);
-        writer.WriteElement("DefShowAirDateMatching", DefShowAirDateMatching);
-        writer.WriteElement("DefShowEpNameMatching", DefShowEpNameMatching);
-        writer.WriteElement("DefShowSpecialsCount", DefShowSpecialsCount);
-        writer.WriteElement("DefShowAutoFolders", DefShowAutoFolders);
-        writer.WriteElement("DefShowUseDefLocation", DefShowUseDefLocation);
-        writer.WriteElement("DefShowLocation", DefShowLocation);
-        writer.WriteElement("DefaultShowTimezoneName", DefaultShowTimezoneName);
-        writer.WriteElement("DefShowUseBase", DefShowUseBase);
-        writer.WriteElement("DefShowUseSubFolders", DefShowUseSubFolders);
-        writer.WriteElement("SampleFileMaxSizeMB", SampleFileMaxSizeMB);
+        new XElement("UnattendedMultiActionOutcome", (int)UnattendedMultiActionOutcome),
+        new XElement("UserMultiActionOutcome", (int)UserMultiActionOutcome),
+        new XElement("DefMovieFolderFormat", (int)DefMovieFolderFormat),
+        new XElement("UnArchiveFilesInDownloadDirectory", UnArchiveFilesInDownloadDirectory),
 
-        writer.WriteElement("DefMovieDoRenaming", DefMovieDoRenaming);
-        writer.WriteElement("DefMovieDoMissingCheck", DefMovieDoMissingCheck);
-        writer.WriteElement("DefMovieUseutomaticFolders", DefMovieUseAutomaticFolders);
-        writer.WriteElement("DefMovieUseDefaultLocation", DefMovieUseDefaultLocation);
-        writer.WriteElement("DefMovieDefaultLocation", DefMovieDefaultLocation);
-        writer.WriteElement("DefaultMovieProvider", (int)DefaultMovieProvider);
-        writer.WriteElement("DefMovieCheckFutureDatedMovies", DefMovieCheckFutureDatedMovies);
-        writer.WriteElement("DefMovieCheckNoDatedMovies", DefMovieCheckNoDatedMovies);
+        new XElement("SearchJackett", SearchJackett),
+        new XElement("UseJackettTextSearch", UseJackettTextSearch),
+        new XElement("SearchJackettManualScanOnly", SearchJackettManualScanOnly),
+        new XElement("JackettServer", JackettServer),
+        new XElement("JackettPort", JackettPort),
+        new XElement("JackettIndexer", JackettIndexer),
+        new XElement("JackettAPIKey", JackettAPIKey),
+        new XElement("SearchJackettButton", SearchJackettButton),
+        new XElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan),
+        new XElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan),
+        new XElement("AutoSaveOnExit", AutoSaveOnExit),
 
-        writer.WriteElement("UnattendedMultiActionOutcome", (int)UnattendedMultiActionOutcome);
-        writer.WriteElement("UserMultiActionOutcome", (int)UserMultiActionOutcome);
-        writer.WriteElement("DefMovieFolderFormat", (int)DefMovieFolderFormat);
-        writer.WriteElement("UnArchiveFilesInDownloadDirectory", UnArchiveFilesInDownloadDirectory);
-
-        writer.WriteElement("SearchJackett", SearchJackett);
-        writer.WriteElement("UseJackettTextSearch", UseJackettTextSearch);
-        writer.WriteElement("SearchJackettManualScanOnly", SearchJackettManualScanOnly);
-        writer.WriteElement("JackettServer", JackettServer);
-        writer.WriteElement("JackettPort", JackettPort);
-        writer.WriteElement("JackettIndexer", JackettIndexer);
-        writer.WriteElement("JackettAPIKey", JackettAPIKey);
-        writer.WriteElement("SearchJackettButton", SearchJackettButton);
-        writer.WriteElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan);
-        writer.WriteElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan);
-        writer.WriteElement("AutoSaveOnExit", AutoSaveOnExit);
-
-        writer.WriteElement("TMDBLanguage", TMDBLanguage.ISODialectAbbreviation);
-        writer.WriteElement("TMDBRegion", TMDBRegion.Abbreviation);
-        writer.WriteElement("TMDBPercentDirty", TMDBPercentDirty);
-        writer.WriteElement("IncludeMoviesQuickRecent", IncludeMoviesQuickRecent);
-
-        WriteAppUpdateElement(writer);
-
-        TheSearchers.WriteXml(writer, "TheSearchers");
-        TheMovieSearchers.WriteXml(writer, "TheMovieSearchers");
-        WriteReplacements(writer);
-        WriteRegExs(writer);
-        XmlHelper.WriteStringsToXml(RSSURLs, writer, "RSSURLs", "URL");
-        WriteShowStatusColours(writer);
-        WriteFilters(writer);
-
-        writer.WriteEndElement(); // settings
+        new XElement("TMDBLanguage", TMDBLanguage.ISODialectAbbreviation),
+        new XElement("TMDBRegion", TMDBRegion.Abbreviation),
+        new XElement("TMDBPercentDirty", TMDBPercentDirty),
+        new XElement("IncludeMoviesQuickRecent", IncludeMoviesQuickRecent),
+        GenerateAppUpdateXElement(),
+        TheSearchers.GenerateXElement("TheSearchers"),
+        TheMovieSearchers.GenerateXElement("TheMovieSearchers"),
+        GenerateReplacementsXElement(),
+        GenerateRegExsXElement(),
+        XmlHelper.GenerateStringsXMLElement(RSSURLs, "RSSURLs", "URL"),
+        GenerateShowStatusColoursXElement(),
+        GenerateFiltersXElement()
+        );
     }
 
-    private void WriteAppUpdateElement(XmlWriter writer)
+    private XElement GenerateAppUpdateXElement()
     {
-        writer.WriteStartElement("AppUpdate");
-        writer.WriteElement("Mode", (int)UpdateCheckType);
-        writer.WriteElement("Interval", UpdateCheckInterval.ToString());
-        writer.WriteElement("SuppressPopup", SuppressUpdateAvailablePopup);
-        writer.WriteEndElement();
+        return new XElement("AppUpdate",
+            new XElement("Mode", (int)UpdateCheckType),
+            new XElement("Interval", UpdateCheckInterval.ToString()),
+            new XElement("SuppressPopup", SuppressUpdateAvailablePopup)
+            );
     }
 
-    private void WriteReplacements(XmlWriter writer)
+    private XElement GenerateReplacementsXElement()
     {
-        writer.WriteStartElement("Replacements");
+        var replacementsElement = new XElement("Replacements");
         foreach (Replacement R in Replacements)
         {
-            writer.WriteStartElement("Replace");
-            writer.WriteAttributeToXml("This", R.This);
-            writer.WriteAttributeToXml("That", R.That);
-            writer.WriteAttributeToXml("CaseInsensitive", R.CaseInsensitive ? "Y" : "N");
-            writer.WriteEndElement(); //Replace
+            replacementsElement.Add(new XElement("Replace",
+                new XAttribute("This", R.This),
+                new XAttribute("That", R.That),
+                new XAttribute("CaseInsensitive", R.CaseInsensitive ? "Y" : "N")
+            ));
         }
-
-        writer.WriteEndElement(); //Replacements
+        return replacementsElement;
     }
 
-    private void WriteRegExs(XmlWriter writer)
+    private XElement GenerateRegExsXElement()
     {
-        writer.WriteStartElement("FNPRegexs");
+        var regExsElement = new XElement("FNPRegexs");
         foreach (FilenameProcessorRE re in FNPRegexs)
         {
-            writer.WriteStartElement("Regex");
-            writer.WriteAttributeToXml("Enabled", re.Enabled);
-            writer.WriteAttributeToXml("RE", re.RegExpression);
-            writer.WriteAttributeToXml("UseFullPath", re.UseFullPath);
-            writer.WriteAttributeToXml("Notes", re.Notes);
-            writer.WriteEndElement(); // Regex
+            regExsElement.Add(new XElement("Regex",
+                new XAttribute("Enabled", re.Enabled),
+                new XAttribute("RE", re.RegExpression),
+                new XAttribute("UseFullPath", re.UseFullPath),
+                new XAttribute("Notes", re.Notes)
+            ));
         }
-
-        writer.WriteEndElement(); // FNPRegexs
+        return regExsElement;
     }
 
-    private void WriteFilters(XmlWriter writer)
+    private XElement GenerateShowStatusColoursXElement()
     {
-        writer.WriteStartElement("ShowFilters");
-
-        writer.WriteInfo("NameFilter", "Name", Filter.ShowName);
-        writer.WriteInfo("ShowStatusFilter", "ShowStatus", Filter.ShowStatus);
-        writer.WriteInfo("ShowNetworkFilter", "ShowNetwork", Filter.ShowNetwork);
-        writer.WriteInfo("ShowRatingFilter", "ShowRating", Filter.ShowRating);
-
-        writer.WriteInfo("ShowStatusFilter", "ShowStatusInclude", Filter.ShowStatusInclude);
-        writer.WriteInfo("ShowNetworkFilter", "ShowNetworkInclude", Filter.ShowNetworkInclude);
-        writer.WriteInfo("ShowRatingFilter", "ShowRatingInclude", Filter.ShowRatingInclude);
-
-        writer.WriteInfo("IncludeBlankFields", "IncludeBlankFields", Filter.IncludeBlankFields);
-
-        foreach (string genre in Filter.Genres)
-        {
-            writer.WriteInfo("GenreFilter", "Genre", genre);
-        }
-
-        writer.WriteEndElement(); //ShowFilters
-
-        writer.WriteStartElement("MovieFilters");
-
-        writer.WriteInfo("NameFilter", "Name", MovieFilter.ShowName);
-        writer.WriteInfo("ShowStatusFilter", "ShowStatus", MovieFilter.ShowStatus);
-        writer.WriteInfo("ShowNetworkFilter", "ShowNetwork", MovieFilter.ShowNetwork);
-        writer.WriteInfo("ShowRatingFilter", "ShowRating", MovieFilter.ShowRating);
-        writer.WriteInfo("ShowYearFilter", "ShowYear", MovieFilter.ShowYear);
-
-        writer.WriteInfo("ShowStatusFilter", "ShowStatusInclude", MovieFilter.ShowStatusInclude);
-        writer.WriteInfo("ShowNetworkFilter", "ShowNetworkInclude", MovieFilter.ShowNetworkInclude);
-        writer.WriteInfo("ShowRatingFilter", "ShowRatingInclude", MovieFilter.ShowRatingInclude);
-        writer.WriteInfo("ShowYearFilter", "ShowYearInclude", MovieFilter.ShowYearInclude);
-        writer.WriteInfo("IncludeBlankFields", "IncludeBlankFields", MovieFilter.IncludeBlankFields);
-
-        foreach (string genre in MovieFilter.Genres)
-        {
-            writer.WriteInfo("GenreFilter", "Genre", genre);
-        }
-
-        writer.WriteEndElement(); //MovieFilters
-
-        writer.WriteStartElement("SeasonFilters");
-        writer.WriteElement("SeasonIgnoredFilter", SeasonFilter.HideIgnoredSeasons);
-        writer.WriteEndElement(); //SeasonFilters
+        return new XElement("ShowStatusTVWColors",
+            from KeyValuePair<ColouringRule, System.Drawing.Color> e in ShowStatusColors
+            select new XElement("ShowStatusTVWColor",
+                new XAttribute("Type", e.Key switch
+                {
+                    ShowStatusColouringRule => "ShowStatusColouringRule",
+                    ShowAirStatusColouringRule => "ShowAirStatusColouringRule",
+                    SeasonStatusColouringRule => "SeasonStatusColouringRule",
+                    _ => throw new NotImplementedException()
+                }),
+                new XAttribute("ShowStatus", e.Key switch
+                {
+                    ShowStatusColouringRule sscr => sscr.status,
+                    ShowAirStatusColouringRule sascr => (int)sascr.status,
+                    SeasonStatusColouringRule ssascr => (int)ssascr.status,
+                    _ => throw new NotImplementedException()
+                }),
+                new XAttribute("Color", e.Value.TranslateColorToHtml())
+            )
+        );
     }
 
-    private void WriteShowStatusColours(XmlWriter writer)
+    private List<XElement> GenerateFiltersXElement()
     {
-        writer.WriteStartElement("ShowStatusTVWColors");
-        foreach (KeyValuePair<ColouringRule, System.Drawing.Color> e in ShowStatusColors)
-        {
-            writer.WriteStartElement("ShowStatusTVWColor");
-
-            switch (e.Key)
-            {
-                case ShowStatusColouringRule sscr:
-                    writer.WriteAttributeToXml("Type", "ShowStatusColouringRule");
-                    writer.WriteAttributeToXml("ShowStatus", sscr.status);
-                    break;
-
-                case ShowAirStatusColouringRule sascr:
-                    writer.WriteAttributeToXml("Type", "ShowAirStatusColouringRule");
-                    writer.WriteAttributeToXml("ShowStatus", (int)sascr.status);
-                    break;
-
-                case SeasonStatusColouringRule ssascr:
-                    writer.WriteAttributeToXml("Type", "SeasonStatusColouringRule");
-                    writer.WriteAttributeToXml("ShowStatus", (int)ssascr.status);
-                    break;
-            }
-
-            writer.WriteAttributeToXml("Color", e.Value.TranslateColorToHtml());
-
-            writer.WriteEndElement(); //ShowStatusTVWColor
-        }
-
-        writer.WriteEndElement(); // ShowStatusTVWColors
+        return [
+            new XElement("ShowFilters",
+                XmlHelper.GenerateInfoXElement("NameFilter", "Name", Filter.ShowName),
+                XmlHelper.GenerateInfoXElement("ShowStatusFilter", "ShowStatus", Filter.ShowStatus),
+                XmlHelper.GenerateInfoXElement("ShowNetworkFilter", "ShowNetwork", Filter.ShowNetwork),
+                XmlHelper.GenerateInfoXElement("ShowRatingFilter", "ShowRating", Filter.ShowRating),
+                XmlHelper.GenerateInfoXElement("ShowStatusFilter", "ShowStatusInclude", Filter.ShowStatusInclude),
+                XmlHelper.GenerateInfoXElement("ShowNetworkFilter", "ShowNetworkInclude", Filter.ShowNetworkInclude),
+                XmlHelper.GenerateInfoXElement("ShowRatingFilter", "ShowRatingInclude", Filter.ShowRatingInclude),
+                XmlHelper.GenerateInfoXElement("IncludeBlankFields", "IncludeBlankFields", Filter.IncludeBlankFields),
+                from string genre in Filter.Genres
+                select XmlHelper.GenerateInfoXElement("GenreFilter", "Genre", genre)
+            ),
+            new XElement("MovieFilters",
+                XmlHelper.GenerateInfoXElement("NameFilter", "Name", MovieFilter.ShowName),
+                XmlHelper.GenerateInfoXElement("ShowStatusFilter", "ShowStatus", MovieFilter.ShowStatus),
+                XmlHelper.GenerateInfoXElement("ShowNetworkFilter", "ShowNetwork", MovieFilter.ShowNetwork),
+                XmlHelper.GenerateInfoXElement("ShowRatingFilter", "ShowRating", MovieFilter.ShowRating),
+                XmlHelper.GenerateInfoXElement("ShowYearFilter", "ShowYear", MovieFilter.ShowYear),
+                XmlHelper.GenerateInfoXElement("ShowStatusFilter", "ShowStatusInclude", MovieFilter.ShowStatusInclude),
+                XmlHelper.GenerateInfoXElement("ShowNetworkFilter", "ShowNetworkInclude", MovieFilter.ShowNetworkInclude),
+                XmlHelper.GenerateInfoXElement("ShowRatingFilter", "ShowRatingInclude", MovieFilter.ShowRatingInclude),
+                XmlHelper.GenerateInfoXElement("ShowYearFilter", "ShowYearInclude", MovieFilter.ShowYearInclude),
+                XmlHelper.GenerateInfoXElement("IncludeBlankFields", "IncludeBlankFields", MovieFilter.IncludeBlankFields),
+                from string genre in MovieFilter.Genres
+                select XmlHelper.GenerateInfoXElement("GenreFilter", "Genre", genre)
+            ),
+            new XElement("SeasonFilters",
+                new XElement("SeasonIgnoredFilter", SeasonFilter.HideIgnoredSeasons)
+            )
+            ];
     }
 
     internal float PercentDirtyUpgrade() => upgradeDirtyPercent;

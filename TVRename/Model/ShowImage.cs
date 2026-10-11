@@ -25,13 +25,13 @@ public class ShowImage : MediaImage
     {
     }
 
-    public void WriteXml(XmlWriter writer)
+    public XElement GenerateXElement()
     {
-        writer.WriteStartElement("ShowImage");
-        WriteCoreXml(writer);
-        writer.WriteElement("SeasonId", SeasonId);
-        writer.WriteElement("SeasonNumber", SeasonNumber);
-        writer.WriteEndElement(); //ShowImage
+        return new XElement("ShowImage",
+            GenerateCoreXElements(),
+            XmlHelper.GenerateOptionalXElement("SeasonId", SeasonId),
+            XmlHelper.GenerateOptionalXElement("SeasonNumber", SeasonNumber)
+        );
     }
 
     internal static ShowImage GenerateFromLegacyBannerXml(XElement r, TVDoc.ProviderType source)

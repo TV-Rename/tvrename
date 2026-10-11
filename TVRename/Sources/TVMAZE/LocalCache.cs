@@ -47,14 +47,14 @@ public class LocalCache : MediaCache, iTVSource
     public override int PrimaryKey(ISeriesSpecifier ss) => ss.TvMazeId;
 
     public override string CacheSourceName() => "TVMaze";
-    public async Task SetupAsync(FileInfo? loadFrom, FileInfo cache, bool showIssues)
+    public async Task SetupAsync(FileInfo? loadFrom, FileInfo cache, bool showIssues, CancellationToken ct)
     {
         System.Diagnostics.Debug.Assert(cache != null);
         CacheFile = cache;
 
         LastErrorMessage = string.Empty;
 
-        LoadOk = loadFrom is null || (CachePersistor.LoadTvCache(loadFrom, this));
+        LoadOk = loadFrom is null || (await CachePersistor.LoadTvCacheAsync(loadFrom, this, ct));
     }
 
     public async Task<bool> ConnectAsync(bool showErrorMsgBox) => true;

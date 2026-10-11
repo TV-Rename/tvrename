@@ -5,7 +5,6 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
 namespace TVRename;
 
 public class CachedMovieInfo : CachedMediaInfo
@@ -118,25 +117,6 @@ public class CachedMovieInfo : CachedMediaInfo
         images.MergeImages(o.images);
     }
 
-    public void WriteXml(XmlWriter writer)
-    {
-        writer.WriteStartElement("Movie");
-        WriteCommonFields(writer);
-
-        writer.WriteElement("CollectionId", CollectionId);
-        writer.WriteElement("CollectionName", CollectionName, true);
-        writer.WriteElement("Type", MovieType);
-
-        writer.WriteStartElement("Images");
-        foreach (MovieImage i in images)
-        {
-            i.WriteXml(writer);
-        }
-        writer.WriteEndElement(); //Images
-
-        writer.WriteEndElement(); // cachedSeries
-    }
-
     public void AddOrUpdateImage(MovieImage image)
     {
         images.RemoveAll(s => s.Id == image.Id);
@@ -156,5 +136,15 @@ public class CachedMovieInfo : CachedMediaInfo
     public bool IsReleased()
     {
         return FirstAired.HasValue && FirstAired.Value.IsInPast();
+    }
+
+    internal XElement GenerateXElement()
+    {
+        return new XElement("Movie",
+            GenerateCommonXElements(),
+            new XElement("CollectionId", CollectionId),
+            XmlHelper.GenerateOptionalXElement("CollectionName", CollectionName),
+            new XElement("Type", MovieType),
+            new XElement("Images", images.Select(i => i.GenerateXElement())));
     }
 }

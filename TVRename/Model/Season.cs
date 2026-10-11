@@ -39,15 +39,15 @@ public class Season
         Url = url;
     }
 
-    public void WriteXml(XmlWriter writer)
+    internal XElement GenerateXElement()
     {
-        writer.WriteStartElement("Season");
-        writer.WriteElement("Id", SeasonId);
-        writer.WriteElement("Name", SeasonName);
-        writer.WriteElement("SeriesId", SeasonSeriesId);
-        writer.WriteElement("seasonNumber", SeasonNumber);
-        writer.WriteElement("description", SeasonDescription);
-        writer.WriteElement("imageUrl", ImageUrl);
-        writer.WriteEndElement();
+        return new XElement("Season",
+            new XElement("Id", SeasonId),
+            new XElement("Name", SeasonName),
+            new XElement("SeriesId", SeasonSeriesId),
+            new XElement("seasonNumber", SeasonNumber),
+            new XElement("description", SeasonDescription),
+            new XElement("imageUrl", ImageUrl)
+        );
     }
 }

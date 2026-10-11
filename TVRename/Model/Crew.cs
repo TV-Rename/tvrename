@@ -42,15 +42,15 @@ public class Crew
         Name = name;
     }
 
-    public void WriteXml(XmlWriter writer)
+    internal XElement GenerateXElement()
     {
-        writer.WriteStartElement("CrewMember");
-        writer.WriteElement("Id", Id);
-        writer.WriteElement("Image", ImageUrl, true);
-        writer.WriteElement("Name", Name, true);
-        writer.WriteElement("Job", Job, true);
-        writer.WriteElement("Department", Department, true);
-        writer.WriteElement("CreditId", CreditId, true);
-        writer.WriteEndElement();
+        return new XElement("CrewMember",
+            new XElement("Id", Id),
+            XmlHelper.GenerateOptionalXElement("Image", ImageUrl),
+            XmlHelper.GenerateOptionalXElement("Name", Name),
+            XmlHelper.GenerateOptionalXElement("Job", Job),
+            XmlHelper.GenerateOptionalXElement("Department", Department),
+            XmlHelper.GenerateOptionalXElement("CreditId", CreditId)
+        );
     }
 }
