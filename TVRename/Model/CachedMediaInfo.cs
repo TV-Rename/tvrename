@@ -6,9 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-
-
-using SharpCompress.Writers;
 using System.Globalization;
 using WinCopies.Util;
 
@@ -298,35 +295,40 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
             new XElement("id", TvdbCode),
             new XElement("mazeid", TvMazeCode),
             new XElement("TMDBCode", TmdbCode),
-            XmlHelper.GenerateOptionalXElement("SeriesName", Name),
             new XElement("lastupdated", SrvLastUpdated),
-            XmlHelper.GenerateOptionalXElement("LanguageId", ActualLocale?.PreferredLanguage?.TvdbId),
             new XElement("RegionCode", ActualLocale?.PreferredRegion?.Abbreviation),
+            new XElement("posterURL", PosterUrl),
+            new XElement("FanartUrl", FanartUrl),
+            new XElement("ShowLanguage", ShowLanguage),
+            new XElement("rating", ContentRating),
+            new XElement("status", Status),
+            new XElement("siteRatingCount", SiteRatingVotes),
+            ];
+
+        List<XElement?> optionalElements = [
+            XmlHelper.GenerateOptionalXElement("SeriesName", Name),
+            XmlHelper.GenerateOptionalXElement("LanguageId", ActualLocale?.PreferredLanguage?.TvdbId),
             XmlHelper.GenerateOptionalXElement("TwitterId", TwitterId),
             XmlHelper.GenerateOptionalXElement("InstagramId", InstagramId),
             XmlHelper.GenerateOptionalXElement("FacebookId", FacebookId),
             XmlHelper.GenerateOptionalXElement("TagLine", TagLine),
             XmlHelper.GenerateOptionalXElement("Country", Country),
-            new XElement("posterURL", PosterUrl),
-            new XElement("FanartUrl", FanartUrl),
             XmlHelper.GenerateOptionalXElement("banner", BannerString),
             XmlHelper.GenerateOptionalXElement("TrailerUrl", TrailerUrl),
             XmlHelper.GenerateOptionalXElement("WebURL", WebUrl),
             XmlHelper.GenerateOptionalXElement("OfficialUrl", OfficialUrl),
-            new XElement("ShowLanguage", ShowLanguage),
             XmlHelper.GenerateOptionalXElement("imdbId", Imdb),
             XmlHelper.GenerateOptionalXElement("rageid", TvRageCode.ToString()),
             XmlHelper.GenerateOptionalXElement("network", Network),
             XmlHelper.GenerateOptionalXElement("overview", Overview),
-            new XElement("rating", ContentRating),
             XmlHelper.GenerateOptionalXElement("runtime", Runtime),
             XmlHelper.GenerateOptionalXElement("seriesId", SeriesId),
-            new XElement("status", Status),
             XmlHelper.GenerateDoubleXElement("siteRating", SiteRating, "0.##", CultureInfo.CreateSpecificCulture("en-US")),
-            new XElement("siteRatingCount", SiteRatingVotes),
             XmlHelper.GenerateOptionalXElement("slug", Slug),
             XmlHelper.GenerateDoubleXElement("Popularity", Popularity, "0.##", CultureInfo.CreateSpecificCulture("en-US"))
             ];
+
+        returnList.AddRange(optionalElements.OfType<XElement>());
 
         if (FirstAired != null && FirstAired > DateTime.Parse("1000-01-01"))
         {

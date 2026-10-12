@@ -880,7 +880,7 @@ public partial class UI : Form, IDialogParent
 
         if (a.Save)
         {
-            mDoc.WriteXMLSettingsAsync();
+            await mDoc.WriteXMLSettingsAsync();
             await SaveCaches();
         }
 
@@ -1414,7 +1414,7 @@ public partial class UI : Form, IDialogParent
                 switch (res)
                 {
                     case DialogResult.Yes:
-                        mDoc.WriteXMLSettingsAsync();
+                        await mDoc.WriteXMLSettingsAsync();
                         break;
 
                     case DialogResult.Cancel:
@@ -1431,7 +1431,7 @@ public partial class UI : Form, IDialogParent
             if (mDoc.Dirty() && (mDoc.Args.Unattended || mDoc.Args.Hide || TVSettings.Instance.AutoSaveOnExit))
             {
                 //We have to assume that they wanted to save any settings
-                mDoc.WriteXMLSettingsAsync();
+                await mDoc.WriteXMLSettingsAsync();
             }
 
             this.Cursor = Cursors.WaitCursor;
@@ -2553,7 +2553,7 @@ public partial class UI : Form, IDialogParent
     {
         try
         {
-            mDoc.WriteXMLSettingsAsync();
+            await mDoc.WriteXMLSettingsAsync();
             await SaveCaches();
             if (!await SaveLayoutXmlAsync())
             {
