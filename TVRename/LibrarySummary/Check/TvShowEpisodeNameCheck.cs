@@ -19,5 +19,5 @@ internal class TvShowEpisodeNameCheck(ShowConfiguration show, TVDoc doc) : TvSho
         Show.UseCustomNamingFormat = false;
     }
 
-    public override string CheckName => "[TV] Use Custom Folder Name Format";
+    public override string CheckName => "[TV] Use Custom Episode Naming Naming Format";
 }
