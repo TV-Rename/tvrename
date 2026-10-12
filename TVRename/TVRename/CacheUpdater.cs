@@ -19,7 +19,6 @@ namespace TVRename;
 /// </summary>
 public class CacheUpdater : IDisposable, IAsyncDisposable
 {
-    public int DownloadPct;
     private bool downloadOk;
     private bool downloadStopOnError;
     private bool showErrorMsgBox;
@@ -44,7 +43,6 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
         {
             downloadStopOnError = stopOnError; //TODO - Work out what this was for
             showErrorMsgBox = showMsgBox;
-            DownloadPct = 0;
             downloadOk = true;
 
             downloadIds = shows;
@@ -146,7 +144,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
         mDownloaderThread = null;
     }
 
-    private async Task GetThreadAsync(ISeriesSpecifier series, IProgress<DownloadProgressReport>? p, CancellationToken cts)
+    private async Task GetThreadAsync(ISeriesSpecifier series, IProgress<DownloadProgressReport>? p, CancellationToken cts, ThreadSafeCounter counter, int totalCount)
     {
         try
         {
@@ -162,7 +160,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
             bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
             Threadslogger.Trace("  Downloading " + series.Name);
-            if (await TVDoc.GetMediaCache(series.Provider).EnsureUpdatedAsync(series, bannersToo, true))
+            if (await TVDoc.GetMediaCache(series.Provider).EnsureUpdatedAsync(series, bannersToo, true, counter, totalCount))
             {
                 return;
             }
@@ -224,6 +222,8 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
             p?.UpdateFromSource(TVDoc.ProviderType.TheTVDB, downloadIds.Count(s => s.Provider == TVDoc.ProviderType.TheTVDB));
             p?.UpdateFromSource(TVDoc.ProviderType.TMDB, downloadIds.Count(s => s.Provider == TVDoc.ProviderType.TMDB));
 
+            int totalCount = downloadIds.Count;
+            ThreadSafeCounter counter = new();
             // for each of the ShowItems, make sure we've got downloaded data for it
 
 
@@ -243,7 +243,8 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
                 },
                 async (series, token) =>
                 {
-                    await GetThreadAsync(series, p, cts);
+
+                    await GetThreadAsync(series, p, cts,counter,totalCount);
                 }).ConfigureAwait(false);
 
             if (!cts.IsCancellationRequested)

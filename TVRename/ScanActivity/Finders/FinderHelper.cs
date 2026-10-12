@@ -860,9 +860,11 @@ internal static class FinderHelper
         }
 
         //popup dialog
-        using AutoAddMedia askForMatch = new(refinedHint, file, assumeMovie);
+        using AutoAddMedia askForMatch = new(file, assumeMovie);
 
-        if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound &&
+        await askForMatch.SetHint(refinedHint);
+
+        if (askForMatch.SingleTvShowFound??false && !(askForMatch.SingleMovieFound ?? false) &&
             TVSettings.Instance.AutomateAutoAddWhenOneShowFound)
         {
             // no need to popup dialog
@@ -870,7 +872,7 @@ internal static class FinderHelper
             addedShows.Add(new PossibleMedia(askForMatch.ShowConfiguration, refinedHint));
             doc.Stats().AutoAddedShows++;
         }
-        else if (askForMatch.SingleMovieFound && !askForMatch.SingleTvShowFound &&
+        else if (askForMatch.SingleMovieFound ?? false && !(askForMatch.SingleTvShowFound ?? false) &&
                  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
         {
             // no need to popup dialog

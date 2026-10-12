@@ -66,7 +66,7 @@ public class LocalCache : MediaCache, iTVSource
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    public override async Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
+    public override async Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
     {
         if (s.Provider != TVDoc.ProviderType.TVmaze)
         {
@@ -82,7 +82,7 @@ public class LocalCache : MediaCache, iTVSource
             }
         }
 
-        Say($"{s.Name} from TVmaze");
+        Say($"{s.Name} from TVmaze", counter.Increment() , totalCount);
         try
         {
             CachedSeriesInfo downloadedSi = await API.GetSeriesDetailsAsync(s);
@@ -114,7 +114,7 @@ public class LocalCache : MediaCache, iTVSource
 
     public override async Task<bool> GetUpdatesAsync(DownloadProgressStatus? p, IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
-        Say("Validating TVmaze cache");
+        SayNoPct("Validating TVmaze cache");
         foreach (ISeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvMazeId)))
         {
             this.AddPlaceholderSeries(downloadShow);
@@ -122,10 +122,10 @@ public class LocalCache : MediaCache, iTVSource
 
         try
         {
-            Say("Updates list from TVmaze");
+            SayNoPct("Updates list from TVmaze");
             IEnumerable<KeyValuePair<string, long>> updateTimes = await API.GetUpdatesAsync();
 
-            Say("Processing updates from TVmaze");
+            SayNoPct("Processing updates from TVmaze");
             foreach (KeyValuePair<string, long> showUpdateTime in updateTimes)
             {
                 if (!cts.IsCancellationRequested)
@@ -228,7 +228,7 @@ public class LocalCache : MediaCache, iTVSource
                         TVDoc.ProviderType.TVmaze, type);
                     try
                     {
-                        await EnsureUpdatedAsync(ss, false, showErrorMsgBox);
+                        await EnsureUpdatedAsync(ss, false, showErrorMsgBox, new ThreadSafeCounter(), 1);
                     }
                     catch (MediaNotFoundException)
                     {

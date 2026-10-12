@@ -77,11 +77,21 @@ public partial class DownloadProgress : Form
             TheTVDB.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ??
             TVmaze.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ??
             TMDB.LocalCache.Instance.CurrentDLTask?.ToUiVersion() ?? string.Empty;
-        pbProgressBar.SetProgress(mDoc.DownloadPct);
-        UiHelpers.SetProgress(mDoc.DownloadPct, ParentForm?.Handle ?? Handle);
+
+        int average = (TheTVDB.LocalCache.Instance.DownloadPct +
+            TVmaze.LocalCache.Instance.DownloadPct +
+            TMDB.LocalCache.Instance.DownloadPct)/3;
+
+        pbProgressBar.SetProgress(average);
+        UiHelpers.SetProgress(average, ParentForm?.Handle ?? Handle);
     }
 
     private void DownloadProgress_Load(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void txtCurrent_Click(object sender, EventArgs e)
     {
 
     }

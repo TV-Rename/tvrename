@@ -89,10 +89,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    public async Task<CachedSeriesInfo?> GetSeriesOrDownloadAsync(ISeriesSpecifier id, bool showErrorMsgBox) => HasSeries(id.TvdbId)
-        ? Series[id.TvdbId]
-        : await DownloadSeriesNowAsync(id, false, false, new Locale(TVSettings.Instance.PreferredTVDBLanguage),
-            showErrorMsgBox);
+    public async Task<CachedSeriesInfo?> GetSeriesOrDownloadAsync(ISeriesSpecifier id, bool showErrorMsgBox)
+        => HasSeries(id.TvdbId)
+            ? Series[id.TvdbId]
+            : await DownloadSeriesNowAsync(id, false, false, new Locale(TVSettings.Instance.PreferredTVDBLanguage),showErrorMsgBox,new ThreadSafeCounter(), 1);
 
     public void UpdatesDoneOk()
     {
@@ -108,7 +108,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         TvdbAccuracyCheck check = new();
         //TODO use DownloadProgressStatus
-        Say($"TVDB Accuracy Check (TV) running for {FullShows().Count} shows.");
+        SayNoPct($"TVDB Accuracy Check (TV) running for {FullShows().Count} shows.");
 
         //todo set parallel cancellation source
         await Parallel.ForEachAsync(FullShows(),
@@ -131,7 +131,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         TvdbAccuracyCheck check = new();
 
-        Say($"TVDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
+        SayNoPct($"TVDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
 
         //todo set parallel cancellation source
         await Parallel.ForEachAsync(FullMovies(),
@@ -172,7 +172,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                 ? $"S{ep.DvdSeasonNumber:00}E{ep.DvdEpNum:00}"
                 : $"S{ep.AiredSeasonNumber:00}E{ep.AiredEpNum:00}";
 
-        Say($"{cachedSeriesInfo.Name} ({eptxt}) in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
+        SayNoPct($"{cachedSeriesInfo.Name} ({eptxt}) in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
         try
         {
             await API.DownloadEpisodeNowAsync(cachedSeriesInfo, episodeId, locale, order);
@@ -213,7 +213,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     public async Task<bool> ConnectAsync(bool showErrorMsgBox)
     {
-        Say("TheTVDB Login");
+        SayNoPct("TheTVDB Login");
         try
         {
             return await TvdbWebApi.TVDBLoginAsync();
@@ -253,7 +253,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     public override async Task ReConnectAsync(bool showErrorMsgBox)
     {
-        Say("TheTVDB Reconnect");
+        SayNoPct("TheTVDB Reconnect");
         try
         {
             await TvdbWebApi.ReConnectAsync();
@@ -294,10 +294,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     public override async Task<bool> GetUpdatesAsync(DownloadProgressStatus? p, IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
-        Say("Validating TheTVDB cache");
+        SayNoPct("Validating TheTVDB cache");
         AddPlaceholders(ss);
 
-        Say("Calculating updates needed from TVDB");
+        SayNoPct("Calculating updates needed from TVDB");
         long updateFromEpochTime = LatestUpdateTime.LastSuccessfulServerUpdateTimecode();
 
         if (updateFromEpochTime == 0)
@@ -335,7 +335,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         try
         {
-            Say("Getting updates list from TVDB");
+            SayNoPct("Getting updates list from TVDB");
             API.TvdbUpdateResponse updatesResponse = await API.GetUpdatesAsync(updateFromEpochTime, showConnectionIssues, cts);
 
             long maxUpdateTime = updatesResponse.LatestTime;
@@ -347,7 +347,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                     $"Obtained updates - since (local) {updateFromEpochTime.GetRequestedTime().ToLocalTime()} - to (local) {LatestUpdateTime}");
             }
 
-            Say("Processing Updates from TVDB");
+            SayNoPct("Processing Updates from TVDB");
 
             //todo set parallel cancellation source
             await Parallel.ForEachAsync(updatesResponse.Updates,
@@ -394,7 +394,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return false;
         }
 
-        Say("Upgrading dirty locks");
+        SayNoPct("Upgrading dirty locks");
 
         UpgradeDirtyLocks();
 
@@ -596,14 +596,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private async Task<CachedSeriesInfo?> DownloadSeriesNowAsync(ISeriesSpecifier deets, bool episodesToo, bool bannersToo,
-        bool showErrorMsgBox) =>
-        await DownloadSeriesNowAsync(deets, episodesToo, bannersToo, deets.TargetLocale, showErrorMsgBox);
+        bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount) =>
+        await DownloadSeriesNowAsync(deets, episodesToo, bannersToo, deets.TargetLocale, showErrorMsgBox, counter, totalCount);
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private async Task<CachedSeriesInfo?> DownloadSeriesNowAsync(ISeriesSpecifier code, bool episodesToo, bool bannersToo, Locale locale,
-        bool showErrorMsgBox)
+        bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
     {
         if (code.TvdbId == 0 || code.TvdbId == -1)
         {
@@ -612,13 +612,13 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
         if (!await ConnectAsync(showErrorMsgBox))
         {
-            Say("Failed to Connect to TVDB");
+            SayNoPct("Failed to Connect to TVDB");
             SayNothing();
         }
 
         bool forceReload = DoWeForceReloadFor(code.TvdbId);
 
-        Say(GenerateMessage(code.TvdbId, episodesToo, bannersToo));
+        Say(GenerateMessage(code.TvdbId, episodesToo, bannersToo),counter.Increment(),totalCount );
 
         try
         {
@@ -698,7 +698,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    public override async Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
+    public override async Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
     {
         if (s.Provider != TVDoc.ProviderType.TheTVDB)
         {
@@ -709,14 +709,14 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         if (s.Media == MediaConfiguration.MediaType.movie)
         {
-            return await EnsureMovieUpdatedAsync(s, showErrorMsgBox);
+            return await EnsureMovieUpdatedAsync(s, showErrorMsgBox, counter, totalCount);
         }
 
-        return await EnsureSeriesUpdatedAsync(s, bannersToo, showErrorMsgBox);
+        return await EnsureSeriesUpdatedAsync(s, bannersToo, showErrorMsgBox, counter, totalCount);
     }
 
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id, bool showErrorMsgBox)
+    private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
     {
         {
             if (Movies.TryGetValue(id.TvdbId, out CachedMovieInfo? movie) && !movie.Dirty)
@@ -731,10 +731,10 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             throw new MediaNotFoundException(id, $"Please add movie {id.Name} to TVDB, or use another source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie);
         }
 
-        Say($"Movie: {id.Name} from The TVDB");
+        Say($"Movie: {id.Name} from The TVDB", counter.Increment() , totalCount);
         try
         {
-            CachedMovieInfo? downloadedSi = await DownloadMovieNowAsync(id, id.TargetLocale, showErrorMsgBox);
+            CachedMovieInfo? downloadedSi = await DownloadMovieNowAsync(id, id.TargetLocale, showErrorMsgBox, counter, totalCount);
 
             if (downloadedSi is null)
             {
@@ -774,7 +774,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    private async Task<bool> EnsureSeriesUpdatedAsync(ISeriesSpecifier seriesd, bool bannersToo, bool showErrorMsgBox)
+    private async Task<bool> EnsureSeriesUpdatedAsync(ISeriesSpecifier seriesd, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
     {
         int code = seriesd.TvdbId;
 
@@ -786,7 +786,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         if (DoWeForceReloadFor(code) || Series[code].Episodes.Count == 0)
         {
-            return await DownloadSeriesNowAsync(seriesd, true, bannersToo, showErrorMsgBox) != null; // the whole lot!
+            return await DownloadSeriesNowAsync(seriesd, true, bannersToo, showErrorMsgBox, counter, totalCount) != null; // the whole lot!
         }
 
         bool ok = true;
@@ -795,7 +795,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
         if (seriesNeedsUpdating)
         {
-            ok = await DownloadSeriesNowAsync(seriesd, false, bannersToo, showErrorMsgBox) != null;
+            ok = await DownloadSeriesNowAsync(seriesd, false, bannersToo, showErrorMsgBox, counter, totalCount) != null;
         }
 
         foreach (Episode e in Series[code].Episodes.Where(e => e is { Dirty: true, EpisodeId: > 0 }))
@@ -828,7 +828,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
         if (string.IsNullOrWhiteSpace(text))
         {
-            Say("Please Search for a Show Name");
+            SayNoPct("Please Search for a Show Name");
             return;
         }
 
@@ -844,11 +844,11 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
                     switch (type)
                     {
                         case MediaConfiguration.MediaType.tv:
-                            await DownloadSeriesNowAsync(ss, false, false, locale, showErrorMsgBox);
+                            await DownloadSeriesNowAsync(ss, false, false, locale, showErrorMsgBox, new ThreadSafeCounter(), 1);
                             break;
 
                         case MediaConfiguration.MediaType.movie:
-                            await DownloadMovieNowAsync(ss, locale, showErrorMsgBox);
+                            await DownloadMovieNowAsync(ss, locale, showErrorMsgBox, new ThreadSafeCounter(), 1);
                             break;
                     }
                 }
@@ -912,14 +912,15 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    public async Task<CachedMovieInfo?> GetMovieAndDownloadAsync(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox) => HasMovie(id.TvdbId)
+    public async Task<CachedMovieInfo?> GetMovieAndDownloadAsync(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
+        => HasMovie(id.TvdbId)
         ? CachedMovieData[id.TvdbId]
-        : await DownloadMovieNowAsync(id, locale, showErrorMsgBox);
+        : await DownloadMovieNowAsync(id, locale, showErrorMsgBox, counter, totalCount);
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    private async Task<CachedMovieInfo?> DownloadMovieNowAsync(ISeriesSpecifier tvdbId, Locale locale, bool showErrroMsgBox)
+    private async Task<CachedMovieInfo?> DownloadMovieNowAsync(ISeriesSpecifier tvdbId, Locale locale, bool showErrroMsgBox, ThreadSafeCounter counter, int totalCount)
     {
         if (tvdbId.TvdbId == 0 || tvdbId.TvdbId == -1)
         {
@@ -927,7 +928,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             return null;
         }
 
-        Say($"Movie with id {tvdbId} from TheTVDB");
+        Say($"Movie with id {tvdbId} from TheTVDB", counter.Increment() , totalCount);
 
         try
         {

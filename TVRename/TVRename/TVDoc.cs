@@ -2145,7 +2145,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
     private async Task BonusAutoAddAsync(FileInfo fi, IDialogParent owner)
     {
         //do an auto add
-        MovieConfiguration? selectedShow = AutoAddMovieFile(fi, owner);
+        MovieConfiguration? selectedShow = await AutoAddMovieFileAsync(fi, owner);
 
         if (selectedShow != null && ContainsMedia(FilmLibrary.Movies, selectedShow))
         {
@@ -2164,7 +2164,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         }
     }
 
-    private MovieConfiguration? AutoAddMovieFile(FileInfo file, IDialogParent owner)
+    private async Task<MovieConfiguration?> AutoAddMovieFileAsync(FileInfo file, IDialogParent owner)
     {
         string hint = file.RemoveExtension(TVSettings.Instance.UseFullPathNameToMatchSearchFolders) + ".";
 
@@ -2202,7 +2202,9 @@ public class TVDoc : IDisposable, IAsyncDisposable
         }
 
         //popup dialog
-        using AutoAddMedia askForMatch = new(refinedHint, file, true);
+        using AutoAddMedia askForMatch = new(file, true);
+
+        await askForMatch.SetHint(refinedHint);
 
         Logger.Info($"Auto Adding New Show/Movie by asking about for '{refinedHint}'");
         owner.ShowChildDialog(askForMatch);

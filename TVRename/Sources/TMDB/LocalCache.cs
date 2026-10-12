@@ -104,7 +104,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    public override async Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
+    public override async Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
     {
         if (s.Provider != TVDoc.ProviderType.TMDB)
         {
@@ -116,18 +116,18 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
 
         return s.Media == MediaConfiguration.MediaType.movie
-            ? await EnsureMovieUpdatedAsync(s)
-            : await EnsureSeriesUpdatedAsync(s);
+            ? await EnsureMovieUpdatedAsync(s, counter, totalCount)
+            : await EnsureSeriesUpdatedAsync(s, counter, totalCount);
     }
 
-    private async Task<bool> EnsureSeriesUpdatedAsync(ISeriesSpecifier s)
+    private async Task<bool> EnsureSeriesUpdatedAsync(ISeriesSpecifier s, ThreadSafeCounter counter, int totalCount)
     {
         if (Series.TryGetValue(s.TmdbId, out CachedSeriesInfo? si) && !si.Dirty)
         {
             return true;
         }
 
-        Say($"Series {s.Name} from TMDB");
+        Say($"Series {s.Name} from TMDB", counter.Increment(), totalCount);
         try
         {
             CachedSeriesInfo downloadedSi = await DownloadSeriesNowAsync(s);
@@ -170,14 +170,14 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         return true;
     }
 
-    private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id)
+    private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id, ThreadSafeCounter counter, int totalCount)
     {
         if (Movies.TryGetValue(id.TmdbId, out CachedMovieInfo? movie) && !movie.Dirty)
         {
             return true;
         }
 
-        Say($"Movie: {id.Name} from TMDB");
+        Say($"Movie: {id.Name} from TMDB", counter.Increment() , totalCount);
         try
         {
             CachedMovieInfo downloadedSi = await DownloadMovieNowAsync(id);
@@ -212,19 +212,19 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     public override async Task<bool> GetUpdatesAsync(DownloadProgressStatus? p, IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
     {
-        Say("Validating TMDB cache");
+        SayNoPct("Validating TMDB cache");
         this.MarkPlaceHoldersDirty(ss);
 
         try
         {
-            Say($"Updates list from TMDB since {latestUpdateTime.LastSuccessfulServerUpdateDateTime()}");
+            SayNoPct($"Updates list from TMDB since {latestUpdateTime.LastSuccessfulServerUpdateDateTime()}");
 
             long updateFromEpochTime = latestUpdateTime.LastSuccessfulServerUpdateTimecode();
             if (updateFromEpochTime == 0)
             {
                 this.MarkAllDirty();
                 latestUpdateTime.RegisterServerUpdate(TimeHelpers.UnixUtcNow());
-                Say($"Identified all TMDB Shows({Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) & Movies({Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) need updating");
+                SayNoPct($"Identified all TMDB Shows({Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) & Movies({Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) need updating");
                 return true;
             }
 
@@ -233,7 +233,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                 //it's been a long time since we last updated, so just mark everything dirty and get the latest data
                 this.MarkAllDirty();
                 latestUpdateTime.RegisterServerUpdate(TimeHelpers.UnixUtcNow());
-                Say($"Identified all TMDB Shows({Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) & Movies({Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) need updating");
+                SayNoPct($"Identified all TMDB Shows({Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) & Movies({Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) need updating");
                 return true;
             }
 
@@ -242,7 +242,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             IEnumerable<TMDbLib.Objects.Changes.ChangesListItem> task = await Client.GetChangesMoviesAsync(latestUpdateTime, cts);
             List<int> movieUpdates = [.. task.Select(item => item.Id).Distinct()];
 
-            Say(
+            SayNoPct(
                 $"Processing {movieUpdates.Count} movie updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
 
             {
@@ -268,14 +268,14 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     }
                 }
 
-                Say(
+                SayNoPct(
                     $"Identified {Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Movies need updating");
             }
 
             IEnumerable<TMDbLib.Objects.Changes.ChangesListItem> taskShows = await Client.GetChangesShowsAsync(latestUpdateTime, cts);
             List<int> showUpdates = [.. taskShows.Select(item => item.Id).Distinct()];
 
-            Say(
+            SayNoPct(
                 $"Processing {showUpdates.Count} show updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
 
             {
@@ -301,7 +301,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     }
                 }
 
-                Say(
+                SayNoPct(
                     $"Identified {Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Shows need updating");
             }
 
@@ -1242,7 +1242,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
         TmdbAccuracyCheck check = new(this);
 
-        Say($"TMDB Accuracy Check (TV) running for {FullShows().Count} shows.");
+        SayNoPct($"TMDB Accuracy Check (TV) running for {FullShows().Count} shows.");
 
         try
         {
@@ -1280,7 +1280,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
         TmdbAccuracyCheck check = new(this);
 
-        Say($"TmDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
+        SayNoPct($"TMDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
 
         try
         {

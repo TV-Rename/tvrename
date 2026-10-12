@@ -16,6 +16,7 @@ public abstract class MediaCache
 
     // ReSharper disable once InconsistentNaming
     public string? CurrentDLTask;
+    public int DownloadPct { get; set; } = 0;
 
     public string? LastErrorMessage { get; set; }
 
@@ -61,18 +62,30 @@ public abstract class MediaCache
         }
     }
 
-    public abstract Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
+    public abstract Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount);
 
-    protected void SayNothing() => Say(null);
+    protected void SayNothing() => SayNoPct(string.Empty);
 
-    protected void Say(string? s)
+    protected void Say(string s, int pos, int max)
     {
         CurrentDLTask = s;
-        if (s.HasValue())
+        if (!s.IsNullOrWhitespace())
+        {
+            LOGGER.Info($"Status on screen updated: {s}");
+        }
+
+        DownloadPct = (int) (100 * pos / max);
+    }
+    protected void SayNoPct(string s)
+    {
+        CurrentDLTask = s;
+        if (!s.IsNullOrWhitespace())
         {
             LOGGER.Info($"Status on screen updated: {s}");
         }
     }
+
+
 
     public ConcurrentDictionary<int, CachedMovieInfo> CachedMovieData
     {

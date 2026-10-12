@@ -20,7 +20,7 @@ public interface iMovieSource
 
     void SaveCache();
 
-    Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
+    Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount);
 
     void UpdatesDoneOk();
 

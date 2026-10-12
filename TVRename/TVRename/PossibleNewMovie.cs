@@ -149,7 +149,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
                 {
                     //Find movie on TVDB based on Id
                     CachedMovieInfo? s3 = await
-                        TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(this, preferredLocale, showErrorMsgBox);
+                        TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(this, preferredLocale, showErrorMsgBox, new ThreadSafeCounter(), 1);
 
                     if (s3 != null)
                     {

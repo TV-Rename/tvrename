@@ -98,9 +98,9 @@ internal static class CachePersistor
     private static async Task SaveCacheFileInternalAsync(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile,
         long timestamp)
     {
-        Logger.Info($"Saving Cache to {cacheFile.FullName}");
         var cacheXml = GenerateCacheXML(series,movies,timestamp);
         await XmlHelper.SaveXmlFileAsync(cacheXml, cacheFile.FullName);
+        Logger.Info($"Saved Cache to {cacheFile.FullName}");
     }
 
     private static XDocument GenerateCacheXML(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, long timestamp)

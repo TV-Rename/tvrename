@@ -12,12 +12,12 @@ public partial class AutoAddMedia : Form, ICodeWindow
 {
     private readonly TvCodeFinder tvCodeFinder;
     private readonly MovieCodeFinder movieCodeFinder;
-    private readonly string originalHint;
-    public readonly bool SingleTvShowFound;
-    public readonly bool SingleMovieFound;
+    private string? originalHint;
+    public  bool? SingleTvShowFound;
+    public  bool? SingleMovieFound;
     private readonly bool assumeMovie;
 
-    public AutoAddMedia(string hint, FileInfo file, bool assumeMovie)
+    public AutoAddMedia(FileInfo file, bool assumeMovie)
     {
         InitializeComponent();
         ShowConfiguration = new ShowConfiguration();
@@ -32,24 +32,29 @@ public partial class AutoAddMedia : Form, ICodeWindow
 
         tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
         movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
+    }
 
-        SingleTvShowFound = (tvCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultProvider).Result) && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
-        SingleMovieFound = (movieCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultMovieProvider).Result) && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && assumeMovie;
+    public async Task SetHint(string hint) {
+        bool tvHintFound = await (tvCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultProvider));
+        SingleTvShowFound = tvHintFound && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
+
+        bool movieHintFound = await movieCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultMovieProvider);
+        SingleMovieFound = movieHintFound && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && assumeMovie;
 
         originalHint = hint;
 
-        if (SingleTvShowFound && tvCodeFinder.TvShowInitialFoundCode.HasValue && tvCodeFinder.TvShowInitialFound != null)
+        if (SingleTvShowFound??false && tvCodeFinder.TvShowInitialFoundCode.HasValue && tvCodeFinder.TvShowInitialFound != null)
         {
-            string filenameFriendly = TVSettings.Instance.DefaultTVShowFolder(tvCodeFinder.TvShowInitialFound);
-            SetShowItem(tvCodeFinder.TvShowInitialFoundCode.Value, tvCodeFinder.Source, TVSettings.Instance.DefShowLocation + System.IO.Path.DirectorySeparatorChar + filenameFriendly);
+            string filenameFriendly = TVSettings.Instance.DefaultTVShowFolder(tvCodeFinder.TvShowInitialFound!);
+            SetShowItem(tvCodeFinder.TvShowInitialFoundCode!.Value, tvCodeFinder.Source, TVSettings.Instance.DefShowLocation + System.IO.Path.DirectorySeparatorChar + filenameFriendly);
             if (ShowConfiguration.Code == -1)
             {
                 SetShowItem();
             }
         }
-        if (SingleMovieFound && movieCodeFinder.MovieInitialFoundCode.HasValue)
+        if (SingleMovieFound ?? false && movieCodeFinder.MovieInitialFoundCode.HasValue)
         {
-            SetMovieItem(movieCodeFinder.MovieInitialFoundCode.Value, movieCodeFinder.Source, TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty);
+            SetMovieItem(movieCodeFinder.MovieInitialFoundCode!.Value, movieCodeFinder.Source, TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty);
             if (MovieConfiguration.Code == -1)
             {
                 SetMovieItem();
@@ -129,6 +134,10 @@ public partial class AutoAddMedia : Form, ICodeWindow
         //Set Default Timezone and if not then set on Network
         ShowConfiguration.ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.TimeZoneForNetwork(tvCodeFinder.SelectedShow()?.Networks.FirstOrDefault(), ShowConfiguration.ShowTimeZone);
 
+        if (originalHint is null)
+        {
+            return;
+        }
         if (!originalHint.Contains(tvCodeFinder.SelectedShow()?.Name ?? string.Empty, StringComparison.OrdinalIgnoreCase))
         {
             ShowConfiguration.AliasNames.Add(originalHint);
@@ -152,6 +161,11 @@ public partial class AutoAddMedia : Form, ICodeWindow
         MovieConfiguration.UseCustomFolderNameFormat = false;
         MovieConfiguration.ConfigurationProvider = type == TVSettings.Instance.DefaultMovieProvider ? TVDoc.ProviderType.libraryDefault : type;
 
+
+        if (originalHint is null)
+        {
+            return;
+        }
         if (!originalHint.Contains(movieCodeFinder.SelectedMovie()?.Name ?? string.Empty, StringComparison.OrdinalIgnoreCase))
         {
             MovieConfiguration.AliasNames.Add(originalHint);
