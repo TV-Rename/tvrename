@@ -56,7 +56,7 @@ public static class FileHelper
         });
     }
 
-    public static void DeleteOrRecycleFile(FileInfo? file, TVSettings.TidySettings? Tidyup)
+    public static void DeleteOrRecycleFile(this FileInfo? file, TVSettings.TidySettings? Tidyup)
     {
         if (file is null)
         {
@@ -847,7 +847,7 @@ public static class FileHelper
         await CopyFileWithProgressAsync(From, To, progress, cancellationToken);
 
         // Complete the "move" by deleting the source file after a successful copy
-        From.Delete(); //todo use soemthing safer!
+        From.DeleteOrRecycleFile(null);
     }
 
     private static async Task CopyFileWithProgressAsync(FileInfo From, string To, IProgress<CopyMoveProgress> progress, CancellationToken cancellationToken)

@@ -243,7 +243,7 @@ public partial class DuplicateMovieFinder : Form
                 movie.ManualLocations.Remove(removeFile.DirectoryName);
             }
 
-            removeFile.Delete(); //TODO use FileHelper
+            FileHelper.DeleteOrRecycleFile(removeFile, null);
 
             if (removeFile.Directory.GetDirectories().Length > 0)
             {
