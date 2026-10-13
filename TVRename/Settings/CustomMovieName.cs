@@ -32,6 +32,10 @@ public static class CustomMovieName
         "{MovieType}",
         "{CollectionFolder}",
         "{CollectionOrder}",
+        "{TVDBId}",
+        "{TMDBId}",
+        "{TVMazeId}",
+
     ];
 
     public static List<string> ExamplePresets(MovieConfiguration s)
@@ -106,6 +110,9 @@ public static class CustomMovieName
             .ReplaceInsensitive("{ContentRating}", m.CachedMovie?.ContentRating)
             .ReplaceInsensitive("{Year}", m.CachedMovie?.Year.ToString())
             .ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb)
+            .ReplaceInsensitive("{TVDBId}", m.CachedMovie?.TvdbId.ToString())
+            .ReplaceInsensitive("{TMDBId}", m.CachedMovie?.TmdbId.ToString())
+            .ReplaceInsensitive("{TVMazeId}", m.CachedMovie?.TvMazeId.ToString())
             .ReplaceInsensitive("{CollectionName}", m.CachedMovie?.CollectionName)
             .ReplaceInsensitive("{CollectionOrder}", m.CollectionOrder?.ToString())
             .ReplaceInsensitive("{MovieType}", m.CachedMovie?.MovieType);

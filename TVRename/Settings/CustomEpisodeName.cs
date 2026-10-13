@@ -80,7 +80,7 @@ public class CustomEpisodeName
         "{Year}",
         "{SeasonYear}",
         "{Imdb}",
-        "{ShowImdb}"
+        "{ShowImdb}",
     ];
 
     public string NameFor(ProcessedEpisode pe) => NameFor(pe, string.Empty, 0);

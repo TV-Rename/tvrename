@@ -28,6 +28,9 @@ public static class CustomTvShowName
         "{Year}",
         "{ContentRating}",
         "{Imdb}",
+        "{TVDBId}",
+        "{TMDBId}",
+        "{TVMazeId}",
     ];
 
     public static List<string> ExamplePresets(ShowConfiguration s)
@@ -93,6 +96,9 @@ public static class CustomTvShowName
         name = name.ReplaceInsensitive("{ContentRating}", si?.ContentRating);
         name = name.ReplaceInsensitive("{Year}", si?.Year);
         name = name.ReplaceInsensitive("{Imdb}", si?.Imdb);
+        name = name.ReplaceInsensitive("{TVDBId}", si?.TvdbId.ToString());
+        name = name.ReplaceInsensitive("{TMDBId}", si?.TmdbId.ToString());
+        name = name.ReplaceInsensitive("{TVMazeId}", si?.TvMazeId.ToString());
 
         if (urlEncode)
         {
