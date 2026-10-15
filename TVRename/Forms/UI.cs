@@ -1589,7 +1589,7 @@ public partial class UI : Form, IDialogParent
 
     public static string QuickStartGuide() => "https://www.tvrename.com/guides/quick-start-guide";
 
-    private void ShowQuickStartGuide()
+    private void ShowTVQuickStartGuide()
     {
         try
         {
@@ -1610,11 +1610,31 @@ public partial class UI : Form, IDialogParent
         }
     }
 
+    private void ShowMovieQuickStartGuide()
+    {
+        try
+        {
+            chrMovieInformation.SetHtmlEmbed(QuickStartGuide());
+            chrMovieImages.SetHtmlEmbed(QuickStartGuide());
+            chrMovieTrailer.SetHtmlEmbed(QuickStartGuide());
+        }
+        catch (COMException ex)
+        {
+            //Fail gracefully - no RHS episode guide is not too big of a problem.
+            Logger.Warn(ex, "Could not update UI for the QuickStart Guide");
+        }
+        catch (Exception ex)
+        {
+            //Fail gracefully - no RHS episode guide is not too big of a problem.
+            Logger.Error(ex);
+        }
+    }
+
     private async Task FillEpGuideHtmlAsync()
     {
         if (MyShowTree.Nodes.Count == 0)
         {
-            ShowQuickStartGuide();
+            ShowTVQuickStartGuide();
         }
         else
         {
@@ -1627,13 +1647,19 @@ public partial class UI : Form, IDialogParent
     {
         if (movieTree.Nodes.Count == 0)
         {
-            ShowQuickStartGuide();
+            ShowMovieQuickStartGuide();
         }
         else
         {
             TreeNode? n = movieTree.SelectedNode;
             await FillMovieGuideHtml(TreeNodeToMovieItem(n));
         }
+    }
+
+    private void ShowQuickStartGuide()
+    {
+        ShowMovieQuickStartGuide();
+        ShowTVQuickStartGuide();
     }
 
     private static MovieConfiguration? TreeNodeToMovieItem(TreeNode? n)
