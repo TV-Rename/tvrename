@@ -17,7 +17,7 @@ public partial class CollectionsView : Form
     private readonly TVDoc mDoc;
     private readonly UI mainUi;
     private readonly List<MovieConfiguration> allAdded;
-    private Task? scanThread;
+    private Task? scanTask;
     CancellationTokenSource cts = new();
 
     public CollectionsView(TVDoc doc, UI main)
@@ -33,7 +33,7 @@ public partial class CollectionsView : Form
     private void StartScan()
     {
         cts = new();
-        scanThread = Scan();
+        scanTask = Scan();
     }
 
     // ReSharper disable once InconsistentNaming
@@ -226,13 +226,16 @@ public partial class CollectionsView : Form
 
     private async void CollectionsView_FormClosing(object sender, FormClosingEventArgs e)
     {
+        await cts.CancelAsync();
+        if (scanTask is not null) await scanTask;
+
         await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, allAdded);
     }
 
     private async void btnClose_Click(object sender, EventArgs e)
     {
-        cts.Cancel();
+        await cts.CancelAsync();
 
-        if (scanThread is not null) await scanThread;
+        if (scanTask is not null) await scanTask;
     }
 }

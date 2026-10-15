@@ -28,10 +28,10 @@ public partial class RecommendationView : Form
     private int similarWeight = 100;
 
     private Task? scanTask;
+    private CancellationTokenSource scanCancellationTokenSource = new();
 
     private RecommendationView(TVDoc doc, UI main)
     {
-        //TODO Setup Cancellation token
         InitializeComponent();
         recs = new Recomendations();
         tvShows = [];
@@ -227,10 +227,10 @@ public partial class RecommendationView : Form
             recs = media switch
             {
                 MediaConfiguration.MediaType.tv => await TMDB.LocalCache.Instance
-                    .GetTVRecommendationsAsync(progressHandler, tvShows.ToList(), languageCode)
+                    .GetTVRecommendationsAsync(progressHandler, tvShows.ToList(), languageCode, scanCancellationTokenSource.Token)
                     ,
                 MediaConfiguration.MediaType.movie => await TMDB.LocalCache.Instance
-                    .GetMovieRecommendationsAsync(progressHandler, movies.ToList(), languageCode)
+                    .GetMovieRecommendationsAsync(progressHandler, movies.ToList(), languageCode, scanCancellationTokenSource.Token)
                     ,
                 _ => throw new NotSupportedException($"media = {media} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}")
             };
@@ -294,7 +294,8 @@ public partial class RecommendationView : Form
     }
     private async void this_FormClosing(object sender, FormClosingEventArgs e)
     {
-        //TODO close off any scans
+        await scanCancellationTokenSource.CancelAsync();
+        if (scanTask is not null) await scanTask;
 
         await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, addedMovies);
         await mDoc.TvAddedOrEditedAsync(true, false, false, mainUi, addedShows);

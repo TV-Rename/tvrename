@@ -99,12 +99,24 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             return;
         }
 
-        if (doc.Dirty())
+        _ = Task.Run(async () =>
         {
-            await doc.WriteXMLSettingsAsync();
-        }
+            try
+            {
+                if (doc.Dirty())
+                {
+                    await doc.WriteXMLSettingsAsync();
+                }
 
-        await doc.ClosingAsync();
+                await doc.ClosingAsync();
+            }
+            catch (Exception ex)
+            {
+                // Always catch exceptions in fire-and-forget tasks 
+                // to avoid crashing the application unhandled
+                logger.Fatal(ex);
+            }
+        });
     }
 
     private async Task<TVDoc> LoadSettingsAsync(CommandLineArgs commandLineArgs)

@@ -1352,7 +1352,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     /// <exception cref="SourceConnectivityException">Condition.</exception>
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    public async Task<Recomendations> GetTVRecommendationsAsync(IProgress<ProgressReport> sender, List<ShowConfiguration> shows, string languageCode)
+    public async Task<Recomendations> GetTVRecommendationsAsync(IProgress<ProgressReport> sender, List<ShowConfiguration> shows, string languageCode,CancellationToken token)
     {
         int total = shows.Count;
         ThreadSafeCounter current = new();
@@ -1361,7 +1361,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         // Configure throttling to avoid getting blocked by the host server
         var options = new ParallelOptions
         {
-            MaxDegreeOfParallelism = 12 // Limit to 12 concurrent downloads at a time
+            MaxDegreeOfParallelism = 12, // Limit to 12 concurrent downloads at a time
+            CancellationToken = token
         };
 
 
@@ -1372,7 +1373,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             string errorMessage = $"Error obtaining TMDB Recommendations for {arg.Name}:";
             try
             {
-                await AddRecommendationsFromASync(arg, returnValue, languageCode);
+                if (cancellationToken.IsCancellationRequested){
+                    return;
+                }
+
+                await AddRecommendationsFromASync(arg, returnValue, languageCode,cancellationToken);
 
                 sender.Report(new ProgressReport()
                 {
@@ -1425,7 +1430,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     }
 
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    private async Task AddRecommendationsFromASync(ShowConfiguration arg, Recomendations returnValue, string languageCode)
+    private async Task AddRecommendationsFromASync(ShowConfiguration arg, Recomendations returnValue, string languageCode,CancellationToken token)
     {
         if (arg.TmdbCode == 0)
         {
@@ -1444,8 +1449,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             arg.TmdbCode = tmdbCode.Value;
         }
 
-        Task<SearchContainer<SearchTv>?> related = Client.GetTvShowRecommendationsAsync(arg.TmdbCode, languageCode);
-        Task<SearchContainer<SearchTv>?> similar = Client.GetTvShowSimilarAsync(arg.TmdbCode, languageCode);
+        Task<SearchContainer<SearchTv>?> related = Client.GetTvShowRecommendationsAsync(arg.TmdbCode, languageCode,0,token);
+        Task<SearchContainer<SearchTv>?> similar = Client.GetTvShowSimilarAsync(arg.TmdbCode, languageCode,0,token);
 
         await Task.WhenAll(related, similar);
 
@@ -1470,7 +1475,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     /// <exception cref="SourceConnectivityException">Condition.</exception>
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    public async Task<Recomendations> GetMovieRecommendationsAsync(IProgress<ProgressReport> sender, List<MovieConfiguration> movies, string languageCode)
+    public async Task<Recomendations> GetMovieRecommendationsAsync(IProgress<ProgressReport> sender, List<MovieConfiguration> movies, string languageCode, CancellationToken token)
     {
         int total = movies.Count;
         ThreadSafeCounter current = new();
@@ -1499,11 +1504,11 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             }
         }
 
-
         // Configure throttling to avoid getting blocked by the host server
         var options = new ParallelOptions
         {
-            MaxDegreeOfParallelism = 12 // Limit to 12 concurrent downloads at a time
+            MaxDegreeOfParallelism = 12, // Limit to 12 concurrent downloads at a time
+            CancellationToken = token
         };
 
 
@@ -1512,7 +1517,12 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             string errorMessage = $"Error obtaining TMDB Recommendations for {movie.Name}:";
             try
             {
-                await HandleWebErrorsForAsync(async () => await GetMovieRecommendationsAsync(languageCode, movie, returnValue), errorMessage);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                await HandleWebErrorsForAsync(async () => await GetMovieRecommendationsAsync(languageCode, movie, returnValue,cancellationToken), errorMessage);
 
                 sender.Report(new ProgressReport()
                 {
@@ -1542,10 +1552,10 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     }
 
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    private async Task<bool> GetMovieRecommendationsAsync(string languageCode, MovieConfiguration movie, Recomendations returnValue)
+    private async Task<bool> GetMovieRecommendationsAsync(string languageCode, MovieConfiguration movie, Recomendations returnValue,CancellationToken token)
     {
-        Task<SearchContainer<SearchMovie>?> related = Client.GetMovieRecommendationsAsync(movie.TmdbCode, languageCode);
-        Task<SearchContainer<SearchMovie>?> similar = Client.GetMovieSimilarAsync(movie.TmdbCode, languageCode);
+        Task<SearchContainer<SearchMovie>?> related = Client.GetMovieRecommendationsAsync(movie.TmdbCode, languageCode, 0, token);
+        Task<SearchContainer<SearchMovie>?> similar = Client.GetMovieSimilarAsync(movie.TmdbCode, languageCode, 0, token);
 
         await Task.WhenAll(related, similar);
 
