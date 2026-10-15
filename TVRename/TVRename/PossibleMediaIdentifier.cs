@@ -8,7 +8,6 @@
 
 using System.Text.RegularExpressions;
 using TMDbLib.Objects.Exceptions;
-using TMDbLib.Objects.People;
 using static TVRename.TVDoc;
 
 namespace TVRename;
@@ -28,7 +27,7 @@ class PossibleMediaIdentifier
                 if (mediaType == MediaConfiguration.MediaType.movie)
                 {
                     CachedMovieInfo? series = await TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(ss, locale, showMessageBox, new ThreadSafeCounter(), 1);
-                    return series?.TmdbCode;
+                    return series?.TvdbCode;
                 }
                 else
                 {
@@ -594,7 +593,7 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, iPossibleTVShowIdenti
                     }
                     break;
                 case "IMDB":
-                    CachedSeriesInfo? s = await TMDB.LocalCache.Instance.LookupTVShowByImdbAsync("tt" + code, preferredLocale);
+                    CachedSeriesInfo? s = await TMDB.LocalCache.Instance.LookupTVShowByImdbAsync($"tt{code:D7}" , preferredLocale);
                     if (s != null)
                     {
                         return (TVDoc.ProviderType.TMDB, s.TmdbCode);
@@ -659,7 +658,7 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, iPossibleTVShowIdenti
                     }
                     break;
                 case "IMDB":
-                    CachedMovieInfo? s = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync("tt" + code, preferredLocale);
+                    CachedMovieInfo? s = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync($"tt{code:D7}", preferredLocale);
                     if (s != null)
                     {
                         return (TVDoc.ProviderType.TMDB, s.TmdbCode);
