@@ -920,7 +920,7 @@ public static class FileHelper
         //This deals with an issue on some systems (XP?) that case insensitive moves did not occur
         if (isMove || FileHelper.Same(From, To))
         {
-            if (SameFolder(From, To))
+            if (SameDrive(From, To))
             {
                 // Copying the temp file into the correct name is very quick, so no progress reporting
                 File.Move(From.FullName, tempName, MoveOptions.ReplaceExisting);
@@ -952,6 +952,13 @@ public static class FileHelper
     {
         return from.DirectoryName == to.DirectoryName;
     }
+
+    private static bool SameDrive(FileInfo from, FileInfo to)
+    {
+        return string.Equals(from.Directory.Root.FullName, to.Directory.Root.FullName,
+                   StringComparison.InvariantCultureIgnoreCase);
+    }
+
 
     internal static void RemoveDirectory(string folderName)
     {
