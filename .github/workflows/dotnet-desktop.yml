@@ -71,4 +71,6 @@ jobs:
     - name: Attach Files to Release
       uses: svenstaro/upload-release-action@2.11.5
       with:
-        file: TVRename-*-Installer.exe
+        file: TVRename-${{ steps.get_version.outputs.version }}-Installer.exe
+
+
