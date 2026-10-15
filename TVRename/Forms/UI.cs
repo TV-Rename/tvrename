@@ -979,7 +979,8 @@ public partial class UI : Form, IDialogParent
     {
         if (_shutdownManager != null)
         {
-            await _shutdownManager.CancelAllAndWaitAsync(TimeSpan.FromSeconds(15));
+            // Increase timeout to 30 seconds to allow caches to save properly
+            await _shutdownManager.CancelAllAndWaitAsync(TimeSpan.FromSeconds(30));
         }
     }
 
@@ -1398,10 +1399,21 @@ public partial class UI : Form, IDialogParent
 
     private async void UI_FormClosing(object sender, FormClosingEventArgs e)
     {
-        e.Cancel = await CloseAndTidyUpAsync(e);
+        //We never allow it to happen automatically
+        e.Cancel = true;
+        _shutdownManager.CancelAllTokens();
+
+        await Task.Yield();
+        bool close = await CloseAndTidyUpAsync();
+
+        if (close)
+        {
+            FormClosing -= UI_FormClosing; //prevent an infinite loop
+            Close();
+        }
     }
 
-    private async Task<bool> CloseAndTidyUpAsync(FormClosingEventArgs e)
+    private async Task<bool> CloseAndTidyUpAsync()
     {
         try
         {
@@ -1418,7 +1430,7 @@ public partial class UI : Form, IDialogParent
                         break;
 
                     case DialogResult.Cancel:
-                        return true;
+                        return false;
 
                     case DialogResult.No:
                         break;
@@ -1436,12 +1448,13 @@ public partial class UI : Form, IDialogParent
 
             this.Cursor = Cursors.WaitCursor;
 
-            await CancellAllTasksAsync();
-
             await SaveLayoutXmlAsync();
             mDoc.TidyCaches();
-            await SaveCaches();
+            await SaveCaches();  // This now tracks the cache save task with shutdown manager
             await mDoc.ClosingAsync();
+
+            // Wait for all tracked tasks (including cache saves) to complete before proceeding
+            await CancellAllTasksAsync();
 
             mAutoFolderMonitor?.Dispose();
             BGDownloadTimer.Dispose();
@@ -1464,7 +1477,7 @@ public partial class UI : Form, IDialogParent
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         Cursor = Cursors.Default;
-        return false;
+        return true;
     }
 
     private void ChooseSiteMenu(ToolStripSplitButton btn)
@@ -2600,7 +2613,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private async Task SaveCaches() => await mDoc.StartSavingCachesAsync();
+    private async Task SaveCaches() => await mDoc.StartSavingCachesAsync(_shutdownManager);
 
     private void backgroundDownloadToolStripMenuItem_Click(object sender, EventArgs e)
     {

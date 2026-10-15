@@ -34,7 +34,7 @@ internal static class CachePersistor
             }
         }
     }
-    public static void SaveCache(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp)
+    public static async Task SaveCacheAsync(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp, bool isShuttingDown = false)
     {
         Policy retryPolicy = Policy
             .Handle<Exception>()
@@ -45,17 +45,21 @@ internal static class CachePersistor
 
         try
         {
-            retryPolicy.Execute(async () => { await SaveCacheInternalAsync(series, movies, cacheFile, timestamp); });
+            await retryPolicy.Execute(async () => { await SaveCacheInternalAsync(series, movies, cacheFile, timestamp); });
         }
         catch (Exception e)
         {
             Logger.Error($"Complete failure to save {cacheFile.FullName}. {e.Message}");
 
-            DialogResult dr = MessageBox.Show($"Could not save {cacheFile.Name} due to {e.Message}. Local cache will be lost. Retry? ", "TV Rename",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-            if (dr != DialogResult.No)
+            // Do not show dialog during shutdown to prevent hanging
+            if (!isShuttingDown)
             {
-                SaveCache(series, movies, cacheFile, timestamp);
+                DialogResult dr = MessageBox.Show($"Could not save {cacheFile.Name} due to {e.Message}. Local cache will be lost. Retry? ", "TV Rename",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                if (dr != DialogResult.No)
+                {
+                    await SaveCacheAsync(series, movies, cacheFile, timestamp, isShuttingDown);
+                }
             }
         }
     }
@@ -84,6 +88,7 @@ internal static class CachePersistor
         {
             Logger.Warn(e, $"Failed to rotate files for Cache to {cacheFile.FullName}");
         }
+
         try
         {
             await SaveCacheFileInternalAsync(series, movies, cacheFile, timestamp);

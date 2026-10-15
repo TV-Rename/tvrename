@@ -832,7 +832,7 @@ internal static class FinderHelper
             TVSettings.Instance.DefMovieUseDefaultLocation && TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
         {
             //TODO - Make generic, currently uses TMDB only
-            CachedMovieInfo? foundMovie = await TMDB.LocalCache.Instance.GetMovieAsync(refinedHint, null, new Locale(), true, true);
+            CachedMovieInfo? foundMovie = await TMDB.LocalCache.Instance.SearchMovieAsync(refinedHint, null, new Locale(), true, true);
             if (foundMovie != null)
             {
                 // no need to popup dialog

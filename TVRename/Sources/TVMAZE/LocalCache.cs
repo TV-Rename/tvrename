@@ -59,10 +59,46 @@ public class LocalCache : MediaCache, iTVSource
 
     public async Task<bool> ConnectAsync(bool showErrorMsgBox) => true;
 
-    public void SaveCache()
+    public async Task SaveCacheAsync()
     {
-        CachePersistor.SaveCache(Series, Movies, CacheFile!, 0);
+        await CachePersistor.SaveCacheAsync(Series, Movies, CacheFile!, 0);
     }
+
+    public async Task<CachedSeriesInfo?> GetSeriesOrDownloadAsync(ISeriesSpecifier id)
+    => HasSeries(id.TvMazeId)
+        ? Series[id.TvMazeId]
+        : await DownloadSeriesNowAsync(id);
+
+    private async Task<CachedSeriesInfo> DownloadSeriesNowAsync(ISeriesSpecifier s)
+    {
+        try
+        {
+            CachedSeriesInfo downloadedSi = await API.GetSeriesDetailsAsync(s);
+
+            if (downloadedSi.TvMazeCode != s.TvMazeId && s.TvMazeId == -1)
+            {
+                {
+                    Series.TryRemove(-1, out _);
+                }
+            }
+
+            this.AddSeriesToCache(downloadedSi);
+
+            return downloadedSi;
+        }
+        catch (SourceConnectivityException conex)
+        {
+            LOGGER.Warn(conex.ErrorText());
+            LastErrorMessage = conex.Message;
+        }
+        catch (SourceConsistencyException sce)
+        {
+            LOGGER.Error(sce.ErrorText());
+            LastErrorMessage = sce.Message;
+        }
+        throw new MediaNotFoundException(s,$"Could not find {s.Name} ({s.TvMazeId}) on TVmaze",TVDoc.ProviderType.TVmaze,TVDoc.ProviderType.TVmaze,MediaConfiguration.MediaType.tv);
+    }
+
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="MediaNotFoundException">Condition.</exception>
@@ -192,7 +228,7 @@ public class LocalCache : MediaCache, iTVSource
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    public async Task<CachedSeriesInfo?> GetSeriesAsync(string showName, bool showErrorMsgBox, Locale preferredLocale)
+    public async Task<CachedSeriesInfo?> SearchSeriesAsync(string showName, bool showErrorMsgBox, Locale preferredLocale)
     {
         await SearchAsync(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
 
@@ -269,7 +305,7 @@ public class LocalCache : MediaCache, iTVSource
             Series.Clear();
         }
 
-        SaveCache();
+        await SaveCacheAsync();
         LOGGER.Info("Forgot all TVMaze shows");
     }
 

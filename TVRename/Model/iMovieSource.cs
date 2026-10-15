@@ -18,13 +18,11 @@ public interface iMovieSource
 
     Task<bool> ConnectAsync(bool showErrorMsgBox);
 
-    void SaveCache();
+    Task SaveCacheAsync();
 
     Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount);
 
     void UpdatesDoneOk();
-
-    Task<CachedMovieInfo?> GetMovieAsync(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox);
 
     CachedMovieInfo? GetMovie(int? id);
 

@@ -62,7 +62,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
         Movies.Clear();
         Series.Clear();
-        SaveCache();
+        await SaveCacheAsync();
         //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
         latestUpdateTime.Reset();
         LOGGER.Info($"Forget everything, so we assume we have TMDB updates until {latestUpdateTime}");
@@ -97,9 +97,9 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     public async Task<bool> ConnectAsync(bool showErrorMsgBox) => true;
 
-    public void SaveCache()
+    public async Task SaveCacheAsync()
     {
-        CachePersistor.SaveCache(Series, Movies, CacheFile!, latestUpdateTime.LastSuccessfulServerUpdateTimecode());
+        await CachePersistor.SaveCacheAsync(Series, Movies, CacheFile!, latestUpdateTime.LastSuccessfulServerUpdateTimecode());
     }
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
@@ -177,7 +177,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             return true;
         }
 
-        Say($"Movie: {id.Name} from TMDB", counter.Increment() , totalCount);
+        Say($"Movie: {id.Name} from TMDB", counter.Increment(), totalCount);
         try
         {
             CachedMovieInfo downloadedSi = await DownloadMovieNowAsync(id);
@@ -350,7 +350,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         latestUpdateTime.RecordSuccessfulUpdate();
     }
 
-    public async Task<CachedMovieInfo?> GetMovieAsync(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => await this.GetMovieAsync(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
+
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     public void AddOrUpdateEpisode(Episode e)
@@ -379,6 +379,10 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     public async Task<CachedMovieInfo> GetMovieAndDownloadAsync(ISeriesSpecifier id) => HasMovie(id.TmdbId)
         ? CachedMovieData[id.TmdbId]
         : await DownloadMovieNowAsync(id);
+
+    public async Task<CachedSeriesInfo> GetSeriesOrDownloadAsync(ISeriesSpecifier id) => HasSeries(id.TmdbId)
+    ? CachedShowData[id.TmdbId]
+    : await DownloadSeriesNowAsync(id);
 
     /// <exception cref="MediaNotFoundException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">Condition.</exception>
@@ -1146,6 +1150,36 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         {
             {
                 return Movies[results.MovieResults.First().Id];
+            }
+        }
+        return null;
+    }
+
+    internal async Task<CachedSeriesInfo?> LookupTVShowByImdbAsync(string imdbToTest, Locale locale)
+    {
+        FindContainer? results = await Client.FindAsync(FindExternalSource.Imdb, imdbToTest);
+
+        if (results?.TvResults == null)
+        {
+            return null;
+        }
+
+        LOGGER.Info($"Got {results?.TvResults?.Count:N0} results searching for {imdbToTest}");
+        foreach (SearchTv result in results!.TvResults?? [])
+        {
+            SearchSpecifier ss = new(result.Id, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
+            await DownloadSeriesNowAsync(ss);
+        }
+
+        if (results.TvResults!.Count == 0)
+        {
+            return null;
+        }
+
+        if (results.TvResults!.Count == 1)
+        {
+            {
+                return Series[results.TvResults.First().Id];
             }
         }
         return null;

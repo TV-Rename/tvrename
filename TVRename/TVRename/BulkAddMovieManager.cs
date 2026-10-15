@@ -5,7 +5,6 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
 using TVRename.Forms;
 
 namespace TVRename;
@@ -104,7 +103,7 @@ public class BulkAddMovieManager(TVDoc doc)
                 PossibleNewMovie ai = new(newFilm, showErrorMsgBox);
                 if (andGuess)
                 {
-                    await ai.GuessMovieAsync(showErrorMsgBox);
+                    await GuessMovieAsync(ai,showErrorMsgBox);
                 }
                 AddItems.AddIfNew(ai);
             }
@@ -116,6 +115,36 @@ public class BulkAddMovieManager(TVDoc doc)
             Logger.Info($"Can't access {di2.FullName}, so ignoring it");
             return (true, null);
         }
+    }
+
+    public static async Task GuessMovieAsync(PossibleNewMovie ai, bool showErrorMsgBox)
+    {
+        iPossibleMovieIdentifier[] identifiers =
+        [
+            new IdentifyFromFilenameCodes(),
+            new IdentifyFromNFOFiles(),
+            new IdentifyByMovieRefinedHint(),
+            new IdentifyByTweakedName(),
+            new IdentifyFinalBoss()
+        ];
+
+        foreach (var identifier in identifiers)
+        {
+            try
+            {
+                if (await identifier.IdentifyAsync(ai, showErrorMsgBox) is (TVDoc.ProviderType type, int code))
+                {
+                    ai.UpdateId(code, type);
+                    Logger.Info($"BULK ADD AUTO ID: identified {ai.Name} ({ai.Movie}) based on {identifier.GetType().Name} which we looked up to get {type}={code}");
+                    return;
+                }
+            }
+            catch (MediaNotIdentifiedException ex)
+            {
+                //not really an issue so we can continue
+            }
+        }
+        Logger.Warn($"Could not match the possible movie: {ai}");
     }
 
     private static async Task<bool> RejectFolderIfIncludedInShowAsync(bool fullLogging, MovieConfiguration si, string theFolder)

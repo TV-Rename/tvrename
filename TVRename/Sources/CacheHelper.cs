@@ -256,7 +256,7 @@ public static class CacheHelper
         return matchingSeries;
     }
 
-    public static async Task<CachedSeriesInfo?> GetSeriesAsync<T>(this T cache, string showName, bool showErrorMsgBox, Locale preferredLocale) where T : MediaCache, iTVSource
+    public static async Task<CachedSeriesInfo?> SearchSeriesAsync<T>(this T cache, string showName, bool showErrorMsgBox, Locale preferredLocale) where T : MediaCache, iTVSource
     {
         await cache.SearchAsync(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
 
@@ -276,7 +276,7 @@ public static class CacheHelper
             _ => null
         };
     }
-    public static async Task<CachedMovieInfo?> GetMovieAsync<T>(this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch) where T : MediaCache, iMovieSource
+    public static async Task<CachedMovieInfo?> SearchMovieAsync<T>(this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch) where T : MediaCache, iMovieSource
     {
         await cache.SearchAsync(hint, showErrorMsgBox, MediaConfiguration.MediaType.movie, preferredLocale);
 

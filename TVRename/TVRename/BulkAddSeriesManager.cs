@@ -23,184 +23,48 @@ public class BulkAddSeriesManager(TVDoc doc)
 
     public static async Task GuessShowItemAsync(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
     {
-        Language languageToUse = TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB
-            ? TVSettings.Instance.TMDBLanguage
-            : TVSettings.Instance.PreferredTVDBLanguage;
+        iPossibleTVShowIdentifier[] identifiers =
+            [
+            new IdentifyFromFilenameCodes(), //Looks for a code in the filename or folder name (e.g. {tvdb=12345}, {tmdb=12345}, etc.)
+            new IdentifyFromNFOFiles(), //Looks for a code in the NFO file
+            new IdentifyBySearchName(library), //searches based on filename/foldername
+            new IdentifyByTweakedSearchName(library) //Does some more advanced name processing to try and find a match
+            ];
 
-        Locale localeToUse = new(languageToUse);
-
-        string showName = GuessShowName(ai, library);
-        //todo - (BulkAdd Manager needs to work for new providers)
-        int tvdbId = FindTvdbShowCode(ai);
-
-        if (string.IsNullOrEmpty(showName) && tvdbId == -1)
-        {
-            return;
-        }
-
-        if (tvdbId != -1)
+        foreach (var identifier in identifiers)
         {
             try
             {
-                ai.UpdateId(tvdbId, TVDoc.ProviderType.TheTVDB);
-                CachedSeriesInfo? cachedSeries = await TheTVDB.LocalCache.Instance.GetSeriesOrDownloadAsync(ai, showErrorMsgBox);
-                if (cachedSeries != null)
+                if (await identifier.IdentifyAsync(ai, showErrorMsgBox) is (TVDoc.ProviderType type, int code))
                 {
-                    return;
-                }
-            }
-            catch (MediaNotFoundException)
-            {
-                //continue to try the next method
-            }
-        }
+                    ai.UpdateId(code, type);
+                    Logger.Info($"BULK ADD AUTO ID: identified {ai.Name} ({ai.FolderName}) based on {identifier.GetType().Name} which we looked up to get {code}");
 
-        CachedSeriesInfo? ser = await TheTVDB.LocalCache.Instance.GetSeriesAsync(showName, showErrorMsgBox, localeToUse);
-        if (ser != null)
-        {
-            ai.UpdateId(ser.TvdbId, TVDoc.ProviderType.TheTVDB);
-            return;
-        }
-
-        //Try removing any year
-        string showNameNoYear = showName.RemoveBracketedYear();
-
-        //Remove anything we can from hint to make it cleaner and hence more likely to match
-        string refinedHint = FinderHelper.RemoveSeriesEpisodeIndicators(showNameNoYear, library.SeasonWords());
-
-        if (string.IsNullOrWhiteSpace(refinedHint))
-        {
-            Logger.Info($"Ignoring {showName} as it refines to nothing.");
-        }
-
-        ser = await TheTVDB.LocalCache.Instance.GetSeriesAsync(refinedHint, showErrorMsgBox, localeToUse);
-
-        ai.RefinedHint = refinedHint;
-        if (ser != null)
-        {
-            ai.UpdateId(tvdbId, TVDoc.ProviderType.TheTVDB);
-        }
-    }
-
-    private static int FindTvdbShowCode(PossibleNewTvShow ai)
-    {
-        List<string> possibleFilenames = ["series.xml", "tvshow.nfo"];
-        foreach (string fileName in possibleFilenames)
-        {
-            try
-            {
-                IEnumerable<FileInfo> files = ai.FindFiles(fileName);
-                if (files.IsAny())
-                {
-                    foreach (int x in files.Select(FindTvdbShowCode).Where(x => x != -1))
+                    await GetTypeInstance(type).EnsureUpdatedAsync(ai, false, showErrorMsgBox, new ThreadSafeCounter(), 1);
+                    CachedSeriesInfo? cachedSeries = GetTypeInstance(type).GetSeries(code);
+                    if (cachedSeries != null)
                     {
-                        return x;
+                        return;
                     }
                 }
             }
-            catch (System.IO.DirectoryNotFoundException e)
+            catch (MediaNotIdentifiedException ex)
             {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
-            }
-            catch (NotSupportedException e)
-            {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
-            }
-            catch (System.IO.IOException e)
-            {
-                Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.ErrorText()}");
+                //not really an issue so we can continue
             }
         }
-        //Can't find it
-        return -1;
+        Logger.Warn($"Could not match the possible tv show: {ai}");
     }
 
-    private static int FindTvdbShowCode(FileInfo file)
+    private static iTVSource GetTypeInstance(TVDoc.ProviderType type)
     {
-        try
-        {
-            using XmlReader reader = XmlReader.Create(file.OpenText());
-            while (reader.Read())
-            {
-                if (reader.Name == "tvdbid" && reader.IsStartElement())
-                {
-                    string s = reader.ReadElementContentAsString();
-                    bool success = int.TryParse(s, out int x);
-                    if (success && x != -1)
-                    {
-                        return x;
-                    }
-                }
-
-                if (reader.Name == "uniqueid" && reader.IsStartElement() && reader.GetAttribute("type") == "tvdb")
-                {
-                    string s = reader.ReadElementContentAsString();
-                    bool success = int.TryParse(s, out int x);
-                    if (success && x != -1)
-                    {
-                        return x;
-                    }
-                }
-            }
-        }
-        catch (XmlException xe)
-        {
-            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.ErrorText()}");
-            return -1;
-        }
-        catch (System.IO.IOException xe)
-        {
-            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.ErrorText()}");
-            return -1;
-        }
-        catch (UnauthorizedAccessException xe)
-        {
-            Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.ErrorText()}");
-            return -1;
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, $"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside.");
-        }
-
-        return -1;
-    }
-
-    private static string GuessShowName(PossibleNewTvShow ai, ShowLibrary library)
-    {
-        // see if we can guess a season number and show name, too
-        // Assume is blah\blah\blah\show\season X
-        string showName = ai.FolderName;
-
-        foreach (string seasonWord in library.SeasonWords())
-        {
-            string seasonFinder = ".*" + seasonWord + "[ _\\.]+([0-9]+).*";
-            if (Regex.Count(showName, seasonFinder, RegexOptions.IgnoreCase) == 0)
-            {
-                continue;
-            }
-
-            try
-            {
-                // remove season folder from end of the path
-                showName = Regex.Replace(showName, "(.*)\\\\" + seasonFinder, "$1", RegexOptions.IgnoreCase);
-                break;
-            }
-            catch (ArgumentException)
-            {
-                //Ignore this Exception
-            }
-        }
-
-        // assume last folder element is the show name
-        showName = showName[(showName.LastIndexOf(Path.DirectorySeparatorChar.ToString(),
-            StringComparison.Ordinal) + 1)..];
-
-        return showName;
+        if (type == TVDoc.ProviderType.TheTVDB)
+            return TheTVDB.LocalCache.Instance;
+        if (type == TVDoc.ProviderType.TMDB)
+            return TMDB.LocalCache.Instance;
+        if (type == TVDoc.ProviderType.TVmaze)
+            return TVmaze.LocalCache.Instance;
+        return TheTVDB.LocalCache.Instance;
     }
 
     private async Task<(bool, DirectoryInfo[]?, string)> HasSeasonFoldersAsync(DirectoryInfo di)

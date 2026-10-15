@@ -64,24 +64,7 @@ public class AsyncShutdownManager : IAsyncDisposable
         Logger.Info($"Starting shutdown - waiting up to {timeout.TotalSeconds} seconds for {_trackingTasks.Count} tasks and {_cancellationTokenSources.Count} cancellation tokens");
 
         // Step 1: Cancel all tracked tokens
-        lock (_lock)
-        {
-            foreach (var cts in _cancellationTokenSources)
-            {
-                if (!cts.IsCancellationRequested)
-                {
-                    try
-                    {
-                        cts.Cancel();
-                        Logger.Debug("Cancelled CancellationTokenSource");
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        Logger.Debug("CancellationTokenSource already disposed");
-                    }
-                }
-            }
-        }
+        CancelAllTokens();
 
         // Step 2: Wait for all tasks to complete with timeout
         Task[] tasksToWait;
@@ -108,6 +91,28 @@ public class AsyncShutdownManager : IAsyncDisposable
             catch (AggregateException ex)
             {
                 Logger.Warn(ex, "One or more tasks threw exceptions during shutdown");
+            }
+        }
+    }
+
+    public void CancelAllTokens()
+    {
+        lock (_lock)
+        {
+            foreach (var cts in _cancellationTokenSources)
+            {
+                if (!cts.IsCancellationRequested)
+                {
+                    try
+                    {
+                        cts.Cancel();
+                        Logger.Debug("Cancelled CancellationTokenSource");
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        Logger.Debug("CancellationTokenSource already disposed");
+                    }
+                }
             }
         }
     }

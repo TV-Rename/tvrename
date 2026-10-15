@@ -101,9 +101,6 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         LatestUpdateTime.RecordSuccessfulUpdate();
     }
 
-    public async Task<CachedMovieInfo?> GetMovieAsync(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) =>
-        await this.GetMovieAsync(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
-
     internal async Task<IEnumerable<CachedSeriesInfo>> ServerTvAccuracyCheckAsync(DownloadProgressStatus? p = null)
     {
         TvdbAccuracyCheck check = new();
@@ -285,7 +282,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         {
             HandleConnectionIssue(true, ex);
         }
-        SaveCache();
+        await SaveCacheAsync();
 
         //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
         LatestUpdateTime.Reset();
@@ -897,9 +894,9 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
 
     public override string CacheSourceName() => "TVDB";
 
-    public void SaveCache()
+    public async Task SaveCacheAsync()
     {
-        CachePersistor.SaveCache(Series, Movies, CacheFile!,
+        await CachePersistor.SaveCacheAsync(Series, Movies, CacheFile!,
         LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
     }
 

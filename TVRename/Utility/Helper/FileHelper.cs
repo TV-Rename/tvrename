@@ -199,6 +199,35 @@ public static class FileHelper
         return -1;
     }
 
+    public static (string codeType, int code)? ExtractIdsFrom(string name)
+    {
+        //See http://regex101.com/r/0rVxkW/3
+        string regex = @".*({\[)?(?<codeType>imdb|tmdb|tvdb|tvmaze)(id)?[=-](?<code>t*\d+)(\]})?.*";
+        try
+        {
+            Match m = Regex.Match(name, regex, RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+            if (!m.Success)
+            {
+                return null;
+            }
+            //We have a match!
+            return (m.Groups["codeType"].Value, int.Parse(m.Groups["code"].Value));
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, $"Could not parse {regex} to tell whether {name} is a name that has an ID.");
+        }
+        return null;
+    }
+
+    public static (string hint, int? year) GuessShowName(string refinedHint)
+    {
+        refinedHint = FinderHelper.RemoveSceneTerms(refinedHint.CompareName());
+
+        (string newRefinedHint, int? possibleYear) = FinderHelper.SplitIntoTitleYear(refinedHint);
+
+        return (newRefinedHint.CompareName(), possibleYear);
+    }
     public static bool IsImportant(this DirectoryInfo info)
     {
         if (info.Name.Equals("subs", StringComparison.OrdinalIgnoreCase))

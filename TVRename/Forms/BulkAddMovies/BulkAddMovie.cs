@@ -400,7 +400,7 @@ public partial class BulkAddMovie : Form
                         return;
                     }
 
-                    await movie.GuessMovieAsync(true);
+                    await BulkAddMovieManager.GuessMovieAsync(movie, true);
 
                     var report = new NewMovieProgressReport
                     {

@@ -326,7 +326,6 @@ public class CachedSeriesInfo : CachedMediaInfo
             new XElement("Episodes", Episodes.Select(e => e.GenerateEpisodeXElement())),
             new XElement("Images", images.Select(i => i.GenerateXElement()))
         );
-        throw new NotImplementedException();
     }
 
     public string? GetSeriesFanartPath() => FanartUrl.HasValue() ? FanartUrl : images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.background)?.ImageUrl;

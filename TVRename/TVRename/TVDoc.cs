@@ -2253,11 +2253,17 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
 
     private Task? saveCachesTask;
-    public async Task StartSavingCachesAsync()
+    public async Task StartSavingCachesAsync(AsyncShutdownManager? shutdownManager = null)
     {
         if (saveCachesTask is null || saveCachesTask.IsCompleted)
         {
             saveCachesTask = SaveCachesAsync();
+
+            // Track the cache save task with the shutdown manager to ensure it completes during shutdown
+            if (shutdownManager != null)
+            {
+                shutdownManager.TrackTask(saveCachesTask);
+            }
         }
         else
         {
@@ -2271,20 +2277,16 @@ public class TVDoc : IDisposable, IAsyncDisposable
         Logger.Info("Attempting to save caches");
         try
         {
-            await Task.Run(() =>
-            {
-                TheTVDB.LocalCache.Instance.SaveCache();
-                TVmaze.LocalCache.Instance.SaveCache();
-                TMDB.LocalCache.Instance.SaveCache();
-            });
+            var a = TheTVDB.LocalCache.Instance.SaveCacheAsync();
+            var b = TMDB.LocalCache.Instance.SaveCacheAsync();
+            var c = TVmaze.LocalCache.Instance.SaveCacheAsync();
+
+            await Task.WhenAll(a, b, c);
+            Logger.Info("Caches saved successfully");
         }
-        catch (ThreadStateException ex)
+        catch (Exception ex)
         {
-            Logger.Error(ex, "Could not save caches");
-        }
-        catch (OutOfMemoryException ex)
-        {
-            Logger.Error(ex, "Could not save caches");
+            Logger.Error(ex, "Error while saving caches during shutdown");
         }
     }
 
