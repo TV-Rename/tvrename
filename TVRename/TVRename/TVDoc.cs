@@ -512,7 +512,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             return;
         }
 
-        CustomEpisodeName.NameForNoExt(epi, s.Url, true).OpenUrlInBrowser();
+        CustomEpisodeName.NameForNoExt(epi, s.Url, true, true).OpenUrlInBrowser();
     }
 
     public static void SearchForMovie(MovieConfiguration? ep)

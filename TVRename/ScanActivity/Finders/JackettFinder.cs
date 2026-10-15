@@ -201,7 +201,7 @@ internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadF
     {
         string apikey = TVSettings.Instance.JackettAPIKey;
         const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
-        string text = WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false));
+        string text = WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false , true));
         return $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
     }
 
@@ -210,7 +210,7 @@ internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadF
         if (episode == null) return;
 
         const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
-        string searchTerm = CustomEpisodeName.NameForNoExt(episode, FORMAT, false);
+        string searchTerm = CustomEpisodeName.NameForNoExt(episode, FORMAT, false, true);
         SearchFor(searchTerm);
     }
 

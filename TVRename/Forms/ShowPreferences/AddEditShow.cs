@@ -190,7 +190,7 @@ public partial class AddEditShow : Form, ICodeWindow
         foreach (string s in CustomEpisodeName.TAGS)
         {
             tl.AppendLine(s + (sampleEpisode != null
-                ? " - " + CustomEpisodeName.NameForNoExt(sampleEpisode, s)
+                ? " - " + CustomEpisodeName.NameForNoExt(sampleEpisode, s, false, true)
                 : string.Empty));
         }
 
@@ -802,7 +802,7 @@ public partial class AddEditShow : Form, ICodeWindow
     {
         if (sampleEpisode != null)
         {
-            llCustomSearchPreview.Text = CustomEpisodeName.NameForNoExt(sampleEpisode, txtSearchURL.Text, true);
+            llCustomSearchPreview.Text = CustomEpisodeName.NameForNoExt(sampleEpisode, txtSearchURL.Text, true,true);
         }
     }
 
@@ -854,7 +854,7 @@ public partial class AddEditShow : Form, ICodeWindow
         if (sampleEpisode != null)
         {
             llCustomName.Text =
-                CustomEpisodeName.NameForNoExt(sampleEpisode, txtCustomEpisodeNamingFormat.Text, false);
+                CustomEpisodeName.NameForNoExt(sampleEpisode, txtCustomEpisodeNamingFormat.Text, false,true);
 
             llLibraryDefaultFormat.Text = TVSettings.Instance.NamingStyle.NameFor(sampleEpisode);
         }

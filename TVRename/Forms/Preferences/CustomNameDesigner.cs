@@ -67,7 +67,7 @@ public partial class CustomNameDesigner : Form
             string txt = s;
             if (pe != null)
             {
-                txt += " - " + CustomEpisodeName.NameForNoExt(pe, s);
+                txt += " - " + CustomEpisodeName.NameForNoExt(pe, s,false, true);
             }
 
             cbTags.Items.Add(txt);
@@ -75,7 +75,7 @@ public partial class CustomNameDesigner : Form
 
         foreach (string s in CustomEpisodeName.PRESETS)
         {
-            cbPresets.Items.Add(pe != null ? CustomEpisodeName.NameForNoExt(pe, s) : s);
+            cbPresets.Items.Add(pe != null ? CustomEpisodeName.NameForNoExt(pe, s, false, true) : s);
         }
     }
 

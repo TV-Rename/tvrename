@@ -21,7 +21,7 @@ public partial class CustomNameTagsFloatingWindow : Form
 {
     public CustomNameTagsFloatingWindow(ProcessedEpisode? pe)
     {
-        InitializeComponent(CustomEpisodeName.TAGS, pe != null, s => CustomEpisodeName.NameForNoExt(pe!, s));
+        InitializeComponent(CustomEpisodeName.TAGS, pe != null, s => CustomEpisodeName.NameForNoExt(pe!, s,false,true));
     }
 
     public CustomNameTagsFloatingWindow(ProcessedSeason? pe)

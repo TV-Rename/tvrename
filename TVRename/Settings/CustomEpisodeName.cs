@@ -220,15 +220,15 @@ public class CustomEpisodeName
 
     public static string NameForNoExt(ProcessedEpisode pe, string styleString) => NameForNoExt(pe, styleString, false);
 
-    public static string NameForNoExt(ProcessedEpisode pe, string styleString, bool urlEncode)
+    public static string NameForNoExt(ProcessedEpisode pe, string styleString, bool urlEncode, bool ignoreCustomNamingFormat = false)
     {
         try
         {
-            string name = styleString;
-
-            string showName = pe.Show.UseCustomNamingFormat && pe.Show.CustomNamingFormat.HasValue()
+            string name = pe.Show.UseCustomNamingFormat && pe.Show.CustomNamingFormat.HasValue() && !ignoreCustomNamingFormat
                 ? pe.Show.CustomNamingFormat
-                : pe.Show.ShowName.Replace("[", "\\[").Replace("]", "\\]");
+                : styleString;
+
+            string showName =  pe.Show.ShowName.Replace("[", "\\[").Replace("]", "\\]");
 
             string episodeName = pe.Name.Trim();
             if (urlEncode)

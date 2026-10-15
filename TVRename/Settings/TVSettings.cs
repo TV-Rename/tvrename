@@ -1080,7 +1080,7 @@ public sealed class TVSettings
             ? epi.Show.CustomSearchUrl
             : TheSearchers.CurrentSearch.Url;
 
-        return url.HasValue() ? CustomEpisodeName.NameForNoExt(epi, url, true) : string.Empty;
+        return url.HasValue() ? CustomEpisodeName.NameForNoExt(epi, url, true,true) : string.Empty;
     }
 
     public string BTMovieSearchURL(MovieConfiguration? mov)
