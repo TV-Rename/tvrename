@@ -201,8 +201,8 @@ public static class FileHelper
 
     public static (string codeType, int code)? ExtractIdsFrom(string name)
     {
-        //See http://regex101.com/r/0rVxkW/3
-        string regex = @".*({\[)?(?<codeType>imdb|tmdb|tvdb|tvmaze)(id)?[=-](tt)?(?<code>\d+)(\]})?.*";
+        //See http://regex101.com/r/0rVxkW/5
+        string regex = @".*[{\[]{1}(?<codeType>imdb|tmdb|tvdb|tvmaze)(id)?[=-](tt)?(?<code>\d+)[\]}]{1}.*";
         try
         {
             Match m = Regex.Match(name, regex, RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
