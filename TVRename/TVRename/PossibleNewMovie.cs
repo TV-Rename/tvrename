@@ -68,7 +68,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
 
     public string Name => RefinedHint;
 
-    public MediaConfiguration.MediaType Media => MediaConfiguration.MediaType.tv;
+    public MediaConfiguration.MediaType Media => MediaConfiguration.MediaType.movie;
 
     public int TvMazeId => Provider == TVDoc.ProviderType.TVmaze && CodeKnown ? ProviderCode : -1;
 

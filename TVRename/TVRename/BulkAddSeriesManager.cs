@@ -44,6 +44,7 @@ public class BulkAddSeriesManager(TVDoc doc)
                     CachedSeriesInfo? cachedSeries = GetTypeInstance(type).GetSeries(code);
                     if (cachedSeries != null)
                     {
+                        ai.UpdateId(code, type); //Update again as the name is now known
                         return;
                     }
                 }

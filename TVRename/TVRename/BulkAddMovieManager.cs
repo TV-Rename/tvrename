@@ -136,7 +136,14 @@ public class BulkAddMovieManager(TVDoc doc)
                 {
                     ai.UpdateId(code, type);
                     Logger.Info($"BULK ADD AUTO ID: identified {ai.Name} ({ai.Movie}) based on {identifier.GetType().Name} which we looked up to get {type}={code}");
-                    return;
+
+                    await GetTypeInstance(type).EnsureUpdatedAsync(ai, false, showErrorMsgBox, new ThreadSafeCounter(), 1);
+                    CachedMovieInfo? cachedMovie = GetTypeInstance(type).GetMovie(code);
+                    if (cachedMovie != null)
+                    {
+                        ai.UpdateId(code, type); //Update again as the name is now known
+                        return;
+                    }
                 }
             }
             catch (MediaNotIdentifiedException)
@@ -145,6 +152,14 @@ public class BulkAddMovieManager(TVDoc doc)
             }
         }
         Logger.Warn($"Could not match the possible movie: {ai}");
+    }
+    private static iMovieSource GetTypeInstance(TVDoc.ProviderType type)
+    {
+        if (type == TVDoc.ProviderType.TheTVDB)
+            return TheTVDB.LocalCache.Instance;
+        if (type == TVDoc.ProviderType.TMDB)
+            return TMDB.LocalCache.Instance;
+        return TheTVDB.LocalCache.Instance;
     }
 
     private static async Task<bool> RejectFolderIfIncludedInShowAsync(bool fullLogging, MovieConfiguration si, string theFolder)

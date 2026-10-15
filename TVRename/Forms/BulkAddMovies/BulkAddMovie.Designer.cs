@@ -68,7 +68,7 @@ namespace TVRename
             bnCheck2 = new Button();
             label3 = new Label();
             tbResults = new TabPage();
-            olvFMNewShows = new ObjectListViewFlickerFree<PossibleNewMovie>();
+            olvFMNewShows = new TVRename.ObjectListViewFlickerFree<TVRename.PossibleNewMovie>();
             olvFOlder = new OLVColumn();
             olvMovie = new OLVColumn();
             olvYear = new OLVColumn();
@@ -90,10 +90,10 @@ namespace TVRename
             // bnCheck1
             // 
             bnCheck1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            bnCheck1.Location = new System.Drawing.Point(898, 443);
+            bnCheck1.Location = new Point(898, 443);
             bnCheck1.Margin = new Padding(4, 3, 4, 3);
             bnCheck1.Name = "bnCheck1";
-            bnCheck1.Size = new System.Drawing.Size(88, 27);
+            bnCheck1.Size = new Size(88, 27);
             bnCheck1.TabIndex = 10;
             bnCheck1.Text = "&Check >>";
             bnCheck1.UseVisualStyleBackColor = true;
@@ -103,10 +103,10 @@ namespace TVRename
             // 
             bnOpenMonFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnOpenMonFolder.Enabled = false;
-            bnOpenMonFolder.Location = new System.Drawing.Point(196, 443);
+            bnOpenMonFolder.Location = new Point(196, 443);
             bnOpenMonFolder.Margin = new Padding(4, 3, 4, 3);
             bnOpenMonFolder.Name = "bnOpenMonFolder";
-            bnOpenMonFolder.Size = new System.Drawing.Size(88, 27);
+            bnOpenMonFolder.Size = new Size(88, 27);
             bnOpenMonFolder.TabIndex = 9;
             bnOpenMonFolder.Text = "&Open";
             bnOpenMonFolder.UseVisualStyleBackColor = true;
@@ -116,10 +116,10 @@ namespace TVRename
             // 
             bnRemoveMonFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnRemoveMonFolder.Enabled = false;
-            bnRemoveMonFolder.Location = new System.Drawing.Point(102, 443);
+            bnRemoveMonFolder.Location = new Point(102, 443);
             bnRemoveMonFolder.Margin = new Padding(4, 3, 4, 3);
             bnRemoveMonFolder.Name = "bnRemoveMonFolder";
-            bnRemoveMonFolder.Size = new System.Drawing.Size(88, 27);
+            bnRemoveMonFolder.Size = new Size(88, 27);
             bnRemoveMonFolder.TabIndex = 8;
             bnRemoveMonFolder.Text = "&Remove";
             bnRemoveMonFolder.UseVisualStyleBackColor = true;
@@ -128,10 +128,10 @@ namespace TVRename
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(4, 45);
+            label2.Location = new Point(4, 45);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(94, 15);
+            label2.Size = new Size(94, 15);
             label2.TabIndex = 5;
             label2.Text = "&Monitor Folders:";
             // 
@@ -141,12 +141,12 @@ namespace TVRename
             lstFMMonitorFolders.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lstFMMonitorFolders.FormattingEnabled = true;
             lstFMMonitorFolders.IntegralHeight = false;
-            lstFMMonitorFolders.Location = new System.Drawing.Point(7, 63);
+            lstFMMonitorFolders.Location = new Point(7, 63);
             lstFMMonitorFolders.Margin = new Padding(4, 3, 4, 3);
             lstFMMonitorFolders.Name = "lstFMMonitorFolders";
             lstFMMonitorFolders.ScrollAlwaysVisible = true;
             lstFMMonitorFolders.SelectionMode = SelectionMode.MultiExtended;
-            lstFMMonitorFolders.Size = new System.Drawing.Size(978, 372);
+            lstFMMonitorFolders.Size = new Size(978, 372);
             lstFMMonitorFolders.TabIndex = 6;
             lstFMMonitorFolders.SelectedIndexChanged += lstFMMonitorFolders_SelectedIndexChanged;
             lstFMMonitorFolders.DragDrop += lstFMMonitorFolders_DragDrop;
@@ -157,10 +157,10 @@ namespace TVRename
             // bnAddMonFolder
             // 
             bnAddMonFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            bnAddMonFolder.Location = new System.Drawing.Point(7, 443);
+            bnAddMonFolder.Location = new Point(7, 443);
             bnAddMonFolder.Margin = new Padding(4, 3, 4, 3);
             bnAddMonFolder.Name = "bnAddMonFolder";
-            bnAddMonFolder.Size = new System.Drawing.Size(88, 27);
+            bnAddMonFolder.Size = new Size(88, 27);
             bnAddMonFolder.TabIndex = 7;
             bnAddMonFolder.Text = "&Add";
             bnAddMonFolder.UseVisualStyleBackColor = true;
@@ -169,10 +169,10 @@ namespace TVRename
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new System.Drawing.Point(4, 45);
+            label7.Location = new Point(4, 45);
             label7.Margin = new Padding(4, 0, 4, 0);
             label7.Name = "label7";
-            label7.Size = new System.Drawing.Size(85, 15);
+            label7.Size = new Size(85, 15);
             label7.TabIndex = 5;
             label7.Text = "&Ignore Folders:";
             // 
@@ -180,10 +180,10 @@ namespace TVRename
             // 
             bnOpenIgFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnOpenIgFolder.Enabled = false;
-            bnOpenIgFolder.Location = new System.Drawing.Point(197, 443);
+            bnOpenIgFolder.Location = new Point(197, 443);
             bnOpenIgFolder.Margin = new Padding(4, 3, 4, 3);
             bnOpenIgFolder.Name = "bnOpenIgFolder";
-            bnOpenIgFolder.Size = new System.Drawing.Size(88, 27);
+            bnOpenIgFolder.Size = new Size(88, 27);
             bnOpenIgFolder.TabIndex = 9;
             bnOpenIgFolder.Text = "O&pen";
             bnOpenIgFolder.UseVisualStyleBackColor = true;
@@ -192,10 +192,10 @@ namespace TVRename
             // bnAddIgFolder
             // 
             bnAddIgFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            bnAddIgFolder.Location = new System.Drawing.Point(7, 443);
+            bnAddIgFolder.Location = new Point(7, 443);
             bnAddIgFolder.Margin = new Padding(4, 3, 4, 3);
             bnAddIgFolder.Name = "bnAddIgFolder";
-            bnAddIgFolder.Size = new System.Drawing.Size(88, 27);
+            bnAddIgFolder.Size = new Size(88, 27);
             bnAddIgFolder.TabIndex = 7;
             bnAddIgFolder.Text = "A&dd";
             bnAddIgFolder.UseVisualStyleBackColor = true;
@@ -205,10 +205,10 @@ namespace TVRename
             // 
             bnRemoveIgFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnRemoveIgFolder.Enabled = false;
-            bnRemoveIgFolder.Location = new System.Drawing.Point(103, 443);
+            bnRemoveIgFolder.Location = new Point(103, 443);
             bnRemoveIgFolder.Margin = new Padding(4, 3, 4, 3);
             bnRemoveIgFolder.Name = "bnRemoveIgFolder";
-            bnRemoveIgFolder.Size = new System.Drawing.Size(88, 27);
+            bnRemoveIgFolder.Size = new Size(88, 27);
             bnRemoveIgFolder.TabIndex = 8;
             bnRemoveIgFolder.Text = "Remo&ve";
             bnRemoveIgFolder.UseVisualStyleBackColor = true;
@@ -220,12 +220,12 @@ namespace TVRename
             lstFMIgnoreFolders.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lstFMIgnoreFolders.FormattingEnabled = true;
             lstFMIgnoreFolders.IntegralHeight = false;
-            lstFMIgnoreFolders.Location = new System.Drawing.Point(7, 63);
+            lstFMIgnoreFolders.Location = new Point(7, 63);
             lstFMIgnoreFolders.Margin = new Padding(4, 3, 4, 3);
             lstFMIgnoreFolders.Name = "lstFMIgnoreFolders";
             lstFMIgnoreFolders.ScrollAlwaysVisible = true;
             lstFMIgnoreFolders.SelectionMode = SelectionMode.MultiExtended;
-            lstFMIgnoreFolders.Size = new System.Drawing.Size(978, 372);
+            lstFMIgnoreFolders.Size = new Size(978, 372);
             lstFMIgnoreFolders.TabIndex = 6;
             lstFMIgnoreFolders.SelectedIndexChanged += lstFMIgnoreFolders_SelectedIndexChanged;
             lstFMIgnoreFolders.DragDrop += lstFMIgnoreFolders_DragDrop;
@@ -236,10 +236,10 @@ namespace TVRename
             // 
             bnVisitTVcom.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnVisitTVcom.Enabled = false;
-            bnVisitTVcom.Location = new System.Drawing.Point(404, 443);
+            bnVisitTVcom.Location = new Point(404, 443);
             bnVisitTVcom.Margin = new Padding(4, 3, 4, 3);
             bnVisitTVcom.Name = "bnVisitTVcom";
-            bnVisitTVcom.Size = new System.Drawing.Size(88, 27);
+            bnVisitTVcom.Size = new Size(88, 27);
             bnVisitTVcom.TabIndex = 26;
             bnVisitTVcom.Text = "&Visit TVDB";
             bnVisitTVcom.UseVisualStyleBackColor = true;
@@ -248,10 +248,10 @@ namespace TVRename
             // bnFullAuto
             // 
             bnFullAuto.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            bnFullAuto.Location = new System.Drawing.Point(7, 443);
+            bnFullAuto.Location = new Point(7, 443);
             bnFullAuto.Margin = new Padding(4, 3, 4, 3);
             bnFullAuto.Name = "bnFullAuto";
-            bnFullAuto.Size = new System.Drawing.Size(88, 27);
+            bnFullAuto.Size = new Size(88, 27);
             bnFullAuto.TabIndex = 24;
             bnFullAuto.Text = "&Auto ID All";
             bnFullAuto.UseVisualStyleBackColor = true;
@@ -260,10 +260,10 @@ namespace TVRename
             // bnFolderMonitorDone
             // 
             bnFolderMonitorDone.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            bnFolderMonitorDone.Location = new System.Drawing.Point(898, 443);
+            bnFolderMonitorDone.Location = new Point(898, 443);
             bnFolderMonitorDone.Margin = new Padding(4, 3, 4, 3);
             bnFolderMonitorDone.Name = "bnFolderMonitorDone";
-            bnFolderMonitorDone.Size = new System.Drawing.Size(88, 27);
+            bnFolderMonitorDone.Size = new Size(88, 27);
             bnFolderMonitorDone.TabIndex = 10;
             bnFolderMonitorDone.Text = "A&dd && Close";
             bnFolderMonitorDone.UseVisualStyleBackColor = true;
@@ -272,10 +272,10 @@ namespace TVRename
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(4, 45);
+            label6.Location = new Point(4, 45);
             label6.Margin = new Padding(4, 0, 4, 0);
             label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(72, 15);
+            label6.Size = new Size(72, 15);
             label6.TabIndex = 5;
             label6.Text = "&New Movies";
             // 
@@ -283,10 +283,10 @@ namespace TVRename
             // 
             bnRemoveNewFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnRemoveNewFolder.Enabled = false;
-            bnRemoveNewFolder.Location = new System.Drawing.Point(204, 443);
+            bnRemoveNewFolder.Location = new Point(204, 443);
             bnRemoveNewFolder.Margin = new Padding(4, 3, 4, 3);
             bnRemoveNewFolder.Name = "bnRemoveNewFolder";
-            bnRemoveNewFolder.Size = new System.Drawing.Size(88, 27);
+            bnRemoveNewFolder.Size = new Size(88, 27);
             bnRemoveNewFolder.TabIndex = 9;
             bnRemoveNewFolder.Text = "Re&move";
             bnRemoveNewFolder.UseVisualStyleBackColor = true;
@@ -296,10 +296,10 @@ namespace TVRename
             // 
             bnNewFolderOpen.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnNewFolderOpen.Enabled = false;
-            bnNewFolderOpen.Location = new System.Drawing.Point(498, 443);
+            bnNewFolderOpen.Location = new Point(498, 443);
             bnNewFolderOpen.Margin = new Padding(4, 3, 4, 3);
             bnNewFolderOpen.Name = "bnNewFolderOpen";
-            bnNewFolderOpen.Size = new System.Drawing.Size(88, 27);
+            bnNewFolderOpen.Size = new Size(88, 27);
             bnNewFolderOpen.TabIndex = 9;
             bnNewFolderOpen.Text = "Open &Folder";
             bnNewFolderOpen.UseVisualStyleBackColor = true;
@@ -309,10 +309,10 @@ namespace TVRename
             // 
             bnIgnoreNewFolder.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnIgnoreNewFolder.Enabled = false;
-            bnIgnoreNewFolder.Location = new System.Drawing.Point(299, 443);
+            bnIgnoreNewFolder.Location = new Point(299, 443);
             bnIgnoreNewFolder.Margin = new Padding(4, 3, 4, 3);
             bnIgnoreNewFolder.Name = "bnIgnoreNewFolder";
-            bnIgnoreNewFolder.Size = new System.Drawing.Size(88, 27);
+            bnIgnoreNewFolder.Size = new Size(88, 27);
             bnIgnoreNewFolder.TabIndex = 9;
             bnIgnoreNewFolder.Text = "&Ignore";
             bnIgnoreNewFolder.UseVisualStyleBackColor = true;
@@ -328,11 +328,11 @@ namespace TVRename
             tabControl1.Controls.Add(tbFolders);
             tabControl1.Controls.Add(tbIgnore);
             tabControl1.Controls.Add(tbResults);
-            tabControl1.Location = new System.Drawing.Point(0, 0);
+            tabControl1.Location = new Point(0, 0);
             tabControl1.Margin = new Padding(4, 3, 4, 3);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new System.Drawing.Size(1002, 503);
+            tabControl1.Size = new Size(1002, 503);
             tabControl1.TabIndex = 13;
             // 
             // tbFolders
@@ -344,21 +344,21 @@ namespace TVRename
             tbFolders.Controls.Add(bnAddMonFolder);
             tbFolders.Controls.Add(bnRemoveMonFolder);
             tbFolders.Controls.Add(lstFMMonitorFolders);
-            tbFolders.Location = new System.Drawing.Point(4, 24);
+            tbFolders.Location = new Point(4, 24);
             tbFolders.Margin = new Padding(4, 3, 4, 3);
             tbFolders.Name = "tbFolders";
             tbFolders.Padding = new Padding(4, 3, 4, 3);
-            tbFolders.Size = new System.Drawing.Size(994, 475);
+            tbFolders.Size = new Size(994, 475);
             tbFolders.TabIndex = 0;
             tbFolders.Text = "Folders";
             tbFolders.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
-            label1.Location = new System.Drawing.Point(4, 3);
+            label1.Location = new Point(4, 3);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(656, 42);
+            label1.Size = new Size(656, 42);
             label1.TabIndex = 5;
             label1.Text = resources.GetString("label1.Text");
             // 
@@ -371,11 +371,11 @@ namespace TVRename
             tbIgnore.Controls.Add(bnOpenIgFolder);
             tbIgnore.Controls.Add(bnRemoveIgFolder);
             tbIgnore.Controls.Add(bnAddIgFolder);
-            tbIgnore.Location = new System.Drawing.Point(4, 24);
+            tbIgnore.Location = new Point(4, 24);
             tbIgnore.Margin = new Padding(4, 3, 4, 3);
             tbIgnore.Name = "tbIgnore";
             tbIgnore.Padding = new Padding(4, 3, 4, 3);
-            tbIgnore.Size = new System.Drawing.Size(994, 475);
+            tbIgnore.Size = new Size(994, 475);
             tbIgnore.TabIndex = 1;
             tbIgnore.Text = "Ignore";
             tbIgnore.UseVisualStyleBackColor = true;
@@ -383,10 +383,10 @@ namespace TVRename
             // bnCheck2
             // 
             bnCheck2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            bnCheck2.Location = new System.Drawing.Point(896, 443);
+            bnCheck2.Location = new Point(896, 443);
             bnCheck2.Margin = new Padding(4, 3, 4, 3);
             bnCheck2.Name = "bnCheck2";
-            bnCheck2.Size = new System.Drawing.Size(88, 27);
+            bnCheck2.Size = new Size(88, 27);
             bnCheck2.TabIndex = 11;
             bnCheck2.Text = "&Check >>";
             bnCheck2.UseVisualStyleBackColor = true;
@@ -394,10 +394,10 @@ namespace TVRename
             // 
             // label3
             // 
-            label3.Location = new System.Drawing.Point(4, 3);
+            label3.Location = new Point(4, 3);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(568, 42);
+            label3.Size = new Size(568, 42);
             label3.TabIndex = 10;
             label3.Text = "Add folders to this list, to have them ignored when Checking.  Drag and drop, or click \"Add...\" below.  Click \"Check >>\" when done.";
             // 
@@ -413,10 +413,10 @@ namespace TVRename
             tbResults.Controls.Add(bnNewFolderOpen);
             tbResults.Controls.Add(bnFolderMonitorDone);
             tbResults.Controls.Add(bnRemoveNewFolder);
-            tbResults.Location = new System.Drawing.Point(4, 24);
+            tbResults.Location = new Point(4, 24);
             tbResults.Margin = new Padding(4, 3, 4, 3);
             tbResults.Name = "tbResults";
-            tbResults.Size = new System.Drawing.Size(994, 475);
+            tbResults.Size = new Size(994, 475);
             tbResults.TabIndex = 2;
             tbResults.Text = "Scan Results";
             tbResults.UseVisualStyleBackColor = true;
@@ -431,14 +431,15 @@ namespace TVRename
             olvFMNewShows.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             olvFMNewShows.Columns.AddRange(new ColumnHeader[] { olvFOlder, olvMovie, olvYear, olvSourceCode });
             olvFMNewShows.FullRowSelect = true;
-            olvFMNewShows.Location = new System.Drawing.Point(4, 63);
+            olvFMNewShows.Location = new Point(4, 63);
             olvFMNewShows.Name = "olvFMNewShows";
             olvFMNewShows.ShowCommandMenuOnRightClick = true;
-            olvFMNewShows.Size = new System.Drawing.Size(982, 374);
+            olvFMNewShows.Size = new Size(982, 374);
             olvFMNewShows.SmallImageList = imagesPassFail;
             olvFMNewShows.TabIndex = 11;
             olvFMNewShows.UseFilterIndicator = true;
             olvFMNewShows.UseFiltering = true;
+            olvFMNewShows.UseNotifyPropertyChanged = true;
             olvFMNewShows.View = View.Details;
             olvFMNewShows.SelectedIndexChanged += lvFMNewShows_SelectedIndexChanged;
             olvFMNewShows.DragDrop += lvFMNewShows_DragDrop;
@@ -484,7 +485,7 @@ namespace TVRename
             // 
             imagesPassFail.ColorDepth = ColorDepth.Depth24Bit;
             imagesPassFail.ImageStream = (ImageListStreamer)resources.GetObject("imagesPassFail.ImageStream");
-            imagesPassFail.TransparentColor = System.Drawing.Color.Transparent;
+            imagesPassFail.TransparentColor = Color.Transparent;
             imagesPassFail.Images.SetKeyName(0, "fail");
             imagesPassFail.Images.SetKeyName(1, "pass");
             // 
@@ -492,10 +493,10 @@ namespace TVRename
             // 
             bnEditEntry.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             bnEditEntry.Enabled = false;
-            bnEditEntry.Location = new System.Drawing.Point(108, 443);
+            bnEditEntry.Location = new Point(108, 443);
             bnEditEntry.Margin = new Padding(4, 3, 4, 3);
             bnEditEntry.Name = "bnEditEntry";
-            bnEditEntry.Size = new System.Drawing.Size(88, 27);
+            bnEditEntry.Size = new Size(88, 27);
             bnEditEntry.TabIndex = 28;
             bnEditEntry.Text = "&Edit";
             bnEditEntry.UseVisualStyleBackColor = true;
@@ -503,10 +504,10 @@ namespace TVRename
             // 
             // label4
             // 
-            label4.Location = new System.Drawing.Point(4, 3);
+            label4.Location = new Point(4, 3);
             label4.Margin = new Padding(4, 0, 4, 0);
             label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(752, 37);
+            label4.Size = new Size(752, 37);
             label4.TabIndex = 12;
             label4.Text = resources.GetString("label4.Text");
             // 
@@ -514,10 +515,10 @@ namespace TVRename
             // 
             bnClose.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             bnClose.DialogResult = DialogResult.Cancel;
-            bnClose.Location = new System.Drawing.Point(903, 510);
+            bnClose.Location = new Point(903, 510);
             bnClose.Margin = new Padding(4, 3, 4, 3);
             bnClose.Name = "bnClose";
-            bnClose.Size = new System.Drawing.Size(88, 27);
+            bnClose.Size = new Size(88, 27);
             bnClose.TabIndex = 27;
             bnClose.Text = "Close";
             bnClose.UseVisualStyleBackColor = true;
@@ -526,31 +527,31 @@ namespace TVRename
             // pbProgress
             // 
             pbProgress.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            pbProgress.Location = new System.Drawing.Point(5, 510);
+            pbProgress.Location = new Point(5, 510);
             pbProgress.Margin = new Padding(4, 3, 4, 3);
             pbProgress.Name = "pbProgress";
-            pbProgress.Size = new System.Drawing.Size(196, 27);
+            pbProgress.Size = new Size(196, 27);
             pbProgress.TabIndex = 28;
             pbProgress.Visible = false;
             // 
             // lblStatusLabel
             // 
             lblStatusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            lblStatusLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
-            lblStatusLabel.Location = new System.Drawing.Point(301, 509);
+            lblStatusLabel.ForeColor = SystemColors.ControlDark;
+            lblStatusLabel.Location = new Point(301, 509);
             lblStatusLabel.Margin = new Padding(4, 0, 4, 0);
             lblStatusLabel.Name = "lblStatusLabel";
-            lblStatusLabel.Size = new System.Drawing.Size(363, 27);
+            lblStatusLabel.Size = new Size(363, 27);
             lblStatusLabel.TabIndex = 29;
-            lblStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            lblStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // btnStopScan
             // 
             btnStopScan.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btnStopScan.Location = new System.Drawing.Point(209, 509);
+            btnStopScan.Location = new Point(209, 509);
             btnStopScan.Margin = new Padding(4, 3, 4, 3);
             btnStopScan.Name = "btnStopScan";
-            btnStopScan.Size = new System.Drawing.Size(88, 27);
+            btnStopScan.Size = new Size(88, 27);
             btnStopScan.TabIndex = 30;
             btnStopScan.Text = "Stop Scan";
             btnStopScan.UseVisualStyleBackColor = true;
@@ -558,18 +559,18 @@ namespace TVRename
             // 
             // BulkAddMovie
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1002, 550);
+            ClientSize = new Size(1002, 550);
             Controls.Add(btnStopScan);
             Controls.Add(lblStatusLabel);
             Controls.Add(pbProgress);
             Controls.Add(bnClose);
             Controls.Add(tabControl1);
-            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4, 3, 4, 3);
             MinimizeBox = false;
-            MinimumSize = new System.Drawing.Size(872, 340);
+            MinimumSize = new Size(872, 340);
             Name = "BulkAddMovie";
             ShowInTaskbar = false;
             SizeGripStyle = SizeGripStyle.Show;

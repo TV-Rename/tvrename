@@ -149,7 +149,6 @@ public partial class UI : Form, IDialogParent
             {
                 UpdateSplashStatus(splash, "Running Auto-scan", 100);
             }
-            SetStartUpTab();
             UpdateSplashStatus(splash, "Opening...", 100);
         }
     }
@@ -1010,6 +1009,8 @@ public partial class UI : Form, IDialogParent
         var m = mDoc.WriteUpcomingAsync();
         var n = mDoc.WriteRecentAsync();
 
+        SetStartUpTab();
+
         foreach (TabPage tp in tabControl1.TabPages) // grr! why does it go white?
         {
             tp.BackColor = SystemColors.Control;
@@ -1185,7 +1186,10 @@ public partial class UI : Form, IDialogParent
             {
                 await FillMyShowsAsync(true);
                 FillMyMovies();
+
                 await FillEpGuideHtmlAsync();
+                await FillMovieGuideHtmlAsync();
+
                 await FillWhenToWatchListAsync();
                 BGDownloadTimer_QuickFire();
             }));
@@ -2809,6 +2813,7 @@ public partial class UI : Form, IDialogParent
             }
 
             UpdateMyShowsButtonStatus();
+            await FillEpGuideHtmlAsync();
         }
         if (tabControl1.SelectedTab == tbMyMovies)
         {
@@ -2820,6 +2825,7 @@ public partial class UI : Form, IDialogParent
             }
 
             UpdateMyMoviesButtonStatus();
+            await FillMovieGuideHtmlAsync();
         }
     }
 
@@ -3376,7 +3382,9 @@ public partial class UI : Form, IDialogParent
     {
         await mDoc.ForceRefreshShowsAsync(sis, unattended, WindowState == FormWindowState.Minimized, this, cts);
         await FillMyShowsAsync(true);
+        FillMyMovies();
         await FillEpGuideHtmlAsync();
+        await FillMovieGuideHtmlAsync();
         await RefreshWTWAsync(false, unattended);
     }
 
