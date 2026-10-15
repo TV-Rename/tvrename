@@ -139,7 +139,7 @@ public class BulkAddMovieManager(TVDoc doc)
                     return;
                 }
             }
-            catch (MediaNotIdentifiedException ex)
+            catch (MediaNotIdentifiedException)
             {
                 //not really an issue so we can continue
             }

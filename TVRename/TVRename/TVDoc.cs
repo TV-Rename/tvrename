@@ -2260,10 +2260,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             saveCachesTask = SaveCachesAsync();
 
             // Track the cache save task with the shutdown manager to ensure it completes during shutdown
-            if (shutdownManager != null)
-            {
-                shutdownManager.TrackTask(saveCachesTask);
-            }
+            shutdownManager?.TrackTask(saveCachesTask);
         }
         else
         {

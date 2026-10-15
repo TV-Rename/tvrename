@@ -52,7 +52,7 @@ public static class FileHelper
             catch (System.IO.IOException)
             {
             }
-            return Array.Empty<DirectoryInfo>();
+            return [];
         });
     }
 
@@ -885,23 +885,21 @@ public static class FileHelper
         long bytesTransferred = 0;
         int bufferSize = 81920; // 80 KB large buffer
 
-        using (var sourceStream = new System.IO.FileStream(From.FullName, System.IO.FileMode.Open, FileAccess.Read, System.IO.FileShare.Read, bufferSize, useAsync: true))
-        using (var destStream = new System.IO.FileStream(To, System.IO.FileMode.Create, FileAccess.Write, System.IO.FileShare.None, bufferSize, useAsync: true))
+        using var sourceStream = new System.IO.FileStream(From.FullName, System.IO.FileMode.Open, FileAccess.Read, System.IO.FileShare.Read, bufferSize, useAsync: true);
+        using var destStream = new System.IO.FileStream(To, System.IO.FileMode.Create, FileAccess.Write, System.IO.FileShare.None, bufferSize, useAsync: true);
+        var buffer = new byte[bufferSize];
+        int bytesRead;
+
+        while ((bytesRead = await sourceStream.ReadAsync(buffer, cancellationToken)) > 0)
         {
-            var buffer = new byte[bufferSize];
-            int bytesRead;
+            await destStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
+            bytesTransferred += bytesRead;
 
-            while ((bytesRead = await sourceStream.ReadAsync(buffer, cancellationToken)) > 0)
+            progress.Report(new CopyMoveProgress
             {
-                await destStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
-                bytesTransferred += bytesRead;
-
-                progress.Report(new CopyMoveProgress
-                {
-                    BytesTransferred = bytesTransferred,
-                    TotalBytes = totalBytes
-                });
-            }
+                BytesTransferred = bytesTransferred,
+                TotalBytes = totalBytes
+            });
         }
     }
 
@@ -911,7 +909,7 @@ public static class FileHelper
         //we use a temp name just in case we are interrupted or some other problem occurs
         string tempName = TempFor(To);
 
-        if (!await DirectoryExistsAsync(To.Directory.FullName))
+        if (!await DirectoryExistsAsync(To.Directory.FullName,cancellationToken))
         {
             Directory.CreateDirectory(To.Directory.FullName);
         }

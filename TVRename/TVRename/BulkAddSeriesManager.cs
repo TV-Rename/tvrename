@@ -48,7 +48,7 @@ public class BulkAddSeriesManager(TVDoc doc)
                     }
                 }
             }
-            catch (MediaNotIdentifiedException ex)
+            catch (MediaNotIdentifiedException)
             {
                 //not really an issue so we can continue
             }

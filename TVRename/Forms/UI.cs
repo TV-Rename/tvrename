@@ -153,7 +153,7 @@ public partial class UI : Form, IDialogParent
             UpdateSplashStatus(splash, "Opening...", 100);
         }
     }
-    private void ApplyColorOverrides(Control container, SystemColorMode colorMode)
+    private static void ApplyColorOverrides(Control container, SystemColorMode colorMode)
     {
         foreach (Control c in container.Controls)
         {
@@ -1397,7 +1397,7 @@ public partial class UI : Form, IDialogParent
 
     #endregion
 
-    private async void UI_FormClosing(object sender, FormClosingEventArgs e)
+    private async void UI_FormClosing(object? sender, FormClosingEventArgs e)
     {
         //We never allow it to happen automatically
         e.Cancel = true;
