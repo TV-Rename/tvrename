@@ -242,35 +242,26 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             IEnumerable<TMDbLib.Objects.Changes.ChangesListItem> task = await Client.GetChangesMoviesAsync(latestUpdateTime, cts);
             List<int> movieUpdates = [.. task.Select(item => item.Id).Distinct()];
 
-            SayNoPct(
-                $"Processing {movieUpdates.Count} movie updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
+            SayNoPct($"Processing {movieUpdates.Count} movie updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
 
+            foreach (int id in movieUpdates)
             {
-                foreach (int id in movieUpdates)
-                {
-                    if (!cts.IsCancellationRequested)
-                    {
-                        if (HasMovie(id))
-                        {
-                            CachedMovieInfo? x = GetMovie(id);
-                            if (x is not null)
-                            {
-                                LOGGER.Info(
-                                    $"Identified that Movie with TMDB Id {id} {x.Name} should be updated.");
+                if (cts.IsCancellationRequested) { return false; }
 
-                                x.Dirty = true;
-                            }
-                        }
-                    }
-                    else
+                if (HasMovie(id))
+                {
+                    CachedMovieInfo? x = GetMovie(id);
+                    if (x is not null)
                     {
-                        return true;
+                        LOGGER.Info(
+                            $"Identified that Movie with TMDB Id {id} {x.Name} should be updated.");
+
+                        x.Dirty = true;
                     }
                 }
-
-                SayNoPct(
-                    $"Identified {Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Movies need updating");
             }
+
+            SayNoPct($"Identified {Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Movies need updating");
 
             IEnumerable<TMDbLib.Objects.Changes.ChangesListItem> taskShows = await Client.GetChangesShowsAsync(latestUpdateTime, cts);
             List<int> showUpdates = [.. taskShows.Select(item => item.Id).Distinct()];
@@ -278,34 +269,24 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             SayNoPct(
                 $"Processing {showUpdates.Count} show updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
 
+            foreach (int id in showUpdates)
             {
-                foreach (int id in showUpdates)
-                {
-                    if (!cts.IsCancellationRequested)
-                    {
-                        if (HasSeries(id))
-                        {
-                            CachedSeriesInfo? x = GetSeries(id);
-                            if (x is not null)
-                            {
-                                LOGGER.Info(
-                                    $"Identified that Show with TMDB Id {id} {x.Name} should be updated.");
+                if (cts.IsCancellationRequested) { return false; }
 
-                                x.Dirty = true;
-                            }
-                        }
-                    }
-                    else
+                if (HasSeries(id))
+                {
+                    CachedSeriesInfo? x = GetSeries(id);
+                    if (x is not null)
                     {
-                        return true;
+                        LOGGER.Info($"Identified that Show with TMDB Id {id} {x.Name} should be updated.");
+                        x.Dirty = true;
                     }
                 }
-
-                SayNoPct(
-                    $"Identified {Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Shows need updating");
             }
+            SayNoPct($"Identified {Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Shows need updating");
 
-            return true;
+
+            return !cts.IsCancellationRequested;
         }
         catch (GeneralHttpException ex)
         {
@@ -355,15 +336,13 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     public void AddOrUpdateEpisode(Episode e)
     {
+        if (!Series.TryGetValue(e.SeriesId, out CachedSeriesInfo? ser))
         {
-            if (!Series.TryGetValue(e.SeriesId, out CachedSeriesInfo? ser))
-            {
-                throw new SourceConsistencyException(
-                    $"Can't find the cachedSeries to add the episode to (TVMaze). EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}", TVDoc.ProviderType.TMDB);
-            }
-
-            ser.AddEpisode(e);
+            throw new SourceConsistencyException(
+                $"Can't find the cachedSeries to add the episode to (TMDB). EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}", TVDoc.ProviderType.TMDB);
         }
+
+        ser.AddEpisode(e);
     }
 
     public void LatestUpdateTimeIs(string time)
@@ -394,7 +373,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     }
 
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    private async Task<CachedMovieInfo> DownloadMovieNowInternalAsync(ISeriesSpecifier seriesSpecifier, bool b)
+    private async Task<CachedMovieInfo> DownloadMovieNowInternalAsync(ISeriesSpecifier seriesSpecifier, bool addToCache)
     {
         string imageLanguage = $"{seriesSpecifier.LanguageToUse().Abbreviation},null";
         Movie downloadedMovie = await Client.GetMovieAsync(seriesSpecifier.TmdbId, seriesSpecifier.LanguageToUse().Abbreviation,
@@ -406,7 +385,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
         CachedMovieInfo m = GenerateCachedMovieInfo(seriesSpecifier, downloadedMovie);
 
-        if (b)
+        if (addToCache)
         {
             this.AddMovieToCache(m);
         }
@@ -1165,7 +1144,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
         }
 
         LOGGER.Info($"Got {results?.TvResults?.Count:N0} results searching for {imdbToTest}");
-        foreach (SearchTv result in results!.TvResults?? [])
+        foreach (SearchTv result in results!.TvResults ?? [])
         {
             SearchSpecifier ss = new(result.Id, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
             await DownloadSeriesNowAsync(ss);
@@ -1352,7 +1331,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
 
     /// <exception cref="SourceConnectivityException">Condition.</exception>
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    public async Task<Recomendations> GetTVRecommendationsAsync(IProgress<ProgressReport> sender, List<ShowConfiguration> shows, string languageCode,CancellationToken token)
+    public async Task<Recomendations> GetTVRecommendationsAsync(IProgress<ProgressReport> sender, List<ShowConfiguration> shows, string languageCode, CancellationToken token)
     {
         int total = shows.Count;
         ThreadSafeCounter current = new();
@@ -1373,11 +1352,12 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             string errorMessage = $"Error obtaining TMDB Recommendations for {arg.Name}:";
             try
             {
-                if (cancellationToken.IsCancellationRequested){
+                if (cancellationToken.IsCancellationRequested)
+                {
                     return;
                 }
 
-                await AddRecommendationsFromASync(arg, returnValue, languageCode,cancellationToken);
+                await AddRecommendationsFromASync(arg, returnValue, languageCode, cancellationToken);
 
                 sender.Report(new ProgressReport()
                 {
@@ -1430,7 +1410,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     }
 
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    private async Task AddRecommendationsFromASync(ShowConfiguration arg, Recomendations returnValue, string languageCode,CancellationToken token)
+    private async Task AddRecommendationsFromASync(ShowConfiguration arg, Recomendations returnValue, string languageCode, CancellationToken token)
     {
         if (arg.TmdbCode == 0)
         {
@@ -1449,8 +1429,8 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             arg.TmdbCode = tmdbCode.Value;
         }
 
-        Task<SearchContainer<SearchTv>?> related = Client.GetTvShowRecommendationsAsync(arg.TmdbCode, languageCode,0,token);
-        Task<SearchContainer<SearchTv>?> similar = Client.GetTvShowSimilarAsync(arg.TmdbCode, languageCode,0,token);
+        Task<SearchContainer<SearchTv>?> related = Client.GetTvShowRecommendationsAsync(arg.TmdbCode, languageCode, 0, token);
+        Task<SearchContainer<SearchTv>?> similar = Client.GetTvShowSimilarAsync(arg.TmdbCode, languageCode, 0, token);
 
         await Task.WhenAll(related, similar);
 
@@ -1522,7 +1502,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
                     return;
                 }
 
-                await HandleWebErrorsForAsync(async () => await GetMovieRecommendationsAsync(languageCode, movie, returnValue,cancellationToken), errorMessage);
+                await HandleWebErrorsForAsync(async () => await GetMovieRecommendationsAsync(languageCode, movie, returnValue, cancellationToken), errorMessage);
 
                 sender.Report(new ProgressReport()
                 {
@@ -1552,7 +1532,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
     }
 
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    private async Task<bool> GetMovieRecommendationsAsync(string languageCode, MovieConfiguration movie, Recomendations returnValue,CancellationToken token)
+    private async Task<bool> GetMovieRecommendationsAsync(string languageCode, MovieConfiguration movie, Recomendations returnValue, CancellationToken token)
     {
         Task<SearchContainer<SearchMovie>?> related = Client.GetMovieRecommendationsAsync(movie.TmdbCode, languageCode, 0, token);
         Task<SearchContainer<SearchMovie>?> similar = Client.GetMovieSimilarAsync(movie.TmdbCode, languageCode, 0, token);

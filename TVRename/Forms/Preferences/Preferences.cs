@@ -1042,7 +1042,7 @@ public partial class Preferences : Form
         cbTMDBLanguages.Text = s.TMDBLanguage.LocalName;
         cbTMDBRegions.Text = s.TMDBRegion.EnglishName ?? Regions.Instance.FallbackRegion.EnglishName;
 
-        tbTMDBPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
+        tbTMDBPercentDirty.Text = s.TMDBPercentDirty.ToString(CultureInfo.InvariantCulture);
         chkIncludeMoviesQuickRecent.Checked = s.IncludeMoviesQuickRecent;
         chkUnArchiveFilesInDownloadDirectory.Checked = s.UnArchiveFilesInDownloadDirectory;
 
