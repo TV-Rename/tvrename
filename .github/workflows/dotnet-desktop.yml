@@ -69,8 +69,6 @@ jobs:
         overwrite: true
 
     - name: Attach Files to Release
-      uses: stacksjs/action-releaser@v1.2.11
+      uses: svenstaro/upload-release-action@2.11.5
       with:
-        files: |
-          TVRename-*-Installer.exe
-
+        file: TVRename-*-Installer.exe
