@@ -5,10 +5,7 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
-
 using Humanizer;
-using SharpCompress.Writers;
 using System.Text.RegularExpressions;
 using TVRename.Forms;
 
@@ -35,11 +32,7 @@ public sealed class TVSettings
             {
                 lock (syncRoot)
                 {
-                    // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
-                    if (instance is null)
-                    {
-                        instance = new TVSettings();
-                    }
+                    instance ??= new TVSettings();
                 }
             }
 

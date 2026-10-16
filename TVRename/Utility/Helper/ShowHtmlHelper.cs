@@ -16,8 +16,8 @@ namespace TVRename;
 
 internal static class ShowHtmlHelper
 {
-    static Color BackgroundColour = SystemColors.ButtonFace;
-    static Color ForegroundColour = SystemColors.ControlText;
+    static readonly Color BackgroundColour = SystemColors.ButtonFace;
+    static readonly Color ForegroundColour = SystemColors.ControlText;
 
     public static string CreateOldPage(string body)
     {

@@ -128,16 +128,16 @@ class PossibleMediaIdentifier
         return showName;
     }
 }
-interface iPossibleTVShowIdentifier
+interface IPossibleTVShowIdentifier
 {
     Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show,bool showErrorMsgBox);
 }
-interface iPossibleMovieIdentifier
+interface IPossibleMovieIdentifier
 {
     Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox);
 }
 
-class IdentifyFinalBoss : IdentifyFromNFOFiles, iPossibleMovieIdentifier
+class IdentifyFinalBoss : IdentifyFromNFOFiles, IPossibleMovieIdentifier
 {
     public new async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie,bool showErrorMsgBox)
     {
@@ -167,7 +167,7 @@ class IdentifyFinalBoss : IdentifyFromNFOFiles, iPossibleMovieIdentifier
     }
 }
 
-class IdentifyByTweakedSearchName(ShowLibrary library) : PossibleMediaIdentifier, iPossibleTVShowIdentifier
+class IdentifyByTweakedSearchName(ShowLibrary library) : PossibleMediaIdentifier, IPossibleTVShowIdentifier
 {
     public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox)
     {
@@ -201,7 +201,7 @@ class IdentifyByTweakedSearchName(ShowLibrary library) : PossibleMediaIdentifier
     }
 }
 
-class IdentifyByTweakedName() : PossibleMediaIdentifier, iPossibleMovieIdentifier
+class IdentifyByTweakedName() : PossibleMediaIdentifier, IPossibleMovieIdentifier
 {
     public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox)
     {
@@ -214,7 +214,7 @@ class IdentifyByTweakedName() : PossibleMediaIdentifier, iPossibleMovieIdentifie
         throw new MediaNotIdentifiedException();
     }
 
-    public async Task<CachedMovieInfo?> ParseHintsAsync(PossibleNewMovie movie, bool showErrorMsgBox)
+    public static async Task<CachedMovieInfo?> ParseHintsAsync(PossibleNewMovie movie, bool showErrorMsgBox)
     {
         try
         {
@@ -254,7 +254,7 @@ class IdentifyByTweakedName() : PossibleMediaIdentifier, iPossibleMovieIdentifie
         return null;
     }
 
-    public async Task<CachedMovieInfo?> GetMovieAsync(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => await TMDB.LocalCache.Instance.SearchMovieAsync(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
+    public static async Task<CachedMovieInfo?> GetMovieAsync(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => await TMDB.LocalCache.Instance.SearchMovieAsync(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
 }
 
 [Serializable]
@@ -273,7 +273,7 @@ internal class MediaNotIdentifiedException : Exception
     }
 }
 
-class IdentifyByMovieRefinedHint() : PossibleMediaIdentifier, iPossibleMovieIdentifier
+class IdentifyByMovieRefinedHint() : PossibleMediaIdentifier, IPossibleMovieIdentifier
 {
     public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox)
     {
@@ -288,7 +288,7 @@ class IdentifyByMovieRefinedHint() : PossibleMediaIdentifier, iPossibleMovieIden
     }
 }
 
-class IdentifyBySearchName(ShowLibrary library) : PossibleMediaIdentifier, iPossibleTVShowIdentifier
+class IdentifyBySearchName(ShowLibrary library) : PossibleMediaIdentifier, IPossibleTVShowIdentifier
 {
     public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox)
     {
@@ -306,7 +306,7 @@ class IdentifyBySearchName(ShowLibrary library) : PossibleMediaIdentifier, iPoss
     }
 }
 
-class IdentifyFromNFOFiles : PossibleMediaIdentifier, iPossibleTVShowIdentifier, iPossibleMovieIdentifier
+class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier, IPossibleMovieIdentifier
 {
     public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox)
     {
@@ -463,7 +463,7 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, iPossibleTVShowIdentifier,
         throw new MediaNotIdentifiedException();
     }
 
-    protected string? FindShowCode(PossibleNewMovie movie, string simpleIdCode, string uniqueIdCode)
+    protected static string? FindShowCode(PossibleNewMovie movie, string simpleIdCode, string uniqueIdCode)
     {
         List<string> possibleFilenames = [$"{movie.movieStub}.nfo", $"{movie.movieStub}.xml"];
         foreach (string fileName in possibleFilenames)
@@ -566,7 +566,7 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, iPossibleTVShowIdentifier,
 }
 
 
-class IdentifyFromFilenameCodes : PossibleMediaIdentifier, iPossibleTVShowIdentifier, iPossibleMovieIdentifier
+class IdentifyFromFilenameCodes : PossibleMediaIdentifier, IPossibleTVShowIdentifier, IPossibleMovieIdentifier
 {
     public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox)
     {
@@ -616,7 +616,7 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, iPossibleTVShowIdenti
         throw new MediaNotIdentifiedException();
     }
 
-    private (string codeType, int code)? GetCodeFromNames(PossibleNewMovie movie)
+    private static (string codeType, int code)? GetCodeFromNames(PossibleNewMovie movie)
     {
         string filename = GetFilename(movie);
         string foldername = GetFolderName(movie);
@@ -632,8 +632,8 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, iPossibleTVShowIdenti
         }
         return null;
     }
-    private string GetFilename(PossibleNewMovie movie) => movie.movieFile.Name;
-    private string GetFolderName(PossibleNewMovie movie) => movie.movieFile.Directory.Name;
+    private static string GetFilename(PossibleNewMovie movie) => movie.movieFile.Name;
+    private static string GetFolderName(PossibleNewMovie movie) => movie.movieFile.Directory.Name;
     public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox)
     {
         Locale preferredLocale = new();

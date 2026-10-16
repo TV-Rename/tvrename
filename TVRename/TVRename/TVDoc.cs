@@ -9,13 +9,9 @@
 // All the processing and work should be done in here, nothing in UI.cs
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
-using Microsoft.VisualBasic;
 using Polly;
-using SharpCompress.Writers;
-using System.Security.Policy;
 using TVRename.Forms;
 using TVRename.Forms.Tools;
-using TVRename.Settings.AppState;
 
 namespace TVRename;
 
@@ -42,7 +38,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
     public readonly MovieLibrary FilmLibrary;
     public readonly CommandLineArgs Args;
     internal readonly TVRenameStats CurrentStats;
-    internal readonly State CurrentAppState;
+    internal readonly Settings.State CurrentAppState;
     public readonly ItemList TheActionList;
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     internal readonly ActionEngine ActionManager;
@@ -93,12 +89,12 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
         try
         {
-            CurrentAppState = State.LoadFromDefaultFile();
+            CurrentAppState = Settings.State.LoadFromDefaultFile();
         }
         catch (Exception ex)
         {
             Logger.Warn(ex, "Could not load app state file.");
-            CurrentAppState = new State();
+            CurrentAppState = new Settings.State();
         }
         ActionManager = new ActionEngine(CurrentStats);
     }
@@ -1555,7 +1551,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
     }
 
     // ReSharper disable once InconsistentNaming
-    public static iTVSource GetTVCache(ProviderType p)
+    public static ITVSource GetTVCache(ProviderType p)
     {
         return p switch
         {
@@ -1566,7 +1562,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         };
     }
 
-    public static iMovieSource GetMovieCache(ProviderType p)
+    public static IMovieSource GetMovieCache(ProviderType p)
     {
         return p switch
         {

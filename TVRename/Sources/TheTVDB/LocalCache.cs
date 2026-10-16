@@ -20,7 +20,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 namespace TVRename.TheTVDB;
 
 // ReSharper disable once InconsistentNaming
-public class LocalCache : MediaCache, iTVSource, iMovieSource
+public class LocalCache : MediaCache, ITVSource, IMovieSource
 {
     private readonly ConcurrentDictionary<int, ExtraEp>
         extraEpisodes; // IDs of extra episodes to grab and merge in on next update
@@ -51,11 +51,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
             {
                 lock (SyncRoot)
                 {
-                    // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
-                    if (InternalInstance is null)
-                    {
-                        InternalInstance = new LocalCache();
-                    }
+                    InternalInstance ??= new LocalCache();
                 }
             }
 
@@ -950,7 +946,7 @@ public class LocalCache : MediaCache, iTVSource, iMovieSource
         }
     }
 
-    TVDoc.ProviderType iMovieSource.SourceProvider() => Provider();
+    TVDoc.ProviderType IMovieSource.SourceProvider() => Provider();
 }
 
 public class TvdbSearchResult

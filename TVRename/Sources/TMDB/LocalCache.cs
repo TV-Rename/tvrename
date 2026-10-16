@@ -27,7 +27,7 @@ using Cast = TMDbLib.Objects.Movies.Cast;
 namespace TVRename.TMDB;
 
 // ReSharper disable once InconsistentNaming
-public class LocalCache : MediaCache, iMovieSource, iTVSource
+public class LocalCache : MediaCache, IMovieSource, ITVSource
 {
     private const string KEY = "2dcfd2d08f80439d7ef5210f217b80b4";
     private static readonly TMDbClient Client = new(KEY);
@@ -47,11 +47,7 @@ public class LocalCache : MediaCache, iMovieSource, iTVSource
             {
                 lock (SyncRoot)
                 {
-                    // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
-                    if (InternalInstance is null)
-                    {
-                        InternalInstance = new LocalCache();
-                    }
+                    InternalInstance ??= new LocalCache();
                 }
             }
 

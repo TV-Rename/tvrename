@@ -21,7 +21,7 @@ public partial class YtsRecommendationView : Form
     private readonly string quality;
     private DateTime scanStartTime;
     private Task? scanTask;
-    private CancellationTokenSource scanCancellationTokenSource = new();
+    private readonly CancellationTokenSource scanCancellationTokenSource = new();
 
     public YtsRecommendationView(TVDoc doc, UI main, string defaultQuality)
     {

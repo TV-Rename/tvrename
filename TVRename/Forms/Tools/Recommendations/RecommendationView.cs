@@ -28,7 +28,7 @@ public partial class RecommendationView : Form
     private int similarWeight = 100;
 
     private Task? scanTask;
-    private CancellationTokenSource scanCancellationTokenSource = new();
+    private readonly CancellationTokenSource scanCancellationTokenSource = new();
 
     private RecommendationView(TVDoc doc, UI main)
     {

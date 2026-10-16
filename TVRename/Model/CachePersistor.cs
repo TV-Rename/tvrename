@@ -156,7 +156,7 @@ internal static class CachePersistor
         return elements;
     }
 
-    public static async Task<bool> LoadTvCacheAsync<T>(FileInfo loadFrom, T cache, CancellationToken token) where T : MediaCache, iTVSource
+    public static async Task<bool> LoadTvCacheAsync<T>(FileInfo loadFrom, T cache, CancellationToken token) where T : MediaCache, ITVSource
     {
         Logger.Info($"Loading Cache from: {loadFrom.FullName}");
         if (!loadFrom.Exists)
@@ -185,7 +185,7 @@ internal static class CachePersistor
         }
     }
 
-    public static async Task<bool> LoadMovieCacheAsync<T>(FileInfo loadFrom, T cache, CancellationToken token) where T : MediaCache, iMovieSource
+    public static async Task<bool> LoadMovieCacheAsync<T>(FileInfo loadFrom, T cache, CancellationToken token) where T : MediaCache, IMovieSource
     {
         Logger.Info($"Loading Cache from: {loadFrom.FullName}");
         if (!loadFrom.Exists)
@@ -214,7 +214,7 @@ internal static class CachePersistor
         }
     }
 
-    private static bool ProcessMovieXml<T>(XElement x, T cache) where T : MediaCache, iMovieSource
+    private static bool ProcessMovieXml<T>(XElement x, T cache) where T : MediaCache, IMovieSource
     {
         try
         {
@@ -252,7 +252,7 @@ internal static class CachePersistor
         return true;
     }
 
-    private static bool ProcessSeriesXml<T>(XElement x, T cache) where T : MediaCache, iTVSource
+    private static bool ProcessSeriesXml<T>(XElement x, T cache) where T : MediaCache, ITVSource
     {
         // Will have one or more cachedSeries, and episodes
         // all wrapped in <Data> </Data>
@@ -330,7 +330,7 @@ internal static class CachePersistor
         return true;
     }
 
-    private static void ProcessXmlBannerCache(XElement r, iTVSource localCache)
+    private static void ProcessXmlBannerCache(XElement r, ITVSource localCache)
     {
         //this is a wrapper that provides the seriesId and the Banners List as provided from the website
         //

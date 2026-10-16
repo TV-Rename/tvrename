@@ -119,7 +119,7 @@ public class BulkAddMovieManager(TVDoc doc)
 
     public static async Task GuessMovieAsync(PossibleNewMovie ai, bool showErrorMsgBox)
     {
-        iPossibleMovieIdentifier[] identifiers =
+        IPossibleMovieIdentifier[] identifiers =
         [
             new IdentifyFromFilenameCodes(),
             new IdentifyFromNFOFiles(),
@@ -157,7 +157,7 @@ public class BulkAddMovieManager(TVDoc doc)
         }
         Logger.Warn($"Could not match the possible movie: {ai}");
     }
-    private static iMovieSource GetTypeInstance(TVDoc.ProviderType type)
+    private static IMovieSource GetTypeInstance(TVDoc.ProviderType type)
     {
         if (type == TVDoc.ProviderType.TheTVDB)
             return TheTVDB.LocalCache.Instance;

@@ -10,7 +10,7 @@ namespace TVRename;
 
 public static class CacheHelper
 {
-    public static void Tidy<T>(this T cache, IEnumerable<ShowConfiguration> libraryValues) where T : MediaCache, iTVSource
+    public static void Tidy<T>(this T cache, IEnumerable<ShowConfiguration> libraryValues) where T : MediaCache, ITVSource
     {
         // remove any shows from cache that aren't in My Shows
         List<ShowConfiguration> showConfigurations = [.. libraryValues];
@@ -25,7 +25,7 @@ public static class CacheHelper
         }
     }
 
-    public static void Tidy<T>(this T cache, IEnumerable<MediaConfiguration> libraryValues) where T : MediaCache, iMovieSource
+    public static void Tidy<T>(this T cache, IEnumerable<MediaConfiguration> libraryValues) where T : MediaCache, IMovieSource
     {
         // remove any shows from cache that aren't in My Movies
         List<MediaConfiguration> movieConfigurations = [.. libraryValues];
@@ -40,7 +40,7 @@ public static class CacheHelper
         }
     }
 
-    public static void ForgetShow<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache, iTVSource
+    public static void ForgetShow<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache, ITVSource
     {
         cache.ForgetShow(cache.PrimaryKey(ss));
         if (cache.PrimaryKey(ss) <= 0)
@@ -54,7 +54,7 @@ public static class CacheHelper
         }
     }
 
-    public static void ForgetShow<T>(this T cache, int id) where T : MediaCache, iTVSource
+    public static void ForgetShow<T>(this T cache, int id) where T : MediaCache, ITVSource
     {
         {
             if (cache.CachedShowData.ContainsKey(id))
@@ -64,7 +64,7 @@ public static class CacheHelper
         }
     }
 
-    public static void AddPlaceholderSeries<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache, iTVSource
+    public static void AddPlaceholderSeries<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache, ITVSource
     {
         {
             cache.CachedShowData[cache.PrimaryKey(ss)] =
@@ -73,7 +73,7 @@ public static class CacheHelper
         }
     }
 
-    public static void AddPlaceholderMovie<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache, iMovieSource
+    public static void AddPlaceholderMovie<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache, IMovieSource
     {
         {
             cache.CachedMovieData[cache.PrimaryKey(ss)] =
@@ -82,7 +82,7 @@ public static class CacheHelper
         }
     }
 
-    public static void AddMovieToCache<T>(this T cache, CachedMovieInfo si) where T : MediaCache, iMovieSource
+    public static void AddMovieToCache<T>(this T cache, CachedMovieInfo si) where T : MediaCache, IMovieSource
     {
         int id = cache.PrimaryKey(si);
         {
@@ -97,7 +97,7 @@ public static class CacheHelper
         }
     }
 
-    public static void AddSeriesToCache<T>(this T cache, CachedSeriesInfo si) where T : MediaCache, iTVSource
+    public static void AddSeriesToCache<T>(this T cache, CachedSeriesInfo si) where T : MediaCache, ITVSource
     {
         int id = cache.PrimaryKey(si);
         {
@@ -112,7 +112,7 @@ public static class CacheHelper
         }
     }
 
-    public static void ForgetMovie<T>(this T cache, int id) where T : MediaCache, iMovieSource
+    public static void ForgetMovie<T>(this T cache, int id) where T : MediaCache, IMovieSource
     {
         {
             if (cache.CachedMovieData.ContainsKey(id))
@@ -122,7 +122,7 @@ public static class CacheHelper
         }
     }
 
-    public static void ForgetMovie<T>(this T cache, ISeriesSpecifier si) where T : MediaCache, iMovieSource
+    public static void ForgetMovie<T>(this T cache, ISeriesSpecifier si) where T : MediaCache, IMovieSource
     {
         cache.ForgetMovie(cache.PrimaryKey(si));
         {
@@ -133,7 +133,7 @@ public static class CacheHelper
         }
     }
 
-    public static void MarkPlaceHoldersDirty<T>(this T cache, IEnumerable<ISeriesSpecifier> ss) where T : MediaCache, iMovieSource, iTVSource
+    public static void MarkPlaceHoldersDirty<T>(this T cache, IEnumerable<ISeriesSpecifier> ss) where T : MediaCache, IMovieSource, ITVSource
     {
         foreach (ISeriesSpecifier downloadShow in ss)
         {
@@ -205,7 +205,7 @@ public static class CacheHelper
         }
     }
 
-    public static Dictionary<int, CachedSeriesInfo> GetSeriesDictMatching<T>(this T cache, string testShowName) where T : MediaCache, iTVSource
+    public static Dictionary<int, CachedSeriesInfo> GetSeriesDictMatching<T>(this T cache, string testShowName) where T : MediaCache, ITVSource
     {
         Dictionary<int, CachedSeriesInfo> matchingSeries = [];
 
@@ -230,7 +230,7 @@ public static class CacheHelper
         return matchingSeries;
     }
 
-    public static Dictionary<int, CachedMovieInfo> GetMoviesDictMatching<T>(this T cache, string testShowName) where T : MediaCache, iMovieSource
+    public static Dictionary<int, CachedMovieInfo> GetMoviesDictMatching<T>(this T cache, string testShowName) where T : MediaCache, IMovieSource
     {
         Dictionary<int, CachedMovieInfo> matchingSeries = [];
 
@@ -256,7 +256,7 @@ public static class CacheHelper
         return matchingSeries;
     }
 
-    public static async Task<CachedSeriesInfo?> SearchSeriesAsync<T>(this T cache, string showName, bool showErrorMsgBox, Locale preferredLocale) where T : MediaCache, iTVSource
+    public static async Task<CachedSeriesInfo?> SearchSeriesAsync<T>(this T cache, string showName, bool showErrorMsgBox, Locale preferredLocale) where T : MediaCache, ITVSource
     {
         await cache.SearchAsync(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
 
@@ -276,7 +276,7 @@ public static class CacheHelper
             _ => null
         };
     }
-    public static async Task<CachedMovieInfo?> SearchMovieAsync<T>(this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch) where T : MediaCache, iMovieSource
+    public static async Task<CachedMovieInfo?> SearchMovieAsync<T>(this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch) where T : MediaCache, IMovieSource
     {
         await cache.SearchAsync(hint, showErrorMsgBox, MediaConfiguration.MediaType.movie, preferredLocale);
 

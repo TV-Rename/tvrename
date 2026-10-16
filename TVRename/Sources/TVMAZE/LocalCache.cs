@@ -16,7 +16,7 @@ using TVRename.Forms;
 namespace TVRename.TVmaze;
 
 // ReSharper disable once InconsistentNaming
-public class LocalCache : MediaCache, iTVSource
+public class LocalCache : MediaCache, ITVSource
 {
     //We are using the singleton design pattern
     //http://msdn.microsoft.com/en-au/library/ff650316.aspx
@@ -315,7 +315,7 @@ public class LocalCache : MediaCache, iTVSource
     }
 
     public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TVmaze;
-    TVDoc.ProviderType iTVSource.SourceProvider() => TVDoc.ProviderType.TVmaze;
+    TVDoc.ProviderType ITVSource.SourceProvider() => TVDoc.ProviderType.TVmaze;
 
     public override async Task ReConnectAsync(bool b)
     {

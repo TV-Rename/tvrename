@@ -6,10 +6,9 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using System.Diagnostics;
 using System.Xml.Serialization;
 
-namespace TVRename.Settings.AppState;
+namespace TVRename.Settings;
 
 public class State
 {
@@ -58,14 +57,5 @@ public class State
         XmlWriterSettings xmlWriterSettings = new() { Indent = true };
         using XmlWriter xmlWriter = XmlWriter.Create(path, xmlWriterSettings);
         serializer.Serialize(xmlWriter, this);
-
-        using (System.IO.StringWriter stringWriter = new System.IO.StringWriter())
-        {
-            // 3. Serialize the object into the writer
-            serializer.Serialize(stringWriter, this);
-
-            // 4. Return the resulting string
-            Debug.Write( stringWriter.ToString());
-        }
     }
 }
