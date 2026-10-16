@@ -1059,7 +1059,7 @@ public partial class UI : Form, IDialogParent
                 return;
             case TVSettings.UpdateCheckMode.Interval:
                 {
-                    TimeSpan lastUpdate = mDoc.CurrentAppState.UpdateCheck.LastUpdate;
+                    TimeSpan lastUpdate = mDoc.CurrentAppState.LastUpdate;
                     TimeSpan interval = TVSettings.Instance.UpdateCheckInterval;
                     if (lastUpdate >= interval)
                     {
@@ -2672,7 +2672,7 @@ public partial class UI : Form, IDialogParent
 
         ServerRelease? result = await VersionUpdater.CheckForUpdatesAsync().ConfigureAwait(false);
 
-        mDoc.CurrentAppState.UpdateCheck.LastUpdateCheckUtc = TimeHelpers.UtcNow();
+        mDoc.CurrentAppState.UpdateLastCheckTime();
         try
         {
             mDoc.CurrentAppState.SaveToDefaultFile();

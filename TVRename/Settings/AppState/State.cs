@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System.Diagnostics;
 using System.Xml.Serialization;
 
 namespace TVRename.Settings.AppState;
@@ -13,7 +14,15 @@ namespace TVRename.Settings.AppState;
 public class State
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-    public UpdateCheck UpdateCheck { get; } = new();
+    public DateTime? LastUpdateCheckUtc { get; set; }
+
+    [XmlIgnore]
+    public TimeSpan LastUpdate => TimeHelpers.UtcNow() - LastUpdateCheckUtc.GetValueOrDefault(DateTime.MinValue);
+
+    internal void UpdateLastCheckTime()
+    {
+        LastUpdateCheckUtc = TimeHelpers.UtcNow();
+    }
 
     public static State LoadFromDefaultFile() => LoadFromFile(PathManager.StateFile.FullName);
 
@@ -49,5 +58,14 @@ public class State
         XmlWriterSettings xmlWriterSettings = new() { Indent = true };
         using XmlWriter xmlWriter = XmlWriter.Create(path, xmlWriterSettings);
         serializer.Serialize(xmlWriter, this);
+
+        using (System.IO.StringWriter stringWriter = new System.IO.StringWriter())
+        {
+            // 3. Serialize the object into the writer
+            serializer.Serialize(stringWriter, this);
+
+            // 4. Return the resulting string
+            Debug.Write( stringWriter.ToString());
+        }
     }
 }
