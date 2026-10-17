@@ -11,7 +11,6 @@ using CefSharp;
 using CefSharp.WinForms;
 using Humanizer;
 using System.Runtime.InteropServices;
-using System.Windows.Threading;
 using TVRename.Forms.Supporting;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
@@ -2668,25 +2667,18 @@ public partial class UI : Form, IDialogParent
     {
         UpdateTimer.Stop();
 
-        Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
-
         ServerRelease? result = await VersionUpdater.CheckForUpdatesAsync().ConfigureAwait(false);
 
-        mDoc.CurrentAppState.UpdateLastCheckTime();
         try
         {
-            mDoc.CurrentAppState.SaveToDefaultFile();
+            mDoc.CurrentAppState.UpdateLastCheckTime();
         }
         catch (Exception ex)
         {
             Logger.Warn(ex, "Could not save app state file after update check!");
         }
 
-        await uiDisp.InvokeAsync(() => UpdateScheduleAsync());
-
-        await uiDisp.Invoke(() => NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
-
-        uiDisp.Invoke(() => InformUserOffline());
+        await this.Invoke(() => NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
     }
 
     private void InformUserOffline()
@@ -4436,11 +4428,8 @@ public partial class UI : Form, IDialogParent
 
     private async void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
-
         ServerRelease? result = await VersionUpdater.CheckForUpdatesAsync().ConfigureAwait(false);
-
-        await uiDisp.Invoke(() => NotifyUpdatesAsync(result, true, false));
+        await this.Invoke(() => NotifyUpdatesAsync(result, true, false));
     }
 
     private async Task NotifyUpdatesAsync(ServerRelease? update, bool manuallyTriggered, bool inSilentMode)
@@ -4505,12 +4494,9 @@ public partial class UI : Form, IDialogParent
     {
         btnUpdateAvailable.Visible = false;
 
-        Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
+        ServerRelease? result = await VersionUpdater.CheckForUpdatesAsync().ConfigureAwait(false);
 
-        Task<ServerRelease?> tuv = VersionUpdater.CheckForUpdatesAsync();
-        ServerRelease? result = await tuv.ConfigureAwait(false);
-
-        await uiDisp.Invoke(() => NotifyUpdatesAsync(result, true, false));
+        await this.Invoke(() => NotifyUpdatesAsync(result, true, false));
     }
 
     private async void tmrPeriodicScan_Tick(object sender, EventArgs e) => await RunAutoScanAsync("Periodic Scan");

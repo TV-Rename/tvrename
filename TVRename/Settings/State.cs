@@ -13,7 +13,7 @@ namespace TVRename.Settings;
 public class State
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-    public DateTime? LastUpdateCheckUtc { get; set; }
+    private DateTime? LastUpdateCheckUtc { get; set; }
 
     [XmlIgnore]
     public TimeSpan LastUpdate => TimeHelpers.UtcNow() - LastUpdateCheckUtc.GetValueOrDefault(DateTime.MinValue);
@@ -21,6 +21,7 @@ public class State
     internal void UpdateLastCheckTime()
     {
         LastUpdateCheckUtc = TimeHelpers.UtcNow();
+        SaveToFile(PathManager.StateFile.FullName);
     }
 
     public static State LoadFromDefaultFile() => LoadFromFile(PathManager.StateFile.FullName);
@@ -44,11 +45,6 @@ public class State
         }
 
         return new State();
-    }
-
-    public void SaveToDefaultFile()
-    {
-        SaveToFile(PathManager.StateFile.FullName);
     }
 
     private void SaveToFile(string path)
