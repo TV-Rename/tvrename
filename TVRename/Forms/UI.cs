@@ -2666,7 +2666,12 @@ public partial class UI : Form, IDialogParent
     private async void UpdateTimer_Tick(object sender, EventArgs e)
     {
         UpdateTimer.Stop();
+        ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
+        await this.Invoke(() => NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
+    }
 
+    private async Task<ServerRelease?> CheckForUpdates()
+    {
         ServerRelease? result = await VersionUpdater.CheckForUpdatesAsync().ConfigureAwait(false);
 
         try
@@ -2678,7 +2683,7 @@ public partial class UI : Form, IDialogParent
             Logger.Warn(ex, "Could not save app state file after update check!");
         }
 
-        await this.Invoke(() => NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
+        return result;
     }
 
     private void InformUserOffline()
@@ -4428,7 +4433,7 @@ public partial class UI : Form, IDialogParent
 
     private async void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        ServerRelease? result = await VersionUpdater.CheckForUpdatesAsync().ConfigureAwait(false);
+        ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
         await this.Invoke(() => NotifyUpdatesAsync(result, true, false));
     }
 
@@ -4494,8 +4499,7 @@ public partial class UI : Form, IDialogParent
     {
         btnUpdateAvailable.Visible = false;
 
-        ServerRelease? result = await VersionUpdater.CheckForUpdatesAsync().ConfigureAwait(false);
-
+        ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
         await this.Invoke(() => NotifyUpdatesAsync(result, true, false));
     }
 
