@@ -2599,7 +2599,7 @@ public partial class UI : Form, IDialogParent
             await SaveCaches();
             if (!await SaveLayoutXmlAsync())
             {
-                Logger.Error("Failed to Save Layout Configuration Files");
+                Logger.Warn("Failed to Save Layout Configuration Files");
             }
         }
         catch (Exception ex)
@@ -2610,7 +2610,7 @@ public partial class UI : Form, IDialogParent
                 e2 = e2.InnerException;
             }
 
-            Logger.Error(e2, "Failed to Save Layout Configuration Files");
+            Logger.Warn(e2, "Failed to Save Layout Configuration Files");
             string m2 = e2.Message;
             MessageBox.Show(this,
                 ex.Message + "\r\n\r\n" +
