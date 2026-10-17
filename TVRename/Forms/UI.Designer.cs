@@ -2314,7 +2314,6 @@ namespace TVRename.Forms
             // 
             // UpdateTimer
             // 
-            UpdateTimer.Enabled = true;
             UpdateTimer.Interval = 1000;
             UpdateTimer.Tick += UpdateTimer_Tick;
             // 
