@@ -302,9 +302,15 @@ public static class API
 
     private static async Task GenerateAddEpisodeAsync(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, JToken x, ProcessedSeason.SeasonType order)
     {
+        if (!code.TvdbId.HasValue)
+        {
+            Logger.Error($"Could not add episodes to show with no Id");
+            si.Dirty = true;
+            return;
+        }
         try
         {
-            (Episode newEp, Language? bestLanguage) = GenerateCoreEpisode(x, code.TvdbId, si, locale, order);
+            (Episode newEp, Language? bestLanguage) = GenerateCoreEpisode(x, code.TvdbId.Value, si, locale, order);
             if (bestLanguage != null)
             {
                 newEp.AddTranslations(await TvdbWebApi.GetEpisodeTranslationsAsync(code, bestLanguage, newEp.EpisodeId));
@@ -523,20 +529,25 @@ public static class API
         return null;
     }
 
-    public static string WebsiteShowUrl(ShowConfiguration si)
+    public static string? WebsiteShowUrl(ShowConfiguration si)
     {
         string? value = si.CachedShow?.Slug;
         return string.IsNullOrWhiteSpace(value) ? WebsiteShowUrl(si.TvdbCode) : WebsiteShowUrl(value);
     }
 
-    public static string WebsiteShowUrl(CachedSeriesInfo si)
+    public static string? WebsiteShowUrl(CachedSeriesInfo si)
     {
         string? value = si.Slug;
         return string.IsNullOrWhiteSpace(value) ? WebsiteShowUrl(si.TvdbCode) : WebsiteShowUrl(value);
     }
 
-    public static string WebsiteShowUrl(int seriesId)
+    public static string WebsiteShowUrl(int? seriesId)
     {
+        if (seriesId is null)
+        {
+            Logger.Error("Could not create website URL for TVDB show");
+            return string.Empty;
+        }
         //return $"{WebsiteRoot}/series/{seriesId}";
         return $"{WebsiteRoot}/?tab=series&id={seriesId}";
     }
@@ -554,8 +565,8 @@ public static class API
 
     public static string WebsiteEpisodeUrl(Episode ep)
     {
-        return string.IsNullOrWhiteSpace(ep.TheCachedSeries.Slug)
-            ? WebsiteEpisodeUrl(ep.TheCachedSeries.TvdbCode, ep.EpisodeId)
+        return string.IsNullOrWhiteSpace(ep.TheCachedSeries.Slug) && ep.TheCachedSeries.TvdbCode.HasValue
+            ? WebsiteEpisodeUrl(ep.TheCachedSeries.TvdbCode.Value, ep.EpisodeId)
             : WebsiteEpisodeUrl(ep.TheCachedSeries.Slug, ep.EpisodeId);
     }
 
@@ -568,8 +579,14 @@ public static class API
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public static string WebsiteSeasonUrl(int seriesId, ProcessedSeason.SeasonType type, int seasonNumber)
+    public static string WebsiteSeasonUrl(int? seriesId, ProcessedSeason.SeasonType type, int seasonNumber)
     {
+        if (seriesId is null)
+        {
+            Logger.Error("Could not create website URL for TVDB season");
+            return string.Empty;
+        }
+
         //format: return $"{WebsiteRoot}/?tab=season&seriesid={seriesId}&seasonid={seasonId}";
         return type switch
         {
@@ -604,9 +621,9 @@ public static class API
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public static string WebsiteEpisodeUrl(string slug, int episodeId)
+    public static string WebsiteEpisodeUrl(string? slug, int episodeId)
     {
-        return episodeId > 0 ? $"{WebsiteRoot}/series/{slug}/episodes/{episodeId}" : string.Empty;
+        return episodeId > 0 && slug.HasValue() ? $"{WebsiteRoot}/series/{slug}/episodes/{episodeId}" : string.Empty;
     }
 
     private static void AddTranslations(this Episode newEp, JObject downloadSeriesTranslationsJson)
@@ -785,7 +802,7 @@ public static class API
             FacebookId = GetExternalIdSearchResult(r, "Facebook"),
             InstagramId = GetExternalIdSearchResult(r, "Instagram"),
             TwitterId = GetExternalIdSearchResult(r, "Twitter"),
-            TmdbCode = GetExternalIdSearchResult(r, "TheMovieDB.com")?.ToInt() ?? -1,
+            TmdbCode = GetExternalIdSearchResult(r, "TheMovieDB.com")?.ToInt(),
             SeriesId = GetExternalIdSearchResult(r, "TV.com"),
         };
         AddAliases(r, si); //todo check whether this needs to be done with V4 version?
@@ -814,7 +831,7 @@ public static class API
             FacebookId = GetExternalIdSearchResult(r, "Facebook"),
             InstagramId = GetExternalIdSearchResult(r, "Instagram"),
             TwitterId = GetExternalIdSearchResult(r, "Twitter"),
-            TmdbCode = GetExternalIdSearchResult(r, "TheMovieDB.com")?.ToInt() ?? -1,
+            TmdbCode = GetExternalIdSearchResult(r, "TheMovieDB.com")?.ToInt(),
             Genres = r["genres"]?.ToObject<string[]>()?.ToSafeList() ?? [],
             Network = r["studios"]?.ToObject<string[]>()?.ToPsv() ?? string.Empty,
         };
@@ -1066,7 +1083,7 @@ public static class API
             ThumbnailUrl = GetImageURL((string?)imageJson["thumbnail"]),
             LanguageCode = (string?)imageJson["language"],
             Rating = imageJson.GetMandatoryInt("score", TVDoc.ProviderType.TheTVDB),
-            MovieId = si.TvdbCode,
+            MovieId = si.TvdbCode ?? throw new SourceConsistencyException("TVDB no longer has this movie",  TVDoc.ProviderType.TheTVDB),
             ImageStyle = MapBannerTvdbApiCode(imageJson.GetMandatoryInt("type", TVDoc.ProviderType.TheTVDB)),
             MovieSource = TVDoc.ProviderType.TheTVDB,
             RatingCount = 1
@@ -1358,7 +1375,7 @@ public static class API
             FacebookId = GetExternalId(r, "Facebook"),
             InstagramId = GetExternalId(r, "Instagram"),
             TwitterId = GetExternalId(r, "Twitter"),
-            TmdbCode = GetExternalId(r, "TheMovieDB.com")?.ToInt() ?? -1,
+            TmdbCode = GetExternalId(r, "TheMovieDB.com")?.ToInt(),
             SeriesId = GetExternalId(r, "TV.com"),
             PosterUrl = GetArtwork(r, 2),
             FanartUrl = GetArtwork(r, 3),

@@ -126,10 +126,9 @@ internal class SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downloadi
             return null;
         }
 
-        if (!FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _,
-                action.MissingEpisode.Show) ||
-            seasF != action.MissingEpisode.AppropriateSeasonNumber ||
-            epF != action.MissingEpisode.AppropriateEpNum)
+        if (!FinderHelper.FindSeasEp(file, out int? seasF, out int? epF, out int? _, action.MissingEpisode.Show) ||
+            seasF.Value != action.MissingEpisode.AppropriateSeasonNumber ||
+            epF.Value != action.MissingEpisode.AppropriateEpNum)
         {
             return null;
         }

@@ -295,8 +295,18 @@ public class BulkAddSeriesManager(TVDoc doc)
             if (found is null)
             {
                 // need to add a new showitem
-                found = new ShowConfiguration(ai.ProviderCode, ai.Provider);
-                await mDoc.AddAsync(found.AsList(), true);
+                int? newId = ai.ProviderCode;
+                if (newId.HasValue)
+                {
+                    found = new ShowConfiguration(newId.Value, ai.Provider);
+                    await mDoc.AddAsync(found.AsList(), true);
+                }
+            }
+
+            if(found is null)
+            {
+                Logger.Warn($"Could not add {ai} as no ids could be found.");
+                continue;
             }
 
             found.AutoAddFolderBase = ai.FolderName;

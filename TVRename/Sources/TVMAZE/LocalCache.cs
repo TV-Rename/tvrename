@@ -32,11 +32,7 @@ public class LocalCache : MediaCache, ITVSource
             {
                 lock (SyncRoot)
                 {
-                    // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
-                    if (InternalInstance is null)
-                    {
-                        InternalInstance = new LocalCache();
-                    }
+                    InternalInstance ??= new LocalCache();
                 }
             }
 
@@ -44,7 +40,7 @@ public class LocalCache : MediaCache, ITVSource
         }
     }
 
-    public override int PrimaryKey(ISeriesSpecifier ss) => ss.TvMazeId;
+    public override int PrimaryKey(ISeriesSpecifier ss) => ss.TvMazeId ?? throw new SourceConsistencyException("Missing Primary Key", TVDoc.ProviderType.TVmaze);
 
     public override string CacheSourceName() => "TVMaze";
     public async Task SetupAsync(FileInfo? loadFrom, FileInfo cache, bool showIssues, CancellationToken ct)
@@ -66,7 +62,7 @@ public class LocalCache : MediaCache, ITVSource
 
     public async Task<CachedSeriesInfo?> GetSeriesOrDownloadAsync(ISeriesSpecifier id)
     => HasSeries(id.TvMazeId)
-        ? Series[id.TvMazeId]
+        ? Series[id.TvMazeId.Value]
         : await DownloadSeriesNowAsync(id);
 
     private async Task<CachedSeriesInfo> DownloadSeriesNowAsync(ISeriesSpecifier s)
@@ -77,9 +73,7 @@ public class LocalCache : MediaCache, ITVSource
 
             if (downloadedSi.TvMazeCode != s.TvMazeId && s.TvMazeId == -1)
             {
-                {
-                    Series.TryRemove(-1, out _);
-                }
+                Series.TryRemove(-1, out _);
             }
 
             this.AddSeriesToCache(downloadedSi);
@@ -111,8 +105,15 @@ public class LocalCache : MediaCache, ITVSource
                 TVDoc.ProviderType.TVmaze);
         }
 
+        if (!s.TmdbId.HasValue)
         {
-            if (Series.TryGetValue(s.TmdbId, out CachedSeriesInfo? si) && !si.Dirty)
+            throw new SourceConsistencyException(
+                $"Asked to update {s.Name} from TV Maze, it has no id specified.",
+                TVDoc.ProviderType.TVmaze);
+        }
+
+        {
+            if (Series.TryGetValue(s.TmdbId.Value, out CachedSeriesInfo? si) && !si.Dirty)
             {
                 return true;
             }
@@ -125,9 +126,7 @@ public class LocalCache : MediaCache, ITVSource
 
             if (downloadedSi.TvMazeCode != s.TvMazeId && s.TvMazeId == -1)
             {
-                {
-                    Series.TryRemove(-1, out _);
-                }
+                Series.TryRemove(-1, out _);
             }
 
             this.AddSeriesToCache(downloadedSi);

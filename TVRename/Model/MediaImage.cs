@@ -47,7 +47,7 @@ public class MediaImage
         Resolution = r.ExtractStringOrNull("Resolution");
         string sn = r.ExtractString("Rating");
         double.TryParse(sn, out Rating);
-        RatingCount = r.ExtractInt("RatingCount", -1);
+        RatingCount = r.ExtractInt("RatingCount", 0);
         ThumbnailUrl = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("ThumbnailUrl"));
     }
 

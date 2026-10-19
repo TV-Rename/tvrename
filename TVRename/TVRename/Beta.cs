@@ -35,9 +35,9 @@ internal static class Beta
                     List<FileInfo> files = await dfc.FindEpOnDiskAsync(pep);
                     foreach (FileInfo file in files)
                     {
-                        int width = file.GetFrameWidth();
-                        int height = file.GetFrameHeight();
-                        int length = file.GetFilmLength();
+                        int? width = file.GetFrameWidth();
+                        int? height = file.GetFrameHeight();
+                        int? length = file.GetFilmLength();
                         Logger.Info($"{width,-10}   {height,-10}   {length,-10}    {pep.Show.ShowName,-50}  {file.Name}");
                     }
                 }

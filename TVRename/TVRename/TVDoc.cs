@@ -264,22 +264,31 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     private int GetBestValue(MediaConfiguration show, CachedMediaInfo cachedData, ProviderType provider, MediaConfiguration.MediaType type, string basedOnInformation)
     {
-        int currentValue = show.IdFor(provider);
-        int valueFromCache = cachedData.IdCode(provider);
+        int? currentValue = show.IdFor(provider);
+        int? valueFromCache = cachedData.IdCode(provider);
 
-        if (currentValue <= 0 && valueFromCache > 0)
+        if (!currentValue.HasValue && valueFromCache.HasValue)
         {
             Logger.Warn($"Updatng media:{type.PrettyPrint()} {show.ShowName} {provider.PrettyPrint()} Id to {valueFromCache}, {basedOnInformation}.");
-            return valueFromCache;
+            return valueFromCache.Value;
         }
 
-        if (currentValue > 0 && valueFromCache > 0 && currentValue != valueFromCache)
+        if (currentValue.HasValue && valueFromCache.HasValue && currentValue.Value != valueFromCache.Value)
         {
+            if (valueFromCache.Value == -1)
+            {
+                return currentValue.Value;
+            }
+            if (currentValue.Value == -1)
+            {
+                return valueFromCache.Value;
+            }
+
             string baseMessage = $"Media:{type.PrettyPrint()}: {show.ShowName} ({show}) has inconsistent {provider.PrettyPrint()} Id: {currentValue} {valueFromCache}, updating to {valueFromCache}, {basedOnInformation} (Cached Value is {cachedData})." + Environment.NewLine
                 + $"    Config: {show}" + Environment.NewLine
                 + $"    Cache:  {cachedData}";
 
-            bool startsWith = valueFromCache.ToString().StartsWith(currentValue.ToString(), StringComparison.Ordinal);
+            bool startsWith = valueFromCache.Value.ToString().StartsWith(currentValue.Value.ToString(), StringComparison.Ordinal);
             switch (show.Media)
             {
                 case MediaConfiguration.MediaType.tv:
@@ -315,25 +324,44 @@ public class TVDoc : IDisposable, IAsyncDisposable
                     throw new ArgumentOutOfRangeException(nameof(show),
                         $"GetBestValue: show has invalid Media {show.Media}");
             }
-            return valueFromCache;
+            return valueFromCache.Value;
         }
 
-        return currentValue;
+        if (currentValue.HasValue)
+        {
+            return currentValue.Value;
+        }
+        return 0;
     }
 
     private void FullyRefresh(ShowConfiguration show)
     {
         forceShowsRefresh.Add(show);
-        TheTVDB.LocalCache.Instance.ForgetShow(show.TvdbId);
-        TMDB.LocalCache.Instance.ForgetShow(show.TmdbId);
-        TVmaze.LocalCache.Instance.ForgetShow(show.TvMazeId);
+        if (show.TvdbId.HasValue)
+        {
+            TheTVDB.LocalCache.Instance.ForgetShow(show.TvdbId.Value);
+        }
+        if (show.TmdbId.HasValue)
+        {
+            TMDB.LocalCache.Instance.ForgetShow(show.TmdbId.Value);
+        }
+        if (show.TvMazeId.HasValue)
+        {
+            TVmaze.LocalCache.Instance.ForgetShow(show.TvMazeId.Value);
+        }
     }
 
     private void FullyRefresh(MovieConfiguration show)
     {
         forceMoviesRefresh.Add(show);
-        TheTVDB.LocalCache.Instance.ForgetMovie(show.TvdbId);
-        TMDB.LocalCache.Instance.ForgetMovie(show.TmdbId);
+        if (show.TvdbId.HasValue)
+        {
+            TheTVDB.LocalCache.Instance.ForgetMovie(show.TvdbId.Value);
+        }
+        if (show.TmdbId.HasValue)
+        {
+            TMDB.LocalCache.Instance.ForgetMovie(show.TmdbId.Value);
+        }
     }
 
     #endregion Denormalisations

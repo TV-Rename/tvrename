@@ -1701,7 +1701,7 @@ public partial class UI : Form, IDialogParent
     {
         if (n is null)
         {
-            await FillEpGuideHtmlAsync(null, -1);
+            await FillEpGuideHtmlAsync(null, null);
             return;
         }
 
@@ -1721,14 +1721,14 @@ public partial class UI : Form, IDialogParent
                 return;
             }
 
-            await FillEpGuideHtmlAsync(null, -1);
+            await FillEpGuideHtmlAsync(null, null);
             return;
         }
 
-        await FillEpGuideHtmlAsync(TreeNodeToShowItem(n), -1);
+        await FillEpGuideHtmlAsync(TreeNodeToShowItem(n), null);
     }
 
-    private async Task FillEpGuideHtmlAsync(ShowConfiguration? si, int snum)
+    private async Task FillEpGuideHtmlAsync(ShowConfiguration? si, int? snum)
     {
         if (tabControl1.SelectedTab != tbMyShows)
         {
@@ -1749,7 +1749,7 @@ public partial class UI : Form, IDialogParent
 
         if (TVSettings.Instance.OfflineMode || TVSettings.Instance.ShowBasicShowDetails)
         {
-            if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? s))
+            if (snum.HasValue && si.AppropriateSeasons().TryGetValue(snum.Value, out ProcessedSeason? s))
             {
                 chrInformation.SetSimpleHtmlBody(await si.GetSeasonHtmlOverviewOfflineAsync(s));
                 chrImages.SetSimpleHtmlBody(si.GetSeasonImagesHtmlOverview(s));
@@ -1766,7 +1766,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out ProcessedSeason? se))
+        if (snum.HasValue && si.AppropriateSeasons().TryGetValue(snum.Value, out ProcessedSeason? se))
         {
             chrImages.SetHtmlBody(se.GetSeasonImagesOverview());
             chrInformation.SetHtmlBody(await si.GetSeasonHtmlOverviewAsync(se, false));
@@ -3778,16 +3778,16 @@ public partial class UI : Form, IDialogParent
 
     private void MoveToTab(KeyEventArgs e)
     {
-        int t = GetIndex(e.KeyCode);
+        int? t = GetIndex(e.KeyCode);
 
-        if (t >= 0 && t < tabControl1.TabCount)
+        if (t.HasValue && t.Value < tabControl1.TabCount)
         {
-            tabControl1.SelectedIndex = t;
+            tabControl1.SelectedIndex = t.Value;
             e.Handled = true;
         }
     }
 
-    private static int GetIndex(Keys e)
+    private static int? GetIndex(Keys e)
     {
         // ReSharper disable once SwitchStatementMissingSomeCases
         return e switch
@@ -3802,7 +3802,7 @@ public partial class UI : Form, IDialogParent
             Keys.D8 => 7,
             Keys.D9 => 8,
             Keys.D0 => 9,
-            _ => -1
+            _ => null
         };
     }
 
@@ -5357,7 +5357,10 @@ public partial class UI : Form, IDialogParent
         Logger.Info($"BETA Update Checker: Testing: {config.Name} ({config.Id()}) since {timeSince.Value.FromUnixTime().ToLocalTime()} ({timeSince}), last update was {config.CachedData?.SrvLastUpdated.FromUnixTime().ToLocalTime()} ({config.CachedData?.SrvLastUpdated})");
         try
         {
-            await TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSinceAsync(config.Id(), timeSince.Value);
+            int? id = config.Id();
+            if (id.HasValue){
+                await TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSinceAsync(id.Value, timeSince.Value);
+            }
         }
         catch (SourceConnectivityException ex)
         {

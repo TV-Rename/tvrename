@@ -184,8 +184,10 @@ public partial class CollectionsView : Form
 
     private async Task AddToLibraryAsync(CachedMovieInfo si)
     {
+        if (!si.TmdbCode.HasValue) { return; }
+
         // need to add a new showitem
-        MovieConfiguration found = new(si.TmdbCode, TVDoc.ProviderType.TMDB);
+        MovieConfiguration found = new(si.TmdbCode.Value, TVDoc.ProviderType.TMDB);
         QuickLocateForm f = new(si.Name, MediaConfiguration.MediaType.movie);
 
         if (f.ShowDialog(this) != DialogResult.OK)

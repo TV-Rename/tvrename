@@ -10,9 +10,9 @@ namespace TVRename;
 
 public class SearchSpecifier : ISeriesSpecifier
 {
-    public int TvdbId { get; private set; }
-    public int TvMazeId { get; private set; }
-    public int TmdbId { get; private set; }
+    public int? TvdbId { get; private set; }
+    public int? TvMazeId { get; private set; }
+    public int? TmdbId { get; private set; }
     public string Name { get; }
     public string? ImdbCode { get; }
     public Locale TargetLocale { get; }
@@ -44,7 +44,7 @@ public class SearchSpecifier : ISeriesSpecifier
     public TVDoc.ProviderType Provider { get; }
     public MediaConfiguration.MediaType Media { get; }
 
-    public SearchSpecifier(int tvdb, int tvmaze, int tmdb, Locale preferredLocale,
+    public SearchSpecifier(int? tvdb, int? tvmaze, int? tmdb, Locale preferredLocale,
         string name, TVDoc.ProviderType p, string? imdb, MediaConfiguration.MediaType t)
     {
         TvdbId = tvdb;
@@ -59,10 +59,6 @@ public class SearchSpecifier : ISeriesSpecifier
 
     public SearchSpecifier(int id, Locale preferredLocale, TVDoc.ProviderType source, MediaConfiguration.MediaType t)
     {
-        TvdbId = -1;
-        TvMazeId = -1;
-        TmdbId = -1;
-
         Provider = source;
         UpdateId(id, source);
         Media = t;

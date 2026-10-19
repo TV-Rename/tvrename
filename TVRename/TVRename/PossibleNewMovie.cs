@@ -20,7 +20,7 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
     // ReSharper disable once InconsistentNaming
     public string RefinedHint;
     public int? PossibleYear;
-    internal int ProviderCode;
+    internal int? ProviderCode;
     internal TVDoc.ProviderType SourceProvider;
 
     public virtual string Folder => Directory.FullName;
@@ -31,8 +31,8 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
 
     public DirectoryInfo Directory => movieFile.Directory;
     public CachedMovieInfo? CachedMovie => TVDoc.GetMovieCache(SourceProvider).GetMovie(ProviderCode);
-    public bool CodeKnown => !CodeUnknown;
-    public bool CodeUnknown => ProviderCode <= 0;
+    public bool CodeKnown => ProviderCode.HasValue;
+    public bool CodeUnknown => !ProviderCode.HasValue;
     public string CodeString => CodeKnown ? $"{ProviderCode} ({SourceProvider.PrettyPrint()})" : "<Unknown>";
 
     public PossibleNewMovie(FileInfo possibleMovieFile, bool showErrorMsgBox)
@@ -64,15 +64,15 @@ public class PossibleNewMovie : ISeriesSpecifier, INotifyPropertyChanged
 
     public TVDoc.ProviderType Provider => SourceProvider;
 
-    public int TvdbId => Provider == TVDoc.ProviderType.TheTVDB && CodeKnown ? ProviderCode : -1;
+    public int? TvdbId => Provider == TVDoc.ProviderType.TheTVDB && CodeKnown ? ProviderCode : null;
 
     public string Name => RefinedHint;
 
     public MediaConfiguration.MediaType Media => MediaConfiguration.MediaType.movie;
 
-    public int TvMazeId => Provider == TVDoc.ProviderType.TVmaze && CodeKnown ? ProviderCode : -1;
+    public int? TvMazeId => Provider == TVDoc.ProviderType.TVmaze && CodeKnown ? ProviderCode : null;
 
-    public int TmdbId => Provider == TVDoc.ProviderType.TMDB && CodeKnown ? ProviderCode : -1;
+    public int? TmdbId => Provider == TVDoc.ProviderType.TMDB && CodeKnown ? ProviderCode : null;
 
     public string? ImdbCode { get; private set; }
 

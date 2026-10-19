@@ -31,7 +31,7 @@ public class CachedMovieInfo : CachedMediaInfo
         DefaultValues();
     }
 
-    public CachedMovieInfo(int tvdb, int tvmaze, int tmdb, Locale locale, TVDoc.ProviderType source) : base(tvdb, tvmaze, tmdb, locale, source)
+    public CachedMovieInfo(int? tvdb, int? tvmaze, int? tmdb, Locale locale, TVDoc.ProviderType source) : base(tvdb, tvmaze, tmdb, locale, source)
     {
         DefaultValues();
     }
@@ -41,6 +41,7 @@ public class CachedMovieInfo : CachedMediaInfo
     {
         DefaultValues();
         IsSearchResultOnly = false;
+
         try
         {
             LoadCommonXml(seriesXml);
@@ -48,7 +49,14 @@ public class CachedMovieInfo : CachedMediaInfo
             CollectionName = seriesXml.ExtractStringOrNull("CollectionName");
             MovieType = seriesXml.ExtractString("Type");
 
-            foreach (MovieImage s in seriesXml.Descendants("Images").Descendants("MovieImage").Select(xml => new MovieImage(IdCode(Source), Source, xml)))
+            int? id = IdCode(Source);
+
+            if (!id.HasValue)
+            {
+                throw new SourceConsistencyException("Could not create MovieInfo with no source Id", source);
+            }
+
+            foreach (MovieImage s in seriesXml.Descendants("Images").Descendants("MovieImage").Select(xml => new MovieImage(id.Value, Source, xml)))
             {
                 images.Add(s);
             }
@@ -74,17 +82,17 @@ public class CachedMovieInfo : CachedMediaInfo
             return; // that's not us!
         }
 
-        if (o.TvMazeCode != -1 && TvMazeCode != o.TvMazeCode)
+        if (o.TvMazeCode.HasValue && TvMazeCode != o.TvMazeCode)
         {
             TvMazeCode = o.TvMazeCode;
         }
 
-        if (o.TmdbCode != -1 && TmdbCode != o.TmdbCode)
+        if (o.TmdbCode.HasValue  && TmdbCode != o.TmdbCode)
         {
             TmdbCode = o.TmdbCode;
         }
 
-        if (o.TvdbCode != -1 && TvdbCode != o.TvdbCode)
+        if (o.TvdbCode.HasValue && TvdbCode != o.TvdbCode)
         {
             TvdbCode = o.TvdbCode;
         }

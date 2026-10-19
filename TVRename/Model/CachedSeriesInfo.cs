@@ -58,7 +58,7 @@ public class CachedSeriesInfo : CachedMediaInfo
         AirsTime = null;
     }
 
-    public CachedSeriesInfo(int tvdb, int tvmaze, int tmdb, Locale langCode, TVDoc.ProviderType source) : base(tvdb, tvmaze, tmdb, langCode, source)
+    public CachedSeriesInfo(int? tvdb, int? tvmaze, int? tmdb, Locale langCode, TVDoc.ProviderType source) : base(tvdb, tvmaze, tmdb, langCode, source)
     {
         sourceEpisodes = new ConcurrentDictionary<int, Episode>();
         AirsTime = null;
@@ -128,15 +128,15 @@ public class CachedSeriesInfo : CachedMediaInfo
             return; // that's not us!
         }
 
-        if (o.TvMazeCode != -1 && TvMazeCode != o.TvMazeCode)
+        if (o.TvMazeCode.HasValue && TvMazeCode != o.TvMazeCode)
         {
             TvMazeCode = o.TvMazeCode;
         }
-        if (o.TmdbCode != -1 && TmdbCode != o.TmdbCode)
+        if (o.TmdbCode.HasValue && TmdbCode != o.TmdbCode)
         {
             TmdbCode = o.TmdbCode;
         }
-        if (o.TvdbCode != -1 && TvdbCode != o.TvdbCode)
+        if (o.TvdbCode.HasValue && TvdbCode != o.TvdbCode)
         {
             TvdbCode = o.TvdbCode;
         }

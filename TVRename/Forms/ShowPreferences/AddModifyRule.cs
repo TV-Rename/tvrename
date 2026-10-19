@@ -78,14 +78,14 @@ public partial class AddModifyRule : Form
         }
 
         txtUserText.Text = mRule.UserSuppliedText;
-        if (mRule.First != -1)
+        if (mRule.First.HasValue)
         {
-            txtValue1.Text = mRule.First.ToString();
+            txtValue1.Text = mRule.First.Value.ToString();
         }
 
-        if (mRule.Second != -1)
+        if (mRule.Second.HasValue)
         {
-            txtValue2.Text = mRule.Second.ToString();
+            txtValue2.Text = mRule.Second.Value.ToString();
         }
 
         chkRenumberAfter.Checked = mRule.RenumberAfter;
@@ -212,13 +212,15 @@ public partial class AddModifyRule : Form
         }
     }
 
-    private bool ContainsEpisode(int episodeNumber)
+    private bool ContainsEpisode(int? episodeNumber)
     {
+        if (!episodeNumber.HasValue) { return false; }
         return eps.Any(ep => ep.GetEpisodeNumber(mOrder) == episodeNumber);
     }
 
-    private bool NextEpisodeIs(int episodeNumber)
+    private bool NextEpisodeIs(int? episodeNumber)
     {
+        if (!episodeNumber.HasValue) { return false; }
         int maxEpNum = eps.MaxOrDefault(ep => ep.GetEpisodeNumber(mOrder), 0);
 
         return episodeNumber == maxEpNum + 1;
@@ -236,15 +238,15 @@ public partial class AddModifyRule : Form
         throw new ValidationFailedException(message);
     }
 
-    private static int ParseTextValue(Control txtValue)
+    private static int? ParseTextValue(Control txtValue)
     {
         try
         {
-            return txtValue.Enabled ? Convert.ToInt32(txtValue.Text) : -1;
+            return txtValue.Enabled ? Convert.ToInt32(txtValue.Text) : null;
         }
         catch
         {
-            return -1;
+            return null;
         }
     }
 

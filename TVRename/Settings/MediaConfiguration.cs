@@ -16,12 +16,10 @@ public abstract class MediaConfiguration : ISeriesSpecifier
     public bool ForceCheckFuture;
     public bool ForceCheckNoAirdate;
 
-    public int TvdbCode;
-
+    public int? TvdbCode;
     // ReSharper disable once InconsistentNaming
-    public int TVmazeCode;
-
-    public int TmdbCode;
+    public int? TVmazeCode;
+    public int? TmdbCode;
     public string? ImdbCode { get; set; }
 
     public Locale TargetLocale
@@ -102,11 +100,11 @@ public abstract class MediaConfiguration : ISeriesSpecifier
         return value is null ? TVDoc.ProviderType.libraryDefault : (TVDoc.ProviderType)value;
     }
 
-    public CachedMediaInfo? CachedData => Code > 0 ? LocalCache().GetMedia(Code, GetMediaType()) : null;
+    public CachedMediaInfo? CachedData => Code.HasValue && Code > 0 ? LocalCache().GetMedia(Code.Value, GetMediaType()) : null;
 
     protected abstract MediaCache LocalCache();
 
-    public int Code
+    public int? Code
     {
         get
         {
@@ -139,7 +137,7 @@ public abstract class MediaConfiguration : ISeriesSpecifier
         IdsMatch(TVmazeCode, newShow.TVmazeCode) ||
         IdsMatch(TmdbCode, newShow.TmdbCode);
 
-    private static bool IdsMatch(int code1, int code2) => code1 == code2 && code1 > 0;
+    private static bool IdsMatch(int? code1, int? code2) => code1.HasValue && code2.HasValue && code1 == code2 && code1 > 0;
 
     public static int CompareNames(MediaConfiguration? x, MediaConfiguration? y)
     {
@@ -168,15 +166,15 @@ public abstract class MediaConfiguration : ISeriesSpecifier
         }
     }
 
-    public int TvdbId => TvdbCode;
+    public int? TvdbId => TvdbCode;
 
     public string? Name => LastName;
 
     public MediaType Media => GetMediaType();
 
-    public int TvMazeId => TVmazeCode;
+    public int? TvMazeId => TVmazeCode;
 
-    public int TmdbId => TmdbCode;
+    public int? TmdbId => TmdbCode;
 
     public bool UseCustomLanguage { get; set; }
 
@@ -279,20 +277,20 @@ public abstract class MediaConfiguration : ISeriesSpecifier
 
             case TVDoc.ProviderType.TVmaze:
                 TVmazeCode = code;
-                TvdbCode = -1;
-                TmdbCode = -1;
+                TvdbCode = null;
+                TmdbCode = null;
                 break;
 
             case TVDoc.ProviderType.TheTVDB:
                 TvdbCode = code;
-                TmdbCode = -1;
-                TVmazeCode = -1;
+                TmdbCode = null;
+                TVmazeCode = null;
                 break;
 
             case TVDoc.ProviderType.TMDB:
                 TmdbCode = code;
-                TvdbCode = -1;
-                TVmazeCode = -1;
+                TvdbCode = null;
+                TVmazeCode = null;
                 break;
 
             default:

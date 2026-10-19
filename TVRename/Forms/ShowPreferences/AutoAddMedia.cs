@@ -47,7 +47,7 @@ public partial class AutoAddMedia : Form, ICodeWindow
         {
             string filenameFriendly = TVSettings.Instance.DefaultTVShowFolder(tvCodeFinder.TvShowInitialFound!);
             SetShowItem(tvCodeFinder.TvShowInitialFoundCode!.Value, tvCodeFinder.Source, TVSettings.Instance.DefShowLocation + System.IO.Path.DirectorySeparatorChar + filenameFriendly);
-            if (ShowConfiguration.Code == -1)
+            if (!ShowConfiguration.Code.HasValue)
             {
                 SetShowItem();
             }
@@ -55,7 +55,7 @@ public partial class AutoAddMedia : Form, ICodeWindow
         if (SingleMovieFound ?? false && movieCodeFinder.MovieInitialFoundCode.HasValue)
         {
             SetMovieItem(movieCodeFinder.MovieInitialFoundCode!.Value, movieCodeFinder.Source, TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty);
-            if (MovieConfiguration.Code == -1)
+            if (!MovieConfiguration.Code.HasValue)
             {
                 SetMovieItem();
             }
@@ -120,9 +120,11 @@ public partial class AutoAddMedia : Form, ICodeWindow
 
     private void SetShowItem()
     {
-        int code = tvCodeFinder.SelectedCode();
+        int? code = tvCodeFinder.SelectedCode();
 
-        SetShowItem(code, tvCodeFinder.Source, cbDirectory.Text + lblDirectoryName.Text);
+        if (!code.HasValue) return;
+
+        SetShowItem(code.Value, tvCodeFinder.Source, cbDirectory.Text + lblDirectoryName.Text);
     }
 
     private void SetShowItem(int code, TVDoc.ProviderType type, string folderbase)
@@ -146,9 +148,11 @@ public partial class AutoAddMedia : Form, ICodeWindow
 
     private void SetMovieItem()
     {
-        int code = movieCodeFinder.SelectedCode();
+        int? code = movieCodeFinder.SelectedCode();
 
-        SetMovieItem(code, movieCodeFinder.Source, cbMovieDirectory.Text);
+        if (!code.HasValue) return;
+
+        SetMovieItem(code.Value, movieCodeFinder.Source, cbMovieDirectory.Text);
     }
 
     private void SetMovieItem(int code, TVDoc.ProviderType type, string folderbase)
@@ -195,11 +199,13 @@ public partial class AutoAddMedia : Form, ICodeWindow
 
     private bool OkToClose()
     {
-        if (tabControl1.SelectedTab == tpTV && TVDoc.GetMediaCache(tvCodeFinder.Source).HasSeries(tvCodeFinder.SelectedCode()))
+        int? tvCode = tvCodeFinder.SelectedCode();
+        if (tabControl1.SelectedTab == tpTV && tvCode.HasValue && TVDoc.GetMediaCache(tvCodeFinder.Source).HasSeries(tvCode.Value))
         {
             return true;
         }
-        if (tabControl1.SelectedTab == tpMovie && TVDoc.GetMediaCache(movieCodeFinder.Source).HasMovie(movieCodeFinder.SelectedCode()))
+        int? movieCode = movieCodeFinder.SelectedCode();
+        if (tabControl1.SelectedTab == tpMovie && movieCode.HasValue && TVDoc.GetMediaCache(movieCodeFinder.Source).HasMovie(movieCode.Value))
         {
             return true;
         }

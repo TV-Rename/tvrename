@@ -20,10 +20,10 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
     public float SiteRating;
     public int SiteRatingVotes;
     public string? Imdb;
-    public int TvdbCode = -1;
-    public int TvMazeCode = -1;
-    public int TvRageCode = 0;
-    public int TmdbCode = -1;
+    public int? TvdbCode;
+    public int? TvMazeCode;
+    public int? TvRageCode;
+    public int? TmdbCode;
     public string? WebUrl;
     public string? OfficialUrl;
     public string? TrailerUrl;
@@ -64,7 +64,7 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
         ActualLocale = locale;
     }
 
-    protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId, Locale locale, TVDoc.ProviderType source) : this(locale, source)
+    protected CachedMediaInfo(int? tvdb, int? tvmaze, int? tmdbId, Locale locale, TVDoc.ProviderType source) : this(locale, source)
     {
         IsSearchResultOnly = false;
         TvMazeCode = tvmaze;
@@ -74,7 +74,7 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
 
     protected abstract MediaConfiguration.MediaType MediaType();
 
-    public int IdCode(TVDoc.ProviderType selectedSource)
+    public int? IdCode(TVDoc.ProviderType selectedSource)
     {
         return selectedSource switch
         {
@@ -252,15 +252,15 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
 
     TVDoc.ProviderType ISeriesSpecifier.Provider => Source;
 
-    public int TvdbId => TvdbCode;
+    public int? TvdbId => TvdbCode;
 
     string ISeriesSpecifier.Name => Name;
 
     public MediaConfiguration.MediaType Media => MediaType();
 
-    public int TvMazeId => TvMazeCode;
+    public int? TvMazeId => TvMazeCode;
 
-    public int TmdbId => TmdbCode;
+    public int? TmdbId => TmdbCode;
 
     public string? ImdbCode => Imdb;
 
@@ -369,8 +369,8 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
         try
         {
             TvdbCode = seriesXml.ExtractInt("id") ?? throw new SourceConsistencyException("Error Extracting Id for Series", TVDoc.ProviderType.TheTVDB);
-            TvMazeCode = seriesXml.ExtractInt("mazeid") ?? -1;
-            TmdbCode = seriesXml.ExtractInt("TMDBCode") ?? -1;
+            TvMazeCode = seriesXml.ExtractInt("mazeid");
+            TmdbCode = seriesXml.ExtractInt("TMDBCode");
             Name = System.Web.HttpUtility.HtmlDecode(
                 XmlHelper.ReadStringFixQuotesAndSpaces(seriesXml.ExtractStringOrNull("SeriesName") ?? seriesXml.ExtractString("seriesName")));
             SrvLastUpdated = seriesXml.ExtractLong("lastupdated") ?? seriesXml.ExtractLong("lastUpdated", 0);

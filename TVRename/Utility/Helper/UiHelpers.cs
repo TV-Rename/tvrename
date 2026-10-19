@@ -28,6 +28,10 @@ public static class UiHelpers
         items.Add(tsi);
     }
 
+    public static bool IsSomethingSelected(this ListBox subject) => subject.SelectedIndex != -1;
+    public static bool IsSomethingSelected(this ComboBox subject) => subject.SelectedIndex != -1;
+    public static void ClearSelection(this ComboBox subject) => subject.SelectedIndex = -1;
+
     public static void SetProgress(this ProgressBar pb, int value)
     {
         if (value >= pb.Maximum)

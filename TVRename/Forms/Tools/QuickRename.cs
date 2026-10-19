@@ -147,7 +147,7 @@ public partial class QuickRename : Form, IDialogParent
             }
         }
 
-        if (!FinderHelper.FindSeasEp(droppedFile, out int seasonNum, out int episodeNum, out int _, bestShow,
+        if (!FinderHelper.FindSeasEp(droppedFile, out int? seasonNum, out int? episodeNum, out int? _, bestShow,
                 out TVSettings.FilenameProcessorRE? _))
         {
             Logger.Info($"Cannot find episode for {bestShow.ShowName} for {droppedFile.FullName}, ignoring this file.");
@@ -156,7 +156,7 @@ public partial class QuickRename : Form, IDialogParent
 
         try
         {
-            ProcessedEpisode episode = bestShow.GetEpisode(seasonNum, episodeNum);
+            ProcessedEpisode episode = bestShow.GetEpisode(seasonNum.Value, episodeNum.Value);
 
             string filename = TVSettings.Instance.FilenameFriendly(
                 TVSettings.Instance.NamingStyle.NameFor(episode, otherExtension,

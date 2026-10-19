@@ -1835,7 +1835,7 @@ public partial class Preferences : Form
         };
 
         //Populate the popup with the right path
-        if (lbSearchFolders.SelectedIndex != -1)
+        if (lbSearchFolders.IsSomethingSelected())
         {
             int n = lbSearchFolders.SelectedIndex;
             searchFolderBrowser.SelectedPath = TVSettings.Instance.DownloadFolders[n];
@@ -1857,7 +1857,7 @@ public partial class Preferences : Form
         mDoc.SetDirty();
         FillSearchFolderList();
     }
-
+    
     private void bnRemoveSearchFolder_Click(object sender, EventArgs e)
     {
         RemoveSelectedSearchFolder();
@@ -1865,13 +1865,12 @@ public partial class Preferences : Form
 
     private void RemoveSelectedSearchFolder()
     {
-        int n = lbSearchFolders.SelectedIndex;
-        if (n == -1)
+        if (!lbSearchFolders.IsSomethingSelected())
         {
             return;
         }
 
-        TVSettings.Instance.DownloadFolders.RemoveAt(n);
+        TVSettings.Instance.DownloadFolders.RemoveAt(lbSearchFolders.SelectedIndex);
         mDoc.SetDirty();
 
         FillSearchFolderList();
@@ -1879,13 +1878,12 @@ public partial class Preferences : Form
 
     private void bnOpenSearchFolder_Click(object sender, EventArgs e)
     {
-        int n = lbSearchFolders.SelectedIndex;
-        if (n == -1)
+        if (!lbSearchFolders.IsSomethingSelected())
         {
             return;
         }
 
-        TVSettings.Instance.DownloadFolders[n].Trim().OpenFolder();
+        TVSettings.Instance.DownloadFolders[lbSearchFolders.SelectedIndex].Trim().OpenFolder();
     }
 
     private void lbSearchFolders_KeyDown(object sender, KeyEventArgs e)
@@ -1969,7 +1967,7 @@ public partial class Preferences : Form
             StartPosition = FormStartPosition.CenterParent
         };
 
-        if (lstFMMonitorFolders.SelectedIndex != -1)
+        if (lstFMMonitorFolders.IsSomethingSelected())
         {
             int n = lstFMMonitorFolders.SelectedIndex;
             searchFolderBrowser.SelectedPath = TVSettings.Instance.LibraryFolders[n];
@@ -1986,7 +1984,7 @@ public partial class Preferences : Form
 
     private void bnOpenMonFolder_Click(object sender, EventArgs e)
     {
-        if (lstFMMonitorFolders.SelectedIndex != -1)
+        if (lstFMMonitorFolders.IsSomethingSelected())
         {
             TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex].OpenFolder();
         }
@@ -1994,7 +1992,7 @@ public partial class Preferences : Form
 
     private void bnOpenMovieMonFolder_Click(object sender, EventArgs e)
     {
-        if (lstMovieMonitorFolders.SelectedIndex != -1)
+        if (lstMovieMonitorFolders.IsSomethingSelected())
         {
             TVSettings.Instance.MovieLibraryFolders[lstMovieMonitorFolders.SelectedIndex].OpenFolder();
         }
@@ -2254,7 +2252,7 @@ public partial class Preferences : Form
             StartPosition = FormStartPosition.CenterParent
         };
 
-        if (lstMovieMonitorFolders.SelectedIndex != -1)
+        if (lstMovieMonitorFolders.IsSomethingSelected())
         {
             int n = lstMovieMonitorFolders.SelectedIndex;
             searchFolderBrowser.SelectedPath = TVSettings.Instance.MovieLibraryFolders[n];

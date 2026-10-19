@@ -93,14 +93,14 @@ public partial class CustomNameDesigner : Form
             string fn = TVSettings.Instance.FilenameFriendly(cn.NameFor(pe));
             lvi.Text = fn;
 
-            bool ok = FinderHelper.FindSeasEp(fn, out int seas, out int ep, out int maxEp, pe.Show);
+            bool ok = FinderHelper.FindSeasEp(fn, out int? seas, out int? ep, out int? maxEp, pe.Show);
             bool ok1 = ok && seas == pe.AppropriateSeasonNumber;
             bool ok2 = ok && ep == pe.AppropriateEpNum;
             string pre1 = ok1 ? "" : "* ";
             string pre2 = ok2 ? "" : "* ";
 
-            lvi.SubItems.Add(pre1 + (seas != -1 ? seas.ToString() : ""));
-            lvi.SubItems.Add(pre2 + (ep != -1 ? ep.ToString() : "") + (maxEp != -1 ? "-" + maxEp : ""));
+            lvi.SubItems.Add(pre1 + (seas.HasValue ? seas.ToString() : ""));
+            lvi.SubItems.Add(pre2 + (ep.HasValue ? ep.ToString() : "") + (maxEp.HasValue ? "-" + maxEp : string.Empty));
 
             lvi.Tag = pe;
 
@@ -115,14 +115,13 @@ public partial class CustomNameDesigner : Form
 
     private void cbPresets_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-        int n = cbPresets.SelectedIndex;
-        if (n == -1)
+        if (!cbPresets.IsSomethingSelected())
         {
             return;
         }
 
-        txtTemplate.Text = CustomEpisodeName.PRESETS[n];
-        cbPresets.SelectedIndex = -1;
+        txtTemplate.Text = CustomEpisodeName.PRESETS[cbPresets.SelectedIndex];
+        cbPresets.ClearSelection();
     }
 
     private void txtTemplate_TextChanged(object sender, System.EventArgs e)
@@ -133,8 +132,7 @@ public partial class CustomNameDesigner : Form
 
     private void cbTags_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-        int n = cbTags.SelectedIndex;
-        if (n == -1)
+        if (!cbTags.IsSomethingSelected())
         {
             return;
         }
@@ -143,7 +141,7 @@ public partial class CustomNameDesigner : Form
         string s = txtTemplate.Text;
         txtTemplate.Text = s[..p] + CustomEpisodeName.TAGS[cbTags.SelectedIndex] + s[p..];
 
-        cbTags.SelectedIndex = -1;
+        cbTags.ClearSelection();
     }
 
     private void lvTest_SelectedIndexChanged(object sender, System.EventArgs e)

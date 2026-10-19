@@ -147,9 +147,9 @@ class IdentifyFinalBoss : IdentifyFromNFOFiles, IPossibleMovieIdentifier
         if (tvdbId.HasValue)
         {
             CachedMovieInfo? s2 = await TMDB.LocalCache.Instance.LookupMovieByTvdbAsync(tvdbId.Value, localeToUse);
-            if (s2 != null)
+            if (s2 != null && s2.TmdbCode.HasValue)
             {
-                return (TVDoc.ProviderType.TMDB, s2.TmdbCode);
+                return (TVDoc.ProviderType.TMDB, s2.TmdbCode.Value);
             }
             else
             {
@@ -157,9 +157,9 @@ class IdentifyFinalBoss : IdentifyFromNFOFiles, IPossibleMovieIdentifier
                 CachedMovieInfo? s3 = await
                     TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(movie, localeToUse, showErrorMsgBox, new ThreadSafeCounter(), 1);
 
-                if (s3 != null)
+                if (s3 != null && s3.TvdbCode.HasValue)
                 {
-                    return (TVDoc.ProviderType.TheTVDB, s3.TvdbCode);
+                    return (TVDoc.ProviderType.TheTVDB, s3.TvdbCode.Value);
                 }
             }
         }
@@ -193,9 +193,9 @@ class IdentifyByTweakedSearchName(ShowLibrary library) : PossibleMediaIdentifier
         var ser = await TheTVDB.LocalCache.Instance.SearchSeriesAsync(refinedHint, showErrorMsgBox, localeToUse);
 
         show.RefinedHint = refinedHint;
-        if (ser != null)
+        if (ser != null && ser.TvdbId.HasValue)
         {
-            return (TVDoc.ProviderType.TheTVDB, ser.TvdbId);
+            return (TVDoc.ProviderType.TheTVDB, ser.TvdbId.Value);
         }
         throw new MediaNotIdentifiedException();
     }
@@ -207,9 +207,9 @@ class IdentifyByTweakedName() : PossibleMediaIdentifier, IPossibleMovieIdentifie
     {
         //Tweak the hints and do another Search on TMDB
         var ser = await ParseHintsAsync(movie, showErrorMsgBox);
-        if (ser != null)
+        if (ser != null && ser.TmdbCode.HasValue)
         {
-            return (TVDoc.ProviderType.TMDB, ser.TmdbCode);
+            return (TVDoc.ProviderType.TMDB, ser.TmdbCode.Value);
         }
         throw new MediaNotIdentifiedException();
     }
@@ -280,9 +280,9 @@ class IdentifyByMovieRefinedHint() : PossibleMediaIdentifier, IPossibleMovieIden
         Locale localeToUse = new(TVSettings.Instance.TMDBLanguage);
         //Do a Search on TMDB
         CachedMovieInfo? ser = await TMDB.LocalCache.Instance.SearchMovieAsync(movie.RefinedHint, movie.PossibleYear, localeToUse, showErrorMsgBox,false);
-        if (ser != null)
+        if (ser != null && ser.TmdbCode.HasValue)
         {
-            return (TVDoc.ProviderType.TMDB, ser.TmdbCode);
+            return (TVDoc.ProviderType.TMDB, ser.TmdbCode.Value);
         }
         throw new MediaNotIdentifiedException();
     }
@@ -297,9 +297,9 @@ class IdentifyBySearchName(ShowLibrary library) : PossibleMediaIdentifier, IPoss
         string showName = GuessShowName(show, library);
 
         CachedSeriesInfo? ser = await TheTVDB.LocalCache.Instance.SearchSeriesAsync(showName, showErrorMsgBox, localeToUse);
-        if (ser != null)
+        if (ser != null && ser.TvdbId.HasValue)
         {
-            return (TVDoc.ProviderType.TheTVDB, ser.TvdbId);
+            return (TVDoc.ProviderType.TheTVDB, ser.TvdbId.Value);
         }
 
         throw new MediaNotIdentifiedException();
@@ -318,9 +318,9 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier,
                 IEnumerable<FileInfo> files = show.FindFiles(fileName);
                 if (files.IsAny())
                 {
-                    foreach (int x in files.Select(FindTvdbShowCode).Where(x => x != -1))
+                    foreach (int? x in files.Select(FindTvdbShowCode).OfType<int>().Where(x => x != -1))
                     {
-                        return (TVDoc.ProviderType.TheTVDB, x);
+                        return (TVDoc.ProviderType.TheTVDB, x.Value);
                     }
                 }
             }
@@ -353,9 +353,9 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier,
             {
                 CachedMovieInfo? s3 = await TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(movie, preferredLocale, showErrorMsgBox, new ThreadSafeCounter(), 1);
 
-                if (s3 != null)
+                if (s3 != null && s3.TvdbCode.HasValue)
                 {
-                    return (TVDoc.ProviderType.TheTVDB, s3.TvdbCode);
+                    return (TVDoc.ProviderType.TheTVDB, s3.TvdbCode.Value);
                 }
             }
         }
@@ -432,9 +432,9 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier,
             if (imdbToTest.HasValue())
             {
                 CachedMovieInfo? s = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync(imdbToTest, preferredLocale);
-                if (s != null)
+                if (s != null && s.TmdbCode.HasValue)
                 {
-                    return (TVDoc.ProviderType.TMDB, s.TmdbCode);
+                    return (TVDoc.ProviderType.TMDB, s.TmdbCode.Value);
                 }
             }
         }
@@ -553,7 +553,7 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier,
         return null;
     }
 
-    private static int FindTvdbShowCode(FileInfo file)
+    private static int? FindTvdbShowCode(FileInfo file)
     {
         var s = FindShowCode(file, "tvdbid", "tvdb");
         bool success = int.TryParse(s, out int x);
@@ -561,7 +561,7 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier,
         {
             return x;
         }
-        return -1;
+        return null;
     }
 }
 
@@ -594,9 +594,9 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, IPossibleTVShowIdenti
                     break;
                 case "IMDB":
                     CachedSeriesInfo? s = await TMDB.LocalCache.Instance.LookupTVShowByImdbAsync($"tt{code:D7}" , preferredLocale);
-                    if (s != null)
+                    if (s != null && s.TmdbCode.HasValue)
                     {
-                        return (TVDoc.ProviderType.TMDB, s.TmdbCode);
+                        return (TVDoc.ProviderType.TMDB, s.TmdbCode.Value);
                     }
                     break;
                 case "TVMAZE":
@@ -659,9 +659,9 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, IPossibleTVShowIdenti
                     break;
                 case "IMDB":
                     CachedMovieInfo? s = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync($"tt{code:D7}", preferredLocale);
-                    if (s != null)
+                    if (s != null && s.TmdbCode.HasValue)
                     {
-                        return (TVDoc.ProviderType.TMDB, s.TmdbCode);
+                        return (TVDoc.ProviderType.TMDB, s.TmdbCode.Value);
                     }
                     break;
                 case "TVMAZE":

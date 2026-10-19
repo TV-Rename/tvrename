@@ -36,16 +36,16 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
                 return false;
             }
 
-            (bool identifySuccess, int seasF, int epF, int maxEp) = IdentifyFile(me, dce);
+            (bool identifySuccess, int? seasF, int? epF, int? maxEp) = IdentifyFile(me, dce);
 
             if (!identifySuccess)
             {
                 return false;
             }
 
-            if (maxEp != -1 && addMergeRules)
+            if (maxEp.HasValue && addMergeRules)
             {
-                me = UpdateMissingItem(me, dce, epF, maxEp, seasF);
+                me = UpdateMissingItem(me, dce, epF!.Value, maxEp.Value, seasF!.Value);
             }
 
             FileInfo fi = FinderHelper.GenerateTargetName(me, dce);
@@ -147,12 +147,12 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
         return false;
     }
 
-    private static (bool identifysuccess, int foundSeason, int foundEpisode, int maxEp) IdentifyFile(ShowItemMissing me, FileInfo dce)
+    private static (bool identifysuccess, int? foundSeason, int? foundEpisode, int? maxEp) IdentifyFile(ShowItemMissing me, FileInfo dce)
     {
         int season = me.MissingEpisode.AppropriateSeasonNumber;
         int epnum = me.MissingEpisode.AppropriateEpNum;
 
-        bool fileMatchesFilenameProcessors = FinderHelper.FindSeasEp(dce, out int foundSeason, out int foundEpisode, out int maxEp, me.MissingEpisode.Show);
+        bool fileMatchesFilenameProcessors = FinderHelper.FindSeasEp(dce, out int? foundSeason, out int? foundEpisode, out int? maxEp, me.MissingEpisode.Show);
 
         if (fileMatchesFilenameProcessors)
         {
@@ -162,7 +162,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
             }
             else
             {
-                return (false, 0, 0, 0);
+                return (false, null, null, null);
             }
         }
 
@@ -180,7 +180,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
             {
                 if (foundEpisode == epnum && foundSeason == season)
                 {
-                    return (true, foundSeason, foundEpisode, -1);
+                    return (true, foundSeason, foundEpisode, null);
                 }
             }
         }
@@ -191,12 +191,12 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
             {
                 if (foundEpisode == epnum && foundSeason == season)
                 {
-                    return (true, foundSeason, foundEpisode, -1);
+                    return (true, foundSeason, foundEpisode, null);
                 }
             }
         }
 
-        return (false, 0, 0, 0);
+        return (false, null, null, null);
     }
 
     private void WarnPathTooLong(ShowItemMissing me, FileInfo dce, Exception e, bool matched)
@@ -476,7 +476,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
 
     private static string GetFilename(FileInfo sourceFile, string basename, string toname)
     {
-        string newName = string.Empty;
+        string newName;
 
         (bool isLangSpecifc, string extension) = FileHelper.IsLanguageSpecificSubtitle(sourceFile);
 

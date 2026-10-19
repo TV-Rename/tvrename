@@ -99,8 +99,7 @@ internal static class API
     {
     }
 
-    public static string WebsiteShowUrl(CachedSeriesInfo ser) => WebsiteShowUrl(ser.TmdbCode);
-    public static string WebsiteShowUrl(ShowConfiguration si) => WebsiteShowUrl(si.TmdbCode);
+    public static string WebsiteShowUrl(ShowConfiguration si) => si.TmdbCode.HasValue ? WebsiteShowUrl(si.TmdbCode.Value) : string.Empty;
     public static string WebsiteShowUrl(int seriesId) => $"https://www.themoviedb.org/tv/{seriesId}";
     public static string WebsiteMovieUrl(int seriesId) => $"https://www.themoviedb.org/movie/{seriesId}";
 }

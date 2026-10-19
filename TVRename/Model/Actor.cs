@@ -14,7 +14,7 @@ public class Actor
     public string? ActorImage { get; }
     public string ActorName { get; }
     public string? ActorRole { get; }
-    public int ActorSortOrder { get; }
+    public int? ActorSortOrder { get; }
 
     public Actor(int actorId, string? actorImage, string actorName, string? actorRole, int? actorSortOrder)
     {
@@ -29,7 +29,7 @@ public class Actor
         }
         else
         {
-            ActorSortOrder = -1;
+            ActorSortOrder = null;
         }
     }
 
@@ -40,8 +40,7 @@ public class Actor
         ActorImage = r.ExtractString("Image");
         ActorName = r.ExtractString("Name");
         ActorRole = r.ExtractString("Role");
-        r.ExtractInt("SeriesId", -1);
-        ActorSortOrder = r.ExtractInt("SortOrder", -1);
+        ActorSortOrder = r.ExtractInt("SortOrder");
     }
 
     public Actor(string name)
@@ -56,7 +55,6 @@ public class Actor
             XmlHelper.GenerateOptionalXElement("Image", ActorImage),
             XmlHelper.GenerateOptionalXElement("Name", ActorName),
             XmlHelper.GenerateOptionalXElement("Role", ActorRole),
-            //new XElement("SeriesId", ActorSeriesId),
             new XElement("SortOrder", ActorSortOrder)
             );
     }

@@ -48,10 +48,6 @@ public class MovieConfiguration : MediaConfiguration
         CustomRegionCode = string.Empty;
         ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
 
-        TvdbCode = -1;
-        TVmazeCode = -1;
-        TmdbCode = -1;
-
         Format = TVSettings.Instance.DefMovieFolderFormat;
         DoRename = TVSettings.Instance.DefMovieDoRenaming;
         DoMissingCheck = TVSettings.Instance.DefMovieDoMissingCheck;
@@ -78,9 +74,9 @@ public class MovieConfiguration : MediaConfiguration
         UseCustomRegion = xmlSettings.ExtractBool("UseCustomRegion", false);
         CustomRegionCode = xmlSettings.ExtractString("CustomRegionCode");
         CustomShowName = xmlSettings.ExtractString("CustomShowName");
-        TvdbCode = xmlSettings.ExtractInt("TVDBID", -1);
-        TVmazeCode = xmlSettings.ExtractInt("TVMAZEID", -1);
-        TmdbCode = xmlSettings.ExtractInt("TMDBID", -1);
+        TvdbCode = xmlSettings.ExtractInt("TVDBID");
+        TVmazeCode = xmlSettings.ExtractInt("TVMAZEID");
+        TmdbCode = xmlSettings.ExtractInt("TMDBID");
         DoRename = xmlSettings.ExtractBool("DoRename", true);
         DoMissingCheck = xmlSettings.ExtractBool("DoMissingCheck", true);
         ConfigurationProvider = GetConfigurationProviderType(xmlSettings.ExtractInt("ConfigurationProvider"));

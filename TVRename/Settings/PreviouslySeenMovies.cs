@@ -43,9 +43,18 @@ public class PreviouslySeenMovies : List<int>
         }
     }
 
-    public void EnsureAdded(MovieConfiguration m) => EnsureAdded(m.Code);
+    public void EnsureAdded(MovieConfiguration m)
+    {
+        if (m.Code.HasValue)
+        {
+            EnsureAdded(m.Code.Value);
+        }
+    }
 
-    public bool Includes(MovieConfiguration? m) => m is { Code: > 0 } && Contains(m.Code);
+    public bool Includes(MovieConfiguration? m)
+    {
+        return (m != null) && m.Code.HasValue && Contains(m.Code.Value);
+    }
 
     public bool Includes(Item item) => Includes(item.Movie);
 

@@ -100,7 +100,8 @@ public abstract partial class CodeFinder : UserControl
 
     private string GenerateNewHintForProvider(MediaConfiguration mi)
     {
-        return mi.IdFor(Source) > 0 ? mi.IdFor(Source).ToString() : mi.ShowName;
+        int? id = mi.IdFor(Source);
+        return id.HasValue ? id.Value.ToString() : mi.ShowName;
     }
 
     public event EventHandler<EventArgs>? SelectionChanged;
@@ -131,7 +132,7 @@ public abstract partial class CodeFinder : UserControl
         }
     }
 
-    public int SelectedCode()
+    public int? SelectedCode()
     {
         try
         {
@@ -141,7 +142,7 @@ public abstract partial class CodeFinder : UserControl
         }
         catch
         {
-            return -1;
+            return null;
         }
     }
 

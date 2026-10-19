@@ -8,19 +8,15 @@
 
 namespace TVRename;
 
-
-
-
 using System.Xml;
 
 // ReSharper disable once InconsistentNaming
 public class ActionMede8erViewXML : ActionWriteMetadata, IEquatable<ActionMede8erViewXML>
 {
-    private readonly int snum;
+    private readonly int? snum = null;
 
     public ActionMede8erViewXML(FileInfo nfo, ShowConfiguration si) : base(nfo, si)
     {
-        snum = -1;
     }
 
     public ActionMede8erViewXML(FileInfo nfo, ShowConfiguration si, int snum) : base(nfo, si)
@@ -111,7 +107,7 @@ public class ActionMede8erViewXML : ActionWriteMetadata, IEquatable<ActionMede8e
     #endregion
 
     public override string SeriesName => SelectedShow?.ShowName ?? Movie!.ShowName;
-    public override string SeasonNumber => snum > 0 ? snum.ToString() : string.Empty;
+    public override string SeasonNumber => snum.HasValue && snum > 0 ? snum.Value.ToString() : string.Empty;
     public override int? SeasonNumberAsInt => snum;
     public override string EpisodeString => string.Empty;
     public override string AirDateString => string.Empty;

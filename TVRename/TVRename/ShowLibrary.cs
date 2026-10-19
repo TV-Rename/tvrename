@@ -155,9 +155,9 @@ public class ShowLibrary : ConcurrentDictionary<ShowConfiguration, int>
         return returnList;
     }
 
-    public ShowConfiguration? GetShowItem(int id, TVDoc.ProviderType provider)
+    public ShowConfiguration? GetShowItem(int? id, TVDoc.ProviderType provider)
     {
-        if (id is 0 or -1)
+        if (!id.HasValue || id.Value is 0 or -1)
         {
             return null;
         }

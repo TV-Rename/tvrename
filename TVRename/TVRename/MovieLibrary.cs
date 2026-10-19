@@ -35,9 +35,9 @@ public class MovieLibrary : ConcurrentDictionary<MovieConfiguration, int>
     }
 
     /// <exception cref="InvalidOperationException">Condition.</exception>
-    public MovieConfiguration? GetMovie(int id, TVDoc.ProviderType provider)
+    public MovieConfiguration? GetMovie(int? id, TVDoc.ProviderType provider)
     {
-        if (id is 0 or -1)
+        if (id is null or 0 or -1)
         {
             return null;
         }

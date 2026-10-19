@@ -9,8 +9,7 @@ namespace TVRename;
 
 public partial class BulkAddEditShow : Form, ICodeWindow
 {
-    public int Code;
-
+    public int? Code;
     private readonly CodeFinder codeFinderControl;
     public TVDoc.ProviderType ProviderType => codeFinderControl.Source;
     public Language? SelectedLanguage() => null;
@@ -26,15 +25,13 @@ public partial class BulkAddEditShow : Form, ICodeWindow
         pnlCF.SuspendLayout();
         pnlCF.Controls.Add(codeFinderControl);
         pnlCF.ResumeLayout();
-
-        Code = -1;
     }
 
     public async Task SetHintAsync(PossibleNewTvShow hint)
     {
-        if (hint.CodeKnown)
+        if (hint.ProviderCode.HasValue)
         {
-            await codeFinderControl.SetHintAsync(hint.ProviderCode.ToString(), hint.Provider);
+            await codeFinderControl.SetHintAsync(hint.ProviderCode.Value.ToString(), hint.Provider);
         }
         else
         {

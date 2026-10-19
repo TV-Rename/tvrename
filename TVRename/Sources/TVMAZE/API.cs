@@ -235,9 +235,9 @@ internal static class API
             int tvMazeId = r.GetMandatoryInt("id", TVDoc.ProviderType.TVmaze);
             JToken externalsToken = GetChild(r, "externals");
             JToken tvdbToken = GetChild(externalsToken, "thetvdb");
-            int tvdb = tvdbToken.Type == JTokenType.Null ? -1 : (int)tvdbToken;
+            int? tvdb = tvdbToken.Type == JTokenType.Null ? null : (int)tvdbToken;
 
-            if (source.TvdbId > 0)
+            if (!source.TvdbId.HasValue)
             {
                 Logger.Error(
                     $"TVMaze Data issue: {tvMazeId} has the wrong TVDB Id based on {s}. Should be {source.TvdbId}, currently is {tvdb}. [{source}]");
@@ -309,10 +309,18 @@ internal static class API
     /// <exception cref="SourceConnectivityException">Condition.</exception>
     public static async Task<CachedSeriesInfo> GetSeriesDetailsAsync(ISeriesSpecifier ss)
     {
-        if (ss.TvMazeId <= 0)
+        if (!ss.TvMazeId.HasValue || ss.TvMazeId == 0)
         {
             await GetSeriesIdFromOtherCodesAsync(ss);
         }
+
+        if (!ss.TvMazeId.HasValue)
+        {
+            throw new MediaNotFoundException(ss,
+                $"Cant find a show with TVDB Id {ss.TvdbId} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.",
+                TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+        }
+
         JObject results = await GetSeriesDetailsWithMazeIdAsync(ss);
 
         CachedSeriesInfo downloadedSi = GenerateSeriesInfo(results);
@@ -327,12 +335,12 @@ internal static class API
         List<string> directors = GetDirectors(GetChild(jToken, "crew"));
         foreach (JToken epJson in GetChild(jToken, "episodes"))
         {
-            downloadedSi.AddEpisode(GenerateEpisode(ss.TvMazeId, writers, directors, (JObject)epJson, downloadedSi));
+            downloadedSi.AddEpisode(GenerateEpisode(ss.TvMazeId.Value, writers, directors, (JObject)epJson, downloadedSi));
         }
 
         foreach (JToken jsonSeason in GetChild(jToken, "seasons"))
         {
-            downloadedSi.AddSeason(GenerateSeason(ss.TvMazeId, jsonSeason));
+            downloadedSi.AddSeason(GenerateSeason(ss.TvMazeId.Value, jsonSeason));
 
             JToken imageNode = GetChild(jsonSeason, "image");
             if (imageNode.HasValues)
@@ -497,8 +505,8 @@ internal static class API
         string? wc = GetKeySubKey(r, "webChannel", "name");
         string? days = GetChild(r, "schedule")["days"]?.Select(x => x.Value<string>()).OfType<string>().ToCsv();
         JToken externalsToken = GetChild(r, "externals");
-        int tvdb = GetChild(externalsToken, "thetvdb").Type == JTokenType.Null ? -1 : (int?)externalsToken["thetvdb"] ?? -1;
-        int rage = GetChild(externalsToken, "tvrage").Type == JTokenType.Null ? -1 : (int?)externalsToken["tvrage"] ?? -1;
+        int? tvdb = GetChild(externalsToken, "thetvdb").Type == JTokenType.Null ? null : (int?)externalsToken["thetvdb"] ;
+        int? rage = GetChild(externalsToken, "tvrage").Type == JTokenType.Null ? null : (int?)externalsToken["tvrage"] ;
 
         return new CachedSeriesInfo(new Locale(), TVDoc.ProviderType.TVmaze)
         {

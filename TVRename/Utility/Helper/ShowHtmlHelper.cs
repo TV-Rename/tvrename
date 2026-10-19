@@ -527,8 +527,8 @@ internal static class ShowHtmlHelper
 
         string imdbLink = ser.Imdb.ToImdbLink();
         string? mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
-        string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteShowUrl(ser) : string.Empty;
-        string tvdbLink = ser.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser) : string.Empty;
+        string tmdbLink = ser.TmdbCode.HasValue ? TMDB.API.WebsiteShowUrl(ser.TmdbCode.Value) : string.Empty;
+        string tvdbLink = ser.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser) ?? string.Empty : string.Empty;
 
         string urlFilename = includeDirectoryLinks && (si is not null)
             ? Uri.EscapeDataString((await si.GetBestFolderLocationToOpenAsync()) ?? string.Empty)
@@ -659,7 +659,7 @@ internal static class ShowHtmlHelper
         string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
         string tvdbLink = ser.Slug.HasValue() ? TheTVDB.API.WebsiteMovieUrl(ser.Slug) : string.Empty;
         string imdbLink = ser.Imdb.ToImdbLink();
-        string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(ser.TmdbCode) : string.Empty;
+        string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(ser.TmdbCode.Value) : string.Empty;
         string? mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
 
         string urlFilename = includeDirectoryLinks && (si != null) ? Uri.EscapeDataString((await dfc.FindMovieOnDiskAsync(si)).FirstOrDefault()?.FullName ?? string.Empty) : string.Empty;
@@ -1645,7 +1645,7 @@ internal static class ShowHtmlHelper
 
         string yearRange = YearRange(ser);
         string siteRating = PrettyPrint(ser?.SiteRating);
-        string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si) : string.Empty;
+        string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si)??string.Empty : string.Empty;
 
         StringBuilder tableHtml = new();
 
@@ -1726,7 +1726,7 @@ internal static class ShowHtmlHelper
             body += "<A href=\"" + episodeUrl + "\" name=\"ep" + epl + "\">"; // anchor
             body += "<b>" + EpisodeName(si, snum, ei) + "</b>";
             body += "</A>"; // anchor
-            if (si.UseSequentialMatch && ei.OverallNumber != -1)
+            if (si.UseSequentialMatch && ei.OverallNumber.HasValue)
             {
                 body += " (#" + ei.OverallNumber + ")";
             }
@@ -1790,7 +1790,7 @@ internal static class ShowHtmlHelper
         });
     }
 
-    private static string ProviderShowUrl(this ShowConfiguration show)
+    private static string? ProviderShowUrl(this ShowConfiguration show)
     {
         return show.Provider switch
         {
@@ -1822,7 +1822,7 @@ internal static class ShowHtmlHelper
 
         string siteRating = PrettyPrint(ser?.SiteRating);
         string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si.TvdbCode) : string.Empty;
-        string tmdbLink = si.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(si.TmdbCode) : string.Empty;
+        string tmdbLink = si.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(si.TmdbCode.Value) : string.Empty;
         string? mazeLink = ser?.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
         string facebookButton = ser?.FacebookId.HasValue() ?? false ? $"https://facebook.com/{ser.FacebookId}" : string.Empty;
         string instagramButton = ser?.InstagramId.HasValue() ?? false ? $"https://instagram.com/{ser.InstagramId}" : string.Empty;

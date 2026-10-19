@@ -164,6 +164,22 @@ public static class Helpers
         }
     }
 
+    public static int ToInt(this string? text, int? def, int def2)
+    {
+        if (text is null)
+        {
+            return def??def2;
+        }
+
+        try
+        {
+            return int.Parse(text);
+        }
+        catch
+        {
+            return def??def2;
+        }
+    }
     public static float ToPercent(this string text, float def)
     {
         float value;

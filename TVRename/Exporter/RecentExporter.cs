@@ -39,7 +39,7 @@ internal abstract class RecentExporter(TVDoc doc) : Exporter
                 }
 
                 string name = TVSettings.Instance.NamingStyle.NameFor(episode);
-                int length = files.First().GetFilmLength();
+                int? length = files.First().GetFilmLength();
 
                 file.WriteLine(GenerateRecord(episode, files.First(), name, length));
             }
@@ -55,7 +55,7 @@ internal abstract class RecentExporter(TVDoc doc) : Exporter
 
     protected abstract string GenerateHeader();
 
-    protected abstract string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length);
+    protected abstract string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int? length);
 
     protected abstract string GenerateFooter();
 }

@@ -81,9 +81,14 @@ public partial class YtsViewerView : Form
             Logger.Info($"Not adding {imdbCode}:{name} as the IMDB code is not found on TMDB");
             return;
         }
+        if (movie.TmdbCode is null)
+        {
+            Logger.Info($"Not adding {imdbCode}:{name} as the TMDB id id not available");
+            return;
+        }
 
         // need to add a new showitem
-        MovieConfiguration found = new(movie.TmdbCode, TVDoc.ProviderType.TMDB);
+        MovieConfiguration found = new(movie.TmdbCode.Value, TVDoc.ProviderType.TMDB);
 
         if (found.ConfigurationProvider == TVSettings.Instance.DefaultMovieProvider)
         {

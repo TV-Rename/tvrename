@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 public partial class BulkAddEditMovie : Form, ICodeWindow
 {
-    public int Code;
+    public int? Code;
     public TVDoc.ProviderType Provider;
 
     private readonly CodeFinder codeFinderControl;
@@ -33,15 +33,14 @@ public partial class BulkAddEditMovie : Form, ICodeWindow
         pnlCF.Controls.Add(codeFinderControl);
         pnlCF.ResumeLayout();
 
-        Code = -1;
         Provider = TVDoc.ProviderType.libraryDefault;
     }
 
     public async Task SetHintAsync(PossibleNewMovie hint)
     {
-        if (hint.CodeKnown)
+        if (hint.ProviderCode.HasValue)
         {
-            await codeFinderControl.SetHintAsync(hint.ProviderCode.ToString(), hint.SourceProvider);
+            await codeFinderControl.SetHintAsync(hint.ProviderCode.Value.ToString(), hint.SourceProvider);
         }
         else
         {

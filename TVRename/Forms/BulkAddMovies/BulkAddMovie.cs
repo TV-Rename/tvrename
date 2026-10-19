@@ -131,7 +131,7 @@ public partial class BulkAddMovie : Form
             StartPosition = FormStartPosition.CenterParent
         };
 
-        if (lstFMMonitorFolders.SelectedIndex != -1)
+        if (lstFMMonitorFolders.IsSomethingSelected())
         {
             int n = lstFMMonitorFolders.SelectedIndex;
             searchFolderBrowser.SelectedPath = TVSettings.Instance.MovieLibraryFolders[n];
@@ -157,7 +157,7 @@ public partial class BulkAddMovie : Form
             StartPosition = FormStartPosition.CenterParent
         };
 
-        if (lstFMIgnoreFolders.SelectedIndex != -1)
+        if (lstFMIgnoreFolders.IsSomethingSelected())
         {
             ignoreFolderBrowser.SelectedPath = TVSettings.Instance.IgnoreFolders[lstFMIgnoreFolders.SelectedIndex];
         }
@@ -176,7 +176,7 @@ public partial class BulkAddMovie : Form
 
     private void OpenSelectedFolder()
     {
-        if (lstFMMonitorFolders.SelectedIndex != -1)
+        if (lstFMMonitorFolders.IsSomethingSelected())
         {
             TVSettings.Instance.MovieLibraryFolders[lstFMMonitorFolders.SelectedIndex].OpenFolder();
         }
@@ -184,7 +184,7 @@ public partial class BulkAddMovie : Form
 
     private void bnOpenIgFolder_Click(object sender, System.EventArgs e)
     {
-        if (lstFMIgnoreFolders.SelectedIndex != -1)
+        if (lstFMIgnoreFolders.IsSomethingSelected())
         {
             TVSettings.Instance.IgnoreFolders[lstFMIgnoreFolders.SelectedIndex].OpenFolder();
         }
@@ -540,16 +540,16 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        if (fme.CodeKnown)
+        if (fme.ProviderCode.HasValue)
         {
             switch (fme.SourceProvider)
             {
                 case TVDoc.ProviderType.TheTVDB:
-                    TheTVDB.API.WebsiteMovieUrl(fme.ProviderCode).OpenUrlInBrowser();
+                    TheTVDB.API.WebsiteMovieUrl(fme.ProviderCode.Value).OpenUrlInBrowser();
                     break;
 
                 case TVDoc.ProviderType.TMDB:
-                    TMDB.API.WebsiteMovieUrl(fme.ProviderCode).OpenUrlInBrowser();
+                    TMDB.API.WebsiteMovieUrl(fme.ProviderCode.Value).OpenUrlInBrowser();
                     break;
             }
         }
@@ -595,12 +595,19 @@ public partial class BulkAddMovie : Form
     {
         BulkAddEditMovie ed = new();
         await ed.SetHintAsync(fme);
-        if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)
+        if (ed.ShowDialog(this) != DialogResult.OK) 
         {
             return;
         }
 
-        fme.UpdateId(ed.Code, ed.Provider);
+        int? code = ed.Code;
+
+        if (!code.HasValue)
+        {
+            return;
+        }
+
+        fme.UpdateId(code.Value, ed.Provider);
     }
 
     private void lstFMMonitorFolders_SelectedIndexChanged(object sender, System.EventArgs e)

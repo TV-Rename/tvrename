@@ -5,10 +5,6 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
-
-
-
 namespace TVRename;
 
 // ReSharper disable once InconsistentNaming
@@ -26,7 +22,7 @@ public interface ITVSource
 
     CachedSeriesInfo? GetSeries(int? id);
 
-    bool HasSeries(int id);
+    bool HasSeries(int? id);
 
     Task ForgetEverythingAsync();
 

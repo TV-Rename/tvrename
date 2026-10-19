@@ -48,12 +48,12 @@ internal class ActionNfoMovie : ActionNfo
         //says that we need a format like this:
         //<episodeguide><url post="yes" cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json</url></episodeguide>
 
-        if (cachedSeries is not null)
+        if (cachedSeries is not null && Movie.Code.HasValue)
         {
             root.UpdateElement("originaltitle", Movie.ShowName);
             root.UpdateElement("sorttitle", UI.GenerateShowUiName(Movie));
             root.ReplaceElements("studio", cachedSeries.Networks);
-            root.UpdateElement("id", Movie.Code);
+            root.UpdateElement("id", Movie.Code.Value);
             root.UpdateElement("runtime", cachedSeries.Runtime, true);
             root.UpdateElement("mpaa", cachedSeries.ContentRating, true);
             root.UpdateElement("premiered", cachedSeries.FirstAired);

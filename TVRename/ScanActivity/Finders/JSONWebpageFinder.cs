@@ -120,7 +120,7 @@ internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downl
                     string? itemName = (string?)item[TVSettings.Instance.SearchJSONFilenameToken];
                     string? itemUrl = (string?)item[TVSettings.Instance.SearchJSONURLToken];
                     int? seeders = (int?)item[TVSettings.Instance.SearchJSONSeedersToken];
-                    long itemSizeBytes = CalculateItemSizeBytes(item);
+                    long? itemSizeBytes = CalculateItemSizeBytes(item);
 
                     if (TVSettings.Instance.DetailedRSSJSONLogging)
                     {
@@ -144,7 +144,7 @@ internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downl
                         continue;
                     }
 
-                    if (!FinderHelper.FindSeasEp(itemName, out int seas, out int ep, out int _, pe.Show))
+                    if (!FinderHelper.FindSeasEp(itemName, out int? seas, out int? ep, out int? _, pe.Show))
                     {
                         continue;
                     }
@@ -189,16 +189,16 @@ internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downl
         Replace(action, toRemove, newItems, newItemsForThisMissingEpisode);
     }
 
-    private static long CalculateItemSizeBytes(JToken item)
+    private static long? CalculateItemSizeBytes(JToken item)
     {
         try
         {
-            return (long?)item[TVSettings.Instance.SearchJSONFileSizeToken] ?? -1;
+            return (long?)item[TVSettings.Instance.SearchJSONFileSizeToken];
         }
         catch
         {
-            //-1 as size is not available (empty string or other)
-            return -1;
+            //null as size is not available (empty string or other)
+            return null;
         }
     }
 }

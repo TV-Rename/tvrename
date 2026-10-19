@@ -19,7 +19,7 @@ internal static class TaskHelper
     // <exception cref="TimeoutException"></exception>
     // <returns></returns>
     /// <exception cref="TimeoutException">Condition.</exception>
-    public static async Task WaitWhileAsync(Func<bool> condition, int frequency = 25, int timeout = -1)
+    public static async Task WaitWhileAsync(Func<bool> condition, int frequency = 25, int timeout=0)
     {
         Task waitTask = Task.Run(async () =>
         {
@@ -43,7 +43,7 @@ internal static class TaskHelper
     /// <param name="timeout">The timeout in milliseconds.</param>
     /// <returns></returns>
     /// <exception cref="TimeoutException">Condition.</exception>
-    public static async Task WaitUntilAsync(Func<bool> condition, int frequency = 25, int timeout = -1)
+    public static async Task WaitUntilAsync(Func<bool> condition, int frequency = 25, int timeout=0)
     {
         Task waitTask = Task.Run(async () =>
         {

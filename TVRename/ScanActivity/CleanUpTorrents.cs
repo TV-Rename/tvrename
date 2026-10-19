@@ -16,7 +16,6 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
     private TorrentEntry? lastFoundEntry;
 
     protected override string CheckName() => "Cleaned up completed TV Torrents";
-
     public override bool Active() => TVSettings.Instance.RemoveCompletedTorrents;
 
     protected override async Task DoCheckAsync(SetProgressDelegate progress)
@@ -70,7 +69,6 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
         }
 
         List<ProcessedEpisode>? pes = MatchEpisodes(x);
-
         List<MovieConfiguration>? movies = MatchMovies(x);
 
         bool matchesSomeMovies = !(movies is null || movies.Count == 0);
@@ -137,15 +135,14 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
             return null;
         }
 
-        if (!FinderHelper.FindSeasEp(droppedFile, out int seasonNum, out int episodeNum, out int _, bestShow,
-                out TVSettings.FilenameProcessorRE? _))
+        if (!FinderHelper.FindSeasEp(droppedFile, out int? seasonNum, out int? episodeNum, out int? _, bestShow, out TVSettings.FilenameProcessorRE? _))
         {
             return null;
         }
 
         try
         {
-            ProcessedEpisode episode = bestShow.GetEpisode(seasonNum, episodeNum);
+            ProcessedEpisode episode = bestShow.GetEpisode(seasonNum.Value, episodeNum.Value);
 
             return [episode];
         }

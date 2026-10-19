@@ -104,7 +104,7 @@ public partial class BugReport : Form
 
                     foreach (DirCacheEntry fi in files)
                     {
-                        bool r = FinderHelper.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, si);
+                        bool r = FinderHelper.FindSeasEp(fi.TheFile, out int? seas, out int? ep, out int? maxEp, si);
                         bool useful = fi.TheFile.IsMovieFile();
                         txt.AppendLine(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," +
                                        maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")");
@@ -128,7 +128,7 @@ public partial class BugReport : Form
 
         foreach (DirCacheEntry fi in dirC)
         {
-            bool r = FinderHelper.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, null);
+            bool r = FinderHelper.FindSeasEp(fi.TheFile, out int? seas, out int? ep, out int? maxEp, null);
             bool useful = fi.TheFile.IsMovieFile();
             txt.AppendLine(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " +
                            (useful ? fi.TheFile.Extension : "-") + ")");

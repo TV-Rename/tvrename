@@ -20,7 +20,7 @@ internal class RecentASXExporter(TVDoc doc) : RecentExporter(doc)
 
     protected override string GenerateHeader() => "<ASX version=\"3\">";
 
-    protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length)
+    protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int? length)
     {
         string filen = System.Security.SecurityElement.Escape(file.UrlPathFullName());
         return $"<Entry>\r\n<ref href={filen.InDoubleQuotes()} />\r\n</Entry><title>{System.Security.SecurityElement.Escape(name)}</title>";

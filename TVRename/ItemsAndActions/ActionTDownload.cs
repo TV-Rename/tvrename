@@ -19,7 +19,7 @@ public class ActionTDownload : ActionDownload
 
     public readonly string SourceName;
     private readonly string url;
-    public readonly long sizeBytes;
+    public readonly long? sizeBytes;
     public readonly int? Seeders;
     public ItemList AlsoAvailable = [];
 
@@ -28,7 +28,7 @@ public class ActionTDownload : ActionDownload
 
     private readonly ItemDownloading becomes;
     public override QueueName Queue() => QueueName.download;
-    public ActionTDownload(string name, long sizeBytes, int? seeders, string url, string toWhereNoExt, ProcessedEpisode? pe, ItemMissing me, string upstreamSource, ItemDownloading becomes)
+    public ActionTDownload(string name, long? sizeBytes, int? seeders, string url, string toWhereNoExt, ProcessedEpisode? pe, ItemMissing me, string upstreamSource, ItemDownloading becomes)
     {
         Episode = pe;
         SourceName = name;
@@ -159,9 +159,9 @@ public class ActionTDownload : ActionDownload
     public override string? DestinationFolder => TargetFolder;
     public override string? DestinationFile => TargetFilename;
 
-    public override string SourceDetails => $"{SourceName} ({(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}) [{Seeders} Seeds]";
+    public override string SourceDetails => $"{SourceName} ({(!sizeBytes.HasValue ? "N/A" : sizeBytes.Value.GBMB())}) [{Seeders} Seeds]";
 
-    public string SizePretty => $"{(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}";
+    public string SizePretty => $"{(!sizeBytes.HasValue ? "N/A" : sizeBytes.Value.GBMB())}";
 
     public override string? TargetFolder => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).DirectoryName;
 

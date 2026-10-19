@@ -20,7 +20,7 @@ internal class RecentM3UExporter(TVDoc doc) : RecentExporter(doc)
 
     protected override string GenerateHeader() => "#EXTM3U";
 
-    protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length)
+    protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int? length)
     {
         return $"#EXTINF:{length},{file.Name}\r\n{file.UrlPathFullName()}";
     }

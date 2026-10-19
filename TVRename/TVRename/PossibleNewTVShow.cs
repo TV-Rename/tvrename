@@ -17,12 +17,12 @@ namespace TVRename;
 public class PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, string folderFormat) : ISeriesSpecifier, INotifyPropertyChanged
 {
     // ReSharper disable once InconsistentNaming
-    internal int ProviderCode = -1;
+    internal int? ProviderCode;
 
     public virtual string FolderName => directory.FullName;
     public virtual string Show => (CodeKnown ? CachedSeries?.Name : RefinedHint) ?? string.Empty;
     public virtual string Type => HasSeasonFoldersGuess ? "Folder per season" : "Flat";
-    public virtual string SourceCode => CodeKnown ? ProviderCode.ToString() : string.Empty;
+    public virtual string SourceCode => ProviderCode.HasValue ? ProviderCode.Value.ToString() : string.Empty;
     public virtual int ImageTypeName => CodeKnown && !string.IsNullOrWhiteSpace(FolderName) ? 1 : 0;
 
     internal TVDoc.ProviderType SourceProvider;
@@ -31,7 +31,7 @@ public class PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, stri
     public string? RefinedHint;
 
     public bool CodeKnown => !CodeUnknown;
-    public bool CodeUnknown => ProviderCode == -1;
+    public bool CodeUnknown => !ProviderCode.HasValue;
 
     public CachedSeriesInfo? CachedSeries => TVDoc.GetTVCache(Provider).GetSeries(ProviderCode);
 
@@ -49,15 +49,15 @@ public class PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, stri
 
     public TVDoc.ProviderType Provider => SourceProvider;
 
-    public int TvdbId => Provider == TVDoc.ProviderType.TheTVDB && CodeKnown ? ProviderCode : -1;
+    public int? TvdbId => Provider == TVDoc.ProviderType.TheTVDB && ProviderCode.HasValue ? ProviderCode : null;
 
     public string Name => RefinedHint ?? string.Empty;
 
     public MediaConfiguration.MediaType Media => MediaConfiguration.MediaType.tv;
 
-    public int TvMazeId => Provider == TVDoc.ProviderType.TVmaze && CodeKnown ? ProviderCode : -1;
+    public int? TvMazeId => Provider == TVDoc.ProviderType.TVmaze && ProviderCode.HasValue ? ProviderCode : null;
 
-    public int TmdbId => Provider == TVDoc.ProviderType.TMDB && CodeKnown ? ProviderCode : -1;
+    public int? TmdbId => Provider == TVDoc.ProviderType.TMDB && ProviderCode.HasValue ? ProviderCode : null;
 
     public string? ImdbCode => null;
 

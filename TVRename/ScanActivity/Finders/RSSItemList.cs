@@ -116,7 +116,7 @@ internal class RssItemList : List<RSSItem>
 
         string showName = string.Empty;
 
-        FinderHelper.FindSeasEp(title, out int season, out int episode, out int _, null);
+        FinderHelper.FindSeasEp(title, out int? season, out int? episode, out int? _, null);
 
         if (TVSettings.Instance.DetailedRSSJSONLogging)
         {
@@ -156,9 +156,9 @@ internal class RssItemList : List<RSSItem>
             Logger.Info($"Episode:     {episode}");
         }
 
-        if (season != -1 && episode != -1)
+        if (season.HasValue && episode.HasValue)
         {
-            Add(new RSSItem(link, title, season, episode, showName, seeders, size, $"{sourcePrefix}: {source}"));
+            Add(new RSSItem(link, title, season.Value , episode.Value, showName, seeders, size, $"{sourcePrefix}: {source}"));
         }
 
         return true;

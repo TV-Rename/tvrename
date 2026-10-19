@@ -76,14 +76,14 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
 
         owner.ShowChildDialog(ed);
         DialogResult x = ed.DialogResult;
-        int code = ed.Code;
+        int? code = ed.Code;
 
-        if (x != DialogResult.OK || code == -1)
+        if (x != DialogResult.OK || !code.HasValue)
         {
             return;
         }
 
-        folder.UpdateId(code, ed.ProviderType);
+        folder.UpdateId(code.Value, ed.ProviderType);
     }
 
     public override bool Active() => TVSettings.Instance.DoBulkAddInScan;

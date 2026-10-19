@@ -142,7 +142,7 @@ public partial class BulkAddShow : Form
             StartPosition = FormStartPosition.CenterParent
         };
 
-        if (lstFMMonitorFolders.SelectedIndex != -1)
+        if (lstFMMonitorFolders.IsSomethingSelected())
         {
             int n = lstFMMonitorFolders.SelectedIndex;
             searchFolderBrowser.SelectedPath = TVSettings.Instance.LibraryFolders[n];
@@ -169,7 +169,7 @@ public partial class BulkAddShow : Form
             StartPosition = FormStartPosition.CenterParent
         };
 
-        if (lstFMIgnoreFolders.SelectedIndex != -1)
+        if (lstFMIgnoreFolders.IsSomethingSelected())
         {
             ignoreFolderBrowser.SelectedPath = TVSettings.Instance.IgnoreFolders[lstFMIgnoreFolders.SelectedIndex];
         }
@@ -189,7 +189,7 @@ public partial class BulkAddShow : Form
 
     private void OpenSelectedFolder()
     {
-        if (lstFMMonitorFolders.SelectedIndex != -1)
+        if (lstFMMonitorFolders.IsSomethingSelected())
         {
             TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex].OpenFolder();
         }
@@ -197,7 +197,7 @@ public partial class BulkAddShow : Form
 
     private void bnOpenIgFolder_Click(object sender, System.EventArgs e)
     {
-        if (lstFMIgnoreFolders.SelectedIndex != -1)
+        if (lstFMIgnoreFolders.IsSomethingSelected())
         {
             TVSettings.Instance.LibraryFolders[lstFMIgnoreFolders.SelectedIndex].OpenFolder();
         }
@@ -557,7 +557,7 @@ public partial class BulkAddShow : Form
         switch (fme.Provider)
         {
             case TVDoc.ProviderType.TheTVDB:
-                TheTVDB.API.WebsiteShowUrl(fme.ProviderCode).OpenUrlInBrowser();
+                TheTVDB.API.WebsiteShowUrl(fme.ProviderCode!.Value).OpenUrlInBrowser();
                 break;
 
             case TVDoc.ProviderType.TVmaze:
@@ -565,7 +565,7 @@ public partial class BulkAddShow : Form
                 break;
 
             case TVDoc.ProviderType.TMDB:
-                TMDB.API.WebsiteShowUrl(fme.ProviderCode).OpenUrlInBrowser();
+                TMDB.API.WebsiteShowUrl(fme.ProviderCode!.Value).OpenUrlInBrowser();
                 break;
         }
     }
@@ -604,12 +604,14 @@ public partial class BulkAddShow : Form
     {
         BulkAddEditShow ed = new();
         await ed.SetHintAsync(fme);
-        if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)
-        {
-            return;
-        }
 
-        fme.UpdateId(ed.Code, ed.ProviderType);
+        if (ed.ShowDialog(this) != DialogResult.OK) return;
+
+        int? code = ed.Code;
+        if (code.HasValue)
+        {
+            fme.UpdateId(code.Value, ed.ProviderType);
+        }
     }
 
     private void lstFMMonitorFolders_SelectedIndexChanged(object sender, System.EventArgs e)

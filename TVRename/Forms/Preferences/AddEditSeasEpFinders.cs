@@ -331,7 +331,7 @@ public partial class AddEditSeasEpFinders : Form
                 }
 
                 ShowConfiguration? si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-                bool r = FinderHelper.FindSeasEp(file, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
+                bool r = FinderHelper.FindSeasEp(file, out int? seas, out int? ep, out int? maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
 
                 AddItemToListView(file.Name, seas, ep, maxEp, matchRex, r);
             }
@@ -346,7 +346,7 @@ public partial class AddEditSeasEpFinders : Form
                 }
 
                 ShowConfiguration? si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-                bool r = FinderHelper.FindSeasEp(filename, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
+                bool r = FinderHelper.FindSeasEp(filename, out int? seas, out int? ep, out int? maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
 
                 AddItemToListView(filename, seas, ep, maxEp, matchRex, r);
             }
@@ -355,7 +355,7 @@ public partial class AddEditSeasEpFinders : Form
         {
             string testValue = txtTestString.Text;
             ShowConfiguration? si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-            bool r = FinderHelper.FindSeasEp(testValue, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
+            bool r = FinderHelper.FindSeasEp(testValue, out int? seas, out int? ep, out int? maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
 
             AddItemToListView(testValue, seas, ep, maxEp, matchRex, r);
         }
@@ -363,7 +363,7 @@ public partial class AddEditSeasEpFinders : Form
         lvPreview.EndUpdate();
     }
 
-    private void AddItemToListView(string filename, int seas, int ep, int maxEp, TVSettings.FilenameProcessorRE? matchRex, bool r)
+    private void AddItemToListView(string filename, int? seas, int? ep, int? maxEp, TVSettings.FilenameProcessorRE? matchRex, bool r)
     {
         IEnumerable<ShowConfiguration> matchingShows = FinderHelper.FindMatchingShows(filename, shows);
         string? bestShowName = FinderHelper.FindBestMatchingShow(filename, shows)?.ShowName;
@@ -373,8 +373,8 @@ public partial class AddEditSeasEpFinders : Form
 
         ListViewItem lvi = new() { Text = filename };
         lvi.SubItems.Add(showDisplayString);
-        lvi.SubItems.Add(seas == -1 ? "-" : seas.ToString());
-        lvi.SubItems.Add(ep == -1 ? "-" : ep + (maxEp != -1 ? "-" + maxEp : string.Empty));
+        lvi.SubItems.Add(seas.HasValue? seas.Value.ToString() : "-" );
+        lvi.SubItems.Add(ep.HasValue ? ep.Value + (maxEp.HasValue ? "-" + maxEp.Value : string.Empty) : "-");
         lvi.SubItems.Add(matchRex is null ? "-" : matchRex.Notes);
         if (!r)
         {

@@ -14,7 +14,7 @@ public static class SeriesSpecifiedHelper
 
     public static Region RegionToUse(this ISeriesSpecifier ss) => ss.TargetLocale.RegionToUse(ss.Provider);
 
-    public static int IdFor(this ISeriesSpecifier ss, TVDoc.ProviderType provider)
+    public static int? IdFor(this ISeriesSpecifier ss, TVDoc.ProviderType provider)
     {
         return provider switch
         {
@@ -26,7 +26,7 @@ public static class SeriesSpecifiedHelper
         };
     }
 
-    public static int Id(this ISeriesSpecifier ss) => ss.IdFor(ss.Provider);
+    public static int? Id(this ISeriesSpecifier ss) => ss.IdFor(ss.Provider);
 
     private static TVDoc.ProviderType DefaultProviderFor(MediaConfiguration.MediaType type)
     {

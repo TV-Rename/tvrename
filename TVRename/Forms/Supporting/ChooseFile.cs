@@ -29,8 +29,8 @@ public partial class ChooseFile : Form
         leftFile = left;
         rightFile = right;
 
-        (int leftFrameWidth, bool leftFrameUnknown, int leftFilmLength) = UpdateFields(left, txtNameLeft, txtDimensionsLeft, txtLengthLeft, txtSizeLeft, txtPathLeft);
-        (int rightFrameWidth, bool rightFrameUnknown, int rightFilmLength) = UpdateFields(right, lblNameRight, lblDimensionsRight, lblLengthRight, lblSizeRight, txtPathRight);
+        (int? leftFrameWidth, bool leftFrameUnknown, int? leftFilmLength) = UpdateFields(left, txtNameLeft, txtDimensionsLeft, txtLengthLeft, txtSizeLeft, txtPathLeft);
+        (int? rightFrameWidth, bool rightFrameUnknown, int? rightFilmLength) = UpdateFields(right, lblNameRight, lblDimensionsRight, lblLengthRight, lblSizeRight, txtPathRight);
 
         SetBoldFileSize(left, right);
 
@@ -44,22 +44,23 @@ public partial class ChooseFile : Form
         SetBoldFrameWidth(leftFrameWidth, rightFrameWidth);
     }
 
-    private static (int, bool, int) UpdateFields(FileInfo file, Label nameLabel, Label dimensionsLabel, Label lengthLabel, Label sizeLabel, Label pathLabel)
+    private static (int?, bool, int?) UpdateFields(FileInfo file, Label nameLabel, Label dimensionsLabel, Label lengthLabel, Label sizeLabel, Label pathLabel)
     {
         nameLabel.Text = file.Name.ToUiVersion();
-        int leftFrameWidth = file.GetFrameWidth();
-        bool leftFrameUnknown = leftFrameWidth == -1;
+        int? leftFrameWidth = file.GetFrameWidth();
+        bool leftFrameUnknown = !leftFrameWidth.HasValue;
         dimensionsLabel.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown" : leftFrameWidth + "x" + file.GetFrameHeight());
-        int leftFilmLength = file.GetFilmLength();
+        int? leftFilmLength = file.GetFilmLength();
+
         try
         {
             lengthLabel.Text =
-                "Length: " + (leftFilmLength == -1 ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
+                "Length: " + (!leftFilmLength.HasValue ? "Unknown" : leftFilmLength.Value.Seconds().Humanize(2));
         }
         catch (ArgumentException) //Issue in Humanizer causes this in Polish
         {
             lengthLabel.Text =
-                "Length: " + (leftFilmLength == -1 ? "Unknown" : leftFilmLength.Seconds() + " s");
+                "Length: " + (!leftFilmLength.HasValue ? "Unknown" : leftFilmLength.Value.Seconds() + " s");
         }
 
         sizeLabel.Text = GetFileSize(file).ToUiVersion();
@@ -96,7 +97,7 @@ public partial class ChooseFile : Form
         }
     }
 
-    private void SetBoldFilmLength(int leftFilmLength, int rightFilmLength)
+    private void SetBoldFilmLength(int? leftFilmLength, int? rightFilmLength)
     {
         if (leftFilmLength > rightFilmLength)
         {
@@ -115,7 +116,7 @@ public partial class ChooseFile : Form
         }
     }
 
-    private void SetBoldFrameWidth(int leftFrameWidth, int rightFrameWidth)
+    private void SetBoldFrameWidth(int? leftFrameWidth, int? rightFrameWidth)
     {
         if (leftFrameWidth > rightFrameWidth)
         {

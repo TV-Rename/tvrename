@@ -14,16 +14,14 @@ namespace TVRename;
 public class ShowRule
 {
     public RuleAction DoWhatNow;
-    public int First;
-    public int Second;
+    public int? First;
+    public int? Second;
     public string UserSuppliedText;
     public bool RenumberAfter;
 
     public ShowRule()
     {
         DoWhatNow = RuleAction.kIgnoreEp;
-        First = -1;
-        Second = -1;
         UserSuppliedText = string.Empty;
         RenumberAfter = true;
     }
@@ -36,8 +34,8 @@ public class ShowRule
         }
 
         DoWhatNow = xmlSettings.ExtractEnum("DoWhatNow", RuleAction.kIgnoreEp);
-        First = xmlSettings.ExtractInt("First", -1);
-        Second = xmlSettings.ExtractInt("Second", -1);
+        First = xmlSettings.ExtractInt("First");
+        Second = xmlSettings.ExtractInt("Second");
         UserSuppliedText = xmlSettings.ExtractString("Text");
         RenumberAfter = xmlSettings.ExtractBool("RenumberAfter", true);
     }

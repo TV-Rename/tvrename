@@ -254,9 +254,10 @@ public class CustomEpisodeName
             name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString(episodeFormat));
 
             name = name.ReplaceInsensitive("{EpisodeName}", episodeName);
-            name = name.ReplaceInsensitiveLazy("{Number}", new Lazy<string?>(() => pe.OverallNumber.ToString()), StringComparison.CurrentCultureIgnoreCase);
-            name = name.ReplaceInsensitiveLazy("{Number:2}", new Lazy<string?>(() => pe.OverallNumber.ToString("00")), StringComparison.CurrentCultureIgnoreCase);
-            name = name.ReplaceInsensitiveLazy("{Number:3}", new Lazy<string?>(() => pe.OverallNumber.ToString("000")), StringComparison.CurrentCultureIgnoreCase);
+
+            name = name.ReplaceInsensitiveLazy("{Number}", new Lazy<string?>(() => pe.OverallNumber.HasValue ? pe.OverallNumber.ToString() : "0"), StringComparison.CurrentCultureIgnoreCase);
+            name = name.ReplaceInsensitiveLazy("{Number:2}", new Lazy<string?>(() => pe.OverallNumber.HasValue ? pe.OverallNumber.Value.ToString("00") : "00"), StringComparison.CurrentCultureIgnoreCase);
+            name = name.ReplaceInsensitiveLazy("{Number:3}", new Lazy<string?>(() => pe.OverallNumber.HasValue ? pe.OverallNumber.Value.ToString("000") : "000"), StringComparison.CurrentCultureIgnoreCase);
             name = name.ReplaceInsensitiveLazy("{Year}", new Lazy<string?>(() => pe.TheCachedSeries.MinYear.ToString()), StringComparison.CurrentCultureIgnoreCase);
             name = name.ReplaceInsensitiveLazy("{SeasonYear}", new Lazy<string?>(() => pe.AppropriateProcessedSeason.MinYear().ToString()), StringComparison.CurrentCultureIgnoreCase);
             name = name.ReplaceInsensitive("{Imdb}", pe.ImdbCode);

@@ -89,7 +89,7 @@ public static class FileHelper
         return extensionOkToRemove || fileOkToRemove;
     }
 
-    public static int GetFrameWidth(this FileInfo movieFile)
+    public static int? GetFrameWidth(this FileInfo movieFile)
     {
         return GetMetaDetails(movieFile, o => o.Properties.System.Video.FrameWidth, Parse, "GetFrameWidth",
             wrapper => wrapper.Width, i => i);
@@ -116,10 +116,24 @@ public static class FileHelper
             return VideoComparison.secondFileBetter;
         }
 
-        int encumbantLength = incumbantFile.GetFilmLength();
-        int newFileLength = newFile.GetFilmLength();
-        int encumbantFrameWidth = incumbantFile.GetFrameWidth();
-        int newFileFrameWidth = newFile.GetFrameWidth();
+        int? encumbantLength = incumbantFile.GetFilmLength();
+        int? newFileLength = newFile.GetFilmLength();
+        int? encumbantFrameWidth = incumbantFile.GetFrameWidth();
+        int? newFileFrameWidth = newFile.GetFrameWidth();
+
+        if (encumbantLength == newFileLength && encumbantFrameWidth == newFileFrameWidth &&
+            newFile.Length == incumbantFile.Length)
+        {
+            return VideoComparison.same;
+        }
+
+        if (!encumbantLength.HasValue
+            || !newFileLength.HasValue
+            || !encumbantFrameWidth.HasValue
+            || !newFileFrameWidth.HasValue)
+        {
+            return VideoComparison.cantTell;
+        }
 
         bool newFileContainsTerm =
             TVSettings.Instance.PriorityReplaceTermsArray.Any(term => newFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
@@ -130,25 +144,11 @@ public static class FileHelper
         float percentMargin = TVSettings.Instance.replaceMargin;
         float marginMultiplier = (percentMargin + 100) / 100;
 
-        bool incumbantFileIsMuchLonger = encumbantLength > newFileLength * marginMultiplier;
-        bool newFileIsMuchLonger = encumbantLength * marginMultiplier < newFileLength;
+        bool incumbantFileIsMuchLonger = encumbantLength.Value > newFileLength.Value * marginMultiplier;
+        bool newFileIsMuchLonger = encumbantLength.Value * marginMultiplier < newFileLength.Value;
 
-        bool newFileIsBetterQuality = encumbantFrameWidth * marginMultiplier < newFileFrameWidth;
-        bool incumbantFileIsBetterQuality = encumbantFrameWidth > newFileFrameWidth * marginMultiplier;
-
-        if (encumbantLength == newFileLength && encumbantFrameWidth == newFileFrameWidth &&
-            newFile.Length == incumbantFile.Length)
-        {
-            return VideoComparison.same;
-        }
-
-        if (encumbantLength == -1
-            || newFileLength == -1
-            || encumbantFrameWidth == -1
-            || newFileFrameWidth == -1)
-        {
-            return VideoComparison.cantTell;
-        }
+        bool newFileIsBetterQuality = encumbantFrameWidth.Value * marginMultiplier < newFileFrameWidth.Value;
+        bool incumbantFileIsBetterQuality = encumbantFrameWidth.Value > newFileFrameWidth.Value * marginMultiplier;
 
         if (incumbantFileIsBetterQuality && !newFileIsMuchLonger)
         {
@@ -183,20 +183,20 @@ public static class FileHelper
         return VideoComparison.similar;
     }
 
-    public static int GetFrameHeight(this FileInfo movieFile)
+    public static int? GetFrameHeight(this FileInfo movieFile)
     {
         return GetMetaDetails(movieFile, o => o.Properties.System.Video.FrameHeight, Parse, "GetFrameHeight",
             wrapper => wrapper.Height, i => i);
     }
 
-    private static int Parse(string returnValue, FileInfo sourceFile)
+    private static int? Parse(string returnValue, FileInfo sourceFile)
     {
         if (int.TryParse(returnValue, out int value))
         {
             return value;
         }
 
-        return -1;
+        return null;
     }
 
     public static (string codeType, int code)? ExtractIdsFrom(string name)
@@ -351,12 +351,12 @@ public static class FileHelper
 
     public static FileInfo WithExtension(this FileInfo baseFile, string extension) => new(baseFile.RemoveExtension(true) + extension);
 
-    private static int GetMetaDetails(this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string, FileInfo, int> parseMethod, string operation, Func<MediaInfoWrapper, int> meExtractMethod, Func<int, int> meParseMethod)
+    private static int? GetMetaDetails(this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string, FileInfo, int?> parseMethod, string operation, Func<MediaInfoWrapper, int> meExtractMethod, Func<int, int> meParseMethod)
     {
         if (!movieFile.Exists)
         {
             Logger.Warn($"Unable to find file as part of {operation} for {movieFile.FullName}");
-            return -1;
+            return null;
         }
         try
         {
@@ -368,18 +368,18 @@ public static class FileHelper
 
             if (!duration.IsNullOrWhitespace())
             {
-                int returnValue = parseMethod(duration, movieFile);
+                int? returnValue = parseMethod(duration, movieFile);
 
-                if (returnValue > 0)
+                if (returnValue.HasValue)
                 {
-                    return returnValue;
+                    return returnValue.Value;
                 }
             }
         }
         catch (System.IO.FileNotFoundException)
         {
             Logger.Warn($"Unable to find file as part of {operation} for {movieFile.FullName}");
-            return -1;
+            return null;
         }
         catch (ArgumentException)
         {
@@ -406,10 +406,10 @@ public static class FileHelper
 
         Logger.Warn($"Could not {operation} for {movieFile.FullName} by using MediaInfo.");
 
-        return -1;
+        return null;
     }
 
-    public static int GetFilmLength(this FileInfo movieFile)
+    public static int? GetFilmLength(this FileInfo movieFile)
     {
         return GetMetaDetails(movieFile, o => o.Properties.System.Media.Duration, ParseDuration,
             "GetFilmLength", wrapper => wrapper.Duration, ParseMwDuration);
@@ -421,7 +421,7 @@ public static class FileHelper
         return (int)Math.Round(ret);
     }
 
-    private static int ParseDuration(string? duration, FileInfo sourceFile)
+    private static int? ParseDuration(string? duration, FileInfo sourceFile)
     {
         try
         {

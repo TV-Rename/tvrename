@@ -124,8 +124,8 @@ public partial class EditSeason : Form
         {
             ListViewItem lvi = new() { Text = sr.ActionInWords() };
 
-            lvi.SubItems.Add(sr.First == -1 ? string.Empty : sr.First.ToString());
-            lvi.SubItems.Add(sr.Second == -1 ? string.Empty : sr.Second.ToString());
+            lvi.SubItems.Add(sr.First.HasValue ? sr.First.ToString() : string.Empty);
+            lvi.SubItems.Add(sr.Second.HasValue ? sr.Second.ToString() : string.Empty);
             lvi.SubItems.Add(sr.UserSuppliedText);
             lvi.SubItems.Add(sr.RenumberAfter ? "Yes" : "No");
             lvi.Tag = sr;

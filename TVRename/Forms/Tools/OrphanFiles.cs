@@ -117,27 +117,26 @@ public partial class OrphanFiles : Form
 
     private void ProcessFile(FileInfo file, ShowConfiguration show, IReadOnlyDictionary<int, SafeList<string>> folders, string showFolder)
     {
-        FinderHelper.FindSeasEp(file, out int seasonNumber, out int episodeNumber, out int _, show);
+        FinderHelper.FindSeasEp(file, out int? seasonNumber, out int? episodeNumber, out int? _, show);
 
-        if (seasonNumber < 0)
+        if (!seasonNumber.HasValue)
         {
             issues.Add(new FileIssue(show, file, "File does not match a Filename Processor"));
         }
-        else if (folders.TryGetValue(seasonNumber, out SafeList<string>? seasonFolders) && !seasonFolders.Contains(showFolder))
+        else if (folders.TryGetValue(seasonNumber.Value, out SafeList<string>? seasonFolders) && !seasonFolders.Contains(showFolder) && episodeNumber.HasValue)
         {
-            issues.Add(new FileIssue(show, file, "File is in the wrong series folder", seasonNumber,
-                episodeNumber));
+            issues.Add(new FileIssue(show, file, "File is in the wrong series folder", seasonNumber.Value, episodeNumber.Value));
         }
         else
         {
-            var episodes = show.EpisodesForSeason(seasonNumber);
+            var episodes = show.EpisodesForSeason(seasonNumber.Value);
             if (episodes == null)
             {
-                issues.Add(new FileIssue(show, file, "Season not found", seasonNumber));
+                issues.Add(new FileIssue(show, file, "Season not found", seasonNumber.Value));
             }
-            else if (!HasEpisode(episodes, episodeNumber))
+            else if (episodeNumber.HasValue && !HasEpisode(episodes, episodeNumber.Value))
             {
-                issues.Add(new FileIssue(show, file, "Episode not found", seasonNumber, episodeNumber));
+                issues.Add(new FileIssue(show, file, "Episode not found", seasonNumber.Value, episodeNumber.Value));
             }
         }
     }

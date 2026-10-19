@@ -53,7 +53,7 @@ public class ShowImage : MediaImage
         ShowImage legacy = new()
         {
             Id = r.ExtractInt("id") ?? -1,
-            SeasonId = r.ExtractInt("seasonid", -1),
+            SeasonId = r.ExtractInt("seasonid"),
             ImageUrl = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("BannerPath")),
             SeriesSource = source,
             ImageStyle = Convert(r.ExtractString("BannerType")),
@@ -61,11 +61,11 @@ public class ShowImage : MediaImage
             LanguageCode = Languages.Instance.GetLanguageFromId(r.ExtractInt("LanguageId") ?? -1)?.Abbreviation,
             Resolution = r.ExtractString("Resolution"),
             Rating = rating,
-            RatingCount = r.ExtractInt("RatingCount", -1)
+            RatingCount = r.ExtractInt("RatingCount", 0)
         };
 
         // thetvdb cachedSeries id
-        legacy.SeasonId = r.ExtractInt("Season", -1);
+        legacy.SeasonId = r.ExtractInt("Season");
         legacy.ThumbnailUrl = r.ExtractString("ThumbnailPath");
 
         return legacy;

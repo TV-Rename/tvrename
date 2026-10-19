@@ -174,7 +174,7 @@ public abstract class ActionNfo : ActionWriteMetadata
                 tAdd.Add(new XElement("role", aa.ActorRole));
             }
 
-            if (aa.ActorSortOrder >= 0)
+            if (aa.ActorSortOrder.HasValue)
             {
                 tAdd.Add(new XElement("order", aa.ActorSortOrder));
             }
@@ -248,9 +248,9 @@ public abstract class ActionNfo : ActionWriteMetadata
         }
     }
 
-    protected static void UpdateId(XElement root, string idType, bool defaultState, int idValue)
+    protected static void UpdateId(XElement root, string idType, bool defaultState, int? idValue)
     {
-        if (idValue < 0)
+        if (!idValue.HasValue)
         {
             return;
         }

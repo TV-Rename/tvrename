@@ -43,8 +43,8 @@ public partial class AddEditShow : Form, ICodeWindow
         mDoc = doc;
         sampleProcessedSeason = si.GetFirstAvailableSeason();
         sampleEpisode = si.GetFirstAvailableEpisode();
-        addingNewShow = si.TvdbCode == -1 && si.TmdbCode == -1 && si.TVmazeCode == -1;
-        codeFinderForm = new TvCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider, this) { Dock = DockStyle.Fill };
+        addingNewShow = !si.TvdbCode.HasValue && !si.TmdbCode.HasValue && !si.TVmazeCode.HasValue;
+        codeFinderForm = new TvCodeFinder(si.Code.HasValue ? si.Code.ToString() : si.LastName, si.Provider, this) { Dock = DockStyle.Fill };
 
         InitializeComponent();
         HasChanged = false;
@@ -333,13 +333,14 @@ public partial class AddEditShow : Form, ICodeWindow
 
     private void buttonOK_Click(object sender, EventArgs e)
     {
-        if (!OkToClose())
+        int? code = codeFinderForm.SelectedCode();
+        if (!OkToClose() || !code.HasValue)
         {
             DialogResult = DialogResult.None;
             return;
         }
 
-        SetShow();
+        SetShow(code.Value);
         DialogResult = DialogResult.OK;
         Close();
     }
@@ -434,9 +435,9 @@ public partial class AddEditShow : Form, ICodeWindow
 
     #endregion HelpWindows
 
-    private void SetShow()
+    private void SetShow(int code)
     {
-        selectedShow.SetId(GetProviderTypeInUse(), codeFinderForm.SelectedCode());
+        selectedShow.SetId(GetProviderTypeInUse(), code);
         selectedShow.CustomShowName = txtCustomShowName.Text;
         selectedShow.UseCustomShowName = chkCustomShowName.Checked;
         selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;

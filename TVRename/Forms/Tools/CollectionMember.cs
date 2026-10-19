@@ -18,7 +18,7 @@ internal class CollectionMember(string collectionName, CachedMovieInfo neededSho
     // ReSharper disable once UnusedMember.Global - Used by UI component
     public string MovieName => Movie.Name;
 
-    public int TmdbCode => Movie.TmdbCode;
+    public int? TmdbCode => Movie.TmdbCode;
 
     public bool IsInLibrary;
 

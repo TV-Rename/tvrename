@@ -18,7 +18,7 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
 
     public bool Ignore;
     public bool NextToAir;
-    public int OverallNumber;
+    public int? OverallNumber;
     public readonly ShowConfiguration Show;
     public readonly ProcessedEpisodeType Type;
     public readonly List<Episode> SourceEpisodes;
@@ -27,7 +27,6 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
 
     // ReSharper disable once InconsistentNaming
     public string TVDBWebsiteUrl => TheTVDB.API.WebsiteEpisodeUrl(this);
-
     public virtual string SeriesName => Forms.UI.GenerateShowUIName(this);
     public virtual DateTime? AirDate => GetAirDateDt();
     public virtual string AirDateString => GetAirDateDt()?.ToShortDateString() ?? string.Empty;
@@ -88,7 +87,7 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
     public ProcessedEpisode(Episode e, ShowConfiguration si)
         : base(e)
     {
-        OverallNumber = -1;
+        OverallNumber = null;
         NextToAir = false;
         Ignore = false;
         Show = si;
@@ -102,7 +101,7 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
     public ProcessedEpisode(ProcessedEpisode e, ShowConfiguration si, ProcessedEpisodeType t)
         : base(e)
     {
-        OverallNumber = -1;
+        OverallNumber = null;
         NextToAir = false;
         Show = si;
         EpNum2 = Show.Order == ProcessedSeason.SeasonType.dvd ? DvdEpNum : AiredEpNum;
@@ -116,7 +115,7 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
     public ProcessedEpisode(ProcessedEpisode e, ShowConfiguration si, List<Episode> episodes)
         : base(e)
     {
-        OverallNumber = -1;
+        OverallNumber = null;
         NextToAir = false;
         Show = si;
         EpNum2 = Show.Order == ProcessedSeason.SeasonType.dvd ? DvdEpNum : AiredEpNum;
@@ -156,7 +155,7 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
         AirTime = null;
 
         NextToAir = false;
-        OverallNumber = -1;
+        OverallNumber = null;
         Ignore = false;
         Name = name;
         AiredEpNum = airedEpNum;

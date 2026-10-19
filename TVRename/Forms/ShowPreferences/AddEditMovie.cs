@@ -34,7 +34,7 @@ public partial class AddEditMovie : Form, ICodeWindow
         selectedShow = si;
         mDoc = doc;
         codeFinderForm =
-            new MovieCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider, this) { Dock = DockStyle.Fill };
+            new MovieCodeFinder(si.Code.HasValue ? si.Code.ToString() : si.LastName, si.Provider, this) { Dock = DockStyle.Fill };
 
         InitializeComponent();
         HasChanged = false;
@@ -274,13 +274,15 @@ public partial class AddEditMovie : Form, ICodeWindow
 
     private void buttonOK_Click(object sender, EventArgs e)
     {
-        if (!OkToClose())
+        int? code = codeFinderForm.SelectedCode();
+
+        if (!OkToClose() || !code.HasValue)
         {
             DialogResult = DialogResult.None;
             return;
         }
 
-        SetShow();
+        SetShow(code.Value);
         DialogResult = DialogResult.OK;
         Close();
     }
@@ -406,10 +408,8 @@ public partial class AddEditMovie : Form, ICodeWindow
 
     #endregion HelpWindows
 
-    private void SetShow()
+    private void SetShow(int code)
     {
-        int code = codeFinderForm.SelectedCode();
-
         selectedShow.CustomShowName = txtCustomShowName.Text;
         selectedShow.UseCustomShowName = chkCustomShowName.Checked;
         selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;

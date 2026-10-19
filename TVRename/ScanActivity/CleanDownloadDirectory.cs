@@ -149,26 +149,26 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private static Action SetupDirectoryRemoval(DirectoryInfo di,
-        IReadOnlyList<ShowConfiguration> matchingShows)
+    private static Action SetupDirectoryRemoval(DirectoryInfo di, IReadOnlyList<ShowConfiguration> matchingShows)
     {
         ShowConfiguration si = matchingShows[0]; //Choose the first cachedSeries
-        FinderHelper.FindSeasEp(di, out int seasF, out int epF, si, out TVSettings.FilenameProcessorRE? _);
-
         if (si.CachedShow is null)
         {
-            throw new ArgumentNullException(nameof(matchingShows), "s is null");
+            throw new ArgumentNullException(nameof(matchingShows), "si is null");
         }
 
-        ProcessedEpisode pep = si.GetEpisode(seasF, epF);
-        LOGGER.Info(
-            $"Removing {di.FullName} as it matches {si.ShowName} and no episodes are needed");
+        if (FinderHelper.FindSeasEp(di, out int? seasF, out int? epF, si, out TVSettings.FilenameProcessorRE? _))
+        {
+            ProcessedEpisode pep = si.GetEpisode(seasF.Value, epF.Value);
+            LOGGER.Info($"Removing {di.FullName} as it matches {si.ShowName} and no episodes are needed");
 
-        return new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup);
+            return new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup);
+        }
+
+        return new ActionDeleteDirectory(di, si, TVSettings.Instance.Tidyup);
     }
 
-    private static Action SetupDirectoryRemoval(DirectoryInfo di,
-        IReadOnlyList<MovieConfiguration> matchingMovies)
+    private static Action SetupDirectoryRemoval(DirectoryInfo di,IReadOnlyList<MovieConfiguration> matchingMovies)
     {
         MovieConfiguration si = matchingMovies[0]; //Choose the first cachedSeries
         LOGGER.Info($"Removing {di.FullName} as it matches {si.ShowName} and no files are needed");
@@ -286,13 +286,24 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
     private async Task<(bool?, ProcessedEpisode?)> CanFileBeDeletedForShowAsync(bool unattended, FileInfo fi, IDialogParent owner, ShowConfiguration si,
         List<ShowConfiguration> matchingShows)
     {
-        FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE? re);
+        bool found = FinderHelper.FindSeasEp(fi, out int? seasF, out int? epF, out int? _, si, out TVSettings.FilenameProcessorRE? re);
 
-        var seasonEpisodes = si.AllEpisodesForSeason(seasF);
+        if (!found)
+        {
+            LOGGER.Warn($"We cannot find a episode for {fi.FullName}, keeping it ");
+            return (false, null);
+        }
+        if (!seasF.HasValue || !epF.HasValue)
+        {
+            LOGGER.Warn($"We cannot find a episode for {fi.FullName}, keeping it ");
+            return (false, null);
+        }
+
+        var seasonEpisodes = si.AllEpisodesForSeason(seasF.Value);
 
         if (!seasonEpisodes.IsAny())
         {
-            LogError(fi, seasF, epF, re, si, "season");
+            LogError(fi, seasF.Value, epF.Value, re, si, "season");
             return (false, null);
         }
 
@@ -300,7 +311,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
 
         if (firstMatchingEpisode == null)
         {
-            LogError(fi, seasF, epF, re, si, "episode");
+            LogError(fi, seasF.Value, epF.Value, re, si, "episode");
             return (false, null);
         }
 
@@ -385,9 +396,9 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private static void LogError(FileInfo fi, int seasF, int epF, TVSettings.FilenameProcessorRE? re, ShowConfiguration si, string typeMissing)
+    private static void LogError(FileInfo fi, int? seasF, int? epF, TVSettings.FilenameProcessorRE? re, ShowConfiguration si, string typeMissing)
     {
-        if (seasF == -1)
+        if (!seasF.HasValue)
         {
             LOGGER.Info(
                 $"Can't find the right {typeMissing} for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");

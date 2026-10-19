@@ -7,7 +7,9 @@
 //
 
 using NodaTime;
+using System.Diagnostics.CodeAnalysis;
 using TimeZoneConverter;
+using WinCopies.Util;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.
 
@@ -76,9 +78,6 @@ public class ShowConfiguration : MediaConfiguration
         UseCustomShowName = false;
         CustomShowName = string.Empty;
         UseCustomLanguage = false;
-        TvdbCode = -1;
-        TVmazeCode = -1;
-        TmdbCode = -1;
         UseCustomSearchUrl = false;
         CustomSearchUrl = string.Empty;
         UseCustomNamingFormat = false;
@@ -251,9 +250,9 @@ public class ShowConfiguration : MediaConfiguration
         CustomRegionCode = xmlSettings.ExtractString("CustomRegionCode");
         CustomLanguageCode = xmlSettings.ExtractString("CustomLanguageCode");
         CustomShowName = xmlSettings.ExtractString("CustomShowName");
-        TvdbCode = xmlSettings.ExtractInt("TVDBID", -1);
-        TVmazeCode = xmlSettings.ExtractInt("TVMAZEID", -1);
-        TmdbCode = xmlSettings.ExtractInt("TMDBID", -1);
+        TvdbCode = xmlSettings.ExtractInt("TVDBID");
+        TVmazeCode = xmlSettings.ExtractInt("TVMAZEID");
+        TmdbCode = xmlSettings.ExtractInt("TMDBID");
         LastName = xmlSettings.ExtractStringOrNull("LastName");
         ImdbCode = xmlSettings.ExtractStringOrNull("ImdbCode");
 
@@ -678,14 +677,15 @@ public class ShowConfiguration : MediaConfiguration
         {
             foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations.ToList())
             {
-                if (!fld.ContainsKey(kvp.Key))
+                if (!fld.TryGetValue(kvp.Key, out SafeList<string>? value))
                 {
-                    fld[kvp.Key] = [];
+                    value = [];
+                    fld[kvp.Key] = value;
                 }
 
                 foreach (string s in kvp.Value)
                 {
-                    fld[kvp.Key].Add(s.TrimSlash());
+                    value.Add(s.TrimSlash());
                 }
             }
         }
@@ -866,17 +866,10 @@ public class ShowConfiguration : MediaConfiguration
     private void RenumberEpisodesSequentually()
     {
         // now, go through and number them all sequentially
-        List<int> theKeys = [.. AppropriateSeasons().Keys];
-        theKeys.Sort();
 
         int overallCount = 1;
-        foreach (int snum in theKeys)
+        foreach (int snum in AppropriateSeasons().Keys.Where(a=>a!=0).OrderBy(a=>a))
         {
-            if (snum == 0)
-            {
-                continue;
-            }
-
             foreach (ProcessedEpisode pe in EpisodeCaches.SeasonEpisodes[snum])
             {
                 pe.OverallNumber = overallCount;
@@ -1016,8 +1009,8 @@ public class ShowConfiguration : MediaConfiguration
         try
         {
             // turn nn1 and nn2 from ep number into position in array
-            int n1 = FindIndex(episodes, sr.First);
-            int n2 = FindIndex(episodes, sr.Second);
+            int? n1 = FindIndex(episodes, sr.First);
+            int? n2 = FindIndex(episodes, sr.Second);
 
             switch (sr.DoWhatNow)
             {
@@ -1078,32 +1071,30 @@ public class ShowConfiguration : MediaConfiguration
         }
     }
 
-    private static int FindIndex(List<ProcessedEpisode> eis, int episodeNumber)
+    private static int? FindIndex(List<ProcessedEpisode> eis, int? episodeNumber)
     {
+        if (!episodeNumber.HasValue)
+        {
+            return null;
+        }
+
         for (int i = 0; i < eis.Count; i++)
         {
-            if (eis[i].AppropriateEpNum == episodeNumber)
+            if (eis[i].AppropriateEpNum == episodeNumber.Value)
             {
                 return i;
             }
         }
-        return -1;
+        return null;
     }
 
-    private static void IgnoreEpisodes(List<ProcessedEpisode> eis, int fromIndex, int toIndex)
+    private static void IgnoreEpisodes(List<ProcessedEpisode> eis, int? fromIndex, int? toIndex)
     {
-        int ec = eis.Count;
+        if (fromIndex.HasValue && toIndex.HasValue)
+        {
+            int ec = eis.Count;
 
-        if (toIndex == -1)
-        {
-            if (ValidIndex(toIndex, ec))
-            {
-                eis[toIndex].Ignore = true;
-            }
-        }
-        else
-        {
-            for (int i = fromIndex; i <= toIndex; i++)
+            for (int i = fromIndex.Value; i <= toIndex.Value; i++)
             {
                 if (ValidIndex(i, ec))
                 {
@@ -1113,16 +1104,16 @@ public class ShowConfiguration : MediaConfiguration
         }
     }
 
-    private static void RemoveEpisode(List<ProcessedEpisode> eis, int fromIndex, int toIndex)
+    private static void RemoveEpisode(List<ProcessedEpisode> eis, int? fromIndex, int? toIndex)
     {
         int ec = eis.Count;
-        if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec))
+        if (ValidIndex(fromIndex, ec) && toIndex.HasValue && ValidIndex(toIndex.Value, ec))
         {
-            eis.RemoveRange(fromIndex, 1 + toIndex - fromIndex);
+            eis.RemoveRange(fromIndex.Value, 1 + toIndex.Value - fromIndex.Value);
         }
-        else if (ValidIndex(fromIndex, ec) && toIndex == -1)
+        else if (ValidIndex(fromIndex, ec) && !toIndex.HasValue)
         {
-            eis.RemoveAt(fromIndex);
+            eis.RemoveAt(fromIndex.Value);
         }
         // ReSharper disable once RedundantIfElseBlock
         else
@@ -1132,28 +1123,33 @@ public class ShowConfiguration : MediaConfiguration
         Renumber(eis);
     }
 
-    private static bool ValidIndex(int index, int maxIndex) => index < maxIndex && index >= 0;
+    private static bool ValidIndex([NotNullWhen(true)] int? index, int maxIndex) => index.HasValue && index < maxIndex && index >= 0;
 
-    private static void RenameEpisode(List<ProcessedEpisode> eis, int index, string txt)
+    private static void RenameEpisode(List<ProcessedEpisode> eis, int? index, string txt)
     {
         int ec = eis.Count;
         if (ValidIndex(index, ec))
         {
-            eis[index].Name = txt;
+            eis[index.Value].Name = txt;
         }
     }
 
-    private void SplitEpisode(List<ProcessedEpisode> eis, int numberOfNewParts, int index)
+    private void SplitEpisode(List<ProcessedEpisode> eis, int? numberOfNewParts, int? index)
     {
+        if (!numberOfNewParts.HasValue)
+        {
+            return;
+        }
+
         int ec = eis.Count;
         // split one episode into a multi-parter
         if (ValidIndex(index, ec))
         {
-            ProcessedEpisode ei = eis[index];
+            ProcessedEpisode ei = eis[index.Value];
             string nameBase = ei.Name;
-            eis.RemoveAt(index); // remove old one
+            eis.RemoveAt(index.Value); // remove old one
 
-            foreach (int i in Enumerable.Range(1, numberOfNewParts))
+            foreach (int i in Enumerable.Range(1, numberOfNewParts.Value))
             // make numberOfNewParts new parts
             {
                 ProcessedEpisode pe2 =
@@ -1165,22 +1161,22 @@ public class ShowConfiguration : MediaConfiguration
                         EpNum2 = -2
                     };
 
-                eis.Insert(index + i - 1, pe2);
+                eis.Insert(index.Value + i - 1, pe2);
             }
         }
     }
 
-    private void MergeEpisodes(List<ProcessedEpisode> eis, RuleAction action, int fromIndex, int toIndex, string? newName)
+    private void MergeEpisodes(List<ProcessedEpisode> eis, RuleAction action, int? fromIndex, int? toIndex, string? newName)
     {
         int ec = eis.Count;
         if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec) && fromIndex < toIndex)
         {
-            ProcessedEpisode oldFirstEi = eis[fromIndex];
-            List<string> episodeNames = [eis[fromIndex].Name];
-            string defaultCombinedName = eis[fromIndex].Name + " + ";
-            string combinedSummary = eis[fromIndex].Overview + "<br/><br/>";
-            List<Episode> alleps = [eis[fromIndex]];
-            for (int i = fromIndex + 1; i <= toIndex; i++)
+            ProcessedEpisode oldFirstEi = eis[fromIndex.Value];
+            List<string> episodeNames = [eis[fromIndex.Value].Name];
+            string defaultCombinedName = eis[fromIndex.Value].Name + " + ";
+            string combinedSummary = eis[fromIndex.Value].Overview + "<br/><br/>";
+            List<Episode> alleps = [eis[fromIndex.Value]];
+            for (int i = fromIndex.Value + 1; i <= toIndex; i++)
             {
                 episodeNames.Add(eis[i].Name);
                 defaultCombinedName += eis[i].Name;
@@ -1193,9 +1189,9 @@ public class ShowConfiguration : MediaConfiguration
                 }
             }
 
-            eis.RemoveRange(fromIndex, toIndex - fromIndex);
+            eis.RemoveRange(fromIndex.Value, toIndex.Value - fromIndex.Value);
 
-            eis.RemoveAt(fromIndex);
+            eis.RemoveAt(fromIndex.Value);
 
             string combinedName = GetBestNameFor(episodeNames, defaultCombinedName);
 
@@ -1208,11 +1204,11 @@ public class ShowConfiguration : MediaConfiguration
                 Overview = combinedSummary
             };
 
-            eis.Insert(fromIndex, pe2);
+            eis.Insert(fromIndex.Value, pe2);
         }
     }
 
-    private void InsertEpisode(List<ProcessedEpisode> eis, int index, string txt, ShowRule sr)
+    private void InsertEpisode(List<ProcessedEpisode> eis, int? index, string txt, ShowRule sr)
     {
         // this only applies for inserting an episode, at the end of the list
         if (sr.First == eis[^1].AppropriateEpNum + 1) // after the last episode
@@ -1224,13 +1220,13 @@ public class ShowConfiguration : MediaConfiguration
 
         if (ValidIndex(index, ec))
         {
-            ProcessedEpisode t = eis[index];
+            ProcessedEpisode t = eis[index.Value];
             ProcessedEpisode n = new(t, this, txt, t.AiredEpNum + 1, t.DvdEpNum + 1, t.EpNum2 + 1);
-            eis.Insert(index, n);
+            eis.Insert(index.Value, n);
         }
         else if (index == ec)
         {
-            ProcessedEpisode t = eis[index - 1];
+            ProcessedEpisode t = eis[index.Value - 1];
             ProcessedEpisode n = new(t, this, txt, t.AiredEpNum + 1, t.DvdEpNum + 1, t.EpNum2 + 1);
             eis.Add(n);
         }
@@ -1241,12 +1237,12 @@ public class ShowConfiguration : MediaConfiguration
         }
     }
 
-    private static void SwapEpisode(List<ProcessedEpisode> eis, int n1, int n2)
+    private static void SwapEpisode(List<ProcessedEpisode> eis, int? n1, int? n2)
     {
         int ec = eis.Count;
         if (ValidIndex(n1, ec) && ValidIndex(n2, ec))
         {
-            (eis[n2], eis[n1]) = (eis[n1], eis[n2]);
+            (eis[n2.Value], eis[n1.Value]) = (eis[n1.Value], eis[n2.Value]);
         }
     }
 

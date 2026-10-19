@@ -127,13 +127,13 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
                 return;
             }
 
-            if (!FinderHelper.FindSeasEp(fi, out int seasNum, out int epNum, out int _, si,
+            if (!FinderHelper.FindSeasEp(fi, out int? seasNum, out int? epNum, out int? _, si,
                     out TVSettings.FilenameProcessorRE? _))
             {
                 continue; // can't find season & episode, so this file is of no interest to us
             }
 
-            if (seasNum == -1)
+            if (!seasNum.HasValue)
             {
                 seasNum = snum;
             }
@@ -160,7 +160,7 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
 
                 if (fileWorthAdding != null)
                 {
-                    localEps[epNum] = fileWorthAdding;
+                    localEps[epNum.Value] = fileWorthAdding;
                 }
             }
 
@@ -168,11 +168,11 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
             if (missCheck && fi.IsMovieFile())
             {
                 // first pass of missing check is to tally up the episodes we do have
-                localEps.TryAdd(epNum, actualFile);
+                localEps.TryAdd(epNum.Value, actualFile);
 
                 if (epNum > maxEpNumFound)
                 {
-                    maxEpNumFound = epNum;
+                    maxEpNumFound = epNum.Value;
                 }
             }
         } // foreach file in folder

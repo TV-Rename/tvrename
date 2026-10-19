@@ -7,6 +7,7 @@
 //
 
 using NodaTime;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Path = System.IO.Path;
@@ -17,31 +18,31 @@ internal static class FinderHelper
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowConfiguration? si, out TVSettings.FilenameProcessorRE? re)
+    public static bool FindSeasEp(FileInfo fi, [NotNullWhen(true)]  out int? seas, [NotNullWhen(true)] out int? ep, out int? maxEp, ShowConfiguration? si, out TVSettings.FilenameProcessorRE? re)
         => FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs, out re);
 
-    public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowConfiguration? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
+    public static bool FindSeasEp(string itemName, [NotNullWhen(true)] out int? seas, [NotNullWhen(true)] out int? ep, out int? maxEp, ShowConfiguration? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
         => FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, si, rexps, out re);
 
-    public static bool FindSeasEp(FileInfo? fi, out int seas, out int ep, out int maxEp, ShowConfiguration? si,
+    public static bool FindSeasEp(FileInfo? fi, [NotNullWhen(true)] out int? seas, [NotNullWhen(true)] out int? ep, out int? maxEp, ShowConfiguration? si,
         IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
     {
         if (fi is null)
         {
             re = null;
-            seas = -1;
-            ep = -1;
-            maxEp = -1;
+            seas = null;
+            ep = null;
+            maxEp = null;
             return false;
         }
 
         return FindSeasEp(fi.Directory.FullName, fi.RemoveExtension(), out seas, out ep, out maxEp, si, rexps, out re);
     }
 
-    public static bool FindSeasEpNameCheck(FileInfo? fi, ShowConfiguration? si, out int seas, out int ep)
+    public static bool FindSeasEpNameCheck(FileInfo? fi, ShowConfiguration? si, out int? seas, out int? ep)
     {
-        ep = -1;
-        seas = -1;
+        ep = null;
+        seas = null;
 
         if (fi is null || si is null)
         {
@@ -74,7 +75,7 @@ internal static class FinderHelper
 
     public static bool MatchesSequentialNumber(string filename, ProcessedEpisode pe)
     {
-        if (pe.OverallNumber == -1)
+        if (!pe.OverallNumber.HasValue)
         {
             return false;
         }
@@ -90,14 +91,14 @@ internal static class FinderHelper
         return regexes
             .Select(regex => Regex.Match(matchText, regex))
             .Where(match => match.Success)
-            .Select(match => int.Parse(match.Groups["sequencenumber"].Value) == pe.OverallNumber)
+            .Select(match => int.Parse(match.Groups["sequencenumber"].Value) == pe.OverallNumber.Value)
             .FirstOrDefault();
     }
 
-    public static bool FindSeasEpDateCheck(string? filename, out int seas, out int ep, ShowConfiguration? si)
+    public static bool FindSeasEpDateCheck(string? filename, out int? seas, out int? ep, ShowConfiguration? si)
     {
-        ep = -1;
-        seas = -1;
+        ep = null;
+        seas = null;
 
         if (filename is null || si is null)
         {
@@ -151,10 +152,10 @@ internal static class FinderHelper
             }
         }
 
-        return ep != -1 && seas != -1;
+        return ep.HasValue && seas.HasValue;
     }
 
-    public static bool FindSeasEp(DirectoryInfo? di, out int seas, out int ep, ShowConfiguration si,
+    public static bool FindSeasEp(DirectoryInfo? di, [NotNullWhen(true)] out int? seas, [NotNullWhen(true)] out int? ep, ShowConfiguration si,
         out TVSettings.FilenameProcessorRE? re)
     {
         List<TVSettings.FilenameProcessorRE> rexps = TVSettings.Instance.FNPRegexs;
@@ -162,29 +163,29 @@ internal static class FinderHelper
 
         if (di is null)
         {
-            seas = -1;
-            ep = -1;
+            seas = null;
+            ep = null;
             return false;
         }
 
-        return FindSeasEp(di.Parent.FullName, di.Name, out seas, out ep, out int _, si, rexps, out re);
+        return FindSeasEp(di.Parent.FullName, di.Name, out seas, out ep, out int? _, si, rexps, out re);
     }
 
-    public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowConfiguration? show)
+    public static bool FindSeasEp(string itemName, out int? seas, out int? ep, out int? maxEp, ShowConfiguration? show)
     {
         return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, show, TVSettings.Instance.FNPRegexs, out TVSettings.FilenameProcessorRE? _);
     }
 
-    public static bool FindSeasEp(FileInfo theFile, out int seasF, out int epF, out int maxEp, ShowConfiguration? sI)
+    public static bool FindSeasEp(FileInfo theFile, [NotNullWhen(true)] out int? seasF, [NotNullWhen(true)] out int? epF, out int? maxEp, ShowConfiguration? sI)
     {
         return FindSeasEp(theFile, out seasF, out epF, out maxEp, sI, out TVSettings.FilenameProcessorRE? _);
     }
 
     public async static Task<bool> FileNeededAsync(FileInfo fi, ShowConfiguration si, DirFilesCache dfc)
     {
-        if (FindSeasEp(fi, out int seasF, out int epF, out _, si, out _))
+        if (FindSeasEp(fi, out int? seasF, out int? epF, out _, si, out _))
         {
-            return await EpisodeNeededAsync(si, dfc, seasF, epF, fi);
+            return await EpisodeNeededAsync(si, dfc, seasF.Value, epF.Value, fi);
         }
 
         //We may need the file
@@ -222,9 +223,9 @@ internal static class FinderHelper
 
         ArgumentNullException.ThrowIfNull(si);
 
-        if (FindSeasEp(di, out int seasF, out int epF, si, out _))
+        if (FindSeasEp(di, out int? seasF, out int? epF, si, out _))
         {
-            return await EpisodeNeededAsync(si, dfc, seasF, epF, di);
+            return await EpisodeNeededAsync(si, dfc, seasF.Value, epF.Value, di);
         }
 
         //We may need the file
@@ -289,12 +290,12 @@ internal static class FinderHelper
                      .Select(folder => cache.GetFiles(folder))
                      .SelectMany(files => files.Where(IsMovieFile)))
         {
-            if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, out int _, si))
+            if (!FindSeasEp(fiTemp, out int? seasFound, out int? epFound, out int? _, si))
             {
                 continue;
             }
 
-            if (seasFound == -1)
+            if (!seasFound.HasValue)
             {
                 seasFound = seasWanted;
             }
@@ -331,12 +332,12 @@ internal static class FinderHelper
                      .Select(folder => cache.GetFiles(folder))
                      .SelectMany(files => files.Where(IsMovieFile)))
         {
-            if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, out int _, si))
+            if (!FindSeasEp(fiTemp, out int? seasFound, out int? epFound, out int? _, si))
             {
                 continue;
             }
 
-            if (seasFound == -1)
+            if (!seasFound.HasValue)
             {
                 seasFound = seasWanted;
             }
@@ -435,13 +436,13 @@ internal static class FinderHelper
         return returnFilename;
     }
 
-    private static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
+    private static bool FindSeasEp(string directory, string filename, [NotNullWhen(true)] out int? seas, [NotNullWhen(true)] out int? ep, out int? maxEp,
         ShowConfiguration? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? rex)
     {
         string showNameHint = si != null ? si.ShowName : string.Empty;
-        maxEp = -1;
-        seas = -1;
-        ep = -1;
+        maxEp = null;
+        seas = null;
+        ep = null;
         rex = null;
 
         filename = SimplifyFilename(filename, showNameHint);
@@ -465,7 +466,7 @@ internal static class FinderHelper
                     (seas, ep, maxEp) = IdentifyEpisode(si, m, re);
 
                     rex = re;
-                    if (seas != -1 && ep != -1)
+                    if (seas.HasValue && ep.HasValue)
                     {
                         return true;
                     }
@@ -481,31 +482,35 @@ internal static class FinderHelper
             }
         }
 
-        return seas != -1 && ep != -1;
+        return seas.HasValue && ep.HasValue;
     }
 
-    private static (int seas, int ep, int maxEp) IdentifyEpisode(ShowConfiguration? si, Match m, TVSettings.FilenameProcessorRE re)
+    private static (int? seas, int? ep, int? maxEp) IdentifyEpisode(ShowConfiguration? si, Match m, TVSettings.FilenameProcessorRE re)
     {
-        if (!int.TryParse(m.Groups["s"].ToString(), out int seas))
+        int? maxEp = null;
+        int? ep = null;
+        int? seas = null;
+
+        if (int.TryParse(m.Groups["s"].ToString(), out int seasparsed))
+        {
+            seas = seasparsed;
+        }
+        else
         {
             if (!re.RegExpression.Contains("<s>") && (si?.AppropriateSeasons().Count ?? 0) == 1)
             {
                 seas = 1;
             }
-            else
-            {
-                seas = -1;
-            }
         }
 
-        if (!int.TryParse(m.Groups["e"].ToString(), out int ep))
+        if (int.TryParse(m.Groups["e"].ToString(), out int eparsed))
         {
-            ep = -1;
+            ep = eparsed;
         }
 
-        if (!int.TryParse(m.Groups["f"].ToString(), out int maxEp))
+        if (int.TryParse(m.Groups["f"].ToString(), out int maxEparsed))
         {
-            maxEp = -1;
+            maxEp = maxEparsed;
         }
 
         return (seas, ep, maxEp);
@@ -608,21 +613,24 @@ internal static class FinderHelper
                 Match m = Regex.Match(hint, re.RegExpression, RegexOptions.IgnoreCase);
                 if (m.Success)
                 {
-                    if (!int.TryParse(m.Groups["s"].ToString(), out int seas))
+                    int? season = null;
+                    int? episode = null;
+
+                    if (int.TryParse(m.Groups["s"].ToString(), out int seas))
                     {
-                        seas = -1;
+                        season = seas;
                     }
 
-                    if (!int.TryParse(m.Groups["e"].ToString(), out int ep))
+                    if (int.TryParse(m.Groups["e"].ToString(), out int ep))
                     {
-                        ep = -1;
+                        episode = ep;
                     }
 
-                    int p = Math.Min(m.Groups["s"].Index, m.Groups["e"].Index);
-                    int p2 = Math.Min(p, hint.IndexOf(m.Groups["0"].ToString(), StringComparison.Ordinal));
-
-                    if (seas != -1 && ep != -1)
+                    if (season.HasValue && episode.HasValue)
                     {
+                        int p = Math.Min(m.Groups["s"].Index, m.Groups["e"].Index);
+                        int p2 = Math.Min(p, hint.IndexOf(m.Groups["0"].ToString(), StringComparison.Ordinal));
+
                         return hint.Remove(p2 != -1 ? p2 : p);
                     }
                 }

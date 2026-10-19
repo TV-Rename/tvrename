@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System.Diagnostics.CodeAnalysis;
 using TVRename.Forms;
 
 namespace TVRename;
@@ -97,15 +98,7 @@ public abstract class MediaCache
         }
     }
 
-    public ConcurrentDictionary<int, CachedSeriesInfo> CachedShowData
-    {
-        get
-        {
-            {
-                return Series;
-            }
-        }
-    }
+    public ConcurrentDictionary<int, CachedSeriesInfo> CachedShowData => Series;
 
     public CachedSeriesInfo? GetSeries(int? id)
     {
@@ -113,23 +106,25 @@ public abstract class MediaCache
         {
             return null;
         }
-        {
-            return Series.TryGetValue(id.Value, out CachedSeriesInfo? si) ? si : null;
-        }
+        return Series.TryGetValue(id.Value, out CachedSeriesInfo? si) ? si : null;
     }
 
-    public bool HasSeries(int id)
+    public bool HasSeries([NotNullWhen(true)]  int? id)
     {
+        if (!id.HasValue)
         {
-            return Series.ContainsKey(id);
+            return false;
         }
+        return Series.ContainsKey(id.Value);
     }
 
-    public bool HasMovie(int id)
+    public bool HasMovie([NotNullWhen(true)] int? id)
     {
+        if (!id.HasValue)
         {
-            return Movies.ContainsKey(id);
+            return false;
         }
+        return Movies.ContainsKey(id.Value);
     }
 
     public CachedMovieInfo? GetMovie(int? id)
@@ -138,10 +133,7 @@ public abstract class MediaCache
         {
             return null;
         }
-
-        {
-            return Movies.TryGetValue(id.Value, out CachedMovieInfo? mi) ? mi : null;
-        }
+        return Movies.TryGetValue(id.Value, out CachedMovieInfo? mi) ? mi : null;
     }
 
     public CachedMediaInfo? GetMedia(int code, MediaConfiguration.MediaType type)

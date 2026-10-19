@@ -87,7 +87,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     public async Task<CachedSeriesInfo?> GetSeriesOrDownloadAsync(ISeriesSpecifier id, bool showErrorMsgBox)
         => HasSeries(id.TvdbId)
-            ? Series[id.TvdbId]
+            ? Series[id.TvdbId.Value]
             : await DownloadSeriesNowAsync(id, false, false, new Locale(TVSettings.Instance.PreferredTVDBLanguage),showErrorMsgBox,new ThreadSafeCounter(), 1);
 
     public void UpdatesDoneOk()
@@ -153,7 +153,14 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
             return true;
         }
 
-        if (!Series.TryGetValue(series.TvdbId, out CachedSeriesInfo? cachedSeriesInfo))
+        if (!series.TvdbId.HasValue)
+        {
+            LOGGER.Warn($"Asked to download episodes for cachedSeries {series.Name}:{series.TvdbId}");
+            SayNothing();
+            return true;
+        }
+
+        if (!Series.TryGetValue(series.TvdbId.Value, out CachedSeriesInfo? cachedSeriesInfo))
         {
             return false; // shouldn't happen
         }
@@ -598,7 +605,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
     private async Task<CachedSeriesInfo?> DownloadSeriesNowAsync(ISeriesSpecifier code, bool episodesToo, bool bannersToo, Locale locale,
         bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
     {
-        if (code.TvdbId == 0 || code.TvdbId == -1)
+        if (code.TvdbId == 0 || ! code.TvdbId.HasValue)
         {
             SayNothing();
             return null;
@@ -609,17 +616,15 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
             SayNothing();
         }
 
-        bool forceReload = DoWeForceReloadFor(code.TvdbId);
+        bool forceReload = DoWeForceReloadFor(code.TvdbId.Value);
 
-        Say(GenerateMessage(code.TvdbId, episodesToo, bannersToo),counter.Increment(),totalCount );
+        Say(GenerateMessage(code.TvdbId.Value, episodesToo, bannersToo),counter.Increment(),totalCount );
 
         try
         {
             CachedSeriesInfo? si = await API.DownloadSeriesInfoAsync(code, locale);
             this.AddSeriesToCache(si);
-            {
-                si = GetSeries(code.TvdbId);
-            }
+            si = GetSeries(code.TvdbId.Value);
 
             //Now deal with obtaining any episodes for the cachedSeries (we then group them into seasons)
             //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
@@ -643,7 +648,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
                 }
             }
 
-            HaveReloaded(code.TvdbId);
+            HaveReloaded(code.TvdbId.Value);
         }
         catch (SourceConnectivityException ex)
         {
@@ -654,7 +659,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
             return null;
         }
 
-        Series.TryGetValue(code.TvdbId, out CachedSeriesInfo? returnValue);
+        Series.TryGetValue(code.TvdbId.Value, out CachedSeriesInfo? returnValue);
         SayNothing();
         return returnValue;
     }
@@ -711,17 +716,15 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
     {
-        {
-            if (Movies.TryGetValue(id.TvdbId, out CachedMovieInfo? movie) && !movie.Dirty)
-            {
-                return true;
-            }
-        }
-
-        if (id.TvdbId == -1)
+        if (!id.TvdbId.HasValue)
         {
             //We don't have access to search by other Ids
             throw new MediaNotFoundException(id, $"Please add movie {id.Name} to TVDB, or use another source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie);
+        }
+
+        if (Movies.TryGetValue(id.TvdbId.Value, out CachedMovieInfo? movie) && !movie.Dirty)
+        {
+            return true;
         }
 
         Say($"Movie: {id.Name} from The TVDB", counter.Increment() , totalCount);
@@ -734,11 +737,9 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
                 return false;
             }
 
-            if (downloadedSi.TvdbCode != id.TvdbId && id.TvdbId == -1)
+            if (downloadedSi.TvdbCode != id.TvdbId && !id.TvdbId.HasValue)
             {
-                {
-                    Movies.TryRemove(-1, out _);
-                }
+                Movies.TryRemove(-1, out _);
             }
 
             this.AddMovieToCache(downloadedSi);
@@ -769,13 +770,13 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private async Task<bool> EnsureSeriesUpdatedAsync(ISeriesSpecifier seriesd, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
     {
-        int code = seriesd.TvdbId;
-
-        if (seriesd.TvdbId == -1)
+        if (!seriesd.TvdbId.HasValue)
         {
             //We don't have access to search by other Ids
             throw new MediaNotFoundException(seriesd, $"Please add movie {seriesd.Name} to TVDB, or use another source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
         }
+
+        int code = seriesd.TvdbId.Value;
 
         if (DoWeForceReloadFor(code) || Series[code].Episodes.Count == 0)
         {
@@ -886,7 +887,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
         }
     }
 
-    public override int PrimaryKey(ISeriesSpecifier ss) => ss.TvdbId;
+    public override int PrimaryKey(ISeriesSpecifier ss) => ss.TvdbId ?? throw new SourceConsistencyException("Missing Primary Key",TVDoc.ProviderType.TheTVDB);
 
     public override string CacheSourceName() => "TVDB";
 
@@ -907,7 +908,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     public async Task<CachedMovieInfo?> GetMovieAndDownloadAsync(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
         => HasMovie(id.TvdbId)
-        ? CachedMovieData[id.TvdbId]
+        ? CachedMovieData[id.TvdbId.Value]
         : await DownloadMovieNowAsync(id, locale, showErrorMsgBox, counter, totalCount);
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
@@ -915,7 +916,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     private async Task<CachedMovieInfo?> DownloadMovieNowAsync(ISeriesSpecifier tvdbId, Locale locale, bool showErrroMsgBox, ThreadSafeCounter counter, int totalCount)
     {
-        if (tvdbId.TvdbId == 0 || tvdbId.TvdbId == -1)
+        if (tvdbId.TvdbId == 0 || !tvdbId.TvdbId.HasValue)
         {
             SayNothing();
             return null;
@@ -940,7 +941,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
         }
 
         {
-            Movies.TryGetValue(tvdbId.TvdbId, out CachedMovieInfo? returnValue);
+            Movies.TryGetValue(tvdbId.TvdbId.Value, out CachedMovieInfo? returnValue);
             SayNothing();
             return returnValue;
         }

@@ -87,13 +87,13 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
                     continue; //not a video file, so ignore
                 }
 
-                if (!FinderHelper.FindSeasEp(fi, out int seasNum, out int epNum, out int maxEp, si,
+                if (!FinderHelper.FindSeasEp(fi, out int? seasNum, out int? epNum, out int? maxEp, si,
                         out TVSettings.FilenameProcessorRE? _))
                 {
                     continue; // can't find season & episode, so this file is of no interest to us
                 }
 
-                if (seasNum == -1)
+                if (!seasNum.HasValue)
                 {
                     seasNum = snum;
                 }
@@ -108,7 +108,7 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
 
                 ProcessedEpisode ep = eps[epIdx];
 
-                if (ep.Type == ProcessedEpisode.ProcessedEpisodeType.merged || maxEp == -1)
+                if (ep.Type == ProcessedEpisode.ProcessedEpisodeType.merged || !maxEp.HasValue)
                 {
                     continue;
                 }
