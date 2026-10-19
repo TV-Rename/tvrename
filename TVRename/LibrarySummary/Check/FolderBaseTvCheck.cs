@@ -40,3 +40,51 @@ internal class FolderBaseTvCheck(ShowConfiguration show, TVDoc doc) : TvShowChec
 
     public override string CheckName => "[TV] Has an automatic base folder supplied";
 }
+
+
+internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
+{
+    public override string CheckName => "[TV] Base folder is not consistent with setting for new shows";
+    public override string Explain() => $"This TV show has a base folder that does not match the default. {show.AutoAddFolderBase} is current value, default is {DefaultFolder(show.AutoAddFolderBase)}";
+
+    public override bool Check()
+    {
+        string currentFolder = show.AutoAddFolderBase;
+        string newlyCreatedSettingsFolder = DefaultFolder(currentFolder);
+
+        return currentFolder != newlyCreatedSettingsFolder;
+    }
+
+    private string DefaultFolder(string currentFolder)
+    {
+        string libraryFolder = FindBestLibraryFolder(currentFolder, TVSettings.Instance.LibraryFolders);
+        string newlyCreatedSettingsFolder = libraryFolder.EnsureEndsWithSeparator()
+                                 + TVSettings.Instance.DefaultTVShowFolder(Show);
+        return newlyCreatedSettingsFolder;
+    }
+
+    private static string FindBestLibraryFolder(string currentFolder, SafeList<string> libraryFolders)
+    {
+        foreach(string libFolder in libraryFolders)
+        {
+            if (currentFolder.StartsWith(libFolder))
+            {
+                return libFolder;
+            }
+        }
+        return libraryFolders.FirstOrDefault() ?? string.Empty;
+    }
+
+    /// <exception cref="FixCheckException">Can't fix movie</exception>
+    protected override void FixInternal()
+    {
+        //Store the old folder
+        string oldFolder = Show.AutoAddFolderBase;
+
+        //Update the folder to the new value
+        Show.AutoAddFolderBase = DefaultFolder(show.AutoAddFolderBase);
+
+        //Create the new location if needed and move files
+        Directory.Move(oldFolder, Show.AutoAddFolderBase);
+    }
+}

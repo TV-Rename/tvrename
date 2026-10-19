@@ -8,6 +8,7 @@
 
 using BrightIdeasSoftware;
 using TVRename.Forms.Tools;
+using WinCopies.Util;
 
 namespace TVRename.Forms;
 
@@ -116,6 +117,7 @@ public partial class SettingsReview : Form
             set.Add(new FolderBaseTvCheck(show, mDoc));
             set.Add(new FolderBaseLibraryDefaultTvCheck(show, mDoc));
             set.Add(new TvShowSubdiretoryFormatCheck(show, mDoc));
+            set.Add(new FolderBaseMatchesDefault(show, mDoc));
 
             ((IProgress<ProgressReport>)progressHandler).Report(new ProgressReport()
             {
