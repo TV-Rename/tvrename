@@ -30,15 +30,15 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 
             foreach (string folderName in (await si.AllProposedFolderLocationsAsync()).SelectMany(folderLocation => folderLocation.Value))
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 string? action = await RemoveIfEmpty(si, folderName);
                 if (action.HasValue())
                 {
                     lastUpdate = action;
-                }
-
-                if (token.IsCancellationRequested)
-                {
-                    return;
                 }
             }
         }
@@ -49,15 +49,14 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
 
             foreach (string folderName in await mi.LocationsAsync())
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
                 string? action = await RemoveIfEmpty(mi, folderName);
                 if (action.HasValue())
                 {
                     lastUpdate = action;
-                }
-
-                if (token.IsCancellationRequested)
-                {
-                    return;
                 }
             }
         }
@@ -68,15 +67,14 @@ internal class CleanUpEmptyLibraryFolders(TVDoc doc) : PostScanActivity(doc)
             DirectoryInfo directory = new(folder);
             foreach (DirectoryInfo testDirectory in directory.EnumerateDirectories(DirectoryEnumerationOptions.Recursive | DirectoryEnumerationOptions.ContinueOnException).ToList())
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
                 string? action = await RemoveIfEmpty(testDirectory.FullName);
                 if (action.HasValue())
                 {
                     lastUpdate = action;
-                }
-
-                if (token.IsCancellationRequested)
-                {
-                    return;
                 }
             }
         }
