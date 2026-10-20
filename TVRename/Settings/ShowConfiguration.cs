@@ -1156,9 +1156,10 @@ public class ShowConfiguration : MediaConfiguration
                     new(ei, this, ProcessedEpisode.ProcessedEpisodeType.split)
                     {
                         Name = $"{nameBase} (Part {i})",
-                        AiredEpNum = -2,
-                        DvdEpNum = -2,
-                        EpNum2 = -2
+                        AiredEpNum = ei.AiredEpNum,
+                        DvdEpNum = ei.DvdEpNum,
+                        EpNum2 = ei.EpNum2,
+                        Part = i
                     };
 
                 eis.Insert(index.Value + i - 1, pe2);

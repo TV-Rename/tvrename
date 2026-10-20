@@ -54,6 +54,8 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
     }
 
     private FoundStatus _airedStatus = FoundStatus.Unknown;
+    internal int? Part;
+
     public enum FoundStatus
     {
         OnDisk,

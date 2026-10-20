@@ -250,8 +250,17 @@ public class CustomEpisodeName
             name = name.ReplaceInsensitive("{SeasonName}", seasonName ?? string.Empty);
 
             string episodeFormat = pe.AppropriateProcessedSeason.Episodes.Count >= 100 ? "000" : "00";
-            name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString(episodeFormat));
-            name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString(episodeFormat));
+
+            if (pe.Type == ProcessedEpisode.ProcessedEpisodeType.split)
+            {
+                name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString(episodeFormat)+".pt"+pe.Part);
+                name = name.ReplaceInsensitive("{Episode2}", string.Empty);
+            }
+            else
+            {
+                name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString(episodeFormat));
+                name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString(episodeFormat));
+            }
 
             name = name.ReplaceInsensitive("{EpisodeName}", episodeName);
 
