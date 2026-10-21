@@ -110,6 +110,7 @@ public partial class SettingsReview : Form
             set.Add(new DefaultSpecialsAsEpisodesTvCheck(show, mDoc));
             set.Add(new DefaultUseDvdTvCheck(show, mDoc));
             set.Add(new DefaultUseAlternateTvCheck(show, mDoc));
+            set.Add(new DefaultSpecialsTVCheck(show, mDoc));
 
             set.Add(new TvShowEpisodeNameCheck(show, mDoc));
             set.Add(new TvShowProviderCheck(show, mDoc));
@@ -174,23 +175,24 @@ public partial class SettingsReview : Form
             }
 
             rightClickMenu.AddSeparator();
-            rightClickMenu.Add("Fix Issue", (_, _) => Remedy(mlastSelected.AsList()));
+            rightClickMenu.Add("Fix Issue", async (_, _) => await RemedyAsync(mlastSelected.AsList()));
         }
         else
         {
-            rightClickMenu.Add("Fix Issues", (_, _) =>
+            rightClickMenu.Add("Fix Issues", async (_, _) =>
             {
-                Remedy(olvDuplicates.Selected());
+                await RemedyAsync(olvDuplicates.Selected());
                 mDoc.SetDirty();
             });
         }
     }
 
-    private void Remedy(IEnumerable<SettingsCheck> selectedItems)
+    private async Task RemedyAsync(IEnumerable<SettingsCheck> selectedItems)
     {
         CancellationTokenSource cts = new();
-        FixIssuesNotifier form = new(new RemedySettings(selectedItems, this), cts);
-        form.ShowDialog();
+        FixIssuesNotifier form = new(cts);
+        form.Show();
+        await form.Run(new RemedySettings(selectedItems, this));
     }
 
     internal void Remove(SettingsCheck selected)

@@ -45,11 +45,11 @@ internal class FolderBaseTvCheck(ShowConfiguration show, TVDoc doc) : TvShowChec
 internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
 {
     public override string CheckName => "[TV] Base folder is not consistent with setting for new shows";
-    public override string Explain() => $"This TV show has a base folder that does not match the default. {show.AutoAddFolderBase} is current value, default is {DefaultFolder(show.AutoAddFolderBase)}";
+    public override string Explain() => $"This TV show has a base folder that does not match the default. {Show.AutoAddFolderBase} is current value, default is {DefaultFolder(Show.AutoAddFolderBase)}";
 
     public override bool Check()
     {
-        string currentFolder = show.AutoAddFolderBase;
+        string currentFolder = Show.AutoAddFolderBase;
         string newlyCreatedSettingsFolder = DefaultFolder(currentFolder);
 
         return currentFolder != newlyCreatedSettingsFolder;
@@ -82,7 +82,7 @@ internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvS
         string oldFolder = Show.AutoAddFolderBase;
 
         //Update the folder to the new value
-        Show.AutoAddFolderBase = DefaultFolder(show.AutoAddFolderBase);
+        Show.AutoAddFolderBase = DefaultFolder(Show.AutoAddFolderBase);
 
         //Create the new location if needed and move files
         Directory.Move(oldFolder, Show.AutoAddFolderBase);

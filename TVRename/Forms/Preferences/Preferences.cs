@@ -471,6 +471,7 @@ public partial class Preferences : Form
         s.DefShowDVDOrder = cbDefShowDVDOrder.Checked;
         s.DefShowAlternateOrder = cbDefShowAlternateOrder.Checked;
         s.DefShowAutoFolders = cbDefShowAutoFolders.Checked;
+        s.IgnoreSpecialsByDefault = cbIgnoreSpecialsByDefault.Checked;
         s.DefShowLocation = (string?)cmbDefShowLocation.SelectedItem;
         s.DefaultShowTimezoneName = cbTimeZone.Text;
         s.DefShowSequentialMatching = cbDefShowSequentialMatching.Checked;
@@ -492,7 +493,6 @@ public partial class Preferences : Form
 
         s.TMDBLanguage = Languages.Instance.GetLanguageFromLocalName(cbTMDBLanguages.SelectedItem?.ToString()) ?? s.TMDBLanguage;
         s.TMDBRegion = Regions.Instance.RegionFromName(cbTMDBRegions.SelectedItem?.ToString()) ?? s.TMDBRegion;
-        s.TMDBPercentDirty = tbTMDBPercentDirty.Text.ToPercent(20);
         s.IncludeMoviesQuickRecent = chkIncludeMoviesQuickRecent.Checked;
         s.UnArchiveFilesInDownloadDirectory = chkUnArchiveFilesInDownloadDirectory.Checked;
 
@@ -1022,6 +1022,7 @@ public partial class Preferences : Form
         cbDefShowDVDOrder.Checked = s.DefShowDVDOrder;
         cbDefShowAlternateOrder.Checked = s.DefShowAlternateOrder;
         cbDefShowAutoFolders.Checked = s.DefShowAutoFolders;
+        cbIgnoreSpecialsByDefault.Checked = s.IgnoreSpecialsByDefault;
         cbDefShowSequentialMatching.Checked = s.DefShowSequentialMatching;
         cbDefShowAirdateMatching.Checked = s.DefShowAirDateMatching;
         cbDefShowEpNameMatching.Checked = s.DefShowEpNameMatching;
@@ -1042,7 +1043,6 @@ public partial class Preferences : Form
         cbTMDBLanguages.Text = s.TMDBLanguage.LocalName;
         cbTMDBRegions.Text = s.TMDBRegion.EnglishName ?? Regions.Instance.FallbackRegion.EnglishName;
 
-        tbTMDBPercentDirty.Text = s.TMDBPercentDirty.ToString(CultureInfo.InvariantCulture);
         chkIncludeMoviesQuickRecent.Checked = s.IncludeMoviesQuickRecent;
         chkUnArchiveFilesInDownloadDirectory.Checked = s.UnArchiveFilesInDownloadDirectory;
 
@@ -1857,7 +1857,7 @@ public partial class Preferences : Form
         mDoc.SetDirty();
         FillSearchFolderList();
     }
-    
+
     private void bnRemoveSearchFolder_Click(object sender, EventArgs e)
     {
         RemoveSelectedSearchFolder();

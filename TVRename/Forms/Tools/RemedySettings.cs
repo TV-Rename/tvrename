@@ -29,7 +29,7 @@ internal class RemedySettings(IEnumerable<SettingsCheck> selectedItems, Settings
             }
             else
             {
-                selected.Fix();
+                await selected.Fix();
                 if (!selected.IsError)
                 {
                     parent.Remove(selected);

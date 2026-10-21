@@ -803,29 +803,16 @@ public class TVDoc : IDisposable, IAsyncDisposable
     {
         CancellationTokenSource cts = new();
         SetDirty();
-
         forceShowsRefresh.AddRange(shows);
         forceShowsScan.AddRange(shows);
 
-        if (download && owner != null)
-        {
-            if (!await DoDownloadsFgAsync(unattended, hidden, owner, shows, cts))
-            {
-                return;
-            }
-        }
-        else
-        {
-            UpdateDenormalisations();
-        }
-
-        await RunExportersAsync();
+        await UpdateMediaAsync(download, unattended, hidden, owner, cts);
         await SaveSettingsIfNeededAsync();
     }
 
-    internal async Task UpdateMediaAsync(bool download, bool unattended, bool hidden, UI owner, CancellationTokenSource cts)
+    internal async Task UpdateMediaAsync(bool download, bool unattended, bool hidden, UI? owner, CancellationTokenSource cts)
     {
-        if (download)
+        if (download && owner != null)
         {
             if (!await DoDownloadsFgAsync(unattended, hidden, owner, cts))
             {
@@ -833,14 +820,10 @@ public class TVDoc : IDisposable, IAsyncDisposable
             }
             await RunExportersAsync();
         }
-        else
-        {
-            UpdateDenormalisations();
-        }
+        UpdateDenormalisations();
     }
 
-    internal async Task MoviesAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner,
-        MovieConfiguration movie) =>
+    internal async Task MoviesAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, MovieConfiguration movie) =>
         await MoviesAddedOrEditedAsync(download, unattended, hidden, owner, movie.AsList());
 
     internal async Task MoviesAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, List<MovieConfiguration> movies)
@@ -850,18 +833,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         forceMoviesRefresh.AddRange(movies);
         forceMoviesScan.AddRange(movies);
 
-        if (download && owner != null)
-        {
-            if (!await DoDownloadsFgAsync(unattended, hidden, owner, movies, cts))
-            {
-                return;
-            }
-        }
-        else
-        {
-            UpdateDenormalisations();
-        }
-        await RunExportersAsync();
+        await UpdateMediaAsync(download, unattended, hidden, owner, cts);
         await SaveSettingsIfNeededAsync();
     }
 

@@ -213,7 +213,6 @@ public sealed class TVSettings
 
     public Language TMDBLanguage;
     public Region TMDBRegion;
-    public float TMDBPercentDirty;
     public bool IncludeMoviesQuickRecent;
 
     public BetaMode mode = BetaMode.ProductionOnly;
@@ -419,6 +418,7 @@ public sealed class TVSettings
     public bool DefShowEpNameMatching = false;
     public bool DefShowSpecialsCount = false;
     public bool DefShowAutoFolders = true;
+    public bool IgnoreSpecialsByDefault = false;
     public bool DefShowUseDefLocation = false;
     public string? DefShowLocation;
     public string? DefaultShowTimezoneName;
@@ -686,6 +686,7 @@ public sealed class TVSettings
         new XElement("DefShowEpNameMatching", DefShowEpNameMatching),
         new XElement("DefShowSpecialsCount", DefShowSpecialsCount),
         new XElement("DefShowAutoFolders", DefShowAutoFolders),
+        new XElement("IgnoreSpecialsByDefault", IgnoreSpecialsByDefault),
         new XElement("DefShowUseDefLocation", DefShowUseDefLocation),
         new XElement("DefShowLocation", DefShowLocation),
         new XElement("DefaultShowTimezoneName", DefaultShowTimezoneName),
@@ -721,7 +722,6 @@ public sealed class TVSettings
 
         new XElement("TMDBLanguage", TMDBLanguage.ISODialectAbbreviation),
         new XElement("TMDBRegion", TMDBRegion.Abbreviation),
-        new XElement("TMDBPercentDirty", TMDBPercentDirty),
         new XElement("IncludeMoviesQuickRecent", IncludeMoviesQuickRecent),
         GenerateAppUpdateXElement(),
         TheSearchers.GenerateXElement("TheSearchers"),
@@ -1534,6 +1534,7 @@ public sealed class TVSettings
         DefShowUseSubFolders = xmlSettings.ExtractBool("DefShowUseSubFolders", true);
         DefShowLocation = xmlSettings.ExtractString("DefShowLocation", string.Empty);
         DefaultShowTimezoneName = xmlSettings.ExtractString("DefaultShowTimezoneName");
+        IgnoreSpecialsByDefault = xmlSettings.ExtractBool("IgnoreSpecialsByDefault") ?? false;
 
         DefMovieDoRenaming = xmlSettings.ExtractBool("DefMovieDoRenaming", true);
         DefMovieDoMissingCheck = xmlSettings.ExtractBool("DefMovieDoMissingCheck", true);
@@ -1563,7 +1564,6 @@ public sealed class TVSettings
 
         TMDBLanguage = Languages.Instance.GetLanguageFromDialectCode(xmlSettings.ExtractString("TMDBLanguage")) ?? Languages.Instance.FallbackLanguage;
         TMDBRegion = Regions.Instance.RegionFromCode(xmlSettings.ExtractString("TMDBRegion")) ?? Regions.Instance.FallbackRegion;
-        TMDBPercentDirty = xmlSettings.ExtractFloat("TMDBPercentDirty", 20);
         IncludeMoviesQuickRecent = xmlSettings.ExtractBool("IncludeMoviesQuickRecent", false);
 
         Tidyup.Load(xmlSettings);

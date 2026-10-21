@@ -21,3 +21,4 @@ internal class DefaultFutureEpisodesTvCheck(ShowConfiguration show, TVDoc doc) :
         Show.ForceCheckFuture = Default;
     }
 }
+

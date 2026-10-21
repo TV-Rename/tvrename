@@ -368,7 +368,7 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
         //</Data>
         try
         {
-            TvdbCode = seriesXml.ExtractInt("id") ?? throw new SourceConsistencyException("Error Extracting Id for Series", TVDoc.ProviderType.TheTVDB);
+            TvdbCode = seriesXml.ExtractInt("id");
             TvMazeCode = seriesXml.ExtractInt("mazeid");
             TmdbCode = seriesXml.ExtractInt("TMDBCode");
             Name = System.Web.HttpUtility.HtmlDecode(

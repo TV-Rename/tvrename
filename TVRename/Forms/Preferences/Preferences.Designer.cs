@@ -359,9 +359,6 @@ namespace TVRename.Forms
             label83 = new Label();
             gbTMDB = new GroupBox();
             cbTMDBRegions = new ComboBox();
-            label80 = new Label();
-            label81 = new Label();
-            tbTMDBPercentDirty = new TextBox();
             label82 = new Label();
             cbTMDBLanguages = new ComboBox();
             label63 = new Label();
@@ -526,6 +523,7 @@ namespace TVRename.Forms
             cboUpdateCheckInterval = new ComboBox();
             optUpdateCheckInterval = new RadioButton();
             optUpdateCheckAlways = new RadioButton();
+            cbIgnoreSpecialsByDefault = new CheckBox();
             cmDefaults.SuspendLayout();
             tpDisplay.SuspendLayout();
             groupBox11.SuspendLayout();
@@ -1075,7 +1073,7 @@ namespace TVRename.Forms
             chkShowAccessibilityOptions.Location = new Point(257, 332);
             chkShowAccessibilityOptions.Margin = new Padding(4, 3, 4, 3);
             chkShowAccessibilityOptions.Name = "chkShowAccessibilityOptions";
-            chkShowAccessibilityOptions.Size = new Size(165, 19);
+            chkShowAccessibilityOptions.Size = new Size(168, 19);
             chkShowAccessibilityOptions.TabIndex = 45;
             chkShowAccessibilityOptions.Text = "Show Accessibility Options";
             chkShowAccessibilityOptions.UseVisualStyleBackColor = true;
@@ -1246,7 +1244,7 @@ namespace TVRename.Forms
             label61.Location = new Point(8, 8);
             label61.Margin = new Padding(4, 0, 4, 0);
             label61.Name = "label61";
-            label61.Size = new Size(326, 45);
+            label61.Size = new Size(330, 45);
             label61.TabIndex = 40;
             label61.Text = "Settings that control the way that TV Rename looks. These do\r\nnot have any impact on the main scanning, just on the way \r\nthe interface looks.";
             // 
@@ -2848,7 +2846,7 @@ namespace TVRename.Forms
             cbSeriesJpg.Location = new Point(7, 22);
             cbSeriesJpg.Margin = new Padding(4, 3, 4, 3);
             cbSeriesJpg.Name = "cbSeriesJpg";
-            cbSeriesJpg.Size = new Size(266, 19);
+            cbSeriesJpg.Size = new Size(189, 19);
             cbSeriesJpg.TabIndex = 7;
             cbSeriesJpg.Text = "&Create series poster (Series.jpg)";
             cbSeriesJpg.UseVisualStyleBackColor = true;
@@ -2859,7 +2857,7 @@ namespace TVRename.Forms
             cbShrinkLarge.Location = new Point(7, 75);
             cbShrinkLarge.Margin = new Padding(4, 3, 4, 3);
             cbShrinkLarge.Name = "cbShrinkLarge";
-            cbShrinkLarge.Size = new Size(363, 19);
+            cbShrinkLarge.Size = new Size(324, 19);
             cbShrinkLarge.TabIndex = 9;
             cbShrinkLarge.Text = "S&hrink large series and episode images to 156 x 232 pixels";
             cbShrinkLarge.UseVisualStyleBackColor = true;
@@ -4430,16 +4428,13 @@ namespace TVRename.Forms
             gbTMDB.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             gbTMDB.Controls.Add(label84);
             gbTMDB.Controls.Add(cbTMDBRegions);
-            gbTMDB.Controls.Add(label80);
-            gbTMDB.Controls.Add(label81);
-            gbTMDB.Controls.Add(tbTMDBPercentDirty);
             gbTMDB.Controls.Add(label82);
             gbTMDB.Controls.Add(cbTMDBLanguages);
             gbTMDB.Location = new Point(14, 479);
             gbTMDB.Margin = new Padding(4, 3, 4, 3);
             gbTMDB.Name = "gbTMDB";
             gbTMDB.Padding = new Padding(4, 3, 4, 3);
-            gbTMDB.Size = new Size(448, 115);
+            gbTMDB.Size = new Size(448, 92);
             gbTMDB.TabIndex = 58;
             gbTMDB.TabStop = false;
             gbTMDB.Text = "TMDB";
@@ -4454,34 +4449,6 @@ namespace TVRename.Forms
             cbTMDBRegions.Size = new Size(170, 23);
             cbTMDBRegions.Sorted = true;
             cbTMDBRegions.TabIndex = 27;
-            // 
-            // label80
-            // 
-            label80.AutoSize = true;
-            label80.Location = new Point(12, 87);
-            label80.Margin = new Padding(4, 0, 4, 0);
-            label80.Name = "label80";
-            label80.Size = new Size(124, 15);
-            label80.TabIndex = 23;
-            label80.Text = "Refresh entire series  if";
-            // 
-            // label81
-            // 
-            label81.AutoSize = true;
-            label81.Location = new Point(189, 87);
-            label81.Margin = new Padding(4, 0, 4, 0);
-            label81.Name = "label81";
-            label81.Size = new Size(146, 15);
-            label81.TabIndex = 25;
-            label81.Text = "% of episodes are updated";
-            // 
-            // tbTMDBPercentDirty
-            // 
-            tbTMDBPercentDirty.Location = new Point(148, 83);
-            tbTMDBPercentDirty.Margin = new Padding(4, 3, 4, 3);
-            tbTMDBPercentDirty.Name = "tbTMDBPercentDirty";
-            tbTMDBPercentDirty.Size = new Size(32, 23);
-            tbTMDBPercentDirty.TabIndex = 24;
             // 
             // label82
             // 
@@ -4885,6 +4852,7 @@ namespace TVRename.Forms
             // groupBox19
             // 
             groupBox19.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox19.Controls.Add(cbIgnoreSpecialsByDefault);
             groupBox19.Controls.Add(label24);
             groupBox19.Controls.Add(cbTimeZone);
             groupBox19.Controls.Add(rbDefShowUseSubFolders);
@@ -4897,7 +4865,7 @@ namespace TVRename.Forms
             groupBox19.Margin = new Padding(4, 3, 4, 3);
             groupBox19.Name = "groupBox19";
             groupBox19.Padding = new Padding(4, 3, 4, 3);
-            groupBox19.Size = new Size(456, 203);
+            groupBox19.Size = new Size(456, 231);
             groupBox19.TabIndex = 57;
             groupBox19.TabStop = false;
             groupBox19.Text = "Default TV Show Settings";
@@ -4906,7 +4874,7 @@ namespace TVRename.Forms
             // 
             label24.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label24.AutoSize = true;
-            label24.Location = new Point(10, 172);
+            label24.Location = new Point(10, 200);
             label24.Margin = new Padding(4, 0, 4, 0);
             label24.Name = "label24";
             label24.Size = new Size(98, 15);
@@ -4919,7 +4887,7 @@ namespace TVRename.Forms
             cbTimeZone.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             cbTimeZone.DropDownStyle = ComboBoxStyle.DropDownList;
             cbTimeZone.FormattingEnabled = true;
-            cbTimeZone.Location = new Point(119, 163);
+            cbTimeZone.Location = new Point(116, 197);
             cbTimeZone.Margin = new Padding(4, 3, 4, 3);
             cbTimeZone.Name = "cbTimeZone";
             cbTimeZone.Size = new Size(330, 23);
@@ -4928,7 +4896,7 @@ namespace TVRename.Forms
             // rbDefShowUseSubFolders
             // 
             rbDefShowUseSubFolders.AutoSize = true;
-            rbDefShowUseSubFolders.Location = new Point(204, 130);
+            rbDefShowUseSubFolders.Location = new Point(202, 150);
             rbDefShowUseSubFolders.Margin = new Padding(4, 3, 4, 3);
             rbDefShowUseSubFolders.Name = "rbDefShowUseSubFolders";
             rbDefShowUseSubFolders.Size = new Size(112, 19);
@@ -4940,7 +4908,7 @@ namespace TVRename.Forms
             // rbDefShowUseBase
             // 
             rbDefShowUseBase.AutoSize = true;
-            rbDefShowUseBase.Location = new Point(34, 130);
+            rbDefShowUseBase.Location = new Point(32, 150);
             rbDefShowUseBase.Margin = new Padding(4, 3, 4, 3);
             rbDefShowUseBase.Name = "rbDefShowUseBase";
             rbDefShowUseBase.Size = new Size(96, 19);
@@ -4952,7 +4920,7 @@ namespace TVRename.Forms
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(10, 111);
+            label12.Location = new Point(8, 131);
             label12.Margin = new Padding(4, 0, 4, 0);
             label12.Name = "label12";
             label12.Size = new Size(133, 15);
@@ -4963,7 +4931,7 @@ namespace TVRename.Forms
             // 
             cmbDefShowLocation.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             cmbDefShowLocation.FormattingEnabled = true;
-            cmbDefShowLocation.Location = new Point(34, 78);
+            cmbDefShowLocation.Location = new Point(32, 98);
             cmbDefShowLocation.Margin = new Padding(4, 3, 4, 3);
             cmbDefShowLocation.Name = "cmbDefShowLocation";
             cmbDefShowLocation.Size = new Size(415, 23);
@@ -4972,7 +4940,7 @@ namespace TVRename.Forms
             // cbDefShowUseDefLocation
             // 
             cbDefShowUseDefLocation.AutoSize = true;
-            cbDefShowUseDefLocation.Location = new Point(10, 50);
+            cbDefShowUseDefLocation.Location = new Point(8, 70);
             cbDefShowUseDefLocation.Margin = new Padding(4, 3, 4, 3);
             cbDefShowUseDefLocation.Name = "cbDefShowUseDefLocation";
             cbDefShowUseDefLocation.Size = new Size(135, 19);
@@ -4984,7 +4952,7 @@ namespace TVRename.Forms
             // cbDefShowAutoFolders
             // 
             cbDefShowAutoFolders.AutoSize = true;
-            cbDefShowAutoFolders.Location = new Point(10, 23);
+            cbDefShowAutoFolders.Location = new Point(8, 22);
             cbDefShowAutoFolders.Margin = new Padding(4, 3, 4, 3);
             cbDefShowAutoFolders.Name = "cbDefShowAutoFolders";
             cbDefShowAutoFolders.Size = new Size(185, 19);
@@ -5007,7 +4975,7 @@ namespace TVRename.Forms
             groupBox18.Controls.Add(cbDefShowIncludeFuture);
             groupBox18.Controls.Add(cbDefShowDoRenaming);
             groupBox18.Controls.Add(cbDefShowNextAirdate);
-            groupBox18.Location = new Point(7, 273);
+            groupBox18.Location = new Point(7, 300);
             groupBox18.Margin = new Padding(4, 3, 4, 3);
             groupBox18.Name = "groupBox18";
             groupBox18.Padding = new Padding(4, 3, 4, 3);
@@ -6471,6 +6439,17 @@ namespace TVRename.Forms
             optUpdateCheckAlways.UseVisualStyleBackColor = true;
             optUpdateCheckAlways.CheckedChanged += updateCheckOption_CheckedChanged;
             // 
+            // cbIgnoreSpecialsByDefault
+            // 
+            cbIgnoreSpecialsByDefault.AutoSize = true;
+            cbIgnoreSpecialsByDefault.Location = new Point(8, 45);
+            cbIgnoreSpecialsByDefault.Margin = new Padding(4, 3, 4, 3);
+            cbIgnoreSpecialsByDefault.Name = "cbIgnoreSpecialsByDefault";
+            cbIgnoreSpecialsByDefault.Size = new Size(105, 19);
+            cbIgnoreSpecialsByDefault.TabIndex = 8;
+            cbIgnoreSpecialsByDefault.Text = "Ignore Specials";
+            cbIgnoreSpecialsByDefault.UseVisualStyleBackColor = true;
+            // 
             // Preferences
             // 
             AcceptButton = OKButton;
@@ -6998,9 +6977,6 @@ namespace TVRename.Forms
         private System.Windows.Forms.RadioButton rdoMovieTMDB;
         private System.Windows.Forms.RadioButton rdoMovieTheTVDB;
         private System.Windows.Forms.GroupBox gbTMDB;
-        private System.Windows.Forms.Label label80;
-        private System.Windows.Forms.Label label81;
-        private System.Windows.Forms.TextBox tbTMDBPercentDirty;
         private System.Windows.Forms.Label label82;
         private System.Windows.Forms.ComboBox cbTMDBLanguages;
         private System.Windows.Forms.TabPage tpMovieDefaults;
@@ -7123,5 +7099,6 @@ namespace TVRename.Forms
         private global::System.Windows.Forms.RadioButton rdoGlobalReleaseDates;
         private global::System.Windows.Forms.RadioButton rdoRegionalReleaseDates;
         private global::System.Windows.Forms.Label label100;
+        private CheckBox cbIgnoreSpecialsByDefault;
     }
 }

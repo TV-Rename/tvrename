@@ -192,13 +192,9 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             {
                 recoverText = createdDoc.LoadErr;
             }
-
-            bool oneOfTheCacheFailedToLoad =
-                !TheTVDB.LocalCache.Instance.LoadOk || !TVmaze.LocalCache.Instance.LoadOk; //todo investigate TMDB??
-
-            if (oneOfTheCacheFailedToLoad && !string.IsNullOrEmpty(CachePersistor.LoadErr))
+            else if (!(TheTVDB.LocalCache.Instance.LoadOk && TMDB.LocalCache.Instance.LoadOk && TVmaze.LocalCache.Instance.LoadOk)  && !string.IsNullOrEmpty(CachePersistor.LoadErr))
             {
-                recoverText += $"{Environment.NewLine}{CachePersistor.LoadErr}";
+                recoverText = CachePersistor.LoadErr;
             }
         } while (recover);
 

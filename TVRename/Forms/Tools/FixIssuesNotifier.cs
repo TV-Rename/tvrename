@@ -5,15 +5,21 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
 namespace TVRename.Forms.Tools;
 
 public class FixIssuesNotifier : TaskNotifier
 {
-    public FixIssuesNotifier(LongOperation operation, CancellationTokenSource cts) : base("Fix Issues", cts)
+    Progress<TaskProgress> progressHandler;
+    public FixIssuesNotifier(CancellationTokenSource cts) : base("Fix Issues", cts)
     {
-        var progressHandler = new Progress<TaskProgress>(UpdateProgress);
+        progressHandler = new Progress<TaskProgress>(UpdateProgress);
+    }
+    public async Task Run(LongOperation operation)
+    {
+        task = operation.StartAsync(progressHandler, cancellationToken.Token);
+        await Task.Yield();
 
-        task = operation.StartAsync(progressHandler, cts.Token);
+        await task;
+        Close();
     }
 }

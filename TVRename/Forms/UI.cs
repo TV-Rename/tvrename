@@ -1150,7 +1150,6 @@ public partial class UI : Form, IDialogParent
 
         progressUI.Start(task);
         await task;
-
         progressUI.Close();
 
         tabControl1.SelectTab(tbAllInOne);

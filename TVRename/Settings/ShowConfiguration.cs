@@ -99,6 +99,11 @@ public class ShowConfiguration : MediaConfiguration
         ForceCheckNoAirdate = TVSettings.Instance.DefShowIncludeNoAirdate;
         ForceCheckFuture = TVSettings.Instance.DefShowIncludeFuture;
 
+        if (TVSettings.Instance.IgnoreSpecialsByDefault)
+        {
+            IgnoreSeasons.Add(0);
+        }
+
         AutoAddCustomFolderFormat = CustomSeasonName.DefaultStyle();
 
         AutoAddFolderBase =

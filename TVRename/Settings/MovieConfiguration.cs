@@ -290,12 +290,10 @@ public class MovieConfiguration : MediaConfiguration
             new XElement("ForceCheckNoAirdate", ForceCheckNoAirdate),
             new XElement("ForceCheckFuture", ForceCheckFuture),
             ManualLocations.Count != 0
-                ? new XElement("Locations",
-                    ManualLocations.Select(str => new XElement("Location", str)))
+                ? new XElement("Locations", ManualLocations.Select(str => new XElement("Location", str)))
                 : null,
             AliasNames.Count != 0
-                ? new XElement("AliasNames",
-                    AliasNames.Select(str => new XElement("Alias", str)))
+                ? new XElement("AliasNames", AliasNames.Select(str => new XElement("Alias", str)))
                 : null
         );
     }

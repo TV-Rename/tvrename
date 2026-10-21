@@ -32,14 +32,14 @@ internal abstract class SettingsCheck(TVDoc doc)
         IsError = true;
     }
 
-    public void Fix()
+    public async Task Fix()
     {
         try
         {
             IsError = false;
             ErrorText = string.Empty;
             FixInternal();
-            MarkMediaDirtyAsync();
+            await MarkMediaDirtyAsync();
             Doc.SetDirty();
         }
         catch (FixCheckException e)
