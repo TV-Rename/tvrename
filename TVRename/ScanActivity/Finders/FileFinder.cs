@@ -379,7 +379,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
 
     protected void KeepTogether(ItemList actionlist, bool fromLibrary)
     {
-        KeepTogether(actionlist, fromLibrary, !MDoc.Args.Unattended && !MDoc.Args.Hide, MDoc);
+        KeepTogether(actionlist, fromLibrary, !MDoc.Args.Unattended && !MDoc.Args.Hide && Environment.UserInteractive, MDoc);
     }
 
     public static void KeepTogether(ItemList actionlist, bool fromLibrary, bool showErrors, TVDoc d)

@@ -822,9 +822,11 @@ internal static class FinderHelper
         //If there are no LibraryFolders then we can't use the simplified UI
         if (TVSettings.Instance.LibraryFolders.Count + TVSettings.Instance.MovieLibraryFolders.Count == 0)
         {
-            MessageBox.Show(
-                "Please add some monitor (library) folders under 'Bulk Add TV Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
-                "Can't Auto Add Media", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (Environment.UserInteractive){
+                MessageBox.Show(
+                    "Please add some monitor (library) folders under 'Bulk Add TV Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
+                    "Can't Auto Add Media", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             return;
         }

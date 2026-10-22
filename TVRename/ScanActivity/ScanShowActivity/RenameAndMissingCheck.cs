@@ -241,6 +241,8 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
                         LOGGER.Warn(
                             $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
 
+                        if (newFile.Length == actualFile.Length) { }
+
                         if (!settings.Unattended && TVSettings.Instance.ChooseWhenMultipleEpisodesMatch)
                         {
                             bool? result = ScanHelper.AskUserAboutFileReplacement(actualFile, newFile, ep,

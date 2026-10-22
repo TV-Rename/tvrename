@@ -164,10 +164,9 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             createdDoc = new TVDoc(settingsFile, commandLineArgs);
 
             // Try loading TheTVDB cache file
-            bool showIssues = commandLineArgs is { Unattended: false, Hide: false };
+            bool showIssues = commandLineArgs is { Unattended: false, Hide: false } && Environment.UserInteractive;
             AlertUser("Loading TVDB Cache", 20);
             await TheTVDB.LocalCache.Instance.SetupAsync(tvdbFile, PathManager.TVDBFile, showIssues, CancellationToken.None );
-
             AlertUser("Loading TVMaze Cache", 30);
             await TVmaze.LocalCache.Instance.SetupAsync(tvMazeFile, PathManager.TVmazeFile, showIssues, CancellationToken.None);
             AlertUser("Loading TMDB Cache", 40);

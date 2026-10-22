@@ -115,6 +115,11 @@ public class BulkAddMovieManager(TVDoc doc)
             Logger.Info($"Can't access {di2.FullName}, so ignoring it");
             return (true, null);
         }
+        catch (System.IO.IOException ex)
+        {
+            Logger.Warn(ex,$"Can't access {di2.FullName}, so ignoring it");
+            return (true, null);
+        }
     }
 
     public static async Task GuessMovieAsync(PossibleNewMovie ai, bool showErrorMsgBox)

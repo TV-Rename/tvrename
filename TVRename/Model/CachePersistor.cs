@@ -52,7 +52,7 @@ internal static class CachePersistor
             Logger.Error($"Complete failure to save {cacheFile.FullName}. {e.Message}");
 
             // Do not show dialog during shutdown to prevent hanging
-            if (!isShuttingDown)
+            if (!isShuttingDown && Environment.UserInteractive)
             {
                 DialogResult dr = MessageBox.Show($"Could not save {cacheFile.Name} due to {e.Message}. Local cache will be lost. Retry? ", "TV Rename",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Error);

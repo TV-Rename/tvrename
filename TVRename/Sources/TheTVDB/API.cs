@@ -116,7 +116,7 @@ public static class API
         }
         catch (Exception e)
         {
-            Logger.Error($"Failed to save {response} to {auditLogFile}", e);
+            Logger.Error($"Failed to save {response} to {auditLogFile} {e.Message}");
         }
     }
 
