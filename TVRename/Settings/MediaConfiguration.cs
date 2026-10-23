@@ -166,6 +166,21 @@ public abstract class MediaConfiguration : ISeriesSpecifier
         }
     }
 
+    public string ProviderName
+    {
+        get
+        {
+            //Needs to match FileHelper.ExtractIdsFrom: tmdb|tvdb|tvmaze
+            return Provider switch
+            {
+                TVDoc.ProviderType.TheTVDB => "tvdb",
+                TVDoc.ProviderType.TMDB => "tmdb",
+                TVDoc.ProviderType.TVmaze => "tvmaze",
+                _ => string.Empty
+            };
+        }
+    }
+
     public int? TvdbId => TvdbCode;
 
     public string? Name => LastName;

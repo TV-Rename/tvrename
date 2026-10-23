@@ -35,7 +35,8 @@ public static class CustomMovieName
         "{TVDBId}",
         "{TMDBId}",
         "{TVMazeId}",
-
+        "{Provider}",
+        "{ProviderId}",
     ];
 
     public static List<string> ExamplePresets(MovieConfiguration s)
@@ -110,12 +111,14 @@ public static class CustomMovieName
             .ReplaceInsensitive("{ContentRating}", m.CachedMovie?.ContentRating)
             .ReplaceInsensitive("{Year}", m.CachedMovie?.Year.ToString())
             .ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb)
-            .ReplaceInsensitive("{TVDBId}", m.CachedMovie?.TvdbId.ToString())
-            .ReplaceInsensitive("{TMDBId}", m.CachedMovie?.TmdbId.ToString())
-            .ReplaceInsensitive("{TVMazeId}", m.CachedMovie?.TvMazeId.ToString())
+            .ReplaceInsensitive("{TVDBId}", m.TvdbId.ToString())
+            .ReplaceInsensitive("{TMDBId}", m.TmdbId.ToString())
+            .ReplaceInsensitive("{TVMazeId}", m.TvMazeId.ToString())
             .ReplaceInsensitive("{CollectionName}", m.CachedMovie?.CollectionName)
             .ReplaceInsensitive("{CollectionOrder}", m.CollectionOrder?.ToString())
-            .ReplaceInsensitive("{MovieType}", m.CachedMovie?.MovieType);
+            .ReplaceInsensitive("{MovieType}", m.CachedMovie?.MovieType)
+            .ReplaceInsensitive("{Provider}", m.ProviderName)
+            .ReplaceInsensitive("{ProviderId}", m.Code?.ToString());
 
         return urlEncode ? name.Trim()
             : isfilename ? TVSettings.Instance.FilenameFriendly(name.Trim())

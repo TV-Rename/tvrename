@@ -31,6 +31,8 @@ public static class CustomTvShowName
         "{TVDBId}",
         "{TMDBId}",
         "{TVMazeId}",
+        "{Provider}",
+        "{ProviderId}",
     ];
 
     public static List<string> ExamplePresets(ShowConfiguration s)
@@ -99,6 +101,8 @@ public static class CustomTvShowName
         name = name.ReplaceInsensitive("{TVDBId}", si?.TvdbId.ToString());
         name = name.ReplaceInsensitive("{TMDBId}", si?.TmdbId.ToString());
         name = name.ReplaceInsensitive("{TVMazeId}", si?.TvMazeId.ToString());
+        name = name.ReplaceInsensitive("{Provider}", si?.ProviderName);
+        name = name.ReplaceInsensitive("{ProviderId}", si?.ProviderCode?.ToString());
 
         if (urlEncode)
         {
