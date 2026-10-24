@@ -19,7 +19,7 @@ public static class API
 {
     // ReSharper disable once ConvertToConstant.Local
     // ReSharper disable once InconsistentNaming
-    private static readonly string APIRoot = "https://yts.gg/api/v2/";
+    private static readonly string APIRoot = "https://movies-api.accel.li/api/v2/";
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
