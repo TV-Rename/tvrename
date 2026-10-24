@@ -273,20 +273,7 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
         }
     }
 
-    public int? ProviderCode
-    {
-        get
-        {
-            return Source switch
-            {
-                TVDoc.ProviderType.libraryDefault => throw new ArgumentOutOfRangeException(),
-                TVDoc.ProviderType.TVmaze => TvMazeCode,
-                TVDoc.ProviderType.TheTVDB => TvdbCode,
-                TVDoc.ProviderType.TMDB => TmdbCode,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
-    }
+    public int? ProviderCode => IdCode(Source);
 
     public int? TvMazeId => TvMazeCode;
 
