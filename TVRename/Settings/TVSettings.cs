@@ -856,40 +856,22 @@ public sealed class TVSettings
 
     public static bool OKExtensionsString(string? s)
     {
-        if (string.IsNullOrEmpty(s))
-        {
-            return true;
-        }
+        return string.IsNullOrEmpty(s) || s.FromScsv().All(OKExtension);
+    }
 
-        var t = s.FromScsv();
-        foreach (string s2 in t)
-        {
-            if (string.IsNullOrEmpty(s2) || !s2.StartsWith('.') || s2.ContainsAnyCharactersFrom(CompulsoryReplacements()) || s2.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
-            {
-                return false;
-            }
-        }
-
-        return true;
+    private static bool OKExtension(string s2)
+    {
+        return OKExtensionNoDot(s2) && s2.StartsWith('.');
     }
 
     public static bool OKExtensionsStringNoDotCheck(string? s)
     {
-        if (string.IsNullOrEmpty(s))
-        {
-            return true;
-        }
+        return string.IsNullOrEmpty(s) || s.FromScsv().All(OKExtensionNoDot);
+    }
 
-        var t = s.FromScsv();
-        foreach (string s2 in t)
-        {
-            if (string.IsNullOrEmpty(s2) || s2.ContainsAnyCharactersFrom(CompulsoryReplacements()) || s2.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
-            {
-                return false;
-            }
-        }
-
-        return true;
+    private static bool OKExtensionNoDot(string s2)
+    {
+        return !string.IsNullOrEmpty(s2) && !s2.ContainsAnyCharactersFrom(CompulsoryReplacements()) && !s2.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars());
     }
 
     public static bool OKExporterLocation(string? s)

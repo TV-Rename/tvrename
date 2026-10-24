@@ -32,7 +32,7 @@ public partial class QuickLocateForm : Form
         cbDirectory.ResumeLayout();
 
         initialFolder = Path.DirectorySeparatorChar + hint;
-        txtShowFolder.Text = initialFolder.ToUiVersion();
+        txtShowFolder.Text = initialFolder;
         DirectoryFullPath = string.Empty;
         RootDirectory = string.Empty;
     }
