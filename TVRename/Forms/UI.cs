@@ -1079,9 +1079,9 @@ public partial class UI : Form, IDialogParent
                 return;
             case TVSettings.UpdateCheckMode.Interval:
                 {
-                    TimeSpan lastUpdate = mDoc.CurrentAppState.LastUpdate;
+                    TimeSpan? lastUpdate = mDoc.CurrentAppState?.LastUpdate;
                     TimeSpan interval = TVSettings.Instance.UpdateCheckInterval;
-                    if (lastUpdate >= interval)
+                    if (!lastUpdate.HasValue || lastUpdate >= interval)
                     {
                         UpdateTimer.Start();
                     }
@@ -2696,7 +2696,11 @@ public partial class UI : Form, IDialogParent
 
         try
         {
-            mDoc.CurrentAppState.UpdateLastCheckTime();
+            var x = mDoc.CurrentAppState;
+            if (x is not null)
+            {
+                await x.UpdateLastCheckTime();
+            }
         }
         catch (Exception ex)
         {

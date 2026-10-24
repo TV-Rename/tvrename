@@ -38,7 +38,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
     public readonly MovieLibrary FilmLibrary;
     public readonly CommandLineArgs Args;
     internal readonly TVRenameStats CurrentStats;
-    internal readonly Settings.State CurrentAppState;
+    internal Settings.State? CurrentAppState;
     public readonly ItemList TheActionList;
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     internal readonly ActionEngine ActionManager;
@@ -87,16 +87,13 @@ public class TVDoc : IDisposable, IAsyncDisposable
             // not worried if stats loading fails
         }
 
-        try
-        {
-            CurrentAppState = Settings.State.LoadFromDefaultFile();
-        }
-        catch (Exception ex)
-        {
-            Logger.Warn(ex, "Could not load app state file.");
-            CurrentAppState = new Settings.State();
-        }
         ActionManager = new ActionEngine(CurrentStats);
+    }
+
+
+    internal async Task LoadState()
+    {
+        CurrentAppState = await Settings.State.LoadFromDefaultFileAsync();
     }
 
     public TVRenameStats Stats()

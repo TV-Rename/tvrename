@@ -162,6 +162,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             // Try loading settings file
             AlertUser("Settings and library", 10);
             createdDoc = new TVDoc(settingsFile, commandLineArgs);
+            await createdDoc.LoadState();
 
             // Try loading TheTVDB cache file
             bool showIssues = commandLineArgs is { Unattended: false, Hide: false } && Environment.UserInteractive;
