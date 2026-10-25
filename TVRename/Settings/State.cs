@@ -5,9 +5,8 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
-
 namespace TVRename.Settings;
+using Polly;
 
 public class State
 {
@@ -58,7 +57,27 @@ public class State
 
     private async Task SaveToFile(string path)
     {
-        await XmlHelper.SaveXmlFileAsync(GenerateXML(), path);
+        try
+        {
+            Policy retryPolicy = Policy
+                .Handle<Exception>()
+                .Retry(3, (exception, retryCount) => Logger.Warn(exception, $"Retry {retryCount}/3 to save {path}."));
+
+            await retryPolicy.Execute(async () => await XmlHelper.SaveXmlFileAsync(GenerateXML(), path));
+        }
+        catch (Exception e)
+        {
+            if (Environment.UserInteractive)
+            {
+                Logger.Error($"Complete failure to save {path}. {e.Message}");
+                DialogResult dr = MessageBox.Show($"Could not save {path} due to {e.Message}. State will be lost. Retry? ", "TV Rename",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                if (dr != DialogResult.No)
+                {
+                    await SaveToFile(path);
+                }
+            }
+        }
     }
 
     private XDocument GenerateXML()

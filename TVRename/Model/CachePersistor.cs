@@ -45,7 +45,7 @@ internal static class CachePersistor
 
         try
         {
-            await retryPolicy.Execute(async () => { await SaveCacheInternalAsync(series, movies, cacheFile, timestamp); });
+            await retryPolicy.Execute(async () => await SaveCacheInternalAsync(series, movies, cacheFile, timestamp));
         }
         catch (Exception e)
         {
