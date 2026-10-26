@@ -1160,7 +1160,7 @@ public class ShowConfiguration : MediaConfiguration
                 ProcessedEpisode pe2 =
                     new(ei, this, ProcessedEpisode.ProcessedEpisodeType.split)
                     {
-                        Name = $"{nameBase} (Part {i})",
+                        Name = $"{nameBase}",
                         AiredEpNum = ei.AiredEpNum,
                         DvdEpNum = ei.DvdEpNum,
                         EpNum2 = ei.EpNum2,

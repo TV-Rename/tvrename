@@ -253,7 +253,7 @@ public class CustomEpisodeName
 
             if (pe.Type == ProcessedEpisode.ProcessedEpisodeType.split)
             {
-                name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString(episodeFormat)+".pt"+pe.Part);
+                name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString(episodeFormat))+" - part"+pe.Part;
                 name = name.ReplaceInsensitive("{Episode2}", string.Empty);
             }
             else
