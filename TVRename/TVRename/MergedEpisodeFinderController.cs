@@ -122,14 +122,14 @@ internal static class MergedEpisodeFinderController
             //Test the file sizes in the season
             //More than 40% longer
             FileInfo possibleDupFile = (await dfc.FindEpOnDiskAsync(possibleDupEpisode))[0];
-            int? dupMovieLength = possibleDupFile.GetFilmLength();
-            List<int> otherMovieLengths = [];
+            TimeSpan? dupMovieLength = await possibleDupFile.GetFilmLengthAsync();
+            List<TimeSpan> otherMovieLengths = [];
 
             foreach (FileInfo file in possibleDupFile.Directory.EnumerateFiles())
             {
                 if (file.IsMovieFile())
                 {
-                    int? size = file.GetFilmLength();
+                    TimeSpan? size = await file.GetFilmLengthAsync();
                     if (size.HasValue)
                     {
                         otherMovieLengths.Add(size.Value);
@@ -137,8 +137,8 @@ internal static class MergedEpisodeFinderController
                 }
             }
 
-            int? averageMovieLength = otherMovieLengths.Count == 1
-                ? otherMovieLengths.Sum()
+            TimeSpan? averageMovieLength = otherMovieLengths.Count == 1
+                ? otherMovieLengths.First()
                 : (otherMovieLengths.Sum() - dupMovieLength) / (otherMovieLengths.Count - 1);
 
             largerFileSize = dupMovieLength > averageMovieLength * 1.4;
@@ -161,5 +161,10 @@ internal static class MergedEpisodeFinderController
         }
 
         return (oneFound, largerFileSize);
+    }
+
+    static TimeSpan Sum(this List<TimeSpan> source)
+    {
+        return TimeSpan.FromTicks(source.Sum(ts => ts.Ticks));
     }
 }

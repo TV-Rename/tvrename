@@ -125,7 +125,7 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
             ProcessFolder(me, folderName, dfc, thisRound, matchedFiles);
         }
 
-        ProcessMissingItem(newList, toRemove, me, thisRound, matchedFiles,
+        await ProcessMissingItemAsync(newList, toRemove, me, thisRound, matchedFiles,
             TVSettings.Instance.UseFullPathNameToMatchLibraryFolders);
     }
 

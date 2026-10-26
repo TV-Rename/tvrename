@@ -60,11 +60,11 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
             }
 
             // all the folders for this particular season
-            CheckSeason(si, dfc, settings, snum, folders, timeForBannerUpdate);
+            await CheckSeason(si, dfc, settings, snum, folders, timeForBannerUpdate);
         } // for each season of this show
     }
 
-    private void CheckSeason(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, SafeList<string> folders, bool timeForBannerUpdate)
+    private async Task CheckSeason(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, SafeList<string> folders, bool timeForBannerUpdate)
     {
         bool folderNotDefined = folders.Count == 0;
         if (folderNotDefined && TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons())
@@ -75,11 +75,11 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
 
         foreach (string folder in folders)
         {
-            CheckSeasonFolder(si, dfc, settings, snum, timeForBannerUpdate, folder);
+            await CheckSeasonFolder(si, dfc, settings, snum, timeForBannerUpdate, folder);
         } // for each folder for this season of this show
     }
 
-    private void CheckSeasonFolder(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum,
+    private async Task CheckSeasonFolder(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum,
         bool timeForBannerUpdate, string folder)
     {
         if (settings.Token.IsCancellationRequested)
@@ -156,7 +156,7 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
                 string newName = TVSettings.Instance.FilenameFriendly(
                     TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
-                FileInfo? fileWorthAdding = CheckFile(folder, fi, actualFile, newName, ep, files, settings);
+                FileInfo? fileWorthAdding = await CheckFileAsync(folder, fi, actualFile, newName, ep, files, settings);
 
                 if (fileWorthAdding != null)
                 {
@@ -200,7 +200,7 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
             }
         } // up to date check, for each episode
     }
-    private FileInfo? CheckFile(string folder, FileInfo fi, FileInfo actualFile, string newName, ProcessedEpisode ep, IEnumerable<FileInfo> files, TVDoc.ScanSettings settings)
+    private async Task<FileInfo?> CheckFileAsync(string folder, FileInfo fi, FileInfo actualFile, string newName, ProcessedEpisode ep, IEnumerable<FileInfo> files, TVDoc.ScanSettings settings)
     {
         try
         {
@@ -241,11 +241,14 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
                         LOGGER.Warn(
                             $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
 
-                        if (newFile.Length == actualFile.Length) { }
+                        if (newFile.Length == actualFile.Length)
+                        {
+                            LOGGER.Warn($"Identified that {actualFile.FullName} is the same sizer as {newName}.");
+                        }
 
                         if (!settings.Unattended && TVSettings.Instance.ChooseWhenMultipleEpisodesMatch)
                         {
-                            bool? result = ScanHelper.AskUserAboutFileReplacement(actualFile, newFile, ep,
+                            bool? result = await ScanHelper.AskUserAboutFileReplacementAsync(actualFile, newFile, ep,
                                 settings.Owner,
                                 Doc, Doc.TheActionList);
 

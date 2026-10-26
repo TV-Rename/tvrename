@@ -582,7 +582,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
         return actionlist.CopyMoveRename.Any(cmAction => cmAction.SameSource(newItem));
     }
 
-    protected void ProcessMissingItem(ItemList newList, ItemList toRemove, ItemMissing me, Dictionary<FileInfo, ItemList> thisRound, List<FileInfo> matchedFiles, bool useFullPath)
+    protected async Task ProcessMissingItemAsync(ItemList newList, ItemList toRemove, ItemMissing me, Dictionary<FileInfo, ItemList> thisRound, List<FileInfo> matchedFiles, bool useFullPath)
     {
         if (matchedFiles.Count == 1)
         {
@@ -610,7 +610,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
 
         if (matchedFiles.Count > 1)
         {
-            List<FileInfo> bestMatchedFiles = IdentifyBestMatches(matchedFiles);
+            List<FileInfo> bestMatchedFiles = await IdentifyBestMatchesAsync(matchedFiles);
 
             if (bestMatchedFiles.Count == 1)
             {
@@ -632,7 +632,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
         }
     }
 
-    private static List<FileInfo> IdentifyBestMatches(List<FileInfo> matchedFiles)
+    private static async Task<List<FileInfo>> IdentifyBestMatchesAsync(List<FileInfo> matchedFiles)
     {
         //See whether there are any of the matched files that stand out
         List<FileInfo> bestMatchedFiles = [];
@@ -647,7 +647,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
                     continue;
                 }
 
-                if (FileHelper.BetterQualityFile(matchedFile, compareAgainst) !=
+                if (await FileHelper.BetterQualityFileAsync(matchedFile, compareAgainst) !=
                     FileHelper.VideoComparison.firstFileBetter)
                 {
                     betterThanAllTheRest = false;

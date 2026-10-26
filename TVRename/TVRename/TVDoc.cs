@@ -1985,7 +1985,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
                 }
                 else
                 {
-                    bool? deleteFile = AskForBetter(fi, incumbent, chosenShow, owner);
+                    bool? deleteFile = await AskForBetterAsync(fi, incumbent, chosenShow, owner);
                     if (deleteFile is false)
                     {
                         fileCanBeDeleted = false;
@@ -2029,9 +2029,9 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     /// <summary>Asks user about whether to replace a file.</summary>
     /// <returns>false if the newFile is needed.</returns>
-    private bool? AskForBetter(FileInfo newFile, FileInfo existingFile, MovieConfiguration chosenShow, IDialogParent owner)
+    private async Task<bool?> AskForBetterAsync(FileInfo newFile, FileInfo existingFile, MovieConfiguration chosenShow, IDialogParent owner)
     {
-        FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
+        FileHelper.VideoComparison result = await FileHelper.BetterQualityFileAsync(existingFile, newFile);
 
         switch (result)
         {
@@ -2042,7 +2042,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             case FileHelper.VideoComparison.cantTell:
             case FileHelper.VideoComparison.similar:
                 {
-                    return ScanHelper.AskUserAboutFileReplacement(newFile, existingFile, chosenShow, owner, this, TheActionList);
+                    return await ScanHelper.AskUserAboutFileReplacementAsync(newFile, existingFile, chosenShow, owner, this, TheActionList);
                 }
             //the other cases of the files being the same or the existing file being better are not enough to save the file
             case FileHelper.VideoComparison.firstFileBetter:

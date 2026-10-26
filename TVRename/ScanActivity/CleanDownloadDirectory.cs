@@ -335,7 +335,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
                     continue;
                 }
 
-                bool? deleteFile = ReviewFile(unattended, fi, matchingShows, existingFile, firstMatchingEpisode, owner);
+                bool? deleteFile = await ReviewFileAsync(unattended, fi, matchingShows, existingFile, firstMatchingEpisode, owner);
                 if (deleteFile is false)
                 {
                     fileCanBeDeleted = false;
@@ -362,7 +362,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
                     continue;
                 }
 
-                bool? deleteFile = ReviewFile(unattended, fi, matchingMovies, existingFile, testMovie, owner);
+                bool? deleteFile = await ReviewFileAsync(unattended, fi, matchingMovies, existingFile, testMovie, owner);
                 if (deleteFile is false)
                 {
                     fileCanBeDeleted = false;
@@ -410,9 +410,9 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private bool? ReviewFile(bool unattended, FileInfo newFile, IReadOnlyCollection<ShowConfiguration> matchingShows, FileInfo existingFile, ProcessedEpisode pep, IDialogParent owner)
+    private async Task<bool?> ReviewFileAsync(bool unattended, FileInfo newFile, IReadOnlyCollection<ShowConfiguration> matchingShows, FileInfo existingFile, ProcessedEpisode pep, IDialogParent owner)
     {
-        FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
+        FileHelper.VideoComparison result = await FileHelper.BetterQualityFileAsync(existingFile, newFile);
 
         FileHelper.VideoComparison newResult = result;
 
@@ -457,7 +457,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
                 {
                     if (matchingShows.Count <= 1)
                     {
-                        return ScanHelper.AskUserAboutFileReplacement(newFile, existingFile, pep, owner, MDoc, returnActions);
+                        return await ScanHelper.AskUserAboutFileReplacementAsync(newFile, existingFile, pep, owner, MDoc, returnActions);
                     }
 
                     LOGGER.Warn(
@@ -479,9 +479,9 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         return null;
     }
 
-    private bool? ReviewFile(bool unattended, FileInfo newFile, IReadOnlyCollection<MovieConfiguration> matchingShows, FileInfo existingFile, MovieConfiguration pep, IDialogParent owner)
+    private async Task<bool?> ReviewFileAsync(bool unattended, FileInfo newFile, IReadOnlyCollection<MovieConfiguration> matchingShows, FileInfo existingFile, MovieConfiguration pep, IDialogParent owner)
     {
-        FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
+        FileHelper.VideoComparison result = await FileHelper.BetterQualityFileAsync(existingFile, newFile);
 
         FileHelper.VideoComparison newResult = result;
 
@@ -526,7 +526,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
                 {
                     if (matchingShows.Count <= 1)
                     {
-                        return ScanHelper.AskUserAboutFileReplacement(newFile, existingFile, pep, owner, MDoc, returnActions);
+                        return await ScanHelper.AskUserAboutFileReplacementAsync(newFile, existingFile, pep, owner, MDoc, returnActions);
                     }
 
                     LOGGER.Warn(

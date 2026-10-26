@@ -12,11 +12,12 @@ public static class ScanHelper
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    public static bool? AskUserAboutFileReplacement(FileInfo newFile, FileInfo existingFile, ProcessedEpisode pep, IDialogParent owner, TVDoc doc, ItemList returnActions)
+    public static async Task<bool?> AskUserAboutFileReplacementAsync(FileInfo newFile, FileInfo existingFile, ProcessedEpisode pep, IDialogParent owner, TVDoc doc, ItemList returnActions)
     {
         try
         {
             using ChooseFile question = new(existingFile, newFile);
+            await question.Setup();
 
             owner.ShowChildDialog(question);
             ChooseFile.ChooseFileDialogResult result = question.Answer;
@@ -50,11 +51,12 @@ public static class ScanHelper
 
     /// <summary>Asks user about whether to replace a file.</summary>
     /// <returns>false if the newFile is needed.</returns>
-    public static bool? AskUserAboutFileReplacement(FileInfo newFile, FileInfo existingFile, MovieConfiguration pep, IDialogParent owner, TVDoc doc, ItemList returnActions)
+    public static async Task<bool?> AskUserAboutFileReplacementAsync(FileInfo newFile, FileInfo existingFile, MovieConfiguration pep, IDialogParent owner, TVDoc doc, ItemList returnActions)
     {
         try
         {
             using ChooseFile question = new(existingFile, newFile);
+            await question.Setup();
 
             owner.ShowChildDialog(question);
             ChooseFile.ChooseFileDialogResult result = question.Answer;

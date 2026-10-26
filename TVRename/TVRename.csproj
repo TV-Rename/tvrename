@@ -42,7 +42,7 @@
     <PackageReference Include="CefSharp.Common.NETCore" Version="152.0.100" />
     <PackageReference Include="CefSharp.WinForms.NETCore" Version="152.0.100" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="NLog" Version="6.2.1" />
+    <PackageReference Include="NLog" Version="6.2.2" />
     <PackageReference Include="AlphaFS" Version="2.2.6" />
     <PackageReference Include="CloudFlareUtilities" Version="1.3.0" />
     <PackageReference Include="GuerrillaNtp" Version="3.1.0" />
@@ -50,23 +50,23 @@
     <PackageReference Include="Ical.Net" Version="5.2.3" />
     <PackageReference Include="IMDbApiLib" Version="3.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
-    <PackageReference Include="MediaInfo.Wrapper.Core" Version="26.1.0" />
+    <PackageReference Include="MediaInfo.Wrapper.Core" Version="26.10.0" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.13" />
     <PackageReference Include="MscVersion" Version="1.0.0.9" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
-    <PackageReference Include="NLog.OutputDebugString" Version="6.2.1" />
+    <PackageReference Include="NLog.OutputDebugString" Version="6.2.2" />
     <PackageReference Include="NLog.Targets.Syslog" Version="7.0.0" />
     <PackageReference Include="NLog.Windows.Forms" Version="6.1.4" />
-    <PackageReference Include="NodaTime" Version="3.3.4" />
+    <PackageReference Include="NodaTime" Version="3.3.6" />
     <PackageReference Include="ObjectListView.Repack.NET6Plus" Version="2.9.5" />
     <PackageReference Include="Polly" Version="8.8.0" />
-    <PackageReference Include="SharpCompress" Version="0.50.4" />
+    <PackageReference Include="SharpCompress" Version="0.50.7" />
     <PackageReference Include="SourceGrid" Version="4.4.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
     <PackageReference Include="TagLibSharp" Version="2.3.0" />
-    <PackageReference Include="TimeZoneConverter" Version="7.2.0" />
+    <PackageReference Include="TimeZoneConverter" Version="8.0.0" />
     <PackageReference Include="TMDbLib" Version="3.0.0" />
     <PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.12.0.2" />
     <PackageReference Include="chromiumembeddedframework.runtime.win-arm64" Version="152.0.10" />

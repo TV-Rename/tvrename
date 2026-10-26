@@ -7,6 +7,7 @@
 //
 using Humanizer;
 using MediaInfo;
+using MediaInfo.Analysis;
 using Microsoft.WindowsAPICodePack.COMNative.Shell.PropertySystem;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
@@ -89,11 +90,24 @@ public static class FileHelper
         return extensionOkToRemove || fileOkToRemove;
     }
 
-    public static int? GetFrameWidth(this FileInfo movieFile)
+    public static async Task<int?> GetFrameWidthAsync(this FileInfo movieFile)
     {
-        return GetMetaDetails(movieFile, o => o.Properties.System.Video.FrameWidth, Parse, "GetFrameWidth",
-            wrapper => wrapper.Width, i => i);
+        var analyzer = MediaInfoAnalyzer.CreateDefault();
+        var result = await analyzer.AnalyzeAsync(movieFile.FullName);
+
+        return result.Success ? result.BestVideoStream?.Width : (int?)null;
     }
+
+    public static async Task<(int? height,int? width,TimeSpan? legth)> GetMovieDetailsAsync(this FileInfo movieFile)
+    {
+        var analyzer = MediaInfoAnalyzer.CreateDefault();
+        var result = await analyzer.AnalyzeAsync(movieFile.FullName);
+
+        return result.Success
+            ? (result.BestVideoStream?.Height,  result.BestVideoStream?.Width, result.General.Duration)
+            : ((int?)null, (int?)null, (TimeSpan?)null);
+    }
+
 
     public enum VideoComparison
     {
@@ -104,7 +118,7 @@ public static class FileHelper
         same
     }
 
-    public static VideoComparison BetterQualityFile(FileInfo incumbantFile, FileInfo newFile)
+    public static async Task<VideoComparison> BetterQualityFileAsync(FileInfo incumbantFile, FileInfo newFile)
     {
         if (!newFile.IsMovieFile())
         {
@@ -116,10 +130,8 @@ public static class FileHelper
             return VideoComparison.secondFileBetter;
         }
 
-        int? encumbantLength = incumbantFile.GetFilmLength();
-        int? newFileLength = newFile.GetFilmLength();
-        int? encumbantFrameWidth = incumbantFile.GetFrameWidth();
-        int? newFileFrameWidth = newFile.GetFrameWidth();
+        (int? _, int? newFileFrameWidth, TimeSpan? newFileLength) = await newFile.GetMovieDetailsAsync();
+        (int? _, int? encumbantFrameWidth, TimeSpan? encumbantLength) = await incumbantFile.GetMovieDetailsAsync();
 
         if (encumbantLength == newFileLength && encumbantFrameWidth == newFileFrameWidth &&
             newFile.Length == incumbantFile.Length)
@@ -183,10 +195,11 @@ public static class FileHelper
         return VideoComparison.similar;
     }
 
-    public static int? GetFrameHeight(this FileInfo movieFile)
+    public static async Task<int?> GetFrameHeightAsync(this FileInfo movieFile)
     {
-        return GetMetaDetails(movieFile, o => o.Properties.System.Video.FrameHeight, Parse, "GetFrameHeight",
-            wrapper => wrapper.Height, i => i);
+        var analyzer = MediaInfoAnalyzer.CreateDefault();
+        var result = await analyzer.AnalyzeAsync(movieFile.FullName);
+        return result.Success ? result.BestVideoStream?.Height : (int?)null;
     }
 
     private static int? Parse(string returnValue, FileInfo sourceFile)
@@ -351,104 +364,11 @@ public static class FileHelper
 
     public static FileInfo WithExtension(this FileInfo baseFile, string extension) => new(baseFile.RemoveExtension(true) + extension);
 
-    private static int? GetMetaDetails(this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string, FileInfo, int?> parseMethod, string operation, Func<MediaInfoWrapper, int> meExtractMethod, Func<int, int> meParseMethod)
+    public static async Task<TimeSpan?> GetFilmLengthAsync(this FileInfo movieFile)
     {
-        if (!movieFile.Exists)
-        {
-            Logger.Warn($"Unable to find file as part of {operation} for {movieFile.FullName}");
-            return null;
-        }
-        try
-        {
-            string duration;
-            using (ShellObject shell = ShellObject.FromParsingName(movieFile.FullName))
-            {
-                duration = extractMethod(shell).FormatForDisplay(PropertyDescriptionFormatOptions.None);
-            }
-
-            if (!duration.IsNullOrWhitespace())
-            {
-                int? returnValue = parseMethod(duration, movieFile);
-
-                if (returnValue.HasValue)
-                {
-                    return returnValue.Value;
-                }
-            }
-        }
-        catch (System.IO.FileNotFoundException)
-        {
-            Logger.Warn($"Unable to find file as part of {operation} for {movieFile.FullName}");
-            return null;
-        }
-        catch (ArgumentException)
-        {
-            Logger.Warn(
-                $"Unable to use shell to access file (ArgumentException) as part of {operation} for {movieFile.FullName}");
-        }
-        catch (ShellException)
-        {
-            Logger.Warn($"Unable to use shell to access file as part of {operation} for {movieFile.FullName}");
-        }
-        catch (PlatformNotSupportedException pe)
-        {
-            Logger.Error(
-                $"Unable to use shell to access file as part of {operation} for {movieFile.FullName}. Platform is not supported: {pe.ErrorText()}");
-        }
-
-        MediaInfoWrapper mw = new(movieFile.FullName, Logger.AsILogger(movieFile.FullName, "MediaInfo"));
-        int returnVal = meExtractMethod(mw);
-
-        if (returnVal != 0)
-        {
-            return meParseMethod(returnVal);
-        }
-
-        Logger.Warn($"Could not {operation} for {movieFile.FullName} by using MediaInfo.");
-
-        return null;
-    }
-
-    public static int? GetFilmLength(this FileInfo movieFile)
-    {
-        return GetMetaDetails(movieFile, o => o.Properties.System.Media.Duration, ParseDuration,
-            "GetFilmLength", wrapper => wrapper.Duration, ParseMwDuration);
-    }
-
-    private static int ParseMwDuration(int returnVal)
-    {
-        float ret = returnVal / 1000f;
-        return (int)Math.Round(ret);
-    }
-
-    private static int? ParseDuration(string? duration, FileInfo sourceFile)
-    {
-        try
-        {
-            // Duration should be formatted as "00:44:08"
-            if (duration.HasValue())
-            {
-                string[] timeParts = duration.Split(':');
-
-                return (int)(int.Parse(timeParts[0]).Hours().TotalSeconds
-                             + int.Parse(timeParts[1]).Minutes().TotalSeconds
-                             + int.Parse(timeParts[2]).Seconds().TotalSeconds);
-            }
-        }
-        catch (FormatException)
-        {
-            //Need this section as we get random text back sometimes
-            //              Unable to parse string Unbekannt as part of GetFilmLength System
-            //              Unable to parse string Text hinzufügen as part of GetFilmLength System
-            //              Unable to parse string Add text as part of GetFilmLength System
-            //              Unable to parse string Unknown as part of GetFilmLength System
-            //              Unable to parse string Okänt as part of GetFilmLength System
-            //              Unable to parse string Lägg till text as part of GetFilmLength System
-
-            Logger.Warn($"Unable to parse string '{duration}' as part of GetFilmLength for {sourceFile.FullName}");
-        }
-
-        return -1;
+        var analyzer = MediaInfoAnalyzer.CreateDefault();
+        var result = await analyzer.AnalyzeAsync(movieFile.FullName);
+        return result.Success ? result.General.Duration : (TimeSpan?)null;
     }
 
     public static bool FileExistsCaseSensitive(string filename)

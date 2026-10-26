@@ -28,11 +28,13 @@ public partial class ChooseFile : Form
 
         leftFile = left;
         rightFile = right;
+    }
+    public async Task Setup()
+    { 
+        (int? leftFrameWidth, bool leftFrameUnknown, TimeSpan? leftFilmLength) = await UpdateFieldsAsync(leftFile, txtNameLeft, txtDimensionsLeft, txtLengthLeft, txtSizeLeft, txtPathLeft);
+        (int? rightFrameWidth, bool rightFrameUnknown, TimeSpan? rightFilmLength) = await UpdateFieldsAsync(rightFile, lblNameRight, lblDimensionsRight, lblLengthRight, lblSizeRight, txtPathRight);
 
-        (int? leftFrameWidth, bool leftFrameUnknown, int? leftFilmLength) = UpdateFields(left, txtNameLeft, txtDimensionsLeft, txtLengthLeft, txtSizeLeft, txtPathLeft);
-        (int? rightFrameWidth, bool rightFrameUnknown, int? rightFilmLength) = UpdateFields(right, lblNameRight, lblDimensionsRight, lblLengthRight, lblSizeRight, txtPathRight);
-
-        SetBoldFileSize(left, right);
+        SetBoldFileSize(leftFile, rightFile);
 
         SetBoldFilmLength(leftFilmLength, rightFilmLength);
 
@@ -44,23 +46,23 @@ public partial class ChooseFile : Form
         SetBoldFrameWidth(leftFrameWidth, rightFrameWidth);
     }
 
-    private static (int?, bool, int?) UpdateFields(FileInfo file, Label nameLabel, Label dimensionsLabel, Label lengthLabel, Label sizeLabel, Label pathLabel)
+    private static async Task<(int?, bool, TimeSpan?)> UpdateFieldsAsync(FileInfo file, Label nameLabel, Label dimensionsLabel, Label lengthLabel, Label sizeLabel, Label pathLabel)
     {
         nameLabel.Text = file.Name.ToUiVersion();
-        int? leftFrameWidth = file.GetFrameWidth();
+        int? leftFrameWidth = await file.GetFrameWidthAsync();
         bool leftFrameUnknown = !leftFrameWidth.HasValue;
-        dimensionsLabel.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown" : leftFrameWidth + "x" + file.GetFrameHeight());
-        int? leftFilmLength = file.GetFilmLength();
+        dimensionsLabel.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown" : leftFrameWidth + "x" + await file.GetFrameHeightAsync());
+        TimeSpan? leftFilmLength = await file.GetFilmLengthAsync();
 
         try
         {
             lengthLabel.Text =
-                "Length: " + (!leftFilmLength.HasValue ? "Unknown" : leftFilmLength.Value.Seconds().Humanize(2));
+                "Length: " + (!leftFilmLength.HasValue ? "Unknown" : leftFilmLength.Value.Humanize());
         }
         catch (ArgumentException) //Issue in Humanizer causes this in Polish
         {
             lengthLabel.Text =
-                "Length: " + (!leftFilmLength.HasValue ? "Unknown" : leftFilmLength.Value.Seconds() + " s");
+                "Length: " + (!leftFilmLength.HasValue ? "Unknown" : leftFilmLength.Value.TotalSeconds + " s");
         }
 
         sizeLabel.Text = GetFileSize(file).ToUiVersion();
@@ -97,7 +99,7 @@ public partial class ChooseFile : Form
         }
     }
 
-    private void SetBoldFilmLength(int? leftFilmLength, int? rightFilmLength)
+    private void SetBoldFilmLength(TimeSpan? leftFilmLength, TimeSpan? rightFilmLength)
     {
         if (leftFilmLength > rightFilmLength)
         {

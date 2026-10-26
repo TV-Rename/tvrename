@@ -51,14 +51,14 @@ internal class SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : 
                 {
                     List<FileInfo> matchedFiles = FindMatchedFiles(dirCache, showMissingAction, thisRound);
 
-                    ProcessMissingItem(newList, toRemove, showMissingAction, thisRound, matchedFiles,
+                    await ProcessMissingItemAsync(newList, toRemove, showMissingAction, thisRound, matchedFiles,
                         TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
                 }
                 else if (action is MovieItemMissing movieMissingAction)
                 {
                     List<FileInfo> matchedFiles = await FindMatchedFilesAsync(dirCache, movieMissingAction, thisRound);
 
-                    ProcessMissingItem(newList, toRemove, movieMissingAction, thisRound, matchedFiles,
+                    await ProcessMissingItemAsync(newList, toRemove, movieMissingAction, thisRound, matchedFiles,
                         TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
                 }
             }

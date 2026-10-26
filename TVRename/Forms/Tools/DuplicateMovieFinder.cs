@@ -163,16 +163,16 @@ public partial class DuplicateMovieFinder : Form
             {
                 if (string.CompareOrdinal(file1.FullName, file2.FullName) > 0)
                 {
-                    MergeConfigurationAndFiles(mlastSelected.Movie, file1, file2, ui);
+                    await MergeConfigurationAndFilesAsync(mlastSelected.Movie, file1, file2, ui);
                 }
             }
         }
         await UpdateAsync(mlastSelected);
     }
 
-    private static void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, FileInfo file2, UI ui)
+    private static async Task MergeConfigurationAndFilesAsync(MovieConfiguration mlastSelectedMovie, FileInfo file1, FileInfo file2, UI ui)
     {
-        FileHelper.VideoComparison result = FileHelper.BetterQualityFile(file1, file2);
+        FileHelper.VideoComparison result = await FileHelper.BetterQualityFileAsync(file1, file2);
 
         FileHelper.VideoComparison newResult = result;
 
@@ -186,7 +186,7 @@ public partial class DuplicateMovieFinder : Form
             case FileHelper.VideoComparison.cantTell:
             case FileHelper.VideoComparison.similar:
                 {
-                    AskUserAboutFileReplacement(file1, file2, mlastSelectedMovie, ui);
+                    await AskUserAboutFileReplacementAsync(file1, file2, mlastSelectedMovie, ui);
                     return;
                 }
             //the other cases of the files being the same or the existing file being better are not enough to save the file
@@ -201,11 +201,12 @@ public partial class DuplicateMovieFinder : Form
         }
     }
 
-    private static void AskUserAboutFileReplacement(FileInfo file1, FileInfo file2, MovieConfiguration pep, UI owner)
+    private static async Task AskUserAboutFileReplacementAsync(FileInfo file1, FileInfo file2, MovieConfiguration pep, UI owner)
     {
         try
         {
             using ChooseFile question = new(file1, file2);
+            await question.Setup();
 
             owner.ShowChildDialog(question);
             ChooseFile.ChooseFileDialogResult result = question.Answer;
