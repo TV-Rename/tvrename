@@ -6,8 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using TVRename.Forms.ShowPreferences;
-
 namespace TVRename.Forms;
 
 public partial class YtsViewerView : Form
@@ -38,6 +36,8 @@ public partial class YtsViewerView : Form
 
         olvRating.GroupKeyGetter = rowObject => (int)Math.Floor(((YtsViewerRow)rowObject).StarScore);
         olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
+
+        olvId.DataType = typeof(int);
 
         StartScan();
     }
@@ -101,7 +101,7 @@ public partial class YtsViewerView : Form
             return;
         }
 
-        QuickLocateForm f = new(name, MediaConfiguration.MediaType.movie);
+        ShowPreferences.QuickLocateForm f = new(name, MediaConfiguration.MediaType.movie);
 
         if (f.ShowDialog(this) != DialogResult.OK)
         {

@@ -36,6 +36,7 @@ public partial class YtsRecommendationView : Form
 
         olvRating.GroupKeyGetter = rowObject => (int)Math.Floor(((YtsRecommendationRow)rowObject).StarScore);
         olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
+        olvId.DataType = typeof(int);
 
         StartScan();
     }
