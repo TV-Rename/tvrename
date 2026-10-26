@@ -467,17 +467,25 @@ internal static class API
         return description.TrimStartString("<p>").TrimEnd("</p>");
     }
 
+    static IEnumerable<string> Mapped(this IEnumerable<string> source) => source.Select(MapGenre);
+    static string MapGenre(string source)
+    {
+        if (source == "Sports") return "Sport";
+        if (source == "Science-Fiction") return "Science Fiction";
+        return source;
+    }
+
     private static CachedSeriesInfo GenerateSeriesInfo(JObject r)
     {
         CachedSeriesInfo returnValue = GenerateCoreSeriesInfo(r);
 
         if (r.TryGetValue("genres", out JToken? genres))
         {
-            returnValue.Genres = genres.Select(x => x.Value<string>()?.Trim()).OfType<string>().Distinct().ToSafeList();
+            returnValue.Genres = genres.Select(x => x.Value<string>()?.Trim()).OfType<string>().Mapped().Distinct().ToSafeList();
         }
 
         List<string> typesToTransferToGenres = ["Animation", "Reality", "Documentary", "News", "Sports"];
-        foreach (string conversionType in typesToTransferToGenres.Where(s => s == returnValue.SeriesType))
+        foreach (string conversionType in typesToTransferToGenres.Where(s => s == returnValue.SeriesType).Mapped())
         {
             returnValue.Genres.Add(conversionType);
         }
