@@ -263,17 +263,26 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
         get
         {
             //Needs to match FileHelper.ExtractIdsFrom: tmdb|tvdb|tvmaze
-            return Source switch
+            return SourceInUse() switch
             {
                 TVDoc.ProviderType.TheTVDB => "tvdb",
                 TVDoc.ProviderType.TMDB => "tmdb",
                 TVDoc.ProviderType.TVmaze => "tvmaze",
-                _ => string.Empty
+                _ => throw new ArgumentOutOfRangeException(nameof(Source), Source, null)
             };
         }
     }
 
-    public int? ProviderCode => IdCode(Source);
+    private TVDoc.ProviderType SourceInUse()
+    {
+        if (Source == TVDoc.ProviderType.libraryDefault)
+            return MediaType() == MediaConfiguration.MediaType.movie
+                ? TVSettings.Instance.DefaultMovieProvider
+                : TVSettings.Instance.DefaultProvider;
+        return Source;
+    }
+
+        public int? ProviderCode => IdCode(Source);
 
     public int? TvMazeId => TvMazeCode;
 
