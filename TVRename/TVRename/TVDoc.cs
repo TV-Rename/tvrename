@@ -2383,4 +2383,33 @@ public class TVDoc : IDisposable, IAsyncDisposable
             Logger.Error($"Asked to add {hint} as alias to {configuration}, but can't work out type for it");
         }
     }
+
+    internal async Task<ShowConfiguration?> AddShowItem(PossibleNewTvShow ai)
+    {
+        ShowConfiguration? found = null;
+        // need to add a new showitem
+        int? newId = ai.ProviderCode;
+        if (newId.HasValue)
+        {
+            found = new ShowConfiguration(newId.Value, ai.Provider);
+            await AddAsync(found.AsList(), true);
+        }
+        return found;
+    }
+
+    internal async Task<CachedSeriesInfo?> UpdatePossibleShow(PossibleNewTvShow ai, bool showErrorMsgBox)
+    {
+        ProviderType type = ai.Provider;
+        int? code = ai.ProviderCode;
+        await GetTypeInstance(type).EnsureUpdatedAsync(ai, false, showErrorMsgBox, new ThreadSafeCounter(), 1);
+        return  GetTypeInstance(type).GetSeries(code);
+    }
+
+    private static ITVSource GetTypeInstance(TVDoc.ProviderType type) => type switch
+    {
+        TVDoc.ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
+        TVDoc.ProviderType.TMDB => TMDB.LocalCache.Instance,
+        TVDoc.ProviderType.TVmaze => TVmaze.LocalCache.Instance,
+        _ => TheTVDB.LocalCache.Instance
+    };
 }

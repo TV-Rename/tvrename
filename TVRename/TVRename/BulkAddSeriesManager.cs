@@ -17,11 +17,11 @@ namespace TVRename;
 /// </summary>
 public class BulkAddSeriesManager(TVDoc doc)
 {
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     public FolderMonitorEntryList AddItems = [];
     private readonly TVDoc mDoc = doc;
 
-    public static async Task GuessShowItemAsync(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
+    public async Task GuessShowItemAsync(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
     {
         IPossibleTVShowIdentifier[] identifiers =
             [
@@ -40,8 +40,7 @@ public class BulkAddSeriesManager(TVDoc doc)
                     ai.UpdateId(code, type);
                     Logger.Info($"BULK ADD AUTO ID: identified {ai.Name} ({ai.FolderName}) based on {identifier.GetType().Name} which we looked up to get {code}");
 
-                    await GetTypeInstance(type).EnsureUpdatedAsync(ai, false, showErrorMsgBox, new ThreadSafeCounter(), 1);
-                    CachedSeriesInfo? cachedSeries = GetTypeInstance(type).GetSeries(code);
+                    CachedSeriesInfo? cachedSeries = await mDoc.UpdatePossibleShow(ai, showErrorMsgBox);
                     if (cachedSeries != null)
                     {
                         ai.UpdateId(code, type); //Update again as the name is now known
@@ -59,17 +58,6 @@ public class BulkAddSeriesManager(TVDoc doc)
             }
         }
         Logger.Warn($"Could not match the possible tv show: {ai}");
-    }
-
-    private static ITVSource GetTypeInstance(TVDoc.ProviderType type)
-    {
-        if (type == TVDoc.ProviderType.TheTVDB)
-            return TheTVDB.LocalCache.Instance;
-        if (type == TVDoc.ProviderType.TMDB)
-            return TMDB.LocalCache.Instance;
-        if (type == TVDoc.ProviderType.TVmaze)
-            return TVmaze.LocalCache.Instance;
-        return TheTVDB.LocalCache.Instance;
     }
 
     private async Task<(bool, DirectoryInfo[]?, string)> HasSeasonFoldersAsync(DirectoryInfo di)
@@ -154,7 +142,7 @@ public class BulkAddSeriesManager(TVDoc doc)
                 return (false, subDirectories);
             }
 
-            if (TVSettings.Instance.BulkAddCompareNoVideoFolders && !hasSeasonFolders && !HasFilmFiles(di2))
+            if (TVSettings.Instance.BulkAddCompareNoVideoFolders && !hasSeasonFolders && !di2.HasFilmFiles())
             {
                 return (false, subDirectories);
             }
@@ -219,11 +207,6 @@ public class BulkAddSeriesManager(TVDoc doc)
         }
 
         return false;
-    }
-
-    private static bool HasFilmFiles(DirectoryInfo directory)
-    {
-        return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
     }
 
     private async Task CheckFolderForShowsAsync(IProgress<ScanProgressReport>? handler, DirectoryInfo di, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
@@ -291,17 +274,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         foreach (PossibleNewTvShow ai in ais)
         {
             // see if there is a matching show item
-            ShowConfiguration? found = mDoc.TvLibrary.GetShowItem(ai);
-            if (found is null)
-            {
-                // need to add a new showitem
-                int? newId = ai.ProviderCode;
-                if (newId.HasValue)
-                {
-                    found = new ShowConfiguration(newId.Value, ai.Provider);
-                    await mDoc.AddAsync(found.AsList(), true);
-                }
-            }
+            ShowConfiguration? found = mDoc.TvLibrary.GetShowItem(ai) ?? await mDoc.AddShowItem(ai);
 
             if(found is null)
             {

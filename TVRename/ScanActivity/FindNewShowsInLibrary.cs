@@ -63,8 +63,8 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
         {
             return;
         }
-
-        await BulkAddSeriesManager.GuessShowItemAsync(folder, MDoc.TvLibrary, true);
+        BulkAddSeriesManager bam = new(MDoc);
+        await bam.GuessShowItemAsync(folder, MDoc.TvLibrary, true);
 
         if (folder.CodeKnown)
         {

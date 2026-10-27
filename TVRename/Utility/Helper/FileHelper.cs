@@ -5,13 +5,9 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using Humanizer;
-using MediaInfo;
 using MediaInfo.Analysis;
 using Microsoft.WindowsAPICodePack.COMNative.Shell.PropertySystem;
-using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
-using Microsoft.WindowsAPICodePack.Win32Native.Shell;
 
 
 using System.Globalization;
@@ -78,6 +74,10 @@ public static class FileHelper
         }
     }
 
+    public static bool HasFilmFiles(this DirectoryInfo directory)
+    {
+        return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
+    }
 
     private static bool CanDelete(FileInfo fi, TVSettings.TidySettings settings)
     {
