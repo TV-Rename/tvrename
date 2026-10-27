@@ -53,17 +53,17 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
                 break;
             }
 
-            await AskUserAboutShowAsync(folder, Settings.Owner);
+            await AskUserAboutShowAsync(folder, bam, Settings.Owner);
         }
     }
 
-    private async Task AskUserAboutShowAsync(PossibleNewTvShow folder, Forms.UI owner)
+    private async Task AskUserAboutShowAsync(PossibleNewTvShow folder, BulkAddSeriesManager bam, Forms.UI owner)
     {
         if (folder.CodeKnown)
         {
             return;
         }
-        BulkAddSeriesManager bam = new(MDoc);
+
         await bam.GuessShowItemAsync(folder, MDoc.TvLibrary, true);
 
         if (folder.CodeKnown)

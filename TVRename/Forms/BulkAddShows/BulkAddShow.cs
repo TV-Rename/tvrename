@@ -415,7 +415,7 @@ public partial class BulkAddShow : Form
                         return;
                     }
 
-                    await BulkAddSeriesManager.GuessShowItemAsync(ai, mDoc.TvLibrary, true);
+                    await engine.GuessShowItemAsync(ai, mDoc.TvLibrary, true);
 
                     var report = new ProgressReport
                     {
