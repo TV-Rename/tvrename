@@ -272,11 +272,11 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
         if (currentValue.HasValue && valueFromCache.HasValue && currentValue.Value != valueFromCache.Value)
         {
-            if (valueFromCache.Value == -1)
+            if (valueFromCache.Value is -1 or 0)
             {
                 return currentValue.Value;
             }
-            if (currentValue.Value == -1)
+            if (currentValue.Value is -1 or 0)
             {
                 return valueFromCache.Value;
             }
