@@ -30,7 +30,7 @@ internal class FolderBaseMovieCheck(MovieConfiguration movie, TVDoc doc) : Movie
 
 internal class DefaultSpecialsTVCheck(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
 {
-    public override bool Check() => !TVSettings.Instance.IgnoreAllSpecials && TVSettings.Instance.IgnoreSpecialsByDefault && Show.IgnoreSeasons.Contains(0);
+    public override bool Check() => !TVSettings.Instance.IgnoreAllSpecials && TVSettings.Instance.IgnoreSpecialsByDefault && !Show.IgnoreSeasons.Contains(0);
 
     public override string Explain() => "This TV show does not ignore specials, by default specials are ignored.";
 
