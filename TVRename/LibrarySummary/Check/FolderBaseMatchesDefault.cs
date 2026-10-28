@@ -15,10 +15,10 @@ internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvS
 
     public override bool Check()
     {
-        string currentFolder = Show.AutoAddFolderBase;
+        string currentFolder = Show.AutoAddFolderBase.EnsureEndsWithSeparator();
         string newlyCreatedSettingsFolder = DefaultFolder(currentFolder);
 
-        return currentFolder != newlyCreatedSettingsFolder;
+        return !string.Equals(currentFolder ,newlyCreatedSettingsFolder,StringComparison.OrdinalIgnoreCase);
     }
 
     private string DefaultFolder(string currentFolder)
@@ -26,14 +26,14 @@ internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvS
         string libraryFolder = FindBestLibraryFolder(currentFolder, TVSettings.Instance.LibraryFolders);
         string newlyCreatedSettingsFolder = libraryFolder.EnsureEndsWithSeparator()
                                  + TVSettings.Instance.DefaultTVShowFolder(Show);
-        return newlyCreatedSettingsFolder;
+        return newlyCreatedSettingsFolder.EnsureEndsWithSeparator();
     }
 
     private static string FindBestLibraryFolder(string currentFolder, SafeList<string> libraryFolders)
     {
         foreach(string libFolder in libraryFolders)
         {
-            if (currentFolder.StartsWith(libFolder))
+            if (currentFolder.StartsWith(libFolder,StringComparison.OrdinalIgnoreCase))
             {
                 return libFolder;
             }
@@ -47,19 +47,14 @@ internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvS
         //Store the old folder
         string oldFolder = Show.AutoAddFolderBase;
 
-        try
-        {
-            //Update the folder to the new value
-            Show.AutoAddFolderBase = DefaultFolder(Show.AutoAddFolderBase);
+        //Update the folder to the new value
+        Show.AutoAddFolderBase = DefaultFolder(Show.AutoAddFolderBase);
 
-            Directory.CreateDirectory(Show.AutoAddFolderBase);
-
-            //Create the new location if needed and move files
-            Directory.Move(oldFolder, Show.AutoAddFolderBase,MoveOptions.CopyAllowed);
-        }
-        catch (Exception ex)
+        //Create the new location if needed and move files
+        CopyMoveResult result = Directory.Move(oldFolder, Show.AutoAddFolderBase,MoveOptions.CopyAllowed);
+        if (result.ErrorCode != 0)
         {
-            LOGGER.Error(ex, $"Could not move from {oldFolder} to {DefaultFolder(Show.AutoAddFolderBase)}");
+            throw new FixCheckException($"Could not move from {oldFolder} to {Show.AutoAddFolderBase} Error was:{result.ErrorMessage}");
         }
     }
 }
