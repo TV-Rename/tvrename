@@ -1276,12 +1276,15 @@ public partial class Preferences : Form
 
     private void FillSearchFolderList()
     {
-        lbSearchFolders.Items.Clear();
         TVSettings.Instance.DownloadFolders.Sort();
-        foreach (string efi in TVSettings.Instance.DownloadFolders)
+
+        lbSearchFolders.BeginUpdate();
+        lbSearchFolders.Items.Clear();
+        foreach (string efi in TVSettings.Instance.DownloadFolders.Distinct())
         {
             lbSearchFolders.Items.Add(efi);
         }
+        lbSearchFolders.EndUpdate();
     }
 
     private void FillMovieFolderStringLists()
@@ -1291,7 +1294,7 @@ public partial class Preferences : Form
         lstMovieMonitorFolders.BeginUpdate();
         lstMovieMonitorFolders.Items.Clear();
 
-        foreach (string folder in TVSettings.Instance.MovieLibraryFolders)
+        foreach (string folder in TVSettings.Instance.MovieLibraryFolders.Distinct())
         {
             lstMovieMonitorFolders.Items.Add(folder);
         }
@@ -1317,7 +1320,7 @@ public partial class Preferences : Form
         lstFMMonitorFolders.BeginUpdate();
         lstFMMonitorFolders.Items.Clear();
 
-        foreach (string folder in TVSettings.Instance.LibraryFolders)
+        foreach (string folder in TVSettings.Instance.LibraryFolders.Distinct())
         {
             lstFMMonitorFolders.Items.Add(folder);
         }
@@ -1346,7 +1349,7 @@ public partial class Preferences : Form
 
         cmbDefMovieLocation.Items.Add(path ?? string.Empty);
 
-        foreach (string folder in TVSettings.Instance.MovieLibraryFolders)
+        foreach (string folder in TVSettings.Instance.MovieLibraryFolders.Distinct())
         {
             if (folder == path)
             {
@@ -1369,7 +1372,7 @@ public partial class Preferences : Form
 
         cmbDefShowLocation.Items.Add(path ?? string.Empty);
 
-        foreach (string folder in TVSettings.Instance.LibraryFolders)
+        foreach (string folder in TVSettings.Instance.LibraryFolders.Distinct())
         {
             if (folder == path)
             {
@@ -1901,18 +1904,26 @@ public partial class Preferences : Form
 
     private void lbSearchFolders_DragDrop(object sender, DragEventArgs e)
     {
-        if (e.Data is not null)
+        ProcessDragDrop(e.Data, TVSettings.Instance.DownloadFolders);
+        FillSearchFolderList();
+    }
+
+    private void ProcessDragDrop(IDataObject? data, SafeList<string> folders)
+    {
+        if (data is not null)
         {
-            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
+            string[]? files = (string[]?)data.GetData(DataFormats.FileDrop);
             if (files is not null)
+            {
                 foreach (string path in files)
                 {
                     try
                     {
                         DirectoryInfo di = new(path);
-                        if (di.Exists)
+                        string newItem = path.ToLower().Trim();
+                        if (di.Exists && !folders.Contains(newItem))
                         {
-                            TVSettings.Instance.DownloadFolders.Add(path.ToLower().Trim());
+                            folders.Add(newItem);
                         }
                     }
                     catch
@@ -1920,10 +1931,9 @@ public partial class Preferences : Form
                         // ignored
                     }
                 }
+                mDoc.SetDirty();
+            }
         }
-
-        mDoc.SetDirty();
-        FillSearchFolderList();
     }
 
     private void bnRemoveMonFolder_Click(object sender, EventArgs e)
@@ -2021,57 +2031,15 @@ public partial class Preferences : Form
 
     private void lstMovieMonitorFolders_DragDrop(object sender, DragEventArgs e)
     {
-        if (e.Data is not null)
-        {
-            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
-
-            if (files != null)
-                foreach (string path in files)
-                {
-                    try
-                    {
-                        DirectoryInfo di = new(path);
-                        if (di.Exists)
-                        {
-                            TVSettings.Instance.MovieLibraryFolders.Add(path.ToLower());
-                        }
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-        }
-
-        mDoc.SetDirty();
+        ProcessDragDrop(e.Data, TVSettings.Instance.MovieLibraryFolders);
         FillMovieFolderStringLists();
+        UpdateDefMovieLocation();
     }
-
     private void lstFMMonitorFolders_DragDrop(object sender, DragEventArgs e)
     {
-        if (e.Data is not null)
-        {
-            string[]? files = (string[]?)e.Data.GetData(DataFormats.FileDrop);
-            if (files != null)
-                foreach (string path in files)
-                {
-                    try
-                    {
-                        DirectoryInfo di = new(path);
-                        if (di.Exists)
-                        {
-                            TVSettings.Instance.LibraryFolders.Add(path.ToLower());
-                        }
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-        }
-
-        mDoc.SetDirty();
-        FillSearchFolderList();
+        ProcessDragDrop(e.Data, TVSettings.Instance.LibraryFolders);
+        FillFolderStringLists();
+        UpdateDefShowLocation();
     }
 
     private void lstFMMonitorFolders_SelectedIndexChanged(object sender, EventArgs e)
