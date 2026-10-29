@@ -16,7 +16,7 @@ internal class DefaultDoMissingTvCheck(ShowConfiguration show, TVDoc doc) : Defa
 
     protected override bool Default => TVSettings.Instance.DefShowDoMissingCheck;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.DoMissingCheck = Default;
     }

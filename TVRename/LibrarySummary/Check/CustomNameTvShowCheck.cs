@@ -10,7 +10,7 @@ namespace TVRename;
 
 internal class CustomNameTvShowCheck(ShowConfiguration show, TVDoc doc) : CustomTvShowCheck(show, doc)
 {
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.UseCustomShowName = false;
     }

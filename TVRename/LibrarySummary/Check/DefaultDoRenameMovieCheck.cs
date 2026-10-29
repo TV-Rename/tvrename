@@ -16,7 +16,7 @@ internal class DefaultDoRenameMovieCheck(MovieConfiguration movie, TVDoc doc) : 
 
     protected override bool Default => TVSettings.Instance.DefMovieDoRenaming;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Movie.DoRename = Default;
     }

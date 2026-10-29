@@ -16,7 +16,7 @@ internal class DefaultSpecialsAsEpisodesTvCheck(ShowConfiguration show, TVDoc do
 
     protected override bool Default => TVSettings.Instance.DefShowSpecialsCount;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.CountSpecials = Default;
     }

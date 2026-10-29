@@ -23,7 +23,7 @@ internal class FolderBaseLibraryDefaultTvCheck(ShowConfiguration show, TVDoc doc
     public override string Explain() => "This TV show's folder is a Library folder. This indicates that the files are stored at the root of the library.";
 
     /// <exception cref="FixCheckException"></exception>
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         //we want to move the files into a sub-folder.
         //This means define new folder and copy any matching files into that location

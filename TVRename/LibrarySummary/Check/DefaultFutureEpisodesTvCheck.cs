@@ -16,7 +16,7 @@ internal class DefaultFutureEpisodesTvCheck(ShowConfiguration show, TVDoc doc) :
 
     protected override bool Default => TVSettings.Instance.DefShowIncludeFuture;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.ForceCheckFuture = Default;
     }

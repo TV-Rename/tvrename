@@ -16,7 +16,7 @@ internal class DefaultSequentialMatchingTvCheck(ShowConfiguration show, TVDoc do
 
     protected override bool Default => TVSettings.Instance.DefShowSequentialMatching;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.UseSequentialMatch = Default;
     }

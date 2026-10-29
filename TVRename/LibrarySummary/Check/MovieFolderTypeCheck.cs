@@ -14,7 +14,7 @@ internal class MovieFolderTypeCheck(MovieConfiguration movie, TVDoc doc) : Movie
 
     public override string Explain() => $"The default format for movies is {TVSettings.Instance.DefMovieFolderFormat.PrettyPrint()}, this movie uses {Movie.Format.PrettyPrint()}.";
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Movie.Format = TVSettings.Instance.DefMovieFolderFormat;
     }

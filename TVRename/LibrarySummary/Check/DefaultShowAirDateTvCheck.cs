@@ -16,7 +16,7 @@ internal class DefaultShowAirDateTvCheck(ShowConfiguration show, TVDoc doc) : De
 
     protected override bool Default => TVSettings.Instance.DefShowNextAirdate;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.ShowNextAirdate = Default;
     }

@@ -16,7 +16,7 @@ internal class DefaultAirDateMatchingTvCheck(ShowConfiguration show, TVDoc doc) 
 
     protected override bool Default => TVSettings.Instance.DefShowAirDateMatching;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.UseAirDateMatch = Default;
     }

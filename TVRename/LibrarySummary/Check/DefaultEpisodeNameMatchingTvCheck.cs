@@ -16,7 +16,7 @@ internal class DefaultEpisodeNameMatchingTvCheck(ShowConfiguration show, TVDoc d
 
     protected override bool Default => TVSettings.Instance.DefShowEpNameMatching;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.UseEpNameMatch = Default;
     }

@@ -16,7 +16,7 @@ internal class DefaultDoMissingMovieCheck(MovieConfiguration movie, TVDoc doc) :
 
     protected override bool Default => TVSettings.Instance.DefMovieDoMissingCheck;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Movie.DoMissingCheck = Default;
     }

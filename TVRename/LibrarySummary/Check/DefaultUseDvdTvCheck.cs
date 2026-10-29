@@ -16,7 +16,7 @@ internal class DefaultUseDvdTvCheck(ShowConfiguration show, TVDoc doc) : Default
 
     protected override bool Default => TVSettings.Instance.DefShowDVDOrder;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.DvdOrder = Default;
     }

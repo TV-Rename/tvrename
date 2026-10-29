@@ -42,19 +42,27 @@ internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvS
     }
 
     /// <exception cref="FixCheckException">Can't fix movie</exception>
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         //Store the old folder
         string oldFolder = Show.AutoAddFolderBase;
+        string newFolder = DefaultFolder(Show.AutoAddFolderBase);
 
         //Update the folder to the new value
-        Show.AutoAddFolderBase = DefaultFolder(Show.AutoAddFolderBase);
+        Show.AutoAddFolderBase = newFolder;
 
         //Create the new location if needed and move files
-        CopyMoveResult result = Directory.Move(oldFolder, Show.AutoAddFolderBase,MoveOptions.CopyAllowed);
-        if (result.ErrorCode != 0)
+        if (Directory.Exists(newFolder))
         {
-            throw new FixCheckException($"Could not move from {oldFolder} to {Show.AutoAddFolderBase} Error was:{result.ErrorMessage}");
+            await FileHelper.MergeDirectoriesAsync(oldFolder, newFolder);
+        }
+        else
+        {
+            CopyMoveResult result = Directory.Move(oldFolder, newFolder, MoveOptions.CopyAllowed);
+            if (result.ErrorCode != 0)
+            {
+                throw new FixCheckException($"Could not move from {oldFolder} to {newFolder} Error was:{result.ErrorMessage}");
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace TVRename;
 
 internal class CustomRegionTvShowCheck(ShowConfiguration show, TVDoc doc) : CustomTvShowCheck(show, doc)
 {
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.UseCustomRegion = false;
     }

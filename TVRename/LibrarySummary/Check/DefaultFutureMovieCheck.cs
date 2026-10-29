@@ -16,7 +16,7 @@ internal class DefaultFutureMovieCheck(MovieConfiguration show, TVDoc doc) : Def
 
     protected override bool Default => TVSettings.Instance.DefMovieCheckFutureDatedMovies;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Movie.ForceCheckFuture = Default;
     }

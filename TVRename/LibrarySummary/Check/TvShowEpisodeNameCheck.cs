@@ -14,7 +14,7 @@ internal class TvShowEpisodeNameCheck(ShowConfiguration show, TVDoc doc) : TvSho
 
     public override string Explain() => $"TV Show does not use the standard episode naming format {TVSettings.Instance.NamingStyle.StyleString}, it uses {Show.CustomNamingFormat}";
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.UseCustomNamingFormat = false;
     }

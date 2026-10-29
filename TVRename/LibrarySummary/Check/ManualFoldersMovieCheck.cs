@@ -12,7 +12,7 @@ internal class ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : Cu
 {
 
     /// <exception cref="FixCheckException">Can't fix ManualFoldersMovieCheck</exception>
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         if (Movie.UseManualLocations && Movie.ManualLocations.Count == 1 && !Movie.AutomaticFolderRoot.HasValue())
         {

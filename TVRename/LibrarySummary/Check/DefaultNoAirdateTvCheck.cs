@@ -16,7 +16,7 @@ internal class DefaultNoAirdateTvCheck(ShowConfiguration show, TVDoc doc) : Defa
 
     protected override bool Default => TVSettings.Instance.DefShowIncludeNoAirdate;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.ForceCheckNoAirdate = Default;
     }

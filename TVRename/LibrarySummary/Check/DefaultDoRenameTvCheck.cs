@@ -16,7 +16,7 @@ internal class DefaultDoRenameTvCheck(ShowConfiguration show, TVDoc doc) : Defau
 
     protected override bool Default => TVSettings.Instance.DefShowDoRenaming;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.DoRename = Default;
     }

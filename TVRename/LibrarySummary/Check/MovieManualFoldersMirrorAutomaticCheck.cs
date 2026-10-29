@@ -25,7 +25,7 @@ internal class MovieManualFoldersMirrorAutomaticCheck(MovieConfiguration movie, 
         return $"{Movie.Name} has manual locations that match automatic ones {matchingLocations.ToCsv()}";
     }
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         IEnumerable<string> matchingLocations =
             [.. Movie.ManualLocations.Where(loc => LocationsMatch(Movie.AutoFolderNameForMovie(), loc))];

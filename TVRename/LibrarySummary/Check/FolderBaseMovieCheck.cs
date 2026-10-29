@@ -15,7 +15,7 @@ internal class FolderBaseMovieCheck(MovieConfiguration movie, TVDoc doc) : Movie
     public override string Explain() => "This Movie does not have an automatic folder base specified.";
 
     /// <exception cref="FixCheckException">Can't fix movie as multiple Movie Library Folders are specified</exception>
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Movie.AutomaticFolderRoot = TVSettings.Instance.MovieLibraryFolders.Count switch
         {
@@ -34,7 +34,7 @@ internal class DefaultSpecialsTVCheck(ShowConfiguration show, TVDoc doc) : TvSho
 
     public override string Explain() => "This TV show does not ignore specials, by default specials are ignored.";
 
-    protected override void FixInternal() => Show.IgnoreSeasons.Add(0);
+    protected override async Task FixInternal() => Show.IgnoreSeasons.Add(0);
 
     public override string CheckName => "[TV] Specials included when default is to ignore";
 }

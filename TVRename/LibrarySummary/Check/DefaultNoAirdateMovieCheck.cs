@@ -16,7 +16,7 @@ internal class DefaultNoAirdateMovieCheck(MovieConfiguration show, TVDoc doc) : 
 
     protected override bool Default => TVSettings.Instance.DefMovieCheckNoDatedMovies;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Movie.ForceCheckNoAirdate = Default;
     }

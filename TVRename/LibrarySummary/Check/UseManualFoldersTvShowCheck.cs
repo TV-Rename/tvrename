@@ -13,7 +13,7 @@ internal class UseManualFoldersTvShowCheck(ShowConfiguration show, TVDoc doc) : 
     protected override string FieldName => "[TV] Use Manual season Folders for TV Show";
     protected override bool Field => Show.UsesManualFolders();
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.ManualFolderLocations.Clear();
         Show.AutoAddType = ShowConfiguration.AutomaticFolderType.libraryDefaultFolderFormat;

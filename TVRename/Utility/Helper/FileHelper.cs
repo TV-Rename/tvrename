@@ -790,7 +790,7 @@ public static class FileHelper
     public static async Task MoveFileWithProgressAsync(
                                         FileInfo From,
                                         string To,
-                                        IProgress<CopyMoveProgress> progress,
+                                        IProgress<CopyMoveProgress>? progress,
                                         CancellationToken cancellationToken = default)
     {
         await CopyFileWithProgressAsync(From, To, progress, cancellationToken);
@@ -799,7 +799,7 @@ public static class FileHelper
         From.DeleteOrRecycleFile(null);
     }
 
-    private static async Task CopyFileWithProgressAsync(FileInfo From, string To, IProgress<CopyMoveProgress> progress, CancellationToken cancellationToken)
+    private static async Task CopyFileWithProgressAsync(FileInfo From, string To, IProgress<CopyMoveProgress>? progress, CancellationToken cancellationToken = default)
     {
         long totalBytes = From.Length;
         long bytesTransferred = 0;
@@ -815,7 +815,7 @@ public static class FileHelper
             await destStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
             bytesTransferred += bytesRead;
 
-            progress.Report(new CopyMoveProgress
+            progress?.Report(new CopyMoveProgress
             {
                 BytesTransferred = bytesTransferred,
                 TotalBytes = totalBytes
@@ -824,7 +824,7 @@ public static class FileHelper
     }
 
     private static string TempFor(Alphaleonis.Win32.Filesystem.FileSystemInfo f) => f.FullName + ".tvrenametemp";
-    public async static Task CopyMoveFileAsync(FileInfo From, FileInfo To, bool isMove, IProgress<CopyMoveProgress> progress, CancellationToken cancellationToken)
+    public async static Task CopyMoveFileAsync(FileInfo From, FileInfo To, bool isMove, IProgress<CopyMoveProgress>? progress, CancellationToken cancellationToken = default)
     {
         //we use a temp name just in case we are interrupted or some other problem occurs
         string tempName = TempFor(To);
@@ -876,7 +876,10 @@ public static class FileHelper
         return string.Equals(from.Directory.Root.FullName, to.Directory.Root.FullName,
                    StringComparison.InvariantCultureIgnoreCase);
     }
-
+    private static bool SameDrive(string from, string to)
+    {
+        return SameDrive(new FileInfo(from),new FileInfo(to));
+    }
 
     internal static void RemoveDirectory(string folderName)
     {
@@ -1121,5 +1124,59 @@ public static class FileHelper
     internal static bool FileExists(string destination)
     {
         return File.Exists(destination);
+    }
+
+    public static async Task MergeDirectoriesAsync(string sourceDir, string targetDir)
+    {
+        // Create target directory if it doesn't exist
+        Directory.CreateDirectory(targetDir);
+
+        // Copy all files from source to target
+        foreach (string file in Directory.GetFiles(sourceDir))
+        {
+            string fileName = Path.GetFileName(file);
+            string destFile = Path.Combine(targetDir, fileName);
+
+            FileInfo source = new FileInfo(fileName);
+            FileInfo destination = new FileInfo(destFile);
+
+            if (!File.Exists(destFile))
+            {
+                if (FileHelper.SameDrive(file, destFile))
+                {
+                    File.Move(file, destFile, MoveOptions.CopyAllowed);
+                }
+                else
+                {
+                    await FileHelper.CopyMoveFileAsync(source, destination,false,null);
+                    FileHelper.DeleteOrRecycleFile(source, null);
+                }
+            }
+            else
+            {
+                if (file.Length == destFile.Length)
+                {
+                    //Do nothing
+                    FileHelper.DeleteOrRecycleFile(source, null);
+                }
+                else
+                {
+                    await FileHelper.CopyMoveFileAsync(source, destination, false, null);
+                }
+            }
+        }
+
+        // Recursively merge subdirectories
+        foreach (string directory in Directory.GetDirectories(sourceDir))
+        {
+            string dirName = Path.GetFileName(directory);
+            string destDir = Path.Combine(targetDir, dirName);
+
+            await MergeDirectoriesAsync(directory, destDir);
+        }
+        if (!DirectoryHasContents(sourceDir))
+        {
+            Directory.Delete(sourceDir);
+        }
     }
 }

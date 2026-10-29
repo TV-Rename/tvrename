@@ -10,7 +10,7 @@ namespace TVRename;
 
 internal class CustomNameMovieCheck(MovieConfiguration movie, TVDoc doc) : CustomMovieCheck(movie, doc)
 {
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Movie.UseCustomShowName = false;
     }

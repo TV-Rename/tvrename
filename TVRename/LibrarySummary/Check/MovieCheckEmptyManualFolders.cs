@@ -28,7 +28,7 @@ internal class MovieCheckEmptyManualFolders(MovieConfiguration movie, TVDoc doc)
 
     public override string Explain() => $"{Movie.Name} has manual folders set, these folders are missing or empty: {Movie.ManualLocations.Where(FileHelper.DirectoryIsMissingEmpty).ToCsv()}";
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         foreach (string directory in Movie.ManualLocations.Where(FileHelper.DirectoryIsMissingEmpty).ToList())
         {

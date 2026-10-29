@@ -14,7 +14,7 @@ internal class FilenameMovieCheck(MovieConfiguration movie, TVDoc doc) : MovieCh
 
     public override string Explain() => $"This movie does not use the standard file naming format '{TVSettings.Instance.MovieFilenameFormat}', it uses '{Movie.CustomNamingFormat}'";
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Movie.UseCustomNamingFormat = false;
     }

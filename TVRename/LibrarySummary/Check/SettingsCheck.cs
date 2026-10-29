@@ -38,7 +38,7 @@ internal abstract class SettingsCheck(TVDoc doc)
         {
             IsError = false;
             ErrorText = string.Empty;
-            FixInternal();
+            await FixInternal();
             await MarkMediaDirtyAsync();
             Doc.SetDirty();
         }
@@ -57,7 +57,7 @@ internal abstract class SettingsCheck(TVDoc doc)
     }
 
     /// <exception cref="FixCheckException">Can't fix movie as multiple Movie Library Folders are specified</exception>
-    protected abstract void FixInternal();
+    protected abstract Task FixInternal();
 
     protected abstract Task MarkMediaDirtyAsync();
 

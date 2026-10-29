@@ -43,7 +43,7 @@ internal class TvShowSubdiretoryFormatCheck(ShowConfiguration show, TVDoc doc) :
         };
     }
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.AutoAddType = DefaultShowFormat();
         //TODO Should move files from the old location to the new one!!

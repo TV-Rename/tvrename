@@ -14,7 +14,7 @@ internal class TvShowSeasonFormatCheck(ShowConfiguration show, TVDoc doc) : TvSh
 
     public override string Explain() => $"TV Show does not use the library default for AutomaticFolder creation ({TVSettings.Instance.SeasonFolderFormat}), it uses {Show.AutoAddType}{(Show.AutoAddType == ShowConfiguration.AutomaticFolderType.customFolderFormat ? $" {Show.AutoAddCustomFolderFormat}" : "")}";
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.AutoAddType = ShowConfiguration.AutomaticFolderType.libraryDefaultFolderFormat;
         //TODO Should move files from the old location to the new one!!

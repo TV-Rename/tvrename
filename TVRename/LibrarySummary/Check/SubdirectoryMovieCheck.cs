@@ -17,7 +17,7 @@ internal class SubdirectoryMovieCheck(MovieConfiguration movie, TVDoc doc) : Mov
     public override string Explain() => $"This movie does not use the standard folder naming format '{TVSettings.Instance.MovieFolderFormat}', it uses '{Movie.CustomFolderNameFormat}'";
 
     /// <exception cref="FixCheckException">Condition.</exception>
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         string newLocation = Movie.AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.DirectoryNameFor(Movie, TVSettings.Instance.MovieFolderFormat);
         string currentLocation = Movie.AutoFolderNameForMovie();

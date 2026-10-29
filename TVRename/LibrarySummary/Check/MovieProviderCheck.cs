@@ -15,7 +15,7 @@ internal class MovieProviderCheck(MovieConfiguration movie, TVDoc doc) : MovieCh
     public override string Explain() => $"This movie does not use the library default ({TVSettings.Instance.DefaultMovieProvider.PrettyPrint()}), it uses {Movie.ConfigurationProvider.PrettyPrint()} (Hardcoded)";
 
     /// <exception cref="FixCheckException">Condition.</exception>
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         if (Movie.HasIdOfType(TVSettings.Instance.DefaultMovieProvider))
         {

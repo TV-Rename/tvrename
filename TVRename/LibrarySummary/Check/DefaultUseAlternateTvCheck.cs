@@ -16,7 +16,7 @@ internal class DefaultUseAlternateTvCheck(ShowConfiguration show, TVDoc doc) : D
 
     protected override bool Default => TVSettings.Instance.DefShowAlternateOrder;
 
-    protected override void FixInternal()
+    protected override async Task FixInternal()
     {
         Show.AlternateOrder = Default;
     }
