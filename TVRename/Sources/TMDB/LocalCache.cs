@@ -1436,19 +1436,21 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
         Task<SearchContainer<SearchTv>?> similar = Client.GetTvShowSimilarAsync(arg.TmdbCode.Value, languageCode, 0, token);
 
         await Task.WhenAll(related, similar);
+        SearchContainer<SearchTv>? relatedResult = await related;
+        SearchContainer<SearchTv>? similarR = await similar;
 
-        if (related.Result != null)
+        if (relatedResult != null)
         {
-            foreach (SearchTv? s in related.Result.Results ?? [])
+            foreach (SearchTv? s in relatedResult.Results ?? [])
             {
                 File(s);
                 returnValue.AddRelated(s.Id, arg);
             }
         }
 
-        if (similar.Result != null)
+        if (similarR != null)
         {
-            foreach (SearchTv? s in similar.Result.Results ?? [])
+            foreach (SearchTv? s in similarR.Results ?? [])
             {
                 File(s);
                 returnValue.AddSimilar(s.Id, arg);
@@ -1464,8 +1466,9 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
         ThreadSafeCounter current = new();
         Recomendations returnValue = new();
 
-        Task<SearchContainer<SearchMovie>?> topRated = Client.GetMovieTopRatedListAsync(languageCode);
-        Task<SearchContainer<SearchMovie>?> trending = Client.GetTrendingMoviesAsync(TimeWindow.Week);
+        Task<SearchContainer<SearchMovie>?> topRated = Client.GetMovieTopRatedListAsync(languageCode,0,null,token);
+        Task<SearchContainer<SearchMovie>?> trending = Client.GetTrendingMoviesAsync(TimeWindow.Week,0,null,token);
+
         var topR = await topRated.ConfigureAwait(false);
         var trend = await trending.ConfigureAwait(false);
 

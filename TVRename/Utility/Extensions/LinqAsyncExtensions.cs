@@ -23,18 +23,13 @@ public static class LinqAsyncExtensions
 
     public static async Task<IEnumerable<TSource>> WhereAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> filter)
     {
-        // 1. Project items into tasks pairing the item with its async boolean outcome
-        var evaluationTasks = source.Select(item => new
-        {
-            Item = item,
-            FilterTask = filter(item)
-        });
-
         // 2. Await all conditions to resolve concurrently
-        var evaluations = await Task.WhenAll(evaluationTasks.Select(p => p.FilterTask));
+        var evaluations = await Task.WhenAll(source.Select(p => filter(p)));
 
-        // 3. Perform a standard synchronous LINQ filter on the results
-        return evaluationTasks.Where(x => x.FilterTask.Result).Select(x => x.Item);
+        // 3. Zip results with items and perform LINQ filter on the results
+        return source.Zip(evaluations, (item, result) => new { item, result })
+            .Where(x => x.result)
+            .Select(x => x.item);
     }
 
 
@@ -64,17 +59,12 @@ public static class LinqAsyncExtensions
 
     public static async Task<TSource> FirstAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> filter)
     {
-        // 1. Project items into tasks pairing the item with its async boolean outcome
-        var evaluationTasks = source.Select(item => new
-        {
-            Item = item,
-            FilterTask = filter(item)
-        });
-
         // 2. Await all conditions to resolve concurrently
-        var evaluations = await Task.WhenAll(evaluationTasks.Select(p => p.FilterTask));
+        var evaluations = await Task.WhenAll(source.Select(item => filter(item)));
 
-        // 3. Perform a standard synchronous LINQ filter on the results
-        return evaluationTasks.First(x => x.FilterTask.Result).Item;
+        // 3. Zip results with items and return the first matching item
+        return source.Zip(evaluations, (item, result) => new { item, result })
+            .First(x => x.result)
+            .item;
     }
 }

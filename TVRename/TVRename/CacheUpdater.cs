@@ -212,7 +212,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
 
             await Task.WhenAll(tvdbTask, tmdbTask, tvmazeTask);
 
-            if (tvdbTask.Result == false || tmdbTask.Result == false || tvmazeTask.Result == false) //one of the downloads that was needed failed, so we can't continue
+            if (await tvdbTask == false || await tmdbTask == false || await tvmazeTask == false) //one of the downloads that was needed failed, so we can't continue
             {
                 downloadOk = false;
                 return;
