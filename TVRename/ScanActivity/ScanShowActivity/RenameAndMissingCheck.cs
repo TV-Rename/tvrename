@@ -17,7 +17,7 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
 
     protected async override Task CheckAsync(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
     {
-        Dictionary<int, SafeList<string>> allFolders = await si.AllExistngFolderLocationsAsync();
+        Dictionary<int, List<string>> allFolders = await si.AllExistngFolderLocationsAsync();
         if (allFolders.Count == 0) // no folders defined for this show
         {
             LOGGER.Warn($"No Folders defined for {si.Name}, please review the configuration for that TV Show. Either there are no scanned episodes or the configuation is not complete");
@@ -54,7 +54,7 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
                 return;
             }
 
-            if (!allFolders.TryGetValue(snum, out SafeList<string>? folders))
+            if (!allFolders.TryGetValue(snum, out List<string>? folders))
             {
                 continue;
             }
@@ -64,7 +64,7 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
         } // for each season of this show
     }
 
-    private async Task CheckSeason(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, SafeList<string> folders, bool timeForBannerUpdate)
+    private async Task CheckSeason(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, List<string> folders, bool timeForBannerUpdate)
     {
         bool folderNotDefined = folders.Count == 0;
         if (folderNotDefined && TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons())

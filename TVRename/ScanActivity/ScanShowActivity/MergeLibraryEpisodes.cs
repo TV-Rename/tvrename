@@ -24,7 +24,7 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
             return;
         }
 
-        Dictionary<int, SafeList<string>> allFolders = await si.AllExistngFolderLocationsAsync();
+        Dictionary<int, List<string>> allFolders = await si.AllExistngFolderLocationsAsync();
 
         if (allFolders.Count == 0) // no folders defined for this show
         {
@@ -39,7 +39,7 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
                 throw new TVRenameOperationInterruptedException();
             }
 
-            if (si.IgnoreSeasons.Contains(snum) || !allFolders.TryGetValue(snum, out SafeList<string>? folders))
+            if (si.IgnoreSeasons.Contains(snum) || !allFolders.TryGetValue(snum, out List<string>? folders))
             {
                 continue;
             }

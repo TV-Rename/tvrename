@@ -2281,17 +2281,17 @@ public partial class UI : Form, IDialogParent
 
         if (ep != null)
         {
-            Dictionary<int, SafeList<string>> afl = await ep.Show.AllExistngFolderLocationsAsync();
-            if (afl.TryGetValue(ep.AppropriateSeasonNumber, out SafeList<string>? folder))
+            Dictionary<int, List<string>> afl = await ep.Show.AllExistngFolderLocationsAsync();
+            if (afl.TryGetValue(ep.AppropriateSeasonNumber, out List<string>? folder))
             {
                 AddFolders(folder, added);
             }
         }
         else if (seas != null && si is not null)
         {
-            Dictionary<int, SafeList<string>>? folders = await si.AllExistngFolderLocationsAsync();
+            Dictionary<int, List<string>>? folders = await si.AllExistngFolderLocationsAsync();
 
-            if (folders?.TryGetValue(seas.SeasonNumber, out SafeList<string>? folder) is true)
+            if (folders?.TryGetValue(seas.SeasonNumber, out List<string>? folder) is true)
             {
                 AddFolders(folder, added);
             }
@@ -3763,7 +3763,7 @@ public partial class UI : Form, IDialogParent
             return string.Empty;
         }
 
-        Dictionary<int, SafeList<string>> folders = await currentShow.AllExistngFolderLocationsAsync();
+        Dictionary<int, List<string>> folders = await currentShow.AllExistngFolderLocationsAsync();
         foreach (string folder in folders
             .Values
             .SelectMany(list => list)

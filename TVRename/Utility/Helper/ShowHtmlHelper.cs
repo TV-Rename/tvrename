@@ -1205,9 +1205,9 @@ internal static class ShowHtmlHelper
 
     private static async Task<string> GetBestFolderLocationToOpenAsync(this ShowConfiguration si, ProcessedSeason s)
     {
-        Dictionary<int, SafeList<string>> afl = await si.AllExistngFolderLocationsAsync();
+        Dictionary<int, List<string>> afl = await si.AllExistngFolderLocationsAsync();
 
-        if (afl.TryGetValue(s.SeasonNumber, out SafeList<string>? folders))
+        if (afl.TryGetValue(s.SeasonNumber, out List<string>? folders))
         {
             foreach (string folder in folders.Where(Directory.Exists))
             {

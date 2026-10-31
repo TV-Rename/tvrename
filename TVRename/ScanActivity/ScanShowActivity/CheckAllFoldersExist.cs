@@ -19,7 +19,7 @@ internal class CheckAllFoldersExist(TVDoc doc) : ScanShowActivity(doc)
             return; // skip
         }
 
-        Dictionary<int, SafeList<string>> flocs = await si.AllProposedFolderLocationsAsync();
+        Dictionary<int, List<string>> flocs = await si.AllProposedFolderLocationsAsync();
 
         List<string> ignoredLocations = [];
 
@@ -43,9 +43,9 @@ internal class CheckAllFoldersExist(TVDoc doc) : ScanShowActivity(doc)
                 continue;
             }
 
-            SafeList<string> folders = [];
+            List<string> folders = [];
 
-            if (flocs.TryGetValue(snum, out SafeList<string>? floc))
+            if (flocs.TryGetValue(snum, out List<string>? floc))
             {
                 folders = floc;
             }

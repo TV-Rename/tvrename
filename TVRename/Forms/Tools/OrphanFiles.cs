@@ -93,7 +93,7 @@ public partial class OrphanFiles : Form
                 UpdateText = show.ShowName
             });
 
-            Dictionary<int, SafeList<string>> folders = await show.AllFolderLocationsAsync(true);
+            Dictionary<int, List<string>> folders = await show.AllFolderLocationsAsync(true);
 
             foreach (string showFolder in folders
                          .SelectMany(x => x.Value)
@@ -115,7 +115,7 @@ public partial class OrphanFiles : Form
         }
     }
 
-    private void ProcessFile(FileInfo file, ShowConfiguration show, IReadOnlyDictionary<int, SafeList<string>> folders, string showFolder)
+    private void ProcessFile(FileInfo file, ShowConfiguration show, IReadOnlyDictionary<int, List<string>> folders, string showFolder)
     {
         FinderHelper.FindSeasEp(file, out int? seasonNumber, out int? episodeNumber, out int? _, show);
 
@@ -123,7 +123,7 @@ public partial class OrphanFiles : Form
         {
             issues.Add(new FileIssue(show, file, "File does not match a Filename Processor"));
         }
-        else if (folders.TryGetValue(seasonNumber.Value, out SafeList<string>? seasonFolders) && !seasonFolders.Contains(showFolder) && episodeNumber.HasValue)
+        else if (folders.TryGetValue(seasonNumber.Value, out List<string>? seasonFolders) && !seasonFolders.Contains(showFolder) && episodeNumber.HasValue)
         {
             issues.Add(new FileIssue(show, file, "File is in the wrong series folder", seasonNumber.Value, episodeNumber.Value));
         }

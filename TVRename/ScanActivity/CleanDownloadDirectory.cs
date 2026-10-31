@@ -579,8 +579,8 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
             return;
         }
 
-        Dictionary<int, SafeList<string>> foldersLocations = await si.AllProposedFolderLocationsAsync();
-        if (!foldersLocations.TryGetValue(seasF, out SafeList<string>? folders))
+        Dictionary<int, List<string>> foldersLocations = await si.AllProposedFolderLocationsAsync();
+        if (!foldersLocations.TryGetValue(seasF, out List<string>? folders))
         {
             LOGGER.Info(
                 $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, but can't tell where to copy it. Not copying across.");

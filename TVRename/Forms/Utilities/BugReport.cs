@@ -86,7 +86,7 @@ public partial class BugReport : Form
                     continue;
                 }
 
-                if (!(await si.AllExistngFolderLocationsAsync()).TryGetValue(snum, out SafeList<string>? folders))
+                if (!(await si.AllExistngFolderLocationsAsync()).TryGetValue(snum, out List<string>? folders))
                 {
                     continue; // skip non seen seasons
                 }

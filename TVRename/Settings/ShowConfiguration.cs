@@ -674,15 +674,15 @@ public class ShowConfiguration : MediaConfiguration
         return seasonFolders;
     }
 
-    protected override async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)
+    protected override async Task<Dictionary<int, List<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)
     {
-        Dictionary<int, SafeList<string>> fld = [];
+        Dictionary<int, List<string>> fld = [];
 
         if (manualToo)
         {
             foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations.ToList())
             {
-                if (!fld.TryGetValue(kvp.Key, out SafeList<string>? value))
+                if (!fld.TryGetValue(kvp.Key, out List<string>? value))
                 {
                     value = [];
                     fld[kvp.Key] = value;
@@ -1316,7 +1316,7 @@ public class ShowConfiguration : MediaConfiguration
 
     internal List<List<ProcessedEpisode>> GetSortedSeasons() => EpisodeCaches.SeasonEpisodes.OrderBy(v => v.Key).Select(v => v.Value).ToList();
 
-    internal async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsEpCheckAsync(bool checkDirectoryExist)
+    internal async Task<Dictionary<int, List<string>>> AllFolderLocationsEpCheckAsync(bool checkDirectoryExist)
     {
         return await AllFolderLocationsAsync(true, checkDirectoryExist);
     }

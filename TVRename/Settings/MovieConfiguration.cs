@@ -133,9 +133,9 @@ public class MovieConfiguration : MediaConfiguration
 
     protected override MediaType GetMediaType() => MediaType.movie;
 
-    protected override async Task<Dictionary<int, SafeList<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)
+    protected override async Task<Dictionary<int, List<string>>> AllFolderLocationsAsync(bool manualToo, bool checkExist)
     {
-        Dictionary<int, SafeList<string>> fld = new()
+        Dictionary<int, List<string>> fld = new()
         {
             [0] = []
         };

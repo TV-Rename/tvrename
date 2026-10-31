@@ -441,9 +441,9 @@ public partial class ShowSummary : Form, IDialogParent
 
         private async Task GenerateOpenMenuAsync(ProcessedSeason seas, List<string> added)
         {
-            Dictionary<int, SafeList<string>> afl = await show.AllExistngFolderLocationsAsync();
+            Dictionary<int, List<string>> afl = await show.AllExistngFolderLocationsAsync();
 
-            if (!afl.TryGetValue(seas.SeasonNumber, out SafeList<string>? seasonData))
+            if (!afl.TryGetValue(seas.SeasonNumber, out List<string>? seasonData))
             {
                 return;
             }
@@ -472,7 +472,7 @@ public partial class ShowSummary : Form, IDialogParent
         {
             bool first = true;
 
-            foreach (KeyValuePair<int, SafeList<string>> kvp in (await show.AllExistngFolderLocationsAsync()).OrderBy(pair => pair.Key))
+            foreach (KeyValuePair<int, List<string>> kvp in (await show.AllExistngFolderLocationsAsync()).OrderBy(pair => pair.Key))
             {
                 foreach (string folder in kvp.Value)
                 {

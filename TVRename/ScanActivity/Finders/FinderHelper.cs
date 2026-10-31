@@ -279,9 +279,9 @@ internal static class FinderHelper
 
         int snum = seasWanted;
 
-        Dictionary<int, SafeList<string>> dirs = await si.AllFolderLocationsEpCheckAsync(checkDirectoryExist);
+        Dictionary<int, List<string>> dirs = await si.AllFolderLocationsEpCheckAsync(checkDirectoryExist);
 
-        if (!dirs.TryGetValue(snum, out SafeList<string>? folders))
+        if (!dirs.TryGetValue(snum, out List<string>? folders))
         {
             return ret;
         }
@@ -321,9 +321,9 @@ internal static class FinderHelper
 
         int snum = seasWanted;
 
-        Dictionary<int, SafeList<string>> dirs = await si.AllFolderLocationsEpCheckAsync(checkDirectoryExist);
+        Dictionary<int, List<string>> dirs = await si.AllFolderLocationsEpCheckAsync(checkDirectoryExist);
 
-        if (!dirs.TryGetValue(snum, out SafeList<string>? folders))
+        if (!dirs.TryGetValue(snum, out List<string>? folders))
         {
             return ret;
         }

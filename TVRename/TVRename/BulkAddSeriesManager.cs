@@ -186,8 +186,8 @@ public class BulkAddSeriesManager(TVDoc doc)
 
         if (si.UsesManualFolders())
         {
-            Dictionary<int, SafeList<string>> afl = await si.AllExistngFolderLocationsAsync();
-            foreach (KeyValuePair<int, SafeList<string>> kvp in afl)
+            Dictionary<int, List<string>> afl = await si.AllExistngFolderLocationsAsync();
+            foreach (KeyValuePair<int, List<string>> kvp in afl)
             {
                 foreach (string folder in kvp.Value)
                 {
