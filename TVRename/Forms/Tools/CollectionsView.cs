@@ -133,7 +133,7 @@ public partial class CollectionsView : Form
                 }
                 ((IProgress<ProgressReport>)progressHandler).Report(new ProgressReport()
                 {
-                    ProgressPercentage = 100 * current.Increment(),
+                    ProgressPercentage = 100 * current.Increment() / total,
                     UpdateText = collection.Item2
                 });
             });
