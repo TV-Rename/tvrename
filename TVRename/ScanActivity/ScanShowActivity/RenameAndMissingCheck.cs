@@ -20,7 +20,7 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
         Dictionary<int, List<string>> allFolders = await si.AllExistngFolderLocationsAsync();
         if (allFolders.Count == 0) // no folders defined for this show
         {
-            LOGGER.Warn($"No Folders defined for {si.Name}, please review the configuration for that TV Show. Either there are no scanned episodes or the configuation is not complete");
+            LOGGER.Warn($"No Folders defined for {si.Name}, please review the configuration for that TV Show. Either there are no scanned episodes or the configuration is not complete");
             return; // so, nothing to do.
         }
 
