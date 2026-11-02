@@ -210,7 +210,7 @@ public static class XmlHelper
     public static XElement GenerateStringsXMLElement(IEnumerable<string> strings, string elementName, string stringName)
     {
         XElement root = new(elementName);
-        foreach (string s in strings)
+        foreach (string s in strings.Distinct())
         {
             root.Add(new XElement(stringName, s));
         }
@@ -219,7 +219,7 @@ public static class XmlHelper
     public static XElement GenerateIntsXMLElement(IEnumerable<int> strings, string elementName, string stringName)
     {
         XElement root = new(elementName);
-        foreach (int s in strings)
+        foreach (int s in strings.Distinct())
         {
             root.Add(new XElement(stringName, s));
         }

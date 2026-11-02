@@ -336,6 +336,8 @@ public class ShowConfiguration : MediaConfiguration
 
     private void SetupIgnoreRules(XElement xmlSettings)
     {
+        IgnoreSeasons.Clear();
+
         foreach (int seasonNumber in xmlSettings.Descendants("IgnoreSeasons").Descendants("Ignore").Select(ig => XmlConvert.ToInt32(ig.Value)).Distinct())
         {
             IgnoreSeasons.Add(seasonNumber);
