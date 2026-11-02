@@ -243,7 +243,7 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
 
                         if (newFile.Length == actualFile.Length)
                         {
-                            LOGGER.Warn($"Identified that {actualFile.FullName} is the same sizer as {newName}.");
+                            LOGGER.Warn($"Identified that {actualFile.FullName} is the same size as {newName}.");
                         }
 
                         if (!settings.Unattended && TVSettings.Instance.ChooseWhenMultipleEpisodesMatch)
