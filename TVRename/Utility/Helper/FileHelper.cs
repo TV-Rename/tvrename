@@ -1137,14 +1137,14 @@ public static class FileHelper
             string fileName = Path.GetFileName(file);
             string destFile = Path.Combine(targetDir, fileName);
 
-            FileInfo source = new FileInfo(fileName);
+            FileInfo source = new FileInfo(file);
             FileInfo destination = new FileInfo(destFile);
 
             if (!File.Exists(destFile))
             {
-                if (FileHelper.SameDrive(file, destFile))
+                if (FileHelper.SameDrive(source, destination))
                 {
-                    File.Move(file, destFile, MoveOptions.CopyAllowed);
+                    source.MoveTo(destFile , MoveOptions.CopyAllowed);
                 }
                 else
                 {
@@ -1154,10 +1154,10 @@ public static class FileHelper
             }
             else
             {
-                if (file.Length == destFile.Length)
+                if (source.Length == destination.Length)
                 {
-                    //Do nothing
-                    FileHelper.DeleteOrRecycleFile(source, null);
+                    //Do nothing - just remove the old file
+                     FileHelper.DeleteOrRecycleFile(source, null);
                 }
                 else
                 {
