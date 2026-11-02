@@ -997,7 +997,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
     private async Task UpdateMediaToScanAsync(ScanSettings settings)
     {
         //Get the default set of shows defined by the specified type
-        List<ShowConfiguration> shows = (await GetShowListAsync(settings.Type, settings.Media, settings.Shows)).ToList();
+        List<ShowConfiguration> shows = [.. await GetShowListAsync(settings.Type, settings.Media, settings.Shows)];
         //Get the default set of shows defined by the specified type
         List<MovieConfiguration> movies = [.. GetMovieList(settings.Type, settings.Media, settings.Movies)];
 
@@ -2399,7 +2399,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         return found;
     }
 
-    internal async Task<CachedSeriesInfo?> UpdatePossibleShow(PossibleNewTvShow ai, bool showErrorMsgBox)
+    internal static async Task<CachedSeriesInfo?> UpdatePossibleShow(PossibleNewTvShow ai, bool showErrorMsgBox)
     {
         ProviderType type = ai.Provider;
         int? code = ai.ProviderCode;

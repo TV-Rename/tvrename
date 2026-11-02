@@ -40,7 +40,7 @@ public class BulkAddSeriesManager(TVDoc doc)
                     ai.UpdateId(code, type);
                     Logger.Info($"BULK ADD AUTO ID: identified {ai.Name} ({ai.FolderName}) based on {identifier.GetType().Name} which we looked up to get {code}");
 
-                    CachedSeriesInfo? cachedSeries = await mDoc.UpdatePossibleShow(ai, showErrorMsgBox);
+                    CachedSeriesInfo? cachedSeries = await TVDoc.UpdatePossibleShow(ai, showErrorMsgBox);
                     if (cachedSeries != null)
                     {
                         ai.UpdateId(code, type); //Update again as the name is now known

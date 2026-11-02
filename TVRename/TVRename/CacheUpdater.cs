@@ -144,7 +144,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
         mDownloaderThread = null;
     }
 
-    private async Task GetThreadAsync(ISeriesSpecifier series, IProgress<DownloadProgressReport>? p, CancellationToken cts, ThreadSafeCounter counter, int totalCount)
+    private async Task GetThreadAsync(ISeriesSpecifier series, IProgress<DownloadProgressReport>? p, ThreadSafeCounter counter, int totalCount, CancellationToken cts)
     {
         try
         {
@@ -244,7 +244,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
                 async (series, token) =>
                 {
 
-                    await GetThreadAsync(series, p, cts,counter,totalCount);
+                    await GetThreadAsync(series, p, counter, totalCount, cts);
                 }).ConfigureAwait(false);
 
             if (!cts.IsCancellationRequested)
