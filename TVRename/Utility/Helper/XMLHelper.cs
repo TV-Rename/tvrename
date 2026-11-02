@@ -17,7 +17,7 @@ public static class XmlHelper
     public static async Task SaveXmlFileAsync(XDocument doc, string filePath, CancellationToken cancellationToken = default)
     {
         // 1. Configure the writer to support async behavior
-        XmlWriterSettings settings = new XmlWriterSettings
+        XmlWriterSettings settings = new()
         {
             Async = true,
             Indent = true, // Optional: formats the XML output
@@ -25,7 +25,7 @@ public static class XmlHelper
         };
 
         // 2. Open the file stream and the writer asynchronously
-        await using FileStream stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true);
+        await using FileStream stream = new(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true);
         await using XmlWriter xmlWriter = XmlWriter.Create(stream, settings);
 
         // 3. Save the document

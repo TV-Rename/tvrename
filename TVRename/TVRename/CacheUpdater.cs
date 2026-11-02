@@ -263,7 +263,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
         catch (TaskCanceledException tce)
         {
             downloadOk = false;
-            Logger.Warn(tce);
+            Logger.Warn(tce,"Download Task was cancelled mid execution");
         }
         catch (Exception e)
         {
@@ -322,15 +322,13 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
         await DownloadThreadAsync();
-        Dispose(true);
-    }
-    private void Dispose(bool disposing)
-    {
+        GC.SuppressFinalize(this);
         Dispose();
     }
 
     public void Dispose()
     {
+        // Ensure finalizer is suppressed
         GC.SuppressFinalize(this);
     }
 

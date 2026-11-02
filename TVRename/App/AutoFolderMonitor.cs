@@ -134,7 +134,7 @@ public sealed class AutoFolderMonitor : IDisposable
 
     public void Dispose()
     {
-        if (mScanDelayTimer!=null)
-            mScanDelayTimer.Dispose();
+        mScanDelayTimer?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

@@ -718,14 +718,15 @@ public class ShowConfiguration : MediaConfiguration
                 }
 
                 //Now we can add the automated one
-                if (!fld.ContainsKey(i))
+                if (!fld.TryGetValue(i, out List<string>? value))
                 {
-                    fld[i] = [];
+                    value = [];
+                    fld[i] = value;
                 }
 
-                if (!fld[i].Contains(newName))
+                if (!value.Contains(newName))
                 {
-                    fld[i].Add(newName.TrimSlash());
+                    value.Add(newName.TrimSlash());
                 }
             }
         }
@@ -916,7 +917,7 @@ public class ShowConfiguration : MediaConfiguration
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException("Order", $"GenerateEpisodes: si has invalid Order {Order}");
+                throw new ArgumentException($"GenerateEpisodes: si has invalid Order {Order}");
         }
 
         if (CountSpecials && AppropriateSeasons().ContainsKey(0) && !TVSettings.Instance.IgnoreAllSpecials)

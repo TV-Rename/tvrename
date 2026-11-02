@@ -90,9 +90,9 @@ public class DirCache : List<DirCacheEntry>
             foreach (FileInfo ff in GetFiles(di))
             {
                 Add(new DirCacheEntry(ff));
-                if (prog != null && totalFiles != 0)
+                if (totalFiles != 0)
                 {
-                    prog.Invoke(100 * count / totalFiles, string.Empty, string.Empty);
+                    prog?.Invoke(100 * count / totalFiles, string.Empty, string.Empty);
                 }
             }
 

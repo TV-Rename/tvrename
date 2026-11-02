@@ -1156,6 +1156,12 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
         foreach (FileInfo? file in movieFiles)
         {
+            if (token.IsCancellationRequested)
+            {
+                Logger.Warn("ForceUpdateImagesAsync cancelled");
+                return;
+            }
+
             TheActionList.Add(await
                 downloadIdentifiers.ForceUpdateMovieAsync(DownloadIdentifier.DownloadType.downloadImage, si, file));
 
@@ -1182,6 +1188,12 @@ public class TVDoc : IDisposable, IAsyncDisposable
         // process each folder for each season...
         foreach (int snum in si.GetSeasonKeys())
         {
+            if (token.IsCancellationRequested)
+            {
+                Logger.Warn("ForceUpdateImagesAsync cancelled");
+                return;
+            }
+
             if (si.IgnoreSeasons.Contains(snum) || !allFolders.TryGetValue(snum, out List<string>? folders))
             {
                 continue; // ignore/skip this season

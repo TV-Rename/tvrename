@@ -209,12 +209,13 @@ internal class CheckAllFoldersExist(TVDoc doc) : ScanShowActivity(doc)
         if (di.Exists &&
             !string.Equals(si.AutoFolderNameForSeason(snum), folder, StringComparison.CurrentCultureIgnoreCase))
         {
-            if (!si.ManualFolderLocations.ContainsKey(snum))
+            if (!si.ManualFolderLocations.TryGetValue(snum, out List<string>? value))
             {
-                si.ManualFolderLocations[snum] = [];
+                value = [];
+                si.ManualFolderLocations[snum] = value;
             }
 
-            si.ManualFolderLocations[snum].Add(folder);
+            value.Add(folder);
             Doc.SetDirty();
         }
 

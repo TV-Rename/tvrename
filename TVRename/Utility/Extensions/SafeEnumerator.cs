@@ -40,7 +40,7 @@ public class SafeEnumerator<T> : IEnumerator<T>
         // This will be called when foreach loop finishes
         try
         {
-            // No-op, just to ensure finally always runs
+            GC.SuppressFinalize(this);
         }
         finally
         {

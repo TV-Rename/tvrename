@@ -18,7 +18,7 @@ public static class LinqAsyncExtensions
         var evaluations = await Task.WhenAll(evaluationTasks);
 
         // 3. Return the results from completed tasks
-        return evaluations.ToList();
+        return evaluations;
     }
 
     public static async Task<IEnumerable<TSource>> WhereAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> filter)

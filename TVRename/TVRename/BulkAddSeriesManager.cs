@@ -21,7 +21,7 @@ public class BulkAddSeriesManager(TVDoc doc)
     public FolderMonitorEntryList AddItems = [];
     private readonly TVDoc mDoc = doc;
 
-    public async Task GuessShowItemAsync(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
+    public static async Task GuessShowItemAsync(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
     {
         IPossibleTVShowIdentifier[] identifiers =
             [

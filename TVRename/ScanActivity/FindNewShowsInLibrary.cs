@@ -18,7 +18,7 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
 
         var progressHandler = new Progress<ScanProgressReport>(scanReport =>
         {
-            progress.Invoke(scanReport.ProgressPercentage, scanReport.UpdateText, scanReport.LatestAction);
+            progress?.Invoke(scanReport.ProgressPercentage, scanReport.UpdateText, scanReport.LatestAction);
         });
 
         await bam.CheckFoldersAsync(progressHandler, false, !Settings.Unattended, Settings.Token);
@@ -53,18 +53,18 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
                 break;
             }
 
-            await AskUserAboutShowAsync(folder, bam, Settings.Owner);
+            await AskUserAboutShowAsync(folder, Settings.Owner);
         }
     }
 
-    private async Task AskUserAboutShowAsync(PossibleNewTvShow folder, BulkAddSeriesManager bam, Forms.UI owner)
+    private async Task AskUserAboutShowAsync(PossibleNewTvShow folder, Forms.UI owner)
     {
         if (folder.CodeKnown)
         {
             return;
         }
 
-        await bam.GuessShowItemAsync(folder, MDoc.TvLibrary, true);
+        await BulkAddSeriesManager.GuessShowItemAsync(folder, MDoc.TvLibrary, true);
 
         if (folder.CodeKnown)
         {
