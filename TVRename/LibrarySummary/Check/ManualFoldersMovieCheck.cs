@@ -123,6 +123,8 @@ internal class ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : Cu
 
     private static void CopyOrMove(DirectoryInfo fromDirectory, string toDirectory)
     {
+        string oldLocation = fromDirectory.FullName;
+
         DirectoryInfo target = new(toDirectory);
 
         if (target.Exists)
@@ -150,7 +152,7 @@ internal class ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : Cu
 
         fromDirectory.MoveTo(toDirectory);
 
-        LOGGER.Info($"Moved whole directory {fromDirectory.FullName} to {toDirectory}");
+        LOGGER.Info($"Moved whole directory {oldLocation} to {toDirectory}");
     }
 
     protected override string FieldName => "Use manual folders";
