@@ -1302,7 +1302,6 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
 
         try
         {
-            //todo set parallel cancellation source
             await Parallel.ForEachAsync(
                 FullMovies(),
                 new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads, CancellationToken = token },

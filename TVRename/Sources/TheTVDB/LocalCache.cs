@@ -97,15 +97,13 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
         LatestUpdateTime.RecordSuccessfulUpdate();
     }
 
-    internal async Task<IEnumerable<CachedSeriesInfo>> ServerTvAccuracyCheckAsync(DownloadProgressStatus? p = null)
+    internal async Task<IEnumerable<CachedSeriesInfo>> ServerTvAccuracyCheckAsync(DownloadProgressStatus? p, CancellationToken token)
     {
         TvdbAccuracyCheck check = new();
-        //TODO use DownloadProgressStatus
         SayNoPct($"TVDB Accuracy Check (TV) running for {FullShows().Count} shows.");
 
-        //todo set parallel cancellation source
         await Parallel.ForEachAsync(FullShows(),
-            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads, CancellationToken = token },
             async (si, token) =>
             {
                 Thread.CurrentThread.Name ??= $"TVDB Consistency Check: {si.Name}"; // Can only set it once
@@ -120,15 +118,14 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
         SayNothing();
         return check.ShowsToUpdate;
     }
-    internal async Task<IEnumerable<CachedMovieInfo>> ServerMovieAccuracyCheckAsync(DownloadProgressStatus? p = null)
+    internal async Task<IEnumerable<CachedMovieInfo>> ServerMovieAccuracyCheckAsync(DownloadProgressStatus? p, CancellationToken token)
     {
         TvdbAccuracyCheck check = new();
 
         SayNoPct($"TVDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
 
-        //todo set parallel cancellation source
         await Parallel.ForEachAsync(FullMovies(),
-            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads, CancellationToken = token},
             async (si, token) =>
             {
                 Thread.CurrentThread.Name ??= $"TVDB Consistency Check: {si.Name}"; // Can only set it once
@@ -349,9 +346,8 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
 
             SayNoPct("Processing Updates from TVDB");
 
-            //todo set parallel cancellation source
             await Parallel.ForEachAsync(updatesResponse.Updates,
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads , CancellationToken =cts},
                 async (o, token) =>
                 {
                     Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once

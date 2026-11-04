@@ -871,25 +871,27 @@ public static class FileHelper
         return from.DirectoryName == to.DirectoryName;
     }
 
-    private static bool SameDrive(FileInfo from, FileInfo to)
+    public static bool SameDrive(FileInfo from, FileInfo to)
     {
         return string.Equals(from.Directory.Root.FullName, to.Directory.Root.FullName,
                    StringComparison.InvariantCultureIgnoreCase);
+
+        // same device ... TODO: UNC paths?
     }
     private static bool SameDrive(string from, string to)
     {
         return SameDrive(new FileInfo(from),new FileInfo(to));
     }
 
-    internal static void RemoveDirectory(string folderName)
+    internal static void RemoveDirectory(string folderName) => DeleteOrRecycleFolder(new DirectoryInfo(folderName), null);
+    public static void RemoveDirectory(DirectoryInfo? folderName) => DeleteOrRecycleFolder(folderName, null);
+    internal static void DeleteOrRecycleFolder(DirectoryInfo? folderName, TVSettings.TidySettings? tidyup)
     {
-        Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName, //TODO make all one use of the folder removal
-                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-    }
+        if (folderName is null)
+        {
+            return;
+        }
 
-    public static void RemoveDirectory(DirectoryInfo folderName, TVSettings.TidySettings? tidyup)
-    {
         try
         {
             Logger.Info($"Removing {folderName.FullName} as part of the library clean up");
@@ -902,92 +904,58 @@ public static class FileHelper
                 Logger.Info($"    Folder contains folder {file}");
             }
 
-            //TODO make all one use of the folder removal
-            Logger.Info($"Recycling {folderName.FullName}");
-            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName.FullName,
-                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-        }
-        catch (FileReadOnlyException)
-        {
-            Logger.Warn($"Could not recycle {folderName.FullName} as we got a FileReadOnlyException");
-        }
-        catch (DirectoryReadOnlyException)
-        {
-            Logger.Warn($"Could not recycle {folderName.FullName} as we got a DirectoryReadOnlyException");
-        }
-        catch (UnauthorizedAccessException)
-        {
-            Logger.Warn($"Could not recycle {folderName.FullName} as we got a UnauthorizedAccessException");
-        }
-        catch (System.IO.PathTooLongException)
-        {
-            Logger.Warn($"Could not recycle {folderName.FullName} as we got a PathTooLongException");
-        }
-        catch (System.IO.DirectoryNotFoundException)
-        {
-            Logger.Info($"Could not recycle {folderName.FullName} as we got a DirectoryNotFoundException");
-        }
-        catch (DirectoryNotEmptyException)
-        {
-            Logger.Warn($"Could not recycle {folderName.FullName} as we got a DirectoryNotEmptyException");
-        }
-        catch (OperationCanceledException)
-        {
-            Logger.Info($"Could not recycle {folderName.FullName} as we got a OperationCanceledException");
-        }
-        catch (System.IO.IOException i)
-        {
-            Logger.Warn($"Could not find {folderName.FullName} as we got a IOException: {i.ErrorText()}");
-        }
-    }
-
-    internal static void DeleteOrRecycleFolder(DirectoryInfo? di, TVSettings.TidySettings? tidyup)
-    {
-        if (di is null)
-        {
-            return;
-        }
-
-        try
-        {
             if (tidyup == null || tidyup.DeleteEmptyIsRecycle)
             {
-                //TODO make all one use of the folder removal
-                Logger.Info($"Recycling {di.FullName}");
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
+                Logger.Info($"Recycling {folderName.FullName}");
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName.FullName,
                     Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
                     Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
             else
             {
-                Logger.Info($"Deleting {di.FullName}");
-                di.Delete(true, true);
+                Logger.Info($"Deleting {folderName.FullName}");
+                folderName.Delete(true, true);
             }
         }
         catch (System.IO.DirectoryNotFoundException ex)
         {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
-        }
-        catch (System.IO.IOException ex)
-        {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+            Logger.Warn(ex, $"Failed to remove {folderName.FullName}");
         }
         catch (ArgumentException ex)
         {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+            Logger.Warn(ex, $"Failed to remove {folderName.FullName}");
         }
         catch (SecurityException ex)
         {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+            Logger.Warn(ex, $"Failed to remove {folderName.FullName}");
+        }
+        catch (DirectoryReadOnlyException ex)
+        {
+            Logger.Warn(ex, $"Could not remove {folderName.FullName} as we got a DirectoryReadOnlyException");
+        }
+        catch (FileReadOnlyException ex)
+        {
+            Logger.Warn(ex, $"Could not remove {folderName.FullName} as we got a FileReadOnlyException");
         }
         catch (UnauthorizedAccessException ex)
         {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+            Logger.Warn(ex, $"Failed to remove {folderName.FullName}");
         }
         catch (OperationCanceledException ex)
         {
-            Logger.Warn(ex, $"Failed to remove {di.FullName}");
+            Logger.Warn(ex, $"Failed to remove {folderName.FullName}");
+        }
+        catch (System.IO.PathTooLongException ex)
+        {
+            Logger.Warn(ex, $"Could not remove {folderName.FullName} as we got a PathTooLongException");
+        }
+        catch (DirectoryNotEmptyException ex)
+        {
+            Logger.Warn(ex, $"Could not remove {folderName.FullName} as we got a DirectoryNotEmptyException");
+        }
+        catch (System.IO.IOException ex)
+        {
+            Logger.Error(ex, $"Failed to remove {folderName.FullName}");
         }
     }
 
@@ -1095,16 +1063,16 @@ public static class FileHelper
         where.Delete(ignoreReadOnly);
     }
 
-    internal static void RemoveEmptyDirectory(string directory)
+    internal static void RemoveEmptyDirectory(string directory) 
     {
-        if (!directory.HasValue() || !DirectoryIsMissingEmpty(directory))
+        if (!directory.HasValue() || DirectoryHasContents(directory))
         {
             return;
         }
 
         try
         {
-            Directory.Delete(directory); //TODO Should use a safer version in FileHelper
+            DeleteOrRecycleFolder(new DirectoryInfo(directory),null); 
         }
         catch (System.IO.DirectoryNotFoundException)
         {

@@ -389,7 +389,7 @@ public static class TvdbWebApi
     {
         string errorMessage = $"Error obtaining {showName} episode[{episodeId}]:";
         string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}";
-        string requestLangCode = language.Abbreviation; //TODO - check this is right - should be TVDBv4() ?
+        string requestLangCode = language.Abbreviation;
 
         return await HandleWebErrorsForAsync(
             async () => await JsonHttpGetRequestAsync(uri, null, TokenProvider, requestLangCode, true),

@@ -70,7 +70,7 @@ public class ActionMoveRenameDirectory : ActionFileOperation
         {
             try
             {
-                target.Delete(); //TODO use FileHelper
+                FileHelper.DeleteOrRecycleFolder(target, null);
             }
             catch (System.IO.DirectoryNotFoundException)
             {
@@ -117,7 +117,7 @@ public class ActionMoveRenameDirectory : ActionFileOperation
 
                 if (Directory.IsEmpty(source.FullName))
                 {
-                    source.Delete(false); //TODO use FileHelper
+                    FileHelper.DeleteOrRecycleFolder(source, null);
                     LOGGER.Info($"Deleted empty directory {source.FullName}");
                 }
                 return ActionOutcome.Success();

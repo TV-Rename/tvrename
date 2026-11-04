@@ -92,7 +92,7 @@ public class BulkAddMovieManager(TVDoc doc)
                 Logger.Warn($"Checked {di2.FullName} and it had no movie files.");
                 if (!di2.GetFiles().IsAny() && !di2.GetDirectories().IsAny())
                 {
-                    di2.Delete(false); //TODO use FileHelper
+                    FileHelper.RemoveDirectory(di2);
                 }
             }
 

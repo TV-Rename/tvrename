@@ -253,7 +253,7 @@ public static class API
     }
 
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task CheckForNewEpisodesAsync(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType st)
+    internal static async Task CheckForNewEpisodesAsync(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType st, CancellationToken token)
     {
         try
         {
@@ -278,9 +278,8 @@ public static class API
                 return;
             }
 
-            //todo set parallel cancellation source
             await Parallel.ForEachAsync(neededEpisodes,
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads , CancellationToken = token }
                 , async (x, token) =>
                 {
                     int? epNumber = x.jsonData["number"]?.ToObject<int>();
@@ -419,10 +418,9 @@ public static class API
 
         result.LatestTime = updatesResponses.Max(API.GetUpdateTime);
 
-        //todo set parallel cancellation source
         await Parallel.ForEachAsync
             (updatesResponses,
-            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads , CancellationToken = cts},
             async (o, token) =>
                 {
                     Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once

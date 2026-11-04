@@ -439,7 +439,7 @@ public sealed class TVSettings
     public string? DefMovieDefaultLocation;
     public TVDoc.ProviderType DefaultMovieProvider = TVDoc.ProviderType.TMDB;
     internal bool UnArchiveFilesInDownloadDirectory = true;
-    internal string DefaultTvShowFolderFormat = "{ShowName}"; //TODO put in settings and preferences
+    internal string DefaultTvShowFolderFormat = "{ShowName}";
 
     private TVSettings()
     {

@@ -20,7 +20,6 @@ public static class LoggerHelper
 
     public static string ErrorText(this Exception e)
     {
-        //TODO look at InnerException if it exists too
         StringBuilder returnValue = new();
         try
         {
@@ -54,6 +53,11 @@ public static class LoggerHelper
             //Avoid any situation that the Trace is what crashes you application. While trace can log to a file. Console normally not output to the same place.
             return "**** Exception in ErrorText(Exception e): " + ee.Message;
         }
+        if(e.InnerException != null)
+        {
+            returnValue.AppendLine(e.InnerException.ErrorText());
+        }
+
         return returnValue.ToString();
     }
 

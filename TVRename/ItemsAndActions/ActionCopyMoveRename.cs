@@ -250,9 +250,7 @@ public class ActionCopyMoveRename : ActionFileOperation
             return false;
         }
 
-        return IsMoveRename() &&
-               string.Equals(From.Directory.Root.FullName, To.Directory.Root.FullName,
-                   StringComparison.InvariantCultureIgnoreCase); // same device ... TODO: UNC paths?
+        return IsMoveRename() && FileHelper.SameDrive(From, To);
     }
 
     // ReSharper disable once UnusedMember.Local

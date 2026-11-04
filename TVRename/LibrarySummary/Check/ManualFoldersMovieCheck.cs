@@ -49,7 +49,7 @@ internal class ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : Cu
                     if (!source.EnumerateFiles().IsAny() && !source.EnumerateDirectories().IsAny())
                     {
                         //directory has nothing in it
-                        FileHelper.RemoveDirectory(source, null);
+                        FileHelper.DeleteOrRecycleFolder(source, null);
                         Movie.UseManualLocations = false;
                         Movie.UseAutomaticFolders = true;
                         return;

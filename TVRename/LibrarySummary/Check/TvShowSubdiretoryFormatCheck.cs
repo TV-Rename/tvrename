@@ -8,7 +8,7 @@
 
 namespace TVRename;
 
-internal class TvShowSubdiretoryFormatCheck(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
+internal class TvShowSubdirectoryFormatCheck(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
 {
     public override bool Check() => Show.AutoAddType != DefaultShowFormat();
 
