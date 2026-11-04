@@ -7,6 +7,7 @@
 //
 
 using BrightIdeasSoftware;
+using CefSharp.DevTools.CSS;
 using DaveChambers.FolderBrowserDialogEx;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using System.ComponentModel;
@@ -121,29 +122,39 @@ public static class UiHelpers
     {
         ArgumentNullException.ThrowIfNull(uiElement);
 
-        if (uiElement.InvokeRequired)
+        if (uiElement.IsDisposed || !uiElement.IsHandleCreated)
         {
-            if (forceSynchronous)
+            Logger.Warn($"Asked to do action on {uiElement.Name}, but it's disposed or not created.");
+            return;
+        }
+
+        try
+        {
+            if (uiElement.InvokeRequired)
             {
-                uiElement.Invoke(delegate { SafeInvoke(uiElement, updater, true); });
+                if (forceSynchronous)
+                {
+                    uiElement.Invoke(new MethodInvoker(updater));
+                }
+                else
+                {
+                    uiElement.BeginInvoke(delegate { SafeInvoke(uiElement, updater, false); });
+                }
             }
             else
             {
-                uiElement.BeginInvoke(delegate { SafeInvoke(uiElement, updater, false); });
-            }
-        }
-        else
-        {
-            ObjectDisposedException.ThrowIf(uiElement.IsDisposed, uiElement);
-
-            try
-            {
                 updater();
             }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "Failed to Invoke");
-            }
+        }
+        catch (InvalidAsynchronousStateException ex)
+        {
+            // The control's thread no longer exists (form was closed)
+            // Silently ignore as the operation is being cancelled anyway
+            Logger.Warn(ex, "Failed to Invoke on {uiElement.Name}");
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Failed to Invoke on {uiElement.Name}");
         }
     }
 

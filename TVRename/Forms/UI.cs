@@ -2724,7 +2724,14 @@ public partial class UI : Form, IDialogParent
     {
         UpdateTimer.Stop();
         ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
-        await this.Invoke(async () => await NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
+
+        if (!IsDisposed && IsHandleCreated)
+        {
+            Invoke((MethodInvoker)async delegate
+            {
+                await NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide);
+            });
+        }
     }
 
     private async Task<ServerRelease?> CheckForUpdates()
@@ -4499,7 +4506,14 @@ public partial class UI : Form, IDialogParent
     private async void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
     {
         ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
-        await this.Invoke(async () => await NotifyUpdatesAsync(result, true, false));
+
+        if (!IsDisposed && IsHandleCreated)
+        {
+            Invoke((MethodInvoker)async delegate
+            {
+                await NotifyUpdatesAsync(result, true, false);
+            });
+        }
     }
 
     private async Task NotifyUpdatesAsync(ServerRelease? update, bool manuallyTriggered, bool inSilentMode)
@@ -4565,7 +4579,14 @@ public partial class UI : Form, IDialogParent
         btnUpdateAvailable.Visible = false;
 
         ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
-        await this.Invoke(async () => await NotifyUpdatesAsync(result, true, false));
+
+        if (!IsDisposed && IsHandleCreated)
+        {
+            Invoke((MethodInvoker)async delegate
+            {
+                await NotifyUpdatesAsync(result, true, false);
+            });
+        }
     }
 
     private async void tmrPeriodicScan_Tick(object sender, EventArgs e) => await RunAutoScanAsync("Periodic Scan");

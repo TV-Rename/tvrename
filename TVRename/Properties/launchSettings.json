@@ -2,6 +2,10 @@
   "profiles": {
     "TVRename": {
       "commandName": "Project"
+    },
+    "Command Line": {
+      "commandName": "Project",
+      "commandLineArgs": "/recentscan /ignoremissing /quit"
     }
   }
 }
