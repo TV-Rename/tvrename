@@ -13,6 +13,13 @@ using System.Text.RegularExpressions;
 
 namespace TVRename;
 
+public enum TargetType //Maybe also have 'Screen' for display on UI and 'other' for random uses
+{
+    URL,
+    Filename,
+    Foldername
+}
+
 public class CustomEpisodeName
 {
     public string StyleString;
@@ -59,6 +66,7 @@ public class CustomEpisodeName
     protected internal static readonly List<string> TAGS =
     [
         "{ShowName}",
+        "{ShowNamePost}",
         "{ShowNameInitial}",
         "{ShowNameLower}",
         "{ShowNameNoYear}",
@@ -97,7 +105,7 @@ public class CustomEpisodeName
                 $"Cannot create files as path is too long - please review settings for {pe.Show.ShowName}");
         }
 
-        string r = NameForNoExt(pe, StyleString);
+        string r = NameForNoExt(pe, StyleString, TargetType.Filename);
 
         if (string.IsNullOrEmpty(extension))
         {
@@ -107,19 +115,19 @@ public class CustomEpisodeName
         return r[..Math.Min(r.Length, maxFilenameLength)] + extension;
     }
 
-    public string GetTargetEpisodeName(ShowConfiguration show, Episode ep)
-        => GetTargetEpisodeName(show, ep, false);
-
-    private string GetTargetEpisodeName(ShowConfiguration show, Episode ep, bool urlEncode)
+    public string GetTargetEpisodeName(ShowConfiguration show, Episode ep, TargetType type)
     {
         //note this is for an Episode and not a ProcessedEpisode
         string name = StyleString;
 
         string epname = ep.Name;
 
-        name = name.ReplaceInsensitive("{ShowName}", show.ShowName);
-        name = name.ReplaceInsensitive("{ShowNameLower}", show.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
-        name = name.ReplaceInsensitive("{ShowNameInitial}", show.ShowName.Initial().ToLower());
+        string showname =show.ShowName;
+
+        name = name.ReplaceInsensitive("{ShowName}", showname);
+        name = name.ReplaceInsensitive("{ShowNameLower}", showname.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
+        name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
+        name = name.ReplaceInsensitive("{ShowNamePost}", TVSettings.Instance.PostpendTerms(showname));
         name = name.ReplaceYear(show);
 
         int seasonNumber;
@@ -167,7 +175,7 @@ public class CustomEpisodeName
         ProcessedSeason? selectedProcessedSeason = show.GetSeason(ep.GetSeasonNumber(show.Order));
         name = name.ReplaceInsensitive("{SeasonYear}", selectedProcessedSeason != null ? selectedProcessedSeason.MinYear().ToString() : string.Empty);
 
-        name = ReplaceDates(urlEncode, name, ep.LocalAirTime());
+        name = ReplaceDates(type == TargetType.URL, name, ep.LocalAirTime());
 
         name = Regex.Replace(name, "([^\\\\])\\[.*?[^\\\\]\\]", "$1"); // remove optional parts
 
@@ -218,9 +226,7 @@ public class CustomEpisodeName
         }
     }
 
-    public static string NameForNoExt(ProcessedEpisode pe, string styleString) => NameForNoExt(pe, styleString, false);
-
-    public static string NameForNoExt(ProcessedEpisode pe, string styleString, bool urlEncode, bool ignoreCustomNamingFormat = false)
+    public static string NameForNoExt(ProcessedEpisode pe, string styleString, TargetType type, bool ignoreCustomNamingFormat = false)
     {
         try
         {
@@ -231,14 +237,15 @@ public class CustomEpisodeName
             string showName =  pe.Show.ShowName.Replace("[", "\\[").Replace("]", "\\]");
 
             string episodeName = pe.Name.Trim();
-            if (urlEncode)
+            if (type == TargetType.URL)
             {
                 showName = Uri.EscapeDataString(showName);
                 episodeName = Uri.EscapeDataString(episodeName);
             }
 
             name = name.ReplaceInsensitive("{ShowName}", showName);
-            name = name.ReplaceInsensitive("{ShowNameLower}", pe.Show.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
+            name = name.ReplaceInsensitive("{ShowNamePost}", TVSettings.Instance.PostpendTerms(showName));
+            name = name.ReplaceInsensitive("{ShowNameLower}", showName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
             name = name.ReplaceInsensitive("{ShowNameInitial}", showName.Initial().ToLower());
             name = name.ReplaceYear(pe.Show);
             name = name.ReplaceInsensitive("{Season}", pe.AppropriateSeasonNumber.ToString());
@@ -272,7 +279,7 @@ public class CustomEpisodeName
             name = name.ReplaceInsensitive("{Imdb}", pe.ImdbCode);
             name = name.ReplaceInsensitive("{ShowImdb}", pe.Show.CachedShow?.Imdb ?? string.Empty);
 
-            name = ReplaceDates(urlEncode, name, pe.LocalAirTime());
+            name = ReplaceDates(type == TargetType.URL, name, pe.LocalAirTime());
             name = Regex.Replace(name, "{AllEpisodes}", AllEpsText(pe), RegexOptions.IgnoreCase);
 
             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression

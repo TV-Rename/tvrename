@@ -22,6 +22,7 @@ public static class CustomMovieName
     internal static readonly List<string> TAGS =
     [
         "{ShowName}",
+        "{ShowNamePost}",
         "{ShowNameInitial}",
         "{ShowNameLower}",
         "{ShowNameNoYear}",
@@ -41,10 +42,8 @@ public static class CustomMovieName
 
     public static List<string> ExamplePresets(MovieConfiguration s)
     {
-        return [.. Presets.Select(example => NameFor(s, example))];
+        return [.. Presets.Select(example => NameFor(s, example, TargetType.Filename))];
     }
-
-    public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false, true);
 
     public static string DirectoryNameFor(MovieConfiguration? m, string styleString)
     {
@@ -65,16 +64,16 @@ public static class CustomMovieName
         {
             if (m?.InCollection ?? false)
             {
-                return m.CachedMovie?.CollectionName + "\\" + NameFor(m, styleString.RemoveFirst(COLLECTION_TAGFOLDER.Length), false, false);
+                return m.CachedMovie?.CollectionName + "\\" + NameFor(m, styleString.RemoveFirst(COLLECTION_TAGFOLDER.Length), TargetType.Foldername);
             }
-            return NameFor(m, styleString.RemoveFirst(COLLECTION_TAGFOLDER.Length), false, false);
+            return NameFor(m, styleString.RemoveFirst(COLLECTION_TAGFOLDER.Length), TargetType.Foldername);
         }
-        return NameFor(m, styleString, false, false);
+        return NameFor(m, styleString, TargetType.Foldername);
     }
 
-    public static string NameFor(MovieConfiguration m, string styleString, string? extension)
+    public static string NameFor(MovieConfiguration m, string styleString, string? extension, TargetType type)
     {
-        string r = NameFor(m, styleString);
+        string r = NameFor(m, styleString, type);
 
         if (string.IsNullOrEmpty(extension))
         {
@@ -91,20 +90,21 @@ public static class CustomMovieName
         return r + extension;
     }
 
-    public static string NameFor(MovieConfiguration? m, string styleString, bool urlEncode, bool isfilename)
+    public static string NameFor(MovieConfiguration? m, string styleString, TargetType type)
     {
         if (m?.ShowName is null)
         {
             return string.Empty;
         }
 
-        string showname = urlEncode
+        string showname = (type == TargetType.URL)
             ? Uri.EscapeDataString(m.ShowName)
             : m.ShowName;
 
         string name = styleString
             .ReplaceInsensitive("{CollectionFolder}", m.InCollection ? "{collectionName}\\" : string.Empty)
             .ReplaceInsensitive("{ShowName}", showname)
+            .ReplaceInsensitive("{ShowNamePost}", TVSettings.Instance.PostpendTerms(showname))
             .ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower())
             .ReplaceInsensitive("{ShowNameLower}", m.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"))
             .ReplaceYear(m)
@@ -120,8 +120,8 @@ public static class CustomMovieName
             .ReplaceInsensitive("{Provider}", m.ProviderName)
             .ReplaceInsensitive("{ProviderId}", m.Code?.ToString());
 
-        return urlEncode ? name.Trim()
-            : isfilename ? TVSettings.Instance.FilenameFriendly(name.Trim())
+        return type == TargetType.URL ? name.Trim()
+            : type == TargetType.Filename ? TVSettings.Instance.FilenameFriendly(name.Trim())
             : TVSettings.Instance.DirectoryFriendly(name.Trim());
     }
 
@@ -143,6 +143,6 @@ public static class CustomMovieName
     {
         string styleStringNewYear = styleString.ReplaceInsensitive("{Year}", year.ToString());
 
-        return NameFor(m, styleStringNewYear);
+        return NameFor(m, styleStringNewYear, TargetType.Filename);
     }
 }

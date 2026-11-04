@@ -141,7 +141,7 @@ public partial class AddEditMovie : Form, ICodeWindow
 
         foreach (string s in CustomMovieName.TAGS)
         {
-            tl.AppendLine($"{s} - {CustomMovieName.NameFor(selectedShow, s)}");
+            tl.AppendLine($"{s} - {CustomMovieName.NameFor(selectedShow, s, TargetType.Filename)}");
         }
 
         txtTagList2.Text = tl.ToString();
@@ -645,7 +645,7 @@ public partial class AddEditMovie : Form, ICodeWindow
     private void txtCustomMovieFileNamingFormat_TextChanged(object sender, EventArgs e)
     {
         llCustomName.Text =
-            CustomMovieName.NameFor(selectedShow, txtCustomMovieFileNamingFormat.Text);
+            CustomMovieName.NameFor(selectedShow, txtCustomMovieFileNamingFormat.Text, TargetType.Filename);
 
         llFilenameDefaultFormat.Text = selectedShow.ProposedFilename;
     }

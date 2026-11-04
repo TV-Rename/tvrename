@@ -321,6 +321,7 @@ public partial class Preferences : Form
         s.MovieFolderFormat = txtMovieFolderFormat.Text;
         s.MovieFilenameFormat = txtMovieFilenameFormat.Text;
         s.searchSeasonWordsString = tbSeasonSearchTerms.Text;
+        s.postpendTermsString = tbPostPenders.Text;
         s.SubsFolderNamesString = txtSubtitleFolderNames.Text;
         s.preferredRSSSearchTermsString = tbPreferredRSSTerms.Text;
         s.unwantedRSSSearchTermsString = tbUnwantedRSSTerms.Text;
@@ -882,6 +883,7 @@ public partial class Preferences : Form
         txtSubtitleExtensions.Text = s.subtitleExtensionsString;
         txtKeepTogether.Text = s.GetKeepTogetherString();
         tbSeasonSearchTerms.Text = s.GetSeasonSearchTermsString();
+        tbPostPenders.Text = s.GetPostpendTermsString();
         txtSubtitleFolderNames.Text = s.SubsFolderNamesString;
         tbPreferredRSSTerms.Text = s.GetPreferredRSSSearchTermsString();
         tbUnwantedRSSTerms.Text = s.GetUnwantedRSSSearchTermsString();
@@ -2301,5 +2303,10 @@ public partial class Preferences : Form
         }
 
         t.Text = t.Text.IntegerCharactersOnly();
+    }
+
+    private void tbSeasonSearchTerms_TextChanged(object sender, EventArgs e)
+    {
+
     }
 }

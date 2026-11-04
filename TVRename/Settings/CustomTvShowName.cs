@@ -22,6 +22,7 @@ public static class CustomTvShowName
     internal static readonly List<string> TAGS =
     [
         "{ShowName}",
+        "{ShowNamePost}",
         "{ShowNameInitial}",
         "{ShowNameLower}",
         "{ShowNameNoYear}",
@@ -40,11 +41,11 @@ public static class CustomTvShowName
         return [.. Presets.Select(example => NameFor(s, example))];
     }
 
-    public static string NameFor(ShowConfiguration? m, string styleString) => NameFor(m, styleString, false, true);
+    public static string NameFor(ShowConfiguration? m, string styleString) => NameFor(m, styleString, TargetType.Filename);
 
     public static string DirectoryNameFor(ShowConfiguration? m, string styleString)
     {
-        return NameFor(m, styleString, false, false);
+        return NameFor(m, styleString, TargetType.Foldername);
     }
 
     public static string NameFor(ShowConfiguration m, string styleString, string? extension)
@@ -66,17 +67,17 @@ public static class CustomTvShowName
         return r + extension;
     }
 
-    private static string NameFor(CachedSeriesInfo? showConfiguration, string styleString, bool urlEncode, bool isfilename)
+    private static string NameFor(CachedSeriesInfo? showConfiguration, string styleString, TargetType type)
     {
-        return NameFor(showConfiguration?.Name, showConfiguration, styleString, urlEncode, isfilename);
+        return NameFor(showConfiguration?.Name, showConfiguration, styleString, type);
     }
 
-    public static string NameFor(ShowConfiguration? m, string styleString, bool urlEncode, bool isfilename)
+    public static string NameFor(ShowConfiguration? m, string styleString, TargetType type)
     {
-        return NameFor(m?.ShowName, m?.CachedShow, styleString, urlEncode, isfilename);
+        return NameFor(m?.ShowName, m?.CachedShow, styleString, type);
     }
 
-    public static string NameFor(string? showName, CachedSeriesInfo? si, string styleString, bool urlEncode, bool isfilename)
+    public static string NameFor(string? showName, CachedSeriesInfo? si, string styleString, TargetType type)
     {
         string name = styleString;
 
@@ -86,12 +87,13 @@ public static class CustomTvShowName
         }
 
         string showname = showName;
-        if (urlEncode)
+        if (type==TargetType.URL)
         {
             showname = Uri.EscapeDataString(showname);
         }
 
         name = name.ReplaceInsensitive("{ShowName}", showname);
+        name = name.ReplaceInsensitive("{ShowNamePost}", TVSettings.Instance.PostpendTerms(showname));
         name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
         name = name.ReplaceInsensitive("{ShowNameLower}", showName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
         name = name.ReplaceYear(showName);
@@ -104,11 +106,11 @@ public static class CustomTvShowName
         name = name.ReplaceInsensitive("{Provider}", si?.ProviderName);
         name = name.ReplaceInsensitive("{ProviderId}", si?.ProviderCode?.ToString());
 
-        if (urlEncode)
+        if (type == TargetType.URL)
         {
             return name.Trim();
         }
-        return isfilename ? TVSettings.Instance.FilenameFriendly(name.Trim()) : TVSettings.Instance.DirectoryFriendly(name.Trim());
+        return (type == TargetType.Filename) ? TVSettings.Instance.FilenameFriendly(name.Trim()) : TVSettings.Instance.DirectoryFriendly(name.Trim());
     }
 
     public static string GetTextFromPattern(string styleString)
@@ -127,6 +129,6 @@ public static class CustomTvShowName
 
     public static string DirectoryNameFor(CachedSeriesInfo showConfiguration, string styleString)
     {
-        return NameFor(showConfiguration, styleString, false, false);
-    }
+        return NameFor(showConfiguration, styleString, TargetType.Foldername);
+    } 
 }

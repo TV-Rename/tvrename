@@ -2125,7 +2125,7 @@ public partial class UI : Form, IDialogParent
         if (next1.IsAny())
         {
             ProcessedEpisode ei = next1.First();
-            tsNextShowTxt.Text += $"{CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(1))}, {ei.HowLong()} ({ei.DayOfWeek()}, {ei.TimeOfDay()})".ToUiVersion();
+            tsNextShowTxt.Text += $"{CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(1), TargetType.Filename)}, {ei.HowLong()} ({ei.DayOfWeek()}, {ei.TimeOfDay()})".ToUiVersion();
         }
         else
         {
@@ -2987,15 +2987,14 @@ public partial class UI : Form, IDialogParent
 
     private static string PostpendTheIfNeeded(string name)
     {
-        if (TVSettings.Instance.PostpendThe && name.StartsWith("The ", StringComparison.Ordinal))
+        if (!TVSettings.Instance.PostpendThe)
         {
-            return name.RemoveFirst(4) + ", The";
+            return name;
         }
-
-        return name;
+        return TVSettings.Instance.PostpendTerms(name);
     }
 
-    private static string GenerateBestName(CachedSeriesInfo? ser, ShowConfiguration? si)
+     private static string GenerateBestName(CachedSeriesInfo? ser, ShowConfiguration? si)
     {
         string? name = si?.ShowName;
 

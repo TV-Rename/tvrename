@@ -130,7 +130,7 @@ public partial class AddEditShow : Form, ICodeWindow
             return TVSettings.Instance.SeasonFolderFormat;
         }
         return
-            $"{TVSettings.Instance.SeasonFolderFormat}-({CustomSeasonName.NameFor(sampleProcessedSeason, TVSettings.Instance.SeasonFolderFormat)})";
+            $"{TVSettings.Instance.SeasonFolderFormat}-({CustomSeasonName.NameFor(sampleProcessedSeason, TVSettings.Instance.SeasonFolderFormat, TargetType.Foldername)})";
     }
 
     public Language? SelectedLanguage() => Languages.Instance.GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString());
@@ -190,7 +190,7 @@ public partial class AddEditShow : Form, ICodeWindow
         foreach (string s in CustomEpisodeName.TAGS)
         {
             tl.AppendLine(s + (sampleEpisode != null
-                ? " - " + CustomEpisodeName.NameForNoExt(sampleEpisode, s, false, true)
+                ? " - " + CustomEpisodeName.NameForNoExt(sampleEpisode, s, TargetType.Filename)
                 : string.Empty));
         }
 
@@ -803,7 +803,7 @@ public partial class AddEditShow : Form, ICodeWindow
     {
         if (sampleEpisode != null)
         {
-            llCustomSearchPreview.Text = CustomEpisodeName.NameForNoExt(sampleEpisode, txtSearchURL.Text, true,true);
+            llCustomSearchPreview.Text = CustomEpisodeName.NameForNoExt(sampleEpisode, txtSearchURL.Text, TargetType.URL);
         }
     }
 
@@ -855,7 +855,7 @@ public partial class AddEditShow : Form, ICodeWindow
         if (sampleEpisode != null)
         {
             llCustomName.Text =
-                CustomEpisodeName.NameForNoExt(sampleEpisode, txtCustomEpisodeNamingFormat.Text, false,true);
+                CustomEpisodeName.NameForNoExt(sampleEpisode, txtCustomEpisodeNamingFormat.Text, TargetType.Filename);
 
             llLibraryDefaultFormat.Text = TVSettings.Instance.NamingStyle.NameFor(sampleEpisode);
         }

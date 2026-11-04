@@ -162,7 +162,7 @@ internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadF
     {
         string apikey = TVSettings.Instance.JackettAPIKey;
         const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
-        string text = WebUtility.UrlEncode(CustomSeasonName.NameFor(series, seasonNumberAsInt ?? 0, FORMAT));
+        string text = CustomSeasonName.NameFor(series, seasonNumberAsInt ?? 0, FORMAT, TargetType.URL);
         return $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
     }
 
@@ -178,7 +178,7 @@ internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadF
     {
         string apikey = TVSettings.Instance.JackettAPIKey;
         const string FORMAT = "{ShowName}";
-        string text = WebUtility.UrlEncode(CustomMovieName.NameFor(actionMovieConfig, FORMAT));
+        string text = CustomMovieName.NameFor(actionMovieConfig, FORMAT, TargetType.URL);
         return $"{IndexerUrl()}api?t=movie&q={text}&apikey={apikey}";
     }
 
@@ -201,7 +201,7 @@ internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadF
     {
         string apikey = TVSettings.Instance.JackettAPIKey;
         const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
-        string text = WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false , true));
+        string text = CustomEpisodeName.NameForNoExt(episode, FORMAT, TargetType.URL);
         return $"{IndexerUrl()}api?t=tvsearch&q={text}&apikey={apikey}";
     }
 
@@ -210,21 +210,21 @@ internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadF
         if (episode == null) return;
 
         const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
-        string searchTerm = CustomEpisodeName.NameForNoExt(episode, FORMAT, false, true);
+        string searchTerm = CustomEpisodeName.NameForNoExt(episode, FORMAT, TargetType.URL);
         SearchFor(searchTerm);
     }
 
     public static void SearchForMovie(MovieConfiguration mov)
     {
         const string FORMAT = "{ShowName} ({Year})";
-        string searchTerm = CustomMovieName.NameFor(mov, FORMAT);
+        string searchTerm = CustomMovieName.NameFor(mov, FORMAT, TargetType.URL);
         SearchFor(searchTerm);
     }
 
     public static void SearchForSeason(ShowConfiguration series, int snum)
     {
         const string FORMAT = "{ShowName} S{Season:2}";
-        string searchTerm = CustomSeasonName.NameFor(series, snum, FORMAT);
+        string searchTerm = CustomSeasonName.NameFor(series, snum, FORMAT,TargetType.URL);
         SearchFor(searchTerm);
     }
 
@@ -234,7 +234,7 @@ internal class JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : DownloadF
         string serverPort = TVSettings.Instance.JackettPort;
         string searchServer = $"http://{serverName}:{serverPort}/";
 
-        string url = $"{searchServer}UI/Dashboard#search={WebUtility.UrlEncode(searchTerm)}&tracker=&category=";
+        string url = $"{searchServer}UI/Dashboard#search={searchTerm}&tracker=&category=";
 
         url.OpenUrlInBrowser();
     }

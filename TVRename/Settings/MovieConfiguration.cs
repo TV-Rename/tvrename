@@ -253,8 +253,8 @@ public class MovieConfiguration : MediaConfiguration
             }
 
             return UseCustomNamingFormat
-                ? CustomMovieName.NameFor(this, CustomNamingFormat)
-                : CustomMovieName.NameFor(this, TVSettings.Instance.MovieFilenameFormat);
+                ? CustomMovieName.NameFor(this, CustomNamingFormat, TargetType.Filename)
+                : CustomMovieName.NameFor(this, TVSettings.Instance.MovieFilenameFormat, TargetType.Filename);
         }
     }
 

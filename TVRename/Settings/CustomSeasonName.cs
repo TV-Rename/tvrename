@@ -9,6 +9,8 @@
 
 // This builds the foldernames to create/find, for any given season
 
+using System.Net;
+
 namespace TVRename;
 
 public static class CustomSeasonName
@@ -35,6 +37,7 @@ public static class CustomSeasonName
     internal static readonly List<string> TAGS =
     [
         "{ShowName}",
+        "{ShowNamePost}",
         "{ShowNameInitial}",
         "{ShowNameLower}",
         "{ShowNameNoYear}",
@@ -51,17 +54,16 @@ public static class CustomSeasonName
 
     public static List<string> ExamplePresets(ProcessedSeason s)
     {
-        return [.. Presets.Select(example => NameFor(s, example))];
+        return [.. Presets.Select(example => NameFor(s, example, TargetType.Filename))];
     }
 
-    public static string NameFor(ProcessedSeason s, string styleString) => NameFor(s, styleString, false);
-    public static string NameFor(ShowConfiguration si, int snum, string styleString)
+    public static string NameFor(ShowConfiguration si, int snum, string styleString, TargetType type)
     {
         ProcessedSeason s = si.AppropriateSeasons()[snum];
-        return NameFor(s, styleString, false);
+        return NameFor(s, styleString, type);
     }
 
-    private static string NameFor(ProcessedSeason? s, string styleString, bool urlEncode)
+    public static string NameFor(ProcessedSeason? s, string styleString, TargetType type)
     {
         string name = styleString;
 
@@ -71,7 +73,7 @@ public static class CustomSeasonName
         }
 
         string showname = s.Show.ShowName;
-        if (urlEncode)
+        if (type == TargetType.URL)
         {
             showname = Uri.EscapeDataString(showname);
         }
@@ -79,6 +81,7 @@ public static class CustomSeasonName
         string? seasonName = s.Show.CachedShow?.Season(s.SeasonNumber)?.SeasonName;
 
         name = name.ReplaceInsensitive("{ShowName}", showname);
+        name = name.ReplaceInsensitive("{ShowNamePost}", TVSettings.Instance.PostpendTerms(showname));
         name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
         name = name.ReplaceInsensitive("{ShowNameLower}", s.Show.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
         name = name.ReplaceYear(s.Show);
@@ -92,7 +95,9 @@ public static class CustomSeasonName
         name = name.ReplaceInsensitive("{ShowImdb}", s.Show.CachedShow?.Imdb ?? string.Empty);
         name = name.ReplaceInsensitive("{TotalNumberOfEpisodes}", s.Episodes.Count.ToString());
 
-        return TVSettings.Instance.DirectoryFriendly(name.Trim());
+        return (type == TargetType.Foldername) ? TVSettings.Instance.DirectoryFriendly(name.Trim())
+            : (type == TargetType.URL) ? WebUtility.UrlEncode(name.Trim())
+            : TVSettings.Instance.FilenameFriendly(name.Trim());
     }
 
     public static string GetTextFromPattern(string styleString)

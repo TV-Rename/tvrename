@@ -580,12 +580,12 @@ public class ShowConfiguration : MediaConfiguration
 
         if (AutoAddType == AutomaticFolderType.libraryDefaultFolderFormat)
         {
-            return r + CustomSeasonName.NameFor(s, TVSettings.Instance.SeasonFolderFormat);
+            return r + CustomSeasonName.NameFor(s, TVSettings.Instance.SeasonFolderFormat, TargetType.Foldername);
         }
 
         if (AutoAddType == AutomaticFolderType.customFolderFormat)
         {
-            return r + CustomSeasonName.NameFor(s, AutoAddCustomFolderFormat);
+            return r + CustomSeasonName.NameFor(s, AutoAddCustomFolderFormat, TargetType.Foldername);
         }
 
         return r;

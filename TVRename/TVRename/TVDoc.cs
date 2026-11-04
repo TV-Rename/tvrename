@@ -533,7 +533,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             return;
         }
 
-        CustomEpisodeName.NameForNoExt(epi, s.Url, true, true).OpenUrlInBrowser();
+        CustomEpisodeName.NameForNoExt(epi, s.Url, TargetType.URL).OpenUrlInBrowser();
     }
 
     public static void SearchForMovie(MovieConfiguration? ep)
@@ -553,7 +553,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             return;
         }
 
-        CustomMovieName.NameFor(epi, s.Url, true, false).OpenUrlInBrowser();
+        CustomMovieName.NameFor(epi, s.Url, TargetType.URL).OpenUrlInBrowser();
     }
 
     // ReSharper disable once InconsistentNaming

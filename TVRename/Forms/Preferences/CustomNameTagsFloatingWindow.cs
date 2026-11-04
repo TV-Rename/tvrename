@@ -21,22 +21,22 @@ public partial class CustomNameTagsFloatingWindow : Form
 {
     public CustomNameTagsFloatingWindow(ProcessedEpisode? pe)
     {
-        InitializeComponent(CustomEpisodeName.TAGS, pe != null, s => CustomEpisodeName.NameForNoExt(pe!, s,false,true));
+        InitializeComponent(CustomEpisodeName.TAGS, pe != null, s => CustomEpisodeName.NameForNoExt(pe!, s, TargetType.Filename));
     }
 
     public CustomNameTagsFloatingWindow(ProcessedSeason? pe)
     {
-        InitializeComponent(CustomSeasonName.TAGS, pe != null, s => CustomSeasonName.NameFor(pe!, s));
+        InitializeComponent(CustomSeasonName.TAGS, pe != null, s => CustomSeasonName.NameFor(pe!, s, TargetType.Filename));
     }
 
     public CustomNameTagsFloatingWindow(MovieConfiguration? movie)
     {
-        InitializeComponent(CustomMovieName.TAGS, movie != null, s => CustomMovieName.NameFor(movie, s));
+        InitializeComponent(CustomMovieName.TAGS, movie != null, s => CustomMovieName.NameFor(movie, s, TargetType.Filename));
     }
 
     public CustomNameTagsFloatingWindow(ShowConfiguration? tvShow)
     {
-        InitializeComponent(CustomTvShowName.TAGS, tvShow != null, s => CustomTvShowName.NameFor(tvShow, s));
+        InitializeComponent(CustomTvShowName.TAGS, tvShow != null, s => CustomTvShowName.NameFor(tvShow, s, TargetType.Filename));
     }
 
     private void InitializeComponent(List<string> tags, bool showExamples, Func<string, string> createExampleFromTagFunc)

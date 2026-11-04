@@ -234,8 +234,7 @@ public sealed class TVSettings
 
     internal string FilenameFriendly(ShowConfiguration show, Episode sourceEp)
     {
-        // ReSharper disable once ArrangeMethodOrOperatorBody
-        return FilenameFriendly(NamingStyle.GetTargetEpisodeName(show, sourceEp));
+        return FilenameFriendly(NamingStyle.GetTargetEpisodeName(show, sourceEp, TargetType.Filename));
     }
 
     public string PriorityReplaceTerms = "PROPER;REPACK;RERIP";
@@ -255,8 +254,12 @@ public sealed class TVSettings
     public IEnumerable<string> SubtitleExtensionsArray => Convert(subtitleExtensionsString);
 
     public string searchSeasonWordsString = "Season;Series;Saison;Temporada;Seizoen";
+    public string postpendTermsString = "The";
+   
 
     public IEnumerable<string> SearchSeasonWordsArray => Convert(searchSeasonWordsString);
+    public IEnumerable<string> PostPendTermsArray => Convert(postpendTermsString);
+    
 
     public string preferredRSSSearchTermsString = "720p;1080p;2160p";
 
@@ -648,6 +651,7 @@ public sealed class TVSettings
         new XElement("PercentBetter", replaceMargin),
         new XElement("BaseSeasonName", defaultSeasonWord),
         new XElement("SearchSeasonNames", searchSeasonWordsString),
+        new XElement("PostpendTerms", postpendTermsString),
         new XElement("PreferredRSSSearchTerms", preferredRSSSearchTermsString),
         new XElement("UnwantedRSSSearchTerms", unwantedRSSSearchTermsString),
         new XElement("BulkAddIgnoreRecycleBin", BulkAddIgnoreRecycleBin),
@@ -850,7 +854,7 @@ public sealed class TVSettings
     public bool RunOnStartUp() => runStartupCheck;
 
     public string GetSeasonSearchTermsString() => searchSeasonWordsString;
-
+    public string GetPostpendTermsString() => postpendTermsString;
     public string GetPreferredRSSSearchTermsString() => preferredRSSSearchTermsString;
     public string GetUnwantedRSSSearchTermsString() => unwantedRSSSearchTermsString;
 
@@ -1055,7 +1059,7 @@ public sealed class TVSettings
             ? epi.Show.CustomSearchUrl
             : TheSearchers.CurrentSearch.Url;
 
-        return url.HasValue() ? CustomEpisodeName.NameForNoExt(epi, url, true,true) : string.Empty;
+        return url.HasValue() ? CustomEpisodeName.NameForNoExt(epi, url, TargetType.URL) : string.Empty;
     }
 
     public string BTMovieSearchURL(MovieConfiguration? mov)
@@ -1067,7 +1071,7 @@ public sealed class TVSettings
 
         string url = TheMovieSearchers.CurrentSearch.Url;
 
-        return !url.HasValue() ? string.Empty : CustomMovieName.NameFor(mov, url, true, false);
+        return !url.HasValue() ? string.Empty : CustomMovieName.NameFor(mov, url, TargetType.URL);
     }
 
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -1478,6 +1482,7 @@ public sealed class TVSettings
         replaceMargin = xmlSettings.ExtractFloat("PercentBetter", 10);
         defaultSeasonWord = xmlSettings.ExtractString("BaseSeasonName", "Season");
         searchSeasonWordsString = xmlSettings.ExtractString("SearchSeasonNames", "Season;Series;Saison;Temporada;Seizoen");
+        postpendTermsString = xmlSettings.ExtractString("PostpendTerms", "The");
         SubsFolderNamesString =
             xmlSettings.ExtractString("SubsFolderNamesString", "subs;subtitle;vobsubs;sub;vobsub;subtitle");
         preferredRSSSearchTermsString = xmlSettings.ExtractString("PreferredRSSSearchTerms", "720p;1080p;2160p");
@@ -1832,4 +1837,24 @@ public sealed class TVSettings
     }
 
     public static string SeasonNameFor(int seasonNumber) => seasonNumber != 0 ? seasonNumber.ToString() : SpecialsListViewName;
+
+    internal IEnumerable<string> PostpendTerms()
+    {
+        return Convert(postpendTermsString);
+    }
+
+    public string PostpendTerms(string name)
+    {
+        IEnumerable<string> terms = PostpendTerms();
+
+        foreach (string term in terms)
+        {
+            if (name.StartsWith(term + " ", StringComparison.OrdinalIgnoreCase))
+            {
+                name = name.RemoveFirst(term.Length + 1) + ", " + term;
+            }
+        }
+
+        return name;
+    }
 }
