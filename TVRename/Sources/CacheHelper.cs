@@ -256,9 +256,9 @@ public static class CacheHelper
         return matchingSeries;
     }
 
-    public static async Task<CachedSeriesInfo?> SearchSeriesAsync<T>(this T cache, string showName, bool showErrorMsgBox, Locale preferredLocale) where T : MediaCache, ITVSource
+    public static async Task<CachedSeriesInfo?> SearchSeriesAsync<T>(this T cache, string showName, bool showErrorMsgBox, Locale preferredLocale, CancellationToken token) where T : MediaCache, ITVSource
     {
-        await cache.SearchAsync(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
+        await cache.SearchAsync(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale, token);
 
         if (string.IsNullOrEmpty(showName))
         {
@@ -276,9 +276,9 @@ public static class CacheHelper
             _ => null
         };
     }
-    public static async Task<CachedMovieInfo?> SearchMovieAsync<T>(this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch) where T : MediaCache, IMovieSource
+    public static async Task<CachedMovieInfo?> SearchMovieAsync<T>(this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch, CancellationToken token) where T : MediaCache, IMovieSource
     {
-        await cache.SearchAsync(hint, showErrorMsgBox, MediaConfiguration.MediaType.movie, preferredLocale);
+        await cache.SearchAsync(hint, showErrorMsgBox, MediaConfiguration.MediaType.movie, preferredLocale, token);
 
         if (string.IsNullOrEmpty(hint))
         {

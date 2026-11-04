@@ -1628,11 +1628,11 @@ public class TVDoc : IDisposable, IAsyncDisposable
         PreventAutoScan("TVDB Accuracy Check");
         await DoDownloadsFgAsync(unattended, hidden, owner, cts);
 
-        IEnumerable<CachedSeriesInfo> seriesToUpdate = await TheTVDB.LocalCache.Instance.ServerTvAccuracyCheckAsync(updateAction);
+        IEnumerable<CachedSeriesInfo> seriesToUpdate = await TheTVDB.LocalCache.Instance.ServerTvAccuracyCheckAsync(updateAction, cts.Token);
         IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode, ProviderType.TheTVDB)).OfType<ShowConfiguration>();
         await ForceRefreshShowsAsync(showsToUpdate, unattended, hidden, owner, cts);
 
-        IEnumerable<CachedMovieInfo> moviesToUpdate = await TheTVDB.LocalCache.Instance.ServerMovieAccuracyCheckAsync(updateAction);
+        IEnumerable<CachedMovieInfo> moviesToUpdate = await TheTVDB.LocalCache.Instance.ServerMovieAccuracyCheckAsync(updateAction, cts.Token);
         IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TvdbCode, ProviderType.TheTVDB)).OfType<MovieConfiguration>();
         await ForceRefreshMoviesAsync(filmsToUpdate, unattended, hidden, owner, cts);
 
@@ -1874,7 +1874,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             TheActionList.Replace(ssm.AsList(), ssm.OriginalItems);
         }
     }
-    public async Task MovieFolderScanAsync(UI ui, string downloadFolder)
+    public async Task MovieFolderScanAsync(UI ui, string downloadFolder, CancellationToken token)
     {
         if (!Directory.Exists(downloadFolder))
         {
@@ -1917,7 +1917,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
                 if (!existingMatchingShows.IsAny())
                 {
-                    await BonusAutoAddAsync(fi, ui);
+                    await BonusAutoAddAsync(fi, ui, token);
                 }
                 else
                 {
@@ -1934,7 +1934,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
                     if (askUser.ChosenShow == null)
                     {
                         //if user selected a new show then
-                        await BonusAutoAddAsync(fi, ui);
+                        await BonusAutoAddAsync(fi, ui, token);
                     }
                     else
                     {
@@ -2151,10 +2151,10 @@ public class TVDoc : IDisposable, IAsyncDisposable
         }
     }
 
-    private async Task BonusAutoAddAsync(FileInfo fi, IDialogParent owner)
+    private async Task BonusAutoAddAsync(FileInfo fi, IDialogParent owner, CancellationToken token)
     {
         //do an auto add
-        MovieConfiguration? selectedShow = await AutoAddMovieFileAsync(fi, owner);
+        MovieConfiguration? selectedShow = await AutoAddMovieFileAsync(fi, owner, token);
 
         if (selectedShow != null && ContainsMedia(FilmLibrary.Movies, selectedShow))
         {
@@ -2173,7 +2173,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         }
     }
 
-    private async Task<MovieConfiguration?> AutoAddMovieFileAsync(FileInfo file, IDialogParent owner)
+    private async Task<MovieConfiguration?> AutoAddMovieFileAsync(FileInfo file, IDialogParent owner, CancellationToken token)
     {
         string hint = file.RemoveExtension(TVSettings.Instance.UseFullPathNameToMatchSearchFolders) + ".";
 
@@ -2215,7 +2215,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         //popup dialog
         using AutoAddMedia askForMatch = new(file, true);
 
-        await askForMatch.SetHint(refinedHint);
+        await askForMatch.SetHint(refinedHint, token);
 
         Logger.Info($"Auto Adding New Show/Movie by asking about for '{refinedHint}'");
         owner.ShowChildDialog(askForMatch);
@@ -2411,11 +2411,11 @@ public class TVDoc : IDisposable, IAsyncDisposable
         return found;
     }
 
-    internal static async Task<CachedSeriesInfo?> UpdatePossibleShow(PossibleNewTvShow ai, bool showErrorMsgBox)
+    internal static async Task<CachedSeriesInfo?> UpdatePossibleShow(PossibleNewTvShow ai, bool showErrorMsgBox, CancellationToken token)
     {
         ProviderType type = ai.Provider;
         int? code = ai.ProviderCode;
-        await GetTypeInstance(type).EnsureUpdatedAsync(ai, false, showErrorMsgBox, new ThreadSafeCounter(), 1);
+        await GetTypeInstance(type).EnsureUpdatedAsync(ai, false, showErrorMsgBox, new ThreadSafeCounter(), 1, token);
         return  GetTypeInstance(type).GetSeries(code);
     }
 

@@ -63,7 +63,7 @@ public abstract class MediaCache
         }
     }
 
-    public abstract Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount);
+    public abstract Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount, CancellationToken token);
 
     protected void SayNothing() => SayNoPct(string.Empty);
 
@@ -146,7 +146,7 @@ public abstract class MediaCache
         };
     }
 
-    public abstract Task SearchAsync(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, Locale locale);
+    public abstract Task SearchAsync(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, Locale locale, CancellationToken token);
     public abstract int PrimaryKey(ISeriesSpecifier ss);
     public abstract string CacheSourceName();
     public abstract Task ReConnectAsync(bool b);

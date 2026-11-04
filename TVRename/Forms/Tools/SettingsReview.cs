@@ -117,7 +117,7 @@ public partial class SettingsReview : Form
             set.Add(new TvShowSeasonFormatCheck(show, mDoc));
             set.Add(new FolderBaseTvCheck(show, mDoc));
             set.Add(new FolderBaseLibraryDefaultTvCheck(show, mDoc));
-            set.Add(new TvShowSubdiretoryFormatCheck(show, mDoc));
+            set.Add(new TvShowSubdirectoryFormatCheck(show, mDoc));
             set.Add(new FolderBaseMatchesDefault(show, mDoc));
 
             ((IProgress<ProgressReport>)progressHandler).Report(new ProgressReport()

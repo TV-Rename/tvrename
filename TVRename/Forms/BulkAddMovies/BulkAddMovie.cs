@@ -290,7 +290,7 @@ public partial class BulkAddMovie : Form
                 DirectoryInfo di = new(path);
                 if (di.Exists)
                 {
-                    await engine.CheckFolderForMoviesAsync(di, true, true, true);
+                    await engine.CheckFolderForMoviesAsync(di, true, true, true, CancellationToken.None);
                 }
             }
             catch
@@ -400,7 +400,7 @@ public partial class BulkAddMovie : Form
                         return;
                     }
 
-                    await BulkAddMovieManager.GuessMovieAsync(movie, true);
+                    await BulkAddMovieManager.GuessMovieAsync(movie, true,cts.Token);
 
                     var report = new NewMovieProgressReport
                     {
@@ -568,15 +568,15 @@ public partial class BulkAddMovie : Form
 
     private async void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
     {
-        await EditEntryAsync();
+        await EditEntryAsync(CancellationToken.None);
     }
 
     private async void bnEditEntry_Click(object sender, System.EventArgs e)
     {
-        await EditEntryAsync();
+        await EditEntryAsync(CancellationToken.None);
     }
 
-    private async Task EditEntryAsync()
+    private async Task EditEntryAsync( CancellationToken token)
     {
         if (NothingSelected())
         {
@@ -585,16 +585,16 @@ public partial class BulkAddMovie : Form
 
         if (olvFMNewShows.FirstSelected() is PossibleNewMovie fme)
         {
-            await EditEntryAsync(fme);
+            await EditEntryAsync(fme, token);
             UpdateListItem(fme, true);
             olvFMNewShows.RefreshObject(fme);
         }
     }
 
-    private async Task EditEntryAsync(PossibleNewMovie fme)
+    private async Task EditEntryAsync(PossibleNewMovie fme, CancellationToken token)
     {
         BulkAddEditMovie ed = new();
-        await ed.SetHintAsync(fme);
+        await ed.SetHintAsync(fme, token);
         if (ed.ShowDialog(this) != DialogResult.OK) 
         {
             return;

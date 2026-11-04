@@ -5334,7 +5334,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        await mDoc.MovieFolderScanAsync(this, downloadFolder);
+        await mDoc.MovieFolderScanAsync(this, downloadFolder,CancellationToken.None);
 
         FillActionList();
         FocusOnScanResults();

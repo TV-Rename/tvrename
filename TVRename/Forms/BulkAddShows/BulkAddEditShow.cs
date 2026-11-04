@@ -27,11 +27,11 @@ public partial class BulkAddEditShow : Form, ICodeWindow
         pnlCF.ResumeLayout();
     }
 
-    public async Task SetHintAsync(PossibleNewTvShow hint)
+    public async Task SetHintAsync(PossibleNewTvShow hint, CancellationToken token)
     {
         if (hint.ProviderCode.HasValue)
         {
-            await codeFinderControl.SetHintAsync(hint.ProviderCode.Value.ToString(), hint.Provider);
+            await codeFinderControl.SetHintAsync(hint.ProviderCode.Value.ToString(), hint.Provider,token);
         }
         else
         {
@@ -40,7 +40,7 @@ public partial class BulkAddEditShow : Form, ICodeWindow
 
             await codeFinderControl.SetHintAsync(string.IsNullOrWhiteSpace(hint.RefinedHint)
                 ? s.RemoveFirst(p + 1)
-                : hint.RefinedHint, TVDoc.ProviderType.libraryDefault);
+                : hint.RefinedHint, TVDoc.ProviderType.libraryDefault, token);
         }
     }
 

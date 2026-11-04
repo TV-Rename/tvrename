@@ -22,7 +22,7 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
         });
 
         await bam.CheckFoldersAsync(progressHandler, false, !Settings.Unattended, Settings.Token);
-        await AskUserAboutShowsAsync(bam);
+        await AskUserAboutShowsAsync(bam, Settings.Token);
 
         if (!bam.AddItems.Any(s => s.CodeKnown))
         {
@@ -44,7 +44,7 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
         await MDoc.TvAddedOrEditedAsync(true, Settings.Unattended, Settings.Hidden, Settings.Owner, addedShows);
     }
 
-    private async Task AskUserAboutShowsAsync(BulkAddSeriesManager bam)
+    private async Task AskUserAboutShowsAsync(BulkAddSeriesManager bam, CancellationToken token)
     {
         foreach (PossibleNewTvShow folder in bam.AddItems)
         {
@@ -53,18 +53,18 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
                 break;
             }
 
-            await AskUserAboutShowAsync(folder, Settings.Owner);
+            await AskUserAboutShowAsync(folder, Settings.Owner, token);
         }
     }
 
-    private async Task AskUserAboutShowAsync(PossibleNewTvShow folder, Forms.UI owner)
+    private async Task AskUserAboutShowAsync(PossibleNewTvShow folder, Forms.UI owner, CancellationToken token)
     {
         if (folder.CodeKnown)
         {
             return;
         }
 
-        await BulkAddSeriesManager.GuessShowItemAsync(folder, MDoc.TvLibrary, true);
+        await BulkAddSeriesManager.GuessShowItemAsync(folder, MDoc.TvLibrary, true, token);
 
         if (folder.CodeKnown)
         {
@@ -72,7 +72,7 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
         }
 
         using BulkAddEditShow ed = new();
-        await ed.SetHintAsync(folder);
+        await ed.SetHintAsync(folder, token);
 
         owner.ShowChildDialog(ed);
         DialogResult x = ed.DialogResult;

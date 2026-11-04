@@ -96,7 +96,7 @@ public class LocalCache : MediaCache, ITVSource
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="MediaNotFoundException">Condition.</exception>
-    public override async Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
+    public override async Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount, CancellationToken token)
     {
         if (s.Provider != TVDoc.ProviderType.TVmaze)
         {
@@ -227,9 +227,9 @@ public class LocalCache : MediaCache, ITVSource
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    public async Task<CachedSeriesInfo?> SearchSeriesAsync(string showName, bool showErrorMsgBox, Locale preferredLocale)
+    public async Task<CachedSeriesInfo?> SearchSeriesAsync(string showName, bool showErrorMsgBox, Locale preferredLocale, CancellationToken token)
     {
-        await SearchAsync(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
+        await SearchAsync(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale, token);
 
         if (string.IsNullOrEmpty(showName))
         {
@@ -251,7 +251,7 @@ public class LocalCache : MediaCache, ITVSource
     /// <exception cref="SourceConsistencyException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     public override async Task SearchAsync(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type,
-        Locale preferredLocale)
+        Locale preferredLocale, CancellationToken token)
     {
         if (type == MediaConfiguration.MediaType.tv)
         {
@@ -263,7 +263,7 @@ public class LocalCache : MediaCache, ITVSource
                         TVDoc.ProviderType.TVmaze, type);
                     try
                     {
-                        await EnsureUpdatedAsync(ss, false, showErrorMsgBox, new ThreadSafeCounter(), 1);
+                        await EnsureUpdatedAsync(ss, false, showErrorMsgBox, new ThreadSafeCounter(), 1,token);
                     }
                     catch (MediaNotFoundException)
                     {

@@ -34,11 +34,11 @@ public partial class AutoAddMedia : Form, ICodeWindow
         movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
     }
 
-    public async Task SetHint(string hint) {
-        bool tvHintFound = await (tvCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultProvider));
+    public async Task SetHint(string hint, CancellationToken token) {
+        bool tvHintFound = await (tvCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultProvider, token));
         SingleTvShowFound = tvHintFound && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
 
-        bool movieHintFound = await movieCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultMovieProvider);
+        bool movieHintFound = await movieCodeFinder.SetHintAsync(hint, TVSettings.Instance.DefaultMovieProvider, token);
         SingleMovieFound = movieHintFound && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && assumeMovie;
 
         originalHint = hint;

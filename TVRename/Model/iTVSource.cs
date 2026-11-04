@@ -16,7 +16,7 @@ public interface ITVSource
 
     Task SaveCacheAsync();
 
-    Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount);
+    Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount, CancellationToken token);
 
     void UpdatesDoneOk();
 

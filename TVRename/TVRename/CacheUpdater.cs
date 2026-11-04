@@ -160,7 +160,7 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
             bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
             Threadslogger.Trace("  Downloading " + series.Name);
-            if (await TVDoc.GetMediaCache(series.Provider).EnsureUpdatedAsync(series, bannersToo, true, counter, totalCount))
+            if (await TVDoc.GetMediaCache(series.Provider).EnsureUpdatedAsync(series, bannersToo, true, counter, totalCount, cts))
             {
                 return;
             }

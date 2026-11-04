@@ -106,13 +106,13 @@ public abstract partial class CodeFinder : UserControl
 
     public event EventHandler<EventArgs>? SelectionChanged;
 
-    public async Task<bool> SetHintAsync(string s, TVDoc.ProviderType provider)
+    public async Task<bool> SetHintAsync(string s, TVDoc.ProviderType provider, CancellationToken token)
     {
         mInternal = true;
         txtFindThis.Text = s;
         SetSource(provider);
         mInternal = false;
-        await SearchAsync(true);
+        await SearchAsync(true, token);
         return DoFind(true);
     }
 
@@ -227,10 +227,10 @@ public abstract partial class CodeFinder : UserControl
 
     private async void BnGoSearch_Click(object sender, EventArgs e)
     {
-        await SearchAsync(true);
+        await SearchAsync(true, CancellationToken.None);
     }
 
-    private async Task SearchAsync(bool showErrorMsgBox)
+    private async Task SearchAsync(bool showErrorMsgBox, CancellationToken token)
     {
         // search on site
         txtSearchStatus.Text = GetLabel(Source);
@@ -244,7 +244,7 @@ public abstract partial class CodeFinder : UserControl
         try
         {
             Language toUse = parent.SelectedLanguage() ?? GetSourceLanguage(Source);
-            await GetSourceInstance(Source).SearchAsync(txtFindThis.Text, showErrorMsgBox, Type, new Locale(toUse));
+            await GetSourceInstance(Source).SearchAsync(txtFindThis.Text, showErrorMsgBox, Type, new Locale(toUse), token);
         }
         catch (SourceConnectivityException scx)
         {
@@ -314,7 +314,7 @@ public abstract partial class CodeFinder : UserControl
     {
         if (e.KeyCode is Keys.Enter or Keys.Return)
         {
-            await SearchAsync(true);
+            await SearchAsync(true, CancellationToken.None);
 
             e.Handled = true;
         }

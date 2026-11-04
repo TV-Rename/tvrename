@@ -36,17 +36,17 @@ public partial class BulkAddEditMovie : Form, ICodeWindow
         Provider = TVDoc.ProviderType.libraryDefault;
     }
 
-    public async Task SetHintAsync(PossibleNewMovie hint)
+    public async Task SetHintAsync(PossibleNewMovie hint, CancellationToken token)
     {
         if (hint.ProviderCode.HasValue)
         {
-            await codeFinderControl.SetHintAsync(hint.ProviderCode.Value.ToString(), hint.SourceProvider);
+            await codeFinderControl.SetHintAsync(hint.ProviderCode.Value.ToString(), hint.SourceProvider, token);
         }
         else
         {
             await codeFinderControl.SetHintAsync(string.IsNullOrWhiteSpace(hint.RefinedHint)
                 ? hint.Directory.Name
-                : hint.RefinedHint, TVSettings.Instance.DefaultMovieProvider);
+                : hint.RefinedHint, TVSettings.Instance.DefaultMovieProvider, token);
         }
     }
 

@@ -441,14 +441,14 @@ internal static class FinderHelper
     }
 
     public static async Task<IEnumerable<PossibleMedia>> FindMediaAsync(IEnumerable<FileInfo> possibleShows,
-        TVDoc doc, IDialogParent owner)
+        TVDoc doc, IDialogParent owner, CancellationToken token)
     {
         List<PossibleMedia> addedShows = [];
         try
         {
             foreach (FileInfo file in possibleShows)
             {
-                await FindMediaAsync(file, addedShows, doc, owner);
+                await FindMediaAsync(file, addedShows, doc, owner, token);
             }
 
             return addedShows;
@@ -459,7 +459,7 @@ internal static class FinderHelper
         }
     }
 
-    private static async Task FindMediaAsync(FileInfo file, List<PossibleMedia> addedShows, TVDoc doc, IDialogParent owner)
+    private static async Task FindMediaAsync(FileInfo file, List<PossibleMedia> addedShows, TVDoc doc, IDialogParent owner, CancellationToken token)
     {
         //If the hint contains certain terms then we'll ignore it
         if (TVSettings.Instance.IgnoredAutoAddHints.Contains(file.RemoveExtension()))
@@ -547,7 +547,7 @@ internal static class FinderHelper
             TVSettings.Instance.DefMovieUseDefaultLocation && TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
         {
             //TODO - Make generic, currently uses TMDB only
-            CachedMovieInfo? foundMovie = await TMDB.LocalCache.Instance.SearchMovieAsync(refinedHint, null, new Locale(), true, true);
+            CachedMovieInfo? foundMovie = await TMDB.LocalCache.Instance.SearchMovieAsync(refinedHint, null, new Locale(), true, true, token);
             if (foundMovie != null)
             {
                 // no need to popup dialog
@@ -577,7 +577,7 @@ internal static class FinderHelper
         //popup dialog
         using AutoAddMedia askForMatch = new(file, assumeMovie);
 
-        await askForMatch.SetHint(refinedHint);
+        await askForMatch.SetHint(refinedHint, token);
 
         if (askForMatch.SingleTvShowFound ?? false && !(askForMatch.SingleMovieFound ?? false) &&
             TVSettings.Instance.AutomateAutoAddWhenOneShowFound)

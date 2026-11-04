@@ -21,7 +21,7 @@ public class BulkAddSeriesManager(TVDoc doc)
     public FolderMonitorEntryList AddItems = [];
     private readonly TVDoc mDoc = doc;
 
-    public static async Task GuessShowItemAsync(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox)
+    public static async Task GuessShowItemAsync(PossibleNewTvShow ai, ShowLibrary library, bool showErrorMsgBox, CancellationToken token)
     {
         IPossibleTVShowIdentifier[] identifiers =
             [
@@ -35,12 +35,12 @@ public class BulkAddSeriesManager(TVDoc doc)
         {
             try
             {
-                if (await identifier.IdentifyAsync(ai, showErrorMsgBox) is (TVDoc.ProviderType type, int code))
+                if (await identifier.IdentifyAsync(ai, showErrorMsgBox, token) is (TVDoc.ProviderType type, int code))
                 {
                     ai.UpdateId(code, type);
                     Logger.Info($"BULK ADD AUTO ID: identified {ai.Name} ({ai.FolderName}) based on {identifier.GetType().Name} which we looked up to get {code}");
 
-                    CachedSeriesInfo? cachedSeries = await TVDoc.UpdatePossibleShow(ai, showErrorMsgBox);
+                    CachedSeriesInfo? cachedSeries = await TVDoc.UpdatePossibleShow(ai, showErrorMsgBox, token);
                     if (cachedSeries != null)
                     {
                         ai.UpdateId(code, type); //Update again as the name is now known
@@ -113,7 +113,7 @@ public class BulkAddSeriesManager(TVDoc doc)
         return (false, null, string.Empty);
     }
 
-    public async Task<(bool finished, DirectoryInfo[]? subDirs)> CheckFolderForShowsAsync(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
+    public async Task<(bool finished, DirectoryInfo[]? subDirs)> CheckFolderForShowsAsync(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
         try
         {
@@ -159,7 +159,7 @@ public class BulkAddSeriesManager(TVDoc doc)
             Logger.Info($"Adding {theFolder} as a new folder");
             if (andGuess)
             {
-                await GuessShowItemAsync(ai, mDoc.TvLibrary, showErrorMsgBox);
+                await GuessShowItemAsync(ai, mDoc.TvLibrary, showErrorMsgBox, token);
             }
             return (hasSeasonFolders, subDirectories);
         }
@@ -232,7 +232,7 @@ public class BulkAddSeriesManager(TVDoc doc)
             return;
         }
 
-        (bool finished, DirectoryInfo[]? subDirs) = await CheckFolderForShowsAsync(di, false, fullLogging, showErrorMsgBox);
+        (bool finished, DirectoryInfo[]? subDirs) = await CheckFolderForShowsAsync(di, false, fullLogging, showErrorMsgBox, token);
 
         if (finished)
         {

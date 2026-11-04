@@ -46,7 +46,7 @@ public class BulkAddMovieManager(TVDoc doc)
         return null;
     }
 
-    public async Task<(bool finished, DirectoryInfo[]? subDirs)> CheckFolderForMoviesAsync(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
+    public async Task<(bool finished, DirectoryInfo[]? subDirs)> CheckFolderForMoviesAsync(DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox, CancellationToken token)
     {
         CurrentPhaseDirectory.Increment();
         try
@@ -103,7 +103,7 @@ public class BulkAddMovieManager(TVDoc doc)
                 PossibleNewMovie ai = new(newFilm, showErrorMsgBox);
                 if (andGuess)
                 {
-                    await GuessMovieAsync(ai,showErrorMsgBox);
+                    await GuessMovieAsync(ai,showErrorMsgBox, token);
                 }
                 AddItems.AddIfNew(ai);
             }
@@ -122,7 +122,7 @@ public class BulkAddMovieManager(TVDoc doc)
         }
     }
 
-    public static async Task GuessMovieAsync(PossibleNewMovie ai, bool showErrorMsgBox)
+    public static async Task GuessMovieAsync(PossibleNewMovie ai, bool showErrorMsgBox, CancellationToken token)
     {
         IPossibleMovieIdentifier[] identifiers =
         [
@@ -137,12 +137,12 @@ public class BulkAddMovieManager(TVDoc doc)
         {
             try
             {
-                if (await identifier.IdentifyAsync(ai, showErrorMsgBox) is (TVDoc.ProviderType type, int code))
+                if (await identifier.IdentifyAsync(ai, showErrorMsgBox, token) is (TVDoc.ProviderType type, int code))
                 {
                     ai.UpdateId(code, type);
                     Logger.Info($"BULK ADD AUTO ID: identified {ai.Name} ({ai.Movie}) based on {identifier.GetType().Name} which we looked up to get {type}={code}");
 
-                    await GetTypeInstance(type).EnsureUpdatedAsync(ai, false, showErrorMsgBox, new ThreadSafeCounter(), 1);
+                    await GetTypeInstance(type).EnsureUpdatedAsync(ai, false, showErrorMsgBox, new ThreadSafeCounter(), 1, token);
                     CachedMovieInfo? cachedMovie = GetTypeInstance(type).GetMovie(code);
                     if (cachedMovie != null)
                     {
@@ -227,7 +227,7 @@ public class BulkAddMovieManager(TVDoc doc)
             return;
         }
 
-        (bool finished, DirectoryInfo[]? subDirs) = await CheckFolderForMoviesAsync(di, false, fullLogging, showErrorMsgBox);
+        (bool finished, DirectoryInfo[]? subDirs) = await CheckFolderForMoviesAsync(di, false, fullLogging, showErrorMsgBox, token);
 
         if (finished)
         {

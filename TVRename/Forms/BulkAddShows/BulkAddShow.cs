@@ -299,7 +299,7 @@ public partial class BulkAddShow : Form
                 DirectoryInfo di = new(path);
                 if (di.Exists)
                 {
-                    await engine.CheckFolderForShowsAsync(di, true, true, true);
+                    await engine.CheckFolderForShowsAsync(di, true, true, true, CancellationToken.None);
                 }
             }
             catch
@@ -415,7 +415,7 @@ public partial class BulkAddShow : Form
                         return;
                     }
 
-                    await BulkAddSeriesManager.GuessShowItemAsync(ai, mDoc.TvLibrary, true);
+                    await BulkAddSeriesManager.GuessShowItemAsync(ai, mDoc.TvLibrary, true, cts.Token);
 
                     var report = new ProgressReport
                     {
@@ -577,15 +577,15 @@ public partial class BulkAddShow : Form
 
     private async void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
     {
-        await EditEntryAsync();
+        await EditEntryAsync(CancellationToken.None);
     }
 
     private async void bnEditEntry_Click(object sender, System.EventArgs e)
     {
-        await EditEntryAsync();
+        await EditEntryAsync(CancellationToken.None);
     }
 
-    private async Task EditEntryAsync()
+    private async Task EditEntryAsync(CancellationToken token)
     {
         if (NothingSelected())
         {
@@ -594,16 +594,16 @@ public partial class BulkAddShow : Form
 
         if (olFMNewShows.FirstSelected() is PossibleNewTvShow fme)
         {
-            await EditEntryAsync(fme);
+            await EditEntryAsync(fme, token);
             UpdateListItem(fme, true);
             olFMNewShows.RefreshObject(fme);
         }
     }
 
-    private async Task EditEntryAsync(PossibleNewTvShow fme)
+    private async Task EditEntryAsync(PossibleNewTvShow fme, CancellationToken token)
     {
         BulkAddEditShow ed = new();
-        await ed.SetHintAsync(fme);
+        await ed.SetHintAsync(fme, token);
 
         if (ed.ShowDialog(this) != DialogResult.OK) return;
 

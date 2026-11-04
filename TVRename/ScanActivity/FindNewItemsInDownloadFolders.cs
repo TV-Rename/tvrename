@@ -33,7 +33,7 @@ internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings setti
         }
 
         IEnumerable<FileInfo> possibleShowNames = GetPossibleFiles();
-        IEnumerable<PossibleMedia> addedShows = await FinderHelper.FindMediaAsync(possibleShowNames, MDoc, Settings.Owner);
+        IEnumerable<PossibleMedia> addedShows = await FinderHelper.FindMediaAsync(possibleShowNames, MDoc, Settings.Owner, Settings.Token);
         List<PossibleMedia> addedShowsUnique = RemoveExistingAndDups(addedShows);
 
         List<ShowConfiguration> addedTvShows = [.. addedShowsUnique.Select(x => x.Configuration).OfType<ShowConfiguration>().Distinct()];

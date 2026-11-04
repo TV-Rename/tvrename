@@ -16,7 +16,7 @@ class PossibleMediaIdentifier
 {
     protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-    protected static async Task<int?> ValidateOnTVDBAsync(int? tvdbId, Locale locale, bool showMessageBox, MediaConfiguration.MediaType mediaType)
+    protected static async Task<int?> ValidateOnTVDBAsync(int? tvdbId, Locale locale, bool showMessageBox, MediaConfiguration.MediaType mediaType, CancellationToken token)
     {
         if (tvdbId.HasValue)
         {
@@ -31,7 +31,7 @@ class PossibleMediaIdentifier
                 }
                 else
                 {
-                    CachedSeriesInfo? s = await TheTVDB.LocalCache.Instance.GetSeriesOrDownloadAsync(ss,false);
+                    CachedSeriesInfo? s = await TheTVDB.LocalCache.Instance.GetSeriesOrDownloadAsync(ss,false, token);
                     if (s != null)
                     {
                         return s.TvdbCode;
@@ -130,16 +130,16 @@ class PossibleMediaIdentifier
 }
 interface IPossibleTVShowIdentifier
 {
-    Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show,bool showErrorMsgBox);
+    Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show,bool showErrorMsgBox, CancellationToken token);
 }
 interface IPossibleMovieIdentifier
 {
-    Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox);
+    Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox, CancellationToken token);
 }
 
 class IdentifyFinalBoss : IdentifyFromNFOFiles, IPossibleMovieIdentifier
 {
-    public new async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie,bool showErrorMsgBox)
+    public new async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie,bool showErrorMsgBox, CancellationToken token)
     {
         Locale localeToUse = new(TVSettings.Instance.PreferredTVDBLanguage);
         //Tweak the hints and do another Search on TMDB
@@ -169,7 +169,7 @@ class IdentifyFinalBoss : IdentifyFromNFOFiles, IPossibleMovieIdentifier
 
 class IdentifyByTweakedSearchName(ShowLibrary library) : PossibleMediaIdentifier, IPossibleTVShowIdentifier
 {
-    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox)
+    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox, CancellationToken token)
     {
         Language languageToUse = TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB
             ? TVSettings.Instance.TMDBLanguage
@@ -190,7 +190,7 @@ class IdentifyByTweakedSearchName(ShowLibrary library) : PossibleMediaIdentifier
             Logger.Info($"Ignoring {showName} as it refines to nothing.");
         }
 
-        var ser = await TheTVDB.LocalCache.Instance.SearchSeriesAsync(refinedHint, showErrorMsgBox, localeToUse);
+        var ser = await TheTVDB.LocalCache.Instance.SearchSeriesAsync(refinedHint, showErrorMsgBox, localeToUse, token);
 
         show.RefinedHint = refinedHint;
         if (ser != null && ser.TvdbId.HasValue)
@@ -203,10 +203,10 @@ class IdentifyByTweakedSearchName(ShowLibrary library) : PossibleMediaIdentifier
 
 class IdentifyByTweakedName() : PossibleMediaIdentifier, IPossibleMovieIdentifier
 {
-    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox)
+    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox, CancellationToken token)
     {
         //Tweak the hints and do another Search on TMDB
-        var ser = await ParseHintsAsync(movie, showErrorMsgBox);
+        var ser = await ParseHintsAsync(movie, showErrorMsgBox, token);
         if (ser != null && ser.TmdbCode.HasValue)
         {
             return (TVDoc.ProviderType.TMDB, ser.TmdbCode.Value);
@@ -214,7 +214,7 @@ class IdentifyByTweakedName() : PossibleMediaIdentifier, IPossibleMovieIdentifie
         throw new MediaNotIdentifiedException();
     }
 
-    public static async Task<CachedMovieInfo?> ParseHintsAsync(PossibleNewMovie movie, bool showErrorMsgBox)
+    public static async Task<CachedMovieInfo?> ParseHintsAsync(PossibleNewMovie movie, bool showErrorMsgBox, CancellationToken token)
     {
         try
         {
@@ -243,7 +243,7 @@ class IdentifyByTweakedName() : PossibleMediaIdentifier, IPossibleMovieIdentifie
                 movie.RefinedHint = refinedHint;
                 movie.PossibleYear ??= newPossibleYear;
 
-                return await GetMovieAsync(movie, new Locale(), showErrorMsgBox);
+                return await GetMovieAsync(movie, new Locale(), showErrorMsgBox, token);
             }
         }
         catch (RegexMatchTimeoutException ex)
@@ -253,7 +253,7 @@ class IdentifyByTweakedName() : PossibleMediaIdentifier, IPossibleMovieIdentifie
         return null;
     }
 
-    public static async Task<CachedMovieInfo?> GetMovieAsync(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => await TMDB.LocalCache.Instance.SearchMovieAsync(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
+    public static async Task<CachedMovieInfo?> GetMovieAsync(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox, CancellationToken token) => await TMDB.LocalCache.Instance.SearchMovieAsync(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false, token);
 }
 
 [Serializable]
@@ -274,11 +274,11 @@ internal class MediaNotIdentifiedException : Exception
 
 class IdentifyByMovieRefinedHint() : PossibleMediaIdentifier, IPossibleMovieIdentifier
 {
-    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox)
+    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox, CancellationToken token)
     {
         Locale localeToUse = new(TVSettings.Instance.TMDBLanguage);
         //Do a Search on TMDB
-        CachedMovieInfo? ser = await TMDB.LocalCache.Instance.SearchMovieAsync(movie.RefinedHint, movie.PossibleYear, localeToUse, showErrorMsgBox,false);
+        CachedMovieInfo? ser = await TMDB.LocalCache.Instance.SearchMovieAsync(movie.RefinedHint, movie.PossibleYear, localeToUse, showErrorMsgBox,false, token);
         if (ser != null && ser.TmdbCode.HasValue)
         {
             return (TVDoc.ProviderType.TMDB, ser.TmdbCode.Value);
@@ -289,13 +289,13 @@ class IdentifyByMovieRefinedHint() : PossibleMediaIdentifier, IPossibleMovieIden
 
 class IdentifyBySearchName(ShowLibrary library) : PossibleMediaIdentifier, IPossibleTVShowIdentifier
 {
-    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox)
+    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox, CancellationToken token)
     {
         Locale localeToUse = new(TVSettings.Instance.PreferredTVDBLanguage);
 
         string showName = GuessShowName(show, library);
 
-        CachedSeriesInfo? ser = await TheTVDB.LocalCache.Instance.SearchSeriesAsync(showName, showErrorMsgBox, localeToUse);
+        CachedSeriesInfo? ser = await TheTVDB.LocalCache.Instance.SearchSeriesAsync(showName, showErrorMsgBox, localeToUse, token);
         if (ser != null && ser.TvdbId.HasValue)
         {
             return (TVDoc.ProviderType.TheTVDB, ser.TvdbId.Value);
@@ -307,7 +307,7 @@ class IdentifyBySearchName(ShowLibrary library) : PossibleMediaIdentifier, IPoss
 
 class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier, IPossibleMovieIdentifier
 {
-    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox)
+    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox, CancellationToken token)
     {
         List<string> possibleFilenames = ["series.xml", "tvshow.nfo"];
         foreach (string fileName in possibleFilenames)
@@ -342,7 +342,7 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier,
         }
         throw new MediaNotIdentifiedException();
     }
-    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox)
+    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox, CancellationToken token)
     {
         Locale preferredLocale = new();
 
@@ -567,7 +567,7 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier,
 
 class IdentifyFromFilenameCodes : PossibleMediaIdentifier, IPossibleTVShowIdentifier, IPossibleMovieIdentifier
 {
-    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox)
+    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewTvShow show, bool showErrorMsgBox, CancellationToken token)
     {
         Locale preferredLocale = new();
         (string codeType, int code)? x = FileHelper.ExtractIdsFrom(show.FolderName);
@@ -577,7 +577,7 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, IPossibleTVShowIdenti
             switch (codeType.ToUpper())
             {
                 case "TVDB":
-                    int? tvDBCode = await ValidateOnTVDBAsync(code, preferredLocale, showErrorMsgBox, MediaConfiguration.MediaType.tv);
+                    int? tvDBCode = await ValidateOnTVDBAsync(code, preferredLocale, showErrorMsgBox, MediaConfiguration.MediaType.tv, token);
 
                     if (tvDBCode != null)
                     {
@@ -633,7 +633,7 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, IPossibleTVShowIdenti
     }
     private static string GetFilename(PossibleNewMovie movie) => movie.movieFile.Name;
     private static string GetFolderName(PossibleNewMovie movie) => movie.movieFile.Directory.Name;
-    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox)
+    public async Task<(ProviderType type, int code)> IdentifyAsync(PossibleNewMovie movie, bool showErrorMsgBox, CancellationToken token)
     {
         Locale preferredLocale = new();
         (string codeType, int code)? x = GetCodeFromNames(movie);
@@ -643,7 +643,7 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, IPossibleTVShowIdenti
             switch (codeType.ToUpper())
             {
                 case "TVDB":
-                    int? tvDBCode = await ValidateOnTVDBAsync(code, preferredLocale, showErrorMsgBox, MediaConfiguration.MediaType.movie);
+                    int? tvDBCode = await ValidateOnTVDBAsync(code, preferredLocale, showErrorMsgBox, MediaConfiguration.MediaType.movie, token);
                     if (tvDBCode != null)
                     {
                         return (TVDoc.ProviderType.TheTVDB, tvDBCode.Value);
