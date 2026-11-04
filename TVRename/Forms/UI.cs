@@ -2495,9 +2495,24 @@ public partial class UI : Form, IDialogParent
         showRightClickMenu.Close();
     }
 
-    private ItemList GetSelectedItems() => new() { olvAction.Selected() };
+    private ItemList GetSelectedItems()
+    {
+        Logger.Info("UI: Got selected actions");
+        List<Item> items = olvAction.Selected();
+        Logger.Info("UI: Got selected actions");
 
-    private ItemList GetCheckedItems() => new() { mDoc.TheActionList.Checked.Intersect(olvAction.FilteredObjects.OfType<Item>()) };
+        return new() { items };
+    }
+
+    private ItemList GetCheckedItems()
+    {
+        Logger.Info("UI: Get checked actions");
+
+        IEnumerable<Item> items = mDoc.TheActionList.Checked.Intersect(olvAction.FilteredObjects.OfType<Item>());
+        Logger.Info("UI: Got checked actions");
+
+        return new() { items };
+    }
 
     private async Task IncludeSeasonAsync(ShowConfiguration si, int seasonNumber)
     {
@@ -4022,6 +4037,7 @@ public partial class UI : Form, IDialogParent
 
         actionsListBeingUpdated = false;
 
+        Logger.Info("UI: Update Action Checkboxes");
         UpdateActionCheckboxes();
     }
 
@@ -4115,6 +4131,7 @@ public partial class UI : Form, IDialogParent
     private async Task GenerateActionshowRightClickMenuAsync(Point pt)
     {
         ItemList lvr = GetSelectedItems();
+
         Item? action = olvAction.FocusedObject as Item;
 
         if (lvr.Count == 0)
@@ -4288,7 +4305,11 @@ public partial class UI : Form, IDialogParent
         mDoc.TheActionList.Remove(toRemove);
 
         actionsListBeingUpdated = true;
+        Logger.Info("UI: Removing actions");
+
         olvAction.RemoveObjects(toRemove.ToList());
+
+        Logger.Info("UI: Removed actions");
         actionsListBeingUpdated = false;
 
         UpdateActionCheckboxes();
