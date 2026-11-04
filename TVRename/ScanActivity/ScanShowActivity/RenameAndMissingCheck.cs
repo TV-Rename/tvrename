@@ -127,20 +127,17 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
                 return;
             }
 
-            if (!FinderHelper.FindSeasEp(fi, out int? seasNum, out int? epNum, out int? _, si,
-                    out TVSettings.FilenameProcessorRE? _))
+            var x = new Utility.FileMatcher().Match(fi, si);
+            if (!x.IsMatch)
             {
                 continue; // can't find season & episode, so this file is of no interest to us
             }
 
-            if (!seasNum.HasValue)
-            {
-                seasNum = snum;
-            }
+            int seasonToUse = x.FoundSeason ?? snum;
 
-            ProcessedEpisode? ep = eps.Find(x => x.AppropriateEpNum == epNum && x.AppropriateSeasonNumber == seasNum);
+            ProcessedEpisode? ep = eps.Find(ep => ep.AppropriateEpNum == x.FoundEpisode && ep.AppropriateSeasonNumber == seasonToUse);
 
-            if (ep is null)
+            if (ep is null || !x.FoundEpisode.HasValue)
             {
                 continue; // season+episode number don't correspond to any episode we know of
             }
@@ -160,7 +157,7 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
 
                 if (fileWorthAdding != null)
                 {
-                    localEps[epNum.Value] = fileWorthAdding;
+                    localEps[x.FoundEpisode.Value] = fileWorthAdding;
                 }
             }
 
@@ -168,11 +165,11 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
             if (missCheck && fi.IsMovieFile())
             {
                 // first pass of missing check is to tally up the episodes we do have
-                localEps.TryAdd(epNum.Value, actualFile);
+                localEps.TryAdd(x.FoundEpisode.Value, actualFile);
 
-                if (epNum > maxEpNumFound)
+                if (x.FoundEpisode > maxEpNumFound)
                 {
-                    maxEpNumFound = epNum.Value;
+                    maxEpNumFound = x.FoundEpisode.Value;
                 }
             }
         } // foreach file in folder

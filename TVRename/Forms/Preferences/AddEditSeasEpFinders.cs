@@ -9,6 +9,7 @@
 
 using SourceGrid;
 using TVRename.Forms;
+using TVRename.Utility;
 
 namespace TVRename;
 
@@ -321,6 +322,8 @@ public partial class AddEditSeasEpFinders : Form
     {
         lvPreview.BeginUpdate();
 
+        ShowConfiguration? si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
+
         if (rdoFileSystem.Checked)
         {
             foreach (FileInfo file in new DirectoryInfo(txtFolder.Text).GetFiles())
@@ -330,10 +333,7 @@ public partial class AddEditSeasEpFinders : Form
                     continue; // move on
                 }
 
-                ShowConfiguration? si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-                bool r = FinderHelper.FindSeasEp(file, out int? seas, out int? ep, out int? maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
-
-                AddItemToListView(file.Name, seas, ep, maxEp, matchRex, r);
+                AddItemToListView(file.Name, new FileMatcher().SetRegEx(rel).Match(file,si));
             }
         }
         else if (rdoTorrentQueue.Checked)
@@ -345,25 +345,19 @@ public partial class AddEditSeasEpFinders : Form
                     continue; // move on
                 }
 
-                ShowConfiguration? si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-                bool r = FinderHelper.FindSeasEp(filename, out int? seas, out int? ep, out int? maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
-
-                AddItemToListView(filename, seas, ep, maxEp, matchRex, r);
+                AddItemToListView(filename, new FileMatcher().SetRegEx(rel).Match(filename,si));
             }
         }
         else
         {
             string testValue = txtTestString.Text;
-            ShowConfiguration? si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-            bool r = FinderHelper.FindSeasEp(testValue, out int? seas, out int? ep, out int? maxEp, si, rel, out TVSettings.FilenameProcessorRE? matchRex);
-
-            AddItemToListView(testValue, seas, ep, maxEp, matchRex, r);
+            AddItemToListView(testValue, new FileMatcher().SetRegEx(rel).Match(testValue,si));
         }
 
         lvPreview.EndUpdate();
     }
 
-    private void AddItemToListView(string filename, int? seas, int? ep, int? maxEp, TVSettings.FilenameProcessorRE? matchRex, bool r)
+    private void AddItemToListView(string filename, Utility.FileMatchResult result)
     {
         IEnumerable<ShowConfiguration> matchingShows = FinderHelper.FindMatchingShows(filename, shows);
         string? bestShowName = FinderHelper.FindBestMatchingShow(filename, shows)?.ShowName;
@@ -373,10 +367,10 @@ public partial class AddEditSeasEpFinders : Form
 
         ListViewItem lvi = new() { Text = filename };
         lvi.SubItems.Add(showDisplayString);
-        lvi.SubItems.Add(seas.HasValue? seas.Value.ToString() : "-" );
-        lvi.SubItems.Add(ep.HasValue ? ep.Value + (maxEp.HasValue ? "-" + maxEp.Value : string.Empty) : "-");
-        lvi.SubItems.Add(matchRex is null ? "-" : matchRex.Notes);
-        if (!r)
+        lvi.SubItems.Add(result.FoundSeason.HasValue ? result.FoundSeason.Value.ToString() : "-");
+        lvi.SubItems.Add(result.FoundEpisode.HasValue ? result.FoundEpisode.Value.ToString() + (result.FoundMaxEpisode.HasValue ? "-" + result.FoundMaxEpisode.Value : string.Empty) : "-");
+        lvi.SubItems.Add(result.MatchReason ?? "-");
+        if (!result.IsMatch)
         {
             lvi.BackColor = UiHelpers.WarningColor();
         }

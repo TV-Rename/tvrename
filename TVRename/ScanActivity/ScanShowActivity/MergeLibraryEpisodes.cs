@@ -87,19 +87,15 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
                     continue; //not a video file, so ignore
                 }
 
-                if (!FinderHelper.FindSeasEp(fi, out int? seasNum, out int? epNum, out int? maxEp, si,
-                        out TVSettings.FilenameProcessorRE? _))
+                var x = new Utility.FileMatcher().Match(fi,si);
+                if (!x.IsMatch || !x.FoundEpisode.HasValue)
                 {
                     continue; // can't find season & episode, so this file is of no interest to us
                 }
 
-                if (!seasNum.HasValue)
-                {
-                    seasNum = snum;
-                }
+                int seasNum = x.FoundSeason ?? snum;
 
-                int epIdx = eps.FindIndex(x =>
-                    x.AppropriateEpNum == epNum && x.AppropriateSeasonNumber == seasNum);
+                int epIdx = eps.FindIndex(ep => ep.AppropriateEpNum == x.FoundEpisode && ep.AppropriateSeasonNumber == seasNum);
 
                 if (epIdx == -1)
                 {
@@ -108,19 +104,19 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
 
                 ProcessedEpisode ep = eps[epIdx];
 
-                if (ep.Type == ProcessedEpisode.ProcessedEpisodeType.merged || !maxEp.HasValue)
+                if (ep.Type == ProcessedEpisode.ProcessedEpisodeType.merged || !x.FoundMaxEpisode.HasValue)
                 {
                     continue;
                 }
 
                 LOGGER.Info(
-                    $"Looking at {ep.Show.ShowName} and have identified that episode {epNum} and {maxEp} of season {seasNum} should be merged into one file {fi.FullName}");
+                    $"Looking at {ep.Show.ShowName} and have identified that episode {x.FoundEpisode} and {x.FoundMaxEpisode} of season {seasNum} should be merged into one file {fi.FullName}");
 
                 ShowRule sr = new()
                 {
                     DoWhatNow = RuleAction.kMerge,
-                    First = epNum,
-                    Second = maxEp
+                    First = x.FoundEpisode,
+                    Second = x.FoundMaxEpisode  
                 };
 
                 rulesToAdd.Add(sr);

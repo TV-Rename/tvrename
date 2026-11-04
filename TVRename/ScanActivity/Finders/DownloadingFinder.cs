@@ -54,10 +54,9 @@ public abstract class DownloadingFinder(TVDoc doc, TVDoc.ScanSettings settings) 
                     {
                         continue;
                     }
+                    var x = new Utility.FileMatcher().VerifyMatchesEpisode(file,episode);
 
-                    if (FinderHelper.FindSeasEp(file, out int? seasF, out int? epF, out int? _, episode.Show)
-                        && seasF == episode.AppropriateSeasonNumber
-                        && epF == episode.AppropriateEpNum)
+                    if (x.IsMatch)
                     {
                         toRemove.Add(action);
                         newList.Add(new ItemDownloading(te, episode, action.TheFileNoExt, tApp, action));

@@ -36,16 +36,16 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
                 return false;
             }
 
-            (bool identifySuccess, int? seasF, int? epF, int? maxEp) = IdentifyFile(me, dce);
+            var x = new Utility.FileMatcher().VerifyMatchesEpisode(dce, me.MissingEpisode);
 
-            if (!identifySuccess)
+            if (!x.IsMatch)
             {
                 return false;
             }
 
-            if (maxEp.HasValue && addMergeRules)
+            if (x.FoundMaxEpisode.HasValue && addMergeRules && x.FoundSeason.HasValue && x.FoundEpisode.HasValue)
             {
-                me = UpdateMissingItem(me, dce, epF!.Value, maxEp.Value, seasF!.Value);
+                me = UpdateMissingItem(me, dce, x.FoundEpisode.Value, x.FoundMaxEpisode.Value, x.FoundSeason.Value);
             }
 
             FileInfo fi = FinderHelper.GenerateTargetName(me, dce);
@@ -145,58 +145,6 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
             WarnPathTooLong(me, dce, e, matched);
         }
         return false;
-    }
-
-    private static (bool identifysuccess, int? foundSeason, int? foundEpisode, int? maxEp) IdentifyFile(ShowItemMissing me, FileInfo dce)
-    {
-        int season = me.MissingEpisode.AppropriateSeasonNumber;
-        int epnum = me.MissingEpisode.AppropriateEpNum;
-
-        bool fileMatchesFilenameProcessors = FinderHelper.FindSeasEp(dce, out int? foundSeason, out int? foundEpisode, out int? maxEp, me.MissingEpisode.Show);
-
-        if (fileMatchesFilenameProcessors)
-        {
-            if (foundSeason == season && foundEpisode == epnum)
-            {
-                return (true, foundSeason, foundEpisode, maxEp);
-            }
-            else
-            {
-                return (false, null, null, null);
-            }
-        }
-
-        if (me.MissingEpisode.Show.UseSequentialMatch)
-        {
-            if (FinderHelper.MatchesSequentialNumber(dce.RemoveExtension(false), me.MissingEpisode))
-            {
-                return (true, season, epnum, me.MissingEpisode.EpNum2);
-            }
-        }
-
-        if (me.MissingEpisode.Show.UseAirDateMatch)
-        {
-            if (FinderHelper.FindSeasEpDateCheck(dce.Name, out foundSeason, out foundEpisode, me.MissingEpisode.Show))
-            {
-                if (foundEpisode == epnum && foundSeason == season)
-                {
-                    return (true, foundSeason, foundEpisode, null);
-                }
-            }
-        }
-
-        if (me.MissingEpisode.Show.UseEpNameMatch)
-        {
-            if (FinderHelper.FindSeasEpNameCheck(dce, me.MissingEpisode.Show, out foundSeason, out foundEpisode))
-            {
-                if (foundEpisode == epnum && foundSeason == season)
-                {
-                    return (true, foundSeason, foundEpisode, null);
-                }
-            }
-        }
-
-        return (false, null, null, null);
     }
 
     private void WarnPathTooLong(ShowItemMissing me, FileInfo dce, Exception e, bool matched)

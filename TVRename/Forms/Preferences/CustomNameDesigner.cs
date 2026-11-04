@@ -90,21 +90,22 @@ public partial class CustomNameDesigner : Form
         foreach (ProcessedEpisode pe in eps)
         {
             ListViewItem lvi = new();
-            string fn = TVSettings.Instance.FilenameFriendly(cn.NameFor(pe));
-            lvi.Text = fn;
+            string proposedFileName = TVSettings.Instance.FilenameFriendly(cn.NameFor(pe));
+            lvi.Text = proposedFileName;
 
-            bool ok = FinderHelper.FindSeasEp(fn, out int? seas, out int? ep, out int? maxEp, pe.Show);
-            bool ok1 = ok && seas == pe.AppropriateSeasonNumber;
-            bool ok2 = ok && ep == pe.AppropriateEpNum;
-            string pre1 = ok1 ? "" : "* ";
-            string pre2 = ok2 ? "" : "* ";
+            var x = new Utility.FileMatcher().Match(proposedFileName,pe.Show);
+            
+            bool ok1 = x.IsMatch && x.FoundSeason == pe.AppropriateSeasonNumber;
+            bool ok2 = x.IsMatch && x.FoundEpisode == pe.AppropriateEpNum;
+            string pre1 = ok1 ? string.Empty : "* ";
+            string pre2 = ok2 ? string.Empty : "* ";
 
-            lvi.SubItems.Add(pre1 + (seas.HasValue ? seas.ToString() : ""));
-            lvi.SubItems.Add(pre2 + (ep.HasValue ? ep.ToString() : "") + (maxEp.HasValue ? "-" + maxEp : string.Empty));
+            lvi.SubItems.Add(pre1 + (x.FoundSeason?.ToString() ?? string.Empty));
+            lvi.SubItems.Add(pre2 + (x.FoundEpisode?.ToString()?? string.Empty) + (x.FoundMaxEpisode.HasValue ? "-" + x.FoundMaxEpisode : string.Empty));
 
             lvi.Tag = pe;
 
-            if (!ok || !ok1 || !ok2)
+            if (!x.IsMatch || !ok1 || !ok2)
             {
                 lvi.BackColor = UiHelpers.WarningColor();
             }

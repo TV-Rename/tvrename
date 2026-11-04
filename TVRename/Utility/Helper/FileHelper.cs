@@ -1137,8 +1137,8 @@ public static class FileHelper
             string fileName = Path.GetFileName(file);
             string destFile = Path.Combine(targetDir, fileName);
 
-            FileInfo source = new FileInfo(file);
-            FileInfo destination = new FileInfo(destFile);
+            FileInfo source = new(file);
+            FileInfo destination = new(destFile);
 
             if (!File.Exists(destFile))
             {

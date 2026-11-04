@@ -6,11 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using NodaTime;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Text.RegularExpressions;
-using Path = System.IO.Path;
 
 namespace TVRename;
 
@@ -18,174 +14,12 @@ internal static class FinderHelper
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    public static bool FindSeasEp(FileInfo fi, [NotNullWhen(true)]  out int? seas, [NotNullWhen(true)] out int? ep, out int? maxEp, ShowConfiguration? si, out TVSettings.FilenameProcessorRE? re)
-        => FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs, out re);
-
-    public static bool FindSeasEp(string itemName, [NotNullWhen(true)] out int? seas, [NotNullWhen(true)] out int? ep, out int? maxEp, ShowConfiguration? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
-        => FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, si, rexps, out re);
-
-    public static bool FindSeasEp(FileInfo? fi, [NotNullWhen(true)] out int? seas, [NotNullWhen(true)] out int? ep, out int? maxEp, ShowConfiguration? si,
-        IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
-    {
-        if (fi is null)
-        {
-            re = null;
-            seas = null;
-            ep = null;
-            maxEp = null;
-            return false;
-        }
-
-        return FindSeasEp(fi.Directory.FullName, fi.RemoveExtension(), out seas, out ep, out maxEp, si, rexps, out re);
-    }
-
-    public static bool FindSeasEpNameCheck(FileInfo? fi, ShowConfiguration? si, out int? seas, out int? ep)
-    {
-        ep = null;
-        seas = null;
-
-        if (fi is null || si is null)
-        {
-            return false;
-        }
-
-        CachedSeriesInfo? ser = si.CachedShow;
-
-        if (ser is null)
-        {
-            return false;
-        }
-
-        string simplifiedFilename = fi.Name.CompareName();
-
-        foreach (Episode epi in si.EpisodesToUse())
-        {
-            string simplifiedEpName = epi.Name.CompareName();
-
-            if (simplifiedFilename.Contains(simplifiedEpName))
-            {
-                seas = epi.GetSeasonNumber(si.Order);
-                ep = epi.GetEpisodeNumber(si.Order);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static bool MatchesSequentialNumber(string filename, ProcessedEpisode pe)
-    {
-        if (!pe.OverallNumber.HasValue)
-        {
-            return false;
-        }
-
-        string matchText = "X " + filename + " X"; // need to pad to let it match non-numbers at start and end
-        string[] regexes =
-        [
-            @"\D\s(E|e|Ep|ep|episode|Episode)\s?0*(?<sequencenumber>\d+)\s\D",
-            @"\D\s0*(?<sequencenumber>\d+)\s\D",
-            @"\D\s0*(?<sequencenumber>\d+)v\d+\s\D",
-        ];
-
-        return regexes
-            .Select(regex => Regex.Match(matchText, regex))
-            .Where(match => match.Success)
-            .Select(match => int.Parse(match.Groups["sequencenumber"].Value) == pe.OverallNumber.Value)
-            .FirstOrDefault();
-    }
-
-    public static bool FindSeasEpDateCheck(string? filename, out int? seas, out int? ep, ShowConfiguration? si)
-    {
-        ep = null;
-        seas = null;
-
-        if (filename is null || si is null)
-        {
-            return false;
-        }
-
-        // look for a valid airdate in the filename
-        // check for YMD, DMY, and MDY
-        // only check against airdates we expect for the given show
-        CachedSeriesInfo? ser = si.CachedShow;
-
-        if (ser is null)
-        {
-            return false;
-        }
-
-        string[] dateFormats = ["yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy", "MM-dd-yy"];
-
-        // force possible date separators to a dash
-        filename = filename.Replace("/", "-");
-        filename = filename.Replace(".", "-");
-        filename = filename.Replace(",", "-");
-        filename = filename.Replace(" ", "-");
-
-        foreach (Episode epi in si.EpisodesToUse())
-        {
-            LocalDateTime? dt = epi.LocalAirTime(); // file will have local timezone date, not ours
-            if (dt is null)
-            {
-                continue;
-            }
-
-            TimeSpan closestDate = TimeSpan.MaxValue;
-
-            foreach (string dateFormat in dateFormats)
-            {
-                string datestr = dt.Value.ToString(dateFormat, CultureInfo.CurrentCulture);
-
-                if (filename.Contains(datestr) && DateTime.TryParseExact(datestr, dateFormat,
-                        new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime dtInFilename))
-                {
-                    TimeSpan timeAgo = TimeHelpers.LocalNow().Subtract(dtInFilename);
-
-                    if (timeAgo < closestDate)
-                    {
-                        seas = epi.GetSeasonNumber(si.Order);
-                        ep = epi.GetEpisodeNumber(si.Order);
-                        closestDate = timeAgo;
-                    }
-                }
-            }
-        }
-
-        return ep.HasValue && seas.HasValue;
-    }
-
-    public static bool FindSeasEp(DirectoryInfo? di, [NotNullWhen(true)] out int? seas, [NotNullWhen(true)] out int? ep, ShowConfiguration si,
-        out TVSettings.FilenameProcessorRE? re)
-    {
-        List<TVSettings.FilenameProcessorRE> rexps = TVSettings.Instance.FNPRegexs;
-        re = null;
-
-        if (di is null)
-        {
-            seas = null;
-            ep = null;
-            return false;
-        }
-
-        return FindSeasEp(di.Parent.FullName, di.Name, out seas, out ep, out int? _, si, rexps, out re);
-    }
-
-    public static bool FindSeasEp(string itemName, out int? seas, out int? ep, out int? maxEp, ShowConfiguration? show)
-    {
-        return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, show, TVSettings.Instance.FNPRegexs, out TVSettings.FilenameProcessorRE? _);
-    }
-
-    public static bool FindSeasEp(FileInfo theFile, [NotNullWhen(true)] out int? seasF, [NotNullWhen(true)] out int? epF, out int? maxEp, ShowConfiguration? sI)
-    {
-        return FindSeasEp(theFile, out seasF, out epF, out maxEp, sI, out TVSettings.FilenameProcessorRE? _);
-    }
-
     public async static Task<bool> FileNeededAsync(FileInfo fi, ShowConfiguration si, DirFilesCache dfc)
     {
-        if (FindSeasEp(fi, out int? seasF, out int? epF, out _, si, out _))
+        var x = new Utility.FileMatcher().Match(fi, si);
+        if (x.IsMatch && x.FoundSeason.HasValue && x.FoundEpisode.HasValue)
         {
-            return await EpisodeNeededAsync(si, dfc, seasF.Value, epF.Value, fi);
+            return await EpisodeNeededAsync(si, dfc, x.FoundSeason.Value, x.FoundEpisode.Value, fi);
         }
 
         //We may need the file
@@ -220,12 +54,12 @@ internal static class FinderHelper
     public async static Task<bool> FileNeededAsync(DirectoryInfo? di, ShowConfiguration? si, DirFilesCache dfc)
     {
         ArgumentNullException.ThrowIfNull(di);
-
         ArgumentNullException.ThrowIfNull(si);
 
-        if (FindSeasEp(di, out int? seasF, out int? epF, si, out _))
+        var x = new Utility.FileMatcher().Match(di, si);
+        if (x.IsMatch && x.FoundSeason.HasValue && x.FoundEpisode.HasValue)
         {
-            return await EpisodeNeededAsync(si, dfc, seasF.Value, epF.Value, di);
+            return await EpisodeNeededAsync(si, dfc, x.FoundSeason.Value, x.FoundEpisode.Value, di);
         }
 
         //We may need the file
@@ -287,20 +121,11 @@ internal static class FinderHelper
         }
 
         foreach (FileInfo fiTemp in folders
-                     .Select(folder => cache.GetFiles(folder))
+                     .Select(cache.GetFiles)
                      .SelectMany(files => files.Where(IsMovieFile)))
         {
-            if (!FindSeasEp(fiTemp, out int? seasFound, out int? epFound, out int? _, si))
-            {
-                continue;
-            }
-
-            if (!seasFound.HasValue)
-            {
-                seasFound = seasWanted;
-            }
-
-            if (seasFound == seasWanted && epFound == epWanted)
+            var x = new Utility.FileMatcher().VerifyMatchesEpisode(fiTemp,epi);
+            if (x.IsMatch)
             {
                 ret.Add(fiTemp);
             }
@@ -309,47 +134,6 @@ internal static class FinderHelper
         return ret;
     }
 
-    private async static Task<List<FileInfo>> FindEpOnDisk(DirFilesCache? dfc, ShowConfiguration si, ProcessedEpisode epi,
-        bool checkDirectoryExist = true)
-    {
-        DirFilesCache cache = dfc ?? new DirFilesCache();
-
-        List<FileInfo> ret = [];
-
-        int seasWanted = epi.AppropriateSeasonNumber;
-        int epWanted = epi.AppropriateEpNum;
-
-        int snum = seasWanted;
-
-        Dictionary<int, List<string>> dirs = await si.AllFolderLocationsEpCheckAsync(checkDirectoryExist);
-
-        if (!dirs.TryGetValue(snum, out List<string>? folders))
-        {
-            return ret;
-        }
-
-        foreach (FileInfo fiTemp in folders
-                     .Select(folder => cache.GetFiles(folder))
-                     .SelectMany(files => files.Where(IsMovieFile)))
-        {
-            if (!FindSeasEp(fiTemp, out int? seasFound, out int? epFound, out int? _, si))
-            {
-                continue;
-            }
-
-            if (!seasFound.HasValue)
-            {
-                seasFound = seasWanted;
-            }
-
-            if (seasFound == seasWanted && epFound == epWanted)
-            {
-                ret.Add(fiTemp);
-            }
-        }
-
-        return ret;
-    }
 
     private static bool IsMovieFile(FileInfo f) => f.IsMovieFile();
 
@@ -391,7 +175,7 @@ internal static class FinderHelper
         return true;
     }
 
-    private static string SimplifyFilename(string filename, string? showNameHint)
+    public static string SimplifyFilename(string filename, string? showNameHint)
     {
         // Look at showNameHint and try to remove the first occurrence of it from filename
         // This is very helpful if the show's name has a >= 4 digit number in it, as that
@@ -434,86 +218,6 @@ internal static class FinderHelper
         }
 
         return returnFilename;
-    }
-
-    private static bool FindSeasEp(string directory, string filename, [NotNullWhen(true)] out int? seas, [NotNullWhen(true)] out int? ep, out int? maxEp,
-        ShowConfiguration? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? rex)
-    {
-        string showNameHint = si != null ? si.ShowName : string.Empty;
-        maxEp = null;
-        seas = null;
-        ep = null;
-        rex = null;
-
-        filename = SimplifyFilename(filename, showNameHint);
-
-        string fullPath = directory.HasValue()
-            ? directory + Path.DirectorySeparatorChar + filename
-            : filename; // construct full path with sanitised filename
-
-        fullPath = fullPath.ToLower() + " ";
-
-        foreach (TVSettings.FilenameProcessorRE re in rexps.Where(re => re.Enabled))
-        {
-            try
-            {
-                string pathToTest = re.UseFullPath ? fullPath : filename.ToLower() + " ";
-
-                Match m = Regex.Match(pathToTest, re.RegExpression, RegexOptions.IgnoreCase);
-
-                if (m.Success)
-                {
-                    (seas, ep, maxEp) = IdentifyEpisode(si, m, re);
-
-                    rex = re;
-                    if (seas.HasValue && ep.HasValue)
-                    {
-                        return true;
-                    }
-                }
-            }
-            catch (FormatException fe)
-            {
-                Logger.Warn($"Please check for the regex {re.RegExpression} as it's causing an FormatException error {fe.ErrorText()}");
-            }
-            catch (ArgumentException ae)
-            {
-                Logger.Warn($"Please check for the regex {re.RegExpression} as it's causing an ArgumentException error {ae.ErrorText()}");
-            }
-        }
-
-        return seas.HasValue && ep.HasValue;
-    }
-
-    private static (int? seas, int? ep, int? maxEp) IdentifyEpisode(ShowConfiguration? si, Match m, TVSettings.FilenameProcessorRE re)
-    {
-        int? maxEp = null;
-        int? ep = null;
-        int? seas = null;
-
-        if (int.TryParse(m.Groups["s"].ToString(), out int seasparsed))
-        {
-            seas = seasparsed;
-        }
-        else
-        {
-            if (!re.RegExpression.Contains("<s>") && (si?.AppropriateSeasons().Count ?? 0) == 1)
-            {
-                seas = 1;
-            }
-        }
-
-        if (int.TryParse(m.Groups["e"].ToString(), out int eparsed))
-        {
-            ep = eparsed;
-        }
-
-        if (int.TryParse(m.Groups["f"].ToString(), out int maxEparsed))
-        {
-            maxEp = maxEparsed;
-        }
-
-        return (seas, ep, maxEp);
     }
 
     public static string RemoveSeriesEpisodeIndicators(string hint, IEnumerable<string> seasonWords)
@@ -822,7 +526,8 @@ internal static class FinderHelper
         //If there are no LibraryFolders then we can't use the simplified UI
         if (TVSettings.Instance.LibraryFolders.Count + TVSettings.Instance.MovieLibraryFolders.Count == 0)
         {
-            if (Environment.UserInteractive){
+            if (Environment.UserInteractive)
+            {
                 MessageBox.Show(
                     "Please add some monitor (library) folders under 'Bulk Add TV Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
                     "Can't Auto Add Media", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -874,7 +579,7 @@ internal static class FinderHelper
 
         await askForMatch.SetHint(refinedHint);
 
-        if (askForMatch.SingleTvShowFound??false && !(askForMatch.SingleMovieFound ?? false) &&
+        if (askForMatch.SingleTvShowFound ?? false && !(askForMatch.SingleMovieFound ?? false) &&
             TVSettings.Instance.AutomateAutoAddWhenOneShowFound)
         {
             // no need to popup dialog
@@ -1027,13 +732,9 @@ internal static class FinderHelper
 
     public static FileInfo GenerateTargetName(string folder, ProcessedEpisode pep, FileInfo fi)
     {
-        string filename = fi.Name;
-
-        if (pep.Show.DoRename && TVSettings.Instance.RenameCheck)
-        {
-            filename = TVSettings.Instance.FilenameFriendly(
-                TVSettings.Instance.NamingStyle.NameFor(pep, fi.Extension, folder.Length));
-        }
+        string filename = (pep.Show.DoRename && TVSettings.Instance.RenameCheck)
+            ? TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pep, fi.Extension, folder.Length))
+            : fi.Name;
 
         return new FileInfo(folder.EnsureEndsWithSeparator() + filename);
     }

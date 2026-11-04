@@ -117,26 +117,26 @@ public partial class OrphanFiles : Form
 
     private void ProcessFile(FileInfo file, ShowConfiguration show, IReadOnlyDictionary<int, List<string>> folders, string showFolder)
     {
-        FinderHelper.FindSeasEp(file, out int? seasonNumber, out int? episodeNumber, out int? _, show);
+        var x = new Utility.FileMatcher().Match(file,show);
 
-        if (!seasonNumber.HasValue)
+        if (!x.IsMatch || !x.FoundSeason.HasValue)
         {
             issues.Add(new FileIssue(show, file, "File does not match a Filename Processor"));
         }
-        else if (folders.TryGetValue(seasonNumber.Value, out List<string>? seasonFolders) && !seasonFolders.Contains(showFolder) && episodeNumber.HasValue)
+        else if (folders.TryGetValue(x.FoundSeason.Value, out List<string>? seasonFolders) && !seasonFolders.Contains(showFolder) && x.FoundEpisode.HasValue)
         {
-            issues.Add(new FileIssue(show, file, "File is in the wrong series folder", seasonNumber.Value, episodeNumber.Value));
+            issues.Add(new FileIssue(show, file, "File is in the wrong series folder", x.FoundSeason.Value, x.FoundEpisode.Value));
         }
-        else
+        else 
         {
-            var episodes = show.EpisodesForSeason(seasonNumber.Value);
+            var episodes = show.EpisodesForSeason(x.FoundSeason.Value);
             if (episodes == null)
             {
-                issues.Add(new FileIssue(show, file, "Season not found", seasonNumber.Value));
+                issues.Add(new FileIssue(show, file, "Season not found", x.FoundSeason.Value));
             }
-            else if (episodeNumber.HasValue && !HasEpisode(episodes, episodeNumber.Value))
+            else if (x.FoundEpisode.HasValue && !HasEpisode(episodes, x.FoundEpisode.Value))
             {
-                issues.Add(new FileIssue(show, file, "Episode not found", seasonNumber.Value, episodeNumber.Value));
+                issues.Add(new FileIssue(show, file, "Episode not found", x.FoundSeason.Value, x.FoundEpisode.Value));
             }
         }
     }

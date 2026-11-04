@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 
 using System.Net;
 using System.Net.Http;
+using TVRename.Utility;
 
 
 namespace TVRename;
@@ -144,25 +145,17 @@ internal class JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : Downl
                         continue;
                     }
 
-                    if (!FinderHelper.FindSeasEp(itemName, out int? seas, out int? ep, out int? _, pe.Show))
+                    FileMatchResult x = new Utility.FileMatcher().VerifyMatchesEpisode(itemName,pe);
+
+                    if (!x.IsMatch)
                     {
                         continue;
                     }
 
                     if (TVSettings.Instance.DetailedRSSJSONLogging)
                     {
-                        LOGGER.Info($"Season:      {seas}");
-                        LOGGER.Info($"Episode:     {ep}");
-                    }
-
-                    if (seas != pe.AppropriateSeasonNumber)
-                    {
-                        continue;
-                    }
-
-                    if (ep != pe.AppropriateEpNum)
-                    {
-                        continue;
+                        LOGGER.Info($"Season:      {x.FoundSeason}");
+                        LOGGER.Info($"Episode:     {x.FoundEpisode}");
                     }
 
                     LOGGER.Info(

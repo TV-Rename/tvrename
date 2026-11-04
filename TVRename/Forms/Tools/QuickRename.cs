@@ -147,8 +147,9 @@ public partial class QuickRename : Form, IDialogParent
             }
         }
 
-        if (!FinderHelper.FindSeasEp(droppedFile, out int? seasonNum, out int? episodeNum, out int? _, bestShow,
-                out TVSettings.FilenameProcessorRE? _))
+        var matchResult = new Utility.FileMatcher().Match(droppedFile,bestShow);
+
+        if (!matchResult.IsMatch || !matchResult.FoundSeason.HasValue || !matchResult.FoundEpisode.HasValue)
         {
             Logger.Info($"Cannot find episode for {bestShow.ShowName} for {droppedFile.FullName}, ignoring this file.");
             return;
@@ -156,7 +157,7 @@ public partial class QuickRename : Form, IDialogParent
 
         try
         {
-            ProcessedEpisode episode = bestShow.GetEpisode(seasonNum.Value, episodeNum.Value);
+            ProcessedEpisode episode = bestShow.GetEpisode(matchResult.FoundSeason.Value, matchResult.FoundEpisode.Value);
 
             string filename = TVSettings.Instance.FilenameFriendly(
                 TVSettings.Instance.NamingStyle.NameFor(episode, otherExtension,
@@ -191,7 +192,7 @@ public partial class QuickRename : Form, IDialogParent
         catch (EpisodeNotFoundException)
         {
             Logger.Info(
-                $"Can't rename file for {bestShow.ShowName} for {droppedFile.FullName}, as it does not have Episode {episodeNum} for Season {seasonNum}.");
+                $"Can't rename file for {bestShow.ShowName} for {droppedFile.FullName}, as it does not have Episode {matchResult.FoundEpisode} for Season {matchResult.FoundSeason}.");
         }
     }
 

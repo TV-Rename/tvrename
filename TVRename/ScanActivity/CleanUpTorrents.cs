@@ -135,14 +135,15 @@ internal class CleanUpTorrents(TVDoc doc, TVDoc.ScanSettings settings) : ScanAct
             return null;
         }
 
-        if (!FinderHelper.FindSeasEp(droppedFile, out int? seasonNum, out int? episodeNum, out int? _, bestShow, out TVSettings.FilenameProcessorRE? _))
+        var x = new Utility.FileMatcher().Match(droppedFile, bestShow);
+        if (!x.IsMatch || !x.FoundSeason.HasValue || !x.FoundEpisode.HasValue)
         {
             return null;
         }
 
         try
         {
-            ProcessedEpisode episode = bestShow.GetEpisode(seasonNum.Value, episodeNum.Value);
+            ProcessedEpisode episode = bestShow.GetEpisode(x.FoundSeason.Value, x.FoundEpisode.Value);
 
             return [episode];
         }

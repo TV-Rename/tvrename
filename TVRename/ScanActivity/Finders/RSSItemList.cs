@@ -114,16 +114,18 @@ internal class RssItemList : List<RSSItem>
             return false;
         }
 
-        string showName = string.Empty;
 
-        FinderHelper.FindSeasEp(title, out int? season, out int? episode, out int? _, null);
+        var x = new Utility.FileMatcher().Match(title);
 
         if (TVSettings.Instance.DetailedRSSJSONLogging)
         {
-            Logger.Info($"Season:      {season}");
-            Logger.Info($"Episode:     {episode}");
+            Logger.Info($"Season:      {x.FoundSeason}");
+            Logger.Info($"Episode:     {x.FoundEpisode}");
         }
 
+        string showName = string.Empty;
+        int? season = x.FoundSeason;
+        int? episode = x.FoundEpisode;
         try
         {
             Match m = Regex.Match(description, "Show Name: (.*?)[;|$]", RegexOptions.IgnoreCase);

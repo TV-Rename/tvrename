@@ -157,9 +157,10 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
             throw new ArgumentNullException(nameof(matchingShows), "si is null");
         }
 
-        if (FinderHelper.FindSeasEp(di, out int? seasF, out int? epF, si, out TVSettings.FilenameProcessorRE? _))
+        var x = new Utility.FileMatcher().Match(di, si);
+        if (x.IsMatch && x.FoundSeason.HasValue && x.FoundEpisode.HasValue)
         {
-            ProcessedEpisode pep = si.GetEpisode(seasF.Value, epF.Value);
+            ProcessedEpisode pep = si.GetEpisode(x.FoundSeason.Value, x.FoundEpisode.Value);
             LOGGER.Info($"Removing {di.FullName} as it matches {si.ShowName} and no episodes are needed");
 
             return new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup);
@@ -286,32 +287,33 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
     private async Task<(bool?, ProcessedEpisode?)> CanFileBeDeletedForShowAsync(bool unattended, FileInfo fi, IDialogParent owner, ShowConfiguration si,
         List<ShowConfiguration> matchingShows)
     {
-        bool found = FinderHelper.FindSeasEp(fi, out int? seasF, out int? epF, out int? _, si, out TVSettings.FilenameProcessorRE? re);
+        var x = new Utility.FileMatcher().Match(fi, si);
+        bool found = x.IsMatch;
 
         if (!found)
         {
             LOGGER.Warn($"We cannot find a episode for {fi.FullName}, keeping it ");
             return (false, null);
         }
-        if (!seasF.HasValue || !epF.HasValue)
+        if (!x.FoundSeason.HasValue || !x.FoundEpisode.HasValue)
         {
             LOGGER.Warn($"We cannot find a episode for {fi.FullName}, keeping it ");
             return (false, null);
         }
 
-        var seasonEpisodes = si.AllEpisodesForSeason(seasF.Value);
+        var seasonEpisodes = si.AllEpisodesForSeason(x.FoundSeason.Value);
 
         if (!seasonEpisodes.IsAny())
         {
-            LogError(fi, seasF.Value, epF.Value, re, si, "season");
+            LogError(fi, x.FoundSeason.Value, x.FoundEpisode.Value, x.MatchReason , si, "season");
             return (false, null);
         }
 
-        ProcessedEpisode? firstMatchingEpisode = seasonEpisodes.FirstOrDefault(ep => ep.AppropriateEpNum == epF);
+        ProcessedEpisode? firstMatchingEpisode = seasonEpisodes.FirstOrDefault(ep => ep.AppropriateEpNum == x.FoundEpisode.Value);
 
         if (firstMatchingEpisode == null)
         {
-            LogError(fi, seasF.Value, epF.Value, re, si, "episode");
+            LogError(fi, x.FoundSeason.Value, x.FoundEpisode.Value, x.MatchReason, si, "episode");
             return (false, null);
         }
 
@@ -396,17 +398,17 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private static void LogError(FileInfo fi, int? seasF, int? epF, TVSettings.FilenameProcessorRE? re, ShowConfiguration si, string typeMissing)
+    private static void LogError(FileInfo fi, int? seasF, int? epF, string? details, ShowConfiguration si, string typeMissing)
     {
         if (!seasF.HasValue)
         {
             LOGGER.Info(
-                $"Can't find the right {typeMissing} for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
+                $"Can't find the right {typeMissing} for {fi.FullName} coming out as S{seasF}E{epF} using rule '{details}' for show {si.ShowName}:{si.Code}");
         }
         else
         {
             LOGGER.Warn(
-                $"Can't find the right {typeMissing} for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
+                $"Can't find the right {typeMissing} for {fi.FullName} coming out as S{seasF}E{epF} using rule '{details}' for show {si.ShowName}:{si.Code}");
         }
     }
 
