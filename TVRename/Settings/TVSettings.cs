@@ -1087,20 +1087,20 @@ public sealed class TVSettings
         if (fn.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
         {
             Logger.Warn($"Need to remove some characters from {fn} as the episode name contains characters that cannot be in the filename.");
-            fn = fn.RemoveCharactersFrom(Path.GetInvalidFileNameChars()).RemoveCharactersFrom(Helpers.Tab.ToCharArray());
+            fn = fn.RemoveCharactersFrom(Path.GetInvalidFileNameChars());
         }
 
-        return ForceLowercaseFilenames ? fn.ToLower() : fn;
+        return ForceLowercaseFilenames ? fn.ToLower().RemoveCharactersFrom(Helpers.Tab.ToCharArray()) : fn.RemoveCharactersFrom(Helpers.Tab.ToCharArray());
     }
 
-    public static string DirectoryFriendly(string fn)
+    public string DirectoryFriendly(string fn)
     {
         if (string.IsNullOrWhiteSpace(fn))
         {
             return string.Empty;
         }
 
-        foreach (Replacement rep in DefaultListRE())
+        foreach (Replacement rep in Replacements)
         {
             fn = rep.DoReplace(fn);
         }
@@ -1108,10 +1108,10 @@ public sealed class TVSettings
         if (fn.ContainsAnyCharactersFrom(Path.GetInvalidPathChars()))
         {
             Logger.Warn($"Need to remove some characters from {fn} as the directory name contains characters that cannot be in the path.");
-            fn = fn.RemoveCharactersFrom(Path.GetInvalidPathChars()).RemoveCharactersFrom(Helpers.Tab.ToCharArray());
+            fn = fn.RemoveCharactersFrom(Path.GetInvalidPathChars());
         }
 
-        return fn;
+        return fn.RemoveCharactersFrom(Helpers.Tab.ToCharArray());
     }
 
     public bool NeedToDownloadBannerFile()

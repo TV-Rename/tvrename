@@ -108,7 +108,7 @@ public static class CustomTvShowName
         {
             return name.Trim();
         }
-        return isfilename ? TVSettings.Instance.FilenameFriendly(name.Trim()) : TVSettings.DirectoryFriendly(name.Trim());
+        return isfilename ? TVSettings.Instance.FilenameFriendly(name.Trim()) : TVSettings.Instance.DirectoryFriendly(name.Trim());
     }
 
     public static string GetTextFromPattern(string styleString)

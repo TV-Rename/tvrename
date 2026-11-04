@@ -92,7 +92,7 @@ public static class CustomSeasonName
         name = name.ReplaceInsensitive("{ShowImdb}", s.Show.CachedShow?.Imdb ?? string.Empty);
         name = name.ReplaceInsensitive("{TotalNumberOfEpisodes}", s.Episodes.Count.ToString());
 
-        return TVSettings.DirectoryFriendly(name.Trim());
+        return TVSettings.Instance.DirectoryFriendly(name.Trim());
     }
 
     public static string GetTextFromPattern(string styleString)

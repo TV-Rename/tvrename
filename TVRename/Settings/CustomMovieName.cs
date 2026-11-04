@@ -122,7 +122,7 @@ public static class CustomMovieName
 
         return urlEncode ? name.Trim()
             : isfilename ? TVSettings.Instance.FilenameFriendly(name.Trim())
-            : TVSettings.DirectoryFriendly(name.Trim());
+            : TVSettings.Instance.DirectoryFriendly(name.Trim());
     }
 
     public static string GetTextFromPattern(string styleString)
