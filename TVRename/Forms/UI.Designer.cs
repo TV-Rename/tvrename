@@ -278,9 +278,7 @@ namespace TVRename.Forms
             refreshWTWTimer = new Timer(components);
             notifyIcon1 = new NotifyIcon(components);
             showRightClickMenu = new ContextMenuStrip(components);
-            statusTimer = new Timer(components);
             BGDownloadTimer = new Timer(components);
-            UpdateTimer = new Timer(components);
             saveFile = new SaveFileDialog();
             tmrShowUpcomingPopup = new Timer(components);
             quickTimer = new Timer(components);
@@ -2301,21 +2299,11 @@ namespace TVRename.Forms
             showRightClickMenu.Size = new Size(36, 4);
             showRightClickMenu.ItemClicked += showRightClickMenu_ItemClicked;
             // 
-            // statusTimer
-            // 
-            statusTimer.Enabled = true;
-            statusTimer.Interval = 250;
-            // 
             // BGDownloadTimer
             // 
             BGDownloadTimer.Enabled = true;
             BGDownloadTimer.Interval = 10000;
             BGDownloadTimer.Tick += BGDownloadTimer_Tick;
-            // 
-            // UpdateTimer
-            // 
-            UpdateTimer.Interval = 1000;
-            UpdateTimer.Tick += UpdateTimer_Tick;
             // 
             // tmrShowUpcomingPopup
             // 
@@ -2502,7 +2490,6 @@ namespace TVRename.Forms
         private System.Windows.Forms.Label txtDLStatusLabel;
         private System.Windows.Forms.ProgressBar pbProgressBarx;
         private System.Windows.Forms.Timer BGDownloadTimer;
-        private System.Windows.Forms.Timer UpdateTimer;
         private System.Windows.Forms.ToolStripMenuItem bugReportToolStripMenuItem;
         private System.Windows.Forms.ImageList ilIcons;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;

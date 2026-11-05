@@ -122,9 +122,9 @@ public static class UiHelpers
     {
         ArgumentNullException.ThrowIfNull(uiElement);
 
-        if (uiElement.IsDisposed || !uiElement.IsHandleCreated)
+        if (uiElement.IsDisposed) 
         {
-            Logger.Warn($"Asked to do action on {uiElement.Name}, but it's disposed or not created.");
+            Logger.Warn($"Asked to do action on {uiElement.Name}, but it's disposed.");
             return;
         }
 
