@@ -105,7 +105,7 @@ public class LocalCache : MediaCache, ITVSource
                 TVDoc.ProviderType.TVmaze);
         }
 
-        if (!s.TmdbId.HasValue)
+        if (!s.TvMazeId.HasValue)
         {
             throw new SourceConsistencyException(
                 $"Asked to update {s.Name} from TV Maze, it has no id specified.",
@@ -113,7 +113,7 @@ public class LocalCache : MediaCache, ITVSource
         }
 
         {
-            if (Series.TryGetValue(s.TmdbId.Value, out CachedSeriesInfo? si) && !si.Dirty)
+            if (Series.TryGetValue(s.TvMazeId.Value, out CachedSeriesInfo? si) && !si.Dirty)
             {
                 return true;
             }
