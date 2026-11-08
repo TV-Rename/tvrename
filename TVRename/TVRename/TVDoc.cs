@@ -2426,4 +2426,50 @@ public class TVDoc : IDisposable, IAsyncDisposable
         TVDoc.ProviderType.TVmaze => TVmaze.LocalCache.Instance,
         _ => TheTVDB.LocalCache.Instance
     };
+
+
+    private Task<bool>? saveLayoutTask;
+    public async Task<bool> StartSavingLayoutAsync(XDocument layoutXML,AsyncShutdownManager? shutdownManager = null)
+    {
+        if (saveLayoutTask is null || saveLayoutTask.IsCompleted)
+        {
+            saveLayoutTask = SaveLayoutXmlInternalAsync(layoutXML);
+
+            // Track the cache save task with the shutdown manager to ensure it completes during shutdown
+            shutdownManager?.TrackTask(saveLayoutTask);
+        }
+        else
+        {
+            Logger.Info("Layout is already being saved, skipping for now...");
+        }
+        return await saveLayoutTask;
+    }
+    private async Task<bool> SaveLayoutXmlInternalAsync(XDocument layoutXML)
+    {
+        Policy retryPolicy = Policy
+            .Handle<Exception>()
+            .Retry(3, (exception, retryCount) => Logger.Warn(exception, $"Retry {retryCount}/3 to save {PathManager.UILayoutFile.FullName}."));
+
+        try
+        {
+            await retryPolicy.Execute(async () => await XmlHelper.SaveXmlFileAsync(layoutXML, PathManager.UILayoutFile.FullName));
+        }
+        catch (Exception e)
+        {
+            if (Environment.UserInteractive)
+            {
+                Logger.Error($"Complete failure to save {PathManager.UILayoutFile.FullName}. {e.Message}");
+                DialogResult dr = MessageBox.Show($"Could not save {PathManager.UILayoutFile.FullName} due to {e.Message}. Layout will be lost. Retry? ", "TV Rename",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                if (dr != DialogResult.No)
+                {
+                    await SaveLayoutXmlInternalAsync(layoutXML);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    internal async Task<bool> SaveLayoutXmlAsync(XDocument layoutXML) => await StartSavingLayoutAsync(layoutXML);
 }
