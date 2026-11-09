@@ -401,7 +401,7 @@ public partial class BulkAddShow : Form
         try
         {
             await Parallel.ForEachAsync(
-                engine.AddItems,
+                engine.AddItems.ToArray(),
                 options,
                 async (ai, token) =>
                 {

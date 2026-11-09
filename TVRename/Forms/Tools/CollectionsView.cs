@@ -119,7 +119,7 @@ public partial class CollectionsView : Form
         try
         {
             await Parallel.ForEachAsync(
-                collectionIds,
+                collectionIds.ToArray(),
                 options,
                 async (collection, token) =>
             {

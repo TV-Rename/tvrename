@@ -386,7 +386,7 @@ public partial class BulkAddMovie : Form
         try
         {
             await Parallel.ForEachAsync(
-                engine.AddItems,
+                engine.AddItems.ToArray(),
                 options,
                 async (movie, token) =>
                 {
