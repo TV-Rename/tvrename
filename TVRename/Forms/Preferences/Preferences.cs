@@ -359,6 +359,7 @@ public partial class Preferences : Form
         s.IgnorePreviouslySeenMovies = cbIgnorePreviouslySeenMovies.Checked;
         s.AutoSearchForDownloadedFiles = chkAutoSearchForDownloadedFiles.Checked;
         s.LeaveOriginals = cbLeaveOriginals.Checked;
+        s.DeferCopyToFileSystem = cbDeferMovesToSystem.Checked;
         s.CheckuTorrent = cbCheckuTorrent.Checked;
         s.AutoMergeDownloadEpisodes = chkAutoMergeDownloadEpisodes.Checked;
         s.AutoMergeLibraryEpisodes = chkAutoMergeLibraryEpisodes.Checked;
@@ -992,6 +993,7 @@ public partial class Preferences : Form
         cbIgnorePreviouslySeen.Checked = s.IgnorePreviouslySeen;
         cbIgnorePreviouslySeenMovies.Checked = s.IgnorePreviouslySeenMovies;
         cbLeaveOriginals.Checked = s.LeaveOriginals;
+        cbDeferMovesToSystem.Checked = s.DeferCopyToFileSystem;
         cbTVDBLanguages.Text = s.PreferredTVDBLanguage.LocalName;
         cbScanIncludesBulkAdd.Checked = s.DoBulkAddInScan;
         chkIgnoreAllSpecials.Checked = s.IgnoreAllSpecials;

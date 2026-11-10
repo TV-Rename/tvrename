@@ -74,6 +74,7 @@ namespace TVRename.Forms
             tbCleanUpDownloadDirMoviesLength = new TextBox();
             label98 = new Label();
             upDownScanSeconds = new DomainUpDown();
+            tbPostPenders = new TextBox();
             colorDialog = new ColorDialog();
             cmDefaults = new ContextMenuStrip(components);
             KODIToolStripMenuItem = new ToolStripMenuItem();
@@ -524,7 +525,7 @@ namespace TVRename.Forms
             cboUpdateCheckInterval = new ComboBox();
             optUpdateCheckInterval = new RadioButton();
             optUpdateCheckAlways = new RadioButton();
-            tbPostPenders = new TextBox();
+            cbDeferMovesToSystem = new CheckBox();
             cmDefaults.SuspendLayout();
             tpDisplay.SuspendLayout();
             groupBox11.SuspendLayout();
@@ -1002,6 +1003,16 @@ namespace TVRename.Forms
             upDownScanSeconds.TabIndex = 48;
             toolTip1.SetToolTip(upDownScanSeconds, "If checked the system will automatically scan and complete actions on a periodic schedule");
             // 
+            // tbPostPenders
+            // 
+            tbPostPenders.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tbPostPenders.Location = new Point(287, 245);
+            tbPostPenders.Margin = new Padding(4, 3, 4, 3);
+            tbPostPenders.Name = "tbPostPenders";
+            tbPostPenders.Size = new Size(187, 23);
+            tbPostPenders.TabIndex = 46;
+            toolTip1.SetToolTip(tbPostPenders, "Which terms should the system look move to the end of a show/movie name?");
+            // 
             // cmDefaults
             // 
             cmDefaults.Items.AddRange(new ToolStripItem[] { KODIToolStripMenuItem, pyTivoToolStripMenuItem, mede8erToolStripMenuItem, noneToolStripMenuItem });
@@ -1431,7 +1442,7 @@ namespace TVRename.Forms
             tpRSSJSONSearch.Margin = new Padding(4, 3, 4, 3);
             tpRSSJSONSearch.Name = "tpRSSJSONSearch";
             tpRSSJSONSearch.Padding = new Padding(4, 3, 4, 3);
-            tpRSSJSONSearch.Size = new Size(500, 684);
+            tpRSSJSONSearch.Size = new Size(510, 705);
             tpRSSJSONSearch.TabIndex = 12;
             tpRSSJSONSearch.Text = "RSS/JSON Search";
             tpRSSJSONSearch.UseVisualStyleBackColor = true;
@@ -2095,7 +2106,7 @@ namespace TVRename.Forms
             tpTorrentNZB.Margin = new Padding(4, 3, 4, 3);
             tpTorrentNZB.Name = "tpTorrentNZB";
             tpTorrentNZB.Padding = new Padding(4, 3, 4, 3);
-            tpTorrentNZB.Size = new Size(500, 684);
+            tpTorrentNZB.Size = new Size(510, 705);
             tpTorrentNZB.TabIndex = 4;
             tpTorrentNZB.Text = "Torrents / NZB";
             tpTorrentNZB.UseVisualStyleBackColor = true;
@@ -2465,6 +2476,7 @@ namespace TVRename.Forms
             // 
             // tbSearchFolders
             // 
+            tbSearchFolders.Controls.Add(cbDeferMovesToSystem);
             tbSearchFolders.Controls.Add(label98);
             tbSearchFolders.Controls.Add(upDownScanSeconds);
             tbSearchFolders.Controls.Add(chkUseSearchFullPathWhenMatchingShows);
@@ -2485,7 +2497,7 @@ namespace TVRename.Forms
             tbSearchFolders.Location = new Point(149, 4);
             tbSearchFolders.Margin = new Padding(4, 3, 4, 3);
             tbSearchFolders.Name = "tbSearchFolders";
-            tbSearchFolders.Size = new Size(500, 684);
+            tbSearchFolders.Size = new Size(510, 705);
             tbSearchFolders.TabIndex = 3;
             tbSearchFolders.Text = "Search Folders";
             tbSearchFolders.UseVisualStyleBackColor = true;
@@ -2788,7 +2800,7 @@ namespace TVRename.Forms
             tbMediaCenter.Margin = new Padding(4, 3, 4, 3);
             tbMediaCenter.Name = "tbMediaCenter";
             tbMediaCenter.Padding = new Padding(4, 3, 4, 3);
-            tbMediaCenter.Size = new Size(500, 684);
+            tbMediaCenter.Size = new Size(510, 705);
             tbMediaCenter.TabIndex = 8;
             tbMediaCenter.Text = "Media Centres";
             tbMediaCenter.UseVisualStyleBackColor = true;
@@ -3142,7 +3154,7 @@ namespace TVRename.Forms
             tbFolderDeleting.Margin = new Padding(4, 3, 4, 3);
             tbFolderDeleting.Name = "tbFolderDeleting";
             tbFolderDeleting.Padding = new Padding(4, 3, 4, 3);
-            tbFolderDeleting.Size = new Size(500, 684);
+            tbFolderDeleting.Size = new Size(510, 705);
             tbFolderDeleting.TabIndex = 9;
             tbFolderDeleting.Text = "Folder Deleting";
             tbFolderDeleting.UseVisualStyleBackColor = true;
@@ -3345,7 +3357,7 @@ namespace TVRename.Forms
             tbAutoExport.Margin = new Padding(4, 3, 4, 3);
             tbAutoExport.Name = "tbAutoExport";
             tbAutoExport.Padding = new Padding(4, 3, 4, 3);
-            tbAutoExport.Size = new Size(500, 684);
+            tbAutoExport.Size = new Size(510, 705);
             tbAutoExport.TabIndex = 2;
             tbAutoExport.Text = "Episode Export";
             tbAutoExport.UseVisualStyleBackColor = true;
@@ -3887,7 +3899,7 @@ namespace TVRename.Forms
             tbFilesAndFolders.Margin = new Padding(4, 3, 4, 3);
             tbFilesAndFolders.Name = "tbFilesAndFolders";
             tbFilesAndFolders.Padding = new Padding(4, 3, 4, 3);
-            tbFilesAndFolders.Size = new Size(500, 684);
+            tbFilesAndFolders.Size = new Size(510, 705);
             tbFilesAndFolders.TabIndex = 1;
             tbFilesAndFolders.Text = "Files and Folders";
             tbFilesAndFolders.UseVisualStyleBackColor = true;
@@ -4133,7 +4145,7 @@ namespace TVRename.Forms
             tbGeneral.Margin = new Padding(4, 3, 4, 3);
             tbGeneral.Name = "tbGeneral";
             tbGeneral.Padding = new Padding(4, 3, 4, 3);
-            tbGeneral.Size = new Size(500, 684);
+            tbGeneral.Size = new Size(510, 705);
             tbGeneral.TabIndex = 0;
             tbGeneral.Text = "General";
             tbGeneral.UseVisualStyleBackColor = true;
@@ -5469,7 +5481,7 @@ namespace TVRename.Forms
             tpSubtitles.Margin = new Padding(4, 3, 4, 3);
             tpSubtitles.Name = "tpSubtitles";
             tpSubtitles.Padding = new Padding(4, 3, 4, 3);
-            tpSubtitles.Size = new Size(500, 684);
+            tpSubtitles.Size = new Size(510, 705);
             tpSubtitles.TabIndex = 21;
             tpSubtitles.Text = "Subtitles";
             tpSubtitles.UseVisualStyleBackColor = true;
@@ -5624,7 +5636,7 @@ namespace TVRename.Forms
             tpJackett.Margin = new Padding(4, 3, 4, 3);
             tpJackett.Name = "tpJackett";
             tpJackett.Padding = new Padding(4, 3, 4, 3);
-            tpJackett.Size = new Size(500, 684);
+            tpJackett.Size = new Size(510, 705);
             tpJackett.TabIndex = 17;
             tpJackett.Text = "Jackett Search";
             tpJackett.UseVisualStyleBackColor = true;
@@ -5963,7 +5975,7 @@ namespace TVRename.Forms
             tpAutoExportLibrary.Margin = new Padding(4, 3, 4, 3);
             tpAutoExportLibrary.Name = "tpAutoExportLibrary";
             tpAutoExportLibrary.Padding = new Padding(4, 3, 4, 3);
-            tpAutoExportLibrary.Size = new Size(500, 684);
+            tpAutoExportLibrary.Size = new Size(510, 705);
             tpAutoExportLibrary.TabIndex = 19;
             tpAutoExportLibrary.Text = "Library Export";
             tpAutoExportLibrary.UseVisualStyleBackColor = true;
@@ -6348,7 +6360,7 @@ namespace TVRename.Forms
             tbAppUpdate.Location = new Point(149, 4);
             tbAppUpdate.Margin = new Padding(4, 3, 4, 3);
             tbAppUpdate.Name = "tbAppUpdate";
-            tbAppUpdate.Size = new Size(500, 684);
+            tbAppUpdate.Size = new Size(510, 705);
             tbAppUpdate.TabIndex = 20;
             tbAppUpdate.Text = "App Updates";
             tbAppUpdate.UseVisualStyleBackColor = true;
@@ -6453,15 +6465,16 @@ namespace TVRename.Forms
             optUpdateCheckAlways.UseVisualStyleBackColor = true;
             optUpdateCheckAlways.CheckedChanged += updateCheckOption_CheckedChanged;
             // 
-            // tbPostPenders
+            // cbDeferMovesToSystem
             // 
-            tbPostPenders.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            tbPostPenders.Location = new Point(287, 245);
-            tbPostPenders.Margin = new Padding(4, 3, 4, 3);
-            tbPostPenders.Name = "tbPostPenders";
-            tbPostPenders.Size = new Size(187, 23);
-            tbPostPenders.TabIndex = 46;
-            toolTip1.SetToolTip(tbPostPenders, "Which terms should the system look move to the end of a show/movie name?");
+            cbDeferMovesToSystem.AutoSize = true;
+            cbDeferMovesToSystem.Location = new Point(173, 92);
+            cbDeferMovesToSystem.Margin = new Padding(4, 3, 4, 3);
+            cbDeferMovesToSystem.Name = "cbDeferMovesToSystem";
+            cbDeferMovesToSystem.Size = new Size(165, 19);
+            cbDeferMovesToSystem.TabIndex = 50;
+            cbDeferMovesToSystem.Text = "Defer file moves to system";
+            cbDeferMovesToSystem.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -7114,5 +7127,6 @@ namespace TVRename.Forms
         private global::System.Windows.Forms.Label label100;
         private CheckBox cbIgnoreSpecialsByDefault;
         private TextBox tbPostPenders;
+        private CheckBox cbDeferMovesToSystem;
     }
 }
