@@ -169,7 +169,7 @@ public class ActionTDownload : ActionDownload
 
     public override string ScanListViewGroup => "lvgActionDownloadRSS";
 
-    public override int IconNumber => 6;
+    public override int IconNumber => 5;
 
     #endregion Item Members
 }
