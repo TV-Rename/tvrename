@@ -1388,8 +1388,8 @@ public partial class UI : Form, IDialogParent
                             ),
                         new XElement("Maximized", WindowState == FormWindowState.Maximized)
                         ),
-                    ColWidthsXElement("WhenToWatch", lvWhenToWatch),
-                    ColWidthsXElement("AllInOne", olvAction),
+                    ColWidthsXElement("WhenToWatch",lvWhenToWatch),
+                    ColWidthsXElement("AllInOne",olvAction),
                     new XElement("Splitter",
                         new XAttribute("Distance", splitContainer1.SplitterDistance),
                         new XAttribute("HTMLCollapsed", splitContainer1.Panel2Collapsed)
@@ -1412,7 +1412,7 @@ public partial class UI : Form, IDialogParent
         {
             returnElement.Add(new XElement("Width", lvc.Width));
         }
-
+         
         return returnElement;
     }
 
@@ -2968,7 +2968,7 @@ public partial class UI : Form, IDialogParent
         return TVSettings.Instance.PostpendTerms(name);
     }
 
-    private static string GenerateBestName(CachedSeriesInfo? ser, ShowConfiguration? si)
+     private static string GenerateBestName(CachedSeriesInfo? ser, ShowConfiguration? si)
     {
         string? name = si?.ShowName;
 
@@ -4539,8 +4539,8 @@ public partial class UI : Form, IDialogParent
     {
         btnUpdateAvailable.Visible = false;
         ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
-        this.SafeInvoke(async ()
-            => await NotifyUpdatesAsync(result, true, false), true);
+        this.SafeInvoke(async () 
+            => await NotifyUpdatesAsync(result, true, false),true);
     }
 
     private async void tmrPeriodicScan_Tick(object sender, EventArgs e) => await RunAutoScanAsync("Periodic Scan");
@@ -5308,7 +5308,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        await mDoc.MovieFolderScanAsync(this, downloadFolder, CancellationToken.None);
+        await mDoc.MovieFolderScanAsync(this, downloadFolder,CancellationToken.None);
 
         FillActionList();
         FocusOnScanResults();
@@ -5398,8 +5398,7 @@ public partial class UI : Form, IDialogParent
         try
         {
             int? id = config.Id();
-            if (id.HasValue)
-            {
+            if (id.HasValue){
                 await TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSinceAsync(id.Value, timeSince.Value);
             }
         }

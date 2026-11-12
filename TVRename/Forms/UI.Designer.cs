@@ -150,7 +150,7 @@ namespace TVRename.Forms
             chrMovieImages = new CefSharp.WinForms.ChromiumWebBrowser();
             tpMovieTrailer = new TabPage();
             chrMovieTrailer = new CefSharp.WinForms.ChromiumWebBrowser();
-            tsMyMovies = new ToolStrip();
+            toolStrip1 = new ToolStrip();
             tbnAddMovie = new ToolStripButton();
             btnEditMovie = new ToolStripButton();
             btnMovieDelete = new ToolStripButton();
@@ -197,7 +197,7 @@ namespace TVRename.Forms
             olvSource = new OLVColumn();
             olvErrors = new OLVColumn();
             olvType = new OLVColumn();
-            ilActionIcons = new ImageList(components);
+            ilIcons = new ImageList(components);
             tsScanResults = new ToolStrip();
             btnScan = new ToolStripSplitButton();
             fullToolStripMenuItem = new ToolStripMenuItem();
@@ -250,6 +250,7 @@ namespace TVRename.Forms
             toolStripSeparator12 = new ToolStripSeparator();
             btnScheduleRightClick = new ToolStripButton();
             toolStripButton1 = new ToolStripButton();
+            ilNewIcons = new ImageList(components);
             columnHeader29 = new ColumnHeader();
             columnHeader30 = new ColumnHeader();
             columnHeader31 = new ColumnHeader();
@@ -259,6 +260,7 @@ namespace TVRename.Forms
             columnHeader34 = new ColumnHeader();
             columnHeader1 = new ColumnHeader();
             columnHeader35 = new ColumnHeader();
+            imageList1 = new ImageList(components);
             tableLayoutPanel2 = new TableLayoutPanel();
             pbProgressBarx = new ProgressBar();
             txtDLStatusLabel = new Label();
@@ -281,6 +283,7 @@ namespace TVRename.Forms
             tmrShowUpcomingPopup = new Timer(components);
             quickTimer = new Timer(components);
             tmrPeriodicScan = new Timer(components);
+            toolTip1 = new ToolTip(components);
             btnUpdateAvailable = new Button();
             tableLayoutPanel3 = new TableLayoutPanel();
             panel1 = new Panel();
@@ -298,7 +301,7 @@ namespace TVRename.Forms
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
             tpMovieTrailer.SuspendLayout();
-            tsMyMovies.SuspendLayout();
+            toolStrip1.SuspendLayout();
             tbMyShows.SuspendLayout();
             toolStripContainer2.ContentPanel.SuspendLayout();
             toolStripContainer2.TopToolStripPanel.SuspendLayout();
@@ -858,6 +861,7 @@ namespace TVRename.Forms
             tabControl1.Controls.Add(tbWTW);
             tabControl1.Dock = DockStyle.Fill;
             tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tabControl1.ImageList = ilNewIcons;
             tabControl1.ItemSize = new Size(100, 100);
             tabControl1.Location = new Point(0, 0);
             tabControl1.Margin = new Padding(4, 3, 4, 3);
@@ -901,7 +905,7 @@ namespace TVRename.Forms
             // 
             // toolStripContainer1.TopToolStripPanel
             // 
-            toolStripContainer1.TopToolStripPanel.Controls.Add(tsMyMovies);
+            toolStripContainer1.TopToolStripPanel.Controls.Add(toolStrip1);
             // 
             // splitContainer2
             // 
@@ -995,7 +999,7 @@ namespace TVRename.Forms
             tabPage2.Margin = new Padding(4, 3, 4, 3);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(4, 3, 4, 3);
-            tabPage2.Size = new Size(1068, 613);
+            tabPage2.Size = new Size(615, 608);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Images";
             tabPage2.UseVisualStyleBackColor = true;
@@ -1007,7 +1011,7 @@ namespace TVRename.Forms
             chrMovieImages.Location = new Point(4, 3);
             chrMovieImages.Margin = new Padding(4, 3, 4, 3);
             chrMovieImages.Name = "chrMovieImages";
-            chrMovieImages.Size = new Size(1060, 607);
+            chrMovieImages.Size = new Size(607, 602);
             chrMovieImages.TabIndex = 1;
             chrMovieImages.Visible = false;
             // 
@@ -1018,7 +1022,7 @@ namespace TVRename.Forms
             tpMovieTrailer.Margin = new Padding(4, 3, 4, 3);
             tpMovieTrailer.Name = "tpMovieTrailer";
             tpMovieTrailer.Padding = new Padding(4, 3, 4, 3);
-            tpMovieTrailer.Size = new Size(1068, 613);
+            tpMovieTrailer.Size = new Size(615, 608);
             tpMovieTrailer.TabIndex = 2;
             tpMovieTrailer.Text = "Trailer";
             tpMovieTrailer.UseVisualStyleBackColor = true;
@@ -1030,23 +1034,23 @@ namespace TVRename.Forms
             chrMovieTrailer.Location = new Point(4, 3);
             chrMovieTrailer.Margin = new Padding(4, 3, 4, 3);
             chrMovieTrailer.Name = "chrMovieTrailer";
-            chrMovieTrailer.Size = new Size(1060, 607);
+            chrMovieTrailer.Size = new Size(607, 602);
             chrMovieTrailer.TabIndex = 2;
             chrMovieTrailer.Visible = false;
             // 
-            // tsMyMovies
+            // toolStrip1
             // 
-            tsMyMovies.Dock = DockStyle.None;
-            tsMyMovies.GripStyle = ToolStripGripStyle.Hidden;
-            tsMyMovies.ImageScalingSize = new Size(28, 28);
-            tsMyMovies.Items.AddRange(new ToolStripItem[] { tbnAddMovie, btnEditMovie, btnMovieDelete, toolStripSeparator15, btnMovieRefresh, tsbScanMovies, btnMovieFilter, toolStripSeparator16, tsbMyMoviesContextMenu });
-            tsMyMovies.Location = new Point(0, 0);
-            tsMyMovies.Name = "tsMyMovies";
-            tsMyMovies.Padding = new Padding(0, 0, 4, 0);
-            tsMyMovies.Size = new Size(1447, 39);
-            tsMyMovies.Stretch = true;
-            tsMyMovies.TabIndex = 13;
-            tsMyMovies.Text = "toolStrip1";
+            toolStrip1.Dock = DockStyle.None;
+            toolStrip1.GripStyle = ToolStripGripStyle.Hidden;
+            toolStrip1.ImageScalingSize = new Size(28, 28);
+            toolStrip1.Items.AddRange(new ToolStripItem[] { tbnAddMovie, btnEditMovie, btnMovieDelete, toolStripSeparator15, btnMovieRefresh, tsbScanMovies, btnMovieFilter, toolStripSeparator16, tsbMyMoviesContextMenu });
+            toolStrip1.Location = new Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Padding = new Padding(0, 0, 4, 0);
+            toolStrip1.Size = new Size(1447, 39);
+            toolStrip1.Stretch = true;
+            toolStrip1.TabIndex = 13;
+            toolStrip1.Text = "toolStrip1";
             // 
             // tbnAddMovie
             // 
@@ -1247,7 +1251,7 @@ namespace TVRename.Forms
             tpImages.Margin = new Padding(4, 3, 4, 3);
             tpImages.Name = "tpImages";
             tpImages.Padding = new Padding(4, 3, 4, 3);
-            tpImages.Size = new Size(1093, 613);
+            tpImages.Size = new Size(640, 608);
             tpImages.TabIndex = 1;
             tpImages.Text = "Images";
             tpImages.UseVisualStyleBackColor = true;
@@ -1259,7 +1263,7 @@ namespace TVRename.Forms
             chrImages.Location = new Point(4, 3);
             chrImages.Margin = new Padding(4, 3, 4, 3);
             chrImages.Name = "chrImages";
-            chrImages.Size = new Size(1085, 607);
+            chrImages.Size = new Size(632, 602);
             chrImages.TabIndex = 1;
             chrImages.Visible = false;
             // 
@@ -1270,7 +1274,7 @@ namespace TVRename.Forms
             tpSummary.Margin = new Padding(4, 3, 4, 3);
             tpSummary.Name = "tpSummary";
             tpSummary.Padding = new Padding(4, 3, 4, 3);
-            tpSummary.Size = new Size(1093, 613);
+            tpSummary.Size = new Size(640, 608);
             tpSummary.TabIndex = 2;
             tpSummary.Text = "Summary";
             tpSummary.UseVisualStyleBackColor = true;
@@ -1282,7 +1286,7 @@ namespace TVRename.Forms
             chrSummary.Location = new Point(4, 3);
             chrSummary.Margin = new Padding(4, 3, 4, 3);
             chrSummary.Name = "chrSummary";
-            chrSummary.Size = new Size(1085, 607);
+            chrSummary.Size = new Size(632, 602);
             chrSummary.TabIndex = 2;
             chrSummary.Visible = false;
             // 
@@ -1293,7 +1297,7 @@ namespace TVRename.Forms
             tabPage3.Margin = new Padding(4, 3, 4, 3);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(4, 3, 4, 3);
-            tabPage3.Size = new Size(1093, 613);
+            tabPage3.Size = new Size(640, 608);
             tabPage3.TabIndex = 3;
             tabPage3.Text = "Trailer";
             tabPage3.UseVisualStyleBackColor = true;
@@ -1305,7 +1309,7 @@ namespace TVRename.Forms
             chrTvTrailer.Location = new Point(4, 3);
             chrTvTrailer.Margin = new Padding(4, 3, 4, 3);
             chrTvTrailer.Name = "chrTvTrailer";
-            chrTvTrailer.Size = new Size(1085, 607);
+            chrTvTrailer.Size = new Size(632, 602);
             chrTvTrailer.TabIndex = 2;
             chrTvTrailer.Visible = false;
             // 
@@ -1462,7 +1466,7 @@ namespace TVRename.Forms
             olvAction.ShowItemCountOnGroups = true;
             olvAction.ShowItemToolTips = true;
             olvAction.Size = new Size(1447, 642);
-            olvAction.SmallImageList = ilActionIcons;
+            olvAction.SmallImageList = ilIcons;
             olvAction.TabIndex = 0;
             olvAction.UseCompatibleStateImageBehavior = false;
             olvAction.UseFilterIndicator = true;
@@ -1569,24 +1573,24 @@ namespace TVRename.Forms
             olvType.IsVisible = false;
             olvType.Text = "Type";
             // 
-            // ilActionIcons
+            // ilIcons
             // 
-            ilActionIcons.ColorDepth = ColorDepth.Depth24Bit;
-            ilActionIcons.ImageStream = (ImageListStreamer)resources.GetObject("ilActionIcons.ImageStream");
-            ilActionIcons.TransparentColor = Color.Transparent;
-            ilActionIcons.Images.SetKeyName(0, "OnDisk.bmp");
-            ilActionIcons.Images.SetKeyName(1, "MagGlass.bmp");
-            ilActionIcons.Images.SetKeyName(2, "uTorrent.bmp");
-            ilActionIcons.Images.SetKeyName(3, "copy.bmp");
-            ilActionIcons.Images.SetKeyName(4, "move.bmp");
-            ilActionIcons.Images.SetKeyName(5, "download.bmp");
-            ilActionIcons.Images.SetKeyName(6, "RSS.bmp");
-            ilActionIcons.Images.SetKeyName(7, "NFO.bmp");
-            ilActionIcons.Images.SetKeyName(8, "sab.png");
-            ilActionIcons.Images.SetKeyName(9, "tk1[1].png");
-            ilActionIcons.Images.SetKeyName(10, "qBitTorrent.png");
-            ilActionIcons.Images.SetKeyName(11, "zip.png");
-            ilActionIcons.Images.SetKeyName(12, "blank.png");
+            ilIcons.ColorDepth = ColorDepth.Depth24Bit;
+            ilIcons.ImageStream = (ImageListStreamer)resources.GetObject("ilIcons.ImageStream");
+            ilIcons.TransparentColor = Color.Transparent;
+            ilIcons.Images.SetKeyName(0, "OnDisk.bmp");
+            ilIcons.Images.SetKeyName(1, "MagGlass.bmp");
+            ilIcons.Images.SetKeyName(2, "uTorrent.bmp");
+            ilIcons.Images.SetKeyName(3, "copy.bmp");
+            ilIcons.Images.SetKeyName(4, "move.bmp");
+            ilIcons.Images.SetKeyName(5, "download.bmp");
+            ilIcons.Images.SetKeyName(6, "RSS.bmp");
+            ilIcons.Images.SetKeyName(7, "NFO.bmp");
+            ilIcons.Images.SetKeyName(8, "sab.png");
+            ilIcons.Images.SetKeyName(9, "tk1[1].png");
+            ilIcons.Images.SetKeyName(10, "qBitTorrent.png");
+            ilIcons.Images.SetKeyName(11, "zip.png");
+            ilIcons.Images.SetKeyName(12, "blank.png");
             // 
             // tsScanResults
             // 
@@ -1964,7 +1968,7 @@ namespace TVRename.Forms
             lvWhenToWatch.ShowItemCountOnGroups = true;
             lvWhenToWatch.ShowItemToolTips = true;
             lvWhenToWatch.Size = new Size(1443, 482);
-            lvWhenToWatch.SmallImageList = ilActionIcons;
+            lvWhenToWatch.SmallImageList = ilIcons;
             lvWhenToWatch.TabIndex = 3;
             lvWhenToWatch.UseCompatibleStateImageBehavior = false;
             lvWhenToWatch.UseFilterIndicator = true;
@@ -2136,6 +2140,43 @@ namespace TVRename.Forms
             toolStripButton1.Text = "Revert View";
             toolStripButton1.Click += toolStripButton1_Click_2;
             // 
+            // ilNewIcons
+            // 
+            ilNewIcons.ColorDepth = ColorDepth.Depth32Bit;
+            ilNewIcons.ImageStream = (ImageListStreamer)resources.GetObject("ilNewIcons.ImageStream");
+            ilNewIcons.TransparentColor = Color.Transparent;
+            ilNewIcons.Images.SetKeyName(0, "322497-48 (1).png");
+            ilNewIcons.Images.SetKeyName(1, "353430-48.png");
+            ilNewIcons.Images.SetKeyName(2, "1587498-48.png");
+            ilNewIcons.Images.SetKeyName(3, "115762-48.png");
+            ilNewIcons.Images.SetKeyName(4, "3790574-48.png");
+            ilNewIcons.Images.SetKeyName(5, "4632196-48.png");
+            // 
+            // imageList1
+            // 
+            imageList1.ColorDepth = ColorDepth.Depth8Bit;
+            imageList1.ImageStream = (ImageListStreamer)resources.GetObject("imageList1.ImageStream");
+            imageList1.TransparentColor = Color.Magenta;
+            imageList1.Images.SetKeyName(0, "clock.bmp");
+            imageList1.Images.SetKeyName(1, "Calendar_schedule.bmp");
+            imageList1.Images.SetKeyName(2, "Save.bmp");
+            imageList1.Images.SetKeyName(3, "Refresh.bmp");
+            imageList1.Images.SetKeyName(4, "Control_TreeView.bmp");
+            imageList1.Images.SetKeyName(5, "Zoom.bmp");
+            imageList1.Images.SetKeyName(6, "delete.bmp");
+            imageList1.Images.SetKeyName(7, "EditInformation.bmp");
+            imageList1.Images.SetKeyName(8, "FormRun.bmp");
+            imageList1.Images.SetKeyName(9, "GetLatestVersion.bmp");
+            imageList1.Images.SetKeyName(10, "OpenFolder.bmp");
+            imageList1.Images.SetKeyName(11, "SearchWeb.bmp");
+            imageList1.Images.SetKeyName(12, "PublishToWeb.bmp");
+            imageList1.Images.SetKeyName(13, "Options.bmp");
+            imageList1.Images.SetKeyName(14, "NewCard.bmp");
+            imageList1.Images.SetKeyName(15, "TVOff.bmp");
+            imageList1.Images.SetKeyName(16, "FillLeft.bmp");
+            imageList1.Images.SetKeyName(17, "FillRight.bmp");
+            imageList1.Images.SetKeyName(18, "filtre.png");
+            // 
             // tableLayoutPanel2
             // 
             tableLayoutPanel2.ColumnCount = 3;
@@ -2243,7 +2284,7 @@ namespace TVRename.Forms
             // 
             // notifyIcon1
             // 
-            notifyIcon1.BalloonTipText = "TV Rename Notification Bar";
+            notifyIcon1.BalloonTipText = "TV Rename is t3h r0x0r";
             notifyIcon1.BalloonTipTitle = "TV Rename";
             notifyIcon1.Icon = (Icon)resources.GetObject("notifyIcon1.Icon");
             notifyIcon1.Text = "TV Rename";
@@ -2358,8 +2399,8 @@ namespace TVRename.Forms
             tabPage1.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
             tpMovieTrailer.ResumeLayout(false);
-            tsMyMovies.ResumeLayout(false);
-            tsMyMovies.PerformLayout();
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
             tbMyShows.ResumeLayout(false);
             toolStripContainer2.ContentPanel.ResumeLayout(false);
             toolStripContainer2.TopToolStripPanel.ResumeLayout(false);
@@ -2450,7 +2491,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.ProgressBar pbProgressBarx;
         private System.Windows.Forms.Timer BGDownloadTimer;
         private System.Windows.Forms.ToolStripMenuItem bugReportToolStripMenuItem;
-        private System.Windows.Forms.ImageList ilActionIcons;
+        private System.Windows.Forms.ImageList ilIcons;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFile;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
@@ -2470,6 +2511,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.Timer tmrShowUpcomingPopup;
         private System.Windows.Forms.ToolStripMenuItem actorsToolStripMenuItem;
         private System.Windows.Forms.Timer quickTimer;
+        private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.TabPage tpInformation;
@@ -2481,6 +2523,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.ToolStripMenuItem checkForNewVersionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem duplicateFinderLOGToolStripMenuItem;
         private System.Windows.Forms.Timer tmrPeriodicScan;
+        private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem timezoneInconsistencyLOGToolStripMenuItem;
         private Button btnUpdateAvailable;
         private ToolStripMenuItem viewToolStripMenuItem;
@@ -2564,7 +2607,7 @@ namespace TVRename.Forms
         private ToolStripButton tbActionJackettSearch;
         private ToolStripButton tsbScheduleJackettSearch;
         private TabPage tbMyMovies;
-        private ToolStrip tsMyMovies;
+        private ToolStrip toolStrip1;
         private ToolStripButton tbnAddMovie;
         private ToolStripButton btnEditMovie;
         private ToolStripButton btnMovieDelete;
