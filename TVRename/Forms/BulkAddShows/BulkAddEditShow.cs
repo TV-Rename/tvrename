@@ -5,6 +5,9 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+
+using TVRename.Forms;
+
 namespace TVRename;
 
 public partial class BulkAddEditShow : Form, ICodeWindow
@@ -17,6 +20,7 @@ public partial class BulkAddEditShow : Form, ICodeWindow
     {
         codeFinderControl = new TvCodeFinder(string.Empty, TVSettings.Instance.DefaultProvider, this) { Dock = DockStyle.Fill };
         InitializeComponent();
+        this.UpdateColorControls();
 
         codeFinderControl.SelectionChanged += CodeChanged;
         codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;

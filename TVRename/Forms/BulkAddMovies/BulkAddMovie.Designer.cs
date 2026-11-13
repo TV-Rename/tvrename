@@ -61,7 +61,7 @@ namespace TVRename
             bnNewFolderOpen = new Button();
             bnIgnoreNewFolder = new Button();
             folderBrowser = new FolderBrowserDialog();
-            tabControl1 = new TabControl();
+            tabControl1 = new TabControlThemed();
             tbFolders = new TabPage();
             label1 = new Label();
             tbIgnore = new TabPage();
@@ -77,7 +77,7 @@ namespace TVRename
             bnEditEntry = new Button();
             label4 = new Label();
             bnClose = new Button();
-            pbProgress = new ProgressBar();
+            pbProgress = new ProgressBarThemed();
             lblStatusLabel = new Label();
             btnStopScan = new Button();
             tabControl1.SuspendLayout();
@@ -610,7 +610,7 @@ namespace TVRename
         private System.Windows.Forms.Button bnNewFolderOpen;
         private System.Windows.Forms.Button bnIgnoreNewFolder;
         private System.Windows.Forms.FolderBrowserDialog folderBrowser;
-        private System.Windows.Forms.TabControl tabControl1;
+        private TVRename.TabControlThemed tabControl1;
         private System.Windows.Forms.TabPage tbFolders;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TabPage tbIgnore;
@@ -621,7 +621,7 @@ namespace TVRename
         private System.Windows.Forms.Button bnEditEntry;
         private System.Windows.Forms.Button bnCheck2;
         private System.Windows.Forms.ImageList imagesPassFail;
-        private System.Windows.Forms.ProgressBar pbProgress;
+        private TVRename.ProgressBarThemed pbProgress;
         private System.Windows.Forms.Label lblStatusLabel;
         private ObjectListViewFlickerFree<PossibleNewMovie> olvFMNewShows;
         private OLVColumn olvFOlder;

@@ -29,6 +29,7 @@ public partial class DownloadProgress : Form
     public DownloadProgress(CacheUpdater doc, CancellationTokenSource cts)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         mDoc = doc;
         token = cts;
         tmrUpdate.Start();

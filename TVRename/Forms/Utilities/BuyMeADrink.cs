@@ -7,6 +7,7 @@
 //
 using System.Globalization;
 using System.Text.RegularExpressions;
+using TVRename.Forms;
 
 namespace TVRename;
 
@@ -24,6 +25,7 @@ public partial class BuyMeADrink : Form
     public BuyMeADrink()
     {
         InitializeComponent();
+        this.UpdateColorControls();
         label1.Text = "If this program has saved you time, and you use it regularly, then please consider buying me a drink to say thanks!\r\r" + "Type in (or choose) an amount, then hit the button to go to Paypal.";
         comboBox1.Items.Add("$" + ((double)5).ToString(".00"));
         comboBox1.Items.Add("$" + ((double)10).ToString(".00"));

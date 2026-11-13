@@ -5,6 +5,9 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+
+using TVRename.Forms;
+
 namespace TVRename;
 
 /// <summary>
@@ -23,6 +26,7 @@ public partial class ShowException : Form
     public ShowException(Exception e)
     {
         InitializeComponent();
+        this.UpdateColorControls();
 
         mException = e;
     }

@@ -101,7 +101,7 @@ namespace TVRename
             pnlCF = new Panel();
             chkCustomShowName = new CheckBox();
             txtCustomShowName = new TextBox();
-            Folders = new TabControl();
+            Folders = new TabControlThemed();
             tabPage6 = new TabPage();
             llFilenameDefaultFormat = new LinkLabel();
             llCustomName = new LinkLabel();
@@ -1143,7 +1143,7 @@ namespace TVRename
         private System.Windows.Forms.Panel pnlCF;
         private System.Windows.Forms.CheckBox chkCustomShowName;
         private System.Windows.Forms.TextBox txtCustomShowName;
-        private System.Windows.Forms.TabControl Folders;
+        private TVRename.TabControlThemed Folders;
         private System.Windows.Forms.RadioButton rdoTMDB;
         private System.Windows.Forms.ComboBox cbRegion;
         private System.Windows.Forms.CheckBox chkCustomRegion;

@@ -11,6 +11,7 @@ namespace TVRename;
 
 
 using System.Windows.Forms;
+using TVRename.Forms;
 
 public partial class BulkAddEditMovie : Form, ICodeWindow
 {
@@ -23,6 +24,7 @@ public partial class BulkAddEditMovie : Form, ICodeWindow
     {
         codeFinderControl = new MovieCodeFinder(string.Empty, TVSettings.Instance.DefaultMovieProvider, this) { Dock = DockStyle.Fill };
         InitializeComponent();
+        this.UpdateColorControls();
 
         codeFinderControl.SelectionChanged += CodeChanged;
         codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;

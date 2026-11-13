@@ -35,6 +35,7 @@ public partial class AddEditSeasEpFinders : Form
         shows = sil;
 
         InitializeComponent();
+        this.UpdateColorControls();
 
         SetupGrid();
         FillGrid(OutputRegularExpressions);

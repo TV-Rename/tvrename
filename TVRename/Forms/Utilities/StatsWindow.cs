@@ -5,6 +5,9 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+
+using TVRename.Forms;
+
 namespace TVRename;
 
 /// <summary>
@@ -24,6 +27,7 @@ public partial class StatsWindow : Form
     {
         stats = s;
         InitializeComponent();
+        this.UpdateColorControls();
     }
 
     private void StatsWindow_Load(object sender, System.EventArgs e)

@@ -47,6 +47,7 @@ public partial class AddEditShow : Form, ICodeWindow
         codeFinderForm = new TvCodeFinder(si.Code.HasValue ? si.Code.ToString() : si.LastName, si.Provider, this) { Dock = DockStyle.Fill };
 
         InitializeComponent();
+        this.UpdateColorControls();
         HasChanged = false;
 
         lblSeasonWordPreview.Text = SeasonPreviewText();

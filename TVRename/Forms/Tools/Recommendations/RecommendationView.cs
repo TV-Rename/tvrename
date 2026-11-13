@@ -33,6 +33,7 @@ public partial class RecommendationView : Form
     private RecommendationView(TVDoc doc, UI main)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         recs = new Recomendations();
         tvShows = [];
         movies = [];

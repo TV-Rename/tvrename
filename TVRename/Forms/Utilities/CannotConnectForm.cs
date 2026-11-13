@@ -16,6 +16,7 @@ public partial class CannotConnectForm : Form
     {
         this.provider = provider;
         InitializeComponent();
+        this.UpdateColorControls();
         label1.Text = message;
         Text = header;
     }

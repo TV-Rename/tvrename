@@ -37,6 +37,7 @@ public partial class AddEditMovie : Form, ICodeWindow
             new MovieCodeFinder(si.Code.HasValue ? si.Code.ToString() : si.LastName, si.Provider, this) { Dock = DockStyle.Fill };
 
         InitializeComponent();
+        this.UpdateColorControls();
         HasChanged = false;
 
         SetupDropDowns(si);

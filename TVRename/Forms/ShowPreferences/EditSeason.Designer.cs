@@ -57,7 +57,7 @@ namespace TVRename
             this.bnOK = new System.Windows.Forms.Button();
             this.txtShowName = new System.Windows.Forms.Label();
             this.txtSeasonNumber = new System.Windows.Forms.Label();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabControl1 = new TVRename.TabControlThemed();
             this.Rules = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label5 = new System.Windows.Forms.Label();
@@ -423,7 +423,7 @@ namespace TVRename
 
         private System.Windows.Forms.Label txtShowName;
         private System.Windows.Forms.Label txtSeasonNumber;
-        private System.Windows.Forms.TabControl tabControl1;
+        private TVRename.TabControlThemed tabControl1;
         private System.Windows.Forms.TabPage Rules;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.ListView lvSeenEpisodes;

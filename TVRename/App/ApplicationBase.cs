@@ -67,6 +67,13 @@ internal class ApplicationBase : WindowsFormsApplicationBase
 
         Task.Run(async () => { doc = await LoadSettingsAsync(parameters); }).Wait();
 
+        ThemeManager.Load();
+        if (TVSettings.Instance.ColorModeActual == SystemColorMode.Dark)
+        {
+            // The splash screen is already showing, so it keeps the standard look
+            SplashScreen.SafeInvoke(() => SplashScreen.KeepStandardLook(), true);
+            Application.SetColorMode(SystemColorMode.Dark);
+        }
 
         if (TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs)
         {

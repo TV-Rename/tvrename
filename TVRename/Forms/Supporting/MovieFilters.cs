@@ -20,6 +20,7 @@ public partial class MovieFilters : Form
     {
         this.doc = doc;
         InitializeComponent();
+        this.UpdateColorControls();
 
         try
         {

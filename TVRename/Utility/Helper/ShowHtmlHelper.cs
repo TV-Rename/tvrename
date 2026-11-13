@@ -27,6 +27,17 @@ internal static class ShowHtmlHelper
                      "a.search:hover { color:#000080 } " + "a.search:active { color:#800000 } " +
                      "* {background-color: " + BackgroundColour.HexColour() + "}" + "* { color: black }";
 
+        if (ThemeManager.Active is { } theme)
+        {
+            css += ThemeCss(theme)
+                   + $"*{{color:{theme.WebText.HexColour()}!important}}a:link,a:visited,a:active{{color:{theme.WebLink.HexColour()}!important}}"
+                   + $"a.search:link,a.search:visited,a.search:active{{color:{ThemeHelper.Readable(Color.FromArgb(128, 0, 0), theme.Background).HexColour()}!important}}";
+            if (theme.Background.ToArgb() != SystemColors.ButtonFace.ToArgb())
+            {
+                css += $"*{{background-color:{theme.Background.HexColour()}!important}}img{{background-color:transparent!important}}";
+            }
+        }
+
         string html = "<html><head><meta charset=\"UTF-8\"><STYLE type=\"text/css\">" + css + "</style>";
 
         html += "</head><body>";
@@ -38,7 +49,7 @@ internal static class ShowHtmlHelper
     public static async Task<string> GetShowHtmlOverviewAsync(this ShowConfiguration si, bool includeDirectoryLinks)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
         await sb.AppendShowAsync(si, BackgroundColour, includeDirectoryLinks);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -47,7 +58,7 @@ internal static class ShowHtmlHelper
     public static string GetSeasonImagesOverview(this ProcessedSeason season)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
         sb.AppendSeasonImages(BackgroundColour, season);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -56,7 +67,7 @@ internal static class ShowHtmlHelper
     public static string GetShowImagesOverview(this ShowConfiguration si)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
         sb.AppendShowImages(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -65,7 +76,7 @@ internal static class ShowHtmlHelper
     public static string GetMovieImagesOverview(this MovieConfiguration si)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
         sb.AppendMovieImages(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -73,7 +84,7 @@ internal static class ShowHtmlHelper
     public static async Task<string> GetShowHtmlOverviewAsync(this CachedSeriesInfo series, RecommendationRow recommendation)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
         await sb.AppendShowAsync(null, series, BackgroundColour, false);
         sb.AppendRecommendation(recommendation, BackgroundColour);
         sb.AppendLine(HTMLFooter());
@@ -84,7 +95,7 @@ internal static class ShowHtmlHelper
     {
         StringBuilder sb = new();
         DirFilesCache dfc = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
         await sb.AppendMovieAsync(si, BackgroundColour, includeDirectoryLinks, dfc);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -92,7 +103,7 @@ internal static class ShowHtmlHelper
     public static string GetMovieHtmlOverview(this API.YtsMovie si)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
         sb.AppendMovie(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -152,7 +163,7 @@ internal static class ShowHtmlHelper
         Color col = Color.FromName("ButtonFace");
         DirFilesCache dfc = new();
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col));
+        sb.AppendLine(HTMLHeader(10, col, ThemeManager.Active));
         await sb.AppendMovieAsync(null, movie, col, false, dfc);
         if (recommendation != null)
         {
@@ -168,7 +179,7 @@ internal static class ShowHtmlHelper
         DirFilesCache dfc = new();
         StringBuilder sb = new();
 
-        sb.AppendLine(HTMLHeader(10, col));
+        sb.AppendLine(HTMLHeader(10, col, ThemeManager.Active));
         await sb.AppendShowSummaryAsync(si, dfc, col, includeDirectoryLinks);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -1024,7 +1035,7 @@ internal static class ShowHtmlHelper
         StringBuilder sb = new();
         DirFilesCache dfc = new();
         Color col = Color.FromName("ButtonFace");
-        sb.AppendLine(HTMLHeader(10, col));
+        sb.AppendLine(HTMLHeader(10, col, ThemeManager.Active));
         await sb.AppendSeasonAsync(s, si, col, includeDirectoryLinks);
 
         List<ProcessedEpisode> seasonEpisodes = si.AllEpisodesForSeason(s.SeasonNumber);
@@ -1042,7 +1053,7 @@ internal static class ShowHtmlHelper
     {
         StringBuilder sb = new();
         Color col = Color.FromName("ButtonFace");
-        sb.AppendLine(HTMLHeader(10, col));
+        sb.AppendLine(HTMLHeader(10, col, ThemeManager.Active));
         await sb.AppendSeasonSummaryAsync(si, s, col, includeDirectoryLinks);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -1581,7 +1592,7 @@ internal static class ShowHtmlHelper
     }
 
     // ReSharper disable once InconsistentNaming
-    internal static string HTMLHeader(int size, Color backgroundColour)
+    internal static string HTMLHeader(int size, Color backgroundColour, Theme? theme = null)
     {
         return @"<!DOCTYPE html>
                 <html><head>
@@ -1591,12 +1602,61 @@ internal static class ShowHtmlHelper
                  <link href=""https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"" rel=""stylesheet"" integrity=""sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"" crossorigin=""anonymous"">
                 <link rel=""stylesheet"" href=""https://pro.fontawesome.com/releases/v5.10.0/css/all.css"" integrity=""sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"" crossorigin=""anonymous""/>
                 <link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"">
-                </head>"
+                "
+               + (theme is null ? string.Empty : $"<style>{ThemeCss(theme)}</style>")
+               + "</head>"
                + $"<body style=\"background-color: {backgroundColour.HexColour()}; color: {ForegroundColour.HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
     }
 
     private static string HexColour(this Color c)
         => "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
+
+    // Bootstrap's tables, season rows, buttons and muted text are made for a light page
+    private static string ThemeCss(Theme t)
+    {
+        string text = t.WebText.HexColour();
+        string muted = t.WebMutedText.HexColour();
+        string link = t.WebLink.HexColour();
+        string border = t.WebBorder.HexColour();
+        string season = t.WebSeasonRow.HexColour();
+        bool dark = !t.IsLightBase;
+        // Hover and stripe shading: a little lighter on dark pages, a little darker on light ones
+        string shade = dark ? "255,255,255" : "0,0,0";
+
+        StringBuilder css = new();
+        css.Append(dark ? ":root{color-scheme:dark}" : ":root{color-scheme:light}");
+        css.Append($"body{{color:{text}}}");
+        css.Append("h1,h2,h3,h4,h5,h6,.lead,p,dl,dt,dd,li{color:inherit}");
+        css.Append($".text-muted{{color:{muted}!important}}");
+        css.Append($"a{{color:{link}}}a:hover{{color:{link};filter:brightness(1.2)}}");
+        css.Append($".table{{color:{text};border-color:{border};--bs-table-striped-color:{text};--bs-table-active-color:{text};" +
+                   $"--bs-table-hover-color:{text};--bs-table-hover-bg:rgba({shade},.06);--bs-table-striped-bg:rgba({shade},.04);" +
+                   $"--bs-table-active-bg:rgba({shade},.08)}}");
+        css.Append($".table>:not(caption)>*>*{{color:inherit;border-bottom-color:{border}}}");
+        css.Append($".table>:not(:last-child)>:last-child>*{{border-bottom-color:{border}}}");
+        css.Append($".table-secondary{{--bs-table-bg:{season}!important;--bs-table-hover-bg:{season}!important;" +
+                   $"--bs-table-striped-bg:{season}!important;--bs-table-active-bg:{season}!important;" +
+                   $"--bs-table-hover-color:{text}!important;color:{text}!important;border-color:{border}!important}}");
+        css.Append($".card{{color:{text};border-color:{border}}}");
+        css.Append($".btn-outline-secondary{{color:{text};border-color:{muted}}}");
+        css.Append($".btn-outline-secondary:hover,.btn-outline-secondary:focus{{color:{text};background-color:rgba({shade},.12);border-color:{muted}}}");
+        css.Append($".accordion-item{{border-color:{border}}}.accordion-button,.accordion-body{{color:{text}}}");
+        css.Append($".accordion-button:not(.collapsed){{color:{link};box-shadow:inset 0 -1px 0 {border}}}");
+        if (dark)
+        {
+            css.Append(".accordion-button::after{filter:invert(1) grayscale(1) brightness(1.5)}");
+        }
+        css.Append($"hr{{color:{border};opacity:1}}");
+        css.Append($".list-group-item{{background-color:transparent;color:{text};border-color:{border}}}");
+        css.Append($".bg-light{{background-color:{season}!important}}.text-dark{{color:{text}!important}}");
+
+        if (t.Background.ToArgb() != SystemColors.ButtonFace.ToArgb())
+        {
+            css.Append($"body,.card,.accordion-item,.accordion-header,.accordion-button{{background-color:{t.Background.HexColour()}!important}}");
+        }
+
+        return css.ToString();
+    }
 
     // ReSharper disable once InconsistentNaming
     internal static string HTMLFooter() =>
@@ -1906,7 +1966,7 @@ internal static class ShowHtmlHelper
 
         Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col));
+        sb.AppendLine(HTMLHeader(10, col, ThemeManager.Active));
         sb.AppendLine(iframe);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
