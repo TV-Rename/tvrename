@@ -194,48 +194,133 @@ public static class UiHelpers
         }
     }
 
-    public static void UpdateColorControls(this Control myControl, Color fore, Color back, Color highlight)
+    // Called by each form after InitializeComponent; does nothing unless a theme is in use
+    public static void UpdateColorControls(this Control myControl)
     {
-        myControl.BackColor = back;
-        myControl.ForeColor = fore;
-
-        if (myControl is DataGridView myDgv)
+        if (!ThemeManager.IsThemed)
         {
-            myDgv.ColumnHeadersDefaultCellStyle.BackColor = back;
-            myDgv.ColumnHeadersDefaultCellStyle.ForeColor = fore;
+            return;
         }
-        else if (myControl is ObjectListView olv)
+
+        try
         {
-            olv.SelectedBackColor = highlight;
-            HeaderStateStyle hss = new()
+            ThemeControl(myControl);
+        }
+        catch (Exception ex)
+        {
+            // Theming must never stop a window from opening
+            Logger.Error(ex, $"Could not apply the theme to {myControl.Name}");
+        }
+    }
+
+    private static void ThemeControl(Control c)
+    {
+        if (!ThemeHelper.FirstTime(c))
+        {
+            return;
+        }
+
+        bool dark = ThemeManager.IsDark;
+
+        ThemeHelper.ApplyColourRules(c);
+        if (dark)
+        {
+            ThemeHelper.FlattenSunkenBorder(c);
+        }
+
+        switch (c)
+        {
+            case TabControl tabControl:
+                // TabControlThemed paints the tabs
+                ThemeHelper.AdaptImageList(tabControl.ImageList);
+                break;
+
+            case TabPage tabPage:
+                // A tab page that uses the visual style back colour is painted white whatever the colour mode
+                tabPage.UseVisualStyleBackColor = false;
+                tabPage.BackColor = ThemeHelper.T.Background;
+                break;
+
+            case ListView listView:
+                ThemeHelper.ThemeListView(listView);
+                break;
+
+            case TreeView treeView when dark:
+                ThemeHelper.WhenHandleCreated(treeView, () => ThemeHelper.SetWindowTheme(treeView.Handle, "DarkMode_Explorer", null));
+                break;
+
+            case MonthCalendar calendar:
+                ThemeHelper.ThemeMonthCalendar(calendar);
+                break;
+
+            case ToolStrip toolStrip:
+                ThemeHelper.UseThemeRenderer(toolStrip);
+                ThemeHelper.AdaptToolStripItems(toolStrip.Items);
+                break;
+
+            case ComboBox { DropDownStyle: ComboBoxStyle.DropDownList } when dark:
+                // The dark theme Windows' own file dialogs use for combo boxes
+                ThemeHelper.WhenHandleCreated(c, () => ThemeHelper.SetWindowTheme(c.Handle, "DarkMode_CFD", null));
+                break;
+
+            case RichTextBox { Enabled: false, Parent.Enabled: true } infoText when dark:
+                // A disabled rich text box is grey on grey; read only looks the same and can be read
+                infoText.ReadOnly = true;
+                infoText.TabStop = false;
+                infoText.Enabled = true;
+                infoText.ForeColor = ThemeHelper.T.ListText;
+                ThemeHelper.WhenHandleCreated(c, () => ThemeHelper.SetWindowTheme(c.Handle, "DarkMode_Explorer", null));
+                break;
+
+            case TextBoxBase { Multiline: true } when dark:
+            case ListBox when dark:
+            case ScrollableControl { AutoScroll: true } when dark:
+                // Dark scroll bars
+                ThemeHelper.WhenHandleCreated(c, () => ThemeHelper.SetWindowTheme(c.Handle, "DarkMode_Explorer", null));
+                break;
+
+            case Button button when dark:
+                // Buttons need the visual style back colour for the Windows 11 dark look
+                button.UseVisualStyleBackColor = true;
+                if (button.Image is { } buttonImage)
+                {
+                    button.Image = ThemeHelper.AdaptImageForDark(buttonImage);
+                }
+                break;
+
+            case LinkLabel link:
+                ThemeHelper.ThemeLinkLabel(link);
+                break;
+
+            case Label label when dark:
+                label.Paint += ThemeHelper.RepaintDisabledLabel;
+                break;
+
+            default:
+                break;
+        }
+
+        if (c.ContextMenuStrip is { } menu)
+        {
+            ThemeHelper.UseThemeRenderer(menu);
+            ThemeHelper.AdaptToolStripItems(menu.Items);
+        }
+
+        c.BackColorChanged += ThemeHelper.OnColourChanged;
+        c.ForeColorChanged += ThemeHelper.OnColourChanged;
+
+        foreach (Control subC in c.Controls)
+        {
+            ThemeControl(subC);
+        }
+
+        c.ControlAdded += (_, e) =>
+        {
+            if (e.Control is not null)
             {
-                ForeColor = fore,
-                BackColor = back
-            };
-
-            HeaderFormatStyle hfs = new()
-            {
-                Hot = hss,
-                Normal = hss,
-                Pressed = hss
-            };
-
-            olv.HeaderFormatStyle = hfs;
-        }
-        else if (myControl is ProgressBar pb)
-        {
-            pb.ForeColor = highlight;
-        }
-        else if (myControl is TabControl tc)
-        {
-            tc.BackColor = back;
-        }
-        // Any other non-standard controls should be implemented here aswell...
-
-        foreach (Control subC in myControl.Controls)
-        {
-            UpdateColorControls(subC, fore, back, highlight);
-        }
+                UpdateColorControls(e.Control);
+            }
+        };
     }
 
     public static void StopTextDisappearing(TextBox tb, Control filterButton)

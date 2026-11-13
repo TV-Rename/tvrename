@@ -266,13 +266,6 @@ public class ActionCopyMoveRename : ActionFileOperation
         to.LastWriteTimeUtc = from.LastWriteTimeUtc;
     }
 
-    private CopyMoveProgressResult CopyProgressCallback(long totalFileSize, long totalBytesTransferred, long streamSize, long streamBytesTransferred, int streamNumber, CopyMoveProgressCallbackReason callbackReason, object userData)
-    {
-        double pct = totalBytesTransferred * 100.0 / totalFileSize;
-        PercentDone = pct > 100.0 ? 100.0 : pct;
-        return CopyMoveProgressResult.Continue;
-    }
-
     private bool IsMoveRename() // same thing to the OS
         => IsMoveRename(Operation);
 

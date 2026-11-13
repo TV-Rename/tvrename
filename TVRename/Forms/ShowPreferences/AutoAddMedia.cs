@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using TVRename.Forms;
+
 namespace TVRename;
 
 public partial class AutoAddMedia : Form, ICodeWindow
@@ -20,6 +22,7 @@ public partial class AutoAddMedia : Form, ICodeWindow
     public AutoAddMedia(FileInfo file, bool assumeMovie)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         ShowConfiguration = new ShowConfiguration();
         MovieConfiguration = new MovieConfiguration();
 

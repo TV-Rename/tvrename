@@ -40,7 +40,7 @@ namespace TVRename.Forms.Tools
         private void InitializeComponent()
         {
             this.btnCancel = new System.Windows.Forms.Button();
-            this.pbProgress = new System.Windows.Forms.ProgressBar();
+            this.pbProgress = new TVRename.ProgressBarThemed();
             this.lblMessage = new System.Windows.Forms.Label();
             this.lblLastUpdate = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -111,7 +111,7 @@ namespace TVRename.Forms.Tools
         private System.Windows.Forms.Label lblMessage;
 
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.ProgressBar pbProgress;
+        private TVRename.ProgressBarThemed pbProgress;
 
         #endregion
 

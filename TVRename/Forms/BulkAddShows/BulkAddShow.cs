@@ -47,6 +47,7 @@ public partial class BulkAddShow : Form
         this.mainUi = mainUi;
 
         InitializeComponent();
+        this.UpdateColorControls();
 
         FillFolderStringLists();
         tbResults.Parent = null;
@@ -401,7 +402,7 @@ public partial class BulkAddShow : Form
         try
         {
             await Parallel.ForEachAsync(
-                engine.AddItems,
+                engine.AddItems.ToArray(),
                 options,
                 async (ai, token) =>
                 {

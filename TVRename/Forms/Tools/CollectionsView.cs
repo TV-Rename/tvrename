@@ -23,6 +23,7 @@ public partial class CollectionsView : Form
     public CollectionsView(TVDoc doc, UI main)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         collectionMovies = [];
         allAdded = [];
         mDoc = doc;
@@ -119,7 +120,7 @@ public partial class CollectionsView : Form
         try
         {
             await Parallel.ForEachAsync(
-                collectionIds,
+                collectionIds.ToArray(),
                 options,
                 async (collection, token) =>
             {

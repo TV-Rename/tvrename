@@ -46,7 +46,7 @@ namespace TVRename
             this.btnIgnoreFile = new System.Windows.Forms.Button();
             this.btnSkipAutoAdd = new System.Windows.Forms.Button();
             this.lblFileName = new System.Windows.Forms.Label();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabControl1 = new TVRename.TabControlThemed();
             this.tpTV = new System.Windows.Forms.TabPage();
             this.rdoTVTMDB = new System.Windows.Forms.RadioButton();
             this.label13 = new System.Windows.Forms.Label();
@@ -393,7 +393,7 @@ namespace TVRename
         private System.Windows.Forms.Button btnIgnoreFile;
         private System.Windows.Forms.Button btnSkipAutoAdd;
         private System.Windows.Forms.Label lblFileName;
-        private System.Windows.Forms.TabControl tabControl1;
+        private TVRename.TabControlThemed tabControl1;
         private System.Windows.Forms.TabPage tpTV;
         private System.Windows.Forms.TabPage tpMovie;
         private System.Windows.Forms.Panel panel1;

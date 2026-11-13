@@ -20,6 +20,7 @@ public partial class DuplicateMovieFinder : Form
     public DuplicateMovieFinder(TVDoc doc, UI main)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         dupMovies = [];
         mDoc = doc;
         mainUi = main;

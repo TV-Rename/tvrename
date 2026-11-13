@@ -51,7 +51,7 @@ namespace TVRename
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblStatus = new System.Windows.Forms.Label();
-            this.pbProgress = new System.Windows.Forms.ProgressBar();
+            this.pbProgress = new TVRename.ProgressBarThemed();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -318,7 +318,7 @@ namespace TVRename
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.ProgressBar pbProgress;
+        private TVRename.ProgressBarThemed pbProgress;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Panel panel2;

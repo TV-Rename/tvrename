@@ -22,6 +22,7 @@ public static class PathManager
     private const string UI_LAYOUT_FILE_NAME = "Layout.xml";
     private const string STATISTICS_FILE_NAME = "Statistics.xml";
     private const string STATE_FILE_NAME = "State.xml";
+    private const string THEMES_FOLDER_NAME = "Themes";
 
     private static string? UserDefinedBasePath;
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -41,6 +42,7 @@ public static class PathManager
     public static FileInfo TmdbFile => GetFileInfo(TMDB_FILE_NAME);
     // ReSharper disable once InconsistentNaming
     public static FileInfo TVDocSettingsFile => GetFileInfo(SETTINGS_FILE_NAME);
+    public static string ThemesFolder => GetFileInfo(THEMES_FOLDER_NAME).FullName;
     public static string CefCachePath()
         => TvRenameFolder("cache");
     public static string CefLogFile()

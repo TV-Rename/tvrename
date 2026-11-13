@@ -19,6 +19,7 @@ public partial class TaskNotifier : Form
         this.name = name;
         this.cancellationToken = cancellationToken;
         InitializeComponent();
+        this.UpdateColorControls();
     }
 
     public void Start(Task task)

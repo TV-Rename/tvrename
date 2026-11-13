@@ -26,6 +26,7 @@ public partial class YtsRecommendationView : Form
     public YtsRecommendationView(TVDoc doc, UI main, string defaultQuality)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         recs = [];
         addedMovies = [];
 

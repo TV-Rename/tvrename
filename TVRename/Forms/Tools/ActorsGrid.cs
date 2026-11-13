@@ -32,6 +32,7 @@ public partial class ActorsGrid : Form
         @internal = 0;
 
         InitializeComponent();
+        this.UpdateColorControls();
 
         mDoc = doc;
         Cursor.Current = Cursors.WaitCursor;
@@ -303,6 +304,7 @@ public partial class ActorsGrid : Form
         grid1[theData.DataR + 1, theData.DataC + 1] = new Cell("");
 
         grid1.AutoSizeCells();
+        grid1.UpdateColorCells();
     }
 
     private void bnClose_Click(object sender, EventArgs e)

@@ -10,6 +10,7 @@ using NLog.Layouts;
 using NLog.Targets;
 using NLog.Windows.Forms;
 using System.ComponentModel;
+using TVRename.Forms;
 
 namespace TVRename;
 
@@ -19,6 +20,7 @@ public partial class LogViewer : Form
     public LogViewer()
     {
         InitializeComponent();
+        this.UpdateColorControls();
     }
 
     private void Form1_Load(object sender, EventArgs e)

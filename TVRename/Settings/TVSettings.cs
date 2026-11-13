@@ -299,6 +299,7 @@ public sealed class TVSettings
     public bool HideWtWSpoilers = false;
     public bool HideMyShowsSpoilers = false;
     public bool ShowInTaskbar = true;
+    public string Theme = ThemeManager.LIGHT;
     public bool ShowAccessibilityOptions = false;
     public bool AutoSearchForDownloadedFiles = false;
     public string SpecialsFolderName = "Specials";
@@ -390,6 +391,7 @@ public sealed class TVSettings
     public bool RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck = false;
     public int RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength = 8;
     public bool DeleteShowFromDisk = true;
+    public bool DeferCopyToFileSystem = false;
 
     public ShowStatusColoringTypeList ShowStatusColors = [];
     public string SABHostPort = string.Empty;
@@ -557,6 +559,7 @@ public sealed class TVSettings
         new XElement("KeepTogetherExtensions", keepTogetherExtensionsString),
         new XElement("LeadingZeroOnSeason", LeadingZeroOnSeason),
         new XElement("ShowInTaskbar", ShowInTaskbar),
+        new XElement("Theme", Theme),
         new XElement("ShowAccessibilityOptions", ShowAccessibilityOptions),
         new XElement("IgnoreSamples", IgnoreSamples),
         new XElement("ForceLowercaseFilenames", ForceLowercaseFilenames),
@@ -608,6 +611,7 @@ public sealed class TVSettings
         new XElement("IgnorePreviouslySeen", IgnorePreviouslySeen),
         new XElement("IgnorePreviouslySeenMovies", IgnorePreviouslySeenMovies),
         new XElement("LeaveOriginals", LeaveOriginals),
+        new XElement("DeferCopyToFileSystem", DeferCopyToFileSystem),
         new XElement("RetainLanguageSpecificSubtitles", RetainLanguageSpecificSubtitles),
         new XElement("ForceBulkAddToUseSettingsOnly", ForceBulkAddToUseSettingsOnly),
         new XElement("AutoMergeEpisodes", AutoMergeDownloadEpisodes),
@@ -1356,6 +1360,7 @@ public sealed class TVSettings
         LeadingZeroOnSeason = xmlSettings.ExtractBool("LeadingZeroOnSeason", false);
         ShowAccessibilityOptions = xmlSettings.ExtractBool("ShowAccessibilityOptions", false);
         ShowInTaskbar = xmlSettings.ExtractBool("ShowInTaskbar", true);
+        Theme = xmlSettings.ExtractString("Theme", ThemeManager.LIGHT);
         RenameTxtToSub = xmlSettings.ExtractBool("RenameTxtToSub", false);
         ShowEpisodePictures = xmlSettings.ExtractBool("ShowEpisodePictures", true);
         HideWtWSpoilers = xmlSettings.ExtractBool("HideWtWSpoilers", false);
@@ -1445,6 +1450,7 @@ public sealed class TVSettings
         SearchLocally = xmlSettings.ExtractBool("SearchLocally", true);
         IgnorePreviouslySeen = xmlSettings.ExtractBool("IgnorePreviouslySeen", false);
         IgnorePreviouslySeenMovies = xmlSettings.ExtractBool("IgnorePreviouslySeenMovies", false);
+        DeferCopyToFileSystem = xmlSettings.ExtractBool("DeferCopyToFileSystem", false);
         LeaveOriginals = xmlSettings.ExtractBool("LeaveOriginals", false);
         AutoSearchForDownloadedFiles = xmlSettings.ExtractBool("AutoSearchForDownloadedFiles", false);
         AutoMergeDownloadEpisodes = xmlSettings.ExtractBool("AutoMergeEpisodes", false);

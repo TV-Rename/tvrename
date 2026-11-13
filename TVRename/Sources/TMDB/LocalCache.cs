@@ -106,7 +106,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
         {
             throw new SourceConsistencyException($"Asked to update {s.Name} from TMDB, but the Id is not for TMDB.", TVDoc.ProviderType.TMDB);
         }
-        if (s.TmdbId is -1 or 0)
+        if ((!s.TmdbId.HasValue) || s.TmdbId is -1 or 0)
         {
             throw new MediaNotFoundException(s, $"Please edit {s.Name} to ensure it has a TMDB Id, or use another source for that show.", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, s.Media);
         }

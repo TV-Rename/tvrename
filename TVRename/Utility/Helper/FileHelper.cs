@@ -846,8 +846,19 @@ public static class FileHelper
             else
             {
                 // This step could be slow, so report progress
-                //CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.WriteThrough | MoveOptions.ReplaceExisting, callback, null);
-                await FileHelper.MoveFileWithProgressAsync(From, tempName, progress, cancellationToken);
+                if (TVSettings.Instance.DeferCopyToFileSystem)
+                {
+                    CallBackMapper x = new CallBackMapper(progress);
+                    CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.WriteThrough | MoveOptions.ReplaceExisting, x.CopyProgressCallback, null);
+                    if (moveResult.ErrorCode != 0)
+                    {
+                        throw new ActionFailedException(moveResult.ErrorMessage);
+                    }
+                }
+                else
+                {
+                    await FileHelper.MoveFileWithProgressAsync(From, tempName, progress, cancellationToken);
+                }
             }
 
             // Copying the temp file into the correct name is very quick, so no progress reporting
@@ -1145,6 +1156,19 @@ public static class FileHelper
         if (!DirectoryHasContents(sourceDir))
         {
             Directory.Delete(sourceDir);
+        }
+    }
+
+    private class CallBackMapper(IProgress<CopyMoveProgress>? progress)
+    {
+        public CopyMoveProgressResult CopyProgressCallback(long totalFileSize, long totalBytesTransferred, long streamSize, long streamBytesTransferred, int streamNumber, CopyMoveProgressCallbackReason callbackReason, object userData)
+        {
+            progress?.Report(new CopyMoveProgress
+            {
+                BytesTransferred = totalBytesTransferred,
+                TotalBytes = totalFileSize
+            });
+            return CopyMoveProgressResult.Continue;
         }
     }
 }
