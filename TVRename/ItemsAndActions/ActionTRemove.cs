@@ -30,7 +30,7 @@ internal class ActionTRemove : Action
     public override string TargetFolder => client.Name();
     public override QueueName Queue() => QueueName.download;
     public override string ScanListViewGroup => "lvgActionDownloadRSS";
-    public override int IconNumber => 6;
+    public override int IconNumber => 13;
 
     public override IgnoreItem? Ignore => null;
 

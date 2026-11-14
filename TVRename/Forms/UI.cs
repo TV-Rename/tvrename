@@ -83,7 +83,7 @@ public partial class UI : Form, IDialogParent
         chrMovieTrailer.RequestHandler = new BrowserRequestHandler();
         chrTvTrailer.RequestHandler = new BrowserRequestHandler();
 
-        tabControl1.ItemSize = LogicalToDeviceUnits(tabControl1.ItemSize);
+        tabMainUITabs.ItemSize = LogicalToDeviceUnits(tabMainUITabs.ItemSize);
 
         ScanAndDo = ScanAndActionAsync;
 
@@ -249,9 +249,9 @@ public partial class UI : Form, IDialogParent
             WaitForCefInitialised();
 
             int t = TVSettings.Instance.StartupTab;
-            if (t < tabControl1.TabCount)
+            if (t < tabMainUITabs.TabCount)
             {
-                tabControl1.SelectedIndex = t;
+                tabMainUITabs.SelectedIndex = t;
             }
 
             tabControl1_SelectedIndexChanged(null, null);
@@ -936,7 +936,7 @@ public partial class UI : Form, IDialogParent
 
     private Searchers GetUsedSearchers()
     {
-        bool usingScanResults = tabControl1.SelectedTab == tbAllInOne;
+        bool usingScanResults = tabMainUITabs.SelectedTab == tbScanResults;
         bool haveTvSelected = !usingScanResults || GetSelectedObjectType(olvAction) == MediaConfiguration.MediaType.tv;
 
         Searchers searchers = haveTvSelected ? TVDoc.GetSearchers() : TVDoc.GetMovieSearchers();
@@ -1011,7 +1011,7 @@ public partial class UI : Form, IDialogParent
 
         SetStartUpTab();
 
-        foreach (TabPage tp in tabControl1.TabPages) // grr! why does it go white?
+        foreach (TabPage tp in tabMainUITabs.TabPages) // grr! why does it go white?
         {
             tp.BackColor = SystemColors.Control;
         }
@@ -1177,7 +1177,7 @@ public partial class UI : Form, IDialogParent
         await task;
         progressUI.Close();
 
-        tabControl1.SelectTab(tbAllInOne);
+        tabMainUITabs.SelectTab(tbScanResults);
         FillActionList();
 
         await FillMyShowsAsync(true);
@@ -1751,7 +1751,7 @@ public partial class UI : Form, IDialogParent
 
     private async Task FillEpGuideHtmlAsync(ShowConfiguration? si, int? snum)
     {
-        if (tabControl1.SelectedTab != tbMyShows)
+        if (tabMainUITabs.SelectedTab != tbMyShows)
         {
             return;
         }
@@ -2026,7 +2026,7 @@ public partial class UI : Form, IDialogParent
 
             case TVSettings.WTWDoubleClickAction.Scan:
                 await UiScanAsync([ei.Show], null, false, TVSettings.ScanType.SingleShow, MediaConfiguration.MediaType.tv);
-                tabControl1.SelectTab(tbAllInOne);
+                tabMainUITabs.SelectTab(tbScanResults);
                 break;
 
             default:
@@ -2165,7 +2165,7 @@ public partial class UI : Form, IDialogParent
     {
         if (changeTab)
         {
-            tabControl1.SelectTab(tbMyShows);
+            tabMainUITabs.SelectTab(tbMyShows);
         }
         await SelectShowAsync(si);
         if (changeTab)
@@ -2178,7 +2178,7 @@ public partial class UI : Form, IDialogParent
     {
         if (changeTab)
         {
-            tabControl1.SelectTab(tbMyShows);
+            tabMainUITabs.SelectTab(tbMyShows);
         }
 
         await SelectSeasonAsync(ep.AppropriateProcessedSeason);
@@ -2188,7 +2188,7 @@ public partial class UI : Form, IDialogParent
     {
         if (changeTab)
         {
-            tabControl1.SelectTab(tbMyMovies);
+            tabMainUITabs.SelectTab(tbMyMovies);
         }
 
         SelectMovie(mc);
@@ -2246,12 +2246,12 @@ public partial class UI : Form, IDialogParent
     private async Task RightMenuScanAsync(List<ShowConfiguration> sil, TVSettings.ScanType x)
     {
         await UiScanAsync(sil, null, false, x, MediaConfiguration.MediaType.tv);
-        tabControl1.SelectTab(tbAllInOne);
+        tabMainUITabs.SelectTab(tbScanResults);
     }
     private async Task RightMenuMovieScanAsync(MovieConfiguration si, TVSettings.ScanType x)
     {
         await UiScanAsync(null, [si], false, x, MediaConfiguration.MediaType.movie);
-        tabControl1.SelectTab(tbAllInOne);
+        tabMainUITabs.SelectTab(tbScanResults);
     }
 
     private async Task MenuFoldersAsync(ItemList? lvr, ShowConfiguration? si, ProcessedSeason? seas, ProcessedEpisode? ep)
@@ -2555,7 +2555,7 @@ public partial class UI : Form, IDialogParent
 
     private void GotoWtwFor(ShowConfiguration show)
     {
-        tabControl1.SelectTab(tbWTW);
+        tabMainUITabs.SelectTab(tbSchedule);
         var y = lvWhenToWatch.AllObjects().Where(ei => ei.TheCachedSeries.IsCacheFor(show)).ToList();
         lvWhenToWatch.SelectObjects(y);
         lvWhenToWatch.Focus();
@@ -2563,25 +2563,25 @@ public partial class UI : Form, IDialogParent
 
     private async void tabControl1_DoubleClick(object sender, EventArgs e)
     {
-        if (tabControl1.SelectedTab == tbMyShows)
+        if (tabMainUITabs.SelectedTab == tbMyShows)
         {
             bnMyShowsRefresh_Click(null, null);
         }
-        else if (tabControl1.SelectedTab == tbWTW)
+        else if (tabMainUITabs.SelectedTab == tbSchedule)
         {
             bnWhenToWatchCheck_Click(null, null);
         }
-        else if (tabControl1.SelectedTab == tbAllInOne)
+        else if (tabMainUITabs.SelectedTab == tbScanResults)
         {
             BtnSearch_ButtonClick(null, null);
         }
-        else if (tabControl1.SelectedTab == tbMyMovies)
+        else if (tabMainUITabs.SelectedTab == tbMyMovies)
         {
             await ForceMovieRefreshAsync(false);
         }
         else
         {
-            throw new NotSupportedException($"tabControl1.SelectedTab = {tabControl1.SelectedTab} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
+            throw new NotSupportedException($"tabControl1.SelectedTab = {tabMainUITabs.SelectedTab} is not supported by {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
     }
 
@@ -2840,7 +2840,7 @@ public partial class UI : Form, IDialogParent
 
     private async void tabControl1_SelectedIndexChanged(object? sender, EventArgs? e)
     {
-        if (tabControl1.SelectedTab == tbMyShows)
+        if (tabMainUITabs.SelectedTab == tbMyShows)
         {
             if (switchToWhenOpenMyShows != null && TVSettings.Instance.AutoSelectShowInMyShows)
             {
@@ -2852,7 +2852,7 @@ public partial class UI : Form, IDialogParent
             UpdateMyShowsButtonStatus();
             await FillEpGuideHtmlAsync();
         }
-        if (tabControl1.SelectedTab == tbMyMovies)
+        if (tabMainUITabs.SelectedTab == tbMyMovies)
         {
             if (switchToWhenOpenMyMovies != null && TVSettings.Instance.AutoSelectShowInMyShows)
             {
@@ -3029,12 +3029,12 @@ public partial class UI : Form, IDialogParent
     {
         return airedStatus switch
         {
-            ProcessedEpisode.FoundStatus.Future => 12,
             ProcessedEpisode.FoundStatus.OnDisk => 0,
-            ProcessedEpisode.FoundStatus.PreviouslySeen => 9,
             ProcessedEpisode.FoundStatus.Missing => 1,
-            ProcessedEpisode.FoundStatus.Unknown => 12,
-            _ => 12
+            ProcessedEpisode.FoundStatus.PreviouslySeen => 2,
+            ProcessedEpisode.FoundStatus.Future => 3,
+            ProcessedEpisode.FoundStatus.Unknown => 3,
+            _ => 3
         };
     }
 
@@ -3459,7 +3459,7 @@ public partial class UI : Form, IDialogParent
         _shutdownManager.TrackCancellationToken(scanCancellationToken);
         await mDoc.UpdateShowImagesScanAsync(sis, scanCancellationToken);
 
-        tabControl1.SelectTab(tbAllInOne);
+        tabMainUITabs.SelectTab(tbScanResults);
         FillActionList();
     }
 
@@ -3474,7 +3474,7 @@ public partial class UI : Form, IDialogParent
         _shutdownManager.TrackCancellationToken(cts);
         await mDoc.UpdateMovieImagesScanAsync(sis, cts);
 
-        tabControl1.SelectTab(tbAllInOne);
+        tabMainUITabs.SelectTab(tbScanResults);
         FillActionList();
     }
 
@@ -3518,7 +3518,7 @@ public partial class UI : Form, IDialogParent
 
     private async Task FillMovieGuideHtml(MovieConfiguration? si)
     {
-        if (tabControl1.SelectedTab != tbMyMovies)
+        if (tabMainUITabs.SelectedTab != tbMyMovies)
         {
             return;
         }
@@ -3818,9 +3818,9 @@ public partial class UI : Form, IDialogParent
     {
         int? t = GetIndex(e.KeyCode);
 
-        if (t.HasValue && t.Value < tabControl1.TabCount)
+        if (t.HasValue && t.Value < tabMainUITabs.TabCount)
         {
-            tabControl1.SelectedIndex = t.Value;
+            tabMainUITabs.SelectedIndex = t.Value;
             e.Handled = true;
         }
     }
@@ -4669,7 +4669,7 @@ public partial class UI : Form, IDialogParent
 
     public void FocusOnScanResults()
     {
-        tabControl1.SelectedTab = tbAllInOne;
+        tabMainUITabs.SelectedTab = tbScanResults;
     }
 
     private async void AccuracyCheckLogToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4855,11 +4855,11 @@ public partial class UI : Form, IDialogParent
         return context switch
         {
             //Check to see whether context is still valid
-            MovieConfiguration when tabControl1.SelectedTab != tbMyMovies => false,
+            MovieConfiguration when tabMainUITabs.SelectedTab != tbMyMovies => false,
             MovieConfiguration mc => TreeNodeToMovieItem(movieTree.SelectedNode) == mc,
-            ShowConfiguration when tabControl1.SelectedTab != tbMyShows => false,
+            ShowConfiguration when tabMainUITabs.SelectedTab != tbMyShows => false,
             ShowConfiguration sc => TreeNodeToShowItem(MyShowTree.SelectedNode) == sc,
-            ProcessedSeason when tabControl1.SelectedTab != tbMyShows => false,
+            ProcessedSeason when tabMainUITabs.SelectedTab != tbMyShows => false,
             ProcessedSeason season => TreeNodeToSeason(MyShowTree.SelectedNode) == season,
             _ => false
         };
@@ -5279,7 +5279,7 @@ public partial class UI : Form, IDialogParent
     private async void toolStripButton1_Click_1(object sender, EventArgs e)
     {
         await UiScanAsync(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.movie);
-        tabControl1.SelectTab(tbAllInOne);
+        tabMainUITabs.SelectTab(tbScanResults);
     }
 
     private void movieSearchEnginesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5358,7 +5358,7 @@ public partial class UI : Form, IDialogParent
     private async void tsbScanTV_Click(object sender, EventArgs e)
     {
         await UiScanAsync(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.tv);
-        tabControl1.SelectTab(tbAllInOne);
+        tabMainUITabs.SelectTab(tbScanResults);
     }
 
     private async void cleanLibraryFoldersToolStripMenuItem_Click(object sender, EventArgs e)

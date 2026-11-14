@@ -16,7 +16,7 @@ public abstract class Item : IComparable<Item>, INotifyPropertyChanged, IEquatab
     protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
     public abstract string? TargetFolder { get; } // return a list of folders for right-click menu
     public abstract string ScanListViewGroup { get; } // which group name for the listview
-    public abstract int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none
+    public abstract int IconNumber { get; } // which icon number to use in "ilActionIcons" (UI.cs). -1 for none
     public abstract IgnoreItem? Ignore { get; } // what to add to the ignore list / compare against the ignore list
     public ProcessedEpisode? Episode { get; protected init; } // associated episode
     public MovieConfiguration? Movie { get; protected init; } // associated movie
