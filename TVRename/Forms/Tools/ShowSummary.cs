@@ -36,6 +36,7 @@ public partial class ShowSummary : Form, IDialogParent
         ct = new CancellationTokenSource();
 
         InitializeComponent();
+        this.UpdateColorControls();
         InitializeCmbShowStatus();
     }
 
@@ -238,6 +239,7 @@ public partial class ShowSummary : Form, IDialogParent
             row++;
         }
         grid1.AutoSizeCells();
+        grid1.UpdateColorCells();
     }
 
     private static int GetMaxSeason(IEnumerable<ShowSummaryData> shows)

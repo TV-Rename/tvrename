@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using TVRename.Forms;
+
 namespace TVRename;
 
 /// <summary>
@@ -42,6 +44,7 @@ public partial class CustomNameTagsFloatingWindow : Form
     private void InitializeComponent(List<string> tags, bool showExamples, Func<string, string> createExampleFromTagFunc)
     {
         InitializeComponent();
+        this.UpdateColorControls();
 
         foreach (string s in tags)
         {

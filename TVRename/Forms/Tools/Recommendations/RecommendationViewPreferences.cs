@@ -13,6 +13,7 @@ public partial class RecommendationViewPreferences : Form
     public RecommendationViewPreferences(int trendingWeight, int topWeight, int relatedWeight, int similarWeight)
     {
         InitializeComponent();
+        this.UpdateColorControls();
 
         trackBar1.Value = trendingWeight;
         trackBar2.Value = topWeight;

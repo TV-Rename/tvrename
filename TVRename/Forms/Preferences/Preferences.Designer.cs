@@ -112,6 +112,9 @@ namespace TVRename.Forms
             label6 = new Label();
             chkShowInTaskbar = new CheckBox();
             cbNotificationIcon = new CheckBox();
+            lblTheme = new Label();
+            cbTheme = new ComboBox();
+            llThemeFolder = new LinkLabel();
             pbDisplay = new PictureBox();
             tpRSSJSONSearch = new TabPage();
             pbRSSJSONSearch = new PictureBox();
@@ -344,7 +347,7 @@ namespace TVRename.Forms
             cbMode = new ComboBox();
             label34 = new Label();
             label2 = new Label();
-            tcTabs = new TabControl();
+            tcTabs = new TabControlThemed();
             tpDataSources = new TabPage();
             panel4 = new Panel();
             rdoGlobalReleaseDates = new RadioButton();
@@ -1071,6 +1074,9 @@ namespace TVRename.Forms
             tpDisplay.Controls.Add(label6);
             tpDisplay.Controls.Add(chkShowInTaskbar);
             tpDisplay.Controls.Add(cbNotificationIcon);
+            tpDisplay.Controls.Add(lblTheme);
+            tpDisplay.Controls.Add(cbTheme);
+            tpDisplay.Controls.Add(llThemeFolder);
             tpDisplay.Controls.Add(pbDisplay);
             tpDisplay.Location = new Point(149, 4);
             tpDisplay.Margin = new Padding(4, 3, 4, 3);
@@ -1414,6 +1420,42 @@ namespace TVRename.Forms
             cbNotificationIcon.Text = "Show &notification area icon";
             cbNotificationIcon.UseVisualStyleBackColor = true;
             cbNotificationIcon.CheckedChanged += EnableDisable;
+            // 
+            // lblTheme
+            // 
+            lblTheme.AutoSize = true;
+            lblTheme.Location = new Point(257, 142);
+            lblTheme.Margin = new Padding(4, 0, 4, 0);
+            lblTheme.Name = "lblTheme";
+            lblTheme.Size = new Size(47, 15);
+            lblTheme.TabIndex = 47;
+            lblTheme.Text = "The&me:";
+            toolTip1.SetToolTip(lblTheme, "Light is the standard look. Other themes come from the .theme.xml files in the Themes folder;\r\ncopy one, change its colours and it appears here. A new theme is used the next time TV Rename starts.");
+            // 
+            // cbTheme
+            // 
+            cbTheme.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbTheme.DropDownWidth = 220;
+            cbTheme.FormattingEnabled = true;
+            cbTheme.Location = new Point(310, 138);
+            cbTheme.Margin = new Padding(4, 3, 4, 3);
+            cbTheme.Name = "cbTheme";
+            cbTheme.Size = new Size(124, 23);
+            cbTheme.TabIndex = 48;
+            toolTip1.SetToolTip(cbTheme, "Light is the standard look. Other themes come from the .theme.xml files in the Themes folder;\r\ncopy one, change its colours and it appears here. A new theme is used the next time TV Rename starts.");
+            // 
+            // llThemeFolder
+            // 
+            llThemeFolder.AutoSize = true;
+            llThemeFolder.Location = new Point(440, 142);
+            llThemeFolder.Margin = new Padding(4, 0, 4, 0);
+            llThemeFolder.Name = "llThemeFolder";
+            llThemeFolder.Size = new Size(40, 15);
+            llThemeFolder.TabIndex = 49;
+            llThemeFolder.TabStop = true;
+            llThemeFolder.Text = "Folder";
+            toolTip1.SetToolTip(llThemeFolder, "Open the folder that holds the theme files");
+            llThemeFolder.LinkClicked += LlThemeFolder_LinkClicked;
             // 
             // pbDisplay
             // 
@@ -6666,6 +6708,9 @@ namespace TVRename.Forms
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox chkShowInTaskbar;
         private System.Windows.Forms.CheckBox cbNotificationIcon;
+        private System.Windows.Forms.Label lblTheme;
+        private System.Windows.Forms.ComboBox cbTheme;
+        private System.Windows.Forms.LinkLabel llThemeFolder;
         private System.Windows.Forms.TabPage tpRSSJSONSearch;
         private System.Windows.Forms.GroupBox gbJSON;
         private System.Windows.Forms.Label label51;
@@ -6789,7 +6834,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.ComboBox cbMode;
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TabControl tcTabs;
+        private TVRename.TabControlThemed tcTabs;
         private System.Windows.Forms.TextBox txtSeasonFolderName;
         private System.Windows.Forms.Label label35;
         private System.Windows.Forms.CheckBox cbLeadingZero;

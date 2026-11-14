@@ -71,6 +71,7 @@ public partial class UI : Form, IDialogParent
 
         InitializeComponent();
         ApplyColorOverrides(this, TVSettings.Instance.ColorModeActual);
+        this.UpdateColorControls();
 
         ShowInTaskbar = TVSettings.Instance.ShowInTaskbar && !mDoc.Args.Hide;
 
@@ -1031,6 +1032,10 @@ public partial class UI : Form, IDialogParent
         backgroundDownloadToolStripMenuItem.Checked = TVSettings.Instance.BGDownload;
         offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
         InformUserOffline();
+        if (!mDoc.Args.Hide && !mDoc.Args.Unattended && Environment.UserInteractive)
+        {
+            ThemeManager.ShowStartupProblems(this);
+        }
 
         BGDownloadTimer.Interval = 10000; // first time
         if (TVSettings.Instance.BGDownload)
@@ -5454,27 +5459,6 @@ public partial class UI : Form, IDialogParent
         });
     }
 
-    // ReSharper disable once RedundantDefaultMemberInitializer
-    private bool darkTheme = false;
-    // ReSharper disable once UnusedMember.Local
-    private void ChangeTheme()
-    {
-        if (darkTheme)
-        {
-            SetColourScheme(Color.LightGray, Color.DarkSlateGray, Color.DarkRed);
-        }
-        else
-        {
-            SetColourScheme(Color.Black, Color.White, Color.DarkRed);
-        }
-
-        darkTheme = !darkTheme;
-    }
-
-    private void SetColourScheme(Color fore, Color back, Color highlight)
-    {
-        this.UpdateColorControls(fore, back, highlight);
-    }
     private async void removeShowsWithNoFoldersToolStripMenuItem_Click(object sender, EventArgs e)
     {
         await PartialScanAsync(new RemoveShowsWithNoFolders(mDoc));

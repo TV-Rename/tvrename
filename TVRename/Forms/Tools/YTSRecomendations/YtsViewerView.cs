@@ -25,6 +25,7 @@ public partial class YtsViewerView : Form
     public YtsViewerView(TVDoc doc, UI main)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         recs = [];
         addedMovies = [];
 

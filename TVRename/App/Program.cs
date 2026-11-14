@@ -34,6 +34,7 @@ public static class Program
         Application.EnableVisualStyles();
         Application.SetHighDpiMode(HighDpiMode.SystemAware);
         Application.SetCompatibleTextRenderingDefault(false);
+        global::TVRename.AddIns.Themes.ThemeManager.Startup(args);
         Application.SetColorMode(TVSettings.Instance.ColorModeActual);
 
         try

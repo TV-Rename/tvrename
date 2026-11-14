@@ -8,6 +8,7 @@
 
 
 using TVRename.Forms.ShowPreferences;
+using TVRename.Forms;
 
 namespace TVRename;
 
@@ -34,6 +35,7 @@ public partial class EditSeason : Form
         mOriginalEps = si.GetRawEpisodes(seasonNumber) ?? [];
 
         InitializeComponent();
+        this.UpdateColorControls();
 
         show = si;
         mSeasonNumber = seasonNumber;

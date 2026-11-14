@@ -18,6 +18,7 @@ public partial class MergedEpisodeFinder : Form
     public MergedEpisodeFinder(TVDoc doc, UI main)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         dupEps = [];
         mDoc = doc;
         mainUi = main;

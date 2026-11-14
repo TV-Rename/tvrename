@@ -24,6 +24,7 @@ public partial class UpdateNotification : Form
     {
         newVersion = update;
         InitializeComponent();
+        this.UpdateColorControls();
         tbReleaseNotes.Text = newVersion.ReleaseNotesText.ToUiVersion();
         lblStatus.Text = $@"There is new version {update} available since {update.ReleaseDate.ToLocalTime()}.";
     }

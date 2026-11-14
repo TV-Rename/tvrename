@@ -55,7 +55,7 @@ namespace TVRename
             chkDVDOrder = new CheckBox();
             cbSequentialMatching = new CheckBox();
             chkCustomShowName = new CheckBox();
-            Folders = new TabControl();
+            Folders = new TabControlThemed();
             tabPage1 = new TabPage();
             chkCustomRegion = new CheckBox();
             cbRegion = new ComboBox();
@@ -1460,7 +1460,7 @@ namespace TVRename
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.CheckBox chkSpecialsCount;
         private System.Windows.Forms.CheckBox chkShowNextAirdate;
-        private System.Windows.Forms.TabControl Folders;
+        private TVRename.TabControlThemed Folders;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label2;

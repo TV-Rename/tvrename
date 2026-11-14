@@ -17,6 +17,7 @@ public partial class QuickLocateForm : Form
     public QuickLocateForm(string? hint, MediaConfiguration.MediaType t)
     {
         InitializeComponent();
+        this.UpdateColorControls();
 
         cbDirectory.SuspendLayout();
         cbDirectory.Items.Clear();

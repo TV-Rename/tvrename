@@ -36,6 +36,7 @@ public partial class CopyMoveProgress : Form
         mToDo = shows;
         mDoOnClose = doOnClose;
         InitializeComponent();
+        this.UpdateColorControls();
         copyTimer.Start();
         diskSpaceTimer.Start();
     }

@@ -49,14 +49,14 @@ namespace TVRename
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CopyMoveProgress));
-            this.pbFile = new System.Windows.Forms.ProgressBar();
-            this.pbGroup = new System.Windows.Forms.ProgressBar();
+            this.pbFile = new TVRename.ProgressBarThemed();
+            this.pbGroup = new TVRename.ProgressBarThemed();
             this.bnCancel = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.txtFilename = new System.Windows.Forms.Label();
-            this.pbDiskSpace = new System.Windows.Forms.ProgressBar();
+            this.pbDiskSpace = new TVRename.ProgressBarThemed();
             this.label4 = new System.Windows.Forms.Label();
             this.txtDiskSpace = new System.Windows.Forms.Label();
             this.txtTotal = new System.Windows.Forms.Label();
@@ -288,7 +288,7 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.ProgressBar pbDiskSpace;
+        private TVRename.ProgressBarThemed pbDiskSpace;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label txtDiskSpace;
         private System.Windows.Forms.Label txtTotal;
@@ -296,8 +296,8 @@ namespace TVRename
         private System.Windows.Forms.Timer copyTimer;
         private System.Windows.Forms.CheckBox cbPause;
 
-        private System.Windows.Forms.ProgressBar pbFile;
-        private System.Windows.Forms.ProgressBar pbGroup;
+        private TVRename.ProgressBarThemed pbFile;
+        private TVRename.ProgressBarThemed pbGroup;
         private System.Windows.Forms.Button bnCancel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;

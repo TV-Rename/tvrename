@@ -18,6 +18,7 @@ public partial class MissingFolderAction : Form
     public MissingFolderAction(string? showName, string? season, string folderName)
     {
         InitializeComponent();
+        this.UpdateColorControls();
 
         Outcome = FaResult.kfaCancel;
         FolderName = folderName;

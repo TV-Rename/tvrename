@@ -15,6 +15,7 @@ namespace TVRename.Forms.Supporting
         public TvdbUpdateChecker(TVDoc doc)
         {
             InitializeComponent();
+            this.UpdateColorControls();
 
             comboBoxShow.DataSource = doc.TvLibrary.GetSortedShows().Where(s => s.Provider == TVDoc.ProviderType.TheTVDB).ToArray();
             comboBoxShow.DisplayMember = "Name";

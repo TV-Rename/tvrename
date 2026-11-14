@@ -42,7 +42,7 @@ namespace TVRename.Forms
             rightClickMenu = new ContextMenuStrip(components);
             toolStripMenuItem1 = new ToolStripMenuItem();
             lblStatus = new Label();
-            pbProgress = new ProgressBar();
+            pbProgress = new ProgressBarThemed();
             btnRefresh = new Button();
             lvRecommendations = new TVRename.ObjectListViewFlickerFree<TVRename.Forms.YtsViewerRow>();
             olvId = new BrightIdeasSoftware.OLVColumn();
@@ -309,7 +309,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.ContextMenuStrip rightClickMenu;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.ProgressBar pbProgress;
+        private TVRename.ProgressBarThemed pbProgress;
         private System.Windows.Forms.Button btnRefresh;
         private ObjectListViewFlickerFree<YtsViewerRow> lvRecommendations;
         private BrightIdeasSoftware.OLVColumn olvName;

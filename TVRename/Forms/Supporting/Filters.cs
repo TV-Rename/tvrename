@@ -19,6 +19,7 @@ public partial class Filters : Form
     {
         this.doc = doc;
         InitializeComponent();
+        this.UpdateColorControls();
 
         try
         {

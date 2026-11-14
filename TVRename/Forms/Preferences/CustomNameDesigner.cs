@@ -31,6 +31,7 @@ public partial class CustomNameDesigner : Form
         this.cn = cn;
 
         InitializeComponent();
+        this.UpdateColorControls();
 
         if (eps is null)
         {

@@ -137,14 +137,14 @@ namespace TVRename.Forms
             toolStripSeparator22 = new ToolStripSeparator();
             webTestToolStripMenuItem = new ToolStripMenuItem();
             downloadInstallerToolStripMenuItem = new ToolStripMenuItem();
-            tabMainUITabs = new TabControl();
+            tabControl1 = new TabControlThemed();
             tbMyMovies = new TabPage();
             toolStripContainer1 = new ToolStripContainer();
             splitContainer2 = new SplitContainer();
             movieTree = new TreeView();
             filterMoviesTextbox = new TextBox();
-            tabControl3 = new TabControl();
-            tabInformationTab = new TabPage();
+            tabControl3 = new TabControlThemed();
+            tabPage1 = new TabPage();
             chrMovieInformation = new CefSharp.WinForms.ChromiumWebBrowser();
             tabPage2 = new TabPage();
             chrMovieImages = new CefSharp.WinForms.ChromiumWebBrowser();
@@ -165,7 +165,7 @@ namespace TVRename.Forms
             splitContainer1 = new SplitContainer();
             MyShowTree = new TreeView();
             filterTextBox = new TextBox();
-            tabControl2 = new TabControl();
+            tabControl2 = new TabControlThemed();
             tpInformation = new TabPage();
             chrInformation = new CefSharp.WinForms.ChromiumWebBrowser();
             tpImages = new TabPage();
@@ -262,7 +262,7 @@ namespace TVRename.Forms
             columnHeader1 = new ColumnHeader();
             columnHeader35 = new ColumnHeader();
             tableLayoutPanel2 = new TableLayoutPanel();
-            pbProgressBarx = new ProgressBar();
+            pbProgressBarx = new ProgressBarThemed();
             txtDLStatusLabel = new Label();
             tsNextShowTxt = new Label();
             columnHeader5 = new ColumnHeader();
@@ -2436,8 +2436,8 @@ namespace TVRename.Forms
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem visitWebsiteToolStripMenuItem;
-        private System.Windows.Forms.TabControl tabMainUITabs;
-        private System.Windows.Forms.TabPage tbSchedule;
+        private TVRename.TabControlThemed tabControl1;
+        private System.Windows.Forms.TabPage tbWTW;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ColumnHeader columnHeader7;
@@ -2472,7 +2472,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.ToolStripMenuItem offlineOperationToolStripMenuItem;
         private System.Windows.Forms.Label tsNextShowTxt;
         private System.Windows.Forms.Label txtDLStatusLabel;
-        private System.Windows.Forms.ProgressBar pbProgressBarx;
+        private TVRename.ProgressBarThemed pbProgressBarx;
         private System.Windows.Forms.Timer BGDownloadTimer;
         private System.Windows.Forms.ToolStripMenuItem bugReportToolStripMenuItem;
         private System.Windows.Forms.ImageList ilScanResultsIcons;
@@ -2497,7 +2497,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.Timer quickTimer;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TabControl tabControl2;
+        private TVRename.TabControlThemed tabControl2;
         private System.Windows.Forms.TabPage tpInformation;
         private System.Windows.Forms.TabPage tpImages;
         private System.Windows.Forms.TextBox filterTextBox;
@@ -2603,8 +2603,8 @@ namespace TVRename.Forms
         private SplitContainer splitContainer2;
         private TreeView movieTree;
         private TextBox filterMoviesTextbox;
-        private TabControl tabControl3;
         private TabPage tabInformationTab;
+        private TabControlThemed tabControl3;
         private TabPage tabPage2;
         private ToolStripSeparator toolStripSeparator17;
         private ToolStripMenuItem bulkAddMoviesToolStripMenuItem;

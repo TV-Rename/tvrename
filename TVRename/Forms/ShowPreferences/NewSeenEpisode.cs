@@ -15,6 +15,7 @@ public partial class NewSeenEpisode : Form
     public NewSeenEpisode(IEnumerable<ProcessedEpisode> eps)
     {
         InitializeComponent();
+        this.UpdateColorControls();
 
         comboBox1.BeginUpdate();
         comboBox1.Items.Clear();

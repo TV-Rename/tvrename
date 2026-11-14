@@ -42,6 +42,7 @@ public partial class ScanProgress : Form
         this.cancellationToken = cancellationToken;
 
         InitializeComponent();
+        this.UpdateColorControls();
 
         lbBulkAutoAdd.Enabled = autoBulkAdd;
         lbMediaLibrary.Enabled = mediaLib;

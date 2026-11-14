@@ -10,6 +10,7 @@ using SourceGrid;
 using SourceGrid.Cells.Views;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using ContentAlignment = DevAge.Drawing.ContentAlignment;
+using TVRename.Forms;
 
 namespace TVRename;
 
@@ -43,6 +44,7 @@ public partial class AddEditSearchEngine : Form
     private AddEditSearchEngine(Searchers s)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         cntfw = null;
 
         SetupGrid();
