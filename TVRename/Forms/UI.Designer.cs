@@ -137,14 +137,14 @@ namespace TVRename.Forms
             toolStripSeparator22 = new ToolStripSeparator();
             webTestToolStripMenuItem = new ToolStripMenuItem();
             downloadInstallerToolStripMenuItem = new ToolStripMenuItem();
-            tabControl1 = new TabControlThemed();
+            tabMainUITabs = new TabControlThemed();
             tbMyMovies = new TabPage();
             toolStripContainer1 = new ToolStripContainer();
             splitContainer2 = new SplitContainer();
             movieTree = new TreeView();
             filterMoviesTextbox = new TextBox();
             tabControl3 = new TabControlThemed();
-            tabPage1 = new TabPage();
+            tabInformationTab = new TabPage();
             chrMovieInformation = new CefSharp.WinForms.ChromiumWebBrowser();
             tabPage2 = new TabPage();
             chrMovieImages = new CefSharp.WinForms.ChromiumWebBrowser();
@@ -2436,8 +2436,8 @@ namespace TVRename.Forms
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem visitWebsiteToolStripMenuItem;
-        private TVRename.TabControlThemed tabControl1;
-        private System.Windows.Forms.TabPage tbWTW;
+        private TVRename.TabControlThemed tabMainUITabs;
+        private System.Windows.Forms.TabPage tbSchedule;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ColumnHeader columnHeader7;
