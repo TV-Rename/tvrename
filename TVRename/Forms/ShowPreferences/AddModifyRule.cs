@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using TVRename.Forms;
+
 namespace TVRename;
 
 /// <inheritdoc />
@@ -31,6 +33,7 @@ public partial class AddModifyRule : Form
         mOrder = show.Order;
 
         InitializeComponent();
+        this.UpdateColorControls();
 
         FillDialog();
     }

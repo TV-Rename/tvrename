@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using TVRename.Forms;
+
 namespace TVRename;
 
 /// <summary>
@@ -34,6 +36,7 @@ public partial class RecoverXml : Form
     public RecoverXml(string? hint)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         settingsList = PathManager.GetPossibleSettingsHistory();
         availableTvDbFiles = PathManager.GetPossibleTvdbHistory();
         availableTvMazeFiles = PathManager.GetPossibleTvMazeHistory();

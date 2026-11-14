@@ -39,7 +39,7 @@ namespace TVRename
         {
             components = new System.ComponentModel.Container();
             bnCancel = new Button();
-            pbProgressBar = new ProgressBar();
+            pbProgressBar = new ProgressBarThemed();
             label2 = new Label();
             txtCurrent = new Label();
             tmrUpdate = new System.Windows.Forms.Timer(components);
@@ -118,7 +118,7 @@ namespace TVRename
         #endregion
 
         private System.Windows.Forms.Button bnCancel;
-        private System.Windows.Forms.ProgressBar pbProgressBar;
+        private TVRename.ProgressBarThemed pbProgressBar;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label txtCurrent;
         private System.Windows.Forms.Timer tmrUpdate;

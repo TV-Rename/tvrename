@@ -21,6 +21,7 @@ public partial class OrphanFiles : Form
         this.mDoc = mDoc;
         issues = [];
         InitializeComponent();
+        this.UpdateColorControls();
         olvSeason.GroupKeyGetter = GroupSeasonKeyDelegate;
         olvFileDirectory.GroupKeyGetter = GroupFolderTitleDelegate;
         olvFileIssues.SetObjects(issues);

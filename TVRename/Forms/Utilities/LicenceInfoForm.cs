@@ -13,6 +13,7 @@ public partial class LicenceInfoForm : Form
     public LicenceInfoForm()
     {
         InitializeComponent();
+        this.UpdateColorControls();
         lblCopyright.Text = $"Copyright (C) {TimeHelpers.LocalNow().Year} TV Rename";
     }
 

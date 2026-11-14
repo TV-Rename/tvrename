@@ -54,7 +54,7 @@ namespace TVRename.Forms
             this.rightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.lblStatus = new System.Windows.Forms.Label();
-            this.pbProgress = new System.Windows.Forms.ProgressBar();
+            this.pbProgress = new TVRename.ProgressBarThemed();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.rightClickMenu.SuspendLayout();
             this.SuspendLayout();
@@ -275,7 +275,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.ContextMenuStrip rightClickMenu;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.ProgressBar pbProgress;
+        private TVRename.ProgressBarThemed pbProgress;
         private System.Windows.Forms.Button btnRefresh;
     }
 }

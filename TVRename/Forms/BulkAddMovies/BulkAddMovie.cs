@@ -45,6 +45,7 @@ public partial class BulkAddMovie : Form
         engine = bam;
         this.mainUi = mainUi;
         InitializeComponent();
+        this.UpdateColorControls();
         FillFolderStringLists();
         tbResults.Parent = null;
         olvFMNewShows.ShowGroups = false;

@@ -41,18 +41,18 @@ namespace TVRename
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScanProgress));
             bnCancel = new System.Windows.Forms.Button();
             lbMediaLibrary = new System.Windows.Forms.Label();
-            pbMediaLib = new System.Windows.Forms.ProgressBar();
+            pbMediaLib = new TVRename.ProgressBarThemed();
             lbSearchLocally = new System.Windows.Forms.Label();
-            pbLocalSearch = new System.Windows.Forms.ProgressBar();
+            pbLocalSearch = new TVRename.ProgressBarThemed();
             lbSearchRSS = new System.Windows.Forms.Label();
-            pbRSS = new System.Windows.Forms.ProgressBar();
+            pbRSS = new TVRename.ProgressBarThemed();
             lbCheckDownloading = new System.Windows.Forms.Label();
-            pbDownloading = new System.Windows.Forms.ProgressBar();
+            pbDownloading = new TVRename.ProgressBarThemed();
             timer1 = new System.Windows.Forms.Timer(components);
-            pbDownloadFolder = new System.Windows.Forms.ProgressBar();
+            pbDownloadFolder = new TVRename.ProgressBarThemed();
             lbDownloadFolder = new System.Windows.Forms.Label();
             lblMessage = new System.Windows.Forms.Label();
-            pbBulkAutoAdd = new System.Windows.Forms.ProgressBar();
+            pbBulkAutoAdd = new TVRename.ProgressBarThemed();
             lbBulkAutoAdd = new System.Windows.Forms.Label();
             lblDetail = new System.Windows.Forms.Label();
             SuspendLayout();
@@ -257,17 +257,17 @@ namespace TVRename
 
         private System.Windows.Forms.Button bnCancel;
         private System.Windows.Forms.Label lbMediaLibrary;
-        private System.Windows.Forms.ProgressBar pbMediaLib;
+        private TVRename.ProgressBarThemed pbMediaLib;
         private System.Windows.Forms.Label lbSearchLocally;
-        private System.Windows.Forms.ProgressBar pbLocalSearch;
+        private TVRename.ProgressBarThemed pbLocalSearch;
         private System.Windows.Forms.Label lbSearchRSS;
-        private System.Windows.Forms.ProgressBar pbRSS;
+        private TVRename.ProgressBarThemed pbRSS;
         private System.Windows.Forms.Label lbCheckDownloading;
-        private System.Windows.Forms.ProgressBar pbDownloading;
-        private System.Windows.Forms.ProgressBar pbDownloadFolder;
+        private TVRename.ProgressBarThemed pbDownloading;
+        private TVRename.ProgressBarThemed pbDownloadFolder;
         private System.Windows.Forms.Label lbDownloadFolder;
         private System.Windows.Forms.Label lblMessage;
-        private System.Windows.Forms.ProgressBar pbBulkAutoAdd;
+        private TVRename.ProgressBarThemed pbBulkAutoAdd;
         private System.Windows.Forms.Label lbBulkAutoAdd;
         private System.Windows.Forms.Label lblDetail;
     }

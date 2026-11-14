@@ -19,6 +19,7 @@ public partial class QuickRename : Form, IDialogParent
         mDoc = tvDoc;
         parent = ui;
         InitializeComponent();
+        this.UpdateColorControls();
 
         mDoc.TheActionList.Clear();
         parent.FillActionList();

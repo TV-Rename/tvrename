@@ -21,6 +21,7 @@ public partial class SettingsReview : Form
     public SettingsReview(TVDoc doc, UI main)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         set = [];
         mDoc = doc;
         mainUi = main;

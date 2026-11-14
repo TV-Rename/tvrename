@@ -15,6 +15,7 @@ public partial class ChooseDownload : Form
     public ChooseDownload(ItemMissing im, IEnumerable<ActionTDownload> options)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         lblEpisodeName.Text = $"{im.Show.ShowName.ToUiVersion()} - {im}";
         if (im is MovieItemMissing mim)
         {

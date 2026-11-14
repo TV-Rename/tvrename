@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using TVRename.Forms;
+
 namespace TVRename;
 
 public partial class LinkMovie : Form
@@ -16,6 +18,7 @@ public partial class LinkMovie : Form
     public LinkMovie(List<MovieConfiguration> matchingShows, FileInfo file)
     {
         InitializeComponent();
+        this.UpdateColorControls();
         lblSourceFileName.Text = file.FullName.ToUiVersion();
         chosenFile = file;
         DialogResult = DialogResult.Abort;

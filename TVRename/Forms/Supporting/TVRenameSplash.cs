@@ -16,6 +16,7 @@ public partial class TVRenameSplash : Form
     public TVRenameSplash()
     {
         InitializeComponent();
+        global::TVRename.AddIns.Themes.ThemeManager.KeepStandardLook(this);
         lblVersion.Text = Helpers.DisplayVersion.ToUiVersion();
     }
 

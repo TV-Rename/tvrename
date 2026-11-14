@@ -13,6 +13,7 @@ public partial class ThanksForm : Form
     public ThanksForm()
     {
         InitializeComponent();
+        this.UpdateColorControls();
     }
 
     private void btnLicence_Click(object sender, EventArgs e)

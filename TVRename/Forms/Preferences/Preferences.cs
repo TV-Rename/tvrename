@@ -39,10 +39,12 @@ public partial class Preferences : Form
     {
         sampleProcessedSeason = s;
         InitializeComponent();
+        this.UpdateColorControls();
 
         FillLanguageList();
         SetupTimezoneDropdown();
         SetupTmdbDropDowns();
+        SetupThemeDropdown();
         SetupRssGrid();
         SetupReplacementsGrid();
         FillFolderStringLists();
@@ -66,6 +68,17 @@ public partial class Preferences : Form
             cbTimeZone.Items.Add(s);
         }
         cbTimeZone.EndUpdate();
+    }
+
+    private void SetupThemeDropdown()
+    {
+        cbTheme.BeginUpdate();
+        cbTheme.Items.Clear();
+        foreach (ThemeChoice choice in ThemeManager.Choices())
+        {
+            cbTheme.Items.Add(choice);
+        }
+        cbTheme.EndUpdate();
     }
 
     private void SetupTmdbDropDowns()
@@ -103,7 +116,14 @@ public partial class Preferences : Form
             return;
         }
 
+        string previousTheme = TVSettings.Instance.Theme;
         UpdateSettings();
+
+        if (!previousTheme.Equals(TVSettings.Instance.Theme, StringComparison.OrdinalIgnoreCase) && cbTheme.SelectedItem is ThemeChoice theme)
+        {
+            MessageBox.Show(this, $"TV Rename will use the \"{theme.Name}\" theme the next time it starts.", "Theme",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
         mDoc.SetDirty();
         DialogResult = DialogResult.OK;
@@ -306,6 +326,10 @@ public partial class Preferences : Form
         s.KeepTogether = cbKeepTogether.Checked;
         s.LeadingZeroOnSeason = cbLeadingZero.Checked;
         s.ShowInTaskbar = chkShowInTaskbar.Checked;
+        if (cbTheme.SelectedItem is ThemeChoice selectedTheme)
+        {
+            s.Theme = selectedTheme.Key;
+        }
         s.ShowAccessibilityOptions = chkShowAccessibilityOptions.Checked;
         s.RenameTxtToSub = cbTxtToSub.Checked;
         s.ShowEpisodePictures = cbShowEpisodePictures.Checked;
@@ -893,6 +917,8 @@ public partial class Preferences : Form
         cbLeadingZero.Checked = s.LeadingZeroOnSeason;
         chkShowAccessibilityOptions.Checked = s.ShowAccessibilityOptions;
         chkShowInTaskbar.Checked = s.ShowInTaskbar;
+        cbTheme.SelectedItem = cbTheme.Items.OfType<ThemeChoice>().FirstOrDefault(c => c.Key.Equals(s.Theme, StringComparison.OrdinalIgnoreCase))
+                               ?? cbTheme.Items[0];
         cbTxtToSub.Checked = s.RenameTxtToSub;
         cbShowEpisodePictures.Checked = s.ShowEpisodePictures;
         chkHideMyShowsSpoilers.Checked = s.HideMyShowsSpoilers;
@@ -2109,6 +2135,11 @@ public partial class Preferences : Form
     private void LlJackettLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
         llJackettLink.Text.OpenUrlInBrowser();
+    }
+
+    private void LlThemeFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+        ThemeManager.ThemesFolder.OpenFolder();
     }
 
     private void UpdateJackettLink()
