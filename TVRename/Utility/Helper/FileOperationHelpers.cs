@@ -22,8 +22,9 @@ public static class FileOperationExtensions
         {
             return false;
         }
+        string explorer = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
 
-        return SysOpen("explorer.exe", folder.EnsureEndsWithSeparator().InDoubleQuotes());
+        return SysOpen(explorer, folder.EnsureEndsWithSeparator().InDoubleQuotes());
     }
 
     public static void OpenFolderSelectFile(this string filename)
@@ -98,7 +99,7 @@ public static class FileOperationExtensions
         {
             if (arguments.HasValue())
             {
-                Process.Start(what, arguments);
+                Process.Start(new ProcessStartInfo(what, arguments) { UseShellExecute = true });
             }
             else
             {

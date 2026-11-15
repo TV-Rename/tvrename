@@ -299,7 +299,7 @@ public sealed class TVSettings
     public bool HideWtWSpoilers = false;
     public bool HideMyShowsSpoilers = false;
     public bool ShowInTaskbar = true;
-    public string Theme = ThemeManager.LIGHT;
+    public string Theme = ThemeManager.WINDOWS;
     public bool ShowAccessibilityOptions = false;
     public bool AutoSearchForDownloadedFiles = false;
     public string SpecialsFolderName = "Specials";
@@ -1360,7 +1360,7 @@ public sealed class TVSettings
         LeadingZeroOnSeason = xmlSettings.ExtractBool("LeadingZeroOnSeason", false);
         ShowAccessibilityOptions = xmlSettings.ExtractBool("ShowAccessibilityOptions", false);
         ShowInTaskbar = xmlSettings.ExtractBool("ShowInTaskbar", true);
-        Theme = xmlSettings.ExtractString("Theme", ThemeManager.LIGHT);
+        Theme = xmlSettings.ExtractString("Theme", ThemeManager.WINDOWS);
         RenameTxtToSub = xmlSettings.ExtractBool("RenameTxtToSub", false);
         ShowEpisodePictures = xmlSettings.ExtractBool("ShowEpisodePictures", true);
         HideWtWSpoilers = xmlSettings.ExtractBool("HideWtWSpoilers", false);
