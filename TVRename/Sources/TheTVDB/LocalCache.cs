@@ -361,7 +361,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
             LOGGER.Warn(errorMessage);
             if (showConnectionIssues && Environment.UserInteractive)
             {
-                MessageBox.Show(errorMessage, "Long Running Update", MessageBoxButtons.OK,
+                ThemeableMessageBox.Show(errorMessage, "Long Running Update", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
             }
 

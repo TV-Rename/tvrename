@@ -302,7 +302,7 @@ public partial class AddEditMovie : Form, ICodeWindow
     {
         if (!TVDoc.GetMediaCache(GetProviderTypeInUse()).HasMovie(codeFinderForm.SelectedCode()))
         {
-            DialogResult dr = MessageBox.Show($"{GetProviderType().PrettyPrint()} code unknown, close anyway?", "TV Rename Add/Edit Movie",
+            DialogResult dr = ThemeableMessageBox.Show($"{GetProviderType().PrettyPrint()} code unknown, close anyway?", "TV Rename Add/Edit Movie",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (dr == DialogResult.No)
             {
@@ -311,28 +311,28 @@ public partial class AddEditMovie : Form, ICodeWindow
         }
         if (chkCustomLanguage.Checked && string.IsNullOrWhiteSpace(cbLanguage.SelectedItem?.ToString()))
         {
-            MessageBox.Show("Please enter language for the show or accept the default preferred language", "TV Rename Add/Edit Movie",
+            ThemeableMessageBox.Show("Please enter language for the show or accept the default preferred language", "TV Rename Add/Edit Movie",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             return false;
         }
         if (chkCustomRegion.Checked && string.IsNullOrWhiteSpace(cbRegion.SelectedItem?.ToString()))
         {
-            MessageBox.Show("Please enter region for the show or accept the default region", "TV Rename Add/Edit Movie",
+            ThemeableMessageBox.Show("Please enter region for the show or accept the default region", "TV Rename Add/Edit Movie",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             return false;
         }
         if (chkCustomShowName.Checked && string.IsNullOrWhiteSpace(txtCustomShowName.Text))
         {
-            MessageBox.Show("Please enter custom for the show or remove custom naming", "TV Rename Add/Edit Movie",
+            ThemeableMessageBox.Show("Please enter custom for the show or remove custom naming", "TV Rename Add/Edit Movie",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             return false;
         }
         if (chkAutoFolders.Checked && string.IsNullOrWhiteSpace(cbDirectory.SelectedItem?.ToString()))
         {
-            MessageBox.Show("Please enter base folder for this show or turn off automatic folders", "TV Rename Add/Edit Movie",
+            ThemeableMessageBox.Show("Please enter base folder for this show or turn off automatic folders", "TV Rename Add/Edit Movie",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             Folders.SelectedTab = tabPage5;
@@ -342,7 +342,7 @@ public partial class AddEditMovie : Form, ICodeWindow
         }
         if (chkAutoFolders.Checked && !TVSettings.OKPath(cbDirectory.SelectedItem?.ToString(), false))
         {
-            MessageBox.Show("Please check the base folder is a valid one and has no invalid characters"
+            ThemeableMessageBox.Show("Please check the base folder is a valid one and has no invalid characters"
                 , "TV Rename Add/Edit Movie",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -354,7 +354,7 @@ public partial class AddEditMovie : Form, ICodeWindow
 
         if (chkAutoFolders.Checked && rdoFolderCustom.Checked && !txtFolderNameFormat.Text.IsValidDirectory())
         {
-            MessageBox.Show("Please check the custom subdirectory is a valid one and has no invalid characters"
+            ThemeableMessageBox.Show("Please check the custom subdirectory is a valid one and has no invalid characters"
                 , "TV Rename Add/Edit Movie",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -366,7 +366,7 @@ public partial class AddEditMovie : Form, ICodeWindow
 
         if (chkManualFolders.Checked && lvManualFolders.Items.Count == 0)
         {
-            MessageBox.Show("Please add manual season folders or disable manual/additional Folders"
+            ThemeableMessageBox.Show("Please add manual season folders or disable manual/additional Folders"
                 , "TV Rename Add/Edit Movie",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -378,7 +378,7 @@ public partial class AddEditMovie : Form, ICodeWindow
 
         if (!chkManualFolders.Checked && !chkAutoFolders.Checked)
         {
-            MessageBox.Show("Please enable either automatic or manual folders"
+            ThemeableMessageBox.Show("Please enable either automatic or manual folders"
                 , "TV Rename Add/Edit Movie",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 

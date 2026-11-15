@@ -70,7 +70,7 @@ public class State
             if (Environment.UserInteractive)
             {
                 Logger.Error($"Complete failure to save {path}. {e.Message}");
-                DialogResult dr = MessageBox.Show($"Could not save {path} due to {e.Message}. State will be lost. Retry? ", "TV Rename",
+                DialogResult dr = ThemeableMessageBox.Show($"Could not save {path} due to {e.Message}. State will be lost. Retry? ", "TV Rename",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 if (dr != DialogResult.No)
                 {

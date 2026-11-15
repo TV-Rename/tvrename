@@ -232,7 +232,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             {
                 if (!commandLineArgs.Unattended && !commandLineArgs.Hide && Environment.UserInteractive)
                 {
-                    MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ThemeableMessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
                 logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {userFilePath}");

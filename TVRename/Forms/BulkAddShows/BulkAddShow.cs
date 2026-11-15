@@ -59,7 +59,7 @@ public partial class BulkAddShow : Form
     {
         if (!CanClose())
         {
-            if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"TV Shows\"?", "Bulk Add TV Shows", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
+            if (DialogResult.OK != ThemeableMessageBox.Show("Close without adding identified shows to \"TV Shows\"?", "Bulk Add TV Shows", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
             {
                 return;
             }
@@ -465,7 +465,7 @@ public partial class BulkAddShow : Form
             return;
         }
 
-        DialogResult res = MessageBox.Show("Add selected folders to the 'Bulk Add TV Shows' ignore folders list?", "Bulk Add TV Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        DialogResult res = ThemeableMessageBox.Show("Add selected folders to the 'Bulk Add TV Shows' ignore folders list?", "Bulk Add TV Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
         if (res != DialogResult.Yes)
         {
             return;
@@ -526,7 +526,7 @@ public partial class BulkAddShow : Form
     {
         if (engine.AddItems.IsAny())
         {
-            DialogResult res = MessageBox.Show("Add identified shows to \"TV Shows\"?", "Bulk Add TV Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult res = ThemeableMessageBox.Show("Add identified shows to \"TV Shows\"?", "Bulk Add TV Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res != DialogResult.Yes)
             {
                 return;

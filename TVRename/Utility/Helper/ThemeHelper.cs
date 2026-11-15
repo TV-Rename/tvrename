@@ -20,13 +20,13 @@ internal static class ThemeHelper
 
     internal static Theme T => ThemeManager.Active ?? Theme.BuiltInDark;
 
-    private static readonly ConditionalWeakTable<Control, object> Themed = new();
-    private static readonly ConditionalWeakTable<ToolStripItem, object> AdaptedItems = new();
-    private static readonly ConditionalWeakTable<ImageList, object> AdaptedImageLists = new();
-    private static readonly ConditionalWeakTable<ImageList, ImageList> ThemedIconLists = new();
-    private static readonly ConditionalWeakTable<ListView, ListViewColourer> ListColourers = new();
-    private static readonly ConditionalWeakTable<SourceGrid.Cells.Views.IView, SourceGrid.Cells.Views.IView> HeaderReplacements = new();
-    private static readonly ConditionalWeakTable<SourceGrid.Cells.Views.IView, object> CheckedViews = new();
+    private static readonly ConditionalWeakTable<Control, object> Themed = [];
+    private static readonly ConditionalWeakTable<ToolStripItem, object> AdaptedItems = [];
+    private static readonly ConditionalWeakTable<ImageList, object> AdaptedImageLists = [];
+    private static readonly ConditionalWeakTable<ImageList, ImageList> ThemedIconLists = [];
+    private static readonly ConditionalWeakTable<ListView, ListViewColourer> ListColourers = [];
+    private static readonly ConditionalWeakTable<SourceGrid.Cells.Views.IView, SourceGrid.Cells.Views.IView> HeaderReplacements = [];
+    private static readonly ConditionalWeakTable<SourceGrid.Cells.Views.IView, object> CheckedViews = [];
 
     [ThreadStatic] private static bool changingColour;
 
@@ -300,7 +300,7 @@ internal static class ThemeHelper
 
     #region Borders
 
-    private static readonly ConditionalWeakTable<Type, PropertyInfo> BorderStyleProperties = new();
+    private static readonly ConditionalWeakTable<Type, PropertyInfo> BorderStyleProperties = [];
 
     // Marker for "this type has no BorderStyle" (ConditionalWeakTable cannot hold null)
     private static readonly PropertyInfo NoBorderStyleProperty =

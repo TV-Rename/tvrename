@@ -528,7 +528,7 @@ internal static class FinderHelper
         {
             if (Environment.UserInteractive)
             {
-                MessageBox.Show(
+                ThemeableMessageBox.Show(
                     "Please add some monitor (library) folders under 'Bulk Add TV Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
                     "Can't Auto Add Media", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

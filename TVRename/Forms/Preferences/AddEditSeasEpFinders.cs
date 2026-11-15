@@ -403,7 +403,7 @@ public partial class AddEditSeasEpFinders : Form
 
     private void bnDefaults_Click(object sender, EventArgs e)
     {
-        DialogResult dr = MessageBox.Show("Restore to default matching expressions?", "Filename Processors",
+        DialogResult dr = ThemeableMessageBox.Show("Restore to default matching expressions?", "Filename Processors",
             MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
         if (dr == DialogResult.Yes)

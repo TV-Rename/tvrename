@@ -213,7 +213,7 @@ public partial class AutoAddMedia : Form, ICodeWindow
             return true;
         }
 
-        DialogResult dr = MessageBox.Show("Code unknown, close anyway?", "TV Rename Auto Add Media",
+        DialogResult dr = ThemeableMessageBox.Show("Code unknown, close anyway?", "TV Rename Auto Add Media",
             MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
         return dr != DialogResult.No;

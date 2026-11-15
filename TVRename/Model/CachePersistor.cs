@@ -54,7 +54,7 @@ internal static class CachePersistor
             // Do not show dialog during shutdown to prevent hanging
             if (!isShuttingDown && Environment.UserInteractive)
             {
-                DialogResult dr = MessageBox.Show($"Could not save {cacheFile.Name} due to {e.Message}. Local cache will be lost. Retry? ", "TV Rename",
+                DialogResult dr = ThemeableMessageBox.Show($"Could not save {cacheFile.Name} due to {e.Message}. Local cache will be lost. Retry? ", "TV Rename",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 if (dr != DialogResult.No)
                 {

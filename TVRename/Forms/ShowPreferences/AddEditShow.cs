@@ -350,7 +350,7 @@ public partial class AddEditShow : Form, ICodeWindow
     {
         if (!TVDoc.GetMediaCache(GetProviderTypeInUse()).HasSeries(codeFinderForm.SelectedCode()))
         {
-            DialogResult dr = MessageBox.Show($"{GetConfigurationProviderType().PrettyPrint()} code unknown, close anyway?", "TV Rename Add/Edit TV Show",
+            DialogResult dr = ThemeableMessageBox.Show($"{GetConfigurationProviderType().PrettyPrint()} code unknown, close anyway?", "TV Rename Add/Edit TV Show",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (dr == DialogResult.No)
             {
@@ -359,28 +359,28 @@ public partial class AddEditShow : Form, ICodeWindow
         }
         if (chkCustomLanguage.Checked && string.IsNullOrWhiteSpace(cbLanguage.SelectedItem?.ToString()))
         {
-            MessageBox.Show("Please enter language for the show or accept the default preferred language", "TV Rename Add/Edit TV Show",
+            ThemeableMessageBox.Show("Please enter language for the show or accept the default preferred language", "TV Rename Add/Edit TV Show",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             return false;
         }
         if (chkCustomRegion.Checked && string.IsNullOrWhiteSpace(cbRegion.SelectedItem?.ToString()))
         {
-            MessageBox.Show("Please enter region for the show or accept the default region", "TV Rename Add/Edit TV Show",
+            ThemeableMessageBox.Show("Please enter region for the show or accept the default region", "TV Rename Add/Edit TV Show",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             return false;
         }
         if (chkCustomShowName.Checked && string.IsNullOrWhiteSpace(txtCustomShowName.Text))
         {
-            MessageBox.Show("Please enter custom for the show or remove custom naming", "TV Rename Add/Edit TV Show",
+            ThemeableMessageBox.Show("Please enter custom for the show or remove custom naming", "TV Rename Add/Edit TV Show",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             return false;
         }
         if (chkAutoFolders.Checked && string.IsNullOrWhiteSpace(txtBaseFolder.Text))
         {
-            MessageBox.Show("Please enter base folder for this show or turn off automatic season folders", "TV Rename Add/Edit TV Show",
+            ThemeableMessageBox.Show("Please enter base folder for this show or turn off automatic season folders", "TV Rename Add/Edit TV Show",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             Folders.SelectedTab = tabPage5;
@@ -390,7 +390,7 @@ public partial class AddEditShow : Form, ICodeWindow
         }
         if (chkAutoFolders.Checked && !TVSettings.OKPath(txtBaseFolder.Text, false))
         {
-            MessageBox.Show("Please check the base folder is a valid one and has no invalid characters"
+            ThemeableMessageBox.Show("Please check the base folder is a valid one and has no invalid characters"
                 , "TV Rename Add/Edit TV Show",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -402,7 +402,7 @@ public partial class AddEditShow : Form, ICodeWindow
 
         if (chkAutoFolders.Checked && rdoFolderCustom.Checked && !txtSeasonFormat.Text.IsValidDirectory())
         {
-            MessageBox.Show("Please check the custom subdirectory is a valid one and has no invalid characters"
+            ThemeableMessageBox.Show("Please check the custom subdirectory is a valid one and has no invalid characters"
                 , "TV Rename Add/Edit TV Show",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -780,7 +780,7 @@ public partial class AddEditShow : Form, ICodeWindow
         //If there are no LibraryFolders then we cant use the simplified UI
         if (TVSettings.Instance.LibraryFolders.Count == 0)
         {
-            MessageBox.Show(
+            ThemeableMessageBox.Show(
                 "Please add some library folders in the Preferences to use this.",
                 "Can't Auto Add TV Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
 

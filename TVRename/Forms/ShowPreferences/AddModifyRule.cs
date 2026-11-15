@@ -236,7 +236,7 @@ public partial class AddModifyRule : Form
             return;
         }
 
-        MessageBox.Show(message, "Modify Rules", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        ThemeableMessageBox.Show(message, "Modify Rules", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         source.Focus();
         throw new ValidationFailedException(message);
     }

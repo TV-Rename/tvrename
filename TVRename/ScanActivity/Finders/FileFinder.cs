@@ -158,7 +158,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
         t += ".  More information is available in the log file";
         if (!MDoc.Args.Unattended && !MDoc.Args.Hide && Environment.UserInteractive)
         {
-            MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            ThemeableMessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
         t = "DirectoryName " + dce.DirectoryName + ", File name: " + dce.Name;
@@ -180,7 +180,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
         t += ".  More information is available in the log file";
         if (!MDoc.Args.Unattended && !MDoc.Args.Hide && Environment.UserInteractive)
         {
-            MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            ThemeableMessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
         t = "DirectoryName " + dce.DirectoryName + ", File name: " + dce.Name;
@@ -413,7 +413,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
 
             if (showErrors && Environment.UserInteractive)
             {
-                MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                ThemeableMessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
         catch (System.IO.IOException ioe)

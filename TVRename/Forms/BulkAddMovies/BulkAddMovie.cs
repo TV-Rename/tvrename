@@ -58,7 +58,7 @@ public partial class BulkAddMovie : Form
 
         if (!CanClose())
         {
-            if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"My Movies\"?", "Bulk Add Movies", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
+            if (DialogResult.OK != ThemeableMessageBox.Show("Close without adding identified shows to \"My Movies\"?", "Bulk Add Movies", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
             {
                 return;
             }
@@ -450,7 +450,7 @@ public partial class BulkAddMovie : Form
             return;
         }
 
-        DialogResult res = MessageBox.Show("Add selected folders to the 'Bulk Add Movies' ignore folders list?", "Bulk Add Movies", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        DialogResult res = ThemeableMessageBox.Show("Add selected folders to the 'Bulk Add Movies' ignore folders list?", "Bulk Add Movies", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
         if (res != DialogResult.Yes)
         {
             return;
@@ -517,7 +517,7 @@ public partial class BulkAddMovie : Form
         int numberToAdd = engine.AddItems.Count(ai => ai.CodeKnown);
         if (numberToAdd > 0)
         {
-            DialogResult res = MessageBox.Show($"Add {numberToAdd} identified movies to \"My Movies\"?", "Bulk Add Movies", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult res = ThemeableMessageBox.Show($"Add {numberToAdd} identified movies to \"My Movies\"?", "Bulk Add Movies", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res != DialogResult.Yes)
             {
                 return;
