@@ -1,11 +1,11 @@
 using System.Runtime.InteropServices;
-using TVRename.Forms;
 
+namespace TVRename.Forms;
 public class ThemeableMessageBox : Form
 {
     // Windows API to force dark title bar (Windows 10 build 18985+ and Windows 11)
-    [DllImport("dwmapi.dll")]
-    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+    [LibraryImport("dwmapi.dll")]
+    private static extern int   DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
     private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
 
     private ThemeableMessageBox(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
@@ -63,13 +63,13 @@ public class ThemeableMessageBox : Form
         // 5. Dynamic Sizing
         int contentWidth = Math.Max(280, lblMessage.Right + 25);
         int contentHeight = Math.Max(65, lblMessage.Bottom + 20);
-        this.ClientSize = new Size(contentWidth, contentHeight + bottomPanel.Height);
+        ClientSize = new Size(contentWidth, contentHeight + bottomPanel.Height);
 
         // 6. Buttons
         AddButtons(bottomPanel, buttons);
 
-        this.Controls.Add(topPanel);
-        this.Controls.Add(bottomPanel);
+        Controls.Add(topPanel);
+        Controls.Add(bottomPanel);
 
         this.UpdateColorControls();
     }
@@ -79,7 +79,7 @@ public class ThemeableMessageBox : Form
         base.OnHandleCreated(e);
         // Apply dark mode to the native window title bar
         int useDarkMode = 1;
-        DwmSetWindowAttribute(this.Handle, DWMWA_USE_IMMERSIVE_DARK_MODE, ref useDarkMode, sizeof(int));
+        DwmSetWindowAttribute(Handle, DWMWA_USE_IMMERSIVE_DARK_MODE, ref useDarkMode, sizeof(int));
     }
 
     private void AddButtons(Panel container, MessageBoxButtons buttons)

@@ -151,8 +151,7 @@ public static class API
 
             if (showConnectionIssues && Environment.UserInteractive)
             {
-                ThemeableMessageBox.Show(msg, "Error obtaining updates from TVDB", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                Forms.ThemeableMessageBox.Show(msg, "Error obtaining updates from TVDB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             return null;

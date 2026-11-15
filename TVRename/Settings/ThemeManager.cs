@@ -206,6 +206,6 @@ internal static class ThemeManager
             + "Backups folder, and the original built in themes are in the Defaults folder; copy one of them back over the "
             + "theme file to undo a change.";
         StartupProblems.Clear();
-        ThemeableMessageBox.Show(message, "TV Rename theme", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        Forms.ThemeableMessageBox.Show(owner, message, "TV Rename theme", MessageBoxButtons.OK, MessageBoxIcon.Warning);
     }
 }

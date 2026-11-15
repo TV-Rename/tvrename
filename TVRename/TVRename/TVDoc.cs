@@ -2444,7 +2444,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         }
         return await saveLayoutTask;
     }
-    private async Task<bool> SaveLayoutXmlInternalAsync(XDocument layoutXML)
+    private static async Task<bool> SaveLayoutXmlInternalAsync(XDocument layoutXML)
     {
         Policy retryPolicy = Policy
             .Handle<Exception>()

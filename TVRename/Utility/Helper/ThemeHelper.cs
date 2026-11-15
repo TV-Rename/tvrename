@@ -17,9 +17,7 @@ namespace TVRename.Forms;
 internal static class ThemeHelper
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
     internal static Theme T => ThemeManager.Active ?? Theme.BuiltInDark;
-
     private static readonly ConditionalWeakTable<Control, object> Themed = [];
     private static readonly ConditionalWeakTable<ToolStripItem, object> AdaptedItems = [];
     private static readonly ConditionalWeakTable<ImageList, object> AdaptedImageLists = [];
