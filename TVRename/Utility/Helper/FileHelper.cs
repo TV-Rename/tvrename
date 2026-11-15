@@ -53,6 +53,30 @@ public static class FileHelper
         });
     }
 
+    public static async Task<FileInfo[]> GetFilesAsync(this DirectoryInfo di, string searchPattern)
+    {
+        return await Task.Run(() =>
+        {
+            try
+            {
+                return di.GetFiles(searchPattern);
+            }
+            catch (NotSupportedException)
+            {
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+            }
+            catch (System.IO.IOException)
+            {
+            }
+            return [];
+        });
+    }
+
     public static void DeleteOrRecycleFile(this FileInfo? file, TVSettings.TidySettings? Tidyup)
     {
         if (file is null)

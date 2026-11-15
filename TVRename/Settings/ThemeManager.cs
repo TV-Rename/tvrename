@@ -81,15 +81,16 @@ internal static class ThemeManager
     }
 
     // Light (the standard look), every theme file found, and Same as Windows
-    internal static List<ThemeChoice> Choices()
+    internal static async Task<List<ThemeChoice>> ChoicesAsync()
     {
         List<ThemeChoice> themes = [];
         try
         {
-            foreach (string path in Directory.GetFiles(ThemesFolder, "*" + Theme.FILE_SUFFIX))
+            DirectoryInfo themesFolder = new(ThemesFolder);
+            foreach (FileInfo path in await themesFolder.GetFilesAsync("*" + Theme.FILE_SUFFIX))
             {
-                string key = Theme.KeyFromPath(path);
-                themes.Add(new ThemeChoice(key, Theme.ReadDisplayName(path) ?? $"{key} (has a mistake)"));
+                string key = Theme.KeyFromPath(path.FullName);
+                themes.Add(new ThemeChoice(key, Theme.ReadDisplayName(path.FullName) ?? $"{key} (has a mistake)"));
             }
         }
         catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)

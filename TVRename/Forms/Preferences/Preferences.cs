@@ -44,7 +44,6 @@ public partial class Preferences : Form
         FillLanguageList();
         SetupTimezoneDropdown();
         SetupTmdbDropDowns();
-        SetupThemeDropdown();
         SetupRssGrid();
         SetupReplacementsGrid();
         FillFolderStringLists();
@@ -59,6 +58,11 @@ public partial class Preferences : Form
         }
     }
 
+    public async Task InitialiseAsync()
+    {
+        await SetupThemeDropdownAsync();
+    }
+
     private void SetupTimezoneDropdown()
     {
         cbTimeZone.BeginUpdate();
@@ -70,11 +74,11 @@ public partial class Preferences : Form
         cbTimeZone.EndUpdate();
     }
 
-    private void SetupThemeDropdown()
+    private async Task SetupThemeDropdownAsync()
     {
         cbTheme.BeginUpdate();
         cbTheme.Items.Clear();
-        foreach (ThemeChoice choice in ThemeManager.Choices())
+        foreach (ThemeChoice choice in await ThemeManager.ChoicesAsync())
         {
             cbTheme.Items.Add(choice);
         }

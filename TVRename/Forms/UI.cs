@@ -2609,6 +2609,8 @@ public partial class UI : Form, IDialogParent
         mDoc.PreventAutoScan("Preferences are open");
 
         Preferences pref = new(mDoc, scanOptions, CurrentlySelectedSeason());
+        await pref.InitialiseAsync();
+
         if (pref.ShowDialog(this) == DialogResult.OK)
         {
             mDoc.SetDirty();
