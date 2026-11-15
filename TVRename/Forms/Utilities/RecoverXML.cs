@@ -48,7 +48,7 @@ public partial class RecoverXml : Form
         }
     }
 
-    private void RecoverXML_Load(object sender, System.EventArgs e)
+    private void RecoverXML_Load(object sender, EventArgs e)
     {
         Setup(lbSettings, "Default settings", settingsList);
         Setup(lbTVDB, "No Cache", availableTvDbFiles);
@@ -70,7 +70,7 @@ public partial class RecoverXml : Form
         }
     }
 
-    private void bnOK_Click(object sender, System.EventArgs e)
+    private void bnOK_Click(object sender, EventArgs e)
     {
         TvDbFile = GetFile(lbTVDB, availableTvDbFiles);
         TvMazeFile = GetFile(lbTvMaze, availableTvMazeFiles);
@@ -80,7 +80,7 @@ public partial class RecoverXml : Form
         Close();
     }
 
-    private static FileInfo? GetFile(ListControl lb, IReadOnlyList<FileInfo> fileInfos)
+    private static FileInfo? GetFile(ListControl lb, FileInfo[] fileInfos)
     {
         // we added a 'none' item at the top of the list, so adjust for that
         int n = lb.SelectedIndex;
@@ -91,13 +91,13 @@ public partial class RecoverXml : Form
         return n == 0 ? null : fileInfos[n - 1];
     }
 
-    private void bnCancel_Click(object sender, System.EventArgs e)
+    private void bnCancel_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Cancel;
         Close();
     }
 
-    private void label5_Click(object sender, System.EventArgs e)
+    private void label5_Click(object sender, EventArgs e)
     {
     }
 }

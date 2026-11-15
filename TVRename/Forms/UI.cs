@@ -498,6 +498,7 @@ public partial class UI : Form, IDialogParent
         return source;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>")]
     private static object GroupFolderTitleDelegate(object rowObject)
     {
         Item? ep = (Item?)rowObject;
@@ -526,6 +527,7 @@ public partial class UI : Form, IDialogParent
         return destFolder;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>")]
     private static object GroupSeasonKeyDelegate(object rowObject)
     {
         Item ep = (Item)rowObject;
@@ -542,6 +544,7 @@ public partial class UI : Form, IDialogParent
         return string.Empty;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>")]
     private static object GroupWTWSeasonKeyDelegate(object rowObject)
     {
         ProcessedEpisode ep = (ProcessedEpisode)rowObject;
@@ -587,6 +590,7 @@ public partial class UI : Form, IDialogParent
         return episodeTime.Value.ToString("yyyy");
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>")]
     private static object? GroupDateKeyDelegate(object rowObject)
     {
         DateTime? episodeTime = ((Item)rowObject).AirDate;
@@ -622,6 +626,7 @@ public partial class UI : Form, IDialogParent
         return new DateTime(episodeTime.Value.Year, 1, 1);
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>")]
     private static object? GroupWTWDateKeyDelegate(object rowObject)
     {
         DateTime? episodeTime = ((ProcessedEpisode)rowObject).GetAirDateDt();
@@ -705,6 +710,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>")]
     private static object GroupItemsKeyDelegate(object rowObject)
     {
         Item i = (Item)rowObject;
@@ -3989,6 +3995,7 @@ public partial class UI : Form, IDialogParent
         mDoc.ClearCacheUpdateProblems();
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>")]
     private static object ActionImageGetter(object rowObject)
     {
         Item s = (Item)rowObject;
@@ -4881,8 +4888,7 @@ public partial class UI : Form, IDialogParent
         lvWhenToWatch.SetObjects(recentEps, true);
         lvWhenToWatch.Refresh();
 
-        List<DateTime> bolded = recentEps.Select(ei => ei.GetAirDateDt()).OfType<DateTime>().ToList();
-        calCalendar.BoldedDates = [.. bolded];
+        calCalendar.BoldedDates = [.. recentEps.Select(ei => ei.GetAirDateDt()).OfType<DateTime>()];
 
         UpdateToolstripWTW();
 

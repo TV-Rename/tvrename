@@ -226,16 +226,6 @@ public static class FileHelper
         return result.Success ? result.BestVideoStream?.Height : (int?)null;
     }
 
-    private static int? Parse(string returnValue, FileInfo sourceFile)
-    {
-        if (int.TryParse(returnValue, out int value))
-        {
-            return value;
-        }
-
-        return null;
-    }
-
     public static (string codeType, int code)? ExtractIdsFrom(string name)
     {
         //See http://regex101.com/r/0rVxkW/5
@@ -847,7 +837,7 @@ public static class FileHelper
         }
     }
 
-    private static string TempFor(Alphaleonis.Win32.Filesystem.FileSystemInfo f) => f.FullName + ".tvrenametemp";
+    private static string TempFor(FileSystemInfo f) => f.FullName + ".tvrenametemp";
     public async static Task CopyMoveFileAsync(FileInfo From, FileInfo To, bool isMove, IProgress<CopyMoveProgress>? progress, CancellationToken cancellationToken = default)
     {
         //we use a temp name just in case we are interrupted or some other problem occurs
@@ -872,7 +862,7 @@ public static class FileHelper
                 // This step could be slow, so report progress
                 if (TVSettings.Instance.DeferCopyToFileSystem)
                 {
-                    CallBackMapper x = new CallBackMapper(progress);
+                    CallBackMapper x = new(progress);
                     CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.WriteThrough | MoveOptions.ReplaceExisting, x.CopyProgressCallback, null);
                     if (moveResult.ErrorCode != 0)
                     {
@@ -1185,6 +1175,7 @@ public static class FileHelper
 
     private class CallBackMapper(IProgress<CopyMoveProgress>? progress)
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
         public CopyMoveProgressResult CopyProgressCallback(long totalFileSize, long totalBytesTransferred, long streamSize, long streamBytesTransferred, int streamNumber, CopyMoveProgressCallbackReason callbackReason, object userData)
         {
             progress?.Report(new CopyMoveProgress

@@ -8,10 +8,10 @@
 
 namespace TVRename.Forms;
 
-public class DuplicateMovie(MovieConfiguration movie, List<FileInfo> files)
+public class DuplicateMovie(MovieConfiguration movie, IEnumerable<FileInfo> files)
 {
     internal readonly MovieConfiguration Movie = movie;
-    internal readonly List<FileInfo> Files = files;
+    internal readonly List<FileInfo> Files = [.. files];
     public bool IsDoublePart;
     public bool IsSample;
     public bool IsDeleted;

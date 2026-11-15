@@ -426,7 +426,7 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
     {
         string newName;
 
-        (bool isLangSpecifc, string extension) = FileHelper.IsLanguageSpecificSubtitle(sourceFile);
+        (bool isLangSpecifc, string _) = FileHelper.IsLanguageSpecificSubtitle(sourceFile);
 
         if (isLangSpecifc)
         {

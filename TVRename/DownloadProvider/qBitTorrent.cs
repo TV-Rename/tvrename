@@ -130,7 +130,7 @@ public class qBitTorrent : IDownloadProvider
             if (!torrentDetails.Children().IsAny())
             {
                 string proposedFilename = TVSettings.Instance.FilenameFriendly(savePath + torrentName) +
-                                          TVSettings.Instance.VideoExtensionsArray[0];
+                                          TVSettings.Instance.VideoExtensionsArray.FirstOrDefault();
 
                 ret.Add(new TorrentEntry(torrentName, proposedFilename, 0, false, hashCode));
                 return;

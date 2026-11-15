@@ -242,7 +242,7 @@ internal static class FinderHelper
         return hint2;
     }
 
-    public static List<T> RemoveShortShows<T>(IReadOnlyCollection<T> matchingShows)
+    public static List<T> RemoveShortShows<T>(List<T> matchingShows)
         where T : MediaConfiguration
     {
         //Remove any shows from the list that are subsets of all the ohters

@@ -33,7 +33,7 @@ public class ShowSeasonMissing : ItemMissing, IEquatable<ShowSeasonMissing>
     public override ShowConfiguration Series => show;
     public override string EpisodeString => ConvertEpNumsToText(show.ActiveSeasons.FirstOrDefault(s => s.Key == seasonNumber).Value);
 
-    private static string ConvertEpNumsToText(IReadOnlyCollection<ProcessedEpisode> value)
+    private static string ConvertEpNumsToText(List<ProcessedEpisode> value)
     {
         if (value is null) return string.Empty;
 

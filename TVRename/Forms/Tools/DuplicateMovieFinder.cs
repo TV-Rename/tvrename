@@ -86,7 +86,7 @@ public partial class DuplicateMovieFinder : Form
 
     private async Task ProcessMovieAsync(MovieConfiguration movie)
     {
-        List<FileInfo> files = (await movie.MovieFilesAsync()).Where(fiTemp => movie.NameMatch(fiTemp, false)).ToList();
+        var files = (await movie.MovieFilesAsync()).Where(fiTemp => movie.NameMatch(fiTemp, false));
 
         if (files.Count() > 1)
         {
@@ -96,9 +96,9 @@ public partial class DuplicateMovieFinder : Form
             duplicateMovie.IsSample = files.Any(f => f.IsSampleFile());
             duplicateMovie.IsDeleted = files.Any(f => f.IsDeletedStubFile());
 
-            if (files.Count == 2)
+            if (files.Count() == 2)
             {
-                duplicateMovie.IsDoublePart = FileHelper.IsDoublePartMovie(files[0], files[1]);
+                duplicateMovie.IsDoublePart = FileHelper.IsDoublePartMovie(files.First(), files.Last());
             }
         }
     }

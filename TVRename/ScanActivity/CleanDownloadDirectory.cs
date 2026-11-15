@@ -149,7 +149,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private static Action SetupDirectoryRemoval(DirectoryInfo di, IReadOnlyList<ShowConfiguration> matchingShows)
+    private static ActionDeleteDirectory SetupDirectoryRemoval(DirectoryInfo di, List<ShowConfiguration> matchingShows)
     {
         ShowConfiguration si = matchingShows[0]; //Choose the first cachedSeries
         if (si.CachedShow is null)
@@ -169,7 +169,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         return new ActionDeleteDirectory(di, si, TVSettings.Instance.Tidyup);
     }
 
-    private static Action SetupDirectoryRemoval(DirectoryInfo di,IReadOnlyList<MovieConfiguration> matchingMovies)
+    private static ActionDeleteDirectory SetupDirectoryRemoval(DirectoryInfo di,List<MovieConfiguration> matchingMovies)
     {
         MovieConfiguration si = matchingMovies[0]; //Choose the first cachedSeries
         LOGGER.Info($"Removing {di.FullName} as it matches {si.ShowName} and no files are needed");
@@ -412,7 +412,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         }
     }
 
-    private async Task<bool?> ReviewFileAsync(bool unattended, FileInfo newFile, IReadOnlyCollection<ShowConfiguration> matchingShows, FileInfo existingFile, ProcessedEpisode pep, IDialogParent owner)
+    private async Task<bool?> ReviewFileAsync(bool unattended, FileInfo newFile, List<ShowConfiguration> matchingShows, FileInfo existingFile, ProcessedEpisode pep, IDialogParent owner)
     {
         FileHelper.VideoComparison result = await FileHelper.BetterQualityFileAsync(existingFile, newFile);
 
@@ -481,7 +481,7 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
         return null;
     }
 
-    private async Task<bool?> ReviewFileAsync(bool unattended, FileInfo newFile, IReadOnlyCollection<MovieConfiguration> matchingShows, FileInfo existingFile, MovieConfiguration pep, IDialogParent owner)
+    private async Task<bool?> ReviewFileAsync(bool unattended, FileInfo newFile, List<MovieConfiguration> matchingShows, FileInfo existingFile, MovieConfiguration pep, IDialogParent owner)
     {
         FileHelper.VideoComparison result = await FileHelper.BetterQualityFileAsync(existingFile, newFile);
 
