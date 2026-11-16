@@ -950,7 +950,12 @@ internal static class ThemeHelper
 
     internal const int WM_PAINT = 0x000F;
     internal const int WM_ERASEBKGND = 0x0014;
+    private const int WM_SETREDRAW = 0x000B;
     private const int LVM_GETHEADER = 0x1000 + 31;
+
+    // While off, the window does not draw itself; turning it back on does not repaint (invalidate for that)
+    internal static void SetRedraw(IntPtr hWnd, bool redraw)
+        => SendMessage(hWnd, WM_SETREDRAW, (IntPtr)(redraw ? 1 : 0), IntPtr.Zero);
 
     [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
     internal static extern int SetWindowTheme(IntPtr hWnd, string? pszSubAppName, string? pszSubIdList);
@@ -1003,6 +1008,9 @@ internal static class ThemeHelper
             try
             {
                 using Graphics g = Graphics.FromHdc(hdc);
+
+                // Only the part Windows asked for, so the painting code can skip what is not shown
+                g.SetClip(Rectangle.FromLTRB(ps.left, ps.top, ps.right, ps.bottom));
                 paint(g);
             }
             finally

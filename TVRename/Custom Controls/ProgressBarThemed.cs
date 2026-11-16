@@ -48,8 +48,25 @@ public class ProgressBarThemed : ProgressBar
             case PBM_STEPIT:
             case PBM_SETRANGE32:
             case PBM_SETSTATE:
-                // The control may draw straight away when its value changes, so make sure ours is what shows
-                base.WndProc(ref m);
+                // The control draws straight away when its value changes (in dark mode through our WM_PAINT, which is
+                // slow when a scan reports often), so hold that back and ask for one repaint in the theme's colours.
+                // Only while it shows: turning redraw back on would also show a hidden bar.
+                if (!Visible)
+                {
+                    base.WndProc(ref m);
+                    return;
+                }
+
+                ThemeHelper.SetRedraw(m.HWnd, false);
+                try
+                {
+                    base.WndProc(ref m);
+                }
+                finally
+                {
+                    ThemeHelper.SetRedraw(m.HWnd, true);
+                }
+
                 ThemeHelper.InvalidateRect(m.HWnd, IntPtr.Zero, false);
                 return;
 
