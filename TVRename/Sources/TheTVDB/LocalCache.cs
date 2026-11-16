@@ -718,7 +718,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
             throw new MediaNotFoundException(id, $"Please add movie {id.Name} to TVDB, or use another source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie);
         }
 
-        if (Movies.TryGetValue(id.TvdbId.Value, out CachedMovieInfo? movie) && !movie.Dirty)
+        if (Movies.TryGetValue(id.TvdbId.Value, out CachedMovieInfo? movie) && !movie.Dirty && !movie.Placeholder)
         {
             return true;
         }
@@ -781,7 +781,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
 
         bool ok = true;
 
-        bool seriesNeedsUpdating = Series[code].Dirty;
+        bool seriesNeedsUpdating = Series[code].Dirty || Series[code].Placeholder;
 
         if (seriesNeedsUpdating)
         {

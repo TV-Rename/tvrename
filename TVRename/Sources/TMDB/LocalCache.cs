@@ -118,7 +118,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
 
     private async Task<bool> EnsureSeriesUpdatedAsync(ISeriesSpecifier s, ThreadSafeCounter counter, int totalCount)
     {
-        if (s.TmdbId.HasValue && Series.TryGetValue(s.TmdbId.Value, out CachedSeriesInfo? si) && !si.Dirty)
+        if (s.TmdbId.HasValue && Series.TryGetValue(s.TmdbId.Value, out CachedSeriesInfo? si) && !si.Dirty && !si.Placeholder)
         {
             return true;
         }
@@ -168,7 +168,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
 
     private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id, ThreadSafeCounter counter, int totalCount)
     {
-        if (id.TmdbId.HasValue && Movies.TryGetValue(id.TmdbId.Value, out CachedMovieInfo? movie) && !movie.Dirty)
+        if (id.TmdbId.HasValue && Movies.TryGetValue(id.TmdbId.Value, out CachedMovieInfo? movie) && !movie.Dirty && !movie.Placeholder)
         {
             return true;
         }
@@ -220,7 +220,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
             {
                 this.MarkAllDirty();
                 latestUpdateTime.RegisterServerUpdate(TimeHelpers.UnixUtcNow());
-                SayNoPct($"Identified all TMDB Shows({Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) & Movies({Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) need updating");
+                SayNoPct($"Identified all TMDB Shows({Series.Values.Count(info => (info.Dirty ||info.Placeholder) && !info.IsSearchResultOnly)}) & Movies({Movies.Values.Count(info => (info.Dirty || info.Placeholder) && !info.IsSearchResultOnly)}) need updating");
                 return true;
             }
 
@@ -229,7 +229,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
                 //it's been a long time since we last updated, so just mark everything dirty and get the latest data
                 this.MarkAllDirty();
                 latestUpdateTime.RegisterServerUpdate(TimeHelpers.UnixUtcNow());
-                SayNoPct($"Identified all TMDB Shows({Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) & Movies({Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)}) need updating");
+                SayNoPct($"Identified all TMDB Shows({Series.Values.Count(info => (info.Dirty || info.Placeholder) && !info.IsSearchResultOnly)}) & Movies({Movies.Values.Count(info => (info.Dirty || info.Placeholder) && !info.IsSearchResultOnly)}) need updating");
                 return true;
             }
 
@@ -257,7 +257,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
                 }
             }
 
-            SayNoPct($"Identified {Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Movies need updating");
+            SayNoPct($"Identified {Movies.Values.Count(info => (info.Dirty || info.Placeholder) && !info.IsSearchResultOnly)} TMDB Movies need updating");
 
             IEnumerable<TMDbLib.Objects.Changes.ChangesListItem> taskShows = await Client.GetChangesShowsAsync(latestUpdateTime, cts);
             List<int> showUpdates = [.. taskShows.Select(item => item.Id).Distinct()];
@@ -279,7 +279,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
                     }
                 }
             }
-            SayNoPct($"Identified {Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Shows need updating");
+            SayNoPct($"Identified {Series.Values.Count(info => (info.Dirty || info.Placeholder) && !info.IsSearchResultOnly)} TMDB Shows need updating");
 
 
             return !cts.IsCancellationRequested;
@@ -436,6 +436,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
             WebUrl = $"https://www.themoviedb.org/movie/{downloadedMovie.Id}",
             Dirty = false,
             Country = downloadedMovie.ProductionCountries?.FirstOrDefault()?.Name,
+            Placeholder = false
         };
 
         if (downloadedMovie.AlternativeTitles?.Titles != null)
@@ -709,6 +710,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
             Popularity = downloadedSeries.Popularity,
             Country = downloadedSeries.OriginCountry?.FirstOrDefault(),
             Dirty = false,
+            Placeholder = false
         };
 
         foreach (string? s in downloadedSeries.AlternativeTitles?.Results?.Select(title => title.Title) ?? [])
@@ -1063,6 +1065,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
             SrvLastUpdated = TimeHelpers.UtcNow().Date.ToUnixTime(),
             FanartUrl = OriginalImageUrl(result.BackdropPath),
             Country = result.OriginCountry?.FirstOrDefault(),
+            Placeholder = false
         };
 
         this.AddSeriesToCache(m);
@@ -1085,6 +1088,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
             FanartUrl = OriginalImageUrl(result.BackdropPath),
             IsSearchResultOnly = true,
             Dirty = false,
+            Placeholder = false
         };
         this.AddMovieToCache(m);
         return m;

@@ -74,12 +74,14 @@ public class CachedSeriesInfo : CachedMediaInfo
     {
         LoadXml(seriesXml);
         IsSearchResultOnly = false;
+        Placeholder = false;
     }
 
     public CachedSeriesInfo(JObject json, Locale locale, bool searchResult, TVDoc.ProviderType source) : this(locale, source)
     {
         LoadJson(json);
         IsSearchResultOnly = searchResult;
+        Placeholder = false;
 
         if (string.IsNullOrEmpty(Name))
         {
@@ -99,6 +101,7 @@ public class CachedSeriesInfo : CachedMediaInfo
     {
         LoadJson(json, jsonInDefaultLang);
         IsSearchResultOnly = false;
+        Placeholder = false;
         if (string.IsNullOrEmpty(Name))
         {
             LOGGER.Warn("Issue with cachedSeries " + this);

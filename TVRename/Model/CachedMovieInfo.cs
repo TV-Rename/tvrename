@@ -41,6 +41,7 @@ public class CachedMovieInfo : CachedMediaInfo
     {
         DefaultValues();
         IsSearchResultOnly = false;
+        Placeholder = false;
 
         try
         {

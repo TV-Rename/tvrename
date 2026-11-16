@@ -540,6 +540,7 @@ internal static class API
                     ? updateTime
                     : 0,
             Dirty = false,
+            Placeholder = false,
             SeasonOrderType = ProcessedSeason.SeasonType.aired,
         };
     }

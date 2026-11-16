@@ -54,6 +54,7 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
     protected SafeList<string> Aliases = [];
 
     public bool Dirty = false; // set to true if local info is known to be older than whats on the server
+    public bool Placeholder = false; // set to true if local info is known to be a placeholder, and not real data. This is used for search results that have no real data yet
     public long SrvLastUpdated;
 
     private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
@@ -518,5 +519,6 @@ public abstract class CachedMediaInfo(TVDoc.ProviderType source) : ISeriesSpecif
 
         Dirty = o.Dirty;
         IsSearchResultOnly = o.IsSearchResultOnly;
+        Placeholder = o.Placeholder;
     }
 }

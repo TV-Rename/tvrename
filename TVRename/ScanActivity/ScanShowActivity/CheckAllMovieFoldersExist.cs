@@ -92,7 +92,7 @@ internal class CheckAllMovieFoldersExist(TVDoc doc) : ScanMovieActivity(doc)
 
             FaResult whatToDo = GetDefaultAction();
 
-            if (TVSettings.Instance.AutoCreateFolders && firstAttempt)
+            if (TVSettings.Instance.AutoCreateFolders && firstAttempt && si.CachedData is not null && !si.CachedData.Placeholder)
             {
                 whatToDo = FaResult.kfaCreate;
                 firstAttempt = false;

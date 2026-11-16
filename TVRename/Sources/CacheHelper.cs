@@ -69,7 +69,7 @@ public static class CacheHelper
         {
             cache.CachedShowData[cache.PrimaryKey(ss)] =
                 new CachedSeriesInfo(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale, cache.SourceProvider())
-                { Dirty = true };
+                { Dirty = true, Placeholder = true };
         }
     }
 
@@ -78,7 +78,7 @@ public static class CacheHelper
         {
             cache.CachedMovieData[cache.PrimaryKey(ss)] =
                 new CachedMovieInfo(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale, cache.SourceProvider())
-                { Dirty = true };
+                { Dirty = true, Placeholder = true };
         }
     }
 
