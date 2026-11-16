@@ -4914,6 +4914,7 @@ public partial class UI : Form, IDialogParent
 
     private async Task UpdateIconsAsync(DirFilesCache dfc)
     {
+        //We use icons from https://icons8.com/icons/all--size-small in general as they are 16x16 in general
 
         var options = new ParallelOptions
         {
