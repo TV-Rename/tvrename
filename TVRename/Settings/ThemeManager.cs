@@ -103,11 +103,10 @@ internal static class ThemeManager
             themes.Add(new ThemeChoice(DARK, DARK));
         }
 
-        List<ThemeChoice> choices = [new ThemeChoice(LIGHT, "Light (default)")];
+        List<ThemeChoice> choices = [new ThemeChoice(WINDOWS, "Same as Windows (default)"), new ThemeChoice(LIGHT, "Light")];
         choices.AddRange(themes
             .OrderBy(t => t.Key.Equals(DARK, StringComparison.OrdinalIgnoreCase) ? 0 : 1)
             .ThenBy(t => t.Name, StringComparer.CurrentCultureIgnoreCase));
-        choices.Add(new ThemeChoice(WINDOWS, "Same as Windows"));
         return choices;
     }
 
