@@ -29,8 +29,11 @@ internal static class ThemeManager
 
     internal static bool IsThemed => ActiveTheme is not null;
 
+    // The Windows colour mode the active theme is built on
+    internal static SystemColorMode SystemColorMode => ActiveTheme is { IsLightBase: false } ? SystemColorMode.Dark : SystemColorMode.Classic;
+
     // Most of the fixes are only needed when the theme is built on Windows' dark look
-    internal static bool IsDark => ActiveTheme is { IsLightBase: false } && Application.IsDarkModeEnabled;
+    internal static bool IsDark => SystemColorMode == SystemColorMode.Dark && Application.IsDarkModeEnabled;
 
     internal static string ThemesFolder => PathManager.ThemesFolder;
 
@@ -47,8 +50,6 @@ internal static class ThemeManager
             ActiveTheme = null;
             Logger.Error(ex, "Could not load the theme, so the standard look is used");
         }
-
-        TVSettings.Instance.ColorMode = ActiveTheme is { IsLightBase: false } ? SystemColorMode.Dark : SystemColorMode.Classic;
 
         Logger.Info(ActiveTheme is null
             ? "Using the standard look"

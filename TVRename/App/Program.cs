@@ -34,7 +34,6 @@ public static class Program
         Application.EnableVisualStyles();
         Application.SetHighDpiMode(HighDpiMode.SystemAware);
         Application.SetCompatibleTextRenderingDefault(false);
-        Application.SetColorMode(TVSettings.Instance.ColorModeActual);
 
         try
         {
