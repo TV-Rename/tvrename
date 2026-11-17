@@ -27,7 +27,7 @@ internal static class ShowHtmlHelper
                      "a.search:hover { color:#000080 } " + "a.search:active { color:#800000 } " +
                      "* {background-color: " + BackgroundColour.HexColour() + "}" + "* { color: black }";
 
-        if (ThemeManager.Active is { } theme)
+        if (ThemeManager.ActiveTheme is { } theme)
         {
             css += ThemeCss(theme)
                    + $"*{{color:{theme.WebText.HexColour()}!important}}a:link,a:visited,a:active{{color:{theme.WebLink.HexColour()}!important}}"
@@ -49,7 +49,7 @@ internal static class ShowHtmlHelper
     public static async Task<string> GetShowHtmlOverviewAsync(this ShowConfiguration si, bool includeDirectoryLinks)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
         await sb.AppendShowAsync(si, BackgroundColour, includeDirectoryLinks);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -58,7 +58,7 @@ internal static class ShowHtmlHelper
     public static string GetSeasonImagesOverview(this ProcessedSeason season)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
         sb.AppendSeasonImages(BackgroundColour, season);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -67,7 +67,7 @@ internal static class ShowHtmlHelper
     public static string GetShowImagesOverview(this ShowConfiguration si)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
         sb.AppendShowImages(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -76,7 +76,7 @@ internal static class ShowHtmlHelper
     public static string GetMovieImagesOverview(this MovieConfiguration si)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
         sb.AppendMovieImages(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -84,7 +84,7 @@ internal static class ShowHtmlHelper
     public static async Task<string> GetShowHtmlOverviewAsync(this CachedSeriesInfo series, RecommendationRow recommendation)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
         await sb.AppendShowAsync(null, series, BackgroundColour, false);
         sb.AppendRecommendation(recommendation, BackgroundColour);
         sb.AppendLine(HTMLFooter());
@@ -95,7 +95,7 @@ internal static class ShowHtmlHelper
     {
         StringBuilder sb = new();
         DirFilesCache dfc = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
         await sb.AppendMovieAsync(si, BackgroundColour, includeDirectoryLinks, dfc);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -103,7 +103,7 @@ internal static class ShowHtmlHelper
     public static string GetMovieHtmlOverview(this API.YtsMovie si)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
         sb.AppendMovie(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -163,7 +163,7 @@ internal static class ShowHtmlHelper
         Color col = Color.FromName("ButtonFace");
         DirFilesCache dfc = new();
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, col, ThemeManager.ActiveTheme));
         await sb.AppendMovieAsync(null, movie, col, false, dfc);
         if (recommendation != null)
         {
@@ -179,7 +179,7 @@ internal static class ShowHtmlHelper
         DirFilesCache dfc = new();
         StringBuilder sb = new();
 
-        sb.AppendLine(HTMLHeader(10, col, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, col, ThemeManager.ActiveTheme));
         await sb.AppendShowSummaryAsync(si, dfc, col, includeDirectoryLinks);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -1035,7 +1035,7 @@ internal static class ShowHtmlHelper
         StringBuilder sb = new();
         DirFilesCache dfc = new();
         Color col = Color.FromName("ButtonFace");
-        sb.AppendLine(HTMLHeader(10, col, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, col, ThemeManager.ActiveTheme));
         await sb.AppendSeasonAsync(s, si, col, includeDirectoryLinks);
 
         List<ProcessedEpisode> seasonEpisodes = si.AllEpisodesForSeason(s.SeasonNumber);
@@ -1053,7 +1053,7 @@ internal static class ShowHtmlHelper
     {
         StringBuilder sb = new();
         Color col = Color.FromName("ButtonFace");
-        sb.AppendLine(HTMLHeader(10, col, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, col, ThemeManager.ActiveTheme));
         await sb.AppendSeasonSummaryAsync(si, s, col, includeDirectoryLinks);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -1966,7 +1966,7 @@ internal static class ShowHtmlHelper
 
         Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col, ThemeManager.Active));
+        sb.AppendLine(HTMLHeader(10, col, ThemeManager.ActiveTheme));
         sb.AppendLine(iframe);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();

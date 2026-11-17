@@ -25,12 +25,12 @@ internal static class ThemeManager
     private static readonly List<string> StartupProblems = [];
 
     // null when the standard look is used
-    internal static Theme? Active { get; private set; }
+    internal static Theme? ActiveTheme { get; private set; }
 
-    internal static bool IsThemed => Active is not null;
+    internal static bool IsThemed => ActiveTheme is not null;
 
     // Most of the fixes are only needed when the theme is built on Windows' dark look
-    internal static bool IsDark => Active is { IsLightBase: false } && Application.IsDarkModeEnabled;
+    internal static bool IsDark => ActiveTheme is { IsLightBase: false } && Application.IsDarkModeEnabled;
 
     internal static string ThemesFolder => PathManager.ThemesFolder;
 
@@ -40,19 +40,19 @@ internal static class ThemeManager
         try
         {
             PrepareFolder();
-            Active = ResolveTheme(TVSettings.Instance.Theme);
+            ActiveTheme = ResolveTheme(TVSettings.Instance.ThemeString);
         }
         catch (Exception ex)
         {
-            Active = null;
+            ActiveTheme = null;
             Logger.Error(ex, "Could not load the theme, so the standard look is used");
         }
 
-        TVSettings.Instance.ColorMode = Active is { IsLightBase: false } ? SystemColorMode.Dark : SystemColorMode.Classic;
+        TVSettings.Instance.ColorMode = ActiveTheme is { IsLightBase: false } ? SystemColorMode.Dark : SystemColorMode.Classic;
 
-        Logger.Info(Active is null
+        Logger.Info(ActiveTheme is null
             ? "Using the standard look"
-            : $"Using the \"{Active.DisplayName}\" theme ({(Active.IsLightBase ? "light" : "dark")} base)");
+            : $"Using the \"{ActiveTheme.DisplayName}\" theme ({(ActiveTheme.IsLightBase ? "light" : "dark")} base)");
     }
 
     private static string ThemeFile(string key) => Path.Combine(ThemesFolder, key + Theme.FILE_SUFFIX);

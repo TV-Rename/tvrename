@@ -120,10 +120,10 @@ public partial class Preferences : Form
             return;
         }
 
-        string previousTheme = TVSettings.Instance.Theme;
+        string previousTheme = TVSettings.Instance.ThemeString;
         UpdateSettings();
 
-        if (!previousTheme.Equals(TVSettings.Instance.Theme, StringComparison.OrdinalIgnoreCase) && cbTheme.SelectedItem is ThemeChoice theme)
+        if (!previousTheme.Equals(TVSettings.Instance.ThemeString, StringComparison.OrdinalIgnoreCase) && cbTheme.SelectedItem is ThemeChoice theme)
         {
             ThemeableMessageBox.Show(this, $"TV Rename will use the \"{theme.Name}\" theme the next time it starts.", "Theme",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -332,7 +332,7 @@ public partial class Preferences : Form
         s.ShowInTaskbar = chkShowInTaskbar.Checked;
         if (cbTheme.SelectedItem is ThemeChoice selectedTheme)
         {
-            s.Theme = selectedTheme.Key;
+            s.ThemeString = selectedTheme.Key;
         }
         s.ShowAccessibilityOptions = chkShowAccessibilityOptions.Checked;
         s.RenameTxtToSub = cbTxtToSub.Checked;
@@ -597,14 +597,14 @@ public partial class Preferences : Form
     {
         if (rdoqBitTorrentAPIVersionv0.Checked)
         {
-            return global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v0;
+            return TVRename.qBitTorrent.qBitTorrentAPIVersion.v0;
         }
         if (rdoqBitTorrentAPIVersionv1.Checked)
         {
-            return global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v1;
+            return TVRename.qBitTorrent.qBitTorrentAPIVersion.v1;
         }
 
-        return global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v2;
+        return TVRename.qBitTorrent.qBitTorrentAPIVersion.v2;
     }
 
     private TVDoc.ProviderType ProviderMode()
@@ -921,7 +921,7 @@ public partial class Preferences : Form
         cbLeadingZero.Checked = s.LeadingZeroOnSeason;
         chkShowAccessibilityOptions.Checked = s.ShowAccessibilityOptions;
         chkShowInTaskbar.Checked = s.ShowInTaskbar;
-        cbTheme.SelectedItem = cbTheme.Items.OfType<ThemeChoice>().FirstOrDefault(c => c.Key.Equals(s.Theme, StringComparison.OrdinalIgnoreCase))
+        cbTheme.SelectedItem = cbTheme.Items.OfType<ThemeChoice>().FirstOrDefault(c => c.Key.Equals(s.ThemeString, StringComparison.OrdinalIgnoreCase))
                                ?? cbTheme.Items[0];
         cbTxtToSub.Checked = s.RenameTxtToSub;
         cbShowEpisodePictures.Checked = s.ShowEpisodePictures;
@@ -1229,10 +1229,10 @@ public partial class Preferences : Form
     private RadioButton ChooseRadioButton(qBitTorrent.qBitTorrentAPIVersion sQBitTorrentApiVersion)
     {
         return sQBitTorrentApiVersion switch
-        {
-            global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v0 => rdoqBitTorrentAPIVersionv0,
-            global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v1 => rdoqBitTorrentAPIVersionv1,
-            global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v2 => rdoqBitTorrentAPIVersionv2,
+        {       
+            TVRename.qBitTorrent.qBitTorrentAPIVersion.v0 => rdoqBitTorrentAPIVersionv0,
+            TVRename.qBitTorrent.qBitTorrentAPIVersion.v1 => rdoqBitTorrentAPIVersionv1,
+            TVRename.qBitTorrent.qBitTorrentAPIVersion.v2 => rdoqBitTorrentAPIVersionv2,
             _ => throw new InvalidOperationException("Unexpected value s.qBitTorrentAPIVersion = " +
                                                      sQBitTorrentApiVersion)
         };

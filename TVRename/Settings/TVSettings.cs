@@ -299,7 +299,7 @@ public sealed class TVSettings
     public bool HideWtWSpoilers = false;
     public bool HideMyShowsSpoilers = false;
     public bool ShowInTaskbar = true;
-    public string Theme = ThemeManager.WINDOWS;
+    public string ThemeString = ThemeManager.WINDOWS;
     public bool ShowAccessibilityOptions = false;
     public bool AutoSearchForDownloadedFiles = false;
     public string SpecialsFolderName = "Specials";
@@ -559,7 +559,7 @@ public sealed class TVSettings
         new XElement("KeepTogetherExtensions", keepTogetherExtensionsString),
         new XElement("LeadingZeroOnSeason", LeadingZeroOnSeason),
         new XElement("ShowInTaskbar", ShowInTaskbar),
-        new XElement("Theme", Theme),
+        new XElement("Theme", ThemeString),
         new XElement("ShowAccessibilityOptions", ShowAccessibilityOptions),
         new XElement("IgnoreSamples", IgnoreSamples),
         new XElement("ForceLowercaseFilenames", ForceLowercaseFilenames),
@@ -1360,7 +1360,7 @@ public sealed class TVSettings
         LeadingZeroOnSeason = xmlSettings.ExtractBool("LeadingZeroOnSeason", false);
         ShowAccessibilityOptions = xmlSettings.ExtractBool("ShowAccessibilityOptions", false);
         ShowInTaskbar = xmlSettings.ExtractBool("ShowInTaskbar", true);
-        Theme = xmlSettings.ExtractString("Theme", ThemeManager.WINDOWS);
+        ThemeString = xmlSettings.ExtractString("Theme", ThemeManager.WINDOWS);
         RenameTxtToSub = xmlSettings.ExtractBool("RenameTxtToSub", false);
         ShowEpisodePictures = xmlSettings.ExtractBool("ShowEpisodePictures", true);
         HideWtWSpoilers = xmlSettings.ExtractBool("HideWtWSpoilers", false);
