@@ -70,7 +70,6 @@ public partial class UI : Form, IDialogParent
         mDoc = doc;
 
         InitializeComponent();
-        ApplyColorOverrides(this, TVSettings.Instance.ColorModeActual);
         this.UpdateColorControls();
 
         ShowInTaskbar = TVSettings.Instance.ShowInTaskbar && !mDoc.Args.Hide;
@@ -150,36 +149,6 @@ public partial class UI : Form, IDialogParent
                 UpdateSplashStatus(splash, "Running Auto-scan", 100);
             }
             UpdateSplashStatus(splash, "Opening...", 100);
-        }
-    }
-    private static void ApplyColorOverrides(Control container, SystemColorMode colorMode)
-    {
-        foreach (Control c in container.Controls)
-        {
-            // 1. TabPages MUST have UseVisualStyleBackColor turned OFF to not be white
-            if (c is TabPage tabPage)
-            {
-                tabPage.UseVisualStyleBackColor = false;
-                if (colorMode == SystemColorMode.Dark)
-                {
-                    tabPage.BackColor = Color.FromArgb(32, 32, 32); // Custom dark gray
-                }
-            }
-            // 2. Buttons MUST have UseVisualStyleBackColor turned ON for Win11 Dark Theme
-            else if (c is Button button)
-            {
-                button.UseVisualStyleBackColor = true;
-            }
-            else if (c is TabControl _)
-            {
-
-            }
-
-            // Recursively handle child controls (like panels or groupboxes)
-            if (c.HasChildren)
-            {
-                ApplyColorOverrides(c, colorMode);
-            }
         }
     }
 

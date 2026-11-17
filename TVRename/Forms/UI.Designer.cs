@@ -885,7 +885,6 @@ namespace TVRename.Forms
             tbMyMovies.Size = new Size(1447, 687);
             tbMyMovies.TabIndex = 12;
             tbMyMovies.Text = "Movies";
-            tbMyMovies.UseVisualStyleBackColor = true;
             // 
             // toolStripContainer1
             // 
@@ -979,7 +978,6 @@ namespace TVRename.Forms
             tabInformationTab.Size = new Size(1068, 613);
             tabInformationTab.TabIndex = 0;
             tabInformationTab.Text = "Information";
-            tabInformationTab.UseVisualStyleBackColor = true;
             // 
             // chrMovieInformation
             // 
@@ -1002,7 +1000,6 @@ namespace TVRename.Forms
             tabPage2.Size = new Size(1068, 613);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Images";
-            tabPage2.UseVisualStyleBackColor = true;
             // 
             // chrMovieImages
             // 
@@ -1025,7 +1022,6 @@ namespace TVRename.Forms
             tpMovieTrailer.Size = new Size(1068, 613);
             tpMovieTrailer.TabIndex = 2;
             tpMovieTrailer.Text = "Trailer";
-            tpMovieTrailer.UseVisualStyleBackColor = true;
             // 
             // chrMovieTrailer
             // 
@@ -1136,7 +1132,6 @@ namespace TVRename.Forms
             tbMyShows.Size = new Size(1447, 687);
             tbMyShows.TabIndex = 9;
             tbMyShows.Text = "TV Shows";
-            tbMyShows.UseVisualStyleBackColor = true;
             // 
             // toolStripContainer2
             // 
@@ -1231,7 +1226,6 @@ namespace TVRename.Forms
             tpInformation.Size = new Size(1093, 613);
             tpInformation.TabIndex = 0;
             tpInformation.Text = "Information";
-            tpInformation.UseVisualStyleBackColor = true;
             // 
             // chrInformation
             // 
@@ -1254,7 +1248,6 @@ namespace TVRename.Forms
             tpImages.Size = new Size(1093, 613);
             tpImages.TabIndex = 1;
             tpImages.Text = "Images";
-            tpImages.UseVisualStyleBackColor = true;
             // 
             // chrImages
             // 
@@ -1277,7 +1270,6 @@ namespace TVRename.Forms
             tpSummary.Size = new Size(1093, 613);
             tpSummary.TabIndex = 2;
             tpSummary.Text = "Summary";
-            tpSummary.UseVisualStyleBackColor = true;
             // 
             // chrSummary
             // 
@@ -1300,7 +1292,6 @@ namespace TVRename.Forms
             tabPage3.Size = new Size(1093, 613);
             tabPage3.TabIndex = 3;
             tabPage3.Text = "Trailer";
-            tabPage3.UseVisualStyleBackColor = true;
             // 
             // chrTvTrailer
             // 
@@ -1433,7 +1424,6 @@ namespace TVRename.Forms
             tbScanResults.Size = new Size(1447, 687);
             tbScanResults.TabIndex = 11;
             tbScanResults.Text = "Scan";
-            tbScanResults.UseVisualStyleBackColor = true;
             // 
             // olvAction
             // 
@@ -1866,7 +1856,6 @@ namespace TVRename.Forms
             tbSchedule.Size = new Size(1447, 687);
             tbSchedule.TabIndex = 4;
             tbSchedule.Text = "Schedule";
-            tbSchedule.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel4
             // 
@@ -2314,7 +2303,7 @@ namespace TVRename.Forms
             btnUpdateAvailable.Size = new Size(135, 27);
             btnUpdateAvailable.TabIndex = 10;
             btnUpdateAvailable.Text = "Update Available...";
-            btnUpdateAvailable.UseVisualStyleBackColor = false;
+            btnUpdateAvailable.UseVisualStyleBackColor = true;
             btnUpdateAvailable.Visible = false;
             btnUpdateAvailable.Click += btnUpdateAvailable_Click;
             // 

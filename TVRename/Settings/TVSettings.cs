@@ -343,12 +343,6 @@ public sealed class TVSettings
 
     public string qBitTorrentProtocol => qBitTorrentUseHTTPS ? "https" : "http";
 
-    public SystemColorMode ColorMode { get; internal set; } = SystemColorMode.Classic; //TODO LInk to settings
-    public SystemColorMode ColorModeActual =>
-        ColorMode == SystemColorMode.Dark ? SystemColorMode.Dark :
-        ColorMode == SystemColorMode.Classic ? SystemColorMode.Classic :
-        Helpers.IsSystemDarkMode() ? SystemColorMode.Dark : SystemColorMode.Classic;
-
     public bool UseGlobalReleaseDate = false;
 
     public int FolderMonitorDelaySeconds = 1;

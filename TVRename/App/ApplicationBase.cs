@@ -12,7 +12,6 @@ using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
-using System.Collections.ObjectModel;
 using TVRename.Forms;
 
 namespace TVRename.App;
@@ -26,13 +25,6 @@ internal class ApplicationBase : WindowsFormsApplicationBase
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
     private TVDoc? doc;
     private UI? ui;
-
-    protected override bool OnInitialize(ReadOnlyCollection<string> commandLineArgs)
-    {
-        ColorMode = TVSettings.Instance.ColorModeActual;
-        return base.OnInitialize(commandLineArgs);
-    }
-
 
     /// <summary>
     /// Initializes the splash screen.
@@ -68,7 +60,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
         Task.Run(async () => { doc = await LoadSettingsAsync(parameters); }).Wait();
 
         ThemeManager.Load();
-        if (TVSettings.Instance.ColorModeActual == SystemColorMode.Dark)
+        if (ThemeManager.SystemColorMode == SystemColorMode.Dark)
         {
             // The splash screen is already showing, so it keeps the standard look
             SplashScreen.SafeInvoke(() => SplashScreen.KeepStandardLook(), true);
