@@ -17,6 +17,14 @@ public class TabControlThemed : TabControl
 {
     private static Theme T => ThemeHelper.T;
 
+    // How far the line joining the selected tab to its page reaches past the tab
+    private const int JOIN_MARGIN = 2;
+
+    // Byte order of a 32 bpp pixel
+    private const int BLUE = 0;
+    private const int GREEN = 1;
+    private const int RED = 2;
+
     protected override void OnHandleCreated(EventArgs e)
     {
         base.OnHandleCreated(e);
@@ -60,13 +68,16 @@ public class TabControlThemed : TabControl
                 return;
             }
 
+            // Showing or hiding a page repaints the control many times without touching the tabs
+            RectangleF dirty = g.ClipBounds;
+
             // Never paint over the selected page
             if (SelectedTab is { Visible: true } page)
             {
                 g.ExcludeClip(page.Bounds);
             }
 
-            PaintTabs(g, client);
+            PaintTabs(g, client, dirty);
         }
         catch (Exception ex)
         {
@@ -74,7 +85,7 @@ public class TabControlThemed : TabControl
         }
     }
 
-    private void PaintTabs(Graphics g, Rectangle client)
+    private void PaintTabs(Graphics g, Rectangle client, RectangleF dirty)
     {
         Color stripBack = Parent?.BackColor ?? T.Background;
         Color pageBack = SelectedTab?.BackColor ?? T.Background;
@@ -114,6 +125,12 @@ public class TabControlThemed : TabControl
         for (int i = 0; i < TabCount; i++)
         {
             Rectangle tab = GetTabRect(i);
+
+            if (!dirty.IntersectsWith(Rectangle.Inflate(tab, JOIN_MARGIN, JOIN_MARGIN)))
+            {
+                continue;
+            }
+
             bool selected = i == SelectedIndex;
 
             if (DrawMode == TabDrawMode.OwnerDrawFixed)
@@ -203,6 +220,17 @@ public class TabControlThemed : TabControl
         // The corner is background in every TV Rename side tab
         Color oldBack = bitmap.GetPixel(0, 0);
 
+        // Read once: a system colour looks its value up every time it is asked
+        int oldB = oldBack.B;
+        int oldG = oldBack.G;
+        int oldR = oldBack.R;
+        int newB = newBack.B;
+        int newG = newBack.G;
+        int newR = newBack.R;
+        int textB = text.B;
+        int textG = text.G;
+        int textR = text.R;
+
         Rectangle all = new(0, 0, bitmap.Width, bitmap.Height);
         BitmapData data = bitmap.LockBits(all, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
         try
@@ -221,9 +249,9 @@ public class TabControlThemed : TabControl
                     continue; // coloured, part of an icon
                 }
 
-                pixels[i] = Remix(b, oldBack.B, newBack.B, text.B);
-                pixels[i + 1] = Remix(g, oldBack.G, newBack.G, text.G);
-                pixels[i + 2] = Remix(r, oldBack.R, newBack.R, text.R);
+                pixels[i + BLUE] = Remix(b, oldB, newB, textB);
+                pixels[i + GREEN] = Remix(g, oldG, newG, textG);
+                pixels[i + RED] = Remix(r, oldR, newR, textR);
                 pixels[i + 3] = 255;
             }
 
