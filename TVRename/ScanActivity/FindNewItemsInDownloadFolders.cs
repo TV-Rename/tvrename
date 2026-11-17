@@ -32,7 +32,7 @@ internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings setti
             return;
         }
 
-        IEnumerable<FileInfo> possibleShowNames = GetPossibleFiles();
+        IEnumerable<FileInfo> possibleShowNames = await GetPossibleFilesAsync();
         IEnumerable<PossibleMedia> addedShows = await FinderHelper.FindMediaAsync(possibleShowNames, MDoc, Settings.Owner, Settings.Token);
         List<PossibleMedia> addedShowsUnique = RemoveExistingAndDups(addedShows);
 
@@ -80,7 +80,7 @@ internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings setti
         return returnList;
     }
 
-    private static List<FileInfo> GetPossibleFiles()
+    private static async Task<List<FileInfo>> GetPossibleFilesAsync()
     {
         List<FileInfo> possibleShowNames = [];
 
@@ -94,23 +94,21 @@ internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings setti
 
             try
             {
-                string[] array = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
-                IOrderedEnumerable<string> orderedFiles = array.OrderBy(name => name);
-                foreach (string filePath in orderedFiles)
+                var array = await FileHelper.GetFilesAsync(dirPath, "*", System.IO.SearchOption.AllDirectories);
+                var orderedFiles = array.OrderBy(name => name);
+                foreach (var file in orderedFiles)
                 {
-                    if (!File.Exists(filePath))
+                    if (!file.Exists)
                     {
                         continue;
                     }
 
-                    FileInfo fi = new(filePath);
-
-                    if (fi.IgnoreFile())
+                    if (file.IgnoreFile())
                     {
                         continue;
                     }
 
-                    possibleShowNames.Add(fi);
+                    possibleShowNames.Add(file);
                 }
             }
             catch (UnauthorizedAccessException ex)

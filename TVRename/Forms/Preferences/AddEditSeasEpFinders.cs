@@ -327,7 +327,7 @@ public partial class AddEditSeasEpFinders : Form
 
         if (rdoFileSystem.Checked)
         {
-            foreach (FileInfo file in new DirectoryInfo(txtFolder.Text).GetFiles())
+            foreach (FileInfo file in await new DirectoryInfo(txtFolder.Text).GetFilesAsync())
             {
                 if (!TVSettings.Instance.FileHasUsefulExtension(file, true))
                 {

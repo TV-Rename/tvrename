@@ -21,11 +21,11 @@ public class DirFilesCache
     private readonly ConcurrentDictionary<string, FileInfo[]> cache = [];
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-    public IEnumerable<FileInfo> GetFilesIncludeSubDirs(string folder) => Get(folder, true);
+    public async Task<IEnumerable<FileInfo>> GetFilesIncludeSubDirs(string folder) => await GetAsync(folder, true);
 
-    public FileInfo[] GetFiles(string folder) => Get(folder, false);
+    public async Task<FileInfo[]> GetFilesAsync(string folder) => await GetAsync(folder, false);
 
-    private FileInfo[] Get(string folder, bool includeSubs)
+    private async Task<FileInfo[]> GetAsync(string folder, bool includeSubs)
     {
         if (cache.TryGetValue(folder, out FileInfo[]? value))
         {
@@ -50,7 +50,7 @@ public class DirFilesCache
 
         try
         {
-            FileInfo[] files = includeSubs ? di.GetFiles("*", System.IO.SearchOption.AllDirectories) : di.GetFiles();
+            FileInfo[] files = includeSubs ? await di.GetFilesAsync("*", System.IO.SearchOption.AllDirectories) : await di.GetFilesAsync();
             cache[folder] = files;
             return files;
         }

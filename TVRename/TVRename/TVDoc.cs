@@ -1077,7 +1077,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         List<ShowConfiguration> showsToScan = [];
         if (doFilesInDownloadDir)
         {
-            showsToScan = GetShowsThatHaveDownloads();
+            showsToScan = await GetShowsThatHaveDownloadsAsync();
         }
 
         if (doRecentMissing)
@@ -1328,7 +1328,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         return missing;
     }
 
-    private List<ShowConfiguration> GetShowsThatHaveDownloads()
+    private async Task<List<ShowConfiguration>> GetShowsThatHaveDownloadsAsync()
     {
         //for each directory in settings directory
         //for each file in directory
@@ -1347,19 +1347,17 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
             try
             {
-                string[] x = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
+                FileInfo[] x = await (new DirectoryInfo(dirPath)).GetFilesAsync( "*", System.IO.SearchOption.AllDirectories);
                 Logger.Info($"Processing {x.Length} files for shows that need to be scanned");
 
-                foreach (string filePath in x)
+                foreach (FileInfo fi in x)
                 {
-                    Logger.Info($"Checking to see whether {filePath} is a file for a show that needs to be scanned");
+                    Logger.Info($"Checking to see whether {fi.FullName} is a file for a show that needs to be scanned");
 
-                    if (!File.Exists(filePath))
+                    if (!fi.Exists)
                     {
                         continue;
                     }
-
-                    FileInfo fi = new(filePath);
 
                     if (fi.IgnoreFile())
                     {

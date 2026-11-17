@@ -45,12 +45,12 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
             }
 
             // all the folders for this particular season
-            MergeShowEpisodes(si, dfc, snum, folders, settings.Token);
+            await MergeShowEpisodesAsync(si, dfc, snum, folders, settings.Token);
         } // for each season of this show
     }
 
     // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-    private static void MergeShowEpisodes(ShowConfiguration si, DirFilesCache dfc, int snum, IEnumerable<string> folders, CancellationToken token)
+    private static async Task MergeShowEpisodesAsync(ShowConfiguration si, DirFilesCache dfc, int snum, IEnumerable<string> folders, CancellationToken token)
     {
         if (snum == 0 && si.CountSpecials)
         {
@@ -73,7 +73,7 @@ internal class MergeLibraryEpisodes(TVDoc doc) : ScanShowActivity(doc)
                 throw new TVRenameOperationInterruptedException();
             }
 
-            FileInfo[] files = dfc.GetFiles(folder);
+            FileInfo[] files = await dfc.GetFilesAsync(folder);
 
             foreach (FileInfo fi in files)
             {

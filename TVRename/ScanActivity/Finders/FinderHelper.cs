@@ -89,8 +89,11 @@ internal static class FinderHelper
 
     public static async Task<IEnumerable<FileInfo>> FindMovieOnDiskAsync(this DirFilesCache cache, MovieConfiguration si)
     {
-        return (await si.LocationsAsync())
-            .SelectMany(cache.GetFiles)
+        var locs = await si.LocationsAsync();
+        var fileLists = await locs.SelectAsync(cache.GetFilesAsync);
+        var files = fileLists.SelectMany(inner => inner);
+
+        return files
             .Where(fiTemp => fiTemp.IsMovieFile())
             .Where(fiTemp => si.NameMatch(fiTemp, false));
     }
@@ -120,9 +123,10 @@ internal static class FinderHelper
             return ret;
         }
 
-        foreach (FileInfo fiTemp in folders
-                     .Select(cache.GetFiles)
-                     .SelectMany(files => files.Where(IsMovieFile)))
+        var files =  (await folders.SelectAsync(cache.GetFilesAsync))
+            .SelectMany(files => files.Where(IsMovieFile));
+
+        foreach (FileInfo fiTemp in files)
         {
             var x = new Utility.FileMatcher().VerifyMatchesEpisode(fiTemp,epi);
             if (x.IsMatch)

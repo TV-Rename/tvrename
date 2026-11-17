@@ -58,7 +58,7 @@ public partial class BugReport : Form
         {
             txt.AppendLine("==== Finding & Organising Directory Scan ====");
             txt.AppendLine();
-            ExtractDownloadFolders(txt);
+            await ExtractDownloadFoldersAsync(txt);
             txt.AppendLine();
         }
 
@@ -102,7 +102,7 @@ public partial class BugReport : Form
                     DirCache files = [];
                     if (Directory.Exists(folder))
                     {
-                        files.AddFolder(null, 0, 0, folder, true);
+                        await files.AddFolderAsync(null, 0, 0, folder, true);
                     }
 
                     foreach (DirCacheEntry fi in files)
@@ -122,12 +122,12 @@ public partial class BugReport : Form
         }
     }
 
-    private static void ExtractDownloadFolders(StringBuilder txt)
+    private static async Task ExtractDownloadFoldersAsync(StringBuilder txt)
     {
         DirCache dirC = [];
         foreach (string efi in TVSettings.Instance.DownloadFolders)
         {
-            dirC.AddFolder(null, 0, 0, efi, true);
+            await dirC.AddFolderAsync(null, 0, 0, efi, true);
         }
 
         foreach (DirCacheEntry fi in dirC)

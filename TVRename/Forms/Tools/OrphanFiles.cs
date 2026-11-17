@@ -27,6 +27,7 @@ public partial class OrphanFiles : Form
         olvFileIssues.SetObjects(issues);
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>")]
     private static object GroupFolderTitleDelegate(object rowObject)
     {
         FileIssue ep = (FileIssue)rowObject;
@@ -41,6 +42,7 @@ public partial class OrphanFiles : Form
         return ep.Directory;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>")]
     private static object GroupSeasonKeyDelegate(object rowObject)
     {
         FileIssue ep = (FileIssue)rowObject;
@@ -101,9 +103,9 @@ public partial class OrphanFiles : Form
                          .Where(showFolder => !doneFolders.Contains(showFolder)))
             {
                 doneFolders.Add(showFolder);
-                foreach (FileInfo file in new DirectoryInfo(showFolder)
-                             .GetFiles()
-                             .Where(file => file.IsMovieFile()))
+                var files = await FileHelper.GetFilesAsync(showFolder);
+
+                foreach (FileInfo file in files.Where(file => file.IsMovieFile()))
                 {
                     ProcessFile(file, show, folders, showFolder);
                 }
@@ -116,7 +118,7 @@ public partial class OrphanFiles : Form
         }
     }
 
-    private void ProcessFile(FileInfo file, ShowConfiguration show, IReadOnlyDictionary<int, List<string>> folders, string showFolder)
+    private void ProcessFile(FileInfo file, ShowConfiguration show, Dictionary<int, List<string>> folders, string showFolder)
     {
         var x = new Utility.FileMatcher().Match(file,show);
 

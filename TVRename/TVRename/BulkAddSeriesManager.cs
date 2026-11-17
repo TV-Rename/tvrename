@@ -142,7 +142,7 @@ public class BulkAddSeriesManager(TVDoc doc)
                 return (false, subDirectories);
             }
 
-            if (TVSettings.Instance.BulkAddCompareNoVideoFolders && !hasSeasonFolders && !di2.HasFilmFiles())
+            if (TVSettings.Instance.BulkAddCompareNoVideoFolders && !hasSeasonFolders && !await di2.HasFilmFilesAsync())
             {
                 return (false, subDirectories);
             }

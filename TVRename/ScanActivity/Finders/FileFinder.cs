@@ -352,9 +352,9 @@ internal abstract class FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : Fin
             string toname = action.To.RemoveExtension();
 
             //We have the arbitary >9 limit to make sure that a file with a short name does not drag a whole load of other files with it
-            FileInfo[] flist = basename.Length > 9
-                ? action.From.Directory.GetFiles(basename + "*.*")
-                : action.From.Directory.GetFiles(basename + ".*");
+            string extension = basename.Length > 9 ? "*.*" : ".*";
+            FileInfo[] flist = action.From.Directory.GetFiles(basename + extension);
+
             foreach (FileInfo fi in flist)
             {
                 //the main file willbe in the list too, we are already copying it

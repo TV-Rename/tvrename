@@ -181,14 +181,15 @@ internal class CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : 
     {
         try
         {
-            foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories).Where(File.Exists))
+            var allFiles = await FileHelper.GetFilesAsync(dirPath, "*", System.IO.SearchOption.AllDirectories);
+            var files = allFiles?.Where(f => f.Exists) ?? [];
+
+            foreach (FileInfo fi in files)
             {
                 if (Settings.Token.IsCancellationRequested)
                 {
                     return;
                 }
-
-                FileInfo fi = new(filePath);
 
                 if (fi.IgnoreFile())
                 {

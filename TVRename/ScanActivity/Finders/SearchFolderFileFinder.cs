@@ -29,7 +29,7 @@ internal class SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : 
                 return;
             }
 
-            dirCache.AddFolder(progress, 0, fileCount, s, true);
+            await dirCache.AddFolderAsync(progress, 0, fileCount, s, true);
         }
         ThreadSafeCounter currentItem = new();
         int totalN = ActionList.Missing.Count + 1;

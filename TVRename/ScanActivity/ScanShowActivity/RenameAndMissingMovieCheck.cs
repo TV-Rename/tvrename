@@ -71,7 +71,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
 
     private async Task CheckSingleMovieFolderAsync(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, DirFilesCache dfc, bool renCheck)
     {
-        FileInfo[] files = dfc.GetFiles(folder);
+        FileInfo[] files = await dfc.GetFilesAsync(folder);
         FileInfo[] movieFiles = [.. files.Where(f => f.IsMovieFile()).Where(f => !f.IsSampleFile())];
         List<string> bases = [.. movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct()];
         string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
@@ -165,7 +165,7 @@ internal class RenameAndMissingMovieCheck(TVDoc doc) : ScanMovieActivity(doc)
     private async Task CheckMultiPartMovieFolderAsync(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, DirFilesCache dfc,
         bool renCheck, bool missCheck)
     {
-        FileInfo[] files = dfc.GetFiles(folder);
+        FileInfo[] files = await dfc.GetFilesAsync(folder);
         FileInfo[] movieFiles = [.. files.Where(f => f.IsMovieFile())];
         List<string> bases = [.. movieFiles.Select(fi => fi.MovieFileNameBase()).Distinct()];
         string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);

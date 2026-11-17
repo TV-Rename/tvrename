@@ -20,11 +20,6 @@ public class DirCache : List<DirCacheEntry>
     {
     }
 
-    public DirCache(SetProgressDelegate? progress, string folder, bool subFolders)
-    {
-        BuildDirCache(progress, 0, 0, folder, subFolders);
-    }
-
     public static int CountFiles(string folder, bool subFolders)
     {
         int n = 0;
@@ -63,15 +58,15 @@ public class DirCache : List<DirCacheEntry>
         return n;
     }
 
-    public void AddFolder(SetProgressDelegate? prog, int initialCount, int totalFiles, string folder,
+    public async Task AddFolderAsync(SetProgressDelegate? prog, int initialCount, int totalFiles, string folder,
         bool subFolders)
     {
-        BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
+        await BuildDirCacheAsync(prog, initialCount, totalFiles, folder, subFolders);
     }
 
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private void BuildDirCache(SetProgressDelegate? prog, int count, int totalFiles, string folder, bool subFolders)
+    private async Task BuildDirCacheAsync(SetProgressDelegate? prog, int count, int totalFiles, string folder, bool subFolders)
     {
         if (!Directory.Exists(folder))
         {
@@ -87,7 +82,7 @@ public class DirCache : List<DirCacheEntry>
                 return;
             }
 
-            foreach (FileInfo ff in GetFiles(di))
+            foreach (FileInfo ff in await GetFilesAsync(di))
             {
                 Add(new DirCacheEntry(ff));
                 if (totalFiles != 0)
@@ -100,7 +95,7 @@ public class DirCache : List<DirCacheEntry>
             {
                 foreach (DirectoryInfo di2 in GetDirectoryInfo(di))
                 {
-                    BuildDirCache(prog, count, totalFiles, di2.FullName, true);
+                    await BuildDirCacheAsync(prog, count, totalFiles, di2.FullName, true);
                 }
             }
         }
@@ -110,7 +105,7 @@ public class DirCache : List<DirCacheEntry>
         }
     }
 
-    private static IEnumerable<DirectoryInfo> GetDirectoryInfo(DirectoryInfo di)
+    private static DirectoryInfo[] GetDirectoryInfo(DirectoryInfo di)
     {
         try
         {
@@ -136,12 +131,12 @@ public class DirCache : List<DirCacheEntry>
         return [];
     }
 
-    private static IEnumerable<FileInfo> GetFiles(DirectoryInfo di)
+    private static async Task<IEnumerable<FileInfo>> GetFilesAsync(DirectoryInfo di)
     {
         FileInfo[] f2 = [];
         try
         {
-            f2 = di.GetFiles();
+            f2 = await di.GetFilesAsync();
         }
         catch (NotSupportedException e)
         {

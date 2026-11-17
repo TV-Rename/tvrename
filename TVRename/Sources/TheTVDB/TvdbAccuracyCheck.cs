@@ -93,7 +93,7 @@ internal class TvdbAccuracyCheck
             }
 
             //Look for episodes that are local, but not on server
-            FindOrphanEpisodes(si, newSi.Episodes.Select(episode => episode.EpisodeId).ToList());
+            FindOrphanEpisodes(si, newSi.Episodes.Select(episode => episode.EpisodeId));
         }
         catch (SourceConnectivityException)
         {
@@ -121,7 +121,7 @@ internal class TvdbAccuracyCheck
             EnsureUpdated(testSi);
         }
 
-        void FindOrphanEpisodes(CachedSeriesInfo testSi, ICollection<int> serverEpIds)
+        void FindOrphanEpisodes(CachedSeriesInfo testSi, IEnumerable<int> serverEpIds)
         {
             foreach (Episode localEp in testSi.Episodes)
             {

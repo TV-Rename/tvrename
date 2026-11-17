@@ -35,21 +35,21 @@ internal class UnArchiveDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings
     {
         try
         {
-            foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories).Where(File.Exists))
+            var files = await FileHelper.GetFilesAsync(dirPath, "*", System.IO.SearchOption.AllDirectories);
+
+            foreach (FileInfo file in files.Where(f => f.Exists))
             {
                 if (Settings.Token.IsCancellationRequested)
                 {
                     return;
                 }
-
-                FileInfo fi = new(filePath);
-
-                if (!fi.IsArchiveFile())
+                
+                if (!file.IsArchiveFile())
                 {
                     continue;
                 }
 
-                await ReviewArchiveAsync(fi);
+                await ReviewArchiveAsync(file);
             }
         }
         catch (UnauthorizedAccessException ex)

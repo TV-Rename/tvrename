@@ -46,7 +46,7 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
             }
             else if (me is MovieItemMissing mim)
             {
-                FindMovie(mim, dfc, newList, toRemove);
+                FindMovieAsync(mim, dfc, newList, toRemove);
             }
         }
 
@@ -67,7 +67,7 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
         ActionList.Replace(toRemove, newList);
     }
 
-    private static void FindMovie(MovieItemMissing mim, DirFilesCache dfc, ItemList newList, ItemList toRemove)
+    private static async Task FindMovieAsync(MovieItemMissing mim, DirFilesCache dfc, ItemList newList, ItemList toRemove)
     {
         if (!mim.MovieConfig.UseAutomaticFolders)
         {
@@ -75,24 +75,24 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
         }
         (string targetFolder, string targetFolderEarlier, string targetFolderLater) = mim.MovieConfig.NeighbouringFolderNames();
 
-        TestShouldMove(targetFolderEarlier, targetFolder, dfc, newList, toRemove, mim);
-        TestShouldMove(targetFolderLater, targetFolder, dfc, newList, toRemove, mim);
+        await TestShouldMoveAsync(targetFolderEarlier, targetFolder, dfc, newList, toRemove, mim);
+        await TestShouldMoveAsync(targetFolderLater, targetFolder, dfc, newList, toRemove, mim);
     }
 
-    private static void TestShouldMove(string sourceFolder, string targetFolder, DirFilesCache dfc, ItemList newList, ItemList toRemove, MovieItemMissing mim)
+    private static async Task TestShouldMoveAsync(string sourceFolder, string targetFolder, DirFilesCache dfc, ItemList newList, ItemList toRemove, MovieItemMissing mim)
     {
         if (sourceFolder == targetFolder)
         {
             return;
         }
 
-        if (dfc.GetFiles(targetFolder).Length > 0)
+        if ((await dfc.GetFilesAsync(targetFolder)).Length > 0)
         {
             //do not want to copy any files over new location
             return;
         }
 
-        if (!Directory.Exists(sourceFolder) || dfc.GetFiles(sourceFolder).Length == 0)
+        if (!Directory.Exists(sourceFolder) || (await dfc.GetFilesAsync(sourceFolder)).Length == 0)
         {
             return;
         }
@@ -113,7 +113,7 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
         string baseFolder = me.Episode.Show.AutoAddFolderBase;
         LOGGER.Info($"Starting to look for {me.Filename} in the library: {baseFolder}");
 
-        List<FileInfo> matchedFiles = GetMatchingFilesFromFolder(baseFolder, dfc, me, thisRound);
+        List<FileInfo> matchedFiles = await GetMatchingFilesFromFolderAsync(baseFolder, dfc, me, thisRound);
 
         var folders = await me.Episode.Show.AllFolderLocationsEpCheck(false);
         foreach (string folderName in folders
@@ -122,14 +122,14 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
                          .Where(f => !string.IsNullOrWhiteSpace(f)) //No point looking here
                          .Where(f => f != baseFolder)))
         {
-            ProcessFolder(me, folderName, dfc, thisRound, matchedFiles);
+            await ProcessFolderAsync(me, folderName, dfc, thisRound, matchedFiles);
         }
 
         await ProcessMissingItemAsync(newList, toRemove, me, thisRound, matchedFiles,
             TVSettings.Instance.UseFullPathNameToMatchLibraryFolders);
     }
 
-    private List<FileInfo> GetMatchingFilesFromFolder(string? baseFolder, DirFilesCache dfc, ShowItemMissing me, Dictionary<FileInfo, ItemList> thisRound)
+    private async Task<List<FileInfo>> GetMatchingFilesFromFolderAsync(string? baseFolder, DirFilesCache dfc, ShowItemMissing me, Dictionary<FileInfo, ItemList> thisRound)
     {
         if (string.IsNullOrWhiteSpace(baseFolder))
         {
@@ -137,7 +137,7 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
         }
 
         List<FileInfo> matchedFiles = [];
-        foreach (FileInfo testFile in dfc.GetFilesIncludeSubDirs(baseFolder))
+        foreach (FileInfo testFile in await dfc.GetFilesIncludeSubDirs(baseFolder))
         {
             ItemList actionsForThisFile = [];
             if (ReviewFile(me, actionsForThisFile, testFile, false, false, false,
@@ -151,11 +151,11 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
         return matchedFiles;
     }
 
-    private void ProcessFolder(ShowItemMissing me, string folderName, DirFilesCache dfc,
+    private async Task ProcessFolderAsync(ShowItemMissing me, string folderName, DirFilesCache dfc,
         Dictionary<FileInfo, ItemList> thisRound, List<FileInfo> matchedFiles)
     {
         LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
-        FileInfo[] files = dfc.GetFiles(folderName);
+        FileInfo[] files = await dfc.GetFilesAsync(folderName);
 
         foreach (FileInfo testFile in files)
         {

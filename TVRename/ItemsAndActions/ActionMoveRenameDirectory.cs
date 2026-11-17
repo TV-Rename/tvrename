@@ -98,7 +98,8 @@ public class ActionMoveRenameDirectory : ActionFileOperation
         {
             if (target.Exists)
             {
-                if (target.GetFiles().Any(x => x.IsMovieFile()))
+                var files = await target.GetFilesAsync();
+                if (files.Any(x => x.IsMovieFile()))
                 {
                     throw new ActionFailedException("Target location has movie files - not copying just in case");
                 }

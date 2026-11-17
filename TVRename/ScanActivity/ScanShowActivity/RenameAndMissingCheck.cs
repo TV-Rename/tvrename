@@ -98,7 +98,7 @@ internal class RenameAndMissingCheck(TVDoc doc) : ScanShowActivity(doc)
         //Image cachedSeries checks here
         Doc.TheActionList.Add(downloadIdentifiers.ProcessSeason(si, folder, snum));
 
-        FileInfo[] files = dfc.GetFiles(folder);
+        FileInfo[] files = await dfc.GetFilesAsync(folder);
 
         bool renCheck =
             TVSettings.Instance.RenameCheck && si.DoRename &&

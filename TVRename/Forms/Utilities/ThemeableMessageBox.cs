@@ -5,7 +5,7 @@ public class ThemeableMessageBox : Form
 {
     // Windows API to force dark title bar (Windows 10 build 18985+ and Windows 11)
     [DllImport("dwmapi.dll")]
-    private static extern int   DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
     private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
 
     private ThemeableMessageBox(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)

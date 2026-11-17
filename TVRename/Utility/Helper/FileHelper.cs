@@ -7,6 +7,7 @@
 //
 using MediaInfo.Analysis;
 using Microsoft.WindowsAPICodePack.COMNative.Shell.PropertySystem;
+using Microsoft.WindowsAPICodePack.PortableDevices.EventSystem;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 
 
@@ -53,13 +54,28 @@ public static class FileHelper
         });
     }
 
-    public static async Task<FileInfo[]> GetFilesAsync(this DirectoryInfo di, string searchPattern)
+
+    public static async Task<FileInfo[]> GetFilesAsync(string folder, string searchPattern, System.IO.SearchOption option)
+    {
+        var di = new DirectoryInfo(folder);
+        return await di.GetFilesAsync(searchPattern,option);
+    }
+
+    internal static async Task<FileInfo[]> GetFilesAsync(string folder)
+    {
+        var di = new DirectoryInfo(folder);
+        return await di.GetFilesAsync();
+    }
+
+    public static async Task<FileInfo[]> GetFilesAsync(this DirectoryInfo di) => await GetFilesAsync(di, "*", System.IO.SearchOption.TopDirectoryOnly);
+
+    public static async Task<FileInfo[]> GetFilesAsync(this DirectoryInfo di, string searchPattern, System.IO.SearchOption option)
     {
         return await Task.Run(() =>
         {
             try
             {
-                return di.GetFiles(searchPattern);
+                return di.GetFiles(searchPattern,option);
             }
             catch (NotSupportedException)
             {
@@ -98,9 +114,9 @@ public static class FileHelper
         }
     }
 
-    public static bool HasFilmFiles(this DirectoryInfo directory)
+    public static async Task<bool> HasFilmFilesAsync(this DirectoryInfo directory)
     {
-        return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
+        return (await directory.GetFilesAsync("*", System.IO.SearchOption.TopDirectoryOnly)).Any(file => file.IsMovieFile());
     }
 
     private static bool CanDelete(FileInfo fi, TVSettings.TidySettings settings)

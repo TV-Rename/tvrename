@@ -2854,7 +2854,6 @@ public partial class UI : Form, IDialogParent
             {
                 await GotoEpguideForAsync(switchToWhenOpenMyShows, false);
                 switchToWhenOpenMyShows = null; //disable switching to this episode again
-                await FillEpGuideHtmlAsync();
             }
 
             UpdateMyShowsButtonStatus();
@@ -2866,7 +2865,6 @@ public partial class UI : Form, IDialogParent
             {
                 GotoMovieFor(switchToWhenOpenMyMovies, false);
                 switchToWhenOpenMyMovies = null; //disable switching to this movie again
-                //FillEpGuideHtml();
             }
 
             UpdateMyMoviesButtonStatus();
@@ -3236,8 +3234,10 @@ public partial class UI : Form, IDialogParent
         }
         try
         {
-            IEnumerable<string> videofilesThatWouldBeDeleted = Directory
-                .GetFiles(folderName, "*", System.IO.SearchOption.AllDirectories)
+            string[] strings = Directory
+                .GetFiles(folderName, "*", System.IO.SearchOption.AllDirectories);
+
+            IEnumerable<string> videofilesThatWouldBeDeleted = strings
                 .Where(f => f.IsMovieFile())
                 .Select(s => s.TrimStartString(folderName));
 

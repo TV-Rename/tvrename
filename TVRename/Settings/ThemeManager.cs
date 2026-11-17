@@ -87,7 +87,7 @@ internal static class ThemeManager
         try
         {
             DirectoryInfo themesFolder = new(ThemesFolder);
-            foreach (FileInfo path in await themesFolder.GetFilesAsync("*" + Theme.FILE_SUFFIX))
+            foreach (FileInfo path in await themesFolder.GetFilesAsync("*" + Theme.FILE_SUFFIX,System.IO.SearchOption.TopDirectoryOnly))
             {
                 string key = Theme.KeyFromPath(path.FullName);
                 themes.Add(new ThemeChoice(key, Theme.ReadDisplayName(path.FullName) ?? $"{key} (has a mistake)"));
