@@ -95,6 +95,26 @@ internal sealed class Theme
                 ["WebBorder"] = Hex(0xE4DDC9),
                 ["WebSeasonRow"] = Hex(0xEFE9DC),
             }),
+        ("Midnight", false, "Deep midnight blue colours on Windows' dark look.",
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Background"] = Hex(0x1B1F2B),
+                ["Text"] = Hex(0xE8ECF4),
+                ["ListBackground"] = Hex(0x232838),
+                ["ListText"] = Hex(0xE8ECF4),
+                ["Border"] = Hex(0x3A4256),
+                ["TabStrip"] = Hex(0x22283A),
+                ["SelectedSideTab"] = Hex(0x2E3A55),
+                ["HeaderBackground"] = Hex(0x1F2433),
+                ["HeaderHot"] = Hex(0x2A3145),
+                ["HeaderPressed"] = Hex(0x34405A),
+                ["GroupTitle"] = Hex(0x8AB4FF),
+                ["ActiveFilterButton"] = Hex(0x34405A),
+                ["ProgressBar"] = Hex(0x5B8CFF),
+                ["ProgressTrack"] = Hex(0x2A3145),
+                ["WebBorder"] = Hex(0x3A4256),
+                ["WebSeasonRow"] = Hex(0x2A3145),
+            }),
     ];
 
     private readonly Dictionary<string, Color> values;
@@ -328,7 +348,7 @@ internal sealed class Theme
         sb.AppendLine($"  TV Rename theme file: {builtIn.Key}. {builtIn.Note}");
         sb.AppendLine();
         sb.AppendLine("  To make your own theme: copy this file in the same folder, give the copy a new name ending in");
-        sb.AppendLine("  .theme.xml (for example Midnight.theme.xml), change name=\"...\" below and edit the colours.");
+        sb.AppendLine("  .theme.xml (for example MyTheme.theme.xml), change name=\"...\" below and edit the colours.");
         sb.AppendLine("  Then choose it in Options > Preferences > Display > Theme and restart TV Rename.");
         sb.AppendLine("  Changes to the theme you are using also show the next time TV Rename starts.");
         sb.AppendLine();
