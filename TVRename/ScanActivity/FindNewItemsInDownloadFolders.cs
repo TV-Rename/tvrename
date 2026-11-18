@@ -95,7 +95,7 @@ internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings setti
             try
             {
                 var array = await FileHelper.GetFilesAsync(dirPath, "*", System.IO.SearchOption.AllDirectories);
-                var orderedFiles = array.OrderBy(name => name);
+                var orderedFiles = array.OrderBy(file => file.FullName);
                 foreach (var file in orderedFiles)
                 {
                     if (!file.Exists)
