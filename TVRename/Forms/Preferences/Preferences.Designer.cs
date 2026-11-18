@@ -1352,7 +1352,7 @@ namespace TVRename.Forms
             cbStartupTab.Location = new Point(88, 138);
             cbStartupTab.Margin = new Padding(4, 3, 4, 3);
             cbStartupTab.Name = "cbStartupTab";
-            cbStartupTab.Size = new Size(157, 23);
+            cbStartupTab.Size = new Size(108, 23);
             cbStartupTab.TabIndex = 29;
             // 
             // cbAutoSelInMyShows
@@ -1424,7 +1424,7 @@ namespace TVRename.Forms
             // lblTheme
             // 
             lblTheme.AutoSize = true;
-            lblTheme.Location = new Point(257, 142);
+            lblTheme.Location = new Point(204, 142);
             lblTheme.Margin = new Padding(4, 0, 4, 0);
             lblTheme.Name = "lblTheme";
             lblTheme.Size = new Size(47, 15);
@@ -1437,17 +1437,17 @@ namespace TVRename.Forms
             cbTheme.DropDownStyle = ComboBoxStyle.DropDownList;
             cbTheme.DropDownWidth = 220;
             cbTheme.FormattingEnabled = true;
-            cbTheme.Location = new Point(310, 138);
+            cbTheme.Location = new Point(257, 138);
             cbTheme.Margin = new Padding(4, 3, 4, 3);
             cbTheme.Name = "cbTheme";
-            cbTheme.Size = new Size(124, 23);
+            cbTheme.Size = new Size(176, 23);
             cbTheme.TabIndex = 48;
             toolTip1.SetToolTip(cbTheme, "Light is the standard look. Other themes come from the .theme.xml files in the Themes folder;\r\ncopy one, change its colours and it appears here. A new theme is used the next time TV Rename starts.");
             // 
             // llThemeFolder
             // 
             llThemeFolder.AutoSize = true;
-            llThemeFolder.Location = new Point(440, 142);
+            llThemeFolder.Location = new Point(438, 142);
             llThemeFolder.Margin = new Padding(4, 0, 4, 0);
             llThemeFolder.Name = "llThemeFolder";
             llThemeFolder.Size = new Size(40, 15);
