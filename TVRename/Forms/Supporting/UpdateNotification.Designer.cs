@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using CefSharp.WinForms;
+
 namespace TVRename.Forms
 {
     partial class UpdateNotification
@@ -43,7 +45,7 @@ namespace TVRename.Forms
             this.btnCancel = new System.Windows.Forms.Button();
             this.tbReleaseNotes = new System.Windows.Forms.TextBox();
             this.lblStatus = new System.Windows.Forms.Label();
-            this.webReleaseNotes = new System.Windows.Forms.WebBrowser();
+            this.webReleaseNotes = new ChromiumWebBrowser();
             this.btnDownloadNowAndQuit = new System.Windows.Forms.Button();
             this.SuspendLayout();
             //
@@ -133,7 +135,6 @@ namespace TVRename.Forms
             this.webReleaseNotes.Size = new System.Drawing.Size(382, 333);
             this.webReleaseNotes.TabIndex = 7;
             this.webReleaseNotes.Visible = false;
-            this.webReleaseNotes.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             //
             // btnDownloadNowAndQuit
             //
@@ -185,7 +186,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.TextBox tbReleaseNotes;
         private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.WebBrowser webReleaseNotes;
+        private ChromiumWebBrowser webReleaseNotes;
         private System.Windows.Forms.Button btnDownloadNowAndQuit;
     }
 }

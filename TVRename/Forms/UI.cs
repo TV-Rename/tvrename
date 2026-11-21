@@ -8,6 +8,7 @@
 
 using BrightIdeasSoftware;
 using CefSharp;
+using CefSharp.DevTools.CSS;
 using CefSharp.WinForms;
 using Humanizer;
 using System.Runtime.InteropServices;
@@ -5530,6 +5531,17 @@ public static class TvWebExtensions
     {
         SetHtml(web, "data:text/html;base64," + Convert.ToBase64String(Encoding.UTF8.GetBytes(body)));
     }
+
+    public static void SetHtmlBodyWithEmoji(this ChromiumWebBrowser web, string body)
+    {
+
+        SetWeb(web,
+            () =>
+            {
+                web.LoadHtml(body,true);
+            });
+    }
+
     internal static void SetHtmlEmbed(this ChromiumWebBrowser web, string? link)
     {
         SetHtml(web, link ?? string.Empty);

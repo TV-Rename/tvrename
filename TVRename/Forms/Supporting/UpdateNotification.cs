@@ -5,7 +5,6 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using System.ComponentModel;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -27,6 +26,7 @@ public partial class UpdateNotification : Form
         this.UpdateColorControls();
         tbReleaseNotes.Text = newVersion.ReleaseNotesText.ToUiVersion();
         lblStatus.Text = $@"There is new version {update} available since {update.ReleaseDate.ToLocalTime()}.";
+        webReleaseNotes.RequestHandler = new BrowserRequestHandler();
     }
 
     public async Task UpdateMarkup()
@@ -47,21 +47,23 @@ public partial class UpdateNotification : Form
                 {"context", "TV-Rename/tvrename"}
             };
             client.DefaultRequestHeaders.UserAgent.ParseAdd(TVSettings.USER_AGENT);
-            client.DefaultRequestHeaders.Accept
-                .Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
 
             HttpResponseMessage response = await client.PostAsJsonAsync(GITHUB_CONVERSION_URL, request).ConfigureAwait(false);
             using System.IO.StreamReader reader = new(response.Content.ReadAsStream());
             string result = reader.ReadToEnd();
 
-            const string HTML_HEAD =
-                "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style></head><body>";
+            string HTML_HEAD_LIGHT =
+                "<html><head><meta charset=\"utf-8\"><style type=\"text/css\">* {body {background-color: #ffffff;} color: #f0f0f0; font-family: Helvetica, Arial, sans-serif; font-size:90%}</style></head><body>";
 
-            const string HTML_FOOTER = "</body></html>";
+            string HTML_HEAD_DARK =
+                "<html><head><meta charset=\"utf-8\"><style type=\"text/css\">* {body {background-color: #323232;} color: #f4f4f6; font-family: Helvetica, Arial, sans-serif; font-size:90%}</style></head><body>";
+
+            string HTML_FOOTER = "</body></html>";
 
             webReleaseNotes.SafeInvoke(() =>
             {
-                webReleaseNotes.DocumentText = HTML_HEAD + result + HTML_FOOTER;
+                TvWebExtensions.SetHtmlBodyWithEmoji(webReleaseNotes, (ThemeManager.IsDark ? HTML_HEAD_DARK : HTML_HEAD_LIGHT) + result + HTML_FOOTER);
                 webReleaseNotes.Visible = true;
             }, true);
 
