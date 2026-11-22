@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System.Diagnostics;
 using System.Net.Http;
 using System.Reflection;
 
@@ -18,6 +19,12 @@ public static class Program
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private static ApplicationBase? TvRename;
+
+    // Set to start TV Rename again once it has closed (to use a new theme)
+    private static bool restartWhenClosed;
+    private const string RESTARTED_FROM = "TVRENAME_RESTARTED_FROM";
+
+    internal static void RestartWhenClosed() => restartWhenClosed = true;
 
     /// <summary>
     /// Defines the entry point of the application.
@@ -82,6 +89,8 @@ public static class Program
             return;
         }
 
+        WaitForPreviousCopyToClose();
+
         Mutex? mutex = null;
         try
         {
@@ -128,6 +137,59 @@ public static class Program
         {
             mutex?.Dispose();
             Logger.Info("Application exiting");
+        }
+
+        if (restartWhenClosed)
+        {
+            StartAgain(args);
+        }
+    }
+
+    // Only the settings that stay in force are passed on, so one off tasks (/scan, /doall, /quit...) are not done again
+    private static readonly string[] KeptArgs = ["/userfilepath:", "/createmissing", "/ignoremissing", "/norenamecheck"];
+
+    // The new copy waits for this one to finish, as only one copy of TV Rename can run at a time
+    private static void StartAgain(string[] args)
+    {
+        try
+        {
+            List<string> keptArgs = [.. args.Where(a => KeptArgs.Any(k => a.StartsWith(k, StringComparison.OrdinalIgnoreCase)))];
+            ProcessStartInfo startInfo = new(Environment.ProcessPath!) { UseShellExecute = false, WorkingDirectory = Environment.CurrentDirectory };
+            foreach (string arg in keptArgs)
+            {
+                startInfo.ArgumentList.Add(arg);
+            }
+
+            startInfo.Environment[RESTARTED_FROM] = Environment.ProcessId.ToString();
+            Logger.Info($"Restarting with args: {string.Join(" ", keptArgs)}");
+            Process.Start(startInfo);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Could not restart TV Rename");
+        }
+    }
+
+    private static void WaitForPreviousCopyToClose()
+    {
+        string? previous = Environment.GetEnvironmentVariable(RESTARTED_FROM);
+        if (previous is null || !int.TryParse(previous, out int processId))
+        {
+            return;
+        }
+
+        Environment.SetEnvironmentVariable(RESTARTED_FROM, null);
+        try
+        {
+            using Process old = Process.GetProcessById(processId);
+            if (!old.WaitForExit(TimeSpan.FromSeconds(60)))
+            {
+                Logger.Warn("The previous copy of TV Rename is still running after a restart");
+            }
+        }
+        catch (ArgumentException)
+        {
+            // It has already closed
         }
     }
 
