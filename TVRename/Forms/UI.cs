@@ -145,7 +145,7 @@ public partial class UI : Form, IDialogParent
         }
         else
         {
-            if (TVSettings.Instance.RunOnStartUp())
+            if (TVSettings.Instance.RunOnStartUp() && !App.Program.StartedByRestart)
             {
                 UpdateSplashStatus(splash, "Running Auto-scan", 100);
             }
@@ -1027,7 +1027,14 @@ public partial class UI : Form, IDialogParent
 
         if (TVSettings.Instance.RunOnStartUp())
         {
-            await RunAutoScanAsync("Startup Scan");
+            if (App.Program.StartedByRestart)
+            {
+                Logger.Info("Startup Scan not run as TV Rename has just restarted");
+            }
+            else
+            {
+                await RunAutoScanAsync("Startup Scan");
+            }
         }
     }
 
@@ -2733,8 +2740,10 @@ public partial class UI : Form, IDialogParent
     private async Task DoAppUpdateCheckAsync()
     {
         ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
+
+        // No update popup straight after a restart (the Update Available button still shows)
         this.SafeInvoke(async ()
-            => await NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide), true);
+            => await NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide || App.Program.StartedByRestart), true);
     }
 
     private async Task<ServerRelease?> CheckForUpdates()
