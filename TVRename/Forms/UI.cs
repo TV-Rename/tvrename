@@ -145,13 +145,16 @@ public partial class UI : Form, IDialogParent
         }
         else
         {
-            if (TVSettings.Instance.RunOnStartUp() && !App.Program.StartedByRestart)
+            if (StartupScanWanted)
             {
                 UpdateSplashStatus(splash, "Running Auto-scan", 100);
             }
             UpdateSplashStatus(splash, "Opening...", 100);
         }
     }
+
+    // No startup scan straight after a theme restart
+    private static bool StartupScanWanted => TVSettings.Instance.RunOnStartUp() && !App.Program.StartedByRestart;
 
     private static void WaitForCefInitialised()
     {

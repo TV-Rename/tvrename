@@ -44,7 +44,14 @@ internal static class ThemeManager
     internal static bool NeedsRestartFor(string key) => !Chosen(key).Equals(loadedKey, StringComparison.OrdinalIgnoreCase);
 
     private static string Chosen(string key)
-        => key.Equals(WINDOWS, StringComparison.OrdinalIgnoreCase) ? (Helpers.IsSystemDarkMode() ? DARK : LIGHT) : key;
+    {
+        if (!key.Equals(WINDOWS, StringComparison.OrdinalIgnoreCase))
+        {
+            return key;
+        }
+
+        return Helpers.IsSystemDarkMode() ? DARK : LIGHT;
+    }
 
     // Called once the settings are loaded, before the main window is created
     internal static void Load()

@@ -93,12 +93,7 @@ public static class Program
             return;
         }
 
-        if (!WaitForPreviousCopyToClose())
-        {
-            // Leave the old copy alone (it may still be saving) and do not pass it any arguments
-            Logger.Warn("The previous copy of TV Rename is still running 60 seconds after a restart, so this copy is closing");
-            return;
-        }
+        CloseIfPreviousCopyStillRunning();
 
         Mutex? mutex = null;
         try
@@ -148,18 +143,20 @@ public static class Program
             Logger.Info("Application exiting");
         }
 
-        if (restartWhenClosed)
-        {
-            StartAgain(args);
-        }
+        StartAgainIfAsked(args);
     }
 
     // Only the settings that stay in force are passed on, so one off tasks (/scan, /doall, /quit...) are not done again
     private static readonly string[] KeptArgs = ["/userfilepath:", "/createmissing", "/ignoremissing", "/norenamecheck", "/hide", "/unattended"];
 
     // The new copy waits for this one to finish, as only one copy of TV Rename can run at a time
-    private static void StartAgain(string[] args)
+    private static void StartAgainIfAsked(string[] args)
     {
+        if (!restartWhenClosed)
+        {
+            return;
+        }
+
         try
         {
             List<string> keptArgs = [.. args.Where(a => KeptArgs.Any(k => a.StartsWith(k, StringComparison.OrdinalIgnoreCase)))];
@@ -176,6 +173,16 @@ public static class Program
         catch (Exception ex)
         {
             Logger.Error(ex, "Could not restart TV Rename");
+        }
+    }
+
+    // Leave the old copy alone (it may still be saving) and do not pass it any arguments
+    private static void CloseIfPreviousCopyStillRunning()
+    {
+        if (!WaitForPreviousCopyToClose())
+        {
+            Logger.Warn("The previous copy of TV Rename is still running 60 seconds after a restart, so this copy is closing");
+            Environment.Exit(1);
         }
     }
 

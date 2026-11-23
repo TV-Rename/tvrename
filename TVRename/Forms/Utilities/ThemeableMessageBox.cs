@@ -181,7 +181,7 @@ public class ThemeableMessageBox : Form
     }
 
     // A Yes/No question with its own button wording, such as "Restart now" and "Later"
-    public static DialogResult Show(IWin32Window owner, string text, string caption, string yesText, string noText, MessageBoxIcon icon = MessageBoxIcon.None, bool noIsDefault = false)
+    public static DialogResult Show(IWin32Window owner, string text, string caption, string yesText, string noText, MessageBoxIcon icon, bool noIsDefault)
     {
         using var box = new ThemeableMessageBox(text, caption, MessageBoxButtons.YesNo, icon, yesText, noText, noIsDefault);
 
