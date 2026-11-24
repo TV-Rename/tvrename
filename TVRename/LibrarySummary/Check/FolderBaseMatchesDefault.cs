@@ -6,8 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using TMDbLib.Objects.Movies;
-
 namespace TVRename;
 
 internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvShowCheck(show, doc)
@@ -20,9 +18,8 @@ internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvS
 
     private string DefaultFolder(string currentFolder)
     {
-        string libraryFolder = FindBestLibraryFolder(currentFolder, TVSettings.Instance.LibraryFolders);
-        string newlyCreatedSettingsFolder = libraryFolder.EnsureEndsWithSeparator() + TVSettings.Instance.DefaultTVShowFolder(Show);
-        return newlyCreatedSettingsFolder.EnsureEndsWithSeparator();
+        return FindBestLibraryFolder(currentFolder, TVSettings.Instance.LibraryFolders)
+            + TVSettings.Instance.DefaultTVShowFolder(Show).EnsureEndsWithSeparator();
     }
 
     private static string FindBestLibraryFolder(string currentFolder, SafeList<string> libraryFolders)
@@ -31,13 +28,13 @@ internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvS
         {
             if (currentFolder.StartsWith(libFolder,StringComparison.OrdinalIgnoreCase))
             {
-                return libFolder;
+                return libFolder.EnsureEndsWithSeparator();
             }
         }
-        return libraryFolders.FirstOrDefault() ?? string.Empty;
+        return libraryFolders.FirstOrDefault()?.EnsureEndsWithSeparator() ?? string.Empty;
     }
 
-    /// <exception cref="FixCheckException">Can't fix movie</exception>
+    /// <exception cref="FixCheckException">Can't fix show</exception>
     protected override async Task FixInternal()
     {
         //Store the old folder
