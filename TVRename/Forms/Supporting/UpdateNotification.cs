@@ -54,7 +54,7 @@ public partial class UpdateNotification : Form
             string result = reader.ReadToEnd();
 
             string HTML_HEAD_LIGHT =
-                "<html><head><meta charset=\"utf-8\"><style type=\"text/css\">* {body {background-color: #ffffff;} color: #f0f0f0; font-family: Helvetica, Arial, sans-serif; font-size:90%}</style></head><body>";
+                "<html><head><meta charset=\"utf-8\"><style type=\"text/css\">* {body {background-color: #ffffff;} color: #333333; font-family: Helvetica, Arial, sans-serif; font-size:90%}</style></head><body>";
 
             string HTML_HEAD_DARK =
                 "<html><head><meta charset=\"utf-8\"><style type=\"text/css\">* {body {background-color: #323232;} color: #f4f4f6; font-family: Helvetica, Arial, sans-serif; font-size:90%}</style></head><body>";
