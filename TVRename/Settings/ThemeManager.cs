@@ -37,6 +37,22 @@ internal static class ThemeManager
 
     internal static string ThemesFolder => PathManager.ThemesFolder;
 
+    // The theme the open windows were made with (Same as Windows is kept as the theme it chose)
+    private static string loadedKey = LIGHT;
+
+    // True when TV Rename has to restart to show the chosen theme
+    internal static bool NeedsRestartFor(string key) => !Chosen(key).Equals(loadedKey, StringComparison.OrdinalIgnoreCase);
+
+    private static string Chosen(string key)
+    {
+        if (!key.Equals(WINDOWS, StringComparison.OrdinalIgnoreCase))
+        {
+            return key;
+        }
+
+        return Helpers.IsSystemDarkMode() ? DARK : LIGHT;
+    }
+
     // Called once the settings are loaded, before the main window is created
     internal static void Load()
     {
@@ -44,6 +60,7 @@ internal static class ThemeManager
         {
             PrepareFolder();
             ActiveTheme = ResolveTheme(TVSettings.Instance.ThemeString);
+            loadedKey = ActiveTheme is null ? LIGHT : Chosen(TVSettings.Instance.ThemeString);
         }
         catch (Exception ex)
         {

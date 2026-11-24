@@ -1710,10 +1710,15 @@ public class TVDoc : IDisposable, IAsyncDisposable
         GC.SuppressFinalize(this);
     }
 
+    // What TV Rename is busy doing (such as a scan), or null when it is free
+    public string? BusyWith => currentlyBusy ? busyWith : null;
+    private string? busyWith;
+
     public void PreventAutoScan(string v)
     {
         Logger.Info($"TV Rename is about to be busy doing {v} since {TimeHelpers.LocalNow()}");
         currentlyBusy = true;
+        busyWith = v;
         busySince = TimeHelpers.LocalNow();
     }
 

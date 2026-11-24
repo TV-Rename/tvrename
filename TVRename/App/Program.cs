@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Reflection;
 
@@ -18,6 +20,15 @@ public static class Program
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private static ApplicationBase? TvRename;
+
+    // Set to start TV Rename again once it has closed (to use a new theme)
+    private static bool restartWhenClosed;
+    private const string RESTARTED_FROM = "TVRENAME_RESTARTED_FROM";
+
+    internal static void RestartWhenClosed() => restartWhenClosed = true;
+
+    // Set when this copy was started by a restart, so the startup scan and update popup are not done again
+    internal static bool StartedByRestart { get; private set; }
 
     /// <summary>
     /// Defines the entry point of the application.
@@ -82,6 +93,8 @@ public static class Program
             return;
         }
 
+        CloseIfPreviousCopyStillRunning();
+
         Mutex? mutex = null;
         try
         {
@@ -128,6 +141,89 @@ public static class Program
         {
             mutex?.Dispose();
             Logger.Info("Application exiting");
+        }
+
+        StartAgainIfAsked(args);
+    }
+
+    // Only the settings that stay in force are passed on, so one off tasks (/scan, /doall, /quit...) are not done again
+    private static readonly string[] KeptArgs = ["/userfilepath:", "/createmissing", "/ignoremissing", "/norenamecheck", "/hide", "/unattended"];
+
+    // The new copy waits for this one to finish, as only one copy of TV Rename can run at a time
+    private static void StartAgainIfAsked(string[] args)
+    {
+        if (!restartWhenClosed)
+        {
+            return;
+        }
+
+        try
+        {
+            List<string> keptArgs = [.. args.Where(a => KeptArgs.Any(k => a.StartsWith(k, StringComparison.OrdinalIgnoreCase)))];
+            ProcessStartInfo startInfo = new(Environment.ProcessPath!) { UseShellExecute = false, WorkingDirectory = Environment.CurrentDirectory };
+            foreach (string arg in keptArgs)
+            {
+                startInfo.ArgumentList.Add(arg);
+            }
+
+            startInfo.Environment[RESTARTED_FROM] = Environment.ProcessId.ToString();
+            Logger.Info($"Restarting with args: {string.Join(" ", keptArgs)}");
+            Process.Start(startInfo);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Could not restart TV Rename");
+        }
+    }
+
+    // Leave the old copy alone (it may still be saving) and do not pass it any arguments
+    private static void CloseIfPreviousCopyStillRunning()
+    {
+        if (!WaitForPreviousCopyToClose())
+        {
+            Logger.Warn("The previous copy of TV Rename is still running 60 seconds after a restart, so this copy is closing");
+            Environment.Exit(1);
+        }
+    }
+
+    // Waits for the process, not the mutex: the old copy closes the mutex in Main's finally, but its
+    // single instance semaphore and argument listener are only released when the process itself ends
+    private static bool WaitForPreviousCopyToClose()
+    {
+        string? previous = Environment.GetEnvironmentVariable(RESTARTED_FROM);
+        if (previous is null || !int.TryParse(previous, out int processId))
+        {
+            return true;
+        }
+
+        Environment.SetEnvironmentVariable(RESTARTED_FROM, null);
+        StartedByRestart = true;
+        try
+        {
+            using Process old = Process.GetProcessById(processId);
+
+            // Process ids get reused, but the copy that asked for the restart started before this one
+            if (old.StartTime >= Process.GetCurrentProcess().StartTime)
+            {
+                return true;
+            }
+
+            return old.WaitForExit(TimeSpan.FromSeconds(60));
+        }
+        catch (ArgumentException)
+        {
+            // It has already closed
+            return true;
+        }
+        catch (InvalidOperationException)
+        {
+            // It closed while being checked
+            return true;
+        }
+        catch (Win32Exception)
+        {
+            // A process this copy cannot look at, so not the copy that asked for the restart
+            return true;
         }
     }
 

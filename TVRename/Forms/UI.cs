@@ -145,13 +145,16 @@ public partial class UI : Form, IDialogParent
         }
         else
         {
-            if (TVSettings.Instance.RunOnStartUp())
+            if (StartupScanWanted)
             {
                 UpdateSplashStatus(splash, "Running Auto-scan", 100);
             }
             UpdateSplashStatus(splash, "Opening...", 100);
         }
     }
+
+    // No startup scan straight after a theme restart
+    private static bool StartupScanWanted => TVSettings.Instance.RunOnStartUp() && !App.Program.StartedByRestart;
 
     private static void WaitForCefInitialised()
     {
@@ -1027,7 +1030,14 @@ public partial class UI : Form, IDialogParent
 
         if (TVSettings.Instance.RunOnStartUp())
         {
-            await RunAutoScanAsync("Startup Scan");
+            if (App.Program.StartedByRestart)
+            {
+                Logger.Info("Startup Scan not run as TV Rename has just restarted");
+            }
+            else
+            {
+                await RunAutoScanAsync("Startup Scan");
+            }
         }
     }
 
@@ -2582,12 +2592,26 @@ public partial class UI : Form, IDialogParent
     private async Task DoPrefs(bool scanOptions)
     {
         MoreBusy(); // no background download while preferences are open!
-        mDoc.PreventAutoScan("Preferences are open");
+        string? busyBefore = mDoc.BusyWith;
+        const string PREFERENCES_OPEN = "Preferences are open";
+        mDoc.PreventAutoScan(PREFERENCES_OPEN);
 
         Preferences pref = new(mDoc, scanOptions, CurrentlySelectedSeason());
         await pref.InitialiseAsync();
 
-        if (pref.ShowDialog(this) == DialogResult.OK)
+        if (pref.ShowDialog(this) == DialogResult.OK && pref.ThemeNeedingRestart is { } theme
+            && RestartNowForTheme(theme, StillBusyWith(busyBefore, PREFERENCES_OPEN)))
+        {
+            // Save now, so closing does not ask, then start again with the new theme
+            await mDoc.WriteXMLSettingsAsync();
+            mDoc.AllowAutoScan();
+            LessBusy();
+            App.Program.RestartWhenClosed();
+            Close();
+            return;
+        }
+
+        if (pref.DialogResult == DialogResult.OK)
         {
             mDoc.SetDirty();
             await TVDoc.ReconnectAsync();
@@ -2603,6 +2627,45 @@ public partial class UI : Form, IDialogParent
 
         mDoc.AllowAutoScan();
         LessBusy();
+    }
+
+    // What is still running after a dialog: something that was running before it opened (unless it has finished,
+    // which leaves TV Rename free), or something that started while it was open (such as a command line scan)
+    private string? StillBusyWith(string? busyBefore, string dialogBusyWith)
+    {
+        string? busyNow = mDoc.BusyWith;
+        if (busyNow is null)
+        {
+            return null;
+        }
+
+        return busyBefore ?? (busyNow == dialogBusyWith ? null : busyNow);
+    }
+
+    // A new theme only shows once TV Rename restarts. Copying and moving files must finish first, and anything
+    // else that is running (a scan) is only stopped if the user agrees, so Later is the default then
+    private bool RestartNowForTheme(string theme, string? busyWith)
+    {
+        string message = $"TV Rename needs to restart to use the \"{theme}\" theme.";
+        if (ActionTask is { IsCompleted: false })
+        {
+            ThemeableMessageBox.Show(this, message + " Files are still being copied or moved, so restart TV Rename once they have finished.",
+                "Theme", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return false;
+        }
+
+        message += " Restart now saves your settings first.";
+        if (busyWith is not null)
+        {
+            // A force refresh lists every show, so keep it short
+            message += $"{Environment.NewLine}{Environment.NewLine}TV Rename is still busy ({busyWith.Truncate(60)}), and restarting now will stop it.";
+        }
+        else if (mDoc.TheActionList.Count > 0)
+        {
+            message += $"{Environment.NewLine}{Environment.NewLine}The results of the last scan will be cleared.";
+        }
+
+        return ThemeableMessageBox.Show(this, message, "Theme", "Restart now", "Later", MessageBoxIcon.Question, busyWith is not null) == DialogResult.Yes;
     }
 
     private async void saveToolStripMenuItem_ClickAsync(object sender, EventArgs e)
@@ -2680,8 +2743,10 @@ public partial class UI : Form, IDialogParent
     private async Task DoAppUpdateCheckAsync()
     {
         ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
+
+        // No update popup straight after a restart (the Update Available button still shows)
         this.SafeInvoke(async ()
-            => await NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide), true);
+            => await NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide || App.Program.StartedByRestart), true);
     }
 
     private async Task<ServerRelease?> CheckForUpdates()

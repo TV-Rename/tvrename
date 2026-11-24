@@ -8,8 +8,19 @@ public class ThemeableMessageBox : Form
     private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
     private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
 
-    private ThemeableMessageBox(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
+    // Wording for the Yes and No buttons, when the standard words do not fit the question
+    private readonly string yesText;
+    private readonly string noText;
+
+    // No is the default (Enter, and where the focus starts) when Yes would lose work
+    private readonly bool noIsDefault;
+
+    private ThemeableMessageBox(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, string yesText = "Yes", string noText = "No", bool noIsDefault = false)
     {
+        this.yesText = yesText;
+        this.noText = noText;
+        this.noIsDefault = noIsDefault;
+
         // 1. Form Styling
         this.Text = caption;
         this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -104,8 +115,8 @@ public class ThemeableMessageBox : Form
                 flow.Controls.Add(CreateButton("OK", DialogResult.OK, true));
                 break;
             case MessageBoxButtons.YesNo:
-                flow.Controls.Add(CreateButton("No", DialogResult.No, false));
-                flow.Controls.Add(CreateButton("Yes", DialogResult.Yes, true));
+                flow.Controls.Add(CreateButton(noText, DialogResult.No, noIsDefault));
+                flow.Controls.Add(CreateButton(yesText, DialogResult.Yes, !noIsDefault));
                 break;
             case MessageBoxButtons.YesNoCancel:
                 flow.Controls.Add(CreateButton("Cancel", DialogResult.Cancel, false));
@@ -132,7 +143,7 @@ public class ThemeableMessageBox : Form
         {
             Text = text,
             DialogResult = result,
-            Width = 80,
+            Width = Math.Max(80, TextRenderer.MeasureText(text, Font).Width + 24),
             Height = 28,
             Margin = new Padding(6, 2, 0, 0),
             FlatStyle = FlatStyle.Flat,
@@ -166,6 +177,16 @@ public class ThemeableMessageBox : Form
     public static DialogResult Show(IWin32Window owner, string text, string caption = "", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None)
     {
         using var box = new ThemeableMessageBox(text, caption, buttons, icon);
+        return box.ShowDialog(owner);
+    }
+
+    // A Yes/No question with its own button wording, such as "Restart now" and "Later"
+    public static DialogResult Show(IWin32Window owner, string text, string caption, string yesText, string noText, MessageBoxIcon icon, bool noIsDefault)
+    {
+        using var box = new ThemeableMessageBox(text, caption, MessageBoxButtons.YesNo, icon, yesText, noText, noIsDefault);
+
+        // Start on the default button, so Enter and the focus agree
+        box.Shown += (_, _) => (box.AcceptButton as Button)?.Focus();
         return box.ShowDialog(owner);
     }
 }

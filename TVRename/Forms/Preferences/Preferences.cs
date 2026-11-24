@@ -31,6 +31,9 @@ public partial class Preferences : Form
     private CustomNameTagsFloatingWindow? cntfw;
     private readonly ProcessedSeason? sampleProcessedSeason;
 
+    // The name of a newly chosen theme that only shows once TV Rename restarts
+    public string? ThemeNeedingRestart { get; private set; }
+
     private class FailedValidationException : Exception
     {
     }
@@ -123,10 +126,10 @@ public partial class Preferences : Form
         string previousTheme = TVSettings.Instance.ThemeString;
         UpdateSettings();
 
-        if (!previousTheme.Equals(TVSettings.Instance.ThemeString, StringComparison.OrdinalIgnoreCase) && cbTheme.SelectedItem is ThemeChoice theme)
+        if (!previousTheme.Equals(TVSettings.Instance.ThemeString, StringComparison.OrdinalIgnoreCase)
+            && ThemeManager.NeedsRestartFor(TVSettings.Instance.ThemeString) && cbTheme.SelectedItem is ThemeChoice theme)
         {
-            ThemeableMessageBox.Show(this, $"TV Rename will use the \"{theme.Name}\" theme the next time it starts.", "Theme",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ThemeNeedingRestart = theme.Name;
         }
 
         mDoc.SetDirty();
