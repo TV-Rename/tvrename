@@ -1605,8 +1605,11 @@ internal static class ShowHtmlHelper
                 "
                + (theme is null ? string.Empty : $"<style>{ThemeCss(theme)}</style>")
                + "</head>"
-               + $"<body style=\"background-color: {backgroundColour.HexColour()}; color: {ForegroundColour.HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
+               + $"<body style=\"background-color: {backgroundColour.HexColour()}; color: {TextColour(theme).HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
     }
+
+    // Exported pages (no theme) always use black text, as the system text colour is light while a dark theme is in use
+    private static Color TextColour(Theme? theme) => theme is null ? Color.Black : ForegroundColour;
 
     private static string HexColour(this Color c)
         => "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
