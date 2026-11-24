@@ -46,7 +46,7 @@ internal class LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) :
             }
             else if (me is MovieItemMissing mim)
             {
-                FindMovieAsync(mim, dfc, newList, toRemove);
+                await FindMovieAsync(mim, dfc, newList, toRemove);
             }
         }
 
