@@ -25,7 +25,7 @@ internal class MoviesHtml(List<MovieConfiguration> shows) : MoviesExporter(shows
     protected override async Task DoAsync()
     {
         using System.IO.StreamWriter file = new(Location());
-        file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
+        file.WriteLine(ShowHtmlHelper.OutputHTMLHeader(8));
         foreach (MovieConfiguration si in Shows)
         {
             try

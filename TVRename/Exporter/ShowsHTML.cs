@@ -24,7 +24,7 @@ internal class ShowsHtml(List<ShowConfiguration> shows) : ShowsExporter(shows)
     protected override async Task DoAsync()
     {
         using System.IO.StreamWriter file = new(Location());
-        file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
+        file.WriteLine(ShowHtmlHelper.OutputHTMLHeader(8));
         foreach (ShowConfiguration si in Shows)
         {
             try

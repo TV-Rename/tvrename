@@ -49,7 +49,7 @@ internal static class ShowHtmlHelper
     public static async Task<string> GetShowHtmlOverviewAsync(this ShowConfiguration si, bool includeDirectoryLinks)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
+        sb.AppendLine(HTMLHeader(10));
         await sb.AppendShowAsync(si, BackgroundColour, includeDirectoryLinks);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -58,7 +58,7 @@ internal static class ShowHtmlHelper
     public static string GetSeasonImagesOverview(this ProcessedSeason season)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
+        sb.AppendLine(HTMLHeader(10));
         sb.AppendSeasonImages(BackgroundColour, season);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -67,7 +67,7 @@ internal static class ShowHtmlHelper
     public static string GetShowImagesOverview(this ShowConfiguration si)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
+        sb.AppendLine(HTMLHeader(10));
         sb.AppendShowImages(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -76,7 +76,7 @@ internal static class ShowHtmlHelper
     public static string GetMovieImagesOverview(this MovieConfiguration si)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
+        sb.AppendLine(HTMLHeader(10));
         sb.AppendMovieImages(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -84,7 +84,7 @@ internal static class ShowHtmlHelper
     public static async Task<string> GetShowHtmlOverviewAsync(this CachedSeriesInfo series, RecommendationRow recommendation)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
+        sb.AppendLine(HTMLHeader(10));
         await sb.AppendShowAsync(null, series, BackgroundColour, false);
         sb.AppendRecommendation(recommendation, BackgroundColour);
         sb.AppendLine(HTMLFooter());
@@ -95,7 +95,7 @@ internal static class ShowHtmlHelper
     {
         StringBuilder sb = new();
         DirFilesCache dfc = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
+        sb.AppendLine(HTMLHeader(10));
         await sb.AppendMovieAsync(si, BackgroundColour, includeDirectoryLinks, dfc);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -103,7 +103,7 @@ internal static class ShowHtmlHelper
     public static string GetMovieHtmlOverview(this API.YtsMovie si)
     {
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, BackgroundColour, ThemeManager.ActiveTheme));
+        sb.AppendLine(HTMLHeader(10));
         sb.AppendMovie(si, BackgroundColour);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -160,14 +160,13 @@ internal static class ShowHtmlHelper
     }
     public static async Task<string> GetMovieHtmlOverviewAsync(this CachedMovieInfo movie, RecommendationRow? recommendation)
     {
-        Color col = Color.FromName("ButtonFace");
         DirFilesCache dfc = new();
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col, ThemeManager.ActiveTheme));
-        await sb.AppendMovieAsync(null, movie, col, false, dfc);
+        sb.AppendLine(HTMLHeader(10));
+        await sb.AppendMovieAsync(null, movie,BackgroundColour, false, dfc);
         if (recommendation != null)
         {
-            sb.AppendRecommendation(recommendation, col);
+            sb.AppendRecommendation(recommendation, BackgroundColour);
         }
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
@@ -175,12 +174,11 @@ internal static class ShowHtmlHelper
 
     public async static Task<string> GetShowSummaryHtmlOverviewAsync(this ShowConfiguration si, bool includeDirectoryLinks)
     {
-        Color col = Color.FromName("ButtonFace");
         DirFilesCache dfc = new();
         StringBuilder sb = new();
 
-        sb.AppendLine(HTMLHeader(10, col, ThemeManager.ActiveTheme));
-        await sb.AppendShowSummaryAsync(si, dfc, col, includeDirectoryLinks);
+        sb.AppendLine(HTMLHeader(10));
+        await sb.AppendShowSummaryAsync(si, dfc, BackgroundColour, includeDirectoryLinks);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
@@ -1034,15 +1032,14 @@ internal static class ShowHtmlHelper
     {
         StringBuilder sb = new();
         DirFilesCache dfc = new();
-        Color col = Color.FromName("ButtonFace");
-        sb.AppendLine(HTMLHeader(10, col, ThemeManager.ActiveTheme));
-        await sb.AppendSeasonAsync(s, si, col, includeDirectoryLinks);
+        sb.AppendLine(HTMLHeader(10));
+        await sb.AppendSeasonAsync(s, si, BackgroundColour, includeDirectoryLinks);
 
         List<ProcessedEpisode> seasonEpisodes = si.AllEpisodesForSeason(s.SeasonNumber);
         foreach (ProcessedEpisode ep in seasonEpisodes)
         {
             List<FileInfo>? fl = includeDirectoryLinks ? await dfc.FindEpOnDiskAsync(ep) : null;
-            sb.AppendEpisode(ep, fl, col);
+            sb.AppendEpisode(ep, fl, BackgroundColour);
         }
 
         sb.AppendLine(HTMLFooter());
@@ -1052,9 +1049,8 @@ internal static class ShowHtmlHelper
     public async static Task<string> GetSeasonSummaryHtmlOverviewAsync(this ShowConfiguration si, ProcessedSeason s, bool includeDirectoryLinks)
     {
         StringBuilder sb = new();
-        Color col = Color.FromName("ButtonFace");
-        sb.AppendLine(HTMLHeader(10, col, ThemeManager.ActiveTheme));
-        await sb.AppendSeasonSummaryAsync(si, s, col, includeDirectoryLinks);
+        sb.AppendLine(HTMLHeader(10));
+        await sb.AppendSeasonSummaryAsync(si, s, BackgroundColour, includeDirectoryLinks);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
     }
@@ -1591,8 +1587,13 @@ internal static class ShowHtmlHelper
         return STAR + StarRating(f - 1);
     }
 
-    // ReSharper disable once InconsistentNaming
-    internal static string HTMLHeader(int size, Color backgroundColour, Theme? theme = null)
+    //Default Header for internal use
+    internal static string HTMLHeader(int size) => HTMLHeader(size, BackgroundColour, ForegroundColour, ThemeManager.ActiveTheme);
+
+    //Default header for external use that defaults to black on white
+    public static string OutputHTMLHeader(int size) => HTMLHeader(size, Color.White, Color.Black);
+
+    private static string HTMLHeader(int size, Color backgroundColour, Color foregroundColour, Theme? theme = null)
     {
         return @"<!DOCTYPE html>
                 <html><head>
@@ -1605,7 +1606,7 @@ internal static class ShowHtmlHelper
                 "
                + (theme is null ? string.Empty : $"<style>{ThemeCss(theme)}</style>")
                + "</head>"
-               + $"<body style=\"background-color: {backgroundColour.HexColour()}; color: {ForegroundColour.HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
+               + $"<body style=\"background-color: {backgroundColour.HexColour()}; color: {foregroundColour.HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
     }
 
     private static string HexColour(this Color c)
@@ -1964,13 +1965,10 @@ internal static class ShowHtmlHelper
     {
         string iframe = $"""<iframe width="560" height="315" src="{YoutubeURL}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>""";
 
-        Color col = Color.FromName("ButtonFace");
         StringBuilder sb = new();
-        sb.AppendLine(HTMLHeader(10, col, ThemeManager.ActiveTheme));
+        sb.AppendLine(HTMLHeader(10));
         sb.AppendLine(iframe);
         sb.AppendLine(HTMLFooter());
         return sb.ToString();
-
-
     }
 }
