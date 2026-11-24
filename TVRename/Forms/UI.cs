@@ -8,7 +8,6 @@
 
 using BrightIdeasSoftware;
 using CefSharp;
-using CefSharp.DevTools.CSS;
 using CefSharp.WinForms;
 using Humanizer;
 using System.Runtime.InteropServices;
@@ -19,7 +18,6 @@ using TVRename.Utility.Helper;
 using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
-using MessageBox = System.Windows.Forms.MessageBox;
 using Resources = TVRename.Properties.Resources;
 using Timer = System.Windows.Forms.Timer;
 
