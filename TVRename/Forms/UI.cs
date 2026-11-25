@@ -4902,6 +4902,12 @@ public partial class UI : Form, IDialogParent
         int dd = TVSettings.Instance.WTWRecentDays;
         recentEps = await mDoc.TvLibrary.GetRecentAndFutureEpsAsync(dd);
 
+
+        if (lvWhenToWatch.IsDisposed)
+        {
+            return;
+        }
+
         //try to maintain selections if we can
         List<ProcessedEpisode> selections = lvWhenToWatch.Selected();
 
