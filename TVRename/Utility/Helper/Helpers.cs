@@ -168,7 +168,7 @@ public static class Helpers
     {
         if (text is null)
         {
-            return def??def2;
+            return def ?? def2;
         }
 
         try
@@ -177,7 +177,7 @@ public static class Helpers
         }
         catch
         {
-            return def??def2;
+            return def ?? def2;
         }
     }
     public static float ToPercent(this string text, float def)
@@ -234,12 +234,11 @@ public static class Helpers
 
     #endregion
 
-    public static T WithRetry<T>(this Func<T> operation, int retryTimes, TimeSpan delay,
-        Func<Exception, bool> retryableException, string message)
+    public static async Task<T> WithRetryAsync<T>(this Func<Task<T>> operation, int retryTimes, TimeSpan delay, Func<Exception, bool> retryableException, string message)
     {
-        Policy retryPolicy = Policy
-            .Handle(retryableException)
-            .WaitAndRetry(
+        AsyncPolicy retryPolicy = Policy
+            .Handle(retryableException) 
+            .WaitAndRetryAsync(
                 retryTimes,
                 _ => delay,
                 (exception, timeSpan, retryCount, _) =>
@@ -247,10 +246,10 @@ public static class Helpers
                     Logger.Warn(exception,
                         $"Retry {retryCount}/{retryTimes}, waiting {timeSpan} to {message}.");
                 });
-
-        return retryPolicy.Execute(operation);
+                                                
+        return await retryPolicy.ExecuteAsync(operation);
     }
-    
+
     public static bool IsSystemDarkMode()
     {
         try
