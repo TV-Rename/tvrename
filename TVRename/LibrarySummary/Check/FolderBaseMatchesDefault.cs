@@ -39,31 +39,28 @@ internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvS
     {
         //Store the old folder
         string oldFolderValue = Show.AutoAddFolderBase;
-
-        //Update the folder to the new value
-        Show.AutoAddFolderBase = NewValue;
+        string newFolderValue = NewValue;
 
         //Create the new location if needed and move files
-        if (Directory.Exists(NewValue))
+        if (Directory.Exists(newFolderValue))
         {
-            await FileHelper.MergeDirectoriesAsync(OldValue, NewValue);
+            await FileHelper.MergeDirectoriesAsync(oldFolderValue, newFolderValue);
         }
         else
         {
-            string message = $"Could not move files for {Show.ShowName}. Would have liked to move files from [{OldValue}] to '{NewValue}'";
+            string message = $"Could not move files for {Show.ShowName}. Would have liked to move files from [{oldFolderValue}] to '{newFolderValue}'";
 
             try
             {
-                CopyMoveResult result = Directory.Move(OldValue, NewValue, MoveOptions.CopyAllowed);
+                CopyMoveResult result = Directory.Move(oldFolderValue, newFolderValue, MoveOptions.CopyAllowed);
                 if (result.ErrorCode != 0)
                 {
                     Show.AutoAddFolderBase = oldFolderValue; // revert to old value if move fails
-                    throw new FixCheckException($"Could not move from {OldValue} to {NewValue} Error was:{result.ErrorMessage}");
+                    throw new FixCheckException($"Could not move from {oldFolderValue} to {newFolderValue} Error was:{result.ErrorMessage}");
                 }
             }
             catch (UnauthorizedAccessException uae)
             {
-                Show.AutoAddFolderBase = oldFolderValue; // revert to old value if move fails
                 throw new FixCheckException(message + ": " + uae.Message, uae);
             }
             catch (System.IO.DirectoryNotFoundException)
@@ -72,14 +69,17 @@ internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvS
             }
             catch (System.IO.PathTooLongException ptle)
             {
-                Show.AutoAddFolderBase = oldFolderValue; // revert to old value if move fails
                 throw new FixCheckException(message + ": " + ptle.Message, ptle);
             }
             catch (System.IO.IOException ex)
             {
-                Show.AutoAddFolderBase = oldFolderValue; // revert to old value if move fails
                 throw new FixCheckException(message + ": " + ex.Message, ex);
             }
         }
+
+        //Update the folder to the new value
+        Show.AutoAddFolderBase = NewValue;
+
+        LOGGER.Warn($"Updated folder for {Show.ShowName}. Updated from [{oldFolderValue}] to '{newFolderValue}'");
     }
 }
