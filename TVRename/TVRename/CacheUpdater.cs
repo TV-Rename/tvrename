@@ -243,7 +243,6 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
                 },
                 async (series, token) =>
                 {
-
                     await GetThreadAsync(series, p, counter, totalCount, cts);
                 }).ConfigureAwait(false);
 

@@ -514,7 +514,7 @@ public partial class Preferences : Form
         s.DefShowUseBase = rbDefShowUseBase.Checked;
         s.DefShowUseDefLocation = cbDefShowUseDefLocation.Checked;
         s.DefShowUseSubFolders = rbDefShowUseSubFolders.Checked;
-
+        s.RestrictMissingExportsToFullScans = chkRestrictMissingExportsToFullScans.Checked;
         s.DefMovieDoRenaming = cbDefMovieDoRenaming.Checked;
         s.DefMovieDoMissingCheck = cbDefMovieDoMissing.Checked;
         s.DefMovieCheckFutureDatedMovies = cbDefMovieIncludeFuture.Checked;
@@ -1074,8 +1074,6 @@ public partial class Preferences : Form
         cbDefMovieUseDefLocation.Checked = s.DefMovieUseDefaultLocation;
         cbDefMovieIncludeFuture.Checked = s.DefMovieCheckFutureDatedMovies;
         cbDefMovieIncludeNoAirdate.Checked = s.DefMovieCheckNoDatedMovies;
-
-        s.RestrictMissingExportsToFullScans = chkRestrictMissingExportsToFullScans.Checked;
 
         cbTMDBLanguages.Text = s.TMDBLanguage.LocalName;
         cbTMDBRegions.Text = s.TMDBRegion.EnglishName ?? Regions.Instance.FallbackRegion.EnglishName;
