@@ -2590,60 +2590,50 @@ public partial class UI : Form, IDialogParent
     private async Task DoPrefs(bool scanOptions)
     {
         MoreBusy(); // no background download while preferences are open!
-        string? busyBefore = mDoc.BusyWith;
-        const string PREFERENCES_OPEN = "Preferences are open";
-        mDoc.PreventAutoScan(PREFERENCES_OPEN);
+        var token = mDoc.PreventAutoScan("Preferences are open");
 
         Preferences pref = new(mDoc, scanOptions, CurrentlySelectedSeason());
         await pref.InitialiseAsync();
+        DialogResult dialogResult = pref.ShowDialog(this);
 
-        if (pref.ShowDialog(this) == DialogResult.OK && pref.ThemeNeedingRestart is { } theme
-            && RestartNowForTheme(theme, StillBusyWith(busyBefore, PREFERENCES_OPEN)))
+        mDoc.AllowAutoScan(token);
+        LessBusy();
+
+        if (dialogResult != DialogResult.OK)
+        {
+            return;
+        }
+
+        if (RestartNowForTheme(pref.ThemeNeedingRestart))
         {
             // Save now, so closing does not ask, then start again with the new theme
             await mDoc.WriteXMLSettingsAsync();
-            mDoc.AllowAutoScan();
-            LessBusy();
             App.Program.RestartWhenClosed();
             Close();
             return;
         }
 
-        if (pref.DialogResult == DialogResult.OK)
-        {
-            mDoc.SetDirty();
-            await TVDoc.ReconnectAsync();
-            ShowHideNotificationIcon();
-            await FillWhenToWatchListAsync();
-            ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
-            EnableDisableAccessibilty();
-            await FillEpGuideHtmlAsync();
-            mAutoFolderMonitor?.SettingsChanged(TVSettings.Instance.MonitorFolders);
-            UpdateVisibilityFromSettings();
-            await ForceRefreshAsync(false);
-        }
-
-        mDoc.AllowAutoScan();
-        LessBusy();
-    }
-
-    // What is still running after a dialog: something that was running before it opened (unless it has finished,
-    // which leaves TV Rename free), or something that started while it was open (such as a command line scan)
-    private string? StillBusyWith(string? busyBefore, string dialogBusyWith)
-    {
-        string? busyNow = mDoc.BusyWith;
-        if (busyNow is null)
-        {
-            return null;
-        }
-
-        return busyBefore ?? (busyNow == dialogBusyWith ? null : busyNow);
+        mDoc.SetDirty();
+        await TVDoc.ReconnectAsync();
+        ShowHideNotificationIcon();
+        await FillWhenToWatchListAsync();
+        ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
+        EnableDisableAccessibilty();
+        await FillEpGuideHtmlAsync();
+        mAutoFolderMonitor?.SettingsChanged(TVSettings.Instance.MonitorFolders);
+        UpdateVisibilityFromSettings();
+        await ForceRefreshAsync(false);
     }
 
     // A new theme only shows once TV Rename restarts. Copying and moving files must finish first, and anything
     // else that is running (a scan) is only stopped if the user agrees, so Later is the default then
-    private bool RestartNowForTheme(string theme, string? busyWith)
+    private bool RestartNowForTheme(string? theme)
     {
+        if (theme is null)
+        {
+            return false;
+        }
+
         string message = $"TV Rename needs to restart to use the \"{theme}\" theme.";
         if (ActionTask is { IsCompleted: false })
         {
@@ -2653,17 +2643,17 @@ public partial class UI : Form, IDialogParent
         }
 
         message += " Restart now saves your settings first.";
-        if (busyWith is not null)
+        if (mDoc.CurrentlyBusy)
         {
             // A force refresh lists every show, so keep it short
-            message += $"{Environment.NewLine}{Environment.NewLine}TV Rename is still busy ({busyWith.Truncate(60)}), and restarting now will stop it.";
+            message += $"{Environment.NewLine}{Environment.NewLine}TV Rename is still busy ({mDoc.BusyWith.Truncate(60)}), and restarting now will stop it.";
         }
         else if (mDoc.TheActionList.Count > 0)
         {
             message += $"{Environment.NewLine}{Environment.NewLine}The results of the last scan will be cleared.";
         }
 
-        return ThemeableMessageBox.Show(this, message, "Theme", "Restart now", "Later", MessageBoxIcon.Question, busyWith is not null) == DialogResult.Yes;
+        return ThemeableMessageBox.Show(this, message, "Theme", "Restart now", "Later", MessageBoxIcon.Question, mDoc.CurrentlyBusy) == DialogResult.Yes;
     }
 
     private async void saveToolStripMenuItem_ClickAsync(object sender, EventArgs e)
@@ -3132,7 +3122,7 @@ public partial class UI : Form, IDialogParent
         Logger.Info("****************");
         Logger.Info("Adding New Movie");
         MoreBusy();
-        mDoc.PreventAutoScan("Add Movie");
+        var token = mDoc.PreventAutoScan("Add Movie");
         MovieConfiguration mov = new();
 
         AddEditMovie aem = new(mov, mDoc);
@@ -3153,7 +3143,7 @@ public partial class UI : Form, IDialogParent
         }
 
         LessBusy();
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
     }
 
     private async void bnMyShowsAdd_Click(object sender, EventArgs e)
@@ -3161,7 +3151,7 @@ public partial class UI : Form, IDialogParent
         Logger.Info("****************");
         Logger.Info("Adding New TV Show");
         MoreBusy();
-        mDoc.PreventAutoScan("Add TV Show");
+        var token = mDoc.PreventAutoScan("Add TV Show");
         ShowConfiguration si = new();
 
         AddEditShow aes = new(si, mDoc);
@@ -3180,7 +3170,7 @@ public partial class UI : Form, IDialogParent
             Logger.Info("Cancelled adding new tv show");
         }
         LessBusy();
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
     }
 
     private async Task ShowAddedOrEditedAsync(bool download, bool unattended, ShowConfiguration si, bool updateSelectedNode)
@@ -3399,7 +3389,7 @@ public partial class UI : Form, IDialogParent
     internal async Task EditSeasonAsync(ShowConfiguration si, int seasnum)
     {
         MoreBusy();
-        mDoc.PreventAutoScan($"Edit Season {si.Name}({seasnum})");
+        var token = mDoc.PreventAutoScan($"Edit Season {si.Name}({seasnum})");
 
         EditSeason er = new(si, seasnum);
         DialogResult dr = er.ShowDialog(this);
@@ -3409,14 +3399,14 @@ public partial class UI : Form, IDialogParent
             await SelectSeasonAsync(si.AppropriateSeasons()[seasnum]);
         }
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
     internal async Task EditShowAsync(ShowConfiguration si)
     {
         MoreBusy();
-        mDoc.PreventAutoScan($"Edit TV Show {si.Name}");
+        var token = mDoc.PreventAutoScan($"Edit TV Show {si.Name}");
 
         AddEditShow aes = new(si, mDoc);
         DialogResult dr = aes.ShowDialog(this);
@@ -3429,14 +3419,14 @@ public partial class UI : Form, IDialogParent
             Logger.Info($"Modified show called {si.ShowName}");
         }
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
     internal async Task EditMovieAsync(MovieConfiguration si)
     {
         MoreBusy();
-        mDoc.PreventAutoScan($"Edit Movie {si.Name}");
+        var token = mDoc.PreventAutoScan($"Edit Movie {si.Name}");
 
         AddEditMovie aes = new(si, mDoc);
         DialogResult dr = aes.ShowDialog(this);
@@ -3450,7 +3440,7 @@ public partial class UI : Form, IDialogParent
             Logger.Info($"Modified movie called {si.ShowName}");
         }
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
@@ -3730,7 +3720,7 @@ public partial class UI : Form, IDialogParent
     private void filenameTemplateEditorToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Filename Templates are open");
+        var token = mDoc.PreventAutoScan("Filename Templates are open");
         CustomEpisodeName cn = new(TVSettings.Instance.NamingStyle.StyleString);
         CustomNameDesigner cne = new(CurrentlySelectedPel(), cn);
         DialogResult dr = cne.ShowDialog(this);
@@ -3739,7 +3729,7 @@ public partial class UI : Form, IDialogParent
             TVSettings.Instance.NamingStyle = cn;
             mDoc.SetDirty();
         }
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
@@ -3751,7 +3741,7 @@ public partial class UI : Form, IDialogParent
             pel is { Count: > 0 } ? pel[0] : null);
 
         MoreBusy();
-        mDoc.PreventAutoScan("Search Engines are open");
+        var token = mDoc.PreventAutoScan("Search Engines are open");
 
         DialogResult dr = aese.ShowDialog(this);
         if (dr == DialogResult.OK)
@@ -3760,7 +3750,7 @@ public partial class UI : Form, IDialogParent
             UpdateSearchButtons();
         }
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
@@ -3775,7 +3765,7 @@ public partial class UI : Form, IDialogParent
         }
 
         MoreBusy();
-        mDoc.PreventAutoScan("Filename Processors are open");
+        var token = mDoc.PreventAutoScan("Filename Processors are open");
 
         AddEditSeasEpFinders d = new(TVSettings.Instance.FNPRegexs, mDoc.TvLibrary.GetSortedShows(), currentShow, theFolder);
 
@@ -3786,7 +3776,7 @@ public partial class UI : Form, IDialogParent
             TVSettings.Instance.FNPRegexs = d.OutputRegularExpressions;
         }
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
@@ -3812,10 +3802,10 @@ public partial class UI : Form, IDialogParent
     private void actorsToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Actors Grid is open");
+        var token = mDoc.PreventAutoScan("Actors Grid is open");
         new ActorsGrid(mDoc).ShowDialog(this);
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
@@ -4127,14 +4117,14 @@ public partial class UI : Form, IDialogParent
     private async void folderMonitorToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Bulk add TV Shows is open");
+        var token = mDoc.PreventAutoScan("Bulk add TV Shows is open");
 
         BulkAddSeriesManager bam = new(mDoc);
         BulkAddShow fm = new(mDoc, bam, this);
         fm.ShowDialog(this);
         await FillMyShowsAsync(true);
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
@@ -5155,27 +5145,27 @@ public partial class UI : Form, IDialogParent
     private void movieCollectionSummaryLogToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Movie Collections are open");
+        var token = mDoc.PreventAutoScan("Movie Collections are open");
 
         CollectionsView form = new(mDoc, this);
         form.ShowDialog(this);
         FillMyMovies();
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
     private void bulkAddMoviesToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Bulk Add Movies");
+        var token = mDoc.PreventAutoScan("Bulk Add Movies");
 
         BulkAddMovieManager bam = new(mDoc);
         BulkAddMovie fm = new(mDoc, bam, this);
         fm.ShowDialog(this);
         FillMyMovies();
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
@@ -5260,11 +5250,11 @@ public partial class UI : Form, IDialogParent
     private async void recommendationsToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Recommendations Open");
+        var token = mDoc.PreventAutoScan("Recommendations Open");
         RecommendationView form = new(mDoc, this, MediaConfiguration.MediaType.tv);
         form.ShowDialog(this);
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
         await FillMyShowsAsync(true);
         await FillWhenToWatchListAsync();
@@ -5273,22 +5263,22 @@ public partial class UI : Form, IDialogParent
     private void duplicateMoviesToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Duplicate Movies Open");
+        var token = mDoc.PreventAutoScan("Duplicate Movies Open");
         DuplicateMovieFinder form = new(mDoc, this);
         form.ShowDialog(this);
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
     private async void movieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Recommendations Open");
+        var token = mDoc.PreventAutoScan("Recommendations Open");
         RecommendationView form = new(mDoc, this, MediaConfiguration.MediaType.movie);
         form.ShowDialog(this);
 
         FillMyMovies();
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
         FillMyMovies();
     }
@@ -5310,11 +5300,11 @@ public partial class UI : Form, IDialogParent
     private void settingsCheckToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("Settings check is open");
+        var token = mDoc.PreventAutoScan("Settings check is open");
 
         SettingsReview form = new(mDoc, this);
         form.ShowDialog(this);
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
@@ -5329,14 +5319,14 @@ public partial class UI : Form, IDialogParent
         MovieConfiguration? m = CurrentlySelectedMovie();
 
         MoreBusy();
-        mDoc.PreventAutoScan("Search Engines are open");
+        var token = mDoc.PreventAutoScan("Search Engines are open");
 
         if (UiHelpers.ShowDialogAndOk(new AddEditSearchEngine(TVDoc.GetMovieSearchers(), m), this))
         {
             mDoc.SetDirty();
             UpdateSearchButtons();
         }
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
     }
 
@@ -5465,11 +5455,11 @@ public partial class UI : Form, IDialogParent
     private async void yTSMoviePreviewToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("YTS Preview Open");
+        var token = mDoc.PreventAutoScan("YTS Preview Open");
         YtsViewerView form = new(mDoc, this);
         form.ShowDialog(this);
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
         await FillMyShowsAsync(true);
         await FillWhenToWatchListAsync();
@@ -5478,11 +5468,11 @@ public partial class UI : Form, IDialogParent
     private async void yTSMovieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MoreBusy();
-        mDoc.PreventAutoScan("YTS Recommendations Open");
+        var token = mDoc.PreventAutoScan("YTS Recommendations Open");
         YtsRecommendationView form = new(mDoc, this, "1080p");
         form.ShowDialog(this);
 
-        mDoc.AllowAutoScan();
+        mDoc.AllowAutoScan(token);
         LessBusy();
         await FillMyShowsAsync(true);
         await FillWhenToWatchListAsync();

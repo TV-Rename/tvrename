@@ -9,6 +9,7 @@
 // All the processing and work should be done in here, nothing in UI.cs
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
+using CefSharp.DevTools.FedCm;
 using Polly;
 using TVRename.Forms;
 using TVRename.Forms.Tools;
@@ -56,10 +57,6 @@ public class TVDoc : IDisposable, IAsyncDisposable
     public readonly bool LoadOk;
     private bool mDirty;
 
-    // ReSharper disable once RedundantDefaultMemberInitializer
-    private bool currentlyBusy = false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
-
-    private DateTime busySince;
     private bool LastScanComplete { get; set; }
     private TVSettings.ScanType lastScanType;
 
@@ -847,12 +844,12 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     public async Task ScanAsync(ScanSettings settings, ScanProgress? scanProgressDlg, CancellationTokenSource cts)
     {
+        var scanToken = PreventAutoScan(settings.Type.PrettyPrint() + " Scan");
+
         try
         {
             Logger.Info("*******************************");
             Logger.Info(settings.GenerateScanMessage());
-
-            PreventAutoScan("Scan " + settings.Type.PrettyPrint());
 
             await UpdateMediaToScanAsync(settings);
             if (settings.Type != TVSettings.ScanType.Incremental)
@@ -971,7 +968,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         finally
         {
             scanProgressDlg?.Done();
-            AllowAutoScan();
+            AllowAutoScan(scanToken);
         }
     }
     private void GroupMissingSeasons()
@@ -1550,7 +1547,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             return;
         }
 
-        PreventAutoScan($"Force Refresh ({sis.Select(s => s.Name)?.ToCsv()})");
+        var token = PreventAutoScan($"Force Refresh ({sis.Select(s => s.Name)?.ToCsv()})");
         List<ShowConfiguration> showConfigurations = [.. sis];
         showConfigurations.ForEach(ForgetShow);
 
@@ -1558,7 +1555,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         {
             await DoDownloadsFgAsync(unattended, tvrMinimised, owner, showConfigurations, cts);
         }
-        AllowAutoScan();
+        AllowAutoScan(token);
     }
 
     // ReSharper disable once InconsistentNaming
@@ -1605,7 +1602,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             return;
         }
 
-        PreventAutoScan($"Force Refresh ({sis.Select(s => s.Name)?.ToCsv()})");
+        var token = PreventAutoScan($"Force Refresh ({sis.Select(s => s.Name)?.ToCsv()})");
 
         List<MovieConfiguration> movieConfigurations = [.. sis];
         movieConfigurations.ForEach(ForgetMovie);
@@ -1614,7 +1611,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         {
             await DoDownloadsFgAsync(unattended, tvrMinimised, owner, movieConfigurations, cts);
         }
-        AllowAutoScan();
+        AllowAutoScan(token);
     }
 
     private async Task<bool> DoDownloadsFgAsync(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MediaConfiguration> passedShows, CancellationTokenSource cts)
@@ -1623,7 +1620,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
     // ReSharper disable once InconsistentNaming
     internal async Task TVDBServerAccuracyCheck(bool unattended, bool hidden, UI owner, DownloadProgressStatus? updateAction, CancellationTokenSource cts)
     {
-        PreventAutoScan("TVDB Accuracy Check");
+        var token = PreventAutoScan("TVDB Accuracy Check");
         await DoDownloadsFgAsync(unattended, hidden, owner, cts);
 
         IEnumerable<CachedSeriesInfo> seriesToUpdate = await TheTVDB.LocalCache.Instance.ServerTvAccuracyCheckAsync(updateAction, cts.Token);
@@ -1635,7 +1632,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         await ForceRefreshMoviesAsync(filmsToUpdate, unattended, hidden, owner, cts);
 
         await DoDownloadsBG(updateAction, cts);
-        AllowAutoScan();
+        AllowAutoScan(token);
     }
 
     // ReSharper disable once UnusedMember.Local
@@ -1669,7 +1666,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
     // ReSharper disable once InconsistentNaming
     internal async Task TMDBServerAccuracyCheckAsync(bool unattended, bool hidden, UI owner, DownloadProgressStatus? updateAction, CancellationTokenSource cts)
     {
-        PreventAutoScan("TMDB Accuracy Check");
+        var token = PreventAutoScan("TMDB Accuracy Check");
         await DoDownloadsFgAsync(unattended, hidden, owner, cts);
 
         IEnumerable<CachedMovieInfo> moviesToUpdate = await TMDB.LocalCache.Instance.ServerMovieAccuracyCheckAsync(cts.Token);
@@ -1681,7 +1678,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
         await ForceRefreshShowsAsync(showsToUpdate, unattended, hidden, owner, cts);
 
         await DoDownloadsBG(updateAction, cts);
-        AllowAutoScan();
+        AllowAutoScan(token);
     }
 
     private async Task ReleaseUnmanagedResources()
@@ -1710,25 +1707,46 @@ public class TVDoc : IDisposable, IAsyncDisposable
         GC.SuppressFinalize(this);
     }
 
-    // What TV Rename is busy doing (such as a scan), or null when it is free
-    public string? BusyWith => currentlyBusy ? busyWith : null;
-    private string? busyWith;
+    #region Region scanBlocking
+    private readonly ConcurrentDictionary<string, ScanBlocker> scanBlockers = [];
+    public bool CurrentlyBusy => !scanBlockers.IsEmpty; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
 
-    public void PreventAutoScan(string v)
+    public class ScanBlocker(string reason, DateTime since)
     {
-        Logger.Info($"TV Rename is about to be busy doing {v} since {TimeHelpers.LocalNow()}");
-        currentlyBusy = true;
-        busyWith = v;
-        busySince = TimeHelpers.LocalNow();
+        internal string Description => $"'{Reason}' since {Since:t}";
+        public string Reason { get; } = reason;
+        public DateTime Since { get; } = since;
     }
 
-    public void AllowAutoScan()
+    public bool AutoScanCanRun() => !CurrentlyBusy;
+
+    // What TV Rename is busy doing (such as a scan)
+    public string? BusyWith => "[" + scanBlockers.Values.Select(b => b.Description).ToCsv() + "]";
+
+    public ScanBlocker PreventAutoScan(string reason)
     {
-        Logger.Info($"TV Rename free again (busy since {busySince})");
-        currentlyBusy = false;
+        ScanBlocker newToken = new(reason, TimeHelpers.LocalNow());
+
+        if (CurrentlyBusy)
+        {
+            Logger.Warn($"TV Rename is already busy doing {BusyWith}");
+        }
+        Logger.Info($"TV Rename is about to be busy doing {reason} since {TimeHelpers.LocalNow()}");
+
+        scanBlockers.TryAdd(newToken.Reason, newToken);
+        return newToken;
     }
 
-    public bool AutoScanCanRun() => !currentlyBusy;
+    public void AllowAutoScan(ScanBlocker b)
+    {
+        Logger.Info($"TV Rename free again (Completed '{b.Reason}') (busy since {b.Since})");
+        scanBlockers.Remove(b.Reason, out _);
+        if (CurrentlyBusy)
+        {
+            Logger.Warn($"TV Rename is continuing to be busy doing {BusyWith}");
+        }
+    }
+    # endregion
 
     public void ClearCacheUpdateProblems() => cacheManager.ClearProblems();
 
@@ -2303,16 +2321,16 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     public async Task DoAllActionsAsync(CancellationTokenSource token)
     {
-        PreventAutoScan("Do all actions");
+        var scanToken = PreventAutoScan("Do all actions");
         await DoActionsAsync(TheActionList, token);
-        AllowAutoScan();
+        AllowAutoScan(scanToken);
     }
 
     public async Task DoSelectedActionsAsync(ItemList shows, CancellationTokenSource token)
     {
-        PreventAutoScan($"Do selected actions ({shows.Count})");
+        var scanToken = PreventAutoScan($"Do selected actions ({shows.Count})");
         await DoActionsAsync(shows, token);
-        AllowAutoScan();
+        AllowAutoScan(scanToken);
     }
 
 

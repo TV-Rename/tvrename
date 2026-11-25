@@ -14,7 +14,7 @@ internal static class Beta
 
     internal static async Task LogShowEpisodeSizesAsync(TVDoc doc)
     {
-        doc.PreventAutoScan("Show File Sizes");
+        var token = doc.PreventAutoScan("Show File Sizes");
         StringBuilder output = new();
 
         output.AppendLine("");
@@ -48,6 +48,6 @@ internal static class Beta
         output.AppendLine("##################################################");
 
         Logger.Info(output.ToString());
-        doc.AllowAutoScan();
+        doc.AllowAutoScan(token);
     }
 }

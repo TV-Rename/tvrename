@@ -17,7 +17,7 @@ internal static class MergedEpisodeFinderController
         int total = doc.TvLibrary.Shows.Count();
         int current = 0;
 
-        doc.PreventAutoScan("Find Double Episodes");
+        var token = doc.PreventAutoScan("Find Double Episodes");
         StringBuilder output = new();
         List<PossibleMergedEpisode> returnValue = [];
 
@@ -59,7 +59,7 @@ internal static class MergedEpisodeFinderController
         output.AppendLine("##################################################");
 
         Logger.Info(output.ToString());
-        doc.AllowAutoScan();
+        doc.AllowAutoScan(token);
         return returnValue;
     }
 
