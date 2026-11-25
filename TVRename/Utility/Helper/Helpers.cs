@@ -8,7 +8,10 @@
 
 using Microsoft.Win32;
 using Polly;
+using Polly.Retry;
+using System.Net.Http;
 using System.Reflection;
+using TMDbLib.Objects.Exceptions;
 
 #pragma warning disable CS0162
 
@@ -234,20 +237,26 @@ public static class Helpers
 
     #endregion
 
-    public static async Task<T> WithRetryAsync<T>(this Func<Task<T>> operation, int retryTimes, TimeSpan delay, Func<Exception, bool> retryableException, string message)
+    public static async ValueTask<T> WithRetryAsync<T>(this Func<CancellationToken, ValueTask<T>> operation, int retryTimes, TimeSpan delay, string message, CancellationToken cancellationToken)
     {
-        AsyncPolicy retryPolicy = Policy
-            .Handle(retryableException) 
-            .WaitAndRetryAsync(
-                retryTimes,
-                _ => delay,
-                (exception, timeSpan, retryCount, _) =>
+        var pipeline = new ResiliencePipelineBuilder()
+            .AddRetry(new RetryStrategyOptions
+            {
+                ShouldHandle = new PredicateBuilder().Handle<RequestLimitExceededException>(),
+                MaxRetryAttempts = retryTimes,
+                Delay = delay,
+                BackoffType = DelayBackoffType.Linear,
+                UseJitter = true,
+                OnRetry = args =>
                 {
-                    Logger.Warn(exception,
-                        $"Retry {retryCount}/{retryTimes}, waiting {timeSpan} to {message}.");
-                });
-                                                
-        return await retryPolicy.ExecuteAsync(operation);
+                    Logger.Warn($"{message} Retrying in {args.RetryDelay.TotalSeconds} seconds. Retry attempt {args.AttemptNumber}.");
+                    return ValueTask.CompletedTask;
+                }
+            })
+            .AddTimeout(TimeSpan.FromSeconds(20))
+            .Build();
+
+        return await pipeline.ExecuteAsync(operation, cancellationToken);
     }
 
     public static bool IsSystemDarkMode()

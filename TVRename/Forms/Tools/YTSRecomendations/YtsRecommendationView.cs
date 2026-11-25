@@ -74,12 +74,12 @@ public partial class YtsRecommendationView : Form
         UpdateUI();
     }
 
-    private async Task AddMovieToLibraryAsync(YtsRecommendationRow addedMovie)
+    private async Task AddMovieToLibraryAsync(YtsRecommendationRow addedMovie, CancellationToken cancellationToken)
     {
         string imdbCode = addedMovie.ImdbCode;
         string name = addedMovie.Name;
 
-        CachedMovieInfo? movie = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync(imdbCode, new Locale());
+        CachedMovieInfo? movie = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync(imdbCode, new Locale(), cancellationToken);
         if (movie is null)
         {
             Logger.Info($"Not adding {imdbCode}:{name} as the IMDB code is not found on TMDB");
@@ -263,15 +263,17 @@ public partial class YtsRecommendationView : Form
 
         YtsRecommendationRow lastSelected = (YtsRecommendationRow)e.Model;
 
+        CancellationTokenSource cts = new();
+
         rightClickMenu.Items.Clear();
 
         rightClickMenu.Add("Add Movie to Library and Download", async (_, _) =>
         {
-            await AddMovieToLibraryAsync(lastSelected);
+            await AddMovieToLibraryAsync(lastSelected, cts.Token);
             Download(lastSelected, quality);
         });
 
-        rightClickMenu.Add("Add Movie to Library", async (_, _) => await AddMovieToLibraryAsync(lastSelected));
+        rightClickMenu.Add("Add Movie to Library", async (_, _) => await AddMovieToLibraryAsync(lastSelected, cts.Token));
         rightClickMenu.Add("Download Movie", (_, _) => Download(lastSelected, quality));
     }
 
