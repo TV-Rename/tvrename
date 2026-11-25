@@ -1284,7 +1284,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
                     return;
                 }
                 Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
-                await check.ServerAccuracyCheckAsync(si);
+                await check.ServerAccuracyCheckAsync(si, token);
             });
         }
         catch (OperationCanceledException ex)
@@ -1322,7 +1322,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
                     {
                         return;
                     }
-                    await check.ServerAccuracyCheckAsync(si);
+                    await check.ServerAccuracyCheckAsync(si, token);
                 });
         }
         catch (OperationCanceledException ex)

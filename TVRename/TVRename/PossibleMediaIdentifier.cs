@@ -47,7 +47,7 @@ class PossibleMediaIdentifier
     }
 
 
-    protected static async Task<int?> ValidateOnTMDBAsync(int? tmdbId, Locale locale, MediaConfiguration.MediaType mediaType)
+    protected static async Task<int?> ValidateOnTMDBAsync(int? tmdbId, Locale locale, MediaConfiguration.MediaType mediaType, CancellationToken token)
     {
         if (tmdbId.HasValue)
         {
@@ -57,12 +57,12 @@ class PossibleMediaIdentifier
 
                 if (mediaType == MediaConfiguration.MediaType.movie)
                 {
-                    CachedMovieInfo series = await TMDB.LocalCache.Instance.GetMovieAndDownloadAsync(ss);
+                    CachedMovieInfo series = await TMDB.LocalCache.Instance.GetMovieAndDownloadAsync(ss, token);
                     return series.TmdbCode;
                 }
                 else
                 {
-                    CachedSeriesInfo? series = await TMDB.LocalCache.Instance.GetSeriesOrDownloadAsync(ss);
+                    CachedSeriesInfo? series = await TMDB.LocalCache.Instance.GetSeriesOrDownloadAsync(ss, token);
                     return series?.TmdbCode;
                 }
             }
@@ -146,7 +146,7 @@ class IdentifyFinalBoss : IdentifyFromNFOFiles, IPossibleMovieIdentifier
         int? tvdbId = FindShowCode(movie, "tvdbid", "tvdb").ToInt();
         if (tvdbId.HasValue)
         {
-            CachedMovieInfo? s2 = await TMDB.LocalCache.Instance.LookupMovieByTvdbAsync(tvdbId.Value, localeToUse);
+            CachedMovieInfo? s2 = await TMDB.LocalCache.Instance.LookupMovieByTvdbAsync(tvdbId.Value, localeToUse, token);
             if (s2 != null && s2.TmdbCode.HasValue)
             {
                 return (TVDoc.ProviderType.TMDB, s2.TmdbCode.Value);
@@ -383,7 +383,7 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier,
         try{
         //Lookup based on TMDB ID Being Present
         int? tmdbId = FindShowCode(movie, "tmdbid", "tmdb").ToInt();
-        int? tmdbCode = await ValidateOnTMDBAsync(tmdbId, preferredLocale, MediaConfiguration.MediaType.movie);
+        int? tmdbCode = await ValidateOnTMDBAsync(tmdbId, preferredLocale, MediaConfiguration.MediaType.movie, token);
             if (tmdbCode.HasValue)
             {
                 return (TVDoc.ProviderType.TMDB, tmdbCode.Value);
@@ -430,7 +430,7 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier,
 
             if (imdbToTest.HasValue())
             {
-                CachedMovieInfo? s = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync(imdbToTest, preferredLocale);
+                CachedMovieInfo? s = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync(imdbToTest, preferredLocale, token);
                 if (s != null && s.TmdbCode.HasValue)
                 {
                     return (TVDoc.ProviderType.TMDB, s.TmdbCode.Value);
@@ -585,14 +585,14 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, IPossibleTVShowIdenti
                     }
                     break;
                 case "TMDB":
-                    int? tmdbCodeA = await ValidateOnTMDBAsync(code, preferredLocale, MediaConfiguration.MediaType.tv  );
+                    int? tmdbCodeA = await ValidateOnTMDBAsync(code, preferredLocale, MediaConfiguration.MediaType.tv, token);
                     if (tmdbCodeA.HasValue)
                     {
                         return (TVDoc.ProviderType.TMDB, tmdbCodeA.Value);
                     }
                     break;
                 case "IMDB":
-                    CachedSeriesInfo? s = await TMDB.LocalCache.Instance.LookupTVShowByImdbAsync($"tt{code:D7}" , preferredLocale);
+                    CachedSeriesInfo? s = await TMDB.LocalCache.Instance.LookupTVShowByImdbAsync($"tt{code:D7}" , preferredLocale, token);
                     if (s != null && s.TmdbCode.HasValue)
                     {
                         return (TVDoc.ProviderType.TMDB, s.TmdbCode.Value);
@@ -650,14 +650,14 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, IPossibleTVShowIdenti
                     }
                     break;
                 case "TMDB":
-                    int? tmdbCodeA = await ValidateOnTMDBAsync(code, preferredLocale, MediaConfiguration.MediaType.movie);
+                    int? tmdbCodeA = await ValidateOnTMDBAsync(code, preferredLocale, MediaConfiguration.MediaType.movie, token);
                     if (tmdbCodeA.HasValue)
                     {
                         return (TVDoc.ProviderType.TMDB, tmdbCodeA.Value);
                     }
                     break;
                 case "IMDB":
-                    CachedMovieInfo? s = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync($"tt{code:D7}", preferredLocale);
+                    CachedMovieInfo? s = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync($"tt{code:D7}", preferredLocale, token);
                     if (s != null && s.TmdbCode.HasValue)
                     {
                         return (TVDoc.ProviderType.TMDB, s.TmdbCode.Value);

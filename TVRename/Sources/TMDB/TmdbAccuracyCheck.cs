@@ -20,12 +20,12 @@ internal class TmdbAccuracyCheck(LocalCache localCache)
 
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-    public async Task ServerAccuracyCheckAsync(CachedMovieInfo si)
+    public async Task ServerAccuracyCheckAsync(CachedMovieInfo si, CancellationToken token)
     {
         Logger.Info($"Accuracy Check for {si.Name} on TMDB");
         try
         {
-            CachedMovieInfo newSi = await lc.DownloadMovieNowAsync(si, false);
+            CachedMovieInfo newSi = await lc.DownloadMovieNowAsync(si, false, token);
 
             if (!Match(newSi, si))
             {
@@ -44,12 +44,12 @@ internal class TmdbAccuracyCheck(LocalCache localCache)
         }
     }
 
-    public async Task ServerAccuracyCheckAsync(CachedSeriesInfo si)
+    public async Task ServerAccuracyCheckAsync(CachedSeriesInfo si, CancellationToken token)
     {
         Logger.Info($"Accuracy Check for {si.Name} on TMDB");
         try
         {
-            CachedSeriesInfo newSi = await lc.DownloadSeriesNowAsync(si, false);
+            CachedSeriesInfo newSi = await lc.DownloadSeriesNowAsync(si, false, token);
 
             if (!Match(newSi, si)) //NB - we use a match method as we can't rely on update time
             {

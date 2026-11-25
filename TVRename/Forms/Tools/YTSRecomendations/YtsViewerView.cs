@@ -76,7 +76,7 @@ public partial class YtsViewerView : Form
         string imdbCode = addedMovie.ImdbCode;
         string name = addedMovie.Name;
 
-        CachedMovieInfo? movie = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync(imdbCode, new Locale());
+        CachedMovieInfo? movie = await TMDB.LocalCache.Instance.LookupMovieByImdbAsync(imdbCode, new Locale(), cts.Token);
         if (movie is null)
         {
             Logger.Info($"Not adding {imdbCode}:{name} as the IMDB code is not found on TMDB");
