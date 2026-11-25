@@ -25,6 +25,8 @@ public partial class ShowSummary : Form, IDialogParent
     private readonly TVDoc mDoc;
     private readonly CancellationTokenSource ct;
     private Task? scanTask;
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
 
     private readonly SafeList<ShowSummaryData> showList;
 
@@ -59,6 +61,7 @@ public partial class ShowSummary : Form, IDialogParent
         ThreadSafeCounter currentRecord = new();
         showList.Clear();
 
+        try {
         await Parallel.ForEachAsync(
             mDoc.TvLibrary.GetSortedShows(),
             new ParallelOptions
@@ -82,7 +85,13 @@ public partial class ShowSummary : Form, IDialogParent
         }
         );
 
-        showList.Sort();
+            showList.Sort();
+        }
+        catch (TaskCanceledException)
+        {
+            Logger.Warn("ShowSummary Cancelled");
+            Reset();
+        }
     }
 
     private void PopulateGrid()
@@ -704,11 +713,7 @@ public partial class ShowSummary : Form, IDialogParent
 
     private async Task ScanAsync(CancellationToken token)
     {
-        btnRefresh.Visible = false;
-        EnableCheckboxes(false);
-
-        pbProgress.Visible = true;
-        lblStatus.Visible = true;
+        SetScanControls(false);
 
         var progressHandler = new Progress<ProgressReport>(scanReport =>
         {
@@ -716,21 +721,28 @@ public partial class ShowSummary : Form, IDialogParent
             pbProgress.SetProgress(scanReport.ProgressPercentage);
             lblStatus.Text = scanReport.UpdateText.ToUiVersion();
         });
+        try
+        {
+            scanTask = GenerateData(progressHandler, token);
+            await scanTask;
 
-        scanTask = GenerateData(progressHandler, token);
-
-        await scanTask;
-
-        btnRefresh.Visible = true;
-        EnableCheckboxes(true);
-
-        pbProgress.Visible = false;
-        lblStatus.Visible = false;
-        PopulateGrid();
+            PopulateGrid();
+        }
+        catch (TaskCanceledException)
+        {
+            Logger.Warn("ShowSummary Cancelled");
+            Reset();
+        }
+        finally
+        {
+            SetScanControls(true);
+        }
     }
 
-    private void EnableCheckboxes(bool enabled)
+    private void SetScanControls(bool enabled)
     {
+        btnRefresh.Visible = enabled;
+
         chkHideIgnored.Enabled = enabled;
         chkHideComplete.Enabled = enabled;
         chkHideSpecials.Enabled = enabled;
@@ -740,8 +752,18 @@ public partial class ShowSummary : Form, IDialogParent
         chkHideDiskEps.Enabled = enabled;
 
         btnClear.Enabled = enabled;
+
+        pbProgress.Visible = !enabled;
+        lblStatus.Visible = !enabled;
     }
 
+    private void Reset()
+    {
+        grid1.Columns.Clear();
+        grid1.Rows.Clear();
+        showList.Clear();
+        PopulateGrid();
+    }
 
     private async void btnRefresh_Click(object sender, EventArgs e)
     {
