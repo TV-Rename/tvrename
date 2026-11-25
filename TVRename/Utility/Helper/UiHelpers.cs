@@ -144,13 +144,13 @@ public static class UiHelpers
                 updater();
             }
         }
-        catch (InvalidAsynchronousStateException _)
+        catch (InvalidAsynchronousStateException)
         {
             // The control's thread no longer exists (form was closed)
             // Silently ignore as the operation is being cancelled anyway
             Logger.Warn($"Failed to Invoke (InvalidAsynchronousStateException) on {uiElement.Name}");
         }
-        catch (ObjectDisposedException _)
+        catch (ObjectDisposedException)
         {
             // Silently ignore as the operation is being cancelled anyway
             Logger.Warn($"Failed to Invoke (ObjectDisposedException) on {uiElement.Name}");
