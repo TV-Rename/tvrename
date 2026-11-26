@@ -40,8 +40,8 @@ public class ActionEngine(TVRenameStats stats)
     /// Processes a set of actions, running them in a multi-threaded way based on the application's settings.
     /// </summary>
     /// <param name="theList">An ItemList to be processed.</param>
-    /// <param name="token"></param>
-    public async Task DoActionsAsync(ItemList theList, CancellationTokenSource token)
+    /// <param name="cts"></param>
+    public async Task DoActionsAsync(ItemList theList, CancellationTokenSource cts)
     {
         Logger.Info("**********************");
         Logger.Info($"Doing Selected Actions.... ({theList.Count} items detected, {theList.Actions.Count} actions to be completed )");
@@ -50,14 +50,15 @@ public class ActionEngine(TVRenameStats stats)
         try
         {
             //Do the main 4 queues
-            actionWorkers = ActionProcessorMakeQueues(theList, token);
-            actionWorkerTasks = actionWorkers.Select(a => a.StartAsync(token.Token)).ToList();
+            actionWorkers = ActionProcessorMakeQueues(theList, cts);
+            CancellationToken token = cts.Token;
+            actionWorkerTasks = actionWorkers.Select(a => a.StartAsync(token)).ToList();
             await Task.WhenAll(actionWorkerTasks);
 
             //Finish up wiht the later queue that needs to happen after the others
             var q = Action.QueueName.later;
-            var laterQueue = new ActionQueue(GetName(q), GetParallelLimit(q), theList.GetActionsForQueue(q), mStats, token);
-            await laterQueue.StartAsync(token.Token);
+            var laterQueue = new ActionQueue(GetName(q), GetParallelLimit(q), theList.GetActionsForQueue(q), mStats, cts);
+            await laterQueue.StartAsync(token);
 
             //Tidy Up
             theList.RemoveAll(x => x is Action { Outcome: { Done: true, Error: false } });
@@ -65,6 +66,10 @@ public class ActionEngine(TVRenameStats stats)
             {
                 Logger.Warn(slia.Outcome.LastError, $"Failed to complete the following action: {slia.Name}, doing {slia}. Error was {slia.Outcome.LastError?.Message}");
             }
+        }
+        catch (ObjectDisposedException)
+        {
+            Logger.Warn("ObjectDisposedException in ActionProcessor");
         }
         catch (Exception e)
         {
