@@ -15,6 +15,10 @@ namespace TVRename;
 internal sealed class ListViewColourer : NativeWindow
 {
     private const int GROUP_TITLE_MAX_CHARS = 512;
+    private const int GROUP_LINE_GAP = 6;
+    private const int GROUP_LINE_END = 26;
+    private const TextFormatFlags GROUP_TITLE_FORMAT =
+        TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix;
     private readonly ListView list;
     private readonly int offsetText = Marshal.OffsetOf<NMLVCUSTOMDRAW>(nameof(NMLVCUSTOMDRAW.clrText)).ToInt32();
     private readonly int offsetTextBack = Marshal.OffsetOf<NMLVCUSTOMDRAW>(nameof(NMLVCUSTOMDRAW.clrTextBk)).ToInt32();
@@ -96,6 +100,12 @@ internal sealed class ListViewColourer : NativeWindow
             else if ((draw.dwDrawStage & CDDS_ITEMPREPAINT) == CDDS_ITEMPREPAINT)
             {
                 AdjustRowColours(m.LParam);
+            }
+
+            if (draw.dwDrawStage == CDDS_PREPAINT && draw.dwItemType != LVCDI_GROUP && ThemeManager.IsDark
+                && list is { Enabled: true, GridLines: false, View: View.Details })
+            {
+                CoverColumnLines(draw.hdc);
             }
         }
         catch (Exception ex)
@@ -227,6 +237,33 @@ internal sealed class ListViewColourer : NativeWindow
         }
     }
 
+    // The dark list style draws faint column lines where there is no row (group titles, below the last row) and the light
+    // style draws none, so they are covered before the rows and group titles are drawn; a disabled list is left as it is
+    private void CoverColumnLines(IntPtr hdc)
+    {
+        IntPtr header = SendMessage(list.Handle, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+        if (header == IntPtr.Zero || !GetWindowRect(header, out RECT headerRect))
+        {
+            return;
+        }
+
+        // The header moves left when the list is scrolled sideways, so its items are offset by where it sits
+        int headerLeft = list.PointToClient(new Point(headerRect.left, headerRect.top)).X;
+        int margin = list.LogicalToDeviceUnits(2);
+        int count = (int)SendMessage(header, HDM_GETITEMCOUNT, IntPtr.Zero, IntPtr.Zero);
+
+        using Graphics g = Graphics.FromHdc(hdc);
+        using SolidBrush back = new(list.BackColor);
+        for (int i = 0; i < count; i++)
+        {
+            RECT item = new();
+            if (SendMessage(header, HDM_GETITEMRECT, (IntPtr)i, ref item) != IntPtr.Zero)
+            {
+                g.FillRectangle(back, headerLeft + item.right - margin, 0, margin + margin, list.ClientSize.Height);
+            }
+        }
+    }
+
     private static bool IsSpecific(int colorRef) => colorRef is not CLR_DEFAULT and not CLR_NONE;
 
     private static Color FromColorRef(int colorRef) => Color.FromArgb(colorRef & 0xFF, (colorRef >> 8) & 0xFF, (colorRef >> 16) & 0xFF);
@@ -273,12 +310,39 @@ internal sealed class ListViewColourer : NativeWindow
             // A little extra width so a marginally wider font is never cut off
             Rectangle textArea = area with { Width = area.Width + area.Height };
             TextRenderer.DrawText(g, title, list.Font, textArea, ThemeHelper.Readable(T.GroupTitle, list.BackColor, 3.0),
-                TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix);
+                GROUP_TITLE_FORMAT);
+
+            Size titleSize = TextRenderer.MeasureText(g, title, list.Font, textArea.Size,
+                GROUP_TITLE_FORMAT | TextFormatFlags.NoPadding);
+            int textRight = area.Left + titleSize.Width;
+            DrawGroupLine(g, groupId, label, Math.Max(label.right, textRight));
         }
         finally
         {
             Marshal.FreeHGlobal(buffer);
         }
+    }
+
+    // The dark list style draws the line after a group title barely darker than the list, so it is drawn again where
+    // Windows draws it (short of the collapse button) in the theme's line colour, as visible as the light style's
+    private void DrawGroupLine(Graphics g, int groupId, RECT label, int titleRight)
+    {
+        RECT header = new() { top = LVGGR_HEADER };
+        if (SendMessage(list.Handle, LVM_GETGROUPRECT, (IntPtr)groupId, ref header) == IntPtr.Zero)
+        {
+            return;
+        }
+
+        int left = titleRight + list.LogicalToDeviceUnits(GROUP_LINE_GAP);
+        int right = header.right - list.LogicalToDeviceUnits(GROUP_LINE_END);
+        if (right <= left)
+        {
+            return;
+        }
+
+        int y = (label.top + label.bottom) / 2;
+        using Pen line = new(T.Border);
+        g.DrawLine(line, left, y, right, y);
     }
 
     private const int WM_PAINT = 0x000F;
@@ -296,6 +360,7 @@ internal sealed class ListViewColourer : NativeWindow
     private const int CDIS_HOT = 0x40;
     private const int LVCDI_GROUP = 0x1;
     private const int LVM_GETGROUPRECT = 0x1000 + 98;
+    private const int LVGGR_HEADER = 1;
     private const int LVGGR_LABEL = 2;
     private const int LVM_GETGROUPINFO = 0x1000 + 149;
     private const int LVGF_HEADER = 0x1;
