@@ -7,7 +7,6 @@
 //
 
 using System.ComponentModel;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -24,6 +23,8 @@ public class ScheduleGuide : UserControl
 {
     private const int DAYS_SHOWN = 7;
     private const string DATE_FORMAT = "yyyy-MM-dd";
+    private const int FONT_SIZE = 12;
+    private const string DIV_END = "</div>";
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     // How much each tile shows; the show name and episode number are always shown
@@ -147,37 +148,42 @@ public class ScheduleGuide : UserControl
     public void SetEpisodes(IEnumerable<ProcessedEpisode> eps, ProcessedEpisode? selectedEpisode, int hidden)
     {
         hiddenByFilter = hidden;
-        slots = [];
+        slots = Slots(eps);
+
+        // The list's selection, or else the slot already shown, found again in the new episode list
+        List<ProcessedEpisode>? wanted = selectedEpisode is null ? null : slots.FirstOrDefault(slot => slot.Contains(selectedEpisode));
+        wanted ??= slots.FirstOrDefault(slot => SameSlot(slot, selected));
+
+        // Same episodes as the page shows or is loading: at most the selection moved
+        bool samePage = Signature() == renderedSignature && (PageReady || PageLoading);
+        if (samePage && wanted is not null && !SameSlot(wanted, selected))
+        {
+            SelectTile(slots.IndexOf(wanted));
+        }
+
+        selected = wanted;
+        if (!samePage)
+        {
+            RenderWhenVisible();
+        }
+    }
+
+    private static List<List<ProcessedEpisode>> Slots(IEnumerable<ProcessedEpisode> eps)
+    {
+        List<List<ProcessedEpisode>> found = [];
         foreach (ProcessedEpisode ep in eps.Where(ep => ep.GetAirDateDt().HasValue).OrderBy(ep => ep.GetAirDateDt()).ThenBy(ep => ep.SeriesName).ThenBy(ep => ep.AppropriateEpNum))
         {
-            List<ProcessedEpisode>? last = slots.LastOrDefault();
+            List<ProcessedEpisode>? last = found.LastOrDefault();
             if (last is not null && last[0].Show == ep.Show && last[0].GetAirDateDt() == ep.GetAirDateDt())
             {
                 last.Add(ep);
             }
             else
             {
-                slots.Add([ep]);
+                found.Add([ep]);
             }
         }
-
-        // The list's selection, or else the slot already shown, found again in the new episode list
-        List<ProcessedEpisode>? wanted = selectedEpisode is null ? null : slots.FirstOrDefault(slot => slot.Contains(selectedEpisode));
-        wanted ??= slots.FirstOrDefault(slot => SameSlot(slot, selected));
-
-        if (Signature() == renderedSignature && (PageReady || PageLoading))
-        {
-            // Same episodes as the page shows or is loading; at most the selection moved
-            if (wanted is not null && !SameSlot(wanted, selected))
-            {
-                SelectTile(slots.IndexOf(wanted));
-            }
-            selected = wanted;
-            return;
-        }
-
-        selected = wanted;
-        RenderWhenVisible();
+        return found;
     }
 
     private void SelectTile(int index)
@@ -264,14 +270,14 @@ public class ScheduleGuide : UserControl
     private void Browser_JavascriptMessageReceived(object? sender, JavascriptMessageReceivedEventArgs e)
     {
         // Messages are "page|action|value"
-        string[] parts = (e.Message as string ?? string.Empty).Split('|');
-        if (parts.Length != 3 || !int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int page)
-            || !int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
+        if ((e.Message as string ?? string.Empty).Split('|') is not [var pageText, var action, var valueText]
+            || !int.TryParse(pageText, NumberStyles.Integer, CultureInfo.InvariantCulture, out int page)
+            || !int.TryParse(valueText, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
         {
             return;
         }
 
-        OnUiThread(() => _ = ActAsync(page, parts[1], value));
+        OnUiThread(() => _ = ActAsync(page, action, value));
     }
 
     private async Task ActAsync(int page, string action, int value)
@@ -356,6 +362,10 @@ public class ScheduleGuide : UserControl
 
             case "search":
                 EpisodesSearched?.Invoke(this, slot);
+                break;
+
+            default:
+                // Not a slot action
                 break;
         }
     }
@@ -471,13 +481,13 @@ public class ScheduleGuide : UserControl
         List<ShowConfiguration> shows = [.. slots.Select(slot => slot[0].Show).Distinct()];
 
         StringBuilder sb = new();
-        sb.AppendLine(ShowHtmlHelper.HTMLHeader(12));
+        sb.AppendLine(ShowHtmlHelper.HTMLHeader(FONT_SIZE));
         sb.AppendLine($"<style>{LayoutCss()}{ColourCss()}{IconCss()}</style>");
 
         sb.AppendLine("<div class=\"guide-top\">");
         AppendDetails(sb);
         AppendPaging(sb);
-        sb.AppendLine("</div>");
+        sb.AppendLine(DIV_END);
 
         for (int w = firstWeek; w <= lastWeek; w++)
         {
@@ -492,7 +502,7 @@ public class ScheduleGuide : UserControl
             $"<script>var page={pageNumber},days={DAYS_SHOWN},firstWeek={firstWeek},lastWeek={lastWeek},startWeek={Math.Clamp(week, firstWeek, lastWeek)}"
             + $",firstDay='{FirstDay.ToString(DATE_FORMAT, CultureInfo.InvariantCulture)}',picked='{picked}'"
             + $",featured={featuredIndex},featuredLabel='{upNextLabel}',shows={ShowsJson(shows)};</script>"));
-        sb.AppendLine($"<script>{GuideScript()}</script>");
+        sb.AppendLine($"<script>{DetailsScript()}{NavigationScript()}</script>");
         sb.AppendLine(ShowHtmlHelper.HTMLFooter());
         return sb.ToString();
     }
@@ -516,7 +526,8 @@ public class ScheduleGuide : UserControl
         sb.AppendLine("<div class=\"details-text\">");
         sb.AppendLine("<div class=\"details-title\"><span id=\"dLabel\" class=\"badge bg-secondary\"></span> <span id=\"dShow\">Nothing on the schedule</span> <span id=\"dStatus\"></span></div>");
         sb.AppendLine("<div id=\"dEpisode\" class=\"details-episode\"></div>");
-        sb.AppendLine("<div class=\"details-airs\"><span id=\"dAirs\"></span> <img id=\"dLogo\" class=\"logo logo-lg\" alt=\"\" onerror=\"noLogo(current)\"><span id=\"dNetwork\" class=\"badge bg-primary\"></span> <span id=\"dHowLong\" class=\"text-muted\"></span></div>");
+        sb.AppendLine("<div class=\"details-airs\"><span id=\"dAirs\"></span> <img id=\"dLogo\" class=\"logo logo-lg\" alt=\"\" onerror=\"noLogo(current)\">"
+                      + "<span id=\"dNetwork\" class=\"badge bg-primary\"></span> <span id=\"dHowLong\" class=\"text-muted\"></span></div>");
         sb.AppendLine("<div class=\"show-summary text-muted\"><span class=\"label\">About the show: </span><span id=\"dShowSummary\"></span></div>");
         sb.AppendLine("<div class=\"file-line\"><span id=\"dFile\" class=\"text-muted small\"></span>");
         sb.AppendLine("<a id=\"dWatch\" class=\"btn btn-sm btn-outline-secondary\"><i class=\"far fa-eye\"></i> Watch</a>");
@@ -532,15 +543,16 @@ public class ScheduleGuide : UserControl
         sb.AppendLine("<button id=\"bEarlier\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"showWeek(shown-1,'',true)\"></button>");
         sb.AppendLine("<button class=\"btn btn-sm btn-outline-secondary\" onclick=\"showWeek(0,'',true)\">Today</button>");
         sb.AppendLine("<button id=\"bLater\" class=\"btn btn-sm btn-outline-secondary\" onclick=\"showWeek(shown+1,'',true)\"></button>");
-        sb.AppendLine("</div>");
+        sb.AppendLine(DIV_END);
         sb.AppendLine("<div id=\"range\" class=\"text-muted small mt-1\"></div>");
         if (hiddenByFilter > 0)
         {
             // A filter set in either view hides episodes here too, so say so
             string episodes = hiddenByFilter == 1 ? "episode" : "episodes";
-            sb.AppendLine($"<div class=\"filter-note small mt-1\"><span class=\"badge bg-warning\" style=\"color:#212529\">Filtered</span> {hiddenByFilter} {episodes} hidden · <a href=\"#\" onclick=\"send('clearfilter',0);return false;\">Clear</a></div>");
+            sb.AppendLine($"<div class=\"filter-note small mt-1\"><span class=\"badge bg-warning\" style=\"color:#212529\">Filtered</span> {hiddenByFilter} {episodes} hidden"
+                          + " · <a href=\"#\" onclick=\"send('clearfilter',0);return false;\">Clear</a></div>");
         }
-        sb.AppendLine("</div>");
+        sb.AppendLine(DIV_END);
     }
 
     private void AppendWeek(StringBuilder sb, int w, List<ShowConfiguration> shows)
@@ -555,9 +567,10 @@ public class ScheduleGuide : UserControl
         for (int d = 0; d < DAYS_SHOWN; d++)
         {
             DateTime day = first.AddDays(d);
-            sb.AppendLine($"<div class=\"day-head {DayClass(day)}\" data-date=\"{day.ToString(DATE_FORMAT, CultureInfo.InvariantCulture)}\"><div class=\"day-name\">{Encode(DayName(day))}</div><div class=\"day-date\">{Encode(day.ToString("M"))}</div></div>");
+            sb.AppendLine($"<div class=\"day-head {DayClass(day)}\" data-date=\"{day.ToString(DATE_FORMAT, CultureInfo.InvariantCulture)}\">"
+                          + $"<div class=\"day-name\">{Encode(DayName(day))}</div><div class=\"day-date\">{Encode(day.ToString("M"))}</div></div>");
         }
-        sb.AppendLine("</div>");
+        sb.AppendLine(DIV_END);
 
         sb.AppendLine("<div class=\"days\">");
         for (int d = 0; d < DAYS_SHOWN; d++)
@@ -573,7 +586,7 @@ public class ScheduleGuide : UserControl
             {
                 AppendTile(sb, i, shows.IndexOf(slots[i][0].Show));
             }
-            sb.AppendLine("</div>");
+            sb.AppendLine(DIV_END);
         }
         sb.AppendLine("</div></div>");
     }
@@ -725,7 +738,7 @@ public class ScheduleGuide : UserControl
             {
                 using Image image = StatusIcons.Images[index];
                 using System.IO.MemoryStream png = new();
-                image.Save(png, ImageFormat.Png);
+                image.Save(png, System.Drawing.Imaging.ImageFormat.Png);
                 css.Append($".st{index}{{background-image:url(data:image/png;base64,{Convert.ToBase64String(png.ToArray())})}}");
             }
         }
@@ -790,7 +803,8 @@ public class ScheduleGuide : UserControl
         return css.ToString();
     }
 
-    private static string GuideScript()
+    // Fills the details panel and the network logos
+    private static string DetailsScript()
     {
         return """
             var shown = 0, current = -1;
@@ -858,6 +872,13 @@ public class ScheduleGuide : UserControl
               el('dWatch').href = watch; el('dWatch').style.display = watch ? '' : 'none';
               el('dExplore').href = explore; el('dExplore').style.display = explore ? '' : 'none';
             }
+            """;
+    }
+
+    // Weeks, tiles and the messages back to the window
+    private static string NavigationScript()
+    {
+        return """
             function pick(tile) {
               document.querySelectorAll('.tile.sel').forEach(function (t) { t.classList.remove('sel'); });
               tile.classList.add('sel');
