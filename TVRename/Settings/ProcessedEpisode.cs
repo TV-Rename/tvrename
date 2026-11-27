@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using Humanizer;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -239,18 +240,7 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
             return "Aired";
         }
 
-        int h = ts.Hours;
-        if (ts.TotalHours >= 1)
-        {
-            if (ts.Minutes >= 30)
-            {
-                h += 1;
-            }
-
-            return ts.Days + "d " + h + "h";
-        }
-
-        return Math.Round(ts.TotalMinutes) + "min";
+        return ts.Humanize(2,true, null, TimeUnit.Week, TimeUnit.Minute, ", ", false);
     }
 
     public string DayOfWeek()
