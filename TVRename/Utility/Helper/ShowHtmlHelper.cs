@@ -1609,7 +1609,7 @@ internal static class ShowHtmlHelper
                + $"<body style=\"background-color: {backgroundColour.HexColour()}; color: {foregroundColour.HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
     }
 
-    private static string HexColour(this Color c)
+    internal static string HexColour(this Color c)
         => "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
 
     // Bootstrap's tables, season rows, buttons and muted text are made for a light page
@@ -1728,7 +1728,7 @@ internal static class ShowHtmlHelper
         return body;
     }
 
-    private static string WideBannerUrl(this ShowConfiguration series)
+    internal static string WideBannerUrl(this ShowConfiguration series)
     {
         string? url = series.CachedShow?.GetSeriesWideBannerPath();
 

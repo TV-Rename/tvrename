@@ -1115,6 +1115,25 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
         return null;
     }
 
+    // The logos of the networks a show is on, by network name; empty if TMDB has none or can't be reached
+    internal static async Task<Dictionary<string, string>> GetNetworkLogosAsync(int tmdbId, CancellationToken token)
+    {
+        try
+        {
+            TvShow? show = await Client.GetTvShowAsync(tmdbId, cancellationToken: token);
+            return show?.Networks?
+                       .Where(network => network.Name.HasValue() && network.LogoPath.HasValue())
+                       .DistinctBy(network => network.Name)
+                       .ToDictionary(network => network.Name!, network => ImageUrl(network.LogoPath, "w154")!)
+                   ?? [];
+        }
+        catch (Exception ex) when (ex is APIException or HttpRequestException or JsonException or OperationCanceledException or UnauthorizedAccessException)
+        {
+            LOGGER.Debug(ex, $"Could not get the network logos for TMDB show {tmdbId}");
+            return [];
+        }
+    }
+
     /// <exception cref="GeneralHttpException">Condition.</exception>
     /// <exception cref="SourceConnectivityException">Condition.</exception>
     /// <exception cref="AggregateException"></exception>

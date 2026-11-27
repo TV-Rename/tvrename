@@ -10,6 +10,7 @@ using BrightIdeasSoftware;
 using CefSharp;
 using CefSharp.WinForms;
 using Humanizer;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using TVRename.Forms.Supporting;
 using TVRename.Forms.Tools;
@@ -989,6 +990,7 @@ public partial class UI : Form, IDialogParent
         var n = mDoc.WriteRecentAsync();
 
         SetStartUpTab();
+        ScheduleViewChanged();
 
         foreach (TabPage tp in tabMainUITabs.TabPages) // grr! why does it go white?
         {
@@ -1282,6 +1284,10 @@ public partial class UI : Form, IDialogParent
             lvWhenToWatch.RestoreState(Convert.FromBase64String(wtwLayout));
         }
 
+        XElement? wtwNode = layoutNode.Descendants("WTWLayout").FirstOrDefault();
+        scheduleGuide.SetTiles(wtwNode?.Attribute("GuideTiles")?.Value);
+        tcSchedule.SelectedTab = bool.TryParse(wtwNode?.Attribute("Guide")?.Value, out bool guide) && guide ? tpScheduleGuide : tpScheduleList;
+
         foreach (XElement widthXmlElement in layoutNode.Descendants("ColumnWidths"))
         {
             ok = LoadWidths(widthXmlElement) && ok;
@@ -1392,7 +1398,9 @@ public partial class UI : Form, IDialogParent
                         new XAttribute("State", Convert.ToBase64String(olvAction.SaveState())
                         ),
                     new XElement("WTWLayout",
-                        new XAttribute("State", Convert.ToBase64String(lvWhenToWatch.SaveState())))
+                        new XAttribute("State", Convert.ToBase64String(lvWhenToWatch.SaveState())),
+                        new XAttribute("Guide", tcSchedule.SelectedTab == tpScheduleGuide),
+                        new XAttribute("GuideTiles", scheduleGuide.TilesText()))
                     )
                 )
             )
@@ -2033,6 +2041,7 @@ public partial class UI : Form, IDialogParent
         DateTime dt = calCalendar.SelectionStart;
         bool first = true;
 
+        scheduleGuide.ShowDay(dt);
         lvWhenToWatch.DeselectAll();
 
         foreach (ProcessedEpisode ei in lvWhenToWatch.Objects)
@@ -2053,6 +2062,131 @@ public partial class UI : Form, IDialogParent
             }
         }
         lvWhenToWatch.Focus();
+    }
+
+    private void tcSchedule_SelectedIndexChanged(object sender, EventArgs e) => ScheduleViewChanged();
+
+    private void ScheduleViewChanged()
+    {
+        bool guide = tcSchedule.SelectedTab == tpScheduleGuide;
+        if (guide)
+        {
+            // the list's filters may have changed while it was showing
+            FillScheduleGuide();
+        }
+        tsbScheduleGuideFilter.Visible = guide;
+        tsbScheduleGuideTiles.Visible = guide;
+        toolStripButton1.Enabled = !guide; // Revert View is for the list's columns
+
+        // The calendar is only on the Guide
+        calCalendar.Visible = guide;
+        tableLayoutPanel1.ColumnStyles[1].SizeType = guide ? SizeType.Absolute : SizeType.AutoSize;
+    }
+
+    // The Guide shows what the list shows: one set of filters serves both views
+    private void FillScheduleGuide()
+    {
+        List<ProcessedEpisode> shown = [.. lvWhenToWatch.FilteredObjects.OfType<ProcessedEpisode>()];
+        scheduleGuide.SetEpisodes(shown, lvWhenToWatch.FirstSelected(), recentEps.Count() - shown.Count);
+    }
+
+    // A pick filters the list's own column, so the list and the Guide stay in step
+    private void tsbScheduleGuideFilter_DropDownOpening(object sender, EventArgs e)
+    {
+        tsbScheduleGuideFilter.DropDownItems.Clear();
+        AddScheduleFilterMenu(olvWTWShowColumn, "All Shows");
+        AddScheduleFilterMenu(olvWTWNetwork, "All Networks");
+        AddScheduleFilterMenu(olvWTWDay, "All Days");
+        tsbScheduleGuideFilter.DropDownItems.Add(new ToolStripSeparator());
+        tsbScheduleGuideFilter.DropDownItems.Add("Clear All Filters", null, (_, _) => ClearScheduleFilters());
+    }
+
+    private void AddScheduleFilterMenu(OLVColumn column, string allText)
+    {
+        List<object> chosen = [.. column.ValuesChosenForFiltering.Cast<object>()];
+        ToolStripMenuItem menu = new(column.Text);
+        tsbScheduleGuideFilter.DropDownItems.Add(menu);
+        AddScheduleFilterItem(menu, column, allText, null, chosen.Count == 0);
+        menu.DropDownItems.Add(new ToolStripSeparator());
+
+        // Days in week order like the calendar, shows and networks alphabetically
+        IEnumerable<IGrouping<object, ProcessedEpisode>> values = lvWhenToWatch.Objects.Cast<ProcessedEpisode>()
+            .GroupBy(ep => column.ClusteringStrategy.GetClusterKey(ep))
+            .Where(g => $"{g.Key}".HasValue());
+        values = column == olvWTWDay
+            ? values.OrderBy(g => ((int)(g.First().GetAirDateDt()?.DayOfWeek ?? DayOfWeek.Sunday) - (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek + 7) % 7)
+            : values.OrderBy(g => $"{g.Key}", StringComparer.CurrentCultureIgnoreCase);
+
+        foreach (IGrouping<object, ProcessedEpisode> value in values)
+        {
+            AddScheduleFilterItem(menu, column, $"{value.Key}", value.Key, chosen.Contains(value.Key));
+        }
+    }
+
+    private void AddScheduleFilterItem(ToolStripMenuItem menu, OLVColumn column, string text, object? value, bool current)
+    {
+        ToolStripMenuItem item = new(text);
+        menu.DropDownItems.Add(item);
+        if (current)
+        {
+            item.Font = ScheduleGuide.BoldMenuFont(item.Font);
+        }
+        item.Click += (_, _) =>
+        {
+            column.ValuesChosenForFiltering = value is null ? new List<object>() : new List<object> { value };
+            lvWhenToWatch.UpdateColumnFiltering();
+            FillScheduleGuide();
+        };
+    }
+
+    private void tsbScheduleGuideTiles_DropDownOpening(object sender, EventArgs e) =>
+        scheduleGuide.FillTilesMenu(tsbScheduleGuideTiles.DropDownItems);
+
+    private void ScheduleGuide_FilterCleared(object? sender, EventArgs e) => ClearScheduleFilters();
+
+    // A click or Escape in the Guide closes any open menu
+    private void ScheduleGuide_MenuDismissed(object? sender, EventArgs e)
+    {
+        showRightClickMenu.Close();
+        foreach (ToolStripDropDownItem item in menuStrip1.Items.OfType<ToolStripDropDownItem>().Concat(tsWtW.Items.OfType<ToolStripDropDownItem>()))
+        {
+            item.HideDropDown();
+        }
+    }
+
+    private void ClearScheduleFilters()
+    {
+        lvWhenToWatch.ResetColumnFiltering();
+        FillScheduleGuide();
+    }
+
+    // The Guide works through the list's selection, so the list's own handlers do the rest
+    private void SelectInSchedule(List<ProcessedEpisode> eps)
+    {
+        if (!lvWhenToWatch.Selected().SequenceEqual(eps))
+        {
+            lvWhenToWatch.SelectedObjects = eps;
+        }
+    }
+
+    private void ScheduleGuide_EpisodesSelected(object? sender, List<ProcessedEpisode> eps) => SelectInSchedule(eps);
+
+    private void ScheduleGuide_EpisodesOpened(object? sender, List<ProcessedEpisode> eps)
+    {
+        SelectInSchedule(eps);
+        lvWhenToWatch_DoubleClick(sender!, EventArgs.Empty);
+    }
+
+    private async void ScheduleGuide_EpisodesRightClicked(object? sender, List<ProcessedEpisode> eps)
+    {
+        SelectInSchedule(eps);
+        await WtwRightClickOnShowAsync(Cursor.Position);
+    }
+
+    private void ScheduleGuide_EpisodesSearched(object? sender, List<ProcessedEpisode> eps)
+    {
+        SelectInSchedule(eps);
+        bnWTWBTSearch_Click(sender, EventArgs.Empty);
     }
 
     // ReSharper disable once InconsistentNaming
@@ -4951,6 +5085,8 @@ public partial class UI : Form, IDialogParent
         calendarBeingUpdated = false;
 
         await UpdateIconsAsync(new DirFilesCache(), token);
+
+        FillScheduleGuide();
     }
 
     private async Task UpdateIconsAsync(DirFilesCache dfc, CancellationToken token)
