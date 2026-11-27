@@ -97,6 +97,10 @@ internal sealed class ListViewColourer : NativeWindow
             {
                 AdjustRowColours(m.LParam);
             }
+            else if (draw.dwDrawStage == CDDS_PREPAINT && ThemeManager.IsDark && list is { Enabled: true, GridLines: false, View: View.Details })
+            {
+                CoverColumnLines(draw.hdc);
+            }
         }
         catch (Exception ex)
         {
@@ -224,6 +228,33 @@ internal sealed class ListViewColourer : NativeWindow
         catch (Exception ex)
         {
             LogManager.GetCurrentClassLogger().Error(ex, $"Could not draw the grid lines of {list.Name}");
+        }
+    }
+
+    // The dark list style draws faint column lines where there is no row (group titles, below the last row) and the light
+    // style draws none, so they are covered before the rows and group titles are drawn; a disabled list is left as it is
+    private void CoverColumnLines(IntPtr hdc)
+    {
+        IntPtr header = SendMessage(list.Handle, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+        if (header == IntPtr.Zero || !GetWindowRect(header, out RECT headerRect))
+        {
+            return;
+        }
+
+        // The header moves left when the list is scrolled sideways, so its items are offset by where it sits
+        int headerLeft = list.PointToClient(new Point(headerRect.left, headerRect.top)).X;
+        int margin = list.LogicalToDeviceUnits(2);
+        int count = (int)SendMessage(header, HDM_GETITEMCOUNT, IntPtr.Zero, IntPtr.Zero);
+
+        using Graphics g = Graphics.FromHdc(hdc);
+        using SolidBrush back = new(list.BackColor);
+        for (int i = 0; i < count; i++)
+        {
+            RECT item = new();
+            if (SendMessage(header, HDM_GETITEMRECT, (IntPtr)i, ref item) != IntPtr.Zero)
+            {
+                g.FillRectangle(back, headerLeft + item.right - margin, 0, margin * 2, list.ClientSize.Height);
+            }
         }
     }
 
