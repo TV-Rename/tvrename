@@ -821,7 +821,7 @@ public static class FileHelper
                                         FileInfo From,
                                         string To,
                                         IProgress<CopyMoveProgress>? progress,
-                                        CancellationToken cancellationToken = default)
+                                        CancellationToken cancellationToken)
     {
         await CopyFileWithProgressAsync(From, To, progress, cancellationToken);
 
@@ -829,7 +829,7 @@ public static class FileHelper
         From.DeleteOrRecycleFile(null);
     }
 
-    private static async Task CopyFileWithProgressAsync(FileInfo From, string To, IProgress<CopyMoveProgress>? progress, CancellationToken cancellationToken = default)
+    private static async Task CopyFileWithProgressAsync(FileInfo From, string To, IProgress<CopyMoveProgress>? progress, CancellationToken cancellationToken)
     {
         long totalBytes = From.Length;
         long bytesTransferred = 0;
@@ -854,7 +854,7 @@ public static class FileHelper
     }
 
     private static string TempFor(FileSystemInfo f) => f.FullName + ".tvrenametemp";
-    public async static Task CopyMoveFileAsync(FileInfo From, FileInfo To, bool isMove, IProgress<CopyMoveProgress>? progress, CancellationToken cancellationToken = default)
+    public async static Task CopyMoveFileAsync(FileInfo From, FileInfo To, bool isMove, IProgress<CopyMoveProgress>? progress, CancellationToken cancellationToken)
     {
         //we use a temp name just in case we are interrupted or some other problem occurs
         string tempName = TempFor(To);
@@ -1135,7 +1135,7 @@ public static class FileHelper
         return File.Exists(destination);
     }
 
-    public static async Task MergeDirectoriesAsync(string sourceDir, string targetDir)
+    public static async Task MergeDirectoriesAsync(string sourceDir, string targetDir, CancellationToken cancellationToken)
     {
         // Create target directory if it doesn't exist
         Directory.CreateDirectory(targetDir);
@@ -1157,7 +1157,7 @@ public static class FileHelper
                 }
                 else
                 {
-                    await FileHelper.CopyMoveFileAsync(source, destination,false,null);
+                    await FileHelper.CopyMoveFileAsync(source, destination,false,null, cancellationToken);
                     FileHelper.DeleteOrRecycleFile(source, null);
                 }
             }
@@ -1170,7 +1170,7 @@ public static class FileHelper
                 }
                 else
                 {
-                    await FileHelper.CopyMoveFileAsync(source, destination, false, null);
+                    await FileHelper.CopyMoveFileAsync(source, destination, false, null, cancellationToken);
                 }
             }
         }
@@ -1181,7 +1181,7 @@ public static class FileHelper
             string dirName = Path.GetFileName(directory);
             string destDir = Path.Combine(targetDir, dirName);
 
-            await MergeDirectoriesAsync(directory, destDir);
+            await MergeDirectoriesAsync(directory, destDir, cancellationToken);
         }
         if (!DirectoryHasContents(sourceDir))
         {

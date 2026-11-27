@@ -10,11 +10,12 @@ using CloudFlareUtilities;
 using Humanizer;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
-
+using Polly;
+using Polly.Retry;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using TMDbLib.Objects.Authentication;
 
 
 namespace TVRename;
@@ -118,15 +119,15 @@ public static class HttpHelper
         return Task.FromResult(Array.Empty<byte>());
     }
 
-    private static async Task<string> HttpRequestAsync(string method, string url, string json, string contentType, string? token)
+    private static async Task<string> HttpRequestAsync(string method, string url, string json, string contentType, string? token, CancellationToken cancellationToken)
     {
-        return await HttpRequestAsync(method, url, json, contentType, token, string.Empty).ConfigureAwait(false);
+        return await HttpRequestAsync(method, url, json, contentType, token, string.Empty, cancellationToken).ConfigureAwait(false);
     }
 
     /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     public static async Task<string> HttpRequestAsync(string method, string url, string? postContent,
-        string? contentType, string? token, string? lang)
+        string? contentType, string? token, string? lang, CancellationToken cancellationToken)
     {
         using HttpClient newClient = new();
         Uri newClientBaseAddress = new(url);
@@ -154,10 +155,10 @@ public static class HttpHelper
             using StringContent content = new(postContent, Encoding.UTF8, "application/json");
 
             //POST the object to the specified URI
-            HttpResponseMessage response = await newClient.PostAsync(newClientBaseAddress, content).ConfigureAwait(false);
+            HttpResponseMessage response = await newClient.PostAsync(newClientBaseAddress, content, cancellationToken).ConfigureAwait(false);
 
             //Read back the answer from server
-            return await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringAsync(cancellationToken);
         }
 
         return await TaskObtainStringFromUrl(url, newClient);
@@ -340,33 +341,33 @@ public static class HttpHelper
     /// <exception cref="JsonReaderException">Response is not valid JSON.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
-    public static async Task<JObject> JsonHttpGetRequestAsync(string url, string? authToken) =>
-        JObject.Parse(await HttpRequestAsync("GET", url, null, "application/json", authToken, string.Empty));
+    public static async Task<JObject> JsonHttpGetRequestAsync(string url, string? authToken, CancellationToken cancellationToken) =>
+        JObject.Parse(await HttpRequestAsync("GET", url, null, "application/json", authToken, string.Empty, cancellationToken));
 
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
-    public static async Task<JArray> JsonListHttpGetRequestAsync(string url, string? authToken) =>
-        JArray.Parse(await HttpRequestAsync("GET", url, null, "application/json", authToken, string.Empty));
+    public static async Task<JArray> JsonListHttpGetRequestAsync(string url, string? authToken, CancellationToken cancellationToken) =>
+        JArray.Parse(await HttpRequestAsync("GET", url, null, "application/json", authToken, string.Empty, cancellationToken));
 
     /// <exception cref="JsonReaderException">Response is not valid JSON.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
-    public static async Task<JObject> JsonHttpPostRequestAsync(string url, JObject request, bool retry)
+    public static async Task<JObject> JsonHttpPostRequestAsync(string url, JObject request, bool retry, CancellationToken cancellationToken)
     {
         string? response = null;
 
-        async Task OperationAsync()
+        async Task OperationAsync(CancellationToken token)
         {
-            response = await HttpRequestAsync("POST", url, request.ToString(), "application/json", string.Empty).ConfigureAwait(false);
+            response = await HttpRequestAsync("POST", url, request.ToString(), "application/json", string.Empty, token).ConfigureAwait(false);
         }
 
         if (retry)
         {
-            await RetryOnExceptionAsync(3, 2.Seconds(), url, _ => true, OperationAsync, null).ConfigureAwait(false);
+            await RetryOnExceptionAsync(3, 2.Seconds(), url, _ => true, OperationAsync, null, cancellationToken).ConfigureAwait(false);
         }
         else
         {
-            await OperationAsync();
+            await OperationAsync(cancellationToken);
         }
 
         return JObject.Parse(response ?? string.Empty);
@@ -393,42 +394,57 @@ public static class HttpHelper
     /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="operation"/> is <see langword="null"/></exception>
     /// <exception cref="Exception">If we still get an Exception after all retries.</exception>
-    public static async Task RetryOnExceptionAsync(int times, TimeSpan delay, string url, Func<Exception, bool> retryableException, Func<Task> operation, System.Action? updateOperation)
+    public static async Task RetryOnExceptionAsync(int times, TimeSpan delay, string url, Func<Exception, bool> retryableException, Func<CancellationToken, Task> operation, System.Action? updateOperation, CancellationToken cancellationToken)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(times);
 
         ArgumentNullException.ThrowIfNull(operation);
 
-        int attempts = 0;
-        do
+        var pipeline = new ResiliencePipelineBuilder()
+            .AddRetry(new RetryStrategyOptions
+            {
+                ShouldHandle = new PredicateBuilder().Handle<Exception>(retryableException),
+                MaxRetryAttempts = times,
+                Delay = delay,
+                BackoffType = DelayBackoffType.Linear,
+                UseJitter = true,
+                OnRetry = args =>
+                {
+                    Logger.Warn($"Exception caught on attempt {args.AttemptNumber} of {times} to get {url} - will retry after delay {delay}: {args.Outcome.Exception?.ErrorText()}");
+
+                    try
+                    {
+                        updateOperation?.Invoke();
+                    }
+                    catch (Exception refreshException)
+                    {
+                        Logger.Error(refreshException, $"Could not complete the update operation: {refreshException.ErrorText()}");
+                    }
+
+                    return ValueTask.CompletedTask;
+                }
+            })
+            .Build();
+
+        try
         {
-            try
+            await pipeline.ExecuteAsync(async (token) =>
             {
-                attempts++;
-                await operation().ConfigureAwait(false);
-                break; // Success! Lets exit the loop!
-            }
-            catch (Exception ex)
-            {
-                if (attempts == times || !retryableException(ex))
+                if (cancellationToken.IsCancellationRequested)
                 {
-                    Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - cancelling: {ex.ErrorText()}");
-                    throw;
-                }
+                    Logger.Warn($"Operation cancelled while attempting to get {url}");
+                    cancellationToken.ThrowIfCancellationRequested();
+                };
 
-                Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.ErrorText()}");
-
-                await Task.Delay(delay).ConfigureAwait(false);
-                try
-                {
-                    updateOperation?.Invoke();
-                }
-                catch (Exception refreshException)
-                {
-                    Logger.Error(refreshException, $"Could not complete the update operation: {refreshException.ErrorText()}");
-                }
-            }
-        } while (true);
+                await operation(cancellationToken).ConfigureAwait(false);
+                return;
+            }, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn($"Unhanded Exception caught after {times} to get {url} - cancelling: {ex.ErrorText()}");
+            throw;
+        }
     }
 
     /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
@@ -464,13 +480,14 @@ public static class HttpHelper
     }
 
     /// <exception cref="Exception">If we still get an Exception after all retries.</exception>
-    public static async Task<JObject> HttpGetRequestWithRetryAsync(string fullUrl, int times, int secondsGap)
+    public static async Task<JObject> HttpGetRequestWithRetryAsync(string fullUrl, int times, int secondsGap, CancellationToken cancellationToken)
     {
         JObject? response = null;
         await RetryOnExceptionAsync(times, secondsGap.Seconds(), fullUrl,
             RetryableWebException()
-            , async () => { response = await JsonHttpGetRequestAsync(fullUrl, null); }
-            , null);
+            , async cancellationToken => { response = await JsonHttpGetRequestAsync(fullUrl, null, cancellationToken); }
+            , null
+            , cancellationToken);
 
         return response!;
     }
@@ -489,13 +506,14 @@ public static class HttpHelper
     /// <exception cref="Exception">If we still get an Exception after all retries.</exception>
     /// <exception cref="TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     /// <exception cref="HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
-    public static async Task<JArray> HttpGetArrayRequestWithRetryAsync(string fullUrl, int times, int secondsGap)
+    public static async Task<JArray> HttpGetArrayRequestWithRetryAsync(string fullUrl, int times, int secondsGap, CancellationToken cancellationToken)
     {
         JArray? response = null;
         await RetryOnExceptionAsync(times, secondsGap.Seconds(), fullUrl,
             RetryableWebException()
-            , async () => { response = await JsonListHttpGetRequestAsync(fullUrl, null); }
-            , null);
+            , async cancellationToken => { response = await JsonListHttpGetRequestAsync(fullUrl, null, cancellationToken); }
+            , null
+            , cancellationToken);
 
         return response!;
     }

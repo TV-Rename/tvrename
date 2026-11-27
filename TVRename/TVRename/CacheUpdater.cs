@@ -96,9 +96,9 @@ public class CacheUpdater : IDisposable, IAsyncDisposable
             switch (ccresult)
             {
                 case DialogResult.Retry:
-                    await TheTVDB.LocalCache.Instance.ReConnectAsync(false);
-                    await TVmaze.LocalCache.Instance.ReConnectAsync(false);
-                    await TMDB.LocalCache.Instance.ReConnectAsync(false);
+                    await TheTVDB.LocalCache.Instance.ReConnectAsync(false,cts.Token);
+                    await TVmaze.LocalCache.Instance.ReConnectAsync(false,cts.Token);
+                    await TMDB.LocalCache.Instance.ReConnectAsync(false,cts.Token);
                     break;
                 case DialogResult.Abort:
                     TVSettings.Instance.OfflineMode = true;

@@ -523,7 +523,7 @@ public partial class BulkAddMovie : Form
                 return;
             }
 
-            await engine.AddAllToMyMoviesAsync(mainUi);
+            await engine.AddAllToMyMoviesAsync(mainUi, new CancellationTokenSource());
         }
 
         Close();

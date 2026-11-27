@@ -7,6 +7,9 @@
 //
 
 using Polly;
+using Polly.Retry;
+using System.Web.Services.Description;
+using TMDbLib.Objects.Exceptions;
 using TVRename;
 
 namespace TVRename;
@@ -34,18 +37,32 @@ internal static class CachePersistor
             }
         }
     }
-    public static async Task SaveCacheAsync(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp, bool isShuttingDown = false)
+
+    public static async Task SaveCacheAsync(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp, CancellationToken token)
+        => await SaveCacheAsync(series, movies, cacheFile, timestamp, false, token);
+
+    public static async Task SaveCacheAsync(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp, bool isShuttingDown, CancellationToken token)
     {
-        Policy retryPolicy = Policy
-            .Handle<Exception>()
-            .Retry(3, (exception, retryCount) =>
+        var pipeline = new ResiliencePipelineBuilder()
+            .AddRetry(new RetryStrategyOptions
             {
-                Logger.Warn(exception, $"Retry {retryCount}/3 to save {cacheFile.FullName}.");
-            });
+                ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+                MaxRetryAttempts = 3,
+                Delay = TimeSpan.FromSeconds(2),
+                BackoffType = DelayBackoffType.Linear,
+                UseJitter = true,
+                OnRetry = args =>
+                {
+                    Logger.Warn(args.Outcome.Exception, $"Retry {args.AttemptNumber}/3 to save {cacheFile.FullName}.");
+                    return ValueTask.CompletedTask;
+                }
+            })
+            .AddTimeout(TimeSpan.FromSeconds(20))
+            .Build();
 
         try
         {
-            await retryPolicy.Execute(async () => await SaveCacheInternalAsync(series, movies, cacheFile, timestamp));
+            await pipeline.ExecuteAsync( async (token) => await SaveCacheInternalAsync(series, movies, cacheFile, timestamp, token), token);
         }
         catch (Exception e)
         {
@@ -58,12 +75,12 @@ internal static class CachePersistor
                     MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 if (dr != DialogResult.No)
                 {
-                    await SaveCacheAsync(series, movies, cacheFile, timestamp, isShuttingDown);
+                    await SaveCacheAsync(series, movies, cacheFile, timestamp, isShuttingDown, token);
                 }
             }
         }
     }
-    private static async Task SaveCacheInternalAsync(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp)
+    private static async Task SaveCacheInternalAsync(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp, CancellationToken token)
     {
         DirectoryInfo di = cacheFile.Directory;
         if (!di.Exists)
@@ -91,7 +108,7 @@ internal static class CachePersistor
 
         try
         {
-            await SaveCacheFileInternalAsync(series, movies, cacheFile, timestamp);
+            await SaveCacheFileInternalAsync(series, movies, cacheFile, timestamp, token);
         }
         catch (Exception e)
         {
@@ -101,10 +118,10 @@ internal static class CachePersistor
     }
 
     private static async Task SaveCacheFileInternalAsync(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile,
-        long timestamp)
+        long timestamp, CancellationToken token)
     {
         var cacheXml = GenerateCacheXML(series,movies,timestamp);
-        await XmlHelper.SaveXmlFileAsync(cacheXml, cacheFile.FullName);
+        await XmlHelper.SaveXmlFileAsync(cacheXml, cacheFile.FullName, token);
         Logger.Info($"Saved Cache to {cacheFile.FullName}");
     }
 

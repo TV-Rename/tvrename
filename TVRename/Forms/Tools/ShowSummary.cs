@@ -368,7 +368,7 @@ public partial class ShowSummary : Form, IDialogParent
                     gridSummary.rightClickMenu.Add("Stop Ignoring Season", async (_, _) =>
                     {
                         processedSeason.Show.IgnoreSeasons.Remove(processedSeason.SeasonNumber);
-                        await mDoc.TvAddedOrEditedAsync(false, false, false, null, processedSeason.Show);
+                        await mDoc.TvAddedOrEditedAsync(false, false, false, null, processedSeason.Show, new CancellationTokenSource());
                         gridSummary.PopulateGrid();
                         await gridSummary.MainWindow.FillMyShowsAsync();
                     });
@@ -378,7 +378,7 @@ public partial class ShowSummary : Form, IDialogParent
                     gridSummary.rightClickMenu.Add("Ignore Season", async (_, _) =>
                     {
                         processedSeason.Show.IgnoreSeasons.Add(processedSeason.SeasonNumber);
-                        await mDoc.TvAddedOrEditedAsync(false, false, false, null, processedSeason.Show);
+                        await mDoc.TvAddedOrEditedAsync(false, false, false, null, processedSeason.Show, new CancellationTokenSource());
                         gridSummary.PopulateGrid();
                         await gridSummary.MainWindow.FillMyShowsAsync();
                     });
@@ -390,7 +390,7 @@ public partial class ShowSummary : Form, IDialogParent
                 gridSummary.rightClickMenu.Add("Stop Checking TV Show", async (_, _) =>
                 {
                     show.DoMissingCheck = false;
-                    await mDoc.TvAddedOrEditedAsync(false, false, false, null, show);
+                    await mDoc.TvAddedOrEditedAsync(false, false, false, null, show, new CancellationTokenSource());
                     gridSummary.PopulateGrid();
                     await gridSummary.MainWindow.FillMyShowsAsync();
                 });
@@ -400,7 +400,7 @@ public partial class ShowSummary : Form, IDialogParent
                 gridSummary.rightClickMenu.Add("Start Checking TV Show", async (_, _) =>
                 {
                     show.DoMissingCheck = true;
-                    await mDoc.TvAddedOrEditedAsync(false, false, false, null, show);
+                    await mDoc.TvAddedOrEditedAsync(false, false, false, null, show, new CancellationTokenSource());
                     gridSummary.PopulateGrid();
                     await gridSummary.MainWindow.FillMyShowsAsync();
                 });

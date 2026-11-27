@@ -229,7 +229,7 @@ public partial class YtsViewerView : Form
     {
         await cts.CancelAsync();
         if (scanTask is not null) await scanTask;
-        await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, addedMovies);
+        await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, addedMovies, new CancellationTokenSource());
     }
 
     private void btnPreferences_Click(object sender, EventArgs e)

@@ -53,23 +53,23 @@ public class LocalCache : MediaCache, ITVSource
         LoadOk = loadFrom is null || (await CachePersistor.LoadTvCacheAsync(loadFrom, this, ct));
     }
 
-    public async Task<bool> ConnectAsync(bool showErrorMsgBox) => true;
+    public async Task<bool> ConnectAsync(bool showErrorMsgBox, CancellationToken token) => true;
 
-    public async Task SaveCacheAsync()
+    public async Task SaveCacheAsync(CancellationToken token)
     {
-        await CachePersistor.SaveCacheAsync(Series, Movies, CacheFile!, 0);
+        await CachePersistor.SaveCacheAsync(Series, Movies, CacheFile!, 0, token);
     }
 
-    public async Task<CachedSeriesInfo?> GetSeriesOrDownloadAsync(ISeriesSpecifier id)
+    public async Task<CachedSeriesInfo?> GetSeriesOrDownloadAsync(ISeriesSpecifier id, CancellationToken token)
     => HasSeries(id.TvMazeId)
         ? Series[id.TvMazeId.Value]
-        : await DownloadSeriesNowAsync(id);
+        : await DownloadSeriesNowAsync(id, token);
 
-    private async Task<CachedSeriesInfo> DownloadSeriesNowAsync(ISeriesSpecifier s)
+    private async Task<CachedSeriesInfo> DownloadSeriesNowAsync(ISeriesSpecifier s, CancellationToken token)
     {
         try
         {
-            CachedSeriesInfo downloadedSi = await API.GetSeriesDetailsAsync(s);
+            CachedSeriesInfo downloadedSi = await API.GetSeriesDetailsAsync(s, token);
 
             if (downloadedSi.TvMazeCode != s.TvMazeId && s.TvMazeId == -1)
             {
@@ -122,7 +122,7 @@ public class LocalCache : MediaCache, ITVSource
         Say($"{s.Name} from TVmaze", counter.Increment() , totalCount);
         try
         {
-            CachedSeriesInfo downloadedSi = await API.GetSeriesDetailsAsync(s);
+            CachedSeriesInfo downloadedSi = await API.GetSeriesDetailsAsync(s, token);
 
             if (downloadedSi.TvMazeCode != s.TvMazeId && s.TvMazeId == -1)
             {
@@ -158,7 +158,7 @@ public class LocalCache : MediaCache, ITVSource
         try
         {
             SayNoPct("Updates list from TVmaze");
-            IEnumerable<KeyValuePair<string, long>> updateTimes = await API.GetUpdatesAsync();
+            IEnumerable<KeyValuePair<string, long>> updateTimes = await API.GetUpdatesAsync(cts);
 
             SayNoPct("Processing updates from TVmaze");
             foreach (KeyValuePair<string, long> showUpdateTime in updateTimes)
@@ -272,7 +272,7 @@ public class LocalCache : MediaCache, ITVSource
                 }
             }
 
-            List<CachedSeriesInfo> results = [.. await API.ShowSearchAsync(text)];
+            List<CachedSeriesInfo> results = [.. await API.ShowSearchAsync(text, token)];
             LOGGER.Info($"Got {results.Count:N0} results searching for {text} on TVMaze");
 
             foreach (CachedSeriesInfo result in results)
@@ -298,13 +298,13 @@ public class LocalCache : MediaCache, ITVSource
         }
     }
 
-    public async Task ForgetEverythingAsync()
+    public async Task ForgetEverythingAsync(CancellationToken token)
     {
         {
             Series.Clear();
         }
 
-        await SaveCacheAsync();
+        await SaveCacheAsync(token);
         LOGGER.Info("Forgot all TVMaze shows");
     }
 
@@ -316,7 +316,7 @@ public class LocalCache : MediaCache, ITVSource
     public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TVmaze;
     TVDoc.ProviderType ITVSource.SourceProvider() => TVDoc.ProviderType.TVmaze;
 
-    public override async Task ReConnectAsync(bool b)
+    public override async Task ReConnectAsync(bool b, CancellationToken token)
     {
         //nothing to be done here
     }

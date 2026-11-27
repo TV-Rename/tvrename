@@ -129,10 +129,10 @@ public partial class MergedEpisodeFinder : Form
 
         rightClickMenu.Add("Episode Guide", async (_, _) => await GotoEpGuideAsync(si, mlastSelected));
         rightClickMenu.Add("Force Refresh", async (_, _) => await mainUi.ForceRefreshAsync(si, false));
-        rightClickMenu.Add("Edit TV Show", async (_, _) => await mainUi.EditShowAsync(si));
+        rightClickMenu.Add("Edit TV Show", async (_, _) => await mainUi.EditShowAsync(si, new CancellationTokenSource()));
 
         rightClickMenu.Add("Edit " + ProcessedSeason.UIFullSeasonWord(mlastSelected!.SeasonNumber),
-            async (_, _) => await mainUi.EditSeasonAsync(si, mlastSelected.SeasonNumber));
+            async (_, _) => await mainUi.EditSeasonAsync(si, mlastSelected.SeasonNumber, new CancellationTokenSource()));
 
         rightClickMenu.AddSeparator();
         rightClickMenu.Add("Add Rule", (_, _) => AddRule(mlastSelected, si, mLastClicked));

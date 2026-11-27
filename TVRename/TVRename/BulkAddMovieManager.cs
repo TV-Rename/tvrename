@@ -248,11 +248,11 @@ public class BulkAddMovieManager(TVDoc doc)
         } // for each directory
     }
 
-    public async Task AddAllToMyMoviesAsync(UI ui)
+    public async Task AddAllToMyMoviesAsync(UI ui, CancellationTokenSource cts)
     {
         List<MovieConfiguration> movies = await AddToLibraryAsync(AddItems.Where(ai => ai.CodeKnown));
 
-        await mDoc.MoviesAddedOrEditedAsync(true, false, false, ui, movies);
+        await mDoc.MoviesAddedOrEditedAsync(true, false, false, ui, movies, cts);
         AddItems.Clear();
     }
 

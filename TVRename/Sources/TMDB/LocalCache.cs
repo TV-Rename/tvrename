@@ -54,11 +54,11 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
             return InternalInstance;
         }
     }
-    public async Task ForgetEverythingAsync()
+    public async Task ForgetEverythingAsync(CancellationToken token)
     {
         Movies.Clear();
         Series.Clear();
-        await SaveCacheAsync();
+        await SaveCacheAsync(token);
         //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
         latestUpdateTime.Reset();
         LOGGER.Info($"Forget everything, so we assume we have TMDB updates until {latestUpdateTime}");
@@ -91,11 +91,11 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
         LoadOk = movieLoadTask && tvLoadTask;
     }
 
-    public async Task<bool> ConnectAsync(bool showErrorMsgBox) => true;
+    public async Task<bool> ConnectAsync(bool showErrorMsgBox, CancellationToken token) => true;
 
-    public async Task SaveCacheAsync()
+    public async Task SaveCacheAsync(CancellationToken token)
     {
-        await CachePersistor.SaveCacheAsync(Series, Movies, CacheFile!, latestUpdateTime.LastSuccessfulServerUpdateTimecode());
+        await CachePersistor.SaveCacheAsync(Series, Movies, CacheFile!, latestUpdateTime.LastSuccessfulServerUpdateTimecode(), token);
     }
 
     /// <exception cref="SourceConsistencyException">Condition.</exception>
@@ -1583,7 +1583,7 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
         return true;
     }
 
-    public override async Task ReConnectAsync(bool b)
+    public override async Task ReConnectAsync(bool showErrorMsgBox, CancellationToken token)
     {
         //nothing to be done here
     }

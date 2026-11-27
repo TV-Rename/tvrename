@@ -26,7 +26,7 @@ class PossibleMediaIdentifier
 
                 if (mediaType == MediaConfiguration.MediaType.movie)
                 {
-                    CachedMovieInfo? series = await TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(ss, locale, showMessageBox, new ThreadSafeCounter(), 1);
+                    CachedMovieInfo? series = await TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(ss, locale, showMessageBox, new ThreadSafeCounter(), 1, token);
                     return series?.TvdbCode;
                 }
                 else
@@ -75,7 +75,7 @@ class PossibleMediaIdentifier
         return null;
     }
 
-    protected static async Task<int?> ValidateOnTVMazeAsync(int? tvmazeId, Locale locale)
+    protected static async Task<int?> ValidateOnTVMazeAsync(int? tvmazeId, Locale locale, CancellationToken token)
     {
         if (tvmazeId.HasValue)
         {
@@ -83,7 +83,7 @@ class PossibleMediaIdentifier
             {
                 ISeriesSpecifier ss = new SearchSpecifier(tvmazeId.Value, locale, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
 
-                CachedSeriesInfo? series = await TVmaze.LocalCache.Instance.GetSeriesOrDownloadAsync(ss);
+                CachedSeriesInfo? series = await TVmaze.LocalCache.Instance.GetSeriesOrDownloadAsync(ss, token);
                 return series?.TvMazeCode;
             }
             catch (MediaNotFoundException)
@@ -155,7 +155,7 @@ class IdentifyFinalBoss : IdentifyFromNFOFiles, IPossibleMovieIdentifier
             {
                 //Find movie on TVDB based on Id
                 CachedMovieInfo? s3 = await
-                    TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(movie, localeToUse, showErrorMsgBox, new ThreadSafeCounter(), 1);
+                    TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(movie, localeToUse, showErrorMsgBox, new ThreadSafeCounter(), 1, token);
 
                 if (s3 != null && s3.TvdbCode.HasValue)
                 {
@@ -350,7 +350,7 @@ class IdentifyFromNFOFiles : PossibleMediaIdentifier, IPossibleTVShowIdentifier,
             int? tvdbId = FindShowCode(movie ,"tvdbid", "tvdb").ToInt();
             if (tvdbId.HasValue)
             {
-                CachedMovieInfo? s3 = await TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(movie, preferredLocale, showErrorMsgBox, new ThreadSafeCounter(), 1);
+                CachedMovieInfo? s3 = await TheTVDB.LocalCache.Instance.GetMovieAndDownloadAsync(movie, preferredLocale, showErrorMsgBox, new ThreadSafeCounter(), 1, token);
 
                 if (s3 != null && s3.TvdbCode.HasValue)
                 {
@@ -599,7 +599,7 @@ class IdentifyFromFilenameCodes : PossibleMediaIdentifier, IPossibleTVShowIdenti
                     }
                     break;
                 case "TVMAZE":
-                    int? tvMazeId = await ValidateOnTVMazeAsync(code, preferredLocale);
+                    int? tvMazeId = await ValidateOnTVMazeAsync(code, preferredLocale, token);
                     if (tvMazeId != null)
                     {
                         return (TVDoc.ProviderType.TVmaze, tvMazeId.Value);

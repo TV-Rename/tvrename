@@ -158,7 +158,7 @@ public partial class SettingsReview : Form
                 rightClickMenu.Add("Force Refresh",
                     async (_, _) => await mainUi.ForceMovieRefreshAsync([si], false));
 
-                rightClickMenu.Add("Edit Movie", async (_, _) => await mainUi.EditMovieAsync(si));
+                rightClickMenu.Add("Edit Movie", async (_, _) => await mainUi.EditMovieAsync(si, new CancellationTokenSource()));
 
                 rightClickMenu.AddSeparator();
                 foreach (string? f in await si.LocationsAsync())
@@ -172,7 +172,7 @@ public partial class SettingsReview : Form
                 rightClickMenu.Add("Force Refresh",
                     async (_, _) => await mainUi.ForceRefreshAsync([si], false, new CancellationTokenSource()));
 
-                rightClickMenu.Add("Edit TV Show", async (_, _) => await mainUi.EditShowAsync(si));
+                rightClickMenu.Add("Edit TV Show", async (_, _) => await mainUi.EditShowAsync(si, new CancellationTokenSource()));
             }
 
             rightClickMenu.AddSeparator();

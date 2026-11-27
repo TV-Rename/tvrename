@@ -388,7 +388,7 @@ public class qBitTorrent : IDownloadProvider
         if (TVSettings.Instance.qBitTorrentAPIVersion == qBitTorrentAPIVersion.v1)
         {
             string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string?> { { "hashes", name.Key } });
-            await HttpHelper.HttpRequestAsync("POST", url, parametersString.RemoveCharactersFrom("?"), "application/x-www-form-urlencoded", null, null);
+            await HttpHelper.HttpRequestAsync("POST", url, parametersString.RemoveCharactersFrom("?"), "application/x-www-form-urlencoded", null, null, CancellationToken.None);
         }
         else
         {

@@ -141,7 +141,7 @@ internal class ActionNfoEpisode : ActionNfo
         }
     }
 
-    protected override async Task<ActionOutcome> UpdateFileAsync()
+    protected override async Task<ActionOutcome> UpdateFileAsync(CancellationToken cancellationToken)
     {
         //We will replace the file as too difficult to update multiparts
         //We can't use XDocument as it's not fully valid XML
@@ -150,7 +150,7 @@ internal class ActionNfoEpisode : ActionNfo
             return await ReplaceMultipartFileAsync();
         }
 
-        XDocument doc = await XmlHelper.LoadXmlFromFileAsync(Where.FullName);
+        XDocument doc = await XmlHelper.LoadXmlFromFileAsync(Where.FullName, cancellationToken);
         XElement? root = doc.Root;
 
         if (root is null)
@@ -161,7 +161,7 @@ internal class ActionNfoEpisode : ActionNfo
         ShowConfiguration si = Episode!.Show;
         UpdateEpisodeFields(Episode, si, root, false);
 
-        await doc.SaveXmlAsync(Where.FullName);
+        await doc.SaveXmlAsync(Where.FullName, cancellationToken);
         return ActionOutcome.Success();
     }
 }

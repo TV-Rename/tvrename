@@ -132,7 +132,7 @@ public partial class DuplicateMovieFinder : Form
         });
         rightClickMenu.Add("Edit Movie", async (_, _) =>
         {
-            await mainUi.EditMovieAsync(si);
+            await mainUi.EditMovieAsync(si, new CancellationTokenSource());
             await UpdateAsync(mlastSelected);
         });
         rightClickMenu.Add("Choose Best", async (_, _) => await MergeItemsAsync(mlastSelected, mainUi));

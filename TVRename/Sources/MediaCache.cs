@@ -86,8 +86,6 @@ public abstract class MediaCache
         }
     }
 
-
-
     public ConcurrentDictionary<int, CachedMovieInfo> CachedMovieData
     {
         get
@@ -149,6 +147,6 @@ public abstract class MediaCache
     public abstract Task SearchAsync(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, Locale locale, CancellationToken token);
     public abstract int PrimaryKey(ISeriesSpecifier ss);
     public abstract string CacheSourceName();
-    public abstract Task ReConnectAsync(bool b);
-    public abstract Task<bool> GetUpdatesAsync(DownloadProgressStatus? p, IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts);
+    public abstract Task ReConnectAsync(bool showErrorMsgBox, CancellationToken token);
+    public abstract Task<bool> GetUpdatesAsync(DownloadProgressStatus? p, IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken token);
 }

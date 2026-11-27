@@ -27,7 +27,7 @@ internal class TvdbAccuracyCheck
         MoviesToUpdate = [];
     }
 
-    public async Task ServerAccuracyCheckAsync(CachedMovieInfo si, IProgress<DownloadProgressReport>? p)
+    public async Task ServerAccuracyCheckAsync(CachedMovieInfo si, IProgress<DownloadProgressReport>? p, CancellationToken token)
     {
         Logger.Info($"Checking Accuracy of {si.Name}({si.Id()}) on TVDB");
 
@@ -41,7 +41,7 @@ internal class TvdbAccuracyCheck
 
         try
         {
-            CachedMovieInfo newSi = await API.DownloadMovieInfoAsync(si, si.TargetLocale);
+            CachedMovieInfo newSi = await API.DownloadMovieInfoAsync(si, si.TargetLocale, token);
 
             if (Match(newSi, si))
             {
@@ -70,7 +70,7 @@ internal class TvdbAccuracyCheck
         }
     }
 
-    public async Task ServerAccuracyCheckAsync(CachedSeriesInfo si, IProgress<DownloadProgressReport>? p)
+    public async Task ServerAccuracyCheckAsync(CachedSeriesInfo si, IProgress<DownloadProgressReport>? p, CancellationToken token)
     {
         Logger.Info($"Checking Accuracy of {si.Name}({si.Id()}) on TVDB");
 
@@ -83,10 +83,10 @@ internal class TvdbAccuracyCheck
 
         try
         {
-            CachedSeriesInfo newSi = await API.DownloadSeriesInfoAsync(si, si.TargetLocale);
+            CachedSeriesInfo newSi = await API.DownloadSeriesInfoAsync(si, si.TargetLocale, token);
             TvShowAccuracyCheck(si, newSi);
 
-            await API.ReloadEpisodesAsync(newSi, si.ActualLocale ?? new Locale(), newSi, si.SeasonOrder);
+            await API.ReloadEpisodesAsync(newSi, si.ActualLocale ?? new Locale(), newSi, si.SeasonOrder, token);
             foreach (Episode newEpisode in newSi.Episodes)
             {
                 EpisodeAccuracyCheck(si, newEpisode);
@@ -201,12 +201,12 @@ internal class TvdbAccuracyCheck
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    public static async Task InvestigateUpdatesSinceAsync(int targetId, long baseTime)
+    public static async Task InvestigateUpdatesSinceAsync(int targetId, long baseTime, CancellationToken token)
     {
         for (int page = 0; page < 10000; page++)
         {
             Logger.Info($" BETA Update Checker: {page}");
-            JObject currentDownload = await TvdbWebApi.GetUpdatesAsync(baseTime, page)
+            JObject currentDownload = await TvdbWebApi.GetUpdatesAsync(baseTime, page, token)
                                       ?? throw new SourceConsistencyException("Could not get updates from TVDB", TVDoc.ProviderType.TheTVDB);
             JToken? jToken = currentDownload["data"];
 

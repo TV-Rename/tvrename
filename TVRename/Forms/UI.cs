@@ -39,7 +39,7 @@ public partial class UI : Form, IDialogParent
 
     #region Delegates
 
-    public delegate Task AsyncScanDelegate(TVSettings.ScanType type);
+    public delegate Task AsyncScanDelegate(TVSettings.ScanType type, CancellationToken token);
 
     public readonly AsyncScanDelegate ScanAndDo;
 
@@ -739,10 +739,10 @@ public partial class UI : Form, IDialogParent
         mDoc.Args.RevertFromTempUse();
     }
 
-    private async Task ScanAndActionAsync(TVSettings.ScanType type)
+    private async Task ScanAndActionAsync(TVSettings.ScanType type, CancellationToken token)
     {
         await UiScanAsync(null, null, true, type, MediaConfiguration.MediaType.both);
-        await ActionActionAsync(true, true, false);
+        await ActionActionAsync(true, true, false, token);
     }
 
     private static void UpdateSplashStatus(TVRenameSplash splashScreen, string text, int percent)
@@ -851,13 +851,14 @@ public partial class UI : Form, IDialogParent
 
         if (a.DoAll)
         {
-            await ActionActionAsync(true, UNATTENDED, true);
+            await ActionActionAsync(true, UNATTENDED, true, CancellationToken.None);
         }
 
         if (a.Save)
         {
-            await mDoc.WriteXMLSettingsAsync();
-            await SaveCaches();
+            var saveCancellationToken = new CancellationTokenSource();
+            await mDoc.WriteXMLSettingsAsync(saveCancellationToken.Token);
+            await SaveCaches(saveCancellationToken.Token);
         }
 
         if (a.Export)
@@ -978,7 +979,8 @@ public partial class UI : Form, IDialogParent
 
     private async void UI_LoadAsync(object sender, EventArgs e)
     {
-        var x = FillWhenToWatchListAsync();
+        var cts = new CancellationTokenSource();
+        var x = FillWhenToWatchListAsync(cts.Token);
         var y = FillMyShowsAsync(true);
 
         FillMyMovies();
@@ -1020,7 +1022,7 @@ public partial class UI : Form, IDialogParent
             BGDownloadTimer.Start();
         }
 
-        await TriggerAppUpdateCheckAsync();
+        await TriggerAppUpdateCheckAsync(CancellationToken.None);
         await Task.WhenAll(n, m);
         await SetShowsInTabs();
 
@@ -1034,7 +1036,7 @@ public partial class UI : Form, IDialogParent
             }
             else
             {
-                await RunAutoScanAsync("Startup Scan");
+                await RunAutoScanAsync("Startup Scan", CancellationToken.None);
             }
         }
     }
@@ -1059,7 +1061,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private async Task TriggerAppUpdateCheckAsync()
+    private async Task TriggerAppUpdateCheckAsync(CancellationToken token)
     {
         switch (TVSettings.Instance.UpdateCheckType)
         {
@@ -1071,18 +1073,18 @@ public partial class UI : Form, IDialogParent
                     TimeSpan interval = TVSettings.Instance.UpdateCheckInterval;
                     if (!lastUpdate.HasValue || lastUpdate >= interval)
                     {
-                        await DoAppUpdateCheckAsync();
+                        await DoAppUpdateCheckAsync(token);
                     }
                     return;
                 }
             case TVSettings.UpdateCheckMode.Everytime:
                 {
-                    await DoAppUpdateCheckAsync();
+                    await DoAppUpdateCheckAsync(token);
                     return;
                 }
             default:
                 {
-                    await DoAppUpdateCheckAsync();
+                    await DoAppUpdateCheckAsync(token);
                     return;
                 }
         }
@@ -1183,11 +1185,14 @@ public partial class UI : Form, IDialogParent
             "the \"Refresh\" button in the \"TV Shows\" tab.",
             "Force Refresh All", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
+        CancellationTokenSource cts = new();
+        CancellationToken token = cts.Token;
+
         if (res == DialogResult.Yes)
         {
-            await TheTVDB.LocalCache.Instance.ForgetEverythingAsync().ConfigureAwait(false);
-            await TVmaze.LocalCache.Instance.ForgetEverythingAsync().ConfigureAwait(false);
-            await TMDB.LocalCache.Instance.ForgetEverythingAsync().ConfigureAwait(false);
+            await TheTVDB.LocalCache.Instance.ForgetEverythingAsync(token).ConfigureAwait(false);
+            await TVmaze.LocalCache.Instance.ForgetEverythingAsync(token).ConfigureAwait(false);
+            await TMDB.LocalCache.Instance.ForgetEverythingAsync(token).ConfigureAwait(false);
 
             this.Invoke(new System.Action(async () =>
             {
@@ -1197,7 +1202,7 @@ public partial class UI : Form, IDialogParent
                 await FillEpGuideHtmlAsync();
                 await FillMovieGuideHtmlAsync();
 
-                await FillWhenToWatchListAsync();
+                await FillWhenToWatchListAsync(token);
                 BGDownloadTimer_QuickFire();
             }));
         }
@@ -1347,7 +1352,7 @@ public partial class UI : Form, IDialogParent
         Size = new Size(xsize, ysize);
     }
 
-    private async Task<bool> SaveLayoutXmlAsync()
+    private async Task<bool> SaveLayoutXmlAsync(CancellationToken token)
     {
         if (mDoc.Args.Hide)
         {
@@ -1356,7 +1361,7 @@ public partial class UI : Form, IDialogParent
 
         var layoutXML = GenerateLayoutXML();
 
-        return await mDoc.SaveLayoutXmlAsync(layoutXML);
+        return await mDoc.SaveLayoutXmlAsync(layoutXML, token);
     }
 
     private XDocument GenerateLayoutXML()
@@ -1414,7 +1419,7 @@ public partial class UI : Form, IDialogParent
         _shutdownManager.CancelAllTokens();
 
         await Task.Yield();
-        bool close = await CloseAndTidyUpAsync();
+        bool close = await CloseAndTidyUpAsync(CancellationToken.None);
 
         if (close)
         {
@@ -1423,7 +1428,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private async Task<bool> CloseAndTidyUpAsync()
+    private async Task<bool> CloseAndTidyUpAsync(CancellationToken token)
     {
         try
         {
@@ -1436,7 +1441,7 @@ public partial class UI : Form, IDialogParent
                 switch (res)
                 {
                     case DialogResult.Yes:
-                        await mDoc.WriteXMLSettingsAsync();
+                        await mDoc.WriteXMLSettingsAsync(token);
                         break;
 
                     case DialogResult.Cancel:
@@ -1453,14 +1458,14 @@ public partial class UI : Form, IDialogParent
             if (mDoc.Dirty() && (mDoc.Args.Unattended || mDoc.Args.Hide || TVSettings.Instance.AutoSaveOnExit || !Environment.UserInteractive))
             {
                 //We have to assume that they wanted to save any settings
-                await mDoc.WriteXMLSettingsAsync();
+                await mDoc.WriteXMLSettingsAsync(token);
             }
 
             this.Cursor = Cursors.WaitCursor;
 
-            await SaveLayoutXmlAsync();
+            await SaveLayoutXmlAsync(token);
             mDoc.TidyCaches();
-            await SaveCaches();  // This now tracks the cache save task with shutdown manager
+            await SaveCaches(token);  // This now tracks the cache save task with shutdown manager
             await mDoc.ClosingAsync();
 
             // Wait for all tracked tasks (including cache saves) to complete before proceeding
@@ -1909,11 +1914,11 @@ public partial class UI : Form, IDialogParent
     }
 
     private async void bnWhenToWatchCheck_Click(object? sender, EventArgs? e) =>
-        await RefreshWTWAsync(true, false);
+        await RefreshWTWAsync(true, false, CancellationToken.None);
 
-    private async Task FillWhenToWatchListAsync()
+    private async Task FillWhenToWatchListAsync(CancellationToken token)
     {
-        await UpdateScheduleAsync();
+        await UpdateScheduleAsync(token);
     }
     IEnumerable<ProcessedEpisode> recentEps = [];
 
@@ -2051,7 +2056,7 @@ public partial class UI : Form, IDialogParent
     }
 
     // ReSharper disable once InconsistentNaming
-    private async Task RefreshWTWAsync(bool doDownloads, bool unattended)
+    private async Task RefreshWTWAsync(bool doDownloads, bool unattended, CancellationToken token)
     {
         var downloadCancellationToken = new CancellationTokenSource();
         _shutdownManager.TrackCancellationToken(downloadCancellationToken);
@@ -2060,7 +2065,7 @@ public partial class UI : Form, IDialogParent
         await FillMyShowsAsync(true);
         FillMyMovies();
 
-        await FillWhenToWatchListAsync();
+        await FillWhenToWatchListAsync(token);
     }
 
     private async Task UiDownloadAsync(bool doDownloads, bool unattended, CancellationTokenSource cts)
@@ -2075,7 +2080,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        await RefreshWTWAsync(false, true);
+        await RefreshWTWAsync(false, true, CancellationToken.None);
     }
 
     // ReSharper disable once InconsistentNaming
@@ -2316,7 +2321,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private async Task RightClickOnMyMoviesAsync(MovieConfiguration si, Point pt)
+    private async Task RightClickOnMyMoviesAsync(MovieConfiguration si, Point pt, CancellationTokenSource cts)
     {
         showRightClickMenu.Items.Clear();
 
@@ -2325,8 +2330,8 @@ public partial class UI : Form, IDialogParent
 
         showRightClickMenu.AddSeparator();
 
-        showRightClickMenu.Add("Edit Movie", async (_, _) => await EditMovieAsync(si));
-        showRightClickMenu.Add("Delete Movie", async (_, _) => await DeleteMovieAsync(si));
+        showRightClickMenu.Add("Edit Movie", async (_, _) => await EditMovieAsync(si, cts));
+        showRightClickMenu.Add("Delete Movie", async (_, _) => await DeleteMovieAsync(si, cts.Token));
 
         showRightClickMenu.AddSeparator();
 
@@ -2375,20 +2380,20 @@ public partial class UI : Form, IDialogParent
 
         if (sil.Count == 1 && si != null)
         {
-            showRightClickMenu.Add("Edit TV Show", async (_, _) => await EditShowAsync(si));
-            showRightClickMenu.Add("Delete TV Show", async (_, _) => await DeleteShowAsync(si));
+            showRightClickMenu.Add("Edit TV Show", async (_, _) => await EditShowAsync(si, new CancellationTokenSource()));
+            showRightClickMenu.Add("Delete TV Show", async (_, _) => await DeleteShowAsync(si, new CancellationTokenSource()));
 
             if (seas != null)
             {
                 string uiFullSeasonWord = ProcessedSeason.UIFullSeasonWord(seas.SeasonNumber);
-                showRightClickMenu.Add("Edit " + uiFullSeasonWord, async (_, _) => await EditSeasonAsync(si, seas.SeasonNumber));
+                showRightClickMenu.Add("Edit " + uiFullSeasonWord, async (_, _) => await EditSeasonAsync(si, seas.SeasonNumber, new CancellationTokenSource()));
                 if (si.IgnoreSeasons.Contains(seas.SeasonNumber))
                 {
-                    showRightClickMenu.Add("Include " + uiFullSeasonWord, async (_, _) => await IncludeSeasonAsync(si, seas.SeasonNumber));
+                    showRightClickMenu.Add("Include " + uiFullSeasonWord, async (_, _) => await IncludeSeasonAsync(si, seas.SeasonNumber, new CancellationTokenSource()));
                 }
                 else
                 {
-                    showRightClickMenu.Add("Ignore " + uiFullSeasonWord, async (_, _) => await IgnoreSeasonAsync(si, seas.SeasonNumber));
+                    showRightClickMenu.Add("Ignore " + uiFullSeasonWord, async (_, _) => await IgnoreSeasonAsync(si, seas.SeasonNumber, new CancellationTokenSource()));
                 }
             }
 
@@ -2477,16 +2482,16 @@ public partial class UI : Form, IDialogParent
         return new() { items };
     }
 
-    private async Task IncludeSeasonAsync(ShowConfiguration si, int seasonNumber)
+    private async Task IncludeSeasonAsync(ShowConfiguration si, int seasonNumber, CancellationTokenSource cts)
     {
         si.IgnoreSeasons.Remove(seasonNumber);
-        await ShowAddedOrEditedAsync(false, false, si, true);
+        await ShowAddedOrEditedAsync(false, false, si, true, cts);
     }
 
-    private async Task IgnoreSeasonAsync(ShowConfiguration si, int seasonNumber)
+    private async Task IgnoreSeasonAsync(ShowConfiguration si, int seasonNumber, CancellationTokenSource cts)
     {
         si.IgnoreSeasons.Add(seasonNumber);
-        await ShowAddedOrEditedAsync(false, false, si, true);
+        await ShowAddedOrEditedAsync(false, false, si, true, cts);
     }
 
     private async Task BrowseForMissingItemAysnc(ItemMissing? mi)
@@ -2604,19 +2609,21 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
+        var cts = new CancellationTokenSource();
+
         if (RestartNowForTheme(pref.ThemeNeedingRestart))
         {
             // Save now, so closing does not ask, then start again with the new theme
-            await mDoc.WriteXMLSettingsAsync();
+            await mDoc.WriteXMLSettingsAsync(cts.Token);
             App.Program.RestartWhenClosed();
             Close();
             return;
         }
 
         mDoc.SetDirty();
-        await TVDoc.ReconnectAsync();
+        await TVDoc.ReconnectAsync(cts.Token);
         ShowHideNotificationIcon();
-        await FillWhenToWatchListAsync();
+        await FillWhenToWatchListAsync(cts.Token);
         ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
         EnableDisableAccessibilty();
         await FillEpGuideHtmlAsync();
@@ -2660,9 +2667,10 @@ public partial class UI : Form, IDialogParent
     {
         try
         {
-            await mDoc.WriteXMLSettingsAsync();
-            await SaveCaches();
-            if (!await SaveLayoutXmlAsync())
+            var cts = new CancellationTokenSource();
+            await mDoc.WriteXMLSettingsAsync(cts.Token);
+            await SaveCaches(cts.Token);
+            if (!await SaveLayoutXmlAsync(cts.Token))
             {
                 Logger.Warn("Failed to Save Layout Configuration Files");
             }
@@ -2707,7 +2715,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private async Task SaveCaches() => await mDoc.StartSavingCachesAsync(_shutdownManager);
+    private async Task SaveCaches(CancellationToken token) => await mDoc.StartSavingCachesAsync(_shutdownManager, token);
 
     private void backgroundDownloadToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -2728,16 +2736,16 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private async Task DoAppUpdateCheckAsync()
+    private async Task DoAppUpdateCheckAsync(CancellationToken token)
     {
-        ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
+        ServerRelease? result = await CheckForUpdates(token).ConfigureAwait(false);
 
         // No update popup straight after a restart (the Update Available button still shows)
         this.SafeInvoke(async ()
             => await NotifyUpdatesAsync(result, false, mDoc.Args.Unattended || mDoc.Args.Hide || App.Program.StartedByRestart), true);
     }
 
-    private async Task<ServerRelease?> CheckForUpdates()
+    private async Task<ServerRelease?> CheckForUpdates(CancellationToken token)
     {
         ServerRelease? result = await VersionUpdater.CheckForUpdatesAsync().ConfigureAwait(false);
 
@@ -2746,7 +2754,7 @@ public partial class UI : Form, IDialogParent
             var x = mDoc.CurrentAppState;
             if (x is not null)
             {
-                await x.UpdateLastCheckTime();
+                await x.UpdateLastCheckTime(token);
             }
         }
         catch (Exception ex)
@@ -2784,7 +2792,8 @@ public partial class UI : Form, IDialogParent
         if (TVSettings.Instance.BGDownload && !mDoc.DownloadsHappening())
         // only do auto-download if don't have stuff to do already
         {
-            await BackgroundDownloadNowAsync();
+            var cts = new CancellationTokenSource();    
+            await BackgroundDownloadNowAsync(cts.Token);
         }
     }
 
@@ -2808,11 +2817,12 @@ public partial class UI : Form, IDialogParent
             }
         }
 
-        await BackgroundDownloadNowAsync();
+        var cts = new CancellationTokenSource();
+        await BackgroundDownloadNowAsync(cts.Token);
         InformUserOffline();
     }
 
-    private async Task BackgroundDownloadNowAsync()
+    private async Task BackgroundDownloadNowAsync(CancellationToken token)
     {
         BGDownloadTimer.Stop();
         BGDownloadTimer.Start();
@@ -2833,9 +2843,9 @@ public partial class UI : Form, IDialogParent
             if (!cts.IsCancellationRequested)
             {
                 // we've just finished a bunch of background downloads
-                await SaveCaches();
-                await mDoc.SaveSettingsIfNeededAsync();
-                await RefreshWTWAsync(false, true);
+                await SaveCaches(token);
+                await mDoc.SaveSettingsIfNeededAsync(token);
+                await RefreshWTWAsync(false, true, token);
             }
             backgroundDownloadNowToolStripMenuItem.Enabled = true;
             progress.MarkFinished();
@@ -3129,10 +3139,11 @@ public partial class UI : Form, IDialogParent
         DialogResult dr = aem.ShowDialog(this);
         if (dr == DialogResult.OK)
         {
+            var cts = new CancellationTokenSource();
             await mDoc.AddAsync(mov.AsList(), false);
             FillMyMovies(mov);
 
-            await mDoc.MoviesAddedOrEditedAsync(true, false, WindowState == FormWindowState.Minimized, this, mov);
+            await mDoc.MoviesAddedOrEditedAsync(true, false, WindowState == FormWindowState.Minimized, this, mov, cts);
             FillMyMovies(mov);
 
             Logger.Info($"Added new movie called {mov.ShowName}");
@@ -3158,11 +3169,12 @@ public partial class UI : Form, IDialogParent
         DialogResult dr = aes.ShowDialog(this);
         if (dr == DialogResult.OK)
         {
+            var cts = new CancellationTokenSource();
             await mDoc.AddAsync(si.AsList(), false);
 
-            await ShowAddedOrEditedAsync(false, false, si, false);
+            await ShowAddedOrEditedAsync(false, false, si, false, cts);
             await SelectShowAsync(si);
-            await ShowAddedOrEditedAsync(true, false, si, false);
+            await ShowAddedOrEditedAsync(true, false, si, false, cts);
             Logger.Info($"Added new show called {si.ShowName}");
         }
         else
@@ -3173,12 +3185,12 @@ public partial class UI : Form, IDialogParent
         mDoc.AllowAutoScan(token);
     }
 
-    private async Task ShowAddedOrEditedAsync(bool download, bool unattended, ShowConfiguration si, bool updateSelectedNode)
+    private async Task ShowAddedOrEditedAsync(bool download, bool unattended, ShowConfiguration si, bool updateSelectedNode, CancellationTokenSource cts)
     {
-        await mDoc.TvAddedOrEditedAsync(download, unattended, WindowState == FormWindowState.Minimized, this, si);
+        await mDoc.TvAddedOrEditedAsync(download, unattended, WindowState == FormWindowState.Minimized, this, si, cts);
 
         await FillMyShowsAsync(updateSelectedNode);
-        await FillWhenToWatchListAsync();
+        await FillWhenToWatchListAsync(cts.Token);
     }
 
     private async void bnMyShowsDelete_Click(object sender, EventArgs e)
@@ -3190,10 +3202,10 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        await DeleteShowAsync(si);
+        await DeleteShowAsync(si, new CancellationTokenSource());
     }
 
-    private async Task DeleteShowAsync(ShowConfiguration si)
+    private async Task DeleteShowAsync(ShowConfiguration si, CancellationTokenSource cts)
     {
         DialogResult res = ThemeableMessageBox.Show(
             $"Remove show {si.ShowName.InDoubleQuotes()}.  Are you sure?", "Confirmation", MessageBoxButtons.YesNo,
@@ -3218,7 +3230,7 @@ public partial class UI : Form, IDialogParent
 
         Logger.Info($"User asked to remove {si.ShowName} - removing now");
         mDoc.TvLibrary.Remove(si);
-        await ShowAddedOrEditedAsync(false, false, si, true);
+        await ShowAddedOrEditedAsync(false, false, si, true, cts);
     }
 
     private void RemoveFromDisk(string folderName, MediaConfiguration si)
@@ -3332,7 +3344,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private async Task DeleteMovieAsync(MovieConfiguration si)
+    private async Task DeleteMovieAsync(MovieConfiguration si, CancellationToken token)
     {
         DialogResult res = ThemeableMessageBox.Show(
             $"Remove movie {si.ShowName.InDoubleQuotes()}.  Are you sure?", "Confirmation", MessageBoxButtons.YesNo,
@@ -3354,7 +3366,7 @@ public partial class UI : Form, IDialogParent
         Logger.Info($"User asked to remove {si.ShowName} - removing now");
         mDoc.FilmLibrary.Remove(si);
         await mDoc.RunExportersAsync();
-        await mDoc.SaveSettingsIfNeededAsync();
+        await mDoc.SaveSettingsIfNeededAsync(token);
 
         FillMyMovies();
     }
@@ -3373,7 +3385,7 @@ public partial class UI : Form, IDialogParent
             ShowConfiguration? si = TreeNodeToShowItem(n);
             if (si != null)
             {
-                await EditSeasonAsync(si, seas.SeasonNumber);
+                await EditSeasonAsync(si, seas.SeasonNumber,  new CancellationTokenSource());
             }
 
             return;
@@ -3382,28 +3394,28 @@ public partial class UI : Form, IDialogParent
         ShowConfiguration? si2 = TreeNodeToShowItem(n);
         if (si2 != null)
         {
-            await EditShowAsync(si2);
+            await EditShowAsync(si2, new CancellationTokenSource());
         }
     }
 
-    internal async Task EditSeasonAsync(ShowConfiguration si, int seasnum)
+    internal async Task EditSeasonAsync(ShowConfiguration si, int seasnum, CancellationTokenSource cts)
     {
         MoreBusy();
-        var token = mDoc.PreventAutoScan($"Edit Season {si.Name}({seasnum})");
+        var LockToken = mDoc.PreventAutoScan($"Edit Season {si.Name}({seasnum})");
 
         EditSeason er = new(si, seasnum);
         DialogResult dr = er.ShowDialog(this);
         if (dr == DialogResult.OK)
         {
-            await ShowAddedOrEditedAsync(false, false, si, true);
+            await ShowAddedOrEditedAsync(false, false, si, true, cts);
             await SelectSeasonAsync(si.AppropriateSeasons()[seasnum]);
         }
 
-        mDoc.AllowAutoScan(token);
+        mDoc.AllowAutoScan(LockToken);
         LessBusy();
     }
 
-    internal async Task EditShowAsync(ShowConfiguration si)
+    internal async Task EditShowAsync(ShowConfiguration si, CancellationTokenSource cts)
     {
         MoreBusy();
         var token = mDoc.PreventAutoScan($"Edit TV Show {si.Name}");
@@ -3413,7 +3425,7 @@ public partial class UI : Form, IDialogParent
 
         if (dr == DialogResult.OK)
         {
-            await ShowAddedOrEditedAsync(aes.HasChanged, false, si, true);
+            await ShowAddedOrEditedAsync(aes.HasChanged, false, si, true,cts);
             await SelectShowAsync(si);
 
             Logger.Info($"Modified show called {si.ShowName}");
@@ -3423,24 +3435,24 @@ public partial class UI : Form, IDialogParent
         LessBusy();
     }
 
-    internal async Task EditMovieAsync(MovieConfiguration si)
+    internal async Task EditMovieAsync(MovieConfiguration si, CancellationTokenSource cts)
     {
         MoreBusy();
-        var token = mDoc.PreventAutoScan($"Edit Movie {si.Name}");
+        var LockToken = mDoc.PreventAutoScan($"Edit Movie {si.Name}");
 
         AddEditMovie aes = new(si, mDoc);
         DialogResult dr = aes.ShowDialog(this);
 
         if (dr == DialogResult.OK)
         {
-            await mDoc.MoviesAddedOrEditedAsync(aes.HasChanged, false, WindowState == FormWindowState.Minimized, this, si);
+            await mDoc.MoviesAddedOrEditedAsync(aes.HasChanged, false, WindowState == FormWindowState.Minimized, this, si, cts);
 
             FillMyMovies(si);
 
             Logger.Info($"Modified movie called {si.ShowName}");
         }
 
-        mDoc.AllowAutoScan(token);
+        mDoc.AllowAutoScan(LockToken);
         LessBusy();
     }
 
@@ -3451,7 +3463,7 @@ public partial class UI : Form, IDialogParent
         FillMyMovies();
         await FillEpGuideHtmlAsync();
         await FillMovieGuideHtmlAsync();
-        await RefreshWTWAsync(false, unattended);
+        await RefreshWTWAsync(false, unattended, cts.Token);
     }
 
     private async Task ForceRefreshAndRescanShowsAsync(IEnumerable<Item>? sis, bool unattended, CancellationTokenSource cts)
@@ -3477,7 +3489,7 @@ public partial class UI : Form, IDialogParent
         await mDoc.ForceRefreshMoviesAsync(movieConfigurations, unattended, WindowState == FormWindowState.Minimized, this, downloadCancellationToken);
         FillMyMovies(movieConfigurations?.FirstOrDefault());
         await FillMovieGuideHtmlAsync();
-        await RefreshWTWAsync(false, unattended);
+        await RefreshWTWAsync(false, unattended, downloadCancellationToken.Token);
     }
 
     private async Task UpdateImagesAsync(IReadOnlyCollection<ShowConfiguration>? sis)
@@ -3627,7 +3639,7 @@ public partial class UI : Form, IDialogParent
         MovieConfiguration? si = TreeNodeToMovieItem(n);
         if (si != null)
         {
-            await RightClickOnMyMoviesAsync(si, pt);
+            await RightClickOnMyMoviesAsync(si, pt, new CancellationTokenSource());
         }
     }
 
@@ -3837,7 +3849,7 @@ public partial class UI : Form, IDialogParent
                 e.Handled = true;
                 break;
             case Keys.D:
-                await ActionActionAsync(true, false, false);
+                await ActionActionAsync(true, false, false, CancellationToken.None);
                 e.Handled = true;
                 break;
         }
@@ -3905,7 +3917,7 @@ public partial class UI : Form, IDialogParent
         {
             UiHelpers.SetProgressStateNone(Handle);
         }
-        await AskUserAboutShowProblemsAsync(scanSettings.Unattended);
+        await AskUserAboutShowProblemsAsync(scanSettings.Unattended, scanCancellationToken);
 
         LessBusy();
 
@@ -3946,7 +3958,7 @@ public partial class UI : Form, IDialogParent
         return scanProgDlg;
     }
 
-    private async Task AskUserAboutShowProblemsAsync(bool unattended)
+    private async Task AskUserAboutShowProblemsAsync(bool unattended, CancellationTokenSource cts)
     {
         if (unattended)
         {
@@ -3979,7 +3991,7 @@ public partial class UI : Form, IDialogParent
                     ShowConfiguration? problemShow = mDoc.TvLibrary.GetShowItem(problem.Media);
                     if (problemShow != null)
                     {
-                        await EditShowAsync(problemShow);
+                        await EditShowAsync(problemShow, cts);
                     }
                 }
             }
@@ -4010,7 +4022,7 @@ public partial class UI : Form, IDialogParent
                 MovieConfiguration? problemMovie = mDoc.FilmLibrary.GetMovie(problem.Media);
                 if (problemMovie != null)
                 {
-                    await EditMovieAsync(problemMovie);
+                    await EditMovieAsync(problemMovie, cts);
                 }
             }
         }
@@ -4057,9 +4069,9 @@ public partial class UI : Form, IDialogParent
 
     private static string HeaderName(string name, int number, long filesize) => $"{name} ({PrettyPrint(number)}, {filesize.GBMB(1)})";
 
-    private async void bnActionAction_Click(object sender, EventArgs e) => await ActionActionAsync(true, false, false);
+    private async void bnActionAction_Click(object sender, EventArgs e) => await ActionActionAsync(true, false, false, CancellationToken.None);
 
-    private async Task ActionActionAsync(bool checkedNotSelected, bool unattended, bool doAll)
+    private async Task ActionActionAsync(bool checkedNotSelected, bool unattended, bool doAll, CancellationToken token)
     {
         var actionCancellationToken = new CancellationTokenSource();
         _shutdownManager.TrackCancellationToken(actionCancellationToken);
@@ -4087,7 +4099,7 @@ public partial class UI : Form, IDialogParent
         await ActionTask;
 
         FillActionList();
-        await RefreshWTWAsync(false, unattended);
+        await RefreshWTWAsync(false, unattended, token);
 
         ItemList GetSelectedItemsToScan(bool checkedNotSelected)
         {
@@ -4095,7 +4107,7 @@ public partial class UI : Form, IDialogParent
         }
     }
 
-    private async Task RevertAsync()
+    private async Task RevertAsync(CancellationToken token)
     {
         foreach (Item item in GetSelectedItems())
         {
@@ -4103,7 +4115,7 @@ public partial class UI : Form, IDialogParent
         }
 
         FillActionList();
-        await RefreshWTWAsync(false, false);
+        await RefreshWTWAsync(false, false, token);
     }
     private void RevertSeasons()
     {
@@ -4179,12 +4191,12 @@ public partial class UI : Form, IDialogParent
         // Action related items
         if (lvr.Actions.IsAny()) // not just missing selected
         {
-            showRightClickMenu.Add("Action Selected", async (_, _) => await ActionActionAsync(false, false, false));
+            showRightClickMenu.Add("Action Selected", async (_, _) => await ActionActionAsync(false, false, false, CancellationToken.None));
         }
         if (lvr.CopyMove.IsAny() || lvr.DownloadTorrents.IsAny() || lvr.Downloading.IsAny())
         {
             showRightClickMenu.AddSeparator();
-            showRightClickMenu.Add("Revert to Missing", async (_, _) => await RevertAsync());
+            showRightClickMenu.Add("Revert to Missing", async (_, _) => await RevertAsync(CancellationToken.None));
         }
 
         if (lvr.MissingSeasons.HasAny())
@@ -4509,7 +4521,7 @@ public partial class UI : Form, IDialogParent
 
     private async void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
+        ServerRelease? result = await CheckForUpdates(CancellationToken.None).ConfigureAwait(false);
         this.SafeInvoke(async ()
             => await NotifyUpdatesAsync(result, true, false), true);
     }
@@ -4575,14 +4587,14 @@ public partial class UI : Form, IDialogParent
     private async void btnUpdateAvailable_Click(object sender, EventArgs e)
     {
         btnUpdateAvailable.Visible = false;
-        ServerRelease? result = await CheckForUpdates().ConfigureAwait(false);
+        ServerRelease? result = await CheckForUpdates(CancellationToken.None).ConfigureAwait(false);
         this.SafeInvoke(async () 
             => await NotifyUpdatesAsync(result, true, false),true);
     }
 
-    private async void tmrPeriodicScan_Tick(object sender, EventArgs e) => await RunAutoScanAsync("Periodic Scan");
+    private async void tmrPeriodicScan_Tick(object sender, EventArgs e) => await RunAutoScanAsync("Periodic Scan", CancellationToken.None);
 
-    private async Task RunAutoScanAsync(string scanType)
+    private async Task RunAutoScanAsync(string scanType, CancellationToken token)
     {
         //We only wish to do a scan now if we are not already undertaking one
         if (mDoc.AutoScanCanRun())
@@ -4590,7 +4602,7 @@ public partial class UI : Form, IDialogParent
             Logger.Info("*******************************");
             Logger.Info(scanType + " fired");
             await UiScanAsync(null, null, true, TVSettings.Instance.MonitoredFoldersScanType, MediaConfiguration.MediaType.both);
-            await ActionActionAsync(true, true, false);
+            await ActionActionAsync(true, true, false, token);
             Logger.Info(scanType + " complete");
         }
         else
@@ -4897,7 +4909,7 @@ public partial class UI : Form, IDialogParent
         };
     }
 
-    private async Task UpdateScheduleAsync()
+    private async Task UpdateScheduleAsync(CancellationToken token)
     {
         int dd = TVSettings.Instance.WTWRecentDays;
         recentEps = await mDoc.TvLibrary.GetRecentAndFutureEpsAsync(dd);
@@ -4938,16 +4950,17 @@ public partial class UI : Form, IDialogParent
         lvWhenToWatch.EndUpdate();
         calendarBeingUpdated = false;
 
-        await UpdateIconsAsync(new DirFilesCache());
+        await UpdateIconsAsync(new DirFilesCache(), token);
     }
 
-    private async Task UpdateIconsAsync(DirFilesCache dfc)
+    private async Task UpdateIconsAsync(DirFilesCache dfc, CancellationToken token)
     {
         //We use icons from https://icons8.com/icons/all--size-small in general as they are 16x16 in general
 
         var options = new ParallelOptions
         {
-            MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads
+            MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads,
+            CancellationToken = token
         };
 
         ThreadSafeCounter c = new();
@@ -5134,7 +5147,7 @@ public partial class UI : Form, IDialogParent
         MovieConfiguration? si2 = TreeNodeToMovieItem(movieTree?.SelectedNode);
         if (si2 != null)
         {
-            await EditMovieAsync(si2);
+            await EditMovieAsync(si2, new CancellationTokenSource());
         }
     }
 
@@ -5146,7 +5159,7 @@ public partial class UI : Form, IDialogParent
         {
             return;
         }
-        await DeleteMovieAsync(si);
+        await DeleteMovieAsync(si, CancellationToken.None);
     }
     private void movieCollectionSummaryLogToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -5213,7 +5226,7 @@ public partial class UI : Form, IDialogParent
         MovieConfiguration? si = TreeNodeToMovieItem(n);
         if (si != null && pt != null)
         {
-            await RightClickOnMyMoviesAsync(si, pt.Value);
+            await RightClickOnMyMoviesAsync(si, pt.Value, new CancellationTokenSource());
         }
     }
 
@@ -5263,7 +5276,7 @@ public partial class UI : Form, IDialogParent
         mDoc.AllowAutoScan(token);
         LessBusy();
         await FillMyShowsAsync(true);
-        await FillWhenToWatchListAsync();
+        await FillWhenToWatchListAsync(CancellationToken.None);
     }
 
     private void duplicateMoviesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5351,7 +5364,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        await mDoc.MovieFolderScanAsync(this, downloadFolder,CancellationToken.None);
+        await mDoc.MovieFolderScanAsync(this, downloadFolder,new CancellationTokenSource());
 
         FillActionList();
         FocusOnScanResults();
@@ -5442,7 +5455,7 @@ public partial class UI : Form, IDialogParent
         {
             int? id = config.Id();
             if (id.HasValue){
-                await TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSinceAsync(id.Value, timeSince.Value);
+                await TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSinceAsync(id.Value, timeSince.Value, CancellationToken.None);
             }
         }
         catch (SourceConnectivityException ex)
@@ -5468,7 +5481,7 @@ public partial class UI : Form, IDialogParent
         mDoc.AllowAutoScan(token);
         LessBusy();
         await FillMyShowsAsync(true);
-        await FillWhenToWatchListAsync();
+        await FillWhenToWatchListAsync(CancellationToken.None );
     }
 
     private async void yTSMovieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5481,7 +5494,7 @@ public partial class UI : Form, IDialogParent
         mDoc.AllowAutoScan(token);
         LessBusy();
         await FillMyShowsAsync(true);
-        await FillWhenToWatchListAsync();
+        await FillWhenToWatchListAsync(CancellationToken.None);
     }
 
     public void ProcessReceivedArgs(string[] args)

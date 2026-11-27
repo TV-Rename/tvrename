@@ -298,8 +298,8 @@ public partial class RecommendationView : Form
         await scanCancellationTokenSource.CancelAsync();
         if (scanTask is not null) await scanTask;
 
-        await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, addedMovies);
-        await mDoc.TvAddedOrEditedAsync(true, false, false, mainUi, addedShows);
+        await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, addedMovies, new CancellationTokenSource());
+        await mDoc.TvAddedOrEditedAsync(true, false, false, mainUi, addedShows, new CancellationTokenSource());
     }
 
     private void btnPreferences_Click(object sender, EventArgs e)

@@ -11,6 +11,8 @@
 
 using CefSharp.DevTools.FedCm;
 using Polly;
+using Polly.Retry;
+using TMDbLib.Objects.Movies;
 using TVRename.Forms;
 using TVRename.Forms.Tools;
 
@@ -363,11 +365,11 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     public bool Dirty() => mDirty;
 
-    public async Task SaveSettingsIfNeededAsync()
+    public async Task SaveSettingsIfNeededAsync(CancellationToken token)
     {
         if (Dirty() && TVSettings.Instance.AutoSaveOnExit)
         {
-            await WriteXMLSettingsAsync();
+            await WriteXMLSettingsAsync(token);
         }
     }
 
@@ -554,20 +556,29 @@ public class TVDoc : IDisposable, IAsyncDisposable
     }
 
     // ReSharper disable once InconsistentNaming
-    public async Task WriteXMLSettingsAsync()
+    public async Task WriteXMLSettingsAsync(CancellationToken token)
     {
+
+        var pipeline = new ResiliencePipelineBuilder()
+            .AddRetry(new RetryStrategyOptions
+            {
+                ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+                MaxRetryAttempts = 3,
+                Delay = TimeSpan.FromSeconds(2),
+                BackoffType = DelayBackoffType.Linear,
+                UseJitter = true,
+                OnRetry = args =>
+                {
+                    Logger.Warn(args.Outcome.Exception, $"Retry {args.AttemptNumber}/3 to save {PathManager.TVDocSettingsFile.FullName}.");
+                    return ValueTask.CompletedTask;
+                }
+            })
+            .AddTimeout(TimeSpan.FromSeconds(20))
+            .Build();
+
         try
         {
-            Policy retryPolicy = Policy
-                .Handle<Exception>()
-                .Retry(3,
-                    (exception, retryCount) =>
-                    {
-                        Logger.Warn(exception,
-                            $"Retry {retryCount}/3 to save {PathManager.TVDocSettingsFile.FullName}.");
-                    });
-
-            await retryPolicy.Execute(WriteXmlSettingsInternalAsync);
+            await pipeline.ExecuteAsync(async (token) => await WriteXmlSettingsInternalAsync(token), token);
         }
         catch (Exception e)
         {
@@ -577,12 +588,12 @@ public class TVDoc : IDisposable, IAsyncDisposable
                 MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 if (dr != DialogResult.No)
                 {
-                    await WriteXMLSettingsAsync();
+                    await WriteXMLSettingsAsync(token);
                 }
             }
         }
     }
-    private async Task WriteXmlSettingsInternalAsync()
+    private async Task WriteXmlSettingsInternalAsync(CancellationToken token)
     {
         DirectoryInfo di = PathManager.TVDocSettingsFile.Directory;
         if (!di.Exists)
@@ -595,7 +606,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
         var settingsXML = GenerateSettingsXML();
 
-        await XmlHelper.SaveXmlFileAsync(settingsXML, PathManager.TVDocSettingsFile.FullName);
+        await XmlHelper.SaveXmlFileAsync(settingsXML, PathManager.TVDocSettingsFile.FullName, token);
 
         mDirty = false;
         Stats().Save();
@@ -792,18 +803,17 @@ public class TVDoc : IDisposable, IAsyncDisposable
         await ExportMovieInfoAsync();
     }
 
-    internal async Task TvAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, ShowConfiguration show) =>
-        await TvAddedOrEditedAsync(download, unattended, hidden, owner, show.AsList());
+    internal async Task TvAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, ShowConfiguration show, CancellationTokenSource cts) =>
+        await TvAddedOrEditedAsync(download, unattended, hidden, owner, show.AsList(), cts);
 
-    internal async Task TvAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, List<ShowConfiguration> shows)
+    internal async Task TvAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, List<ShowConfiguration> shows, CancellationTokenSource cts)
     {
-        CancellationTokenSource cts = new();
         SetDirty();
         forceShowsRefresh.AddRange(shows);
         forceShowsScan.AddRange(shows);
 
         await UpdateMediaAsync(download, unattended, hidden, owner, cts);
-        await SaveSettingsIfNeededAsync();
+        await SaveSettingsIfNeededAsync(cts.Token);
     }
 
     internal async Task UpdateMediaAsync(bool download, bool unattended, bool hidden, UI? owner, CancellationTokenSource cts)
@@ -819,18 +829,17 @@ public class TVDoc : IDisposable, IAsyncDisposable
         UpdateDenormalisations();
     }
 
-    internal async Task MoviesAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, MovieConfiguration movie) =>
-        await MoviesAddedOrEditedAsync(download, unattended, hidden, owner, movie.AsList());
+    internal async Task MoviesAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, MovieConfiguration movie, CancellationTokenSource cts) =>
+        await MoviesAddedOrEditedAsync(download, unattended, hidden, owner, movie.AsList(), cts);
 
-    internal async Task MoviesAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, List<MovieConfiguration> movies)
+    internal async Task MoviesAddedOrEditedAsync(bool download, bool unattended, bool hidden, UI? owner, List<MovieConfiguration> movies, CancellationTokenSource cts)
     {
-        CancellationTokenSource cts = new();
         SetDirty();
         forceMoviesRefresh.AddRange(movies);
         forceMoviesScan.AddRange(movies);
 
         await UpdateMediaAsync(download, unattended, hidden, owner, cts);
-        await SaveSettingsIfNeededAsync();
+        await SaveSettingsIfNeededAsync(cts.Token);
     }
 
     public IEnumerable<MediaNotFoundException> ShowProblems => cacheManager.Problems.Where(x => x.SourceType == MediaConfiguration.MediaType.tv);
@@ -1895,7 +1904,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             TheActionList.Replace(ssm.AsList(), ssm.OriginalItems);
         }
     }
-    public async Task MovieFolderScanAsync(UI ui, string downloadFolder, CancellationToken token)
+    public async Task MovieFolderScanAsync(UI ui, string downloadFolder, CancellationTokenSource cts)
     {
         if (!Directory.Exists(downloadFolder))
         {
@@ -1938,7 +1947,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
                 if (!existingMatchingShows.IsAny())
                 {
-                    await BonusAutoAddAsync(fi, ui, token);
+                    await BonusAutoAddAsync(fi, ui, cts.Token);
                 }
                 else
                 {
@@ -1955,7 +1964,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
                     if (askUser.ChosenShow == null)
                     {
                         //if user selected a new show then
-                        await BonusAutoAddAsync(fi, ui, token);
+                        await BonusAutoAddAsync(fi, ui, cts.Token);
                     }
                     else
                     {
@@ -1974,7 +1983,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
             {
                 FileFinder.CopySubsFolders(TheActionList, this);
             }
-            await MoviesAddedOrEditedAsync(true, false, false, ui, []);
+            await MoviesAddedOrEditedAsync(true, false, false, ui, [], cts);
         }
         catch (UnauthorizedAccessException ex)
         {
@@ -2269,11 +2278,11 @@ public class TVDoc : IDisposable, IAsyncDisposable
         return null;
     }
 
-    public static async Task ReconnectAsync()
+    public static async Task ReconnectAsync(CancellationToken token)
     {
-        await TheTVDB.LocalCache.Instance.ReConnectAsync(false);
-        await TMDB.LocalCache.Instance.ReConnectAsync(false);
-        await TVmaze.LocalCache.Instance.ReConnectAsync(false);
+        await TheTVDB.LocalCache.Instance.ReConnectAsync(false, token);
+        await TMDB.LocalCache.Instance.ReConnectAsync(false, token);
+        await TVmaze.LocalCache.Instance.ReConnectAsync(false, token);
     }
 
     public void SetScanSettings(ScanSettings settings)
@@ -2285,11 +2294,11 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
 
     private Task? saveCachesTask;
-    public async Task StartSavingCachesAsync(AsyncShutdownManager? shutdownManager = null)
+    public async Task StartSavingCachesAsync(AsyncShutdownManager? shutdownManager,CancellationToken token)
     {
         if (saveCachesTask is null || saveCachesTask.IsCompleted)
         {
-            saveCachesTask = SaveCachesAsync();
+            saveCachesTask = SaveCachesAsync(token);
 
             // Track the cache save task with the shutdown manager to ensure it completes during shutdown
             shutdownManager?.TrackTask(saveCachesTask);
@@ -2301,14 +2310,14 @@ public class TVDoc : IDisposable, IAsyncDisposable
         await saveCachesTask;
     }
 
-    private static async Task SaveCachesAsync()
+    private static async Task SaveCachesAsync(CancellationToken token)
     {
         Logger.Info("Attempting to save caches");
         try
         {
-            var a = TheTVDB.LocalCache.Instance.SaveCacheAsync();
-            var b = TMDB.LocalCache.Instance.SaveCacheAsync();
-            var c = TVmaze.LocalCache.Instance.SaveCacheAsync();
+            var a = TheTVDB.LocalCache.Instance.SaveCacheAsync(token);
+            var b = TMDB.LocalCache.Instance.SaveCacheAsync(token);
+            var c = TVmaze.LocalCache.Instance.SaveCacheAsync(token);
 
             await Task.WhenAll(a, b, c);
             Logger.Info("Caches saved successfully");
@@ -2450,11 +2459,11 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
 
     private Task<bool>? saveLayoutTask;
-    public async Task<bool> StartSavingLayoutAsync(XDocument layoutXML,AsyncShutdownManager? shutdownManager = null)
+    public async Task<bool> StartSavingLayoutAsync(XDocument layoutXML,AsyncShutdownManager? shutdownManager, CancellationToken token)
     {
         if (saveLayoutTask is null || saveLayoutTask.IsCompleted)
         {
-            saveLayoutTask = SaveLayoutXmlInternalAsync(layoutXML);
+            saveLayoutTask = SaveLayoutXmlInternalAsync(layoutXML, token);
 
             // Track the cache save task with the shutdown manager to ensure it completes during shutdown
             shutdownManager?.TrackTask(saveLayoutTask);
@@ -2465,15 +2474,27 @@ public class TVDoc : IDisposable, IAsyncDisposable
         }
         return await saveLayoutTask;
     }
-    private static async Task<bool> SaveLayoutXmlInternalAsync(XDocument layoutXML)
+    private static async Task<bool> SaveLayoutXmlInternalAsync(XDocument layoutXML, CancellationToken token)
     {
-        Policy retryPolicy = Policy
-            .Handle<Exception>()
-            .Retry(3, (exception, retryCount) => Logger.Warn(exception, $"Retry {retryCount}/3 to save {PathManager.UILayoutFile.FullName}."));
+        var pipeline = new ResiliencePipelineBuilder()
+            .AddRetry(new RetryStrategyOptions
+            {
+                ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+                MaxRetryAttempts = 3,
+                Delay = TimeSpan.FromSeconds(2),
+                BackoffType = DelayBackoffType.Linear,
+                OnRetry = args =>
+                {
+                    Logger.Warn(args.Outcome.Exception, $"Retry {args.AttemptNumber}/3 to save {PathManager.UILayoutFile.FullName}.");
+                    return ValueTask.CompletedTask;
+                }
+            })
+            .AddTimeout(TimeSpan.FromSeconds(20))
+            .Build();
 
         try
         {
-            await retryPolicy.Execute(async () => await XmlHelper.SaveXmlFileAsync(layoutXML, PathManager.UILayoutFile.FullName));
+            await pipeline.ExecuteAsync(async (token) => await XmlHelper.SaveXmlFileAsync(layoutXML, PathManager.UILayoutFile.FullName, token), token);
         }
         catch (Exception e)
         {
@@ -2484,7 +2505,7 @@ public class TVDoc : IDisposable, IAsyncDisposable
                     MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 if (dr != DialogResult.No)
                 {
-                    await SaveLayoutXmlInternalAsync(layoutXML);
+                    await SaveLayoutXmlInternalAsync(layoutXML, token);
                 }
             }
         }
@@ -2492,5 +2513,5 @@ public class TVDoc : IDisposable, IAsyncDisposable
         return true;
     }
 
-    internal async Task<bool> SaveLayoutXmlAsync(XDocument layoutXML) => await StartSavingLayoutAsync(layoutXML);
+    internal async Task<bool> SaveLayoutXmlAsync(XDocument layoutXML, CancellationToken token) => await StartSavingLayoutAsync(layoutXML, shutdownManager: null, token: token);
 }

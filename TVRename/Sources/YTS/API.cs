@@ -91,7 +91,7 @@ public static class API
 
         public IEnumerable<string> Genres =>
             result["genres"]?.Children().Select(x => x.ToObject<string>()).OfType<string>().ToArray() ??
-            Array.Empty<string>();
+            [];
 
         public string Language => result.GetMandatoryString("language");
 
@@ -118,7 +118,7 @@ public static class API
     {
         List<YtsMovie> downloadedMovies = [];
 
-        int totalPages = (int)Math.Ceiling(await GetTotalMovies(resolution, minRating) / 50D);
+        int totalPages = (int)Math.Ceiling(await GetTotalMovies(resolution, minRating, ct) / 50D);
         ThreadSafeCounter c = new();
 
         await Parallel.ForEachAsync(
@@ -141,19 +141,19 @@ public static class API
                     return;
                 }
 
-                await ObtainAndProcessPage(downloadedMovies, resolution, minRating, c.Value);
+                await ObtainAndProcessPage(downloadedMovies, resolution, minRating, c.Value, ct);
             }
             );
 
         return downloadedMovies;
     }
 
-    private static async Task ObtainAndProcessPage(List<YtsMovie> downloadedMovies, string resolution, int minRating, int page)
+    private static async Task ObtainAndProcessPage(List<YtsMovie> downloadedMovies, string resolution, int minRating, int page, CancellationToken cancellationToken)
     {
         JObject updatesJson = await HttpHelper.HttpGetRequestWithRetryAsync(
                         APIRoot +
                         $"list_movies.json?quality={resolution}&limit=50&page={page}&minimum_rating={minRating}&with_rt_ratings=true",
-                        3, 2);
+                        3, 2, cancellationToken);
 
         if (updatesJson["status"]?.ToString() is "ok" && updatesJson["data"]?["movies"] is not null)
         {
@@ -170,12 +170,12 @@ public static class API
         }
     }
 
-    private static async Task<int> GetTotalMovies(string resolution, int minRating)
+    private static async Task<int> GetTotalMovies(string resolution, int minRating, CancellationToken cancellationToken)
     {
         JObject updatesJson = await HttpHelper.HttpGetRequestWithRetryAsync(
                 APIRoot +
                 $"list_movies.json?quality={resolution}&limit=50&page=1&minimum_rating={minRating}&with_rt_ratings=true",
-                3, 2);
+                3, 2, cancellationToken);
 
         if (updatesJson["status"]?.ToString() is "ok" && updatesJson["data"]?["movies"] is not null)
         {
@@ -187,7 +187,7 @@ public static class API
     private static async Task<YtsMovie?> GetMovieByImdbInternalAsync(string? imdbCode, CancellationToken cancellationToken)
     {
         JObject updatesJson =
-            await HttpHelper.HttpGetRequestWithRetryAsync(APIRoot + $"movie_details.json?imdb_id={imdbCode}", 3, 2);
+            await HttpHelper.HttpGetRequestWithRetryAsync(APIRoot + $"movie_details.json?imdb_id={imdbCode}", 3, 2, cancellationToken);
 
         if (updatesJson["status"]?.ToString() is "ok" && updatesJson["data"]?["movie"] is JObject o)
         {
@@ -200,7 +200,7 @@ public static class API
     private static async Task<IEnumerable<YtsMovie>?> GetRelatedMoviesInternalAsync(int ytsMovieId, CancellationToken cancellationToken)
     {
         JObject updatesJson =
-            await HttpHelper.HttpGetRequestWithRetryAsync(APIRoot + $"movie_suggestions.json?movie_id={ytsMovieId}", 3, 2);
+            await HttpHelper.HttpGetRequestWithRetryAsync(APIRoot + $"movie_suggestions.json?movie_id={ytsMovieId}", 3, 2, cancellationToken);
 
         if (updatesJson["status"]?.ToString() is "ok" && updatesJson["data"]?["movies"] is JArray movies)
         {

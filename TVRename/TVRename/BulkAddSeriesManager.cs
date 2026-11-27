@@ -260,11 +260,11 @@ public class BulkAddSeriesManager(TVDoc doc)
         } // for each directory
     }
 
-    public async Task AddAllToMyShowsAsync(UI ui)
+    public async Task AddAllToMyShowsAsync(UI ui, CancellationTokenSource cts)
     {
         List<ShowConfiguration> shows = await AddToLibraryAsync(AddItems.Where(ai => ai.CodeKnown));
 
-        await mDoc.TvAddedOrEditedAsync(true, false, false, ui, shows);
+        await mDoc.TvAddedOrEditedAsync(true, false, false, ui, shows, cts);
         AddItems.Clear();
     }
 

@@ -38,7 +38,7 @@ internal class ActionChangeLibraryRemoveMovie : ActionChangeLibrary, IEquatable<
         if (Movie != null)
         {
             Doc.FilmLibrary.Remove(Movie);
-            await Doc.MoviesAddedOrEditedAsync(false, true, true, null, Movie);
+            await Doc.MoviesAddedOrEditedAsync(false, true, true, null, Movie, new CancellationTokenSource());
         }
         return ActionOutcome.Success();
     }
@@ -84,7 +84,7 @@ internal class ActionChangeLibraryRemoveShow(ShowConfiguration si, TVDoc doc) : 
     public override async Task<ActionOutcome> GoAsync(TVRenameStats stats, CancellationToken cancellationToken)
     {
         Doc.TvLibrary.Remove(si);
-        await Doc.TvAddedOrEditedAsync(false, true, true, null, si);
+        await Doc.TvAddedOrEditedAsync(false, true, true, null, si, new CancellationTokenSource());
         return ActionOutcome.Success();
     }
 

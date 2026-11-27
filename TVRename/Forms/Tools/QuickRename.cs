@@ -63,7 +63,7 @@ public partial class QuickRename : Form, IDialogParent
             if (files is not null)
                 foreach (FileInfo droppedFile in files.Select(droppedFileName => new FileInfo(droppedFileName)))
                 {
-                    await ProcessUnknownAsync(droppedFile, this, CancellationToken.None);
+                    await ProcessUnknownAsync(droppedFile, this, new CancellationTokenSource());
                 }
         }
 
@@ -73,7 +73,7 @@ public partial class QuickRename : Form, IDialogParent
         Logger.Info("Finished quick rename.");
     }
 
-    private async Task ProcessDirectoryAsync(DirectoryInfo droppedDir, CancellationToken token)
+    private async Task ProcessDirectoryAsync(DirectoryInfo droppedDir, CancellationTokenSource cts)
     {
         if ((droppedDir.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
         {
@@ -83,28 +83,28 @@ public partial class QuickRename : Form, IDialogParent
 
         foreach (FileInfo subFile in await droppedDir.GetFilesAsync())
         {
-            await ProcessUnknownAsync(subFile, this, token);
+            await ProcessUnknownAsync(subFile, this, cts);
         }
 
         foreach (DirectoryInfo subFile in await droppedDir.GetDirectoriesAsync())
         {
-            await ProcessDirectoryAsync(subFile, token);
+            await ProcessDirectoryAsync(subFile, cts);
         }
     }
 
-    private async Task ProcessUnknownAsync(FileInfo droppedFile, IDialogParent owner, CancellationToken token)
+    private async Task ProcessUnknownAsync(FileInfo droppedFile, IDialogParent owner, CancellationTokenSource cts)
     {
         if ((droppedFile.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
         {
-            await ProcessDirectoryAsync(new DirectoryInfo(droppedFile.FullName), token);
+            await ProcessDirectoryAsync(new DirectoryInfo(droppedFile.FullName), cts);
         }
         else
         {
-            await ProcessFileAsync(droppedFile, owner, token);
+            await ProcessFileAsync(droppedFile, owner, cts);
         }
     }
 
-    private async Task ProcessFileAsync(FileInfo droppedFile, IDialogParent owner, CancellationToken token)
+    private async Task ProcessFileAsync(FileInfo droppedFile, IDialogParent owner, CancellationTokenSource cts)
     {
         if ((droppedFile.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
         {
@@ -129,13 +129,13 @@ public partial class QuickRename : Form, IDialogParent
         {
             if (TVSettings.Instance.AutoAddAsPartOfQuickRename)
             {
-                IEnumerable<MediaConfiguration> addedShows = (await FinderHelper.FindMediaAsync([droppedFile], mDoc, owner, token)).Select(x => x.Configuration);
+                IEnumerable<MediaConfiguration> addedShows = (await FinderHelper.FindMediaAsync([droppedFile], mDoc, owner, cts.Token)).Select(x => x.Configuration);
                 bestShow = addedShows.OfType<ShowConfiguration>().FirstOrDefault();
 
                 if (bestShow != null && !mDoc.AlreadyContains(bestShow))
                 {
                     await mDoc.AddAsync(bestShow.AsList(), true);
-                    await mDoc.TvAddedOrEditedAsync(true, false, false, parent, bestShow);
+                    await mDoc.TvAddedOrEditedAsync(true, false, false, parent, bestShow, cts);
 
                     Logger.Info($"Added new show called: {bestShow.ShowName}");
                 }

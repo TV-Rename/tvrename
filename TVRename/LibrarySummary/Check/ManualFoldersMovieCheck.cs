@@ -5,7 +5,6 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
 namespace TVRename;
 
 internal class ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : CustomMovieCheck(movie, doc)
@@ -95,6 +94,14 @@ internal class ManualFoldersMovieCheck(MovieConfiguration movie, TVDoc doc) : Cu
                         .Where(file => Movie.NameMatch(file, false)),
                     automaticDestination);
             }
+        }
+        catch (UnauthorizedAccessException uae)
+        {
+            throw new FixCheckException(uae.Message);
+        }
+        catch (System.IO.DirectoryNotFoundException ex)
+        {
+            throw new FixCheckException(ex.Message, ex);
         }
         catch (System.IO.IOException ioe)
         {

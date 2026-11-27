@@ -44,7 +44,7 @@ internal class FolderBaseMatchesDefault(ShowConfiguration show, TVDoc doc) : TvS
         //Create the new location if needed and move files
         if (Directory.Exists(newFolderValue))
         {
-            await FileHelper.MergeDirectoriesAsync(oldFolderValue, newFolderValue);
+            await FileHelper.MergeDirectoriesAsync(oldFolderValue, newFolderValue, CancellationToken.None);
         }
         else
         {

@@ -24,23 +24,23 @@ public static class TvdbWebApi
     #region Login
     // ReSharper disable once InconsistentNaming
     private static readonly TokenProvider TokenProvider = new();
-    private static async Task LoginAsync(bool forceReconnect)
+    private static async Task LoginAsync(bool forceReconnect, CancellationToken token)
     {
         if (forceReconnect)
         {
             TokenProvider.Reset();
         }
-        await TokenProvider.EnsureValidAsync();
+        await TokenProvider.EnsureValidAsync(token);
     }
 
     // ReSharper disable once InconsistentNaming
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    public static async Task<bool> TVDBLoginAsync()
+    public static async Task<bool> TVDBLoginAsync(CancellationToken token)
     {
         const string ERROR_MESSAGE = "Failed to obtain token from TVDB";
         try
         {
-            await LoginAsync(false);
+            await LoginAsync(false, token);
             return true;
         }
         catch (WebException ex)
@@ -67,12 +67,12 @@ public static class TvdbWebApi
     }
 
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    public static async Task<bool> ReConnectAsync()
+    public static async Task<bool> ReConnectAsync(CancellationToken token)
     {
         const string ERROR_MESSAGE = "Failed to renew token from TVDB";
         try
         {
-            await LoginAsync(true);
+            await LoginAsync(true, token);
             return true;
         }
         catch (WebException ex)
@@ -105,25 +105,26 @@ public static class TvdbWebApi
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
     // ReSharper disable once UnusedMember.Local
-    private static async Task<JObject> GetUrlWithErrorHandlingAsync(ISeriesSpecifier? code, string uri, Language language)
+    private static async Task<JObject> GetUrlWithErrorHandlingAsync(ISeriesSpecifier? code, string uri, Language language, CancellationToken token)
     {
         return await HandleWebErrorsWithNotFoundForAsync(
             async () =>
             {
                 Logger.Trace($"   Downloading {uri} in {language.EnglishName} ({language.TVDBCode()}");
                 string message = $"Error obtaining {uri} in {language.EnglishName} ({language.TVDBCode()})";
-                return await JsonHttpGetRequestAsync(uri, null, TokenProvider, language.TVDBCode(), true)
+                return await JsonHttpGetRequestAsync(uri, null, TokenProvider, language.TVDBCode(), true, token)
                        ?? throw new SourceConsistencyException(message, TVDoc.ProviderType.TheTVDB);
             },
             $"Error obtaining {code?.Media.PrettyPrint()} with id={code} Looking for {uri} (in {language}), but got an error:",
             code,
-            $"{code?.Media.PrettyPrint()} with TVDB Id {code} is no longer found on TVDB. ({uri}) Please Update"
+            $"{code?.Media.PrettyPrint()} with TVDB Id {code} is no longer found on TVDB. ({uri}) Please Update",
+            token
         );
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    private static async Task<JObject> GetUrlAsync(string uri, Language language)
+    private static async Task<JObject> GetUrlAsync(string uri, Language language, CancellationToken token)
     {
         return await HandleWebErrorsForAsync(
             async () =>
@@ -131,7 +132,7 @@ public static class TvdbWebApi
                 Logger.Trace($"   Downloading {uri} in {language.EnglishName} ({language.TVDBCode()}");
                 string message = $"Error obtaining {uri} in {language.EnglishName} ({language.TVDBCode()})";
 
-                return await JsonHttpGetRequestAsync(uri, null, TokenProvider, language.TVDBCode(), true)
+                return await JsonHttpGetRequestAsync(uri, null, TokenProvider, language.TVDBCode(), true, token)
                        ?? throw new SourceConsistencyException(message, TVDoc.ProviderType.TheTVDB);
             },
             $"Error obtaining {uri} (in {language}), but got an error:"
@@ -140,29 +141,29 @@ public static class TvdbWebApi
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="WebException">Regular WebExceptions</exception>
-    private static async Task<JObject> GetUrlAsync(string uri, Language language, string errorMessage)
-    => await JsonHttpGetRequestAsync(uri, null, TokenProvider, language.TVDBCode(), true)
+    private static async Task<JObject> GetUrlAsync(string uri, Language language, string errorMessage, CancellationToken token)
+    => await JsonHttpGetRequestAsync(uri, null, TokenProvider, language.TVDBCode(), true, token)
        ?? throw new SourceConsistencyException(errorMessage, TVDoc.ProviderType.TheTVDB);
-    private static async Task<JObject?> JsonHttpGetRequestAsync(string url, Dictionary<string, string?>? parameters, TokenProvider? authToken, bool retry) =>
-        await JsonHttpGetRequestAsync(url, parameters, authToken, string.Empty, retry);
-    private static async Task<JObject?> JsonHttpGetRequestAsync(string url, Dictionary<string, string?>? parameters, TokenProvider? authToken, string lang, bool retry)
+    private static async Task<JObject?> JsonHttpGetRequestAsync(string url, Dictionary<string, string?>? parameters, TokenProvider? authToken, bool retry, CancellationToken token) =>
+        await JsonHttpGetRequestAsync(url, parameters, authToken, string.Empty, retry, token);
+    private static async Task<JObject?> JsonHttpGetRequestAsync(string url, Dictionary<string, string?>? parameters, TokenProvider? authToken, string lang, bool retry, CancellationToken token)
     {
         string fullUrl = url + HttpHelper.GetHttpParameters(parameters);
 
         string? response = null;
 
-        async Task Operation()
+        async Task Operation(CancellationToken cancellationToken)
         {
-            response = await HttpRequestAsync("GET", fullUrl, "application/json", authToken, lang);
+            response = await HttpRequestAsync("GET", fullUrl, "application/json", authToken, lang, cancellationToken);
         }
 
         if (retry)
         {
-            await HttpHelper.RetryOnExceptionAsync(3, 2.Seconds(), fullUrl, _ => true, Operation, async () => { authToken?.EnsureValidAsync(); }).ConfigureAwait(false);
+            await HttpHelper.RetryOnExceptionAsync(3, 2.Seconds(), fullUrl, _ => true, Operation, async () => { authToken?.EnsureValidAsync(token); }, token).ConfigureAwait(false);
         }
         else
         {
-            await Operation();
+            await Operation(token);
         }
 
         try
@@ -179,14 +180,14 @@ public static class TvdbWebApi
             throw;
         }
     }
-    private static async Task<string> HttpRequestAsync(string method, string url, string contentType, TokenProvider? authToken, string lang)
-        => await HttpHelper.HttpRequestAsync(method, url, null, contentType, await AuthToken(authToken), lang);
+    private static async Task<string> HttpRequestAsync(string method, string url, string contentType, TokenProvider? authToken, string lang, CancellationToken token)
+        => await HttpHelper.HttpRequestAsync(method, url, null, contentType, await AuthToken(authToken, token), lang, token);
 
-    private static async Task<string?> AuthToken(TokenProvider? authToken)
+    private static async Task<string?> AuthToken(TokenProvider? authToken, CancellationToken token)
     {
         if (authToken is null) return string.Empty;
 
-        return await authToken.GetTokenAsync();
+        return await authToken.GetTokenAsync(token);
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
@@ -240,7 +241,7 @@ public static class TvdbWebApi
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    private static async Task<T> HandleWebErrorsWithNotFoundForAsync<T>(Func<Task<T>> webCall, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage)
+    private static async Task<T> HandleWebErrorsWithNotFoundForAsync<T>(Func<Task<T>> webCall, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage, CancellationToken cancellationToken)
     {
         try
         {
@@ -264,57 +265,57 @@ public static class TvdbWebApi
         }
         catch (WebException ex)
         {
-            await ProcessWebException(ex, errorMessage, code, notFoundMessage);
+            await ProcessWebException(ex, errorMessage, code, notFoundMessage, cancellationToken);
         }
         catch (AggregateException ex) when (ex.InnerException is WebException wex)
         {
-            await ProcessWebException(wex, errorMessage, code, notFoundMessage);
+            await ProcessWebException(wex, errorMessage, code, notFoundMessage, cancellationToken);
         }
         catch (HttpRequestException ex)
         {
-            await ProcessHttpRequestException(ex, errorMessage, code, notFoundMessage);
+            await ProcessHttpRequestException(ex, errorMessage, code, notFoundMessage, cancellationToken);
         }
         catch (AggregateException ex) when (ex.InnerException is HttpRequestException wex)
         {
-            await ProcessHttpRequestException(wex, errorMessage, code, notFoundMessage);
+            await ProcessHttpRequestException(wex, errorMessage, code, notFoundMessage, cancellationToken);
         }
 
         throw new SourceConnectivityException("Failed to execute");//should never happen - just to appease compiler
 
-        static async Task ProcessWebException(WebException ex, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage)
+        static async Task ProcessWebException(WebException ex, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage, CancellationToken token)
         {
             if (ex.Is404() && code != null)
             {
-                await RaiseNotFoundIfNeeded(notFoundMessage ?? errorMessage, code);
+                await RaiseNotFoundIfNeeded(notFoundMessage ?? errorMessage, code, token);
             }
             Logger.LogWebException($"Error {errorMessage}:", ex);
             throw new SourceConnectivityException(errorMessage + " - " + ex.LoggableDetails(), ex);
         }
-        static async Task ProcessHttpRequestException(HttpRequestException ex, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage)
+        static async Task ProcessHttpRequestException(HttpRequestException ex, string errorMessage, ISeriesSpecifier? code, string? notFoundMessage, CancellationToken cancellationToken)
         {
             if (ex.Is404() && code != null)
             {
-                await RaiseNotFoundIfNeeded(notFoundMessage ?? errorMessage, code);
+                await RaiseNotFoundIfNeeded(notFoundMessage ?? errorMessage, code, cancellationToken);
             }
             Logger.LogHttpRequestException($"Error {errorMessage}:", ex);
             throw new SourceConnectivityException(errorMessage + " - " + ex.LoggableDetails(), ex);
         }
-        static async Task RaiseNotFoundIfNeeded(string message, ISeriesSpecifier code)
+        static async Task RaiseNotFoundIfNeeded(string message, ISeriesSpecifier code, CancellationToken token)
         {
-            if (await TvdbIsUp())
+            if (await TvdbIsUp(token))
             {
                 Logger.Warn(message);
                 throw new MediaNotFoundException(code, message, TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TheTVDB, code.Media);
             }
         }
     }
-    private static async Task<bool> TvdbIsUp()
+    private static async Task<bool> TvdbIsUp(CancellationToken token)
     {
         JObject? jsonResponse;
         try
         {
             //Deliberately send no authToken, so that it should fail if it's up
-            jsonResponse = await JsonHttpGetRequestAsync(TokenProvider.TVDB_API_URL, null, null, false);
+            jsonResponse = await JsonHttpGetRequestAsync(TokenProvider.TVDB_API_URL, null, null, false, token);
         }
         catch (WebException ex)
         {
@@ -366,123 +367,123 @@ public static class TvdbWebApi
     #region Simple Queries
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task<JObject> DownloadMovieTranslationsAsync(ISeriesSpecifier code, Language language)
+    internal static async Task<JObject> DownloadMovieTranslationsAsync(ISeriesSpecifier code, Language language, CancellationToken token)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/translations/{language.TVDBCode()}";
         string errorMessage = $"obtaining translations for {code} in {language.EnglishName}";
 
-        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage, token), errorMessage);
     }
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task<JObject> DownloadSeriesTranslationsAsync(ISeriesSpecifier code, Language language)
+    internal static async Task<JObject> DownloadSeriesTranslationsAsync(ISeriesSpecifier code, Language language, CancellationToken token)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/translations/{language.TVDBCode()}";
         string errorMessage = $"obtaining translations for {code.TvdbId} in {language.EnglishName}";
 
-        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage, token), errorMessage);
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task<JObject?> DownloadEpisodeAsync(string showName, int episodeId, Language language)
+    internal static async Task<JObject?> DownloadEpisodeAsync(string showName, int episodeId, Language language, CancellationToken token)
     {
         string errorMessage = $"Error obtaining {showName} episode[{episodeId}]:";
         string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}";
         string requestLangCode = language.Abbreviation;
 
         return await HandleWebErrorsForAsync(
-            async () => await JsonHttpGetRequestAsync(uri, null, TokenProvider, requestLangCode, true),
+            async () => await JsonHttpGetRequestAsync(uri, null, TokenProvider, requestLangCode, true, token),
             errorMessage);
     }
     // ReSharper disable once UnusedMember.Local
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task<JObject> ImageTypesAsync()
+    internal static async Task<JObject> ImageTypesAsync(CancellationToken token)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/artwork/types";
-        return await GetUrlAsync(uri, Languages.Instance.FallbackLanguage);
+        return await GetUrlAsync(uri, Languages.Instance.FallbackLanguage, token);
     }
     // ReSharper disable once UnusedMember.Local
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task<JObject> GetSeasonAsync(ISeriesSpecifier code, Language language, int seasonId)
+    internal static async Task<JObject> GetSeasonAsync(ISeriesSpecifier code, Language language, int seasonId, CancellationToken token)
     {
         string errorMessage = $"Error obtaining season {seasonId} in {language.EnglishName} episodes for [{code}]:";
         string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
 
-        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage, token), errorMessage);
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task<JObject> GetSeriesEpisodesOfTypeAsync(ISeriesSpecifier code, Language language, ProcessedSeason.SeasonType type)
+    internal static async Task<JObject> GetSeriesEpisodesOfTypeAsync(ISeriesSpecifier code, Language language, ProcessedSeason.SeasonType type, CancellationToken token)
     {
         string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/episodes/{type.PrettyPrint()}";
         string errorMessage = $"Error obtaining {type.PrettyPrint()} episodes for [{code}] in {language.EnglishName}:";
 
-        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage, token), errorMessage);
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task<JObject> GetSeasonEpisodesAsync(ISeriesSpecifier code, Language language, int seasonId)
+    internal static async Task<JObject> GetSeasonEpisodesAsync(ISeriesSpecifier code, Language language, int seasonId, CancellationToken token)
     {
         string errorMessage = $"Error obtaining episodes for [{code}] in {language.TVDBCode()} for season [{seasonId}]:";
         string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
 
-        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage, token), errorMessage);
     }
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task<JObject> GetEpisodeTranslationsAsync(ISeriesSpecifier code, Language language, int episodeId)
+    internal static async Task<JObject> GetEpisodeTranslationsAsync(ISeriesSpecifier code, Language language, int episodeId, CancellationToken token)
     {
         string errorMessage = $"Error obtaining episode [{episodeId}] for [{code}] in {language.EnglishName}:";
         string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}/translations/{language.TVDBCode()}";
 
-        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage);
+        return await HandleWebErrorsForAsync(async () => await GetUrlAsync(uri, language, errorMessage, token), errorMessage);
     }
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    internal static async Task<JObject> DownloadMovieAsync(ISeriesSpecifier code, Language language)
+    internal static async Task<JObject> DownloadMovieAsync(ISeriesSpecifier code, Language language, CancellationToken token)
     {
         string errorMessage = $"Error obtaining movie {code} in {language.EnglishName}:";
         string notFoundMessage = $"Movie with Id {code} is no longer available from TVDB (got a 404), please update.";
         string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/extended";
 
-        return await HandleWebErrorsWithNotFoundForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage, code, notFoundMessage);
+        return await HandleWebErrorsWithNotFoundForAsync(async () => await GetUrlAsync(uri, language, errorMessage, token), errorMessage, code, notFoundMessage, token);
     }
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    internal static async Task<JObject> DownloadSeriesAsync(ISeriesSpecifier code, Language language)
+    internal static async Task<JObject> DownloadSeriesAsync(ISeriesSpecifier code, Language language, CancellationToken token)
     {
         string errorMessage = $"Error obtaining TV series {code} in {language.EnglishName}:";
         string notFoundMessage = $"Show with Id {code} is no longer available from TVDB (got a 404), please update.";
         string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/extended";
 
-        return await HandleWebErrorsWithNotFoundForAsync(async () => await GetUrlAsync(uri, language, errorMessage), errorMessage, code, notFoundMessage);
+        return await HandleWebErrorsWithNotFoundForAsync(async () => await GetUrlAsync(uri, language, errorMessage, token), errorMessage, code, notFoundMessage, token);
     }
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task<JObject?> GetUpdatesAsync(long updateFromEpochTime, int pageNumber)
+    internal static async Task<JObject?> GetUpdatesAsync(long updateFromEpochTime, int pageNumber, CancellationToken token)
     {
         string errorMessage = $"Error obtaining lastupdated query since (local) {updateFromEpochTime}:{pageNumber}";
         string url = $"{TokenProvider.TVDB_API_URL}/updates";
         Dictionary<string, string?> parameters = new() { { "since", updateFromEpochTime.ToString() }, { "page", pageNumber.ToString() } };
 
         return await HandleWebErrorsForAsync(
-            async () => await JsonHttpGetRequestAsync(url, parameters, TokenProvider, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation, true)
+            async () => await JsonHttpGetRequestAsync(url, parameters, TokenProvider, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation, true, token)
             , errorMessage);
     }
     #endregion
 
     #region Custom Search Query
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
-    internal static async Task<JObject?> SearchResponseAsync(string text, MediaConfiguration.MediaType type, Language language)
+    internal static async Task<JObject?> SearchResponseAsync(string text, MediaConfiguration.MediaType type, Language language, CancellationToken token)
     {
         //This is separate from the main queries as we want to handle 404s differently
 
@@ -492,7 +493,7 @@ public static class TvdbWebApi
 
         try
         {
-            return await JsonHttpGetRequestAsync(uri, GenerateParmeters(text, type), TokenProvider, language.TVDBCode(), true);
+            return await JsonHttpGetRequestAsync(uri, GenerateParmeters(text, type), TokenProvider, language.TVDBCode(), true, token);
         }
         catch (WebException ex)
         {

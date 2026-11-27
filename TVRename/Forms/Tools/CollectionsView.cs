@@ -174,7 +174,7 @@ public partial class CollectionsView : Form
             if (si != null)
             {
                 rightClickMenu.Add("Force Refresh", async (_, _) => await mainUi.ForceMovieRefreshAsync(si, false));
-                rightClickMenu.Add("Edit Movie", async (_, _) => await mainUi.EditMovieAsync(si));
+                rightClickMenu.Add("Edit Movie", async (_, _) => await mainUi.EditMovieAsync(si,new CancellationTokenSource()));
             }
         }
         else
@@ -232,7 +232,7 @@ public partial class CollectionsView : Form
         await cts.CancelAsync();
         if (scanTask is not null) await scanTask;
 
-        await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, allAdded);
+        await mDoc.MoviesAddedOrEditedAsync(true, false, false, mainUi, allAdded, new CancellationTokenSource());
     }
 
     private async void btnClose_Click(object sender, EventArgs e)

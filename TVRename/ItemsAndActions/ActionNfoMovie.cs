@@ -25,9 +25,9 @@ internal class ActionNfoMovie : ActionNfo
 
     protected override string RootName() => "movie";
 
-    protected override async Task<ActionOutcome> UpdateFileAsync()
+    protected override async Task<ActionOutcome> UpdateFileAsync(CancellationToken cancellationToken)
     {
-        XDocument doc = await XmlHelper.LoadXmlFromFileAsync(Where.FullName);
+        XDocument doc = await XmlHelper.LoadXmlFromFileAsync(Where.FullName, cancellationToken);
         XElement? root = doc.Root;
 
         if (root is null)
@@ -85,7 +85,7 @@ internal class ActionNfoMovie : ActionNfo
 
             ReplaceFanart(root, cachedSeries.Images(MediaImage.ImageType.background));
         }
-        await doc.SaveXmlAsync(Where.FullName);
+        await doc.SaveXmlAsync(Where.FullName, cancellationToken);
         return ActionOutcome.Success();
     }
 }

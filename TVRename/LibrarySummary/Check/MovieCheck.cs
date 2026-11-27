@@ -22,7 +22,7 @@ internal abstract class MovieCheck(MovieConfiguration movie, TVDoc doc) : Settin
         }
 
         Movie.CachedMovie.Dirty = true;
-        await Doc.MoviesAddedOrEditedAsync(false, true, true, null, Movie);
+        await Doc.MoviesAddedOrEditedAsync(false, true, true, null, Movie, new CancellationTokenSource());
     }
 
     public override MediaConfiguration.MediaType Type() => MediaConfiguration.MediaType.movie;

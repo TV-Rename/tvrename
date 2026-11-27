@@ -107,7 +107,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
             async (si, token) =>
             {
                 Thread.CurrentThread.Name ??= $"TVDB Consistency Check: {si.Name}"; // Can only set it once
-                await check.ServerAccuracyCheckAsync(si, p);
+                await check.ServerAccuracyCheckAsync(si, p, token);
             });
 
         foreach (string issue in check.Issues)
@@ -129,7 +129,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
             async (si, token) =>
             {
                 Thread.CurrentThread.Name ??= $"TVDB Consistency Check: {si.Name}"; // Can only set it once
-                await check.ServerAccuracyCheckAsync(si, p);
+                await check.ServerAccuracyCheckAsync(si, p, token);
             });
 
         foreach (string issue in check.Issues)
@@ -141,7 +141,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
         return check.MoviesToUpdate;
     }
 
-    private async Task<bool> DownloadEpisodeNowAsync(ISeriesSpecifier series, int episodeId, Locale locale, ProcessedSeason.SeasonType order)
+    private async Task<bool> DownloadEpisodeNowAsync(ISeriesSpecifier series, int episodeId, Locale locale, ProcessedSeason.SeasonType order, CancellationToken token)
     {
         if (episodeId == 0 || episodeId == -1)
         {
@@ -172,7 +172,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
         SayNoPct($"{cachedSeriesInfo.Name} ({eptxt}) in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
         try
         {
-            await API.DownloadEpisodeNowAsync(cachedSeriesInfo, episodeId, locale, order);
+            await API.DownloadEpisodeNowAsync(cachedSeriesInfo, episodeId, locale, order, token);
         }
         catch (SourceConnectivityException e)
         {
@@ -208,12 +208,12 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
         }
     }
 
-    public async Task<bool> ConnectAsync(bool showErrorMsgBox)
+    public async Task<bool> ConnectAsync(bool showErrorMsgBox, CancellationToken token)
     {
         SayNoPct("TheTVDB Login");
         try
         {
-            return await TvdbWebApi.TVDBLoginAsync();
+            return await TvdbWebApi.TVDBLoginAsync(token);
         }
         catch (SourceConnectivityException e)
         {
@@ -248,12 +248,12 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
         LastErrorMessage = string.Empty;
     }
 
-    public override async Task ReConnectAsync(bool showErrorMsgBox)
+    public override async Task ReConnectAsync(bool showErrorMsgBox, CancellationToken token)
     {
         SayNoPct("TheTVDB Reconnect");
         try
         {
-            await TvdbWebApi.ReConnectAsync();
+            await TvdbWebApi.ReConnectAsync(token);
         }
         catch (SourceConnectivityException e)
         {
@@ -265,7 +265,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
             SayNothing();
         }
     }
-    public async Task ForgetEverythingAsync()
+    public async Task ForgetEverythingAsync(CancellationToken token)
     {
         {
             Movies.Clear();
@@ -276,20 +276,20 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
 
         try
         {
-            await TvdbWebApi.ReConnectAsync().ConfigureAwait(false);
+            await TvdbWebApi.ReConnectAsync(token).ConfigureAwait(false);
         }
         catch (SourceConnectivityException ex)
         {
             HandleConnectionIssue(true, ex);
         }
-        await SaveCacheAsync();
+        await SaveCacheAsync(token);
 
         //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
         LatestUpdateTime.Reset();
         LOGGER.Info($"Forget everything, so we assume we have updates until {LatestUpdateTime}");
     }
 
-    public override async Task<bool> GetUpdatesAsync(DownloadProgressStatus? p, IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken cts)
+    public override async Task<bool> GetUpdatesAsync(DownloadProgressStatus? p, IEnumerable<ISeriesSpecifier> ss, bool showErrorMsgBox, CancellationToken token)
     {
         SayNoPct("Validating TheTVDB cache");
         AddPlaceholders(ss);
@@ -310,10 +310,10 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
             LOGGER.Warn(
                 $"Not updating as update time is 0. Need to do a Full Refresh on {Series.Values.Count(info => !info.IsSearchResultOnly)} shows. {LatestUpdateTime}");
 
-            await ForgetEverythingAsync();
+            await ForgetEverythingAsync(token);
             return true; // that's it for now
 
-            //return await GetUpdatesManuallyAsync(p); 
+            //return await GetUpdatesManuallyAsync(p, token); 
         }
 
         if (updateFromEpochTime == 0)
@@ -327,13 +327,13 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
         {
             SayNothing();
             LOGGER.Warn("Last update from TVDB was more than 10 weeks ago, so doing a full refresh.");
-            return await GetUpdatesManuallyAsync(p, cts);
+            return await GetUpdatesManuallyAsync(p, token);
         }
 
         try
         {
             SayNoPct("Getting updates list from TVDB");
-            API.TvdbUpdateResponse updatesResponse = await API.GetUpdatesAsync(updateFromEpochTime, showConnectionIssues, cts);
+            API.TvdbUpdateResponse updatesResponse = await API.GetUpdatesAsync(updateFromEpochTime, showConnectionIssues, token);
 
             long maxUpdateTime = updatesResponse.LatestTime;
 
@@ -347,7 +347,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
             SayNoPct("Processing Updates from TVDB");
 
             await Parallel.ForEachAsync(updatesResponse.Updates,
-                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads , CancellationToken =cts},
+                new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads , CancellationToken = token},
                 async (o, token) =>
                 {
                     Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
@@ -606,7 +606,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
             SayNothing();
             return null;
         }
-        if (!await ConnectAsync(showErrorMsgBox))
+        if (!await ConnectAsync(showErrorMsgBox, cancellationToken))
         {
             SayNoPct("Failed to Connect to TVDB");
             SayNothing();
@@ -618,7 +618,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
 
         try
         {
-            CachedSeriesInfo? si = await API.DownloadSeriesInfoAsync(code, locale);
+            CachedSeriesInfo? si = await API.DownloadSeriesInfoAsync(code, locale, cancellationToken);
             this.AddSeriesToCache(si);
             si = GetSeries(code.TvdbId.Value);
 
@@ -635,7 +635,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
 
                 if (episodesToo || forceReload)
                 {
-                    await API.ReloadEpisodesAsync(code, locale, si, st);
+                    await API.ReloadEpisodesAsync(code, locale, si, st, cancellationToken);
                 }
                 else
                 {
@@ -703,14 +703,14 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
 
         if (s.Media == MediaConfiguration.MediaType.movie)
         {
-            return await EnsureMovieUpdatedAsync(s, showErrorMsgBox, counter, totalCount);
+            return await EnsureMovieUpdatedAsync(s, showErrorMsgBox, counter, totalCount, token);
         }
 
         return await EnsureSeriesUpdatedAsync(s, bannersToo, showErrorMsgBox, counter, totalCount, token);
     }
 
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
+    private async Task<bool> EnsureMovieUpdatedAsync(ISeriesSpecifier id, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount, CancellationToken token)
     {
         if (!id.TvdbId.HasValue)
         {
@@ -726,7 +726,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
         Say($"Movie: {id.Name} from The TVDB", counter.Increment() , totalCount);
         try
         {
-            CachedMovieInfo? downloadedSi = await DownloadMovieNowAsync(id, id.TargetLocale, showErrorMsgBox, counter, totalCount);
+            CachedMovieInfo? downloadedSi = await DownloadMovieNowAsync(id, id.TargetLocale, showErrorMsgBox, counter, totalCount, token);
 
             if (downloadedSi is null)
             {
@@ -796,7 +796,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
 
         await Parallel.ForEachAsync(
             extraEpisodes.Where(e => e.Value.SeriesId == code && !e.Value.Done),
-            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads },
+            new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads, CancellationToken = token },
             async (ee, token) =>
                 {
                     if (ee.Value.Done)
@@ -805,7 +805,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
                     }
                     Thread.CurrentThread.Name ??= $"Download Episode {ee.Value.EpisodeId}"; // Can only set it once
 
-                    ok = await DownloadEpisodeNowAsync(seriesd, ee.Key, seriesd.TargetLocale, ee.Value.Order) && ok;
+                    ok = await DownloadEpisodeNowAsync(seriesd, ee.Key, seriesd.TargetLocale, ee.Value.Order, token) && ok;
                     ee.Value.Done = true;
                 });
 
@@ -838,7 +838,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
                             break;
 
                         case MediaConfiguration.MediaType.movie:
-                            await DownloadMovieNowAsync(ss, locale, showErrorMsgBox, new ThreadSafeCounter(), 1);
+                            await DownloadMovieNowAsync(ss, locale, showErrorMsgBox, new ThreadSafeCounter(), 1, token);
                             break;
                     }
                 }
@@ -860,7 +860,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
 
         try
         {
-            TvdbSearchResult sr = await API.SearchAsync(text, locale, type);
+            TvdbSearchResult sr = await API.SearchAsync(text, locale, type, token);
 
             foreach (CachedSeriesInfo si in sr.TvShows)
             {
@@ -887,10 +887,10 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
 
     public override string CacheSourceName() => "TVDB";
 
-    public async Task SaveCacheAsync()
+    public async Task SaveCacheAsync(CancellationToken token)
     {
         await CachePersistor.SaveCacheAsync(Series, Movies, CacheFile!,
-        LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
+        LatestUpdateTime.LastSuccessfulServerUpdateTimecode(),token);
     }
 
     public void LatestUpdateTimeIs(string time)
@@ -902,15 +902,15 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    public async Task<CachedMovieInfo?> GetMovieAndDownloadAsync(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount)
+    public async Task<CachedMovieInfo?> GetMovieAndDownloadAsync(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount, CancellationToken token)
         => HasMovie(id.TvdbId)
         ? CachedMovieData[id.TvdbId.Value]
-        : await DownloadMovieNowAsync(id, locale, showErrorMsgBox, counter, totalCount);
+        : await DownloadMovieNowAsync(id, locale, showErrorMsgBox, counter, totalCount, token);
 
     /// <exception cref="SourceConsistencyException">If there is a problem with what is returned</exception>
     /// <exception cref="SourceConnectivityException">If there is a problem connecting</exception>
     /// <exception cref="MediaNotFoundException">If the show/movie is not found</exception>
-    private async Task<CachedMovieInfo?> DownloadMovieNowAsync(ISeriesSpecifier tvdbId, Locale locale, bool showErrroMsgBox, ThreadSafeCounter counter, int totalCount)
+    private async Task<CachedMovieInfo?> DownloadMovieNowAsync(ISeriesSpecifier tvdbId, Locale locale, bool showErrroMsgBox, ThreadSafeCounter counter, int totalCount, CancellationToken token)
     {
         if (tvdbId.TvdbId == 0 || !tvdbId.TvdbId.HasValue)
         {
@@ -922,7 +922,7 @@ public class LocalCache : MediaCache, ITVSource, IMovieSource
 
         try
         {
-            CachedMovieInfo si = await API.DownloadMovieInfoAsync(tvdbId, locale);
+            CachedMovieInfo si = await API.DownloadMovieInfoAsync(tvdbId, locale, token);
             this.AddMovieToCache(si);
         }
         catch (SourceConnectivityException e)

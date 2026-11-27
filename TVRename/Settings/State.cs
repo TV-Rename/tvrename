@@ -6,7 +6,13 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 namespace TVRename.Settings;
+
 using Polly;
+using Polly.Retry;
+using System.Web.Services.Description;
+using TMDbLib.Objects.Authentication;
+using TMDbLib.Objects.Exceptions;
+using TMDbLib.Objects.Movies;
 
 public class State
 {
@@ -23,10 +29,10 @@ public class State
 
     public TimeSpan LastUpdate => TimeHelpers.UtcNow() - LastUpdateCheckUtc.GetValueOrDefault(DateTime.MinValue);
 
-    internal async Task UpdateLastCheckTime()
+    internal async Task UpdateLastCheckTime(CancellationToken token)
     {
         LastUpdateCheckUtc = TimeHelpers.UtcNow();
-        await SaveToFile(PathManager.StateFile.FullName);
+        await SaveToFile(PathManager.StateFile.FullName, token);
     }
 
     public static async Task<State> LoadFromDefaultFileAsync() => await LoadFromFile(PathManager.StateFile.FullName);
@@ -36,9 +42,9 @@ public class State
         if (File.Exists(path))
         {
             try
-            { 
+            {
                 await using var stream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read, bufferSize: 4096, useAsync: true);
-                XElement x = await XElement.LoadAsync(stream, LoadOptions.None,CancellationToken.None);
+                XElement x = await XElement.LoadAsync(stream, LoadOptions.None, CancellationToken.None);
                 DateTime? d = x.ExtractDateTime("LastUpdateCheckUtc");
                 return new State(d);
             }
@@ -55,15 +61,28 @@ public class State
         return new State();
     }
 
-    private async Task SaveToFile(string path)
+    private async Task SaveToFile(string path, CancellationToken token)
     {
+        var pipeline = new ResiliencePipelineBuilder()
+            .AddRetry(new RetryStrategyOptions
+            {
+                ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+                MaxRetryAttempts = 3,
+                Delay = TimeSpan.FromSeconds(2),
+                BackoffType = DelayBackoffType.Linear,
+                UseJitter = true,
+                OnRetry = args =>
+                {
+                    Logger.Warn(args.Outcome.Exception, $"Retry {args.AttemptNumber}/3 to save {path}.");
+                    return ValueTask.CompletedTask;
+                }
+            })
+            .AddTimeout(TimeSpan.FromSeconds(20))
+            .Build();
+
         try
         {
-            Policy retryPolicy = Policy
-                .Handle<Exception>()
-                .Retry(3, (exception, retryCount) => Logger.Warn(exception, $"Retry {retryCount}/3 to save {path}."));
-
-            await retryPolicy.Execute(async () => await XmlHelper.SaveXmlFileAsync(GenerateXML(), path));
+            await pipeline.ExecuteAsync(async (token) => await XmlHelper.SaveXmlFileAsync(GenerateXML(), path, token), token);
         }
         catch (Exception e)
         {
@@ -74,7 +93,7 @@ public class State
                     MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 if (dr != DialogResult.No)
                 {
-                    await SaveToFile(path);
+                    await SaveToFile(path, token);
                 }
             }
         }

@@ -64,35 +64,35 @@ internal class TokenProvider
         lastRefreshTime = DateTime.MinValue;
     }
 
-    public async Task<string> GetTokenAsync()
+    public async Task<string> GetTokenAsync(CancellationToken token)
     {
         //If we have not logged on at all then logon
         if (!IsTokenAcquired())
         {
-            await AcquireTokenAsync().ConfigureAwait(false);
+            await AcquireTokenAsync(token).ConfigureAwait(false);
         }
         //If we have logged in but the token has expired so logon again
         if (!TokenIsValid())
         {
-            await AcquireTokenAsync().ConfigureAwait(false);
+            await AcquireTokenAsync(token).ConfigureAwait(false);
         }
         //If we have logged on and have a valid token that is nearing its use-by date then refresh
         if (ShouldRefreshToken())
         {
             if (ApiVersion.v4 == TVSettings.Instance.TvdbVersion)
             {
-                await AcquireTokenAsync();
+                await AcquireTokenAsync(token);
             }
             else
             {
                 try
                 {
-                    await RefreshTokenAsync();
+                    await RefreshTokenAsync(token);
                 }
                 catch (Exception e)
                 {
                     Logger.Error($"Could not refresh Token: {e.ErrorText()}");
-                    await AcquireTokenAsync();
+                    await AcquireTokenAsync(token);
                 }
             }
         }
@@ -100,16 +100,16 @@ internal class TokenProvider
         return lastKnownToken;
     }
 
-    public async Task EnsureValidAsync()
+    public async Task EnsureValidAsync(CancellationToken token)
     {
-        await GetTokenAsync();
+        await GetTokenAsync(token);
     }
 
-    private async Task AcquireTokenAsync()
+    private async Task AcquireTokenAsync(CancellationToken token)
     {
         Logger.Info("Acquire a TheTVDB token... ");
         JObject request = new(new JProperty("apikey", TVDB_API_KEY), new JProperty("pin", "TVDB_API_KEY"));
-        JObject jsonResponse = await HttpHelper.JsonHttpPostRequestAsync($"{TVDB_API_URL}/login", request, true).ConfigureAwait(false);
+        JObject jsonResponse = await HttpHelper.JsonHttpPostRequestAsync($"{TVDB_API_URL}/login", request, true, token).ConfigureAwait(false);
 
         string? newToken = TVSettings.Instance.TvdbVersion == ApiVersion.v4 ? (string?)jsonResponse["data"]?["token"] : (string?)jsonResponse["token"];
         if (newToken == null)
@@ -122,10 +122,10 @@ internal class TokenProvider
         Logger.Info("Performed login at " + TimeHelpers.LocalNow() + ", and got a new Token");
     }
 
-    private async Task RefreshTokenAsync()
+    private async Task RefreshTokenAsync(CancellationToken token)
     {
         Logger.Info("Refreshing TheTVDB token... ");
-        JObject jsonResponse = await HttpHelper.JsonHttpGetRequestAsync($"{TVDB_API_URL}/refresh_token", lastKnownToken);
+        JObject jsonResponse = await HttpHelper.JsonHttpGetRequestAsync($"{TVDB_API_URL}/refresh_token", lastKnownToken, token);
 
         string? newToken = (string?)jsonResponse["token"];
         if (newToken == null)

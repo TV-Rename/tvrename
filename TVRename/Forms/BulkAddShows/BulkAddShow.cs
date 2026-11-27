@@ -532,7 +532,7 @@ public partial class BulkAddShow : Form
                 return;
             }
 
-            await engine.AddAllToMyShowsAsync(mainUi);
+            await engine.AddAllToMyShowsAsync(mainUi, new CancellationTokenSource());
         }
 
         Close();

@@ -12,9 +12,9 @@ public interface ITVSource
 {
     Task SetupAsync(FileInfo loadFrom, FileInfo cacheFile, bool showConnectionIssues, CancellationToken token);
 
-    Task<bool> ConnectAsync(bool showErrorMsgBox);
+    Task<bool> ConnectAsync(bool showErrorMsgBox, CancellationToken token);
 
-    Task SaveCacheAsync();
+    Task SaveCacheAsync(CancellationToken token);
 
     Task<bool> EnsureUpdatedAsync(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox, ThreadSafeCounter counter, int totalCount, CancellationToken token);
 
@@ -24,7 +24,7 @@ public interface ITVSource
 
     bool HasSeries(int? id);
 
-    Task ForgetEverythingAsync();
+    Task ForgetEverythingAsync(CancellationToken token);
 
     void AddOrUpdateEpisode(Episode episode);
 

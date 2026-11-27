@@ -540,7 +540,7 @@ internal static class ShowHtmlHelper
         string tvdbLink = ser.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser) ?? string.Empty : string.Empty;
 
         string urlFilename = includeDirectoryLinks && (si is not null)
-            ? Uri.EscapeDataString((await si.GetBestFolderLocationToOpenAsync()) ?? string.Empty)
+            ? Uri.EscapeDataString((await si.GetBestFolderLocationToOpenAsync(CancellationToken.None)) ?? string.Empty)
             : string.Empty;
         string explorerButton = includeDirectoryLinks
             ? CreateExploreButton(urlFilename)
@@ -894,9 +894,9 @@ internal static class ShowHtmlHelper
         return ser.AirsTime?.ToString("h tt") ?? string.Empty;
     }
 
-    private static async Task<string> GetBestFolderLocationToOpenAsync(this ShowConfiguration si)
+    private static async Task<string> GetBestFolderLocationToOpenAsync(this ShowConfiguration si, CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && await FileHelper.DirectoryExistsAsync(si.AutoAddFolderBase))
+        if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && await FileHelper.DirectoryExistsAsync(si.AutoAddFolderBase, cancellationToken))
         {
             return si.AutoAddFolderBase;
         }

@@ -30,7 +30,7 @@ public abstract class ActionNfo : ActionWriteMetadata
                 CreateBlankFile();
             }
 
-            ActionOutcome actionOutcome = await UpdateFileAsync();
+            ActionOutcome actionOutcome = await UpdateFileAsync(cancellationToken);
             Where.LastWriteTime = DateTimeOffset.FromUnixTimeSeconds(UpdateTime() ?? 0).UtcDateTime;
             return actionOutcome;
         }
@@ -82,7 +82,7 @@ public abstract class ActionNfo : ActionWriteMetadata
 
     protected abstract string RootName();
 
-    protected abstract Task<ActionOutcome> UpdateFileAsync();
+    protected abstract Task<ActionOutcome> UpdateFileAsync(CancellationToken cancellationToken);
 
     protected static void UpdateAmongstElements(XElement e, string elementName, string? value)
     {

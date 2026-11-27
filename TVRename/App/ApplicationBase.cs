@@ -104,7 +104,7 @@ internal class ApplicationBase : WindowsFormsApplicationBase
             {
                 if (doc.Dirty())
                 {
-                    await doc.WriteXMLSettingsAsync();
+                    await doc.WriteXMLSettingsAsync(CancellationToken.None);
                 }
 
                 await doc.ClosingAsync();

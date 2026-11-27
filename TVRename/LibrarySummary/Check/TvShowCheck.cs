@@ -19,7 +19,7 @@ internal abstract class TvShowCheck(ShowConfiguration show, TVDoc doc) : Setting
         if (Show.CachedShow != null)
         {
             Show.CachedShow.Dirty = true;
-            await Doc.TvAddedOrEditedAsync(false, true, true, null, Show);
+            await Doc.TvAddedOrEditedAsync(false, true, true, null, Show, new CancellationTokenSource());
         }
     }
 

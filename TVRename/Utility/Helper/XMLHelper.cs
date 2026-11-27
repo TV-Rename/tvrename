@@ -14,7 +14,7 @@ public static class XmlHelper
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    public static async Task SaveXmlFileAsync(XDocument doc, string filePath, CancellationToken cancellationToken = default)
+    public static async Task SaveXmlFileAsync(XDocument doc, string filePath, CancellationToken cancellationToken)
     {
         // 1. Configure the writer to support async behavior
         XmlWriterSettings settings = new()
@@ -49,7 +49,7 @@ public static class XmlHelper
         }
     }
 
-    public static async Task<XDocument> LoadXmlFromFileAsync(string filePath, CancellationToken cancellationToken = default)
+    public static async Task<XDocument> LoadXmlFromFileAsync(string filePath, CancellationToken cancellationToken)
     {
         // Open an async-compatible file stream
         using FileStream stream = System.IO.File.OpenRead(filePath);
@@ -79,7 +79,7 @@ public static class XmlHelper
     /// <param name="filePath">The destination file path.</param>
     /// <param name="cancellationToken">Optional token to cancel the operation.</param>
     /// <returns>A Task representing the asynchronous operation.</returns>
-    public static async Task SaveXmlAsync(this XDocument doc, string filePath, CancellationToken cancellationToken = default)
+    public static async Task SaveXmlAsync(this XDocument doc, string filePath, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(doc);
         ArgumentException.ThrowIfNullOrWhiteSpace("filePath");
@@ -92,6 +92,7 @@ public static class XmlHelper
             FileShare.None,
             bufferSize: 4096,
             options: FileOptions.Asynchronous);
+
         await doc.SaveAsync(stream, SaveOptions.None, cancellationToken);
     }
 

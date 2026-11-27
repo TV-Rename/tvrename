@@ -113,7 +113,7 @@ public sealed class AutoFolderMonitor : IDisposable
             {
                 throw new ArgumentException("Inappropriate action for auto-scan " + TVSettings.Instance.MonitoredFoldersScanType);
             }
-            mainForm.BeginInvoke(mainForm.ScanAndDo, TVSettings.Instance.MonitoredFoldersScanType);
+            mainForm.BeginInvoke(mainForm.ScanAndDo, TVSettings.Instance.MonitoredFoldersScanType, CancellationToken.None);
         }
         else
         {

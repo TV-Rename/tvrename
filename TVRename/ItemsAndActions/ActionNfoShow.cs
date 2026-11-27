@@ -27,7 +27,7 @@ internal class ActionNfoShow : ActionNfo
 
     protected override string RootName() => "tvshow";
 
-    protected override async Task<ActionOutcome> UpdateFileAsync()
+    protected override async Task<ActionOutcome> UpdateFileAsync(CancellationToken cancellationToken)
     {
         XDocument doc = XDocument.Load(Where.FullName);
         XElement? root = doc.Root;
@@ -76,7 +76,7 @@ internal class ActionNfoShow : ActionNfo
                 UpdateRatings(root, showRating.ToString(CultureInfo.InvariantCulture), cachedSeries.SiteRatingVotes);
             }
         }
-        await doc.SaveXmlAsync(Where.FullName);
+        await doc.SaveXmlAsync(Where.FullName, cancellationToken);
         return ActionOutcome.Success();
     }
 

@@ -36,11 +36,13 @@ internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings setti
         IEnumerable<PossibleMedia> addedShows = await FinderHelper.FindMediaAsync(possibleShowNames, MDoc, Settings.Owner, Settings.Token);
         List<PossibleMedia> addedShowsUnique = RemoveExistingAndDups(addedShows);
 
+        var cts = new CancellationTokenSource();
+
         List<ShowConfiguration> addedTvShows = [.. addedShowsUnique.Select(x => x.Configuration).OfType<ShowConfiguration>().Distinct()];
         if (addedTvShows.IsAny())
         {
             await MDoc.AddAsync(addedTvShows, true);
-            await MDoc.TvAddedOrEditedAsync(true, false, false, Settings.Owner, addedTvShows);
+            await MDoc.TvAddedOrEditedAsync(true, false, false, Settings.Owner, addedTvShows, cts);
             //add each new show into the shows being scanned
             Settings.Shows.AddRange(addedTvShows);
             LOGGER.Info($"Added new shows called: {addedTvShows.Select(s => s.ShowName).ToCsv()}");
@@ -50,7 +52,7 @@ internal class FindNewItemsInDownloadFolders(TVDoc doc, TVDoc.ScanSettings setti
         if (addedMovies.IsAny())
         {
             await MDoc.AddAsync(addedMovies, true);
-            await MDoc.MoviesAddedOrEditedAsync(true, false, false, Settings.Owner, addedMovies);
+            await MDoc.MoviesAddedOrEditedAsync(true, false, false, Settings.Owner, addedMovies, cts);
             Settings.Movies.AddRange(addedMovies);
             LOGGER.Info($"Added new movies called: {addedMovies.Select(s => s.ShowName).ToCsv()}");
         }

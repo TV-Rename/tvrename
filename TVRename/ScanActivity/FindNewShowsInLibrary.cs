@@ -31,7 +31,9 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
 
         var idsToAdd = bam.AddItems.Where(s => s.CodeKnown).Select(folder => new { Code = folder.ProviderCode, folder.Provider }).ToList();
 
-        await bam.AddAllToMyShowsAsync(Settings.Owner);
+        var cts = new CancellationTokenSource();
+
+        await bam.AddAllToMyShowsAsync(Settings.Owner, cts);
         List<ShowConfiguration> addedShows = [.. idsToAdd.Select(s => MDoc.TvLibrary.GetShowItem(s.Code, s.Provider)).OfType<ShowConfiguration>()];
 
         //add each new show into the shows being scanned
@@ -41,7 +43,7 @@ internal class FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : S
         }
         LOGGER.Info($"Added new shows called: {addedShows.Select(si => si.ShowName).ToCsv()}");
 
-        await MDoc.TvAddedOrEditedAsync(true, Settings.Unattended, Settings.Hidden, Settings.Owner, addedShows);
+        await MDoc.TvAddedOrEditedAsync(true, Settings.Unattended, Settings.Hidden, Settings.Owner, addedShows,cts);
     }
 
     private async Task AskUserAboutShowsAsync(BulkAddSeriesManager bam, CancellationToken token)
