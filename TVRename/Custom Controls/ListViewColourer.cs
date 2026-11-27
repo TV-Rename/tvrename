@@ -97,7 +97,9 @@ internal sealed class ListViewColourer : NativeWindow
             {
                 AdjustRowColours(m.LParam);
             }
-            else if (draw.dwDrawStage == CDDS_PREPAINT && ThemeManager.IsDark && list is { Enabled: true, GridLines: false, View: View.Details })
+
+            if (draw.dwDrawStage == CDDS_PREPAINT && draw.dwItemType != LVCDI_GROUP && ThemeManager.IsDark
+                && list is { Enabled: true, GridLines: false, View: View.Details })
             {
                 CoverColumnLines(draw.hdc);
             }
@@ -253,7 +255,7 @@ internal sealed class ListViewColourer : NativeWindow
             RECT item = new();
             if (SendMessage(header, HDM_GETITEMRECT, (IntPtr)i, ref item) != IntPtr.Zero)
             {
-                g.FillRectangle(back, headerLeft + item.right - margin, 0, margin * 2, list.ClientSize.Height);
+                g.FillRectangle(back, headerLeft + item.right - margin, 0, margin + margin, list.ClientSize.Height);
             }
         }
     }
