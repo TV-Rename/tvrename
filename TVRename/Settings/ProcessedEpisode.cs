@@ -35,7 +35,9 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
     public virtual string Day => GetAirDateDt()?.ToString("ddd") ?? string.Empty;
     public virtual string Length => HowLong();
     public virtual string Network => TheCachedSeries.Networks.FirstOrDefault() ?? string.Empty;
-    public virtual int ImageTypeName
+    public virtual int ImageTypeName => Forms.UI.ChooseWtwIcon(AiredStatus);
+
+    public FoundStatus AiredStatus
     {
         get
         {
@@ -50,7 +52,7 @@ public class ProcessedEpisode : Episode, IComparable<ProcessedEpisode>, INotifyP
                 NotifyPropertyChanged(nameof(ImageTypeName));
             }
 
-            return Forms.UI.ChooseWtwIcon(_airedStatus);
+            return _airedStatus;
         }
     }
 

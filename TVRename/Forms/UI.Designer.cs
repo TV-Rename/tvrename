@@ -233,6 +233,8 @@ namespace TVRename.Forms
             calCalendar = new MonthCalendar();
             txtWhenToWatchSynopsis = new TextBox();
             toolStripContainer3 = new ToolStripContainer();
+            tcSchedule = new TabControlThemed();
+            tpScheduleList = new TabPage();
             lvWhenToWatch = new TVRename.ObjectListViewFlickerFree<TVRename.ProcessedEpisode>();
             olvWTWShowColumn = new OLVColumn();
             olvWTWSeason = new OLVColumn();
@@ -244,6 +246,8 @@ namespace TVRename.Forms
             olvWTWNetwork = new OLVColumn();
             olvWTWName = new OLVColumn();
             ilScheduleIcons = new ImageList(components);
+            tpScheduleGuide = new TabPage();
+            scheduleGuide = new ScheduleGuide();
             tsWtW = new ToolStrip();
             btnWhenToWatchCheck = new ToolStripButton();
             btnScheduleBTSearch = new ToolStripSplitButton();
@@ -251,6 +255,8 @@ namespace TVRename.Forms
             toolStripSeparator12 = new ToolStripSeparator();
             btnScheduleRightClick = new ToolStripButton();
             toolStripButton1 = new ToolStripButton();
+            tsbScheduleGuideFilter = new ToolStripDropDownButton();
+            tsbScheduleGuideTiles = new ToolStripDropDownButton();
             ilMainTabIcons = new ImageList(components);
             columnHeader29 = new ColumnHeader();
             columnHeader30 = new ColumnHeader();
@@ -325,7 +331,10 @@ namespace TVRename.Forms
             toolStripContainer3.ContentPanel.SuspendLayout();
             toolStripContainer3.TopToolStripPanel.SuspendLayout();
             toolStripContainer3.SuspendLayout();
+            tcSchedule.SuspendLayout();
+            tpScheduleList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)lvWhenToWatch).BeginInit();
+            tpScheduleGuide.SuspendLayout();
             tsWtW.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             panel1.SuspendLayout();
@@ -1917,7 +1926,7 @@ namespace TVRename.Forms
             // 
             // toolStripContainer3.ContentPanel
             // 
-            toolStripContainer3.ContentPanel.Controls.Add(lvWhenToWatch);
+            toolStripContainer3.ContentPanel.Controls.Add(tcSchedule);
             toolStripContainer3.ContentPanel.Margin = new Padding(2);
             toolStripContainer3.ContentPanel.Size = new Size(1443, 482);
             toolStripContainer3.Dock = DockStyle.Fill;
@@ -1931,6 +1940,31 @@ namespace TVRename.Forms
             // toolStripContainer3.TopToolStripPanel
             // 
             toolStripContainer3.TopToolStripPanel.Controls.Add(tsWtW);
+            // 
+            // tcSchedule
+            // 
+            tcSchedule.Appearance = TabAppearance.FlatButtons;
+            tcSchedule.Controls.Add(tpScheduleList);
+            tcSchedule.Controls.Add(tpScheduleGuide);
+            tcSchedule.Dock = DockStyle.Fill;
+            tcSchedule.Location = new Point(0, 0);
+            tcSchedule.Margin = new Padding(4, 3, 4, 3);
+            tcSchedule.Name = "tcSchedule";
+            tcSchedule.SelectedIndex = 0;
+            tcSchedule.Size = new Size(1443, 482);
+            tcSchedule.TabIndex = 4;
+            tcSchedule.SelectedIndexChanged += tcSchedule_SelectedIndexChanged;
+            // 
+            // tpScheduleList
+            // 
+            tpScheduleList.Controls.Add(lvWhenToWatch);
+            tpScheduleList.Location = new Point(4, 27);
+            tpScheduleList.Margin = new Padding(4, 3, 4, 3);
+            tpScheduleList.Name = "tpScheduleList";
+            tpScheduleList.Padding = new Padding(4, 3, 4, 3);
+            tpScheduleList.Size = new Size(1435, 451);
+            tpScheduleList.TabIndex = 0;
+            tpScheduleList.Text = "List";
             // 
             // lvWhenToWatch
             // 
@@ -1949,7 +1983,7 @@ namespace TVRename.Forms
             lvWhenToWatch.GroupWithItemCountFormat = "{0} ({1} items)";
             lvWhenToWatch.GroupWithItemCountSingularFormat = "{0} (1 Item)";
             lvWhenToWatch.IncludeColumnHeadersInCopy = true;
-            lvWhenToWatch.Location = new Point(0, 0);
+            lvWhenToWatch.Location = new Point(4, 3);
             lvWhenToWatch.Margin = new Padding(4, 3, 4, 3);
             lvWhenToWatch.Name = "lvWhenToWatch";
             lvWhenToWatch.ShowCommandMenuOnRightClick = true;
@@ -1957,7 +1991,7 @@ namespace TVRename.Forms
             lvWhenToWatch.ShowImagesOnSubItems = true;
             lvWhenToWatch.ShowItemCountOnGroups = true;
             lvWhenToWatch.ShowItemToolTips = true;
-            lvWhenToWatch.Size = new Size(1443, 482);
+            lvWhenToWatch.Size = new Size(1427, 445);
             lvWhenToWatch.SmallImageList = ilScheduleIcons;
             lvWhenToWatch.TabIndex = 3;
             lvWhenToWatch.UseCompatibleStateImageBehavior = false;
@@ -2072,12 +2106,38 @@ namespace TVRename.Forms
             ilScheduleIcons.Images.SetKeyName(2, "check.png");
             ilScheduleIcons.Images.SetKeyName(3, "blank.png");
             // 
+            // tpScheduleGuide
+            // 
+            tpScheduleGuide.Controls.Add(scheduleGuide);
+            tpScheduleGuide.Location = new Point(4, 27);
+            tpScheduleGuide.Margin = new Padding(4, 3, 4, 3);
+            tpScheduleGuide.Name = "tpScheduleGuide";
+            tpScheduleGuide.Padding = new Padding(4, 3, 4, 3);
+            tpScheduleGuide.Size = new Size(1435, 451);
+            tpScheduleGuide.TabIndex = 1;
+            tpScheduleGuide.Text = "Guide";
+            // 
+            // scheduleGuide
+            // 
+            scheduleGuide.Dock = DockStyle.Fill;
+            scheduleGuide.Location = new Point(4, 3);
+            scheduleGuide.Name = "scheduleGuide";
+            scheduleGuide.Size = new Size(1427, 445);
+            scheduleGuide.StatusIcons = ilScheduleIcons;
+            scheduleGuide.TabIndex = 0;
+            scheduleGuide.EpisodesSelected += ScheduleGuide_EpisodesSelected;
+            scheduleGuide.EpisodesOpened += ScheduleGuide_EpisodesOpened;
+            scheduleGuide.EpisodesRightClicked += ScheduleGuide_EpisodesRightClicked;
+            scheduleGuide.EpisodesSearched += ScheduleGuide_EpisodesSearched;
+            scheduleGuide.FilterCleared += ScheduleGuide_FilterCleared;
+            scheduleGuide.MenuDismissed += ScheduleGuide_MenuDismissed;
+            // 
             // tsWtW
             // 
             tsWtW.Dock = DockStyle.None;
             tsWtW.GripStyle = ToolStripGripStyle.Hidden;
             tsWtW.ImageScalingSize = new Size(28, 28);
-            tsWtW.Items.AddRange(new ToolStripItem[] { btnWhenToWatchCheck, btnScheduleBTSearch, tsbScheduleJackettSearch, toolStripSeparator12, btnScheduleRightClick, toolStripButton1 });
+            tsWtW.Items.AddRange(new ToolStripItem[] { btnWhenToWatchCheck, btnScheduleBTSearch, tsbScheduleJackettSearch, toolStripSeparator12, btnScheduleRightClick, tsbScheduleGuideFilter, tsbScheduleGuideTiles, toolStripButton1 });
             tsWtW.Location = new Point(0, 0);
             tsWtW.Name = "tsWtW";
             tsWtW.Padding = new Padding(0, 0, 4, 0);
@@ -2139,6 +2199,26 @@ namespace TVRename.Forms
             toolStripButton1.Size = new Size(88, 36);
             toolStripButton1.Text = "Revert View";
             toolStripButton1.Click += toolStripButton1_Click_2;
+            // 
+            // tsbScheduleGuideFilter
+            // 
+            tsbScheduleGuideFilter.Image = Properties.Resources.FilterSmall;
+            tsbScheduleGuideFilter.Name = "tsbScheduleGuideFilter";
+            tsbScheduleGuideFilter.Size = new Size(66, 36);
+            tsbScheduleGuideFilter.Text = "Filter";
+            tsbScheduleGuideFilter.ToolTipText = "Filter the guide by show, network or day (the list uses the same filter)";
+            tsbScheduleGuideFilter.Visible = false;
+            tsbScheduleGuideFilter.DropDownOpening += tsbScheduleGuideFilter_DropDownOpening;
+            // 
+            // tsbScheduleGuideTiles
+            // 
+            tsbScheduleGuideTiles.Image = Properties.Resources.SettingsSmall;
+            tsbScheduleGuideTiles.Name = "tsbScheduleGuideTiles";
+            tsbScheduleGuideTiles.Size = new Size(62, 36);
+            tsbScheduleGuideTiles.Text = "Tiles";
+            tsbScheduleGuideTiles.ToolTipText = "Choose what each guide tile shows";
+            tsbScheduleGuideTiles.Visible = false;
+            tsbScheduleGuideTiles.DropDownOpening += tsbScheduleGuideTiles_DropDownOpening;
             // 
             // ilMainTabIcons
             // 
@@ -2406,7 +2486,10 @@ namespace TVRename.Forms
             toolStripContainer3.TopToolStripPanel.PerformLayout();
             toolStripContainer3.ResumeLayout(false);
             toolStripContainer3.PerformLayout();
+            tcSchedule.ResumeLayout(false);
+            tpScheduleList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)lvWhenToWatch).EndInit();
+            tpScheduleGuide.ResumeLayout(false);
             tsWtW.ResumeLayout(false);
             tsWtW.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
@@ -2643,6 +2726,12 @@ namespace TVRename.Forms
         private ToolStripSeparator toolStripSeparator25;
         private ObjectListViewFlickerFree<ProcessedEpisode> lvWhenToWatch;
         private ToolStripButton toolStripButton1;
+        private ToolStripDropDownButton tsbScheduleGuideFilter;
+        private ToolStripDropDownButton tsbScheduleGuideTiles;
+        private TabControlThemed tcSchedule;
+        private TabPage tpScheduleList;
+        private TabPage tpScheduleGuide;
+        private ScheduleGuide scheduleGuide;
         private ImageList ilScheduleIcons;
     }
 }
