@@ -431,6 +431,8 @@ public class TVDoc : IDisposable, IAsyncDisposable
 
     private static void ForgetMovie(MovieConfiguration si)
     {
+        if (si is null) return;
+
         switch (si.Provider)
         {
             case ProviderType.TheTVDB:
