@@ -31,6 +31,11 @@ internal class ShowsHtml(List<ShowConfiguration> shows) : ShowsExporter(shows)
             {
                 file.WriteLine(CreateHtml(si));
             }
+            catch (System.IO.IOException ex)
+            {
+                LOGGER.Warn(ex,
+                    $"Skipped adding {si.ShowName} to the output HTML as there was an error. Please try later.");
+            }
             catch (Exception ex)
             {
                 LOGGER.Error(ex,
