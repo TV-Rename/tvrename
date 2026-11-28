@@ -254,9 +254,9 @@ namespace TVRename.Forms
             tsbScheduleJackettSearch = new ToolStripButton();
             toolStripSeparator12 = new ToolStripSeparator();
             btnScheduleRightClick = new ToolStripButton();
-            toolStripButton1 = new ToolStripButton();
             tsbScheduleGuideFilter = new ToolStripDropDownButton();
             tsbScheduleGuideTiles = new ToolStripDropDownButton();
+            toolStripButton1 = new ToolStripButton();
             ilMainTabIcons = new ImageList(components);
             columnHeader29 = new ColumnHeader();
             columnHeader30 = new ColumnHeader();
@@ -293,6 +293,7 @@ namespace TVRename.Forms
             btnUpdateAvailable = new Button();
             tableLayoutPanel3 = new TableLayoutPanel();
             panel1 = new Panel();
+            testToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             tabMainUITabs.SuspendLayout();
             tbMyMovies.SuspendLayout();
@@ -343,7 +344,7 @@ namespace TVRename.Forms
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, optionsToolStripMenuItem, toolsToolStripMenuItem, viewToolStripMenuItem, betaToolsToolStripMenuItem, helpToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, optionsToolStripMenuItem, toolsToolStripMenuItem, viewToolStripMenuItem, betaToolsToolStripMenuItem, helpToolStripMenuItem, testToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(7, 2, 0, 2);
@@ -2190,21 +2191,11 @@ namespace TVRename.Forms
             btnScheduleRightClick.Text = "Context Menu";
             btnScheduleRightClick.Click += ToolStripButton1_Click;
             // 
-            // toolStripButton1
-            // 
-            toolStripButton1.Alignment = ToolStripItemAlignment.Right;
-            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
-            toolStripButton1.ImageScaling = ToolStripItemImageScaling.None;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new Size(88, 36);
-            toolStripButton1.Text = "Revert View";
-            toolStripButton1.Click += toolStripButton1_Click_2;
-            // 
             // tsbScheduleGuideFilter
             // 
             tsbScheduleGuideFilter.Image = Properties.Resources.FilterSmall;
             tsbScheduleGuideFilter.Name = "tsbScheduleGuideFilter";
-            tsbScheduleGuideFilter.Size = new Size(66, 36);
+            tsbScheduleGuideFilter.Size = new Size(74, 36);
             tsbScheduleGuideFilter.Text = "Filter";
             tsbScheduleGuideFilter.ToolTipText = "Filter the guide by show, network or day (the list uses the same filter)";
             tsbScheduleGuideFilter.Visible = false;
@@ -2214,11 +2205,21 @@ namespace TVRename.Forms
             // 
             tsbScheduleGuideTiles.Image = Properties.Resources.SettingsSmall;
             tsbScheduleGuideTiles.Name = "tsbScheduleGuideTiles";
-            tsbScheduleGuideTiles.Size = new Size(62, 36);
+            tsbScheduleGuideTiles.Size = new Size(72, 36);
             tsbScheduleGuideTiles.Text = "Tiles";
             tsbScheduleGuideTiles.ToolTipText = "Choose what each guide tile shows";
             tsbScheduleGuideTiles.Visible = false;
             tsbScheduleGuideTiles.DropDownOpening += tsbScheduleGuideTiles_DropDownOpening;
+            // 
+            // toolStripButton1
+            // 
+            toolStripButton1.Alignment = ToolStripItemAlignment.Right;
+            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
+            toolStripButton1.ImageScaling = ToolStripItemImageScaling.None;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new Size(88, 36);
+            toolStripButton1.Text = "Revert View";
+            toolStripButton1.Click += toolStripButton1_Click_2;
             // 
             // ilMainTabIcons
             // 
@@ -2408,6 +2409,13 @@ namespace TVRename.Forms
             panel1.Name = "panel1";
             panel1.Size = new Size(1555, 695);
             panel1.TabIndex = 12;
+            // 
+            // testToolStripMenuItem
+            // 
+            testToolStripMenuItem.Name = "testToolStripMenuItem";
+            testToolStripMenuItem.Size = new Size(41, 20);
+            testToolStripMenuItem.Text = "test ";
+            testToolStripMenuItem.Click += testToolStripMenuItem_Click;
             // 
             // UI
             // 
@@ -2733,5 +2741,6 @@ namespace TVRename.Forms
         private TabPage tpScheduleGuide;
         private ScheduleGuide scheduleGuide;
         private ImageList ilScheduleIcons;
+        private ToolStripMenuItem testToolStripMenuItem;
     }
 }

@@ -1388,8 +1388,8 @@ public partial class UI : Form, IDialogParent
                             ),
                         new XElement("Maximized", WindowState == FormWindowState.Maximized)
                         ),
-                    ColWidthsXElement("WhenToWatch",lvWhenToWatch),
-                    ColWidthsXElement("AllInOne",olvAction),
+                    ColWidthsXElement("WhenToWatch", lvWhenToWatch),
+                    ColWidthsXElement("AllInOne", olvAction),
                     new XElement("Splitter",
                         new XAttribute("Distance", splitContainer1.SplitterDistance),
                         new XAttribute("HTMLCollapsed", splitContainer1.Panel2Collapsed)
@@ -1414,7 +1414,7 @@ public partial class UI : Form, IDialogParent
         {
             returnElement.Add(new XElement("Width", lvc.Width));
         }
-         
+
         return returnElement;
     }
 
@@ -2132,7 +2132,7 @@ public partial class UI : Form, IDialogParent
         }
         item.Click += (_, _) =>
         {
-            column.ValuesChosenForFiltering = value is null ? new List<object>() : new List<object> { value };
+            column.ValuesChosenForFiltering = value is null ? [] : new List<object> { value };
             lvWhenToWatch.UpdateColumnFiltering();
             FillScheduleGuide();
         };
@@ -2927,7 +2927,7 @@ public partial class UI : Form, IDialogParent
         if (TVSettings.Instance.BGDownload && !mDoc.DownloadsHappening())
         // only do auto-download if don't have stuff to do already
         {
-            var cts = new CancellationTokenSource();    
+            var cts = new CancellationTokenSource();
             await BackgroundDownloadNowAsync(cts.Token);
         }
     }
@@ -3147,7 +3147,7 @@ public partial class UI : Form, IDialogParent
         return TVSettings.Instance.PostpendTerms(name);
     }
 
-     private static string GenerateBestName(CachedSeriesInfo? ser, ShowConfiguration? si)
+    private static string GenerateBestName(CachedSeriesInfo? ser, ShowConfiguration? si)
     {
         string? name = si?.ShowName;
 
@@ -3520,7 +3520,7 @@ public partial class UI : Form, IDialogParent
             ShowConfiguration? si = TreeNodeToShowItem(n);
             if (si != null)
             {
-                await EditSeasonAsync(si, seas.SeasonNumber,  new CancellationTokenSource());
+                await EditSeasonAsync(si, seas.SeasonNumber, new CancellationTokenSource());
             }
 
             return;
@@ -3560,7 +3560,7 @@ public partial class UI : Form, IDialogParent
 
         if (dr == DialogResult.OK)
         {
-            await ShowAddedOrEditedAsync(aes.HasChanged, false, si, true,cts);
+            await ShowAddedOrEditedAsync(aes.HasChanged, false, si, true, cts);
             await SelectShowAsync(si);
 
             Logger.Info($"Modified show called {si.ShowName}");
@@ -4723,8 +4723,8 @@ public partial class UI : Form, IDialogParent
     {
         btnUpdateAvailable.Visible = false;
         ServerRelease? result = await CheckForUpdates(CancellationToken.None).ConfigureAwait(false);
-        this.SafeInvoke(async () 
-            => await NotifyUpdatesAsync(result, true, false),true);
+        this.SafeInvoke(async ()
+            => await NotifyUpdatesAsync(result, true, false), true);
     }
 
     private async void tmrPeriodicScan_Tick(object sender, EventArgs e) => await RunAutoScanAsync("Periodic Scan", CancellationToken.None);
@@ -5501,7 +5501,7 @@ public partial class UI : Form, IDialogParent
             return;
         }
 
-        await mDoc.MovieFolderScanAsync(this, downloadFolder,new CancellationTokenSource());
+        await mDoc.MovieFolderScanAsync(this, downloadFolder, new CancellationTokenSource());
 
         FillActionList();
         FocusOnScanResults();
@@ -5591,7 +5591,8 @@ public partial class UI : Form, IDialogParent
         try
         {
             int? id = config.Id();
-            if (id.HasValue){
+            if (id.HasValue)
+            {
                 await TheTVDB.TvdbAccuracyCheck.InvestigateUpdatesSinceAsync(id.Value, timeSince.Value, CancellationToken.None);
             }
         }
@@ -5618,7 +5619,7 @@ public partial class UI : Form, IDialogParent
         mDoc.AllowAutoScan(token);
         LessBusy();
         await FillMyShowsAsync(true);
-        await FillWhenToWatchListAsync(CancellationToken.None );
+        await FillWhenToWatchListAsync(CancellationToken.None);
     }
 
     private async void yTSMovieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5695,6 +5696,27 @@ public partial class UI : Form, IDialogParent
         lvWhenToWatch.ShowGroups = true;
         lvWhenToWatch.ResetColumnFiltering();
         lvWhenToWatch.EndUpdate();
+    }
+
+    private void testToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        Dictionary<string, string?> networks = [];
+
+        foreach (var si in mDoc.TvLibrary.GetSortedShows())
+        {
+            foreach (var network in si.CachedShow?.Networks ?? [])
+            {
+                if (network.HasValue())
+                {
+                    networks[network] = TMDB.LocalCache.KnownNetworkLogo(network);
+                }
+            }
+        }
+
+        foreach (var kvp in networks.OrderBy(a=>a.Key))
+        {
+            Logger.Warn($"Network: {kvp.Key} Logo: {kvp.Value}");
+        }
     }
 }
 

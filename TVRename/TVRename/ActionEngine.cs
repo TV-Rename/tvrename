@@ -55,7 +55,7 @@ public class ActionEngine(TVRenameStats stats)
             actionWorkerTasks = actionWorkers.Select(a => a.StartAsync(token)).ToList();
             await Task.WhenAll(actionWorkerTasks);
 
-            //Finish up wiht the later queue that needs to happen after the others
+            //Finish up with the later queue that needs to happen after the others
             var q = Action.QueueName.later;
             var laterQueue = new ActionQueue(GetName(q), GetParallelLimit(q), theList.GetActionsForQueue(q), mStats, cts);
             await laterQueue.StartAsync(token);

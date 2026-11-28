@@ -1116,33 +1116,43 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
         return null;
     }
 
-    // Network logos by TMDB show id and network key, looked up once a session; the browser keeps the pictures in its own cache
-    private static readonly ConcurrentDictionary<int, Dictionary<string, string>> NetworkLogos = new();
+    // Network logos by network key, looked up once a session; the browser keeps the pictures in its own cache
+    private static readonly ConcurrentDictionary<string, string> NetworkLogos = new();
 
     // The logo for one of a show's networks, or empty if TMDB has none, can't be reached or we are offline
-    internal static async Task<string> GetNetworkLogoAsync(int tmdbId, string network, CancellationToken token)
+    internal static async Task<string?> GetNetworkLogoAsync(int tmdbId, string network, CancellationToken token)
     {
-        if (!NetworkLogos.ContainsKey(tmdbId) && !TVSettings.Instance.OfflineMode)
+        if (!NetworkLogos.ContainsKey(network) && !TVSettings.Instance.OfflineMode)
         {
             Dictionary<string, string>? logos = await DownloadNetworkLogosAsync(tmdbId, token);
             if (logos is not null)
             {
-                NetworkLogos[tmdbId] = logos;
+                foreach (KeyValuePair<string, string> kvp in logos)
+                {
+                    NetworkLogos[kvp.Key] = kvp.Value;
+                }
             }
         }
 
-        return KnownNetworkLogo(tmdbId, network);
+        return KnownNetworkLogo(network);
     }
 
     // Only what has already been looked up, so it never waits for TMDB
-    internal static string KnownNetworkLogo(int tmdbId, string network) =>
-        NetworkLogos.TryGetValue(tmdbId, out Dictionary<string, string>? logos) && logos.TryGetValue(NetworkKey(network), out string? logo)
+    internal static string? KnownNetworkLogo(string? network)
+    {
+        if (network is null)
+        {
+            return null;
+        }
+
+        return NetworkLogos.TryGetValue(NetworkKey(network), out string? logo)
             ? logo
-            : string.Empty;
+            : null;
+    }
 
     // So "ABC (US)" matches TMDB's "ABC" and "Apple TV" matches "Apple TV+"
-    private static string NetworkKey(string name) =>
-        new([.. Regex.Replace(name, @"\([^)]*\)", string.Empty).Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant)]);
+    private static string NetworkKey(string name) => name;
+    //private static string NetworkKey(string name) =>        new([.. Regex.Replace(name, @"\([^)]*\)", string.Empty).Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant)]);
 
     // By network key; a failed lookup counts as none for the session, a cancelled one is asked again next time
     private static async Task<Dictionary<string, string>?> DownloadNetworkLogosAsync(int tmdbId, CancellationToken token)

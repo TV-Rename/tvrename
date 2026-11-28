@@ -534,8 +534,7 @@ internal static class ShowHtmlHelper
         string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
         string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
         string dayTime = $"{ser.AirsDay} {ParseAirsTime(ser)}";
-        int? tmdbId = si?.TmdbCode is > 0 ? si.TmdbCode : ser.TmdbCode;
-        string networksAndAirs = await NetworksAndAirsHtmlAsync(tmdbId, [.. ser.Networks], dayTime, includeDirectoryLinks);
+        string networksAndAirs = await NetworksAndAirsHtmlAsync(si, ser, dayTime, includeDirectoryLinks);
 
         string imdbLink = ser.Imdb.ToImdbLink();
         string? mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
@@ -624,18 +623,17 @@ internal static class ShowHtmlHelper
 
     // "CBS, Thursday 20:00", with TMDB's logo in place of a network's name where it has one.
     // Only the full page asks TMDB, as it checks the show is still selected; the quick first page uses what is known
-    private static async Task<string> NetworksAndAirsHtmlAsync(int? tmdbId, List<string> networks, string dayTime, bool askTmdb)
+    private static async Task<string> NetworksAndAirsHtmlAsync(ShowConfiguration? si, CachedSeriesInfo ser, string dayTime, bool forceRefresh)
     {
+        int? tmdbId = si?.TmdbCode is > 0 ? si.TmdbCode : ser.TmdbCode;
+
         List<string> parts = [];
-        foreach (string network in networks)
+        foreach (string network in ser.Networks)
         {
-            string logo = string.Empty;
-            if (tmdbId is > 0)
-            {
-                logo = askTmdb
+            string? logo = forceRefresh && (tmdbId is > 0)
                     ? await TMDB.LocalCache.GetNetworkLogoAsync(tmdbId.Value, network, CancellationToken.None)
-                    : TMDB.LocalCache.KnownNetworkLogo(tmdbId.Value, network);
-            }
+                    : TMDB.LocalCache.KnownNetworkLogo(network);
+
             parts.Add(logo.HasValue() ? NetworkLogoHtml(logo, network) : network);
         }
 

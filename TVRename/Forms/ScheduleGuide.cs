@@ -108,8 +108,11 @@ public class ScheduleGuide : UserControl
 
     public ScheduleGuide()
     {
-        browser = new ChromiumWebBrowser { Dock = DockStyle.Fill };
-        browser.RequestHandler = new BrowserRequestHandler();
+        browser = new ChromiumWebBrowser
+        {
+            Dock = DockStyle.Fill,
+            RequestHandler = new BrowserRequestHandler()
+        };
         browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
         // Pages are only loaded once the browser is ready: a load asked for earlier is queued and could land after a newer one
         browser.IsBrowserInitializedChanged += (_, _) => this.SafeInvoke(() =>
@@ -394,33 +397,39 @@ public class ScheduleGuide : UserControl
     // Logos come from TMDB once the page is ready; until then, and if TMDB has none, the network's name is shown
     private async Task ShowNetworkLogosAsync()
     {
-        List<ProcessedEpisode> shows = [.. episodes.Where(ep => ep.Show.TmdbCode > 0 && ep.Network.HasValue()).DistinctBy(ep => ep.Show.TmdbCode)];
-        ConcurrentDictionary<int, string> found = new();
+        List<ProcessedEpisode> shows = [.. episodes.Where(ep=>ep.Network.HasValue()).DistinctBy(ep => ep.Show.TmdbCode)];
+        ConcurrentDictionary<string, string> found = new();
         await Parallel.ForEachAsync(shows, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, async (ep, token) =>
         {
             int id = ep.Show.TmdbCode!.Value;
-            found[id] = await TMDB.LocalCache.GetNetworkLogoAsync(id, ep.Network, token);
+            string? logo = await TMDB.LocalCache.GetNetworkLogoAsync(id, ep.Network, token);
+            if (logo.HasValue())
+            {
+                found[ep.Network] = logo;
+            }
         });
 
         // Back on the window's thread
-        foreach ((int id, string logo) in found)
+        foreach ((string network, string logo) in found)
         {
-            SetLogo(id, logo);
+            SetLogo(network, logo);
         }
     }
 
-    private void SetLogo(int tmdbId, string logo)
+    private void SetLogo(string network, string logo)
     {
         if (logo.HasValue() && !IsDisposed && PageReady)
         {
-            browser.ExecuteScriptAsync("setLogo", pageNumber, tmdbId, logo);
+            foreach(ProcessedEpisode ep in episodes.Where(ep => ep.Network == network))
+            {
+                browser.ExecuteScriptAsync("setLogo", pageNumber, ep.Show.TmdbCode, logo);
+            }
         }
     }
 
-    private static string Network(ShowConfiguration show) => show.CachedShow?.Networks.FirstOrDefault() ?? string.Empty;
+    private static string? Network(ShowConfiguration show) => show.CachedShow?.Networks.FirstOrDefault() ?? null;
 
-    private static string KnownLogo(ShowConfiguration show) =>
-        show.TmdbCode is { } id ? TMDB.LocalCache.KnownNetworkLogo(id, Network(show)) : string.Empty;
+    private static string? KnownLogo(ShowConfiguration show) => TMDB.LocalCache.KnownNetworkLogo(Network(show));
 
     private string GuideHtml()
     {
@@ -617,7 +626,7 @@ public class ScheduleGuide : UserControl
             return time;
         }
 
-        string logo = KnownLogo(ep.Show);
+        string? logo = KnownLogo(ep.Show);
         string network = logo.HasValue()
             ? $"<img class=\"logo\" src=\"{Encode(logo)}\" alt=\"{Encode(ep.Network)}\" title=\"{Encode(ep.Network)}\" onerror=\"noLogo(this.closest('.tile').dataset.i)\">"
             : Encode(ep.Network);
