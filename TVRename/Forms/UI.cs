@@ -2338,9 +2338,11 @@ public partial class UI : Form, IDialogParent
 
         ProcessedEpisode? ep = eps.Count == 1 ? eps[0] : null;
 
-        List<ShowConfiguration> sis = [.. eps.Select(e => e.Show)];
+        List<ShowConfiguration> sis = [.. eps.Select(e => e.Show).Distinct()];
+        List<ProcessedSeason> seasons = [.. eps.Select(e => e.AppropriateProcessedSeason).Distinct()];
+        ProcessedSeason? seasonToUse = seasons.Count == 1 ? seasons[0] : null;
 
-        await BuildshowRightClickMenuAsync(pt, ep, sis, ep?.AppropriateProcessedSeason);
+        await BuildshowRightClickMenuAsync(pt, ep, sis, seasonToUse);
     }
 
     private void MenuGuideAndTvdb(ProcessedEpisode? ep, ShowConfiguration si, ProcessedSeason? seas)
