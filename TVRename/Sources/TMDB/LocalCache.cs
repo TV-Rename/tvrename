@@ -1411,63 +1411,73 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
     {
         int total = shows.Count();
         ThreadSafeCounter current = new();
-        Recomendations returnValue = await GetTrendingAsync(languageCode).ConfigureAwait(false);
 
-        // Configure throttling to avoid getting blocked by the host server
-        var options = new ParallelOptions
+        try
         {
-            MaxDegreeOfParallelism = 12, // Limit to 12 concurrent downloads at a time
-            CancellationToken = token
-        };
+            Recomendations returnValue = await GetTrendingAsync(languageCode, token).ConfigureAwait(false);
 
-        await Parallel.ForEachAsync(shows, options, async (arg, cancellationToken) =>
-        {
-            string errorMessage = $"Error obtaining TMDB Recommendations for {arg.Name}:";
-            try
+            // Configure throttling to avoid getting blocked by the host server
+            var options = new ParallelOptions
             {
-                if (cancellationToken.IsCancellationRequested)
+                MaxDegreeOfParallelism = 12, // Limit to 12 concurrent downloads at a time
+                CancellationToken = token
+            };
+
+            await Parallel.ForEachAsync(shows, options, async (arg, cancellationToken) =>
+            {
+                string errorMessage = $"Error obtaining TMDB Recommendations for {arg.Name}:";
+                try
                 {
-                    return;
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    await AddRecommendationsFromASync(arg, returnValue, languageCode, cancellationToken);
+
+                    sender.Report(new ProgressReport()
+                    {
+                        ProgressPercentage = 100 * current.Increment() / total,
+                        UpdateText = arg.CachedShow?.Name ?? string.Empty
+                    });
                 }
-
-                await AddRecommendationsFromASync(arg, returnValue, languageCode, cancellationToken);
-
-                sender.Report(new ProgressReport()
+                catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
                 {
-                    ProgressPercentage = 100 * current.Increment() / total,
-                    UpdateText = arg.CachedShow?.Name ?? string.Empty
-                });
-            }
-            catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
-            {
-                LOGGER.LogHttpRequestException(errorMessage, ex);
-                SayNothing();
-                LastErrorMessage = ex.LoggableDetails();
-                // ReSharper disable once ThrowFromCatchWithNoInnerException
-                throw new SourceConnectivityException(errorMessage, ex);
-            }
-            catch (TaskCanceledException ex)
-            {
-                SayNothing();
-                LastErrorMessage = ex.Message;
-            }
-            catch (Exception e)
-            {
-                LOGGER.Error(e, errorMessage);
-                SayNothing();
-                LastErrorMessage = e.Message;
-                throw new SourceConnectivityException(errorMessage, e);
-            }
-        }).ConfigureAwait(false);
+                    LOGGER.LogHttpRequestException(errorMessage, ex);
+                    SayNothing();
+                    LastErrorMessage = ex.LoggableDetails();
+                    // ReSharper disable once ThrowFromCatchWithNoInnerException
+                    throw new SourceConnectivityException(errorMessage, ex);
+                }
+                catch (TaskCanceledException ex)
+                {
+                    SayNothing();
+                    LastErrorMessage = ex.Message;
+                }
+                catch (Exception e)
+                {
+                    LOGGER.Error(e, errorMessage);
+                    SayNothing();
+                    LastErrorMessage = e.Message;
+                    throw new SourceConnectivityException(errorMessage, e);
+                }
+            }).ConfigureAwait(false);
 
-        return returnValue;
+            return returnValue;
+        }
+        catch (TaskCanceledException ex)
+        {
+            SayNothing();
+            LastErrorMessage = ex.Message;
+            throw new SourceConnectivityException("TMDB Recommendations task was cancelled.");
+        }
     }
 
     /// <exception cref="GeneralHttpException">Condition.</exception>
-    private async Task<Recomendations> GetTrendingAsync(string languageCode)
+    private async Task<Recomendations> GetTrendingAsync(string languageCode, CancellationToken token)
     {
-        Task<SearchContainer<SearchTv>?> topRated = Client.GetTvShowTopRatedAsync(language: languageCode);
-        Task<SearchContainer<SearchTv>?> trending = Client.GetTrendingTvAsync(TimeWindow.Week);
+        Task<SearchContainer<SearchTv>?> topRated = Client.GetTvShowTopRatedAsync(language: languageCode, cancellationToken: token);
+        Task<SearchContainer<SearchTv>?> trending = Client.GetTrendingTvAsync(TimeWindow.Week, cancellationToken: token);
         Recomendations returnValue = new();
 
         await topRated.ConfigureAwait(false);
