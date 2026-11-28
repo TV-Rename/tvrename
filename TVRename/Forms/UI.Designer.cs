@@ -2125,10 +2125,10 @@ namespace TVRename.Forms
             scheduleGuide.Size = new Size(1427, 445);
             scheduleGuide.StatusIcons = ilScheduleIcons;
             scheduleGuide.TabIndex = 0;
-            scheduleGuide.EpisodesSelected += ScheduleGuide_EpisodesSelected;
-            scheduleGuide.EpisodesOpened += ScheduleGuide_EpisodesOpened;
-            scheduleGuide.EpisodesRightClicked += ScheduleGuide_EpisodesRightClicked;
-            scheduleGuide.EpisodesSearched += ScheduleGuide_EpisodesSearched;
+            scheduleGuide.EpisodeSelected += ScheduleGuide_EpisodeSelected;
+            scheduleGuide.EpisodeOpened += ScheduleGuide_EpisodeOpened;
+            scheduleGuide.EpisodeRightClicked += ScheduleGuide_EpisodeRightClicked;
+            scheduleGuide.EpisodeSearched += ScheduleGuide_EpisodeSearched;
             scheduleGuide.FilterCleared += ScheduleGuide_FilterCleared;
             scheduleGuide.MenuDismissed += ScheduleGuide_MenuDismissed;
             // 
