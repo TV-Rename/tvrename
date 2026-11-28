@@ -48,6 +48,7 @@ public class ScheduleGuide : UserControl
 
     private readonly ChromiumWebBrowser browser;
     private List<ProcessedEpisode> episodes = [];
+    private List<ShowConfiguration> pageShows = []; // in the page's order; tiles and logos refer to a show by its place here
     private ProcessedEpisode? selected;
     private DateTime? pickedDay;
     private int week; // 0 is the week starting yesterday
@@ -394,42 +395,43 @@ public class ScheduleGuide : UserControl
         }
     }
 
-    // Logos come from TMDB once the page is ready; until then, and if TMDB has none, the network's name is shown
+    // Logos come from TMDB once the page is ready; until then, and if none is found, the network's name is shown.
+    // Shows TMDB doesn't know then share what the others found
     private async Task ShowNetworkLogosAsync()
     {
-        List<ProcessedEpisode> shows = [.. episodes.Where(ep=>ep.Network.HasValue()).DistinctBy(ep => ep.Show.TmdbCode)];
-        ConcurrentDictionary<string, string> found = new();
-        await Parallel.ForEachAsync(shows, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, async (ep, token) =>
+        List<ShowConfiguration> shows = pageShows;
+        List<(int? id, string network, bool only)> lookups =
+            [.. shows.Select(show => (id: TmdbId(show), network: Network(show) ?? string.Empty, only: OnlyNetwork(show))).Where(s => s.id is > 0 && s.network.HasValue()).DistinctBy(s => s.id)];
+
+        await Parallel.ForEachAsync(lookups, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, async (lookup, token) =>
         {
-            int id = ep.Show.TmdbCode!.Value;
-            string? logo = await TMDB.LocalCache.GetNetworkLogoAsync(id, ep.Network, token);
-            if (logo.HasValue())
-            {
-                found[ep.Network] = logo;
-            }
+            await TMDB.LocalCache.GetNetworkLogoAsync(lookup.id, lookup.network, lookup.only, token);
         });
 
         // Back on the window's thread
-        foreach ((string network, string logo) in found)
+        if (shows != pageShows || !PageReady)
         {
-            SetLogo(network, logo);
+            return;
         }
-    }
 
-    private void SetLogo(string network, string logo)
-    {
-        if (logo.HasValue() && !IsDisposed && PageReady)
+        // Empty puts the name back where the page was drawn with a logo TMDB has since ruled out
+        for (int i = 0; i < shows.Count; i++)
         {
-            foreach(ProcessedEpisode ep in episodes.Where(ep => ep.Network == network))
+            if (Network(shows[i]).HasValue())
             {
-                browser.ExecuteScriptAsync("setLogo", pageNumber, ep.Show.TmdbCode, logo);
+                browser.ExecuteScriptAsync("setLogo", pageNumber, i, KnownLogo(shows[i]) ?? string.Empty);
             }
         }
     }
 
-    private static string? Network(ShowConfiguration show) => show.CachedShow?.Networks.FirstOrDefault() ?? null;
+    private static string? Network(ShowConfiguration show) => show.CachedShow?.Networks.FirstOrDefault();
 
-    private static string? KnownLogo(ShowConfiguration show) => TMDB.LocalCache.KnownNetworkLogo(Network(show));
+    private static string? KnownLogo(ShowConfiguration show) => TMDB.LocalCache.KnownNetworkLogo(Network(show), TmdbId(show), OnlyNetwork(show));
+
+    private static bool OnlyNetwork(ShowConfiguration show) => show.CachedShow?.Networks.Count() == 1;
+
+    // As the Information tab does: the show's own TMDB id, else the one its other source knows
+    private static int? TmdbId(ShowConfiguration show) => show.TmdbCode is > 0 ? show.TmdbCode : show.CachedShow?.TmdbCode;
 
     private string GuideHtml()
     {
@@ -438,6 +440,7 @@ public class ScheduleGuide : UserControl
         int firstWeek = Math.Min(0, episodes.Count == 0 ? 0 : WeekOf(AirTime(episodes[0])));
         int lastWeek = Math.Max(0, episodes.Count == 0 ? 0 : WeekOf(AirTime(episodes[^1])));
         List<ShowConfiguration> shows = [.. episodes.Select(ep => ep.Show).Distinct()];
+        pageShows = shows;
 
         StringBuilder sb = new();
         sb.AppendLine(ShowHtmlHelper.HTMLHeader(FONT_SIZE));
@@ -473,7 +476,6 @@ public class ScheduleGuide : UserControl
             poster = show.PosterUrl(),
             summary = show.CachedShow?.Overview?.ToUiVersion() ?? string.Empty,
             network = Network(show),
-            tmdb = show.TmdbCode ?? 0,
             logo = KnownLogo(show)
         }), new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml });
 
@@ -629,7 +631,7 @@ public class ScheduleGuide : UserControl
         string? logo = KnownLogo(ep.Show);
         string network = logo.HasValue()
             ? $"<img class=\"logo\" src=\"{Encode(logo)}\" alt=\"{Encode(ep.Network)}\" title=\"{Encode(ep.Network)}\" onerror=\"noLogo(this.closest('.tile').dataset.i)\">"
-            : Encode(ep.Network);
+            : $"<span class=\"badge bg-primary\">{Encode(ep.Network)}</span>";
         return $"{time}<span class=\"net\">{network}</span>";
     }
 
@@ -702,6 +704,7 @@ public class ScheduleGuide : UserControl
         + ".tile-episode{font-size:.85rem;line-height:1.25;margin:2px 0}"
         + ".tile-meta{font-size:.8rem;line-height:22px;display:flex;justify-content:space-between;align-items:center;gap:6px}"
         + ".tile-meta .time{white-space:nowrap}.tile-meta .net{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}"
+        + ".tile-meta .net .badge{display:block;overflow:hidden;text-overflow:ellipsis}"
         + ".badge{font-weight:500;vertical-align:middle}"
         + ".status{display:inline-block;width:16px;height:16px;margin-right:5px;vertical-align:-2px;background:no-repeat center/16px 16px}"
         + ".status-text{font-size:.9rem;font-weight:400}"
@@ -755,6 +758,11 @@ public class ScheduleGuide : UserControl
                 name.textContent = s.network; name.style.display = s.network ? '' : 'none';
               }
             }
+            function nameBadge(s) {
+              var badge = document.createElement('span');
+              badge.className = 'badge bg-primary'; badge.textContent = s.network;
+              return badge;
+            }
             function logoImage(s) {
               var img = document.createElement('img');
               img.className = 'logo'; img.src = s.logo; img.alt = s.network; img.title = s.network;
@@ -766,20 +774,18 @@ public class ScheduleGuide : UserControl
               var tile = tileAt(i);
               if (!tile) { return; }
               var s = shows[tile.dataset.s];
-              s.logo = '';
-              document.querySelectorAll('.tile[data-s="' + tile.dataset.s + '"] .net').forEach(function (net) { net.textContent = s.network; });
+              s.failed = s.logo; s.logo = '';
+              document.querySelectorAll('.tile[data-s="' + tile.dataset.s + '"] .net').forEach(function (net) { net.replaceChildren(nameBadge(s)); });
               if (current >= 0 && tileAt(current).dataset.s === tile.dataset.s) { showNetwork(s); }
             }
-            function setLogo(p, tmdb, url) {
-              if (p !== page) { return; }
-              shows.forEach(function (s, i) {
-                if (s.tmdb !== tmdb || s.logo === url) { return; }
-                s.logo = url;
-                document.querySelectorAll('.tile[data-s="' + i + '"] .net').forEach(function (net) {
-                  net.textContent = ''; net.appendChild(logoImage(s));
-                });
-                if (current >= 0 && Number(tileAt(current).dataset.s) === i) { showNetwork(s); }
+            function setLogo(p, i, url) {
+              var s = shows[i];
+              if (p !== page || !s || s.logo === url || (url && url === s.failed)) { return; }
+              s.logo = url;
+              document.querySelectorAll('.tile[data-s="' + i + '"] .net').forEach(function (net) {
+                net.replaceChildren(url ? logoImage(s) : nameBadge(s));
               });
+              if (current >= 0 && Number(tileAt(current).dataset.s) === i) { showNetwork(s); }
             }
             function fill(tile, label) {
               var d = tile.dataset, s = shows[d.s];
