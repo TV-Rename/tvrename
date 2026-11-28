@@ -2076,7 +2076,6 @@ public partial class UI : Form, IDialogParent
         }
         tsbScheduleGuideFilter.Visible = guide;
         tsbScheduleGuideTiles.Visible = guide;
-        toolStripButton1.Enabled = !guide; // Revert View is for the list's columns
 
         // The calendar is only on the Guide
         calCalendar.Visible = guide;
@@ -2161,31 +2160,31 @@ public partial class UI : Form, IDialogParent
     }
 
     // The Guide works through the list's selection, so the list's own handlers do the rest
-    private void SelectInSchedule(List<ProcessedEpisode> eps)
+    private void SelectInSchedule(ProcessedEpisode ep)
     {
-        if (!lvWhenToWatch.Selected().SequenceEqual(eps))
+        if (lvWhenToWatch.Selected() is not [var only] || only != ep)
         {
-            lvWhenToWatch.SelectedObjects = eps;
+            lvWhenToWatch.SelectedObjects = new List<ProcessedEpisode> { ep };
         }
     }
 
-    private void ScheduleGuide_EpisodesSelected(object? sender, List<ProcessedEpisode> eps) => SelectInSchedule(eps);
+    private void ScheduleGuide_EpisodeSelected(object? sender, ProcessedEpisode ep) => SelectInSchedule(ep);
 
-    private void ScheduleGuide_EpisodesOpened(object? sender, List<ProcessedEpisode> eps)
+    private void ScheduleGuide_EpisodeOpened(object? sender, ProcessedEpisode ep)
     {
-        SelectInSchedule(eps);
+        SelectInSchedule(ep);
         lvWhenToWatch_DoubleClick(sender!, EventArgs.Empty);
     }
 
-    private async void ScheduleGuide_EpisodesRightClicked(object? sender, List<ProcessedEpisode> eps)
+    private async void ScheduleGuide_EpisodeRightClicked(object? sender, ProcessedEpisode ep)
     {
-        SelectInSchedule(eps);
+        SelectInSchedule(ep);
         await WtwRightClickOnShowAsync(Cursor.Position);
     }
 
-    private void ScheduleGuide_EpisodesSearched(object? sender, List<ProcessedEpisode> eps)
+    private void ScheduleGuide_EpisodeSearched(object? sender, ProcessedEpisode ep)
     {
-        SelectInSchedule(eps);
+        SelectInSchedule(ep);
         bnWTWBTSearch_Click(sender, EventArgs.Empty);
     }
 
@@ -5671,6 +5670,21 @@ public partial class UI : Form, IDialogParent
     private void toolStripButton1_Click_2(object sender, EventArgs e)
     {
         RevertWTWView();
+        if (tcSchedule.SelectedTab == tpScheduleGuide)
+        {
+            RevertScheduleGuide();
+        }
+    }
+
+    // The filters are cleared with the list's; the Guide goes back to this week with nothing picked
+    private void RevertScheduleGuide()
+    {
+        lvWhenToWatch.DeselectAll();
+        calendarBeingUpdated = true;
+        calCalendar.SetDate(DateTime.Today);
+        calendarBeingUpdated = false;
+        scheduleGuide.Revert();
+        FillScheduleGuide();
     }
 
     private void RevertWTWView()

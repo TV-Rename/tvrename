@@ -9,7 +9,6 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Web;
 using CefSharp;
 using CefSharp.WinForms;
@@ -17,7 +16,7 @@ using Newtonsoft.Json;
 
 namespace TVRename.Forms;
 
-// The Schedule's Guide tab: the list's episodes as weeks of day columns, a double episode sharing one slot.
+// The Schedule's Guide tab: the list's episodes as weeks of day columns, one tile for each row of the list.
 // Every week is in the page, so paging happens in the page; the details panel has a fixed height so the columns never move.
 public class ScheduleGuide : UserControl
 {
@@ -42,17 +41,14 @@ public class ScheduleGuide : UserControl
         (TileLayout.Compact, "Compact (show and episode only)")
     ];
 
-    // Network logos by TMDB show id, found once a session; empty when TMDB has none for the show's network
-    private static readonly Dictionary<int, string> NetworkLogos = [];
-    private static readonly HashSet<int> LogosAsked = [];
     private static Font? boldMenuFont;
 
     private TileLayout tiles = TileLayout.Full;
     private int hiddenByFilter;
 
     private readonly ChromiumWebBrowser browser;
-    private List<List<ProcessedEpisode>> slots = [];
-    private List<ProcessedEpisode>? selected;
+    private List<ProcessedEpisode> episodes = [];
+    private ProcessedEpisode? selected;
     private DateTime? pickedDay;
     private int week; // 0 is the week starting yesterday
     private int pageNumber; // a click on an older page must not act on a newer episode list
@@ -63,10 +59,10 @@ public class ScheduleGuide : UserControl
     private string renderedSignature = string.Empty; // what the page shows; reloading redraws every picture, so only reload for a change
     private string iconCss = string.Empty;
 
-    public event EventHandler<List<ProcessedEpisode>>? EpisodesSelected;
-    public event EventHandler<List<ProcessedEpisode>>? EpisodesOpened;
-    public event EventHandler<List<ProcessedEpisode>>? EpisodesRightClicked;
-    public event EventHandler<List<ProcessedEpisode>>? EpisodesSearched;
+    public event EventHandler<ProcessedEpisode>? EpisodeSelected;
+    public event EventHandler<ProcessedEpisode>? EpisodeOpened;
+    public event EventHandler<ProcessedEpisode>? EpisodeRightClicked;
+    public event EventHandler<ProcessedEpisode>? EpisodeSearched;
     public event EventHandler? FilterCleared;
     public event EventHandler? MenuDismissed; // the page runs on the browser's thread, so an open menu never sees its clicks
 
@@ -116,49 +112,30 @@ public class ScheduleGuide : UserControl
         browser.RequestHandler = new BrowserRequestHandler();
         browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
         // Pages are only loaded once the browser is ready: a load asked for earlier is queued and could land after a newer one
-        browser.IsBrowserInitializedChanged += (_, _) => OnUiThread(() =>
+        browser.IsBrowserInitializedChanged += (_, _) => this.SafeInvoke(() =>
         {
             if (Visible && needsRender)
             {
                 Render();
             }
-        });
+        }, false);
         Controls.Add(browser);
-    }
-
-    // The browser calls back on its own thread, possibly while the window is closing
-    private void OnUiThread(System.Action action)
-    {
-        if (IsDisposed || !IsHandleCreated)
-        {
-            return;
-        }
-
-        try
-        {
-            BeginInvoke(action);
-        }
-        catch (InvalidOperationException)
-        {
-            // Closed in the meantime
-        }
     }
 
     // hidden is how many of the schedule's episodes the list's filters leave out
     public void SetEpisodes(IEnumerable<ProcessedEpisode> eps, ProcessedEpisode? selectedEpisode, int hidden)
     {
         hiddenByFilter = hidden;
-        slots = Slots(eps);
+        episodes = [.. eps.Where(ep => ep.GetAirDateDt().HasValue).OrderBy(ep => ep.GetAirDateDt()).ThenBy(ep => ep.SeriesName).ThenBy(ep => ep.AppropriateEpNum)];
 
-        // The list's selection, or else the slot already shown, found again in the new episode list
-        List<ProcessedEpisode>? wanted = selectedEpisode is null ? null : slots.FirstOrDefault(slot => slot.Contains(selectedEpisode));
-        wanted ??= slots.FirstOrDefault(slot => SameSlot(slot, selected));
+        // The list's selection, or else the episode already shown, found again in the new episode list
+        ProcessedEpisode? wanted = episodes.FirstOrDefault(ep => ep.Equals(selectedEpisode)) ?? episodes.FirstOrDefault(ep => ep.Equals(selected));
 
         // Same episodes as the page shows or is loading: at most the selection moved
         bool samePage = Signature() == renderedSignature && (PageReady || PageLoading);
-        if (samePage && wanted is not null && !SameSlot(wanted, selected))
+        if (samePage && wanted is not null && !wanted.Equals(selected))
         {
-            SelectTile(slots.IndexOf(wanted));
+            SelectTile(episodes.IndexOf(wanted));
         }
 
         selected = wanted;
@@ -168,22 +145,15 @@ public class ScheduleGuide : UserControl
         }
     }
 
-    private static List<List<ProcessedEpisode>> Slots(IEnumerable<ProcessedEpisode> eps)
+    // Revert View: back to this week with nothing picked, on full tiles; drawn by the SetEpisodes that follows the list's revert
+    public void Revert()
     {
-        List<List<ProcessedEpisode>> found = [];
-        foreach (ProcessedEpisode ep in eps.Where(ep => ep.GetAirDateDt().HasValue).OrderBy(ep => ep.GetAirDateDt()).ThenBy(ep => ep.SeriesName).ThenBy(ep => ep.AppropriateEpNum))
-        {
-            List<ProcessedEpisode>? last = found.LastOrDefault();
-            if (last is not null && last[0].Show == ep.Show && last[0].GetAirDateDt() == ep.GetAirDateDt())
-            {
-                last.Add(ep);
-            }
-            else
-            {
-                found.Add([ep]);
-            }
-        }
-        return found;
+        tiles = TileLayout.Full;
+        week = 0;
+        pickedDay = null;
+        selected = null;
+        renderedSignature = string.Empty;
+        needsRender = true;
     }
 
     private void SelectTile(int index)
@@ -198,16 +168,13 @@ public class ScheduleGuide : UserControl
         }
     }
 
-    private static bool SameSlot(List<ProcessedEpisode> a, List<ProcessedEpisode>? b) =>
-        b is not null && a.Count == b.Count && a.Zip(b).All(pair => pair.First.Equals(pair.Second));
-
     // Everything the page draws from, so an unchanged schedule (a periodic refresh, switching views) keeps the page as it is
     private string Signature()
     {
         StringBuilder sb = new();
         sb.Append(DateTime.Today.ToString(DATE_FORMAT, CultureInfo.InvariantCulture)).Append(ThemeManager.ActiveTheme?.Key)
           .Append(TVSettings.Instance.UseColoursOnWtw).Append(tiles).Append(hiddenByFilter);
-        foreach (ProcessedEpisode ep in slots.SelectMany(slot => slot))
+        foreach (ProcessedEpisode ep in episodes)
         {
             sb.Append(';').Append(ep.SeriesName).Append('|').Append(ep.AppropriateSeasonNumber).Append('|').Append(ep.EpisodeNumbersAsText)
               .Append('|').Append(ep.GetAirDateDt()?.ToString("O")).Append('|').Append(ep.AiredStatus).Append('|').Append(ep.Name)
@@ -247,7 +214,7 @@ public class ScheduleGuide : UserControl
 
     private static int WeekOf(DateTime day) => (int)Math.Floor((day.Date - FirstDay).TotalDays / DAYS_SHOWN);
 
-    private static DateTime AirTime(List<ProcessedEpisode> slot) => slot[0].GetAirDateDt() ?? DateTime.MaxValue;
+    private static DateTime AirTime(ProcessedEpisode ep) => ep.GetAirDateDt() ?? DateTime.MaxValue;
 
     private void RenderWhenVisible()
     {
@@ -277,7 +244,7 @@ public class ScheduleGuide : UserControl
             return;
         }
 
-        OnUiThread(() => _ = ActAsync(page, action, value));
+        this.SafeInvoke(() => _ = ActAsync(page, action, value), false);
     }
 
     private async Task ActAsync(int page, string action, int value)
@@ -325,57 +292,57 @@ public class ScheduleGuide : UserControl
                 break;
 
             default:
-                if (value >= 0 && value < slots.Count)
+                if (value >= 0 && value < episodes.Count)
                 {
-                    await ActOnSlotAsync(slots[value], action);
+                    await ActOnEpisodeAsync(episodes[value], action);
                 }
                 break;
         }
     }
 
-    private async Task ActOnSlotAsync(List<ProcessedEpisode> slot, string action)
+    private async Task ActOnEpisodeAsync(ProcessedEpisode ep, string action)
     {
         if (action != "look")
         {
-            selected = slot;
+            selected = ep;
         }
 
         switch (action)
         {
             case "look":
-                await ShowFileAsync(slot);
+                await ShowFileAsync(ep);
                 break;
 
             case "select":
-                EpisodesSelected?.Invoke(this, slot);
-                await ShowFileAsync(slot);
+                EpisodeSelected?.Invoke(this, ep);
+                await ShowFileAsync(ep);
                 break;
 
             case "open":
-                EpisodesOpened?.Invoke(this, slot);
+                EpisodeOpened?.Invoke(this, ep);
                 break;
 
             case "menu":
-                EpisodesRightClicked?.Invoke(this, slot);
-                await ShowFileAsync(slot);
+                EpisodeRightClicked?.Invoke(this, ep);
+                await ShowFileAsync(ep);
                 break;
 
             case "search":
-                EpisodesSearched?.Invoke(this, slot);
+                EpisodeSearched?.Invoke(this, ep);
                 break;
 
             default:
-                // Not a slot action
+                // Not an episode action
                 break;
         }
     }
 
-    // The file is looked up only for the slot in the details panel, so drawing the page reads nothing from disk
-    private async Task ShowFileAsync(List<ProcessedEpisode> slot)
+    // The file is looked up only for the episode in the details panel, so drawing the page reads nothing from disk
+    private async Task ShowFileAsync(ProcessedEpisode ep)
     {
         int lookup = ++fileLookup;
         int page = pageNumber;
-        FileInfo? file = (await FinderHelper.FindEpOnDiskAsync(null, slot[0])).FirstOrDefault();
+        FileInfo? file = (await FinderHelper.FindEpOnDiskAsync(null, ep)).FirstOrDefault();
         (string size, string dimensions) = file is null ? (string.Empty, string.Empty) : await FileDetailsAsync(file);
 
         if (lookup != fileLookup || page != pageNumber || !browser.IsBrowserInitialized)
@@ -414,9 +381,9 @@ public class ScheduleGuide : UserControl
         }
 
         syncWhenReady = false;
-        if (selected is not null && slots.Contains(selected))
+        if (selected is not null && episodes.Contains(selected))
         {
-            browser.ExecuteScriptAsync("selectTile", slots.IndexOf(selected));
+            browser.ExecuteScriptAsync("selectTile", episodes.IndexOf(selected));
         }
         if (pickedDay.HasValue)
         {
@@ -424,35 +391,20 @@ public class ScheduleGuide : UserControl
         }
     }
 
-    // Logos come from TMDB when a page is ready; until then, and if TMDB has none, the network's name is shown
+    // Logos come from TMDB once the page is ready; until then, and if TMDB has none, the network's name is shown
     private async Task ShowNetworkLogosAsync()
     {
-        List<ProcessedEpisode> shows = [.. slots.Select(slot => slot[0]).Where(ep => ep.Show.TmdbCode > 0 && ep.Network.HasValue()).DistinctBy(ep => ep.Show.TmdbCode)];
-
-        // Found while this page was loading
-        foreach (ProcessedEpisode ep in shows)
-        {
-            SetLogo(ep.Show.TmdbCode!.Value, KnownLogo(ep.Show));
-        }
-
-        if (TVSettings.Instance.OfflineMode)
-        {
-            return;
-        }
-
-        List<ProcessedEpisode> toFind = [.. shows.Where(ep => LogosAsked.Add(ep.Show.TmdbCode!.Value))];
+        List<ProcessedEpisode> shows = [.. episodes.Where(ep => ep.Show.TmdbCode > 0 && ep.Network.HasValue()).DistinctBy(ep => ep.Show.TmdbCode)];
         ConcurrentDictionary<int, string> found = new();
-        await Parallel.ForEachAsync(toFind, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, async (ep, token) =>
+        await Parallel.ForEachAsync(shows, new ParallelOptions { MaxDegreeOfParallelism = TVSettings.Instance.ParallelDownloads }, async (ep, token) =>
         {
             int id = ep.Show.TmdbCode!.Value;
-            Dictionary<string, string> logos = await TMDB.LocalCache.GetNetworkLogosAsync(id, token);
-            found[id] = logos.FirstOrDefault(pair => NetworkKey(pair.Key) == NetworkKey(ep.Network)).Value ?? string.Empty;
+            found[id] = await TMDB.LocalCache.GetNetworkLogoAsync(id, ep.Network, token);
         });
 
         // Back on the window's thread
         foreach ((int id, string logo) in found)
         {
-            NetworkLogos[id] = logo;
             SetLogo(id, logo);
         }
     }
@@ -465,20 +417,18 @@ public class ScheduleGuide : UserControl
         }
     }
 
-    // So "ABC (US)" matches TMDB's "ABC" and "Apple TV" matches "Apple TV+"
-    private static string NetworkKey(string name) =>
-        new([.. Regex.Replace(name, @"\([^)]*\)", string.Empty).Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant)]);
+    private static string Network(ShowConfiguration show) => show.CachedShow?.Networks.FirstOrDefault() ?? string.Empty;
 
     private static string KnownLogo(ShowConfiguration show) =>
-        show.TmdbCode is { } id && NetworkLogos.TryGetValue(id, out string? logo) ? logo : string.Empty;
+        show.TmdbCode is { } id ? TMDB.LocalCache.KnownNetworkLogo(id, Network(show)) : string.Empty;
 
     private string GuideHtml()
     {
-        List<ProcessedEpisode>? upNext = slots.FirstOrDefault(slot => AirTime(slot) >= TimeHelpers.LocalNow());
-        List<ProcessedEpisode>? featured = selected ?? upNext;
-        int firstWeek = Math.Min(0, slots.Count == 0 ? 0 : WeekOf(AirTime(slots[0])));
-        int lastWeek = Math.Max(0, slots.Count == 0 ? 0 : WeekOf(AirTime(slots[^1])));
-        List<ShowConfiguration> shows = [.. slots.Select(slot => slot[0].Show).Distinct()];
+        ProcessedEpisode? upNext = episodes.FirstOrDefault(ep => AirTime(ep) >= TimeHelpers.LocalNow());
+        ProcessedEpisode? featured = selected ?? upNext;
+        int firstWeek = Math.Min(0, episodes.Count == 0 ? 0 : WeekOf(AirTime(episodes[0])));
+        int lastWeek = Math.Max(0, episodes.Count == 0 ? 0 : WeekOf(AirTime(episodes[^1])));
+        List<ShowConfiguration> shows = [.. episodes.Select(ep => ep.Show).Distinct()];
 
         StringBuilder sb = new();
         sb.AppendLine(ShowHtmlHelper.HTMLHeader(FONT_SIZE));
@@ -494,8 +444,8 @@ public class ScheduleGuide : UserControl
             AppendWeek(sb, w, shows);
         }
 
-        int featuredIndex = featured is null ? -1 : slots.IndexOf(featured);
-        string upNextLabel = featured is not null && featured == upNext && selected is null ? "Up next" : string.Empty;
+        int featuredIndex = featured is null ? -1 : episodes.IndexOf(featured);
+        string upNextLabel = featured is not null && featured.Equals(upNext) && selected is null ? "Up next" : string.Empty;
         // Invariant, as some cultures write a minus sign that the script can't read
         string picked = pickedDay?.ToString(DATE_FORMAT, CultureInfo.InvariantCulture) ?? string.Empty;
         sb.AppendLine(string.Create(CultureInfo.InvariantCulture,
@@ -513,7 +463,7 @@ public class ScheduleGuide : UserControl
         {
             poster = show.PosterUrl(),
             summary = show.CachedShow?.Overview?.ToUiVersion() ?? string.Empty,
-            network = show.CachedShow?.Networks.FirstOrDefault() ?? string.Empty,
+            network = Network(show),
             tmdb = show.TmdbCode ?? 0,
             logo = KnownLogo(show)
         }), new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml });
@@ -548,8 +498,8 @@ public class ScheduleGuide : UserControl
         if (hiddenByFilter > 0)
         {
             // A filter set in either view hides episodes here too, so say so
-            string episodes = hiddenByFilter == 1 ? "episode" : "episodes";
-            sb.AppendLine($"<div class=\"filter-note small mt-1\"><span class=\"badge bg-warning\" style=\"color:#212529\">Filtered</span> {hiddenByFilter} {episodes} hidden"
+            string hiddenEpisodes = hiddenByFilter == 1 ? "episode" : "episodes";
+            sb.AppendLine($"<div class=\"filter-note small mt-1\"><span class=\"badge bg-warning\" style=\"color:#212529\">Filtered</span> {hiddenByFilter} {hiddenEpisodes} hidden"
                           + " · <a href=\"#\" onclick=\"send('clearfilter',0);return false;\">Clear</a></div>");
         }
         sb.AppendLine(DIV_END);
@@ -559,8 +509,8 @@ public class ScheduleGuide : UserControl
     {
         DateTime first = FirstDay.AddDays(w * DAYS_SHOWN);
         DateTime end = first.AddDays(DAYS_SHOWN);
-        int earlier = slots.Sum(slot => AirTime(slot) < first ? slot.Count : 0);
-        int later = slots.Sum(slot => AirTime(slot) >= end ? slot.Count : 0);
+        int earlier = episodes.Count(ep => AirTime(ep) < first);
+        int later = episodes.Count(ep => AirTime(ep) >= end);
 
         sb.AppendLine($"<div class=\"week\" id=\"w{w}\" data-range=\"{Encode(first.ToString("M"))} to {Encode(end.AddDays(-1).ToString("M"))}\" data-earlier=\"{earlier}\" data-later=\"{later}\">");
         sb.AppendLine("<div class=\"days day-heads\">");
@@ -576,7 +526,7 @@ public class ScheduleGuide : UserControl
         for (int d = 0; d < DAYS_SHOWN; d++)
         {
             DateTime day = first.AddDays(d);
-            List<int> onDay = [.. Enumerable.Range(0, slots.Count).Where(i => AirTime(slots[i]).Date == day)];
+            List<int> onDay = [.. Enumerable.Range(0, episodes.Count).Where(i => AirTime(episodes[i]).Date == day)];
             sb.AppendLine("<div class=\"day\">");
             if (onDay.Count == 0)
             {
@@ -584,7 +534,7 @@ public class ScheduleGuide : UserControl
             }
             foreach (int i in onDay)
             {
-                AppendTile(sb, i, shows.IndexOf(slots[i][0].Show));
+                AppendTile(sb, i, shows.IndexOf(episodes[i].Show));
             }
             sb.AppendLine(DIV_END);
         }
@@ -602,12 +552,11 @@ public class ScheduleGuide : UserControl
 
     private void AppendTile(StringBuilder sb, int index, int showIndex)
     {
-        List<ProcessedEpisode> slot = slots[index];
-        ProcessedEpisode ep = slot[0];
+        ProcessedEpisode ep = episodes[index];
         string banner = ep.Show.WideBannerUrl();
-        ProcessedEpisode.FoundStatus status = SlotStatus(slot);
+        ProcessedEpisode.FoundStatus status = ep.AiredStatus;
 
-        sb.AppendLine($"<div class=\"tile card{(slot == selected ? " sel" : string.Empty)}\" data-i=\"{index}\" data-s=\"{showIndex}\"{TileData(slot, status)}>");
+        sb.AppendLine($"<div class=\"tile card{(ep.Equals(selected) ? " sel" : string.Empty)}\" data-i=\"{index}\" data-s=\"{showIndex}\"{TileData(ep, status)}>");
         if (banner.HasValue() && tiles == TileLayout.Full)
         {
             sb.AppendLine($"<img class=\"banner\" loading=\"lazy\" src=\"{Encode(banner)}\" alt=\"{Encode(ep.SeriesName)}\" onerror=\"this.remove()\">");
@@ -616,26 +565,25 @@ public class ScheduleGuide : UserControl
         sb.AppendLine($"<div class=\"tile-show\">{StatusHtml(status, false)}{Encode(ep.SeriesName)}</div>");
         if (tiles == TileLayout.Compact)
         {
-            sb.AppendLine($"<div class=\"tile-episode\">{Encode(EpisodeNumbers(slot))}</div>");
+            sb.AppendLine($"<div class=\"tile-episode\">{Encode(EpisodeNumbers(ep))}</div>");
         }
         else
         {
-            sb.AppendLine($"<div class=\"tile-episode\">{Encode(EpisodeTitle(slot, false))}</div>");
+            sb.AppendLine($"<div class=\"tile-episode\">{Encode(EpisodeTitle(ep))}</div>");
             sb.AppendLine($"<div class=\"tile-meta text-muted\">{TileMeta(ep)}</div>");
         }
         sb.AppendLine("</div></div>");
     }
 
-    // What the details panel shows for this slot
-    private string TileData(List<ProcessedEpisode> slot, ProcessedEpisode.FoundStatus status)
+    // What the details panel shows for this episode
+    private string TileData(ProcessedEpisode ep, ProcessedEpisode.FoundStatus status)
     {
-        ProcessedEpisode ep = slot[0];
-        DateTime airs = AirTime(slot);
+        DateTime airs = AirTime(ep);
         bool aired = airs <= TimeHelpers.LocalNow();
         string howLong = aired ? string.Empty : ep.HowLong();
         string airsText = $"{(aired ? "Aired" : "Airs")} {airs:ddd d MMM} at {ep.Time}{(ep.Network.HasValue() ? " on" : string.Empty)}";
 
-        return $" data-show=\"{Encode(ep.SeriesName)}\" data-episode=\"{Encode(EpisodeTitle(slot, true))}\""
+        return $" data-show=\"{Encode(ep.SeriesName)}\" data-episode=\"{Encode(EpisodeTitle(ep))}\""
                + $" data-status=\"{Encode(StatusHtml(status, true))}\" data-airs=\"{Encode(airsText)}\""
                + $" data-howlong=\"{Encode(howLong.HasValue() ? "in " + howLong : string.Empty)}\""
                + $" data-aired=\"{(aired ? 1 : 0)}\" data-ondisk=\"{(status == ProcessedEpisode.FoundStatus.OnDisk ? 1 : 0)}\"";
@@ -654,51 +602,26 @@ public class ScheduleGuide : UserControl
         return day == DateTime.Today.AddDays(1) ? "Tomorrow" : day.ToString("dddd");
     }
 
-    // "S6 E3 · Name" for one episode; "S6 E3-E4 · Name" for a double episode, with every name in the details panel
-    private static string EpisodeTitle(List<ProcessedEpisode> slot, bool allNames)
-    {
-        string names = allNames ? string.Join(" / ", slot.Select(e => e.Name)) : slot[0].Name;
-        return $"{EpisodeNumbers(slot)} · {names}";
-    }
+    // "S6 E3 · Name"; a multipart episode shows its numbers as the list does, "S6 E3-4"
+    private static string EpisodeTitle(ProcessedEpisode ep) => $"{EpisodeNumbers(ep)} · {ep.Name}";
 
-    private static string EpisodeNumbers(List<ProcessedEpisode> slot)
-    {
-        ProcessedEpisode ep = slot[0];
-        ProcessedEpisode last = slot[^1];
-        string numbers = slot.Count == 1 ? ep.EpisodeNumbersAsText : $"{ep.EpisodeNumbersAsText}-E{last.EpisodeNumbersAsText}";
-        return ep.AppropriateSeasonNumber == 0 ? $"Special {numbers}" : $"S{ep.SeasonNumberAsText} E{numbers}";
-    }
+    private static string EpisodeNumbers(ProcessedEpisode ep) =>
+        ep.AppropriateSeasonNumber == 0 ? $"Special {ep.EpisodeNumbersAsText}" : $"S{ep.SeasonNumberAsText} E{ep.EpisodeNumbersAsText}";
 
-    // "9:00 PM · CBS", with the network's logo in place of its name once it is known
+    // The time on the left and the network on the right, its logo in place of its name once it is known
     private static string TileMeta(ProcessedEpisode ep)
     {
+        string time = $"<span class=\"time\">{Encode(ep.Time)}</span>";
         if (!ep.Network.HasValue())
         {
-            return Encode(ep.Time);
+            return time;
         }
 
         string logo = KnownLogo(ep.Show);
         string network = logo.HasValue()
             ? $"<img class=\"logo\" src=\"{Encode(logo)}\" alt=\"{Encode(ep.Network)}\" title=\"{Encode(ep.Network)}\" onerror=\"noLogo(this.closest('.tile').dataset.i)\">"
             : Encode(ep.Network);
-        return $"{Encode(ep.Time)} · <span class=\"net\">{network}</span>";
-    }
-
-    // A slot is as good as its worst episode: one missing part of a double episode makes it Missing
-    private static ProcessedEpisode.FoundStatus SlotStatus(List<ProcessedEpisode> slot)
-    {
-        List<ProcessedEpisode.FoundStatus> found = [.. slot.Select(ep => ep.AiredStatus)];
-        if (found.Contains(ProcessedEpisode.FoundStatus.Missing))
-        {
-            return ProcessedEpisode.FoundStatus.Missing;
-        }
-        if (found.All(s => s == ProcessedEpisode.FoundStatus.OnDisk))
-        {
-            return ProcessedEpisode.FoundStatus.OnDisk;
-        }
-        return found.All(s => s is ProcessedEpisode.FoundStatus.OnDisk or ProcessedEpisode.FoundStatus.PreviouslySeen)
-            ? ProcessedEpisode.FoundStatus.PreviouslySeen
-            : ProcessedEpisode.FoundStatus.Future;
+        return $"{time}<span class=\"net\">{network}</span>";
     }
 
     private static string StatusText(ProcessedEpisode.FoundStatus status) => status switch
@@ -752,12 +675,12 @@ public class ScheduleGuide : UserControl
     private static string LayoutCss() =>
         "body{margin:0;padding:0 10px 8px}.col-sm-12{width:100%}"
         + ".guide-top{position:sticky;top:0;z-index:3;padding:8px 0 6px;display:grid;grid-template-columns:1fr auto;gap:16px}"
-        + ".details{display:flex;gap:16px;height:150px;overflow:hidden}.details-text{max-width:1100px;min-width:0;flex:1}"
-        + ".poster{height:150px;width:100px;object-fit:cover;border-radius:4px;flex:none}"
+        + ".details{display:flex;gap:16px;height:200px;overflow:hidden}.details-text{max-width:1100px;min-width:0;flex:1}"
+        + ".poster{height:200px;width:134px;object-fit:cover;border-radius:4px;flex:none}"
         + ".details-title,.details-episode,.details-airs{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}"
         + ".details-title{font-size:1.25rem;font-weight:500;line-height:1.3}.details-episode{font-weight:500}"
         + ".details-airs{line-height:24px}#dLabel:empty{display:none}"
-        + ".show-summary{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;-webkit-line-clamp:2;font-size:.9rem;line-height:1.35;height:2.7em}"
+        + ".show-summary{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;-webkit-line-clamp:4;font-size:.9rem;line-height:1.35;height:5.4em}"
         + ".file-line{margin-top:3px;height:31px;display:flex;gap:6px;align-items:center;overflow:hidden}"
         + ".paging{text-align:right;white-space:nowrap}.paging-buttons{display:flex;gap:4px;justify-content:flex-end}"
         + ".show-summary .label{font-weight:500}"
@@ -767,7 +690,9 @@ public class ScheduleGuide : UserControl
         + ".nothing{padding:4px 8px}.week{display:none}"
         + ".banner{display:block;width:100%;aspect-ratio:758/140;object-fit:cover}"
         + ".tile-body{padding:6px 8px}.tile-show{font-weight:500;line-height:1.2}"
-        + ".tile-episode{font-size:.85rem;line-height:1.25;margin:2px 0}.tile-meta{font-size:.8rem;line-height:20px}"
+        + ".tile-episode{font-size:.85rem;line-height:1.25;margin:2px 0}"
+        + ".tile-meta{font-size:.8rem;line-height:22px;display:flex;justify-content:space-between;align-items:center;gap:6px}"
+        + ".tile-meta .time{white-space:nowrap}.tile-meta .net{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}"
         + ".badge{font-weight:500;vertical-align:middle}"
         + ".status{display:inline-block;width:16px;height:16px;margin-right:5px;vertical-align:-2px;background:no-repeat center/16px 16px}"
         + ".status-text{font-size:.9rem;font-weight:400}"
