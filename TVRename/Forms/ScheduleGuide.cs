@@ -112,32 +112,14 @@ public class ScheduleGuide : UserControl
         browser.RequestHandler = new BrowserRequestHandler();
         browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
         // Pages are only loaded once the browser is ready: a load asked for earlier is queued and could land after a newer one
-        browser.IsBrowserInitializedChanged += (_, _) => OnUiThread(() =>
+        browser.IsBrowserInitializedChanged += (_, _) => this.SafeInvoke(() =>
         {
             if (Visible && needsRender)
             {
                 Render();
             }
-        });
+        }, false);
         Controls.Add(browser);
-    }
-
-    // The browser calls back on its own thread, possibly while the window is closing
-    private void OnUiThread(System.Action action)
-    {
-        if (IsDisposed || !IsHandleCreated)
-        {
-            return;
-        }
-
-        try
-        {
-            BeginInvoke(action);
-        }
-        catch (InvalidOperationException)
-        {
-            // Closed in the meantime
-        }
     }
 
     // hidden is how many of the schedule's episodes the list's filters leave out
@@ -262,7 +244,7 @@ public class ScheduleGuide : UserControl
             return;
         }
 
-        OnUiThread(() => _ = ActAsync(page, action, value));
+        this.SafeInvoke(() => _ = ActAsync(page, action, value), false);
     }
 
     private async Task ActAsync(int page, string action, int value)
