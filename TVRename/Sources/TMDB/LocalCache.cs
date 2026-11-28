@@ -1377,7 +1377,6 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
             CancellationToken = token
         };
 
-
         await Parallel.ForEachAsync(shows, options, async (arg, cancellationToken) =>
         {
             string errorMessage = $"Error obtaining TMDB Recommendations for {arg.Name}:";
@@ -1403,6 +1402,11 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
                 LastErrorMessage = ex.LoggableDetails();
                 // ReSharper disable once ThrowFromCatchWithNoInnerException
                 throw new SourceConnectivityException(errorMessage, ex);
+            }
+            catch (TaskCanceledException ex)
+            {
+                SayNothing();
+                LastErrorMessage = ex.Message;
             }
             catch (Exception e)
             {
