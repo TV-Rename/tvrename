@@ -668,6 +668,8 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
                                       TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
 
         CachedSeriesInfo m = await GenerateTvShowAsync(seriesSpecifier, downloadedSeries);
+        // The download already has the network logos, so the Guide and Information pages need not ask again
+        ShowNetworkLogos[downloadedSeries.Id] = NetworkLogosByName(downloadedSeries);
 
         if (save)
         {
@@ -1116,55 +1118,108 @@ public class LocalCache : MediaCache, IMovieSource, ITVSource
         return null;
     }
 
-    // Network logos by network key, looked up once a session; the browser keeps the pictures in its own cache
+    // Network logos by the network's name as TVR has it ("ABC (US)" and "ABC (AU)" are kept apart), found once a session.
+    // The browser keeps the pictures in its own cache
     private static readonly ConcurrentDictionary<string, string> NetworkLogos = new();
 
-    // The logo for one of a show's networks, or empty if TMDB has none, can't be reached or we are offline
-    internal static async Task<string?> GetNetworkLogoAsync(int tmdbId, string network, CancellationToken token)
+    // Each TMDB show's networks by TMDB's names (empty where it has no logo), so a show is only asked about once a session
+    private static readonly ConcurrentDictionary<int, Dictionary<string, string>> ShowNetworkLogos = new();
+
+    // The logo for one of a show's networks, or null if TMDB has none, can't be reached or we are offline.
+    // onlyNetwork: it is the only network TVR has for the show
+    internal static async Task<string?> GetNetworkLogoAsync(int? tmdbId, string network, bool onlyNetwork, CancellationToken token)
     {
-        if (!NetworkLogos.ContainsKey(network) && !TVSettings.Instance.OfflineMode)
+        if (tmdbId is > 0 && !ShowNetworkLogos.ContainsKey(tmdbId.Value) && !TVSettings.Instance.OfflineMode)
         {
-            Dictionary<string, string>? logos = await DownloadNetworkLogosAsync(tmdbId, token);
+            Dictionary<string, string>? logos = await DownloadNetworkLogosAsync(tmdbId.Value, token);
             if (logos is not null)
             {
-                foreach (KeyValuePair<string, string> kvp in logos)
-                {
-                    NetworkLogos[kvp.Key] = kvp.Value;
-                }
+                ShowNetworkLogos.TryAdd(tmdbId.Value, logos);
             }
         }
 
-        return KnownNetworkLogo(network);
+        // Only a name TMDB matched is shared; a guess (a renamed network, or a show TMDB doesn't know) is not passed on
+        string? logo = KnownNetworkLogo(network, tmdbId, onlyNetwork);
+        if (logo.HasValue() && tmdbId is > 0 && logo == KnownNetworkLogo(network, tmdbId, false))
+        {
+            NetworkLogos.TryAdd(network, logo);
+        }
+        return logo;
     }
 
-    // Only what has already been looked up, so it never waits for TMDB
-    internal static string? KnownNetworkLogo(string? network)
+    // Only what has already been found under this exact name, so it never waits for TMDB
+    internal static string? KnownNetworkLogo(string? network) =>
+        network.HasValue() && NetworkLogos.TryGetValue(network, out string? logo) ? logo : null;
+
+    // A show TMDB knows goes by its own networks, so two that TVmaze both calls "ABC" stay apart.
+    // A show it doesn't know can borrow a logo found under a similar name ("ABC" for "ABC (US)") if only one is known
+    internal static string? KnownNetworkLogo(string? network, int? tmdbId, bool onlyNetwork)
     {
-        if (network is null)
+        if (!network.HasValue())
         {
             return null;
         }
 
-        return NetworkLogos.TryGetValue(NetworkKey(network), out string? logo)
-            ? logo
-            : null;
+        // A lookup that failed leaves the show's list empty; it can still use what other shows found under this name
+        if (tmdbId is > 0 && ShowNetworkLogos.TryGetValue(tmdbId.Value, out Dictionary<string, string>? own) && own.Count > 0)
+        {
+            return MatchNetwork(own, network, onlyNetwork);
+        }
+
+        string? logo = KnownNetworkLogo(network);
+        if (logo.HasValue() || tmdbId is > 0)
+        {
+            return logo;
+        }
+
+        List<string> similar = [.. LooseMatches(NetworkLogos, network).Distinct()];
+        return similar.Count == 1 ? similar[0] : null;
     }
 
-    // So "ABC (US)" matches TMDB's "ABC" and "Apple TV" matches "Apple TV+"
-    private static string NetworkKey(string name) => name;
-    //private static string NetworkKey(string name) =>        new([.. Regex.Replace(name, @"\([^)]*\)", string.Empty).Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant)]);
+    // The exact name first, then a loose match; only within one show's own networks, so it can't pick up another country's.
+    // When TVR and TMDB each have just the one network it is the same one, even if renamed since (TheTVDB still says "ReelzChannel")
+    private static string? MatchNetwork(Dictionary<string, string> logos, string network, bool onlyNetwork)
+    {
+        string? logo = logos.TryGetValue(network, out string? exact) ? exact : LooseMatches(logos, network).FirstOrDefault(url => url.HasValue());
+        if (!logo.HasValue() && onlyNetwork && logos.Count == 1)
+        {
+            logo = logos.Values.First();
+        }
+        return logo.HasValue() ? logo : null;
+    }
 
-    // By network key; a failed lookup counts as none for the session, a cancelled one is asked again next time
+    // "ABC (US)" matches "ABC" and "Apple TV" matches "Apple TV+", but "ABC (US)" never matches "ABC (AU)"
+    private static IEnumerable<string> LooseMatches(IEnumerable<KeyValuePair<string, string>> logos, string network)
+    {
+        string key = NetworkKey(network);
+        string country = NetworkCountry(network);
+        return key.HasValue()
+            ? logos.Where(kvp => NetworkKey(kvp.Key) == key && SameCountry(NetworkCountry(kvp.Key), country)).Select(kvp => kvp.Value)
+            : [];
+    }
+
+    private static bool SameCountry(string a, string b) => a.Length == 0 || b.Length == 0 || a == b;
+
+    private static string NetworkKey(string name) =>
+        new([.. Regex.Replace(name, @"\([^)]*\)", string.Empty, RegexOptions.None, TimeSpan.FromSeconds(1)).Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant)]);
+
+    // What is in brackets, such as "us" for "ABC (US)"
+    private static string NetworkCountry(string name) =>
+        Regex.Match(name, @"\(([^)]*)\)", RegexOptions.None, TimeSpan.FromSeconds(1)).Groups[1].Value.Trim().ToLowerInvariant();
+
+    private static Dictionary<string, string> NetworkLogosByName(TvShow? show) =>
+        (show?.Networks ?? [])
+            .Where(network => network.Name.HasValue())
+            .DistinctBy(network => network.Name)
+            .ToDictionary(network => network.Name ?? string.Empty, network => ImageUrl(network.LogoPath, "w154") ?? string.Empty);
+
+    // By TMDB's network name; a failed lookup counts as none for the session, a cancelled one is asked again next time
     private static async Task<Dictionary<string, string>?> DownloadNetworkLogosAsync(int tmdbId, CancellationToken token)
     {
         try
         {
             TvShow? show = await Client.GetTvShowAsync(tmdbId, cancellationToken: token);
-            return show?.Networks?
-                       .Where(network => network.Name.HasValue() && network.LogoPath.HasValue() && NetworkKey(network.Name!).HasValue())
-                       .DistinctBy(network => NetworkKey(network.Name!))
-                       .ToDictionary(network => NetworkKey(network.Name!), network => ImageUrl(network.LogoPath, "w154")!)
-                   ?? [];
+            return NetworkLogosByName(show);
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested)
         {

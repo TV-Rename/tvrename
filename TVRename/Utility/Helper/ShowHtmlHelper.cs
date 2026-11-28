@@ -627,14 +627,15 @@ internal static class ShowHtmlHelper
     {
         int? tmdbId = si?.TmdbCode is > 0 ? si.TmdbCode : ser.TmdbCode;
 
+        List<string> networks = [.. ser.Networks];
         List<string> parts = [];
-        foreach (string network in ser.Networks)
+        foreach (string network in networks)
         {
-            string? logo = forceRefresh && (tmdbId is > 0)
-                    ? await TMDB.LocalCache.GetNetworkLogoAsync(tmdbId.Value, network, CancellationToken.None)
-                    : TMDB.LocalCache.KnownNetworkLogo(network);
+            string? logo = forceRefresh
+                    ? await TMDB.LocalCache.GetNetworkLogoAsync(tmdbId, network, networks.Count == 1, CancellationToken.None)
+                    : TMDB.LocalCache.KnownNetworkLogo(network, tmdbId, networks.Count == 1);
 
-            parts.Add(logo.HasValue() ? NetworkLogoHtml(logo, network) : network);
+            parts.Add(logo.HasValue() ? NetworkLogoHtml(logo, network) : WebUtility.HtmlEncode(network));
         }
 
         return $"{parts.ToCsv()}, {dayTime}";
@@ -645,7 +646,7 @@ internal static class ShowHtmlHelper
     {
         string name = WebUtility.HtmlEncode(network);
         return $"<img src=\"{WebUtility.HtmlEncode(url)}\" alt=\"{name}\" title=\"{name}\" onerror=\"this.replaceWith(this.alt)\""
-               + " style=\"height:24px;max-width:120px;object-fit:contain;padding:2px 5px;border-radius:3px;background:#fff;vertical-align:middle\">";
+               + " style=\"height:22px;max-width:104px;object-fit:contain;padding:2px 5px;border-radius:3px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.15);vertical-align:middle\">";
     }
 
     private static string PrettyPrint(float? rating) => rating is > 0 ? rating.Value + "/10" : string.Empty;
