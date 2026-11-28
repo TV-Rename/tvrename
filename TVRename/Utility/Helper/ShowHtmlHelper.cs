@@ -646,7 +646,7 @@ internal static class ShowHtmlHelper
     {
         string name = WebUtility.HtmlEncode(network);
         return $"<img src=\"{WebUtility.HtmlEncode(url)}\" alt=\"{name}\" title=\"{name}\" onerror=\"this.replaceWith(this.alt)\""
-               + " style=\"height:24px;max-width:120px;object-fit:contain;padding:2px 5px;border-radius:3px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.15);vertical-align:middle\">";
+               + " style=\"height:22px;max-width:104px;object-fit:contain;padding:2px 5px;border-radius:3px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.15);vertical-align:middle\">";
     }
 
     private static string PrettyPrint(float? rating) => rating is > 0 ? rating.Value + "/10" : string.Empty;

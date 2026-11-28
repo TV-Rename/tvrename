@@ -709,8 +709,8 @@ public class ScheduleGuide : UserControl
         + ".status{display:inline-block;width:16px;height:16px;margin-right:5px;vertical-align:-2px;background:no-repeat center/16px 16px}"
         + ".status-text{font-size:.9rem;font-weight:400}"
         // Network logos are made for a light background, so they sit on one in every theme
-        + ".logo{height:18px;max-width:72px;object-fit:contain;padding:2px 4px;border-radius:3px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.15);vertical-align:middle}"
-        + ".logo-lg{height:22px;max-width:110px}";
+        + ".logo{height:16px;max-width:60px;object-fit:contain;padding:2px 4px;border-radius:3px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.15);vertical-align:middle}"
+        + ".logo-lg{height:20px;max-width:96px}";
 
     // Day headings use the Schedule row colours, so the Guide matches the list in every theme
     private static string ColourCss()
